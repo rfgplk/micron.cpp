@@ -539,4 +539,31 @@ inline constexpr unsigned __micron_width = __wordsize;
 #if !defined(__STDC_HOSTED__) || __STDC_HOSTED__ == 0
 #define __micron_freestanding 1
 #endif
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// __micron_no_ssp
+//
+// suppress the stack-protector prologue on a single function
+//
+// WARNING: __attribute__((naked)) does NOT imply "no compiler-generated prologue"
+// under -fstack-protector-all gcc still prepends the canary spill (?!?!?!?!?):
+//
+//     ldr r3, [pc, #..]   ; &__stack_chk_guard
+//     ldr r3, [r3]
+//     str r3, [sp, #4]    ; <-- ABOVE sp: a naked fn reserved no frame
+//     <the naked body>
+//
+// on x86 gcc emits no canary for naked fns and the store would land in the 128b red
+// zone anyway, which is why amd64 never noticed
+#if defined(__has_attribute)
+#if __has_attribute(no_stack_protector)
+#define __micron_no_ssp __attribute__((no_stack_protector))
+#endif
+#endif
+#if !defined(__micron_no_ssp)
+// gcc < 11 / clang < 12: the historical workaround. costs nothing here because every
+// naked fn in the tree is also noinline, so losing the inline-into-caller opts is moot
+#define __micron_no_ssp __attribute__((optimize("no-stack-protector")))
+#endif
+
 #endif

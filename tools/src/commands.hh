@@ -40,7 +40,7 @@ match(char **argv) -> __modes
   // makes a new project from template
   else if ( mc::strcmp(argv[1], "make") == 0 )
     return __modes::make;
-  // builds test files and runs, verifies if each exits with '1' (success) or '0' (fail)
+  // builds test files and runs them (under qemu for cross targets)
   else if ( mc::strcmp(argv[1], "test") == 0 )
     return __modes::test;
   else if ( mc::strcmp(argv[1], "doctor") == 0 )
@@ -104,6 +104,7 @@ parse_main(int argc, char **argv)
 
     mc::vector<recipes::gnu::config_t> pool;
     mc::vector<mc::string> deferred;
+    int rc = 0;      // a batchfile fails if any of its lines fails
 
     for ( auto &line : lines ) {
       // strip comments and blank lines
@@ -133,23 +134,22 @@ parse_main(int argc, char **argv)
 
       for ( auto &tok : tokens ) __argv.push_back(tok.begin());
 
-      parse_main(static_cast<int>(__argv.size()), __argv.data());
+      if ( int r = parse_main(static_cast<int>(__argv.size()), __argv.data()); r != 0 ) rc = r;
     }
 
     if ( parallel ) {
-      int r = build_parallel(pool);
+      if ( int r = build_parallel(pool); r != 0 ) rc = r;
       for ( auto &line : deferred ) {
         auto tokens = mc::fmt::split_to(line, "");
         if ( tokens.empty() ) continue;
         mc::vector<char *> __argv;
         __argv.push_back(nullptr);
         for ( auto &tok : tokens ) __argv.push_back(tok.begin());
-        parse_main(static_cast<int>(__argv.size()), __argv.data());
+        if ( int r = parse_main(static_cast<int>(__argv.size()), __argv.data()); r != 0 ) rc = r;
       }
-      return r;
     }
 
-    break;
+    return rc;
   }
   case __modes::compile : {
     auto confs = parse_argv_build(argc - 2, argv + 2);
@@ -184,10 +184,8 @@ parse_main(int argc, char **argv)
     break;
   }
   case __modes::emulate : {
-    // can't be batched doesn't make sense
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
-    build_and_emulate(conf);
-    break;
+    return build_and_emulate(conf);
   }
   case __modes::make : {
     break;
@@ -198,12 +196,10 @@ parse_main(int argc, char **argv)
     if ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) {
       if ( argc < 4 ) mc::cerror("test parallel requires at least one source");
       auto confs = parse_argv_build(argc - 3, argv + 3);
-      cicd_test_parallel(confs);
-      break;
+      return cicd_test_parallel(confs);
     }
     auto confs = parse_argv_build(argc - 2, argv + 2);
-    cicd_test(confs);
-    break;
+    return cicd_test(confs);
   }
   case __modes::doctor : {
     auto confs = parse_argv_build(argc - 2, argv + 2);

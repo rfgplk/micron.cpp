@@ -131,6 +131,37 @@ __va_carve(usize bytes) noexcept
   return __va_commit(reinterpret_cast<addr_t *>(reinterpret_cast<uintptr_t>(base) + off), rounded);
 }
 
+inline addr_t *
+__va_carve_reserved(usize bytes) noexcept
+{
+  addr_t *base = __va_base.get(micron::memory_order_acquire);
+  if ( !base ) [[unlikely]] {
+    base = __va_reserve_once();
+    if ( !base ) return nullptr;
+  }
+
+  const usize rounded = (bytes + __sheet_align_mask) & ~__sheet_align_mask;
+  const u32 want = static_cast<u32>(rounded >> __sheet_align_log2);
+
+  u64 reuse_off = ~0ull;
+  {
+    micron::free_guard<> guard{ &__va_free_lock };
+    for ( usize i = __va_free_count; i-- > 0; ) {
+      if ( __va_free_runs[i].granules == want ) {
+        reuse_off = __va_free_runs[i].off;
+        __va_free_runs[i] = __va_free_runs[--__va_free_count];      // swap-remove
+        break;
+      }
+    }
+  }
+  if ( reuse_off != ~0ull ) return reinterpret_cast<addr_t *>(reinterpret_cast<uintptr_t>(base) + reuse_off);
+
+  const u64 off = __va_offset.fetch_add(rounded, micron::memory_order_acq_rel);
+  if ( off + rounded > __va_reservation_size ) [[unlikely]]
+    return nullptr;      // reservation exhausted
+  return reinterpret_cast<addr_t *>(reinterpret_cast<uintptr_t>(base) + off);
+}
+
 inline void
 __va_release(addr_t *slot, usize bytes) noexcept
 {

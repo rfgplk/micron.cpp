@@ -107,10 +107,31 @@ __zsubs_epi8(__m256_neon a, __m256_neon b)
 }
 
 // _mm256_permute2x128_si256(x, x, 0x01)
+// also _mm256_permute4x64_epi64(x, 0x4E): lanes [2,3,0,1]
 __attribute__((always_inline)) static inline __m256_neon
 __zperm_swap(__m256_neon a)
 {
   return { a.hi, a.lo };
+}
+
+// _mm256_permute4x64_epi64(x, 0x39): lanes [1,2,3,0]
+__attribute__((always_inline)) static inline __m256_neon
+__zperm_1230(__m256_neon a)
+{
+  return { vextq_u64(a.lo, a.hi, 1), vextq_u64(a.hi, a.lo, 1) };
+}
+
+// _mm256_permute4x64_epi64(x, 0x93): lanes [3,0,1,2]
+__attribute__((always_inline)) static inline __m256_neon
+__zperm_3012(__m256_neon a)
+{
+  return { vextq_u64(a.hi, a.lo, 1), vextq_u64(a.lo, a.hi, 1) };
+}
+
+__attribute__((always_inline)) static inline __m256_neon
+__zbyterev64(__m256_neon a)
+{
+  return { vreinterpretq_u64_u8(vrev64q_u8(vreinterpretq_u8_u64(a.lo))), vreinterpretq_u64_u8(vrev64q_u8(vreinterpretq_u8_u64(a.hi))) };
 }
 
 __attribute__((always_inline)) static inline __m256_neon
@@ -664,6 +685,137 @@ zzz128(const u8 *data, usize sz)
 {
   alignas(32) u64 out[4];
   zzz<Seed>(data, sz, out);
+  return { out[0] ^ out[1], out[2] ^ out[3] };
+}
+
+template<int A, int B, int C, int D>
+__attribute__((always_inline)) static inline __m256_neon
+__zzzf_mix(__m256_neon s)
+{
+  __m256_neon t = __zslli64<A>(s);
+  s = __zsub64(s, t);
+  t = __zsrli64<B>(s);
+  s = __zxor(s, t);
+  s = __zbyterev64(s);
+  t = __zslli64<C>(s);
+  s = __zadd64(s, t);
+  t = __zsrli64<D>(s);
+  s = __zxor(s, t);
+  return s;
+}
+
+// rt seed version
+inline void
+zzzf(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
+{
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+  const __m256_neon seedv = __zset1_epi64(seed);
+
+  __m256_neon S0 = __zxor(IV, seedv);
+  __m256_neon S1 = __zxor(__zperm_swap(IV), seedv);
+  __m256_neon S2 = __zxor(__zslli64<1>(IV), seedv);
+  __m256_neon S3 = __zxor(__zsrli64<1>(IV), seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr < end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining >= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    S0 = __zzzf_mix<3, 31, 5, 29>(__zxor(S0, block));
+    S1 = __zzzf_mix<5, 29, 7, 31>(__zxor(S1, block));
+    S2 = __zzzf_mix<7, 27, 3, 33>(__zxor(S2, block));
+    S3 = __zzzf_mix<9, 33, 5, 27>(__zxor(S3, block));
+  }
+
+  __m256_neon F = __zxor(__zxor(S0, __zperm_1230(S1)), __zxor(__zperm_swap(S2), __zperm_3012(S3)));
+  F = __zxor(F, seedv);
+  F = __zxor(F, __zset1_epi64((i64)sz));
+  F = __zzzf_mix<3, 29, 5, 31>(F);
+  F = __zzzf_mix<7, 31, 9, 27>(F);
+  __zstore(reinterpret_cast<u8 *>(out), F);
+}
+
+// hard seed template
+template<i64 Seed>
+void
+zzzf(const u8 *__restrict data, usize sz, u64 *__restrict out)
+{
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+  const __m256_neon seedv = __zset1_epi64(Seed);
+
+  __m256_neon S0 = __zxor(IV, seedv);
+  __m256_neon S1 = __zxor(__zperm_swap(IV), seedv);
+  __m256_neon S2 = __zxor(__zslli64<1>(IV), seedv);
+  __m256_neon S3 = __zxor(__zsrli64<1>(IV), seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr < end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining >= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    S0 = __zzzf_mix<3, 31, 5, 29>(__zxor(S0, block));
+    S1 = __zzzf_mix<5, 29, 7, 31>(__zxor(S1, block));
+    S2 = __zzzf_mix<7, 27, 3, 33>(__zxor(S2, block));
+    S3 = __zzzf_mix<9, 33, 5, 27>(__zxor(S3, block));
+  }
+
+  __m256_neon F = __zxor(__zxor(S0, __zperm_1230(S1)), __zxor(__zperm_swap(S2), __zperm_3012(S3)));
+  F = __zxor(F, seedv);
+  F = __zxor(F, __zset1_epi64((i64)sz));
+  F = __zzzf_mix<3, 29, 5, 31>(F);
+  F = __zzzf_mix<7, 31, 9, 27>(F);
+  __zstore(reinterpret_cast<u8 *>(out), F);
+}
+
+inline u64
+zzzf64(const u8 *data, i64 seed, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzzf(data, seed, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}
+
+template<i64 Seed>
+u64
+zzzf64(const u8 *data, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzzf<Seed>(data, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}
+
+inline micron::pair<u64, u64>
+zzzf128(const u8 *data, i64 seed, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzzf(data, seed, sz, out);
+  return { out[0] ^ out[1], out[2] ^ out[3] };
+}
+
+template<i64 Seed>
+micron::pair<u64, u64>
+zzzf128(const u8 *data, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzzf<Seed>(data, sz, out);
   return { out[0] ^ out[1], out[2] ^ out[3] };
 }
 

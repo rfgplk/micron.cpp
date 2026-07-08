@@ -254,6 +254,11 @@ call_on_stack([[maybe_unused]] void *stack_top, [[maybe_unused]] void (*fn)(void
 }
 
 // fiber CPU contexts
+//
+// NOTE: by default our swap will _NOT_ save/restore the FP control state, by benchmarking was measured at ~half the total switch cost
+// every fiber instead starts with the thread's current FP env
+// code that changes rounding/exception modes must NEVER hold that change across a suspend point
+// unless compiled with -DMICRON_FIBER_FPENV
 
 #if defined(__micron_arch_amd64)
 
@@ -275,7 +280,7 @@ static_assert(__builtin_offsetof(__fiber_ctx, rip) == 0x38, "amd64 __fiber_ctx r
 static_assert(__builtin_offsetof(__fiber_ctx, mxcsr) == 0x40, "amd64 __fiber_ctx mxcsr offset");
 static_assert(__builtin_offsetof(__fiber_ctx, fcw) == 0x44, "amd64 __fiber_ctx fcw offset");
 
-[[maybe_unused]] static __attribute__((naked, noinline)) void
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
 __micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noexcept
 {
   asm volatile("movq %rbx, 0x00(%rdi)\n\t"
@@ -286,12 +291,14 @@ __micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noex
                "movq %r15, 0x28(%rdi)\n\t"
                "movq (%rsp), %rax\n\t"      // return address -> from->rip
                "movq %rax, 0x38(%rdi)\n\t"
-               "leaq 8(%rsp), %rax\n\t"      // caller SP past the return addr (16-aligned) -> from->rsp
+               "leaq 8(%rsp), %rax\n\t"
                "movq %rax, 0x30(%rdi)\n\t"
+#if defined(MICRON_FIBER_FPENV)
                "stmxcsr 0x40(%rdi)\n\t"
                "fnstcw 0x44(%rdi)\n\t"
                "ldmxcsr 0x40(%rsi)\n\t"      // restore *to
                "fldcw 0x44(%rsi)\n\t"
+#endif
                "movq 0x00(%rsi), %rbx\n\t"
                "movq 0x08(%rsi), %rbp\n\t"
                "movq 0x10(%rsi), %r12\n\t"
@@ -302,7 +309,7 @@ __micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noex
                "jmp *0x38(%rsi)\n\t");
 }
 
-[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) void
+[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
 __micron_fiber_trampoline() noexcept
 {
   asm volatile("andq $-16, %rsp\n\t"      // defensive 16-align
@@ -315,13 +322,16 @@ __micron_fiber_trampoline() noexcept
 [[gnu::always_inline]] inline void
 make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept
 {
+  // zero it first
   *ctx = __fiber_ctx{};
   ctx->rsp = reinterpret_cast<u64>(stack_top) & ~static_cast<u64>(15);
   ctx->rip = reinterpret_cast<u64>(&__micron_fiber_trampoline);
   ctx->r12 = reinterpret_cast<u64>(arg);
   ctx->r13 = reinterpret_cast<u64>(fn);
+#if defined(MICRON_FIBER_FPENV)
   ctx->mxcsr = 0x1F80;      // default: all SSE exceptions masked, round-to-nearest
   ctx->fcw = 0x037F;        // default x87 control word
+#endif
 }
 
 #elif defined(__micron_arch_x86)
@@ -337,7 +347,12 @@ struct __fiber_ctx {
   u16 fcw;        // 0x1c  x87 control word
 };
 
-[[maybe_unused]] static __attribute__((naked, noinline)) void
+static_assert(__builtin_offsetof(__fiber_ctx, esp) == 0x10, "i386 __fiber_ctx esp offset");
+static_assert(__builtin_offsetof(__fiber_ctx, eip) == 0x14, "i386 __fiber_ctx eip offset");
+static_assert(__builtin_offsetof(__fiber_ctx, mxcsr) == 0x18, "i386 __fiber_ctx mxcsr offset");
+static_assert(__builtin_offsetof(__fiber_ctx, fcw) == 0x1c, "i386 __fiber_ctx fcw offset");
+
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
 __micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept
 {
   // cdecl: from @ 4(%esp), to @ 8(%esp)
@@ -350,15 +365,19 @@ __micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept
                "movl %ecx, 0x14(%eax)\n\t"
                "leal 4(%esp), %ecx\n\t"      // caller esp past ret -> from->esp
                "movl %ecx, 0x10(%eax)\n\t"
+#if defined(MICRON_FIBER_FPENV)
 #if defined(__SSE__)
                "stmxcsr 0x18(%eax)\n\t"
 #endif
                "fnstcw 0x1c(%eax)\n\t"
+#endif
                "movl 8(%esp), %eax\n\t"      // to (esp still original here)
+#if defined(MICRON_FIBER_FPENV)
 #if defined(__SSE__)
                "ldmxcsr 0x18(%eax)\n\t"
 #endif
                "fldcw 0x1c(%eax)\n\t"
+#endif
                "movl 0x00(%eax), %ebx\n\t"
                "movl 0x04(%eax), %esi\n\t"
                "movl 0x08(%eax), %edi\n\t"
@@ -367,7 +386,7 @@ __micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept
                "jmp *0x14(%eax)\n\t");
 }
 
-[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) void
+[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
 __micron_fiber_trampoline() noexcept
 {
   asm volatile("andl $-16, %esp\n\t"
@@ -381,13 +400,15 @@ __micron_fiber_trampoline() noexcept
 [[gnu::always_inline]] inline void
 make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept
 {
-  *ctx = __fiber_ctx{};
+  *ctx = __fiber_ctx{};      // recycled FCBs: don't leak the previous fiber's callee-saved regs
   ctx->esp = reinterpret_cast<u32>(stack_top) & ~static_cast<u32>(15);
   ctx->eip = reinterpret_cast<u32>(&__micron_fiber_trampoline);
   ctx->esi = reinterpret_cast<u32>(arg);
   ctx->edi = reinterpret_cast<u32>(fn);
+#if defined(MICRON_FIBER_FPENV)
   ctx->mxcsr = 0x1F80;
   ctx->fcw = 0x037F;
+#endif
 }
 
 #elif defined(__micron_arch_arm64)
@@ -458,7 +479,7 @@ namespace ar
 [[gnu::always_inline]] inline void
 make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept
 {
-  *ctx = __fiber_ctx{};
+  *ctx = __fiber_ctx{};      // recycled FCBs: don't leak the previous fiber's x21..x28 / d8..d15
   ctx->sp = reinterpret_cast<u64>(stack_top) & ~static_cast<u64>(15);
   ctx->x[11] = reinterpret_cast<u64>(&__micron_fiber_trampoline);      // x30 = entry
   ctx->x[0] = reinterpret_cast<u64>(arg);                              // x19
@@ -474,7 +495,12 @@ struct __fiber_ctx {
   u64 d[8];      // 0x28  d8..d15 (guarded by __ARM_FP)
 };
 
-[[maybe_unused]] static __attribute__((naked, noinline)) void
+static_assert(__builtin_offsetof(__fiber_ctx, sp) == 0x20, "arm32 __fiber_ctx sp offset");
+static_assert(__builtin_offsetof(__fiber_ctx, lr) == 0x24, "arm32 __fiber_ctx lr offset");
+static_assert(__builtin_offsetof(__fiber_ctx, d) == 0x28, "arm32 __fiber_ctx d offset");
+static_assert(sizeof(__fiber_ctx) == 0x68, "arm32 __fiber_ctx size");
+
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
 __micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept
 {
   // r0 = from, r1 = to
@@ -493,20 +519,23 @@ __micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept
                "bx lr\n\t");
 }
 
-[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) void
+[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
 __micron_fiber_trampoline() noexcept
 {
-  asm volatile("mov r11, #0\n\t"      // terminate unwind chain
-               "mov r0, r4\n\t"       // arg -> a0
-               "blx r5\n\t"           // fn(arg)
+  // gcc's frame pointer is r11 in arm mode but r7 in thumb, and this
+  // toolchain defaults to thumb-2 (__thumb__), so zero both, we don't know which mode we're in
+  asm volatile("mov r11, #0\n\t"
+               "mov r7, #0\n\t"
+               "mov r0, r4\n\t"      // arg -> a0
+               "blx r5\n\t"          // fn(arg)
                "udf #0\n\t");
 }
 
 [[gnu::always_inline]] inline void
 make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept
 {
-  *ctx = __fiber_ctx{};
-  ctx->sp = reinterpret_cast<u32>(stack_top) & ~static_cast<u32>(7);
+  *ctx = __fiber_ctx{};      // recycled FCBs: don't leak the previous fiber's r6..r11 / d8..d15
+  ctx->sp = reinterpret_cast<u32>(stack_top) & ~static_cast<u32>(15);
   ctx->lr = reinterpret_cast<u32>(&__micron_fiber_trampoline);
   ctx->r[0] = reinterpret_cast<u32>(arg);      // r4
   ctx->r[1] = reinterpret_cast<u32>(fn);       // r5

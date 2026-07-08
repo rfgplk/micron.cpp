@@ -24,9 +24,10 @@
 
 // TODO: this is only here temporarily move it out to */coroutine (somewhere else?)
 
+// WARNING: GCC ICE caught (report is below)
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // continuation stealing scheduler
-
 namespace micron
 {
 namespace coro
@@ -34,18 +35,22 @@ namespace coro
 
 inline constexpr u32 __cl_max_workers = 32;
 
-// resume a continuation handle on the current worker's fresh fiber
 inline void
-__cl_resume_entry(micron::fiber::fiber *self) noexcept
+__cl_hot_entry(micron::fiber::fiber *self) noexcept
 {
-  static_cast<__frame_base *>(self->arg)->__self.resume();
+  for ( ;; ) {
+    void *a = self->arg;
+    if ( a == nullptr ) return;
+    static_cast<__frame_base *>(a)->__self.resume();
+    self->arg = nullptr;
+    micron::ar::__micron_swap_context(&self->ctx, self->link);
+  }
 }
 
 struct engine {
   worker *workers = nullptr;
   micron::crossbeam<__frame_base *, 256> inbox;      // externally submitted roots
   micron::atomic_token<u32> stopping{ 0 };
-  micron::atomic_token<u32> busy{ 0 };                // num of workers currently running a fiber
   micron::atomic_token<u32> pending_timers{ 0 };      // num of frames in the timer
   u32 n = 0;
   micron::__thread_pointer<micron::auto_thread<>> threads[__cl_max_workers];
@@ -54,56 +59,113 @@ struct engine {
 
   engine() noexcept = default;
 
-  [[gnu::always_inline]] void
-  __run(worker *w, __frame_base *cont, bool stolen) noexcept
+  // retire a worker's hot fiber
+  static void
+  __retire_hot(worker *w) noexcept
   {
-    // NOTE: busy counter is held by worker_main across __find + __run
-    (void)w;
-    if ( stolen ) cont->__steals.fetch_add(1, micron::memory_order_acq_rel);
-    micron::fiber::fiber *f = micron::fiber::create_fiber(&__cl_resume_entry, cont, static_cast<usize>(small_stack_size));
-    while ( f == nullptr ) [[unlikely]] {
-      // stack/VA reservation is exhausted
-      if ( stopping.get(micron::memory_order_acquire) ) return;
-      micron::yield();
-      f = micron::fiber::create_fiber(&__cl_resume_entry, cont, static_cast<usize>(small_stack_size));
+    micron::fiber::fiber *f = w->hot;
+    if ( f == nullptr ) return;
+    w->hot = nullptr;
+    micron::fiber::resume(f);
+    micron::fiber::destroy_fiber(f);
+  }
+
+  [[gnu::always_inline]] void
+  __run(worker *w, __frame_base *cont) noexcept
+  {
+    // steal accounting happens at the take sites
+    micron::fiber::fiber *f = w->hot;
+    if ( f == nullptr ) [[unlikely]] {
+      f = micron::fiber::create_fiber(&__cl_hot_entry, nullptr, static_cast<usize>(small_stack_size));
+      while ( f == nullptr ) [[unlikely]] {
+        // stack/VA reservation is exhausted
+        if ( stopping.get(micron::memory_order_acquire) ) return;
+        micron::yield();
+        f = micron::fiber::create_fiber(&__cl_hot_entry, nullptr, static_cast<usize>(small_stack_size));
+      }
+      w->hot = f;
     }
+    f->arg = cont;
     micron::fiber::resume(f);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     // hard trap out if an exception escaped the coroutine
     if ( f->escaped ) [[unlikely]]
       __builtin_trap();
 #endif
-    micron::fiber::destroy_fiber(f);
+    if ( f->refs.get(micron::memory_order_acquire) != 1 ) [[unlikely]]
+      __retire_hot(w);
+    else
+      f->frame_sp = f->region.frame_base;
   }
 
   __frame_base *
   __steal(worker *w, u32 &seed) noexcept
   {
     if ( n <= 1 ) return nullptr;
-    for ( u32 attempt = 0; attempt < n * 2u; ++attempt ) {
-      seed ^= seed << 13;
+    for ( u32 sweep = 0; sweep < 2u; ++sweep ) {
+      seed ^= seed << 13;      // one xorshift per sweep; random start avoids thief convoys
       seed ^= seed >> 17;
       seed ^= seed << 5;
-      u32 v = seed % n;
-      if ( v == w->id ) continue;
-      __frame_base *c = workers[v].deque.steal_top();
-      if ( c != nullptr ) return c;
+      // Lemire reduction instead of seed % n (integer division), then a linear probe (faster)
+      u32 v = static_cast<u32>((static_cast<u64>(seed) * n) >> 32);
+      for ( u32 i = 0; i < n; ++i ) {
+        if ( v != w->id ) {
+#if defined(MICRON_CORO_STEAL_MIN_DEPTH)
+          // experiment: first sweep skips depth-1 victims
+          if ( sweep == 0 && workers[v].deque.size() <= 1 ) {
+            if ( ++v == n ) v = 0;
+            continue;
+          }
+#endif
+          __frame_base *c = workers[v].deque.steal_top();
+          if ( c != nullptr ) {
+            if ( !workers[v].deque.empty() ) __notify_work();      // wake propagation: more work remains
+            return c;
+          }
+        }
+        if ( ++v == n ) v = 0;
+      }
     }
     return nullptr;
   }
 
   __frame_base *
-  __find(worker *w, u32 &seed, bool &stolen) noexcept
+  __search(worker *w, u32 &seed) noexcept
   {
+    if ( __cl_searchers.get(micron::memory_order_relaxed) >= __cl_max_searchers ) return nullptr;
+    __cl_searchers.fetch_add(1, micron::memory_order_acq_rel);
     __frame_base *cont = nullptr;
-    if ( inbox.pop(cont) && cont != nullptr ) {
-      stolen = false;
-      return cont;
+    u32 backoff = 16;
+    for ( u32 round = 0; round < 6; ++round ) {      // 16+32+..+512 pauses ~= 1-2 us total
+      for ( u32 p = 0; p < backoff; ++p ) __cpu_pause();
+      if ( stopping.get(micron::memory_order_acquire) ) break;
+      cont = __find(w, seed);
+      if ( cont != nullptr ) break;
+      if ( backoff < 512 ) backoff <<= 1;
     }
-    cont = __steal(w, seed);
-    stolen = true;
+    __cl_searchers.sub_fetch(1, micron::memory_order_acq_rel);
     return cont;
   }
+
+  __frame_base *
+  __find(worker *w, u32 &seed) noexcept
+  {
+    __frame_base *cont = nullptr;
+    if ( (++w->tick & 63u) == 0u ) {      // periodic inbox-first so roots aren't starved by deep local work
+      if ( inbox.pop(cont) && cont != nullptr ) return cont;
+    }
+    cont = w->deque.pop_bottom();
+    if ( cont != nullptr ) {
+      __count_take(cont);      // a locally-popped fork continuation was detached from its child (it suspended)
+      return cont;
+    }
+    if ( inbox.pop(cont) && cont != nullptr ) return cont;
+    cont = __steal(w, seed);
+    if ( cont != nullptr ) __count_take(cont);
+    return cont;
+  }
+
+  static constexpr u32 __cl_prewarm_segments = 2;      // segments carved into the TLS freelist at worker start (0 disables)
 
   void
   worker_main(u32 id) noexcept
@@ -111,36 +173,40 @@ struct engine {
     worker *w = &workers[id];
     __cur_worker = w;
     u32 seed = id * 2654435761u + 1u;
-    // ensure that theres no  interval where a continuation left the inbox/deque but is not yet counted in busy
+    for ( u32 __i = 0; __i < __cl_prewarm_segments; ++__i ) {
+      micron::fiber::fiber *__pf = micron::fiber::create_fiber(&__cl_hot_entry, nullptr, static_cast<usize>(small_stack_size));
+      if ( __pf == nullptr ) break;
+      micron::fiber::destroy_fiber(__pf);
+    }
+    // active covers the interval where a continuation left the inbox/deque but is still running here
     for ( ;; ) {
       if ( stopping.get(micron::memory_order_acquire) ) break;
-      bool stolen = false;
-      busy.fetch_add(1, micron::memory_order_acq_rel);
-      __frame_base *cont = __find(w, seed, stolen);
+      w->active.store(1, micron::memory_order_release);
+      __frame_base *cont = __find(w, seed);
+      if ( cont == nullptr ) cont = __search(w, seed);      // bounded pre-park spin (capped searchers)
       if ( cont != nullptr ) {
-        __run(w, cont, stolen);
-        busy.sub_fetch(1, micron::memory_order_acq_rel);
+        __run(w, cont);
         continue;
       }
-      busy.sub_fetch(1, micron::memory_order_acq_rel);
-      // nothing found after a full steal sweep
-      __cl_sleepers.fetch_add(1, micron::memory_order_acq_rel);      // announce parked
-      const u32 sig = __cl_signal.get(micron::memory_order_acquire);
-      busy.fetch_add(1, micron::memory_order_acq_rel);
-      cont = __find(w, seed, stolen);
+      w->active.store(0, micron::memory_order_release);
+      __cl_sleepers.fetch_add(1, micron::memory_order_seq_cst);      // announce parked (Dekker: see submit)
+      const u32 sig = __cl_signal.get(micron::memory_order_seq_cst);
+      w->active.store(1, micron::memory_order_release);
+      cont = __find(w, seed);
       if ( cont != nullptr ) {
         __cl_sleepers.sub_fetch(1, micron::memory_order_acq_rel);
-        if ( !stopping.get(micron::memory_order_acquire) ) __run(w, cont, stolen);
-        busy.sub_fetch(1, micron::memory_order_acq_rel);
+        if ( !stopping.get(micron::memory_order_acquire) ) __run(w, cont);
         continue;
       }
-      busy.sub_fetch(1, micron::memory_order_acq_rel);
+      w->active.store(0, micron::memory_order_release);
       if ( !stopping.get(micron::memory_order_acquire) ) {
         timespec_t __ts{ 0, 100000000 };
         micron::__futex(__cl_signal.ptr(), futex_wait | futex_private_flag, sig, &__ts, nullptr, 0);
       }
       __cl_sleepers.sub_fetch(1, micron::memory_order_acq_rel);
     }
+    w->active.store(0, micron::memory_order_release);
+    __retire_hot(w);      // before drain: the retired segment recycles into the freelist being drained
     micron::fiber::drain_freelist();
   }
 
@@ -148,8 +214,8 @@ struct engine {
   submit(__frame_base *fb) noexcept
   {
     while ( !inbox.push(fb) ) micron::yield();      // inbox full
-    __cl_signal.fetch_add(1, micron::memory_order_release);
-    micron::wake_futex(__cl_signal.ptr(), static_cast<int>(n));      // wake all
+    __cl_signal.fetch_add(1, micron::memory_order_seq_cst);
+    if ( __cl_sleepers.get(micron::memory_order_seq_cst) != 0 ) micron::wake_futex(__cl_signal.ptr(), 1);
   }
 };
 
@@ -168,6 +234,8 @@ struct __timer_node {
 inline __timer_node *__timer_head = nullptr;
 inline micron::atomic_token<u32> __timer_lk{ 0 };
 inline micron::__thread_pointer<micron::auto_thread<>> __timer_thread;
+// 0 = off, 1 = a thread is spawning it, 2 = running
+inline micron::atomic_token<u32> __timer_state{ 0 };
 
 inline void
 __timer_lock() noexcept
@@ -217,12 +285,25 @@ __timer_main() noexcept
     while ( __fired != nullptr ) {
       __timer_node *__nx = __fired->__next;      // read before submit (the resumed frame may free the node)
       __frame_base *__f = __fired->__frame;
-      __e->pending_timers.sub_fetch(1, micron::memory_order_acq_rel);
       __e->submit(__f);
+      __e->pending_timers.sub_fetch(1, micron::memory_order_acq_rel);
       __fired = __nx;
     }
     micron::nanosleep(__tick);
   }
+}
+
+inline void
+__ensure_timer_thread() noexcept
+{
+  if ( __timer_state.get(micron::memory_order_acquire) == 2u ) return;
+  u32 __e = 0;
+  if ( __timer_state.compare_exchange_strong(__e, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+    __timer_thread = micron::solo::spawn<micron::auto_thread<>>([]() { __timer_main(); });
+    __timer_state.store(2u, micron::memory_order_release);
+    return;
+  }
+  while ( __timer_state.get(micron::memory_order_acquire) != 2u ) micron::yield();      // wait for publish
 }
 
 inline void
@@ -232,7 +313,7 @@ start_coroutine_runtime(u32 nworkers = 0) noexcept
 
   u32 __exp = 0u;
   if ( !__engine_state.compare_exchange_strong(__exp, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
-    while ( __engine_state.get(micron::memory_order_acquire) != 2u ) micron::yield();      // loser: wait for ready
+    while ( __engine_state.get(micron::memory_order_acquire) != 2u ) micron::yield();      // wait for ready
     return;
   }
 
@@ -247,7 +328,7 @@ start_coroutine_runtime(u32 nworkers = 0) noexcept
   __global_engine = e;
   for ( u32 i = 0; i < nworkers; ++i )
     e->threads[i] = micron::solo::spawn<micron::auto_thread<>>([](engine *eng, u32 id) { eng->worker_main(id); }, e, i);
-  __timer_thread = micron::solo::spawn<micron::auto_thread<>>([]() { __timer_main(); });
+  // the timer thread spawns lazily on the first sleep/timer
   __engine_state.store(2u, micron::memory_order_release);
 }
 
@@ -260,10 +341,9 @@ stop_coroutine_runtime() noexcept
   {
     u32 __quiet = 0;
     while ( __quiet < 4 ) {
-      bool __q
-          = e->inbox.empty() && e->busy.get(micron::memory_order_acquire) == 0 && e->pending_timers.get(micron::memory_order_acquire) == 0;
+      bool __q = e->inbox.empty() && e->pending_timers.get(micron::memory_order_acquire) == 0;
       for ( u32 __i = 0; __q && __i < e->n; ++__i )
-        if ( !e->workers[__i].deque.empty() ) __q = false;
+        if ( e->workers[__i].active.get(micron::memory_order_acquire) != 0 || !e->workers[__i].deque.empty() ) __q = false;
       if ( __q )
         ++__quiet;
       else
@@ -273,7 +353,10 @@ stop_coroutine_runtime() noexcept
   }
 
   e->stopping.store(1, micron::memory_order_release);
-  __timer_thread.reset();
+  if ( __timer_state.get(micron::memory_order_acquire) != 0u ) {
+    __timer_thread.reset();
+    __timer_state.store(0u, micron::memory_order_release);
+  }
   __cl_signal.fetch_add(1, micron::memory_order_release);
   micron::wake_futex(__cl_signal.ptr(), static_cast<int>(e->n));
   for ( u32 i = 0; i < e->n; ++i ) e->threads[i].reset();
@@ -365,6 +448,15 @@ __sync_bridge::promise_type::get_return_object_on_allocation_failure() noexcept
   return __sync_bridge{};
 }
 
+[[gnu::always_inline]] inline void
+__sync_spin(const micron::atomic_token<u32> &__done) noexcept
+{
+  for ( u32 __p = 0; __p < 800; ++__p ) {
+    if ( __done.get(micron::memory_order_acquire) != 0 ) return;
+    __cpu_pause();
+  }
+}
+
 template<class T>
 decltype(auto)
 sync_wait(task<T> &&root)
@@ -376,20 +468,119 @@ sync_wait(task<T> &&root)
     __sync_bridge bridge = [](task<void> __r) -> __sync_bridge { co_await micron::move(__r); }(micron::move(root));
     bridge.__h.promise().__done = &done;
     __global_engine->submit(&bridge.__h.promise());
-    micron::wait_futex(done.ptr(), 0u);
+    __sync_spin(done);
+    // WARNING: exit exclusively via an acquire load seeing done!=0 (without this the bridge destroy below has no hb edge to the worker's
+    // frame writes)
+    while ( done.get(micron::memory_order_acquire) == 0 ) micron::wait_futex(done.ptr(), 0u);
     bridge.__h.destroy();
     return;
   } else {
     alignas(T) unsigned char storage[sizeof(T)];
     T *slot = reinterpret_cast<T *>(storage);
     __sync_bridge bridge = [](task<T> __r, T *__s) -> __sync_bridge {
-      // NOTE: the co_await is split out of the placement-new to dodge a GCC ICE (co_await inside a new-expr)
+      // NOTE: the co_await is split out of the placement-new to avoid a GCC ICE (co_await inside a new-expr)
+      // i investigated this _thoroughly_, the placement-new bug is completely unrelated to our code (all paths have been audited and are
+      // fully standard compliant && valid) it's a pure gcc compiler bug
+      //  standard compliant repro
+      //  #include <coroutine>
+      //  #include <new>
+      //  struct Aw { bool await_ready() const noexcept {return false;}
+      //              void await_suspend(std::coroutine_handle<>) noexcept {}
+      //              int  await_resume() noexcept {return 7;} };
+      //  struct bridge { struct promise_type {
+      //    bridge get_return_object(){return {};}
+      //    std::suspend_always initial_suspend() noexcept {return {};}
+      //    std::suspend_never  final_suspend() noexcept {return {};}
+      //    void return_void(){} void unhandled_exception(){} }; };
+      //
+      //  bridge f(int* s) { ::new (static_cast<void*>(s)) int(co_await Aw{}); }   // ICE on the spot
+
+      //  during RTL pass: expand
+      //  internal compiler error: in expand_expr_real_1, at expr.cc:11648    (GCC 16.1.1)
+      //  internal compiler error: in expand_expr_real_1, at expr.cc:11559    (GCC 15.2.1, arm32) [present across cmpl versions and arches
+      //  too]
+
+      // main difference between operator new and placement new
+      //
+      // %%%%%%%%%%%%%%%%%
+      //  for operator new
+      // _17 = operator new (4);
+      // frame_ptr->T001_2_3 = _17;  // result
+      // frame_ptr->T002_2_3 = 1;    // guard
+
+      // suspend/resume
+      //_24 = frame_ptr->T001_2_3;  // rewritten
+      // MEM[(int *)_24] = _25;
+
+      // %%%%%%%%%%%%%%%
+      // for placement new
+      //  _17 = frame_ptr->s;
+      //  frame_ptr->T001_2_3 = _17;  // saved placement ptr
+      //  _18 = frame_ptr->T001_2_3;
+      //  _19 = operator new (4, _18);
+      //  frame_ptr->T002_2_3 = _19;  // result
+      //  frame_ptr->T003_2_3 = 1;    // guard
+      //  suspend/resume
+      //  MEM[(int *)D.12331] = _26;  // __NOT__ rewritten
+      //  frame_ptr->T003_2_3 = 0;
+      //
+      //  according to gdb exact abort fires at pass_expand::execute -> expand_gimple_stmt -> expand_assignment -> expand_expr_real_1 ->
+      //  hard abort on reading base of a store coroutine transform promotes temps that live _across a suspend into the frame_ (almost never
+      //  occurs in reg code); during gimple emit it rewrites the defs but leaves one redundant use behind important to note that ONLY THE
+      //  STANDARD PLACEMENT NEW (in co_await form) materialize an additional saved pointer temporary (three tmps instead of two)
+      // fully invariant across std spec exceptions arches and importantly optimization levels
+      // the gimple lowering almost certainly misses the spurious third temporary that is entirely unexpected at a later pass (real reg
+      // emit?)
+
+      // UPDATE
+      // looked at the gcc source
+      // gcc_assert fires in expand_expr_real_1
+      //
+      /* Variables inherited from containing functions should have
+         been lowered by this point.  */
+      //  tree context = decl_function_context (exp);
+      // gcc_assert (SCOPE_FILE_SCOPE_P (context)
+      //            || context == current_function_decl
+      //            || TREE_STATIC (exp) || DECL_EXTERNAL (exp)
+      //            || TREE_CODE (exp) == FUNCTION_DECL);
+      // full trigger is in cp/init.cc:3543-3559:
+      //  if (call_expr_nargs (alloc_call) == 2
+      //      && TYPE_PTR_P (TREE_TYPE (CALL_EXPR_ARG (alloc_call, 1))))
+      //    if (placement_first != NULL_TREE && (INTEGRAL_OR_ENUMERATION_TYPE_P (TREE_TYPE (TREE_TYPE (placement)))
+      //     || VOID_TYPE_P (TREE_TYPE (TREE_TYPE (placement)))))
+      //     placement_expr = get_internal_target_expr (placement_first);  // extra TARGET_EXPR
+      // stabilize_call later hoists it, which in turn makes alloc_expr a nested COMPOUND_EXPR rather than a simple TARGET_EXPR
+      // it also has NOTHING to do with placement new (placement new is incidental only), only fires for two promoted tmps rather than one,
+      // ie operator new(size_t, char) and it will NEVER fire for ::new (nullptr) [do note that nullptr is not a TYPE_PTR_T] OR for
+      // placement-new cases where the target pointer is a class
+      //
+      //
+      // final final issue is with cp/coroutines.cc| flatten_await_stmt; by hoisting each TARGET_EXPR into a frame tmp it later must repoint
+      // every ref to the old TARGET_EXPR_SLOT; alloc_node <await result> sits at the other end of the enclosing COMPOUND_EXPR, according to
+      // gccs own source
+      //
+      /* ... and any other uses of it or its slot.  */
+      /* Compiler-generated temporaries can also have uses in
+         following arms of compound expressions, which will be listed
+         in 'replace_in' if present.  */
+      // thus only the replace_in parameter can patch it but it's never forwarded down the chain
+      //  3160: case COMPOUND_EXPR:
+      //  3180: flatten_await_stmt (ins, promoted, temps_used, &n->init);
+      //  3289: flatten_await_stmt (n,   promoted, temps_used, NULL);   -> replace_in discarded(?!?!)
+      // a simple TARGET_EXPR [meaning one tmp only], replace_in = &rest and the store is rewritten, yet nested COMPOUND_EXPRs (two temp
+      // forms), the replace_in is discarded, case reenters, the _slot gets rewritten at its definition_ and _read zero times_; VAR_DECL
+      // keeps DECL_CONTEXT [original unrewritten raw fn] and the gcc_assert fires
+      //
+      // CRAZY OBSERVATION is that wrapping the new expression in
+      // a comma statement, MAKES THE STORE COME OUT CORRECTLY and the assert no longer fires (?!?!)
+      // effectively stopping here, analyzing this further requires effectively recompiling gcc with proper instrumentation attached, and i don't have the time right now, patching replace_in _should_ in principle fix this
       T __v = co_await micron::move(__r);
       ::new (static_cast<void *>(__s)) T(micron::move(__v));
     }(micron::move(root), slot);
     bridge.__h.promise().__done = &done;
     __global_engine->submit(&bridge.__h.promise());
-    micron::wait_futex(done.ptr(), 0u);
+    __sync_spin(done);
+    while ( done.get(micron::memory_order_acquire) == 0 ) micron::wait_futex(done.ptr(), 0u);
     bridge.__h.destroy();
     T r = micron::move(*slot);
     slot->~T();
@@ -526,7 +717,8 @@ struct __reschedule_awaitable {
   bool
   await_suspend(std::coroutine_handle<P> __h) noexcept
   {
-    __frame_base *__f = &__h.promise();      // already suspended here; safe to publish (same rule as fork)
+    __frame_base *__f = &__h.promise();                   // already suspended here; safe to publish (same rule as fork)
+    __f->__pushed_kind = __frame_base::__kind_plain;      // a rescheduled frame is never steal-counted
     worker *__w = current_worker();
     if ( __w != nullptr && __w->deque.push_bottom(__f) ) {
       __notify_work();
@@ -653,6 +845,7 @@ struct [[nodiscard]] __sleep_awaiter {
   bool
   await_suspend(std::coroutine_handle<P> __h) noexcept
   {
+    __ensure_timer_thread();
     __node.__deadline = __deadline;
     __node.__frame = &__h.promise();
     __global_engine->pending_timers.fetch_add(1, micron::memory_order_acq_rel);

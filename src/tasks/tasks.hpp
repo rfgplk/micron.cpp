@@ -9,6 +9,8 @@
 
 #include "coroutine/cl_sched.hpp"
 
+#include "coroutine/routine.hpp"
+
 #include "../thread/coroutine/executor.hpp"
 
 #include "async_barrier.hpp"

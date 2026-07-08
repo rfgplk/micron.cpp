@@ -888,6 +888,16 @@ set_i8(char b0, char b1, char b2, char b3, char b4, char b5, char b6, char b7, c
                          cd, ce, cf);
 }
 
+// was missing
+__inline_avx __m256i
+setr_i8(char b0, char b1, char b2, char b3, char b4, char b5, char b6, char b7, char b8, char b9, char ba, char bb, char bc, char bd,
+        char be, char bf, char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8, char c9, char ca, char cb,
+        char cc, char cd, char ce, char cf) noexcept
+{
+  return _mm256_setr_epi8(b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, ba, bb, bc, bd, be, bf, c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, ca, cb,
+                          cc, cd, ce, cf);
+}
+
 #undef __inline_avx
 
 #pragma GCC diagnostic pop

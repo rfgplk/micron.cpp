@@ -8,6 +8,7 @@
 
 #include "../../memory/allocation/abcmalloc/tapi.hpp"
 
+#include "../../bits/__arch.hpp"      // __micron_arch_*, __micron_no_ssp
 #include "../../errno.hpp"
 #include "../../type_traits.hpp"
 #include "../__includes.hpp"
@@ -25,7 +26,7 @@
 // raw arch specific asm clone trampolines
 
 #if defined(__micron_arch_amd64)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // entry: rdi=fn rsi=stack rdx=flags rcx=arg r8=ptid r9=tls 8(%rsp)=ctid
@@ -55,7 +56,7 @@ __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void
                "ret\n\t");
 }
 #elif defined(__micron_arch_x86)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // all args on stack; +16 after pushing the 4 callee-saved regs
@@ -121,7 +122,7 @@ asm(".text\n\t"
     "mov x8, #93\n\t"                // SYS_exit
     "svc #0\n\t");
 #elif defined(__micron_arch_arm32)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // entry: r0=fn r1=stack r2=flags r3=arg; ptid@[sp,#0] tls@[sp,#4] ctid@[sp,#8] (+16 after push)
@@ -149,7 +150,7 @@ __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void
 
 // clone3 child trampolines (for micthread et al.)
 #if defined(__micron_arch_amd64)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
 {
   // rdi=thunk rsi=payload rdx=&clone_args rcx=args_size
@@ -177,7 +178,7 @@ __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
                "ret\n\t");
 }
 #elif defined(__micron_arch_x86)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
 {
   // cdecl stack args; +16 after pushing the 4 callee-saved regs
@@ -233,7 +234,7 @@ asm(".text\n\t"
     "mov x8, #93\n\t"      // SYS_exit
     "svc #0\n\t");
 #elif defined(__micron_arch_arm32)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
 {
   // r0=thunk r1=payload r2=&clone_args r3=args_size

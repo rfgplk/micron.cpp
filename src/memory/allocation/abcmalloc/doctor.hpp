@@ -94,33 +94,39 @@ __d_hex_byte(byte b)
   abc::__write(buf, 2);
 }
 
-// gdb x/Nxb-style raw memory dump
+inline void
+__d_hex64(u64 v)
+{
+  char buf[18];
+  const auto nib = [](unsigned x) -> char { return static_cast<char>(x < 10 ? ('0' + x) : ('a' + x - 10)); };
+  buf[0] = '0';
+  buf[1] = 'x';
+  for ( int i = 0; i < 16; ++i ) buf[2 + i] = nib(static_cast<unsigned>((v >> (60 - 4 * i)) & 0xF));
+  abc::__write(buf, 18);
+}
+
+inline void
+__dump_row(const void *label, const byte *src, usize n) noexcept
+{
+  __d("  ");
+  __d_ptr(label);
+  __d(":  ");
+  for ( usize j = 0; j < n; ++j ) {
+    __d_hex_byte(src[j]);
+    __d(" ");
+  }
+  __d_nl();
+}
+
+// gdb x/Nxb-style raw memory dump, pure hex
 inline void
 __dump_bytes(const void *addr, usize len)
 {
   const byte *p = reinterpret_cast<const byte *>(addr);
   usize i = 0;
   while ( i < len ) {
-    __d("  ");
-    __d_ptr(p + i);
-    __d(":  ");
-    usize row = (len - i < 16) ? (len - i) : 16;
-    for ( usize j = 0; j < 16; ++j ) {
-      if ( j < row ) {
-        __d_hex_byte(p[i + j]);
-        __d(" ");
-      } else {
-        __d("   ");
-      }
-    }
-    __d(" |");
-    for ( usize j = 0; j < row; ++j ) {
-      byte c = p[i + j];
-      char ch = (c >= 0x20 && c < 0x7f) ? static_cast<char>(c) : '.';
-      abc::__write(&ch, 1);
-    }
-    __d("|");
-    __d_nl();
+    const usize row = (len - i < 16) ? (len - i) : 16;
+    __dump_row(p + i, p + i, row);
     i += row;
   }
 }
@@ -153,6 +159,18 @@ __banner(const char *what)
   else
     __d("abcmalloc[doctor] ");
   __d(what);
+}
+
+inline void
+__d_bad_begin(void) noexcept
+{
+  if ( __doctor_want_color() ) __d("\033[31m");
+}
+
+inline void
+__d_bad_end(void) noexcept
+{
+  if ( __doctor_want_color() ) __d("\033[0m");
 }
 
 // NOTE: must be mmaped, don't reuse abcmalloc
@@ -250,13 +268,13 @@ __d_tid(i32 tid) noexcept
 // crash-safe inspection
 
 // amd64 only for now
-inline void __report_hw_fault(int sig, const void *addr) noexcept;
+inline void __report_hw_fault(int sig, const void *addr, const void *uctx) noexcept;
 
-#if defined(__x86_64__)
+#if defined(__micron_arch_amd64)
 constexpr static const bool __crash_safe_on = __default_doctor_crash_safe;
 
 // buf layout: [0]rbx [1]rbp [2]r12 [3]r13 [4]r14 [5]r15 [6]rsp [7]rip
-[[gnu::naked]] inline int
+[[gnu::naked]] __micron_no_ssp inline int
 __dr_setjmp(void **) noexcept      // arg in %rdi
 {
   asm volatile("movq %%rbx, 0(%%rdi)\n\t"
@@ -274,7 +292,7 @@ __dr_setjmp(void **) noexcept      // arg in %rdi
                    : "memory");
 }
 
-[[gnu::naked]] inline void
+[[gnu::naked]] __micron_no_ssp inline void
 __dr_longjmp(void **, int) noexcept      // buf in %rdi, val in %esi
 {
   asm volatile("movq 0(%%rdi), %%rbx\n\t"
@@ -292,6 +310,32 @@ __dr_longjmp(void **, int) noexcept      // buf in %rdi, val in %esi
                "jmp *56(%%rdi)\n\t" ::
                    : "memory");
 }
+
+struct __dr_sigcontext {
+  u64 r8, r9, r10, r11, r12, r13, r14, r15;
+  u64 rdi, rsi, rbp, rbx, rdx, rax, rcx, rsp;
+  u64 rip, eflags;
+  u16 cs, gs, fs, ss;      // ss was __pad0 before Linux 4.1; real since (uc_flags bit 1)
+  u64 err, trapno, oldmask, cr2;
+  const void *fpstate;      // points into the sigframe; null if no FPU context saved
+  u64 __reserved[8];
+};
+
+struct __dr_ucontext {
+  u64 uc_flags;
+  void *uc_link;
+  u64 __uc_stack[3];      // stack_t, opaque: never read
+  __dr_sigcontext mc;
+  u64 sigmask;
+};
+
+static_assert(sizeof(__dr_sigcontext) == 256);
+static_assert(__builtin_offsetof(__dr_sigcontext, rip) == 128);
+static_assert(__builtin_offsetof(__dr_sigcontext, cs) == 144);
+static_assert(__builtin_offsetof(__dr_sigcontext, err) == 152);
+static_assert(__builtin_offsetof(__dr_sigcontext, fpstate) == 184);
+static_assert(__builtin_offsetof(__dr_ucontext, mc) == 40);
+static_assert(__builtin_offsetof(__dr_ucontext, sigmask) == 296);
 #else
 constexpr static const bool __crash_safe_on = false;      // crash-safe sweep is x86-64 only for now
 #endif
@@ -307,17 +351,16 @@ inline micron::atomic_flag __sig_install_once{};
 inline void
 __doctor_fault_handler(int sig, micron::posix::siginfo_t *info, void *ucontext) noexcept
 {
-  (void)ucontext;
   const void *addr = info ? info->_sifields._sigfault.si_addr : nullptr;
   if ( __fault_armed ) {
     __fault_armed = false;
     __fault_addr = addr;
-#if defined(__x86_64__)
+#if defined(__micron_arch_amd64)
     __dr_longjmp(__fault_jmp, 1);      // noreturn -> back to the armed __dr_setjmp
 #endif
   }
 
-  __report_hw_fault(sig, addr);
+  __report_hw_fault(sig, addr, ucontext);
   micron::posix::sigaction(sig, (sig == micron::posix::sig_bus) ? __prev_bus : __prev_segv, nullptr);
 }
 
@@ -361,6 +404,29 @@ struct __fault_installer {
 };
 
 inline __fault_installer __fault_installer_instance{};
+
+// dump as pure hex rows
+inline void
+__splat_window(const void *base, usize len) noexcept
+{
+  const uintptr_t a = reinterpret_cast<uintptr_t>(base);
+  byte buf[16];
+  const auto emit = [&](uintptr_t at, usize n) {
+    const bool ok = __guard_read([&] {
+      const byte *s = reinterpret_cast<const byte *>(at);
+      for ( usize i = 0; i < n; ++i ) buf[i] = s[i];      // copy under guard; print outside
+    });
+    if ( ok ) {
+      __dump_row(reinterpret_cast<const void *>(at), buf, n);
+    } else {
+      __d("  ");
+      __d_ptr(reinterpret_cast<const void *>(at));
+      __d(":  (unreadable)\n");
+    }
+  };
+  emit(a - 8, 8);
+  for ( usize off = 0; off < len; off += 16 ) emit(a + off, (len - off < 16) ? (len - off) : 16);
+}
 
 enum class __rec_state : u8 {
   empty = 0,            // slot unused
@@ -1022,10 +1088,8 @@ __kind_name(int kind) noexcept
 }
 
 inline void
-__d_flags(i32 f) noexcept
+__d_flag_names(i32 f) noexcept
 {
-  __d_i(f);
-  __d(" (");
   if ( f == __block_free ) {
     __d("__block_free");
   } else if ( f & __block_alloc ) {
@@ -1038,6 +1102,14 @@ __d_flags(i32 f) noexcept
   } else {
     __d("INVALID");
   }
+}
+
+inline void
+__d_flags(i32 f) noexcept
+{
+  __d_i(f);
+  __d(" (");
+  __d_flag_names(f);
   __d(")");
 }
 
@@ -1059,56 +1131,137 @@ __flags_known(i32 f) noexcept
   return f == __block_free || __alloc_flags_ok(f);
 }
 
-// decode + raw-dump the block metadata header for a live/known user pointer
+// decode && splat the block metadata header for a live/known user pointer
 inline void
-__decode_header(byte *user, usize user_size, int kind, bool expect_live) noexcept
+__decode_header(byte *user, usize user_size, int kind, bool expect_live, const __rec *rec) noexcept
 {
-  if ( kind == 1 ) {
-    byte *h = user - __hdr_offset;
+  if ( kind != 1 && kind != 2 ) {
+    __d("  header       (allocator kind unresolved; block not in any tier)\n");
+    return;
+  }
+  byte *h = (kind == 1) ? user - __hdr_offset : user + user_size;      // buddy header lives at the block tail
+  const usize hdr_n = (kind == 1) ? __hdr_offset : 2 * sizeof(i32);
+  byte c[__hdr_offset] = {};
+  const bool readable = __guard_read([&] {
+    for ( usize i = 0; i < hdr_n; ++i ) c[i] = h[i];      // copy under guard; decode outside
+  });
+
+  const u32 shadow = (rec && rec->state == __rec_state::live) ? rec->hdr_shadow : 0;
+  const bool tlsf_shadow = shadow && kind == 1 && !(shadow & __hdr_shadow_buddy_captured);
+  const bool buddy_shadow = shadow && kind == 2 && (shadow & __hdr_shadow_buddy_captured);
+
+  const auto field_flags = [&](i32 f) {
+    const bool ok = __flags_known(f) && (!expect_live || (f & __block_alloc));
+    __d("    i32       flags      = ");
+    __d_i(f);
+    __d(";   // ");
+    __d_flag_names(f);
+    if ( !ok ) __d("  <-- BAD");
+    __d_nl();
+    if ( !ok ) {
+      __d_bad_begin();
+      if ( expect_live )
+        __d("    i32       flags      = 1;   // SHOULD READ: __block_alloc (temporal bit unknowable)");
+      else
+        __d("    i32       flags      = 0;   // SHOULD READ: __block_free (1/2/5 also valid)");
+      __d_bad_end();
+      __d_nl();
+    }
+  };
+
+  if ( !readable ) {
+    __d("  header       (");
+    __d(kind == 1 ? "tlsf_hdr" : "block_header");
+    __d(" slot unreadable @");
+    __d_ptr(h);
+    __d("; raw window below)\n");
+  } else if ( kind == 1 ) {
     u32 bsize = 0;
     i32 flags = 0;
-    __builtin_memcpy(&bsize, h + 0, sizeof(bsize));
-    __builtin_memcpy(&flags, h + 4, sizeof(flags));
-    __d("  tlsf_hdr     @");
+    u64 prev_phys = 0, next_free = 0, prev_free = 0;
+    __builtin_memcpy(&bsize, c + 0, sizeof(bsize));
+    __builtin_memcpy(&flags, c + 4, sizeof(flags));
+    __builtin_memcpy(&prev_phys, c + 8, sizeof(prev_phys));
+    __builtin_memcpy(&next_free, c + 16, sizeof(next_free));
+    __builtin_memcpy(&prev_free, c + 24, sizeof(prev_free));
+    __d("  header       struct tlsf_hdr {   // @");
     __d_ptr(h);
-    __d("   def cache_list.hpp:67\n");
-    __d("    bsize  @+0 (u32)  actual=");
+    __d(" = user-32  cache_list.hpp:67\n");
+    const u64 bsize_floor = rec ? rec->req_size + __hdr_offset : 2 * __hdr_offset;
+    const bool bsize_ok = tlsf_shadow ? (bsize == shadow) : ((bsize & (__hdr_offset - 1)) == 0 && bsize >= bsize_floor);
+    __d("    u32       bsize      = ");
     __d_u(bsize);
-    __d("  expected ");
-    __d_u(static_cast<u64>(user_size) + __hdr_offset);
-    __d_ok(bsize == static_cast<u64>(user_size) + __hdr_offset);
+    __d(";");
+    if ( !bsize_ok )
+      __d("  <-- BAD");
+    else
+      __d(tlsf_shadow ? "   // matches alloc-time snapshot" : "   // plausible (no alloc-time snapshot)");
     __d_nl();
-    __d("    flags  @+4 (i32)  actual=");
-    __d_flags(flags);
-    __d("  expected alloc bit set (1 or 5)");
-    __d_ok(__flags_known(flags) && (!expect_live || (flags & __block_alloc)));
-    __d_nl();
-    __d("    raw 32B header region:\n");
-    __dump_bytes(h, __hdr_offset);
-  } else if ( kind == 2 ) {
-    byte *h = user + user_size;      // buddy header lives at the block tail (block_start + order_size - hdr)
+    if ( !bsize_ok ) {
+      __d_bad_begin();
+      if ( tlsf_shadow ) {
+        __d("    u32       bsize      = ");
+        __d_u(shadow);
+        __d(";   // SHOULD READ (alloc-time snapshot)");
+      } else {
+        __d("    u32       bsize      = ?;   // SHOULD READ: >= ");
+        __d_u(bsize_floor);
+        __d(", 32-byte aligned (exact unknown: no alloc-time snapshot)");
+      }
+      __d_bad_end();
+      __d_nl();
+    }
+    field_flags(flags);
+    const auto field_link = [&](const char *name_padded, u64 v, const char *note) {
+      __d("    tlsf_hdr *");
+      __d(name_padded);
+      __d("= (tlsf_hdr *)");
+      __d_hex64(v);
+      __d(";   // ");
+      __d(note);
+      __d_nl();
+    };
+    field_link("prev_phys  ", prev_phys, "unvalidated (physical link)");
+    field_link("next_free  ", next_free, "unvalidated (free link; stale while allocated)");
+    field_link("prev_free  ", prev_free, "unvalidated (free link; stale while allocated)");
+    __d("  };\n");
+  } else {
     i32 order = 0;
     i32 flags = 0;
-    __builtin_memcpy(&order, h + 0, sizeof(order));
-    __builtin_memcpy(&flags, h + 4, sizeof(flags));
-    __d("  block_header @");
+    __builtin_memcpy(&order, c + 0, sizeof(order));
+    __builtin_memcpy(&flags, c + 4, sizeof(flags));
+    __d("  header       struct block_header {   // @");
     __d_ptr(h);
-    __d("   def metadata.hpp:35 (buddy tail)\n");
-    __d("    order  @+0 (i32)  actual=");
+    __d(" = user+");
+    __d_u(user_size);
+    __d(" (buddy tail)  metadata.hpp:35\n");
+    const i32 want_order = buddy_shadow ? static_cast<i32>(shadow & ~__hdr_shadow_buddy_captured) : 0;
+    const bool order_ok = buddy_shadow ? (order == want_order) : (order >= 0 && order <= 25);
+    __d("    i32       order      = ");
     __d_i(order);
-    __d("  expected 0..25");
-    __d_ok(order >= 0 && order <= 25);
+    __d(";");
+    if ( !order_ok )
+      __d("  <-- BAD");
+    else
+      __d(buddy_shadow ? "   // matches alloc-time snapshot" : "   // plausible (no alloc-time snapshot)");
     __d_nl();
-    __d("    flags  @+4 (i32)  actual=");
-    __d_flags(flags);
-    __d("  expected alloc bit set (1 or 5)");
-    __d_ok(__flags_known(flags) && (!expect_live || (flags & __block_alloc)));
-    __d_nl();
-    __d("    raw 8B tail header:\n");
-    __dump_bytes(h, 8);
-  } else {
-    __d("  header       (allocator kind unresolved; block not in any tier)\n");
+    if ( !order_ok ) {
+      __d_bad_begin();
+      if ( buddy_shadow ) {
+        __d("    i32       order      = ");
+        __d_i(want_order);
+        __d(";   // SHOULD READ (alloc-time snapshot)");
+      } else {
+        __d("    i32       order      = ?;   // SHOULD READ: 0..25 (exact unknown: no alloc-time snapshot)");
+      }
+      __d_bad_end();
+      __d_nl();
+    }
+    field_flags(flags);
+    __d("  };   // 8 of 32 tail-slot bytes used (free_list.hpp:41)\n");
   }
+  __d("    raw [hdr-8, hdr+32):\n");
+  __splat_window(h, __hdr_offset);
 }
 
 // dump redzone canaries with expected vs actual (only meaningful when redzone on)
@@ -1133,7 +1286,7 @@ __dump_redzones(byte *user, usize user_size) noexcept
 }
 
 inline void
-__forensics(const void *p) noexcept
+__forensics(const void *p, bool bt) noexcept
 {
   __install_fault_handler();
   byte *ptr = reinterpret_cast<byte *>(const_cast<void *>(p));
@@ -1167,9 +1320,14 @@ __forensics(const void *p) noexcept
         __d("(size-less)");
     }
     __d_nl();
-    __print_backtrace("allocated at:", s->alloc_bt);
+    if ( bt ) __print_backtrace("allocated at:", s->alloc_bt);
   } else {
     __d("  ledger       no record (never allocated by abcmalloc, or record evicted)\n");
+  }
+
+  if ( p ) {
+    __d("  memory       [ptr-8, ptr+64) raw window:\n");
+    __splat_window(ptr, 64);
   }
 
   if ( !inva ) return;      // do NOT dereference arena/memory state for foreign pointers
@@ -1231,15 +1389,106 @@ __forensics(const void *p) noexcept
   __d(prov ? "yes" : "no");
   __d_nl();
 
-  if ( prov && sz > 0 && kind != 0 ) {
-    if ( !__guard_read([&] { __decode_header(ptr, sz, kind, live); }) ) {
-      const void *fa = __fault_addr;
-      __d("  header       (FAULTED decoding block header @");
-      __d_ptr(fa);
-      __d(")\n");
-    }
-  } else
+  if ( prov && sz > 0 && kind != 0 )
+    __decode_header(ptr, sz, kind, live, s);      // guards internally; we are unarmed here
+  else
     __d("  header       (not decoded: pointer outside any live sheet / interior / reclaimed)\n");
+}
+
+// scheduler / signal-mask contexts
+inline const char *
+__sig_name(unsigned sig) noexcept
+{
+  static const char *const names[32] = { nullptr, "HUP",  "INT",  "QUIT", "ILL",    "TRAP",   "ABRT",  "BUS",  "FPE",  "KILL", "USR1",
+                                         "SEGV",  "USR2", "PIPE", "ALRM", "TERM",   "STKFLT", "CHLD",  "CONT", "STOP", "TSTP", "TTIN",
+                                         "TTOU",  "URG",  "XCPU", "XFSZ", "VTALRM", "PROF",   "WINCH", "IO",   "PWR",  "SYS" };
+  return sig < 32 ? names[sig] : nullptr;
+}
+
+inline void
+__d_sigset64(u64 mask) noexcept
+{
+  __d_hex64(mask);
+  if ( !mask ) {
+    __d("  (none)");
+    return;
+  }
+  __d("  [");
+  bool first = true;
+  for ( unsigned sig = 1; sig <= 64; ++sig ) {
+    if ( !(mask & (1ULL << (sig - 1))) ) continue;
+    if ( !first ) __d(" ");
+    first = false;
+    const char *nm = __sig_name(sig);
+    if ( nm )
+      __d(nm);
+    else {
+      __d("rt");
+      __d_u(sig);
+    }
+  }
+  __d("]");
+}
+
+inline void
+__dump_sched_sig_context(const u64 *at_fault) noexcept
+{
+  __d("  thread       tid ");
+  __d_tid(__gettid());
+  __d_nl();
+
+  __d("  cpu now      ");
+  u32 cpu = ~0u, node = ~0u;
+  if ( micron::syscall(SYS_getcpu, &cpu, &node, nullptr) == 0 ) {
+    __d("#");
+    __d_u(cpu);
+    __d(" (node ");
+    __d_u(node);
+    __d(")");
+  } else
+    __d("(unavailable)");
+
+  __d("   affinity ");
+  u64 aff[16] = {};
+  const long ar = static_cast<long>(micron::syscall(SYS_sched_getaffinity, 0, sizeof(aff), aff));
+  if ( ar > 0 && static_cast<usize>(ar) <= sizeof(aff) && (ar % 8) == 0 ) {
+    const usize words = static_cast<usize>(ar) / 8;
+    usize top = words;
+    while ( top > 1 && aff[top - 1] == 0 ) --top;
+    const auto nib = [](unsigned x) -> char { return static_cast<char>(x < 10 ? ('0' + x) : ('a' + x - 10)); };
+    __d("0x");
+    for ( usize w = top; w-- > 0; ) {
+      char buf[16];
+      for ( int i = 0; i < 16; ++i ) buf[i] = nib(static_cast<unsigned>((aff[w] >> (60 - 4 * i)) & 0xF));
+      abc::__write(buf, 16);
+    }
+    u64 ncpu = 0;
+    for ( usize w = 0; w < words; ++w )
+      for ( u64 x = aff[w]; x; x &= x - 1 ) ++ncpu;      // hand-rolled: no libgcc popcount in freestanding
+    __d(" (");
+    __d_u(ncpu);
+    __d(" cpus, kernel window ");
+    __d_u(static_cast<u64>(ar));
+    __d(" B)");
+  } else
+    __d("(unavailable)");
+  __d_nl();
+
+  u64 blocked = 0, pending = 0;
+  micron::syscall(SYS_rt_sigprocmask, micron::posix::sig_block, nullptr, &blocked, micron::posix::__sig_syscall_size);
+  micron::syscall(SYS_rt_sigpending, &pending, micron::posix::__sig_syscall_size);
+  if ( at_fault ) {
+    __d("  sigmask      at-fault ");
+    __d_sigset64(*at_fault);
+    __d_nl();
+    __d("               blocked  ");
+  } else
+    __d("  sigmask      blocked  ");
+  __d_sigset64(blocked);
+  __d_nl();
+  __d("               pending  ");
+  __d_sigset64(pending);
+  __d_nl();
 }
 
 inline void
@@ -1252,6 +1501,7 @@ __fault_head(const char *what, const char *file, int line) noexcept
   __d(":");
   __d_i(line);
   __d_nl();
+  __dump_sched_sig_context(nullptr);
 }
 
 // non-printing header validity check
@@ -1308,6 +1558,7 @@ __note_overflow_source(byte *u) noexcept
   __d(") ends ");
   __d_u(gap);
   __d(" B before -- check its write bounds\n");
+  __print_backtrace("          source allocated at:", src->alloc_bt);
 }
 
 // sweep accumulator
@@ -1568,8 +1819,137 @@ __find_containing_any(uintptr_t p) noexcept
   return nullptr;
 }
 
+#if defined(__micron_arch_amd64)
 inline void
-__report_hw_fault(int sig, const void *addr) noexcept
+__d_hex16(u16 v) noexcept
+{
+  char buf[6];
+  const auto nib = [](unsigned x) -> char { return static_cast<char>(x < 10 ? ('0' + x) : ('a' + x - 10)); };
+  buf[0] = '0';
+  buf[1] = 'x';
+  for ( int i = 0; i < 4; ++i ) buf[2 + i] = nib(static_cast<unsigned>((v >> (12 - 4 * i)) & 0xF));
+  abc::__write(buf, 6);
+}
+
+inline void
+__d_reg(const char *name, u64 v) noexcept
+{
+  __d(name);
+  __d_hex64(v);
+  __d("  ");
+}
+
+inline void
+__d_eflags(u64 f) noexcept
+{
+  __d("    eflags ");
+  __d_hex64(f);
+  __d("  [");
+
+  static const struct {
+    u64 bit;
+    const char *nm;
+  } fl[] = { { 1u << 0, "CF" }, { 1u << 2, "PF" },  { 1u << 4, "AF" },  { 1u << 6, "ZF" },  { 1u << 7, "SF" }, { 1u << 8, "TF" },
+             { 1u << 9, "IF" }, { 1u << 10, "DF" }, { 1u << 11, "OF" }, { 1u << 16, "RF" }, { 1u << 18, "AC" } };
+
+  bool first = true;
+  for ( const auto &x : fl )
+    if ( f & x.bit ) {
+      if ( !first ) __d(" ");
+      first = false;
+      __d(x.nm);
+    }
+  __d("]");
+  __d_nl();
+}
+
+inline void
+__d_fault_regs(const __dr_ucontext &u) noexcept
+{
+  const __dr_sigcontext &m = u.mc;
+  __d("  registers    (ucontext at fault)\n");
+  __d("    ");
+  __d_reg("rip ", m.rip);
+  __d_reg("rsp ", m.rsp);
+  __d_reg("rbp ", m.rbp);
+  __d_nl();
+  __d("    ");
+  __d_reg("rax ", m.rax);
+  __d_reg("rbx ", m.rbx);
+  __d_reg("rcx ", m.rcx);
+  __d_nl();
+  __d("    ");
+  __d_reg("rdx ", m.rdx);
+  __d_reg("rsi ", m.rsi);
+  __d_reg("rdi ", m.rdi);
+  __d_nl();
+  __d("    ");
+  __d_reg("r8  ", m.r8);
+  __d_reg("r9  ", m.r9);
+  __d_reg("r10 ", m.r10);
+  __d_nl();
+  __d("    ");
+  __d_reg("r11 ", m.r11);
+  __d_reg("r12 ", m.r12);
+  __d_reg("r13 ", m.r13);
+  __d_nl();
+  __d("    ");
+  __d_reg("r14 ", m.r14);
+  __d_reg("r15 ", m.r15);
+  __d_nl();
+  __d_eflags(m.eflags);
+  __d("    cs ");
+  __d_hex16(m.cs);
+  __d("  ss ");
+  __d_hex16(m.ss);
+  __d("  fs ");
+  __d_hex16(m.fs);
+  __d("  gs ");
+  __d_hex16(m.gs);
+  __d_nl();
+  __d("    trapno ");
+  __d_u(m.trapno);
+  if ( m.trapno == 13 )
+    __d(" (#GP)");
+  else if ( m.trapno == 14 )
+    __d(" (#PF)");
+  else if ( m.trapno == 17 )
+    __d(" (#AC)");
+  __d("  err ");
+  __d_hex64(m.err);
+  if ( m.trapno == 14 ) {      // page-fault error code
+    __d(" (");
+    __d(m.err & 4 ? "user" : "kernel");
+    __d((m.err & 16) ? " ifetch" : ((m.err & 2) ? " write" : " read"));
+    __d((m.err & 1) ? ", protection violation" : ", page not present");
+    if ( m.err & 8 ) __d(", rsvd-bit");
+    if ( m.err & 32 ) __d(", pkey");
+    __d(")");
+  }
+  __d("  cr2 ");
+  __d_hex64(m.cr2);
+  __d_nl();
+  __d("    oldmask ");
+  __d_hex64(m.oldmask);
+  __d("  fpstate ");
+  __d(m.fpstate ? "present" : "(null)");
+  __d_nl();
+}
+#endif
+
+inline void
+__splat_fault_memory(const void *addr) noexcept
+{
+  if ( !addr ) {
+    __d("  memory       (fault address null; window skipped)\n");
+    return;
+  }
+  __d("  memory       [fault-8, fault+64) raw window:\n");
+  __splat_window(addr, 64);
+}
+
+inline void
+__report_hw_fault(int sig, const void *addr, const void *uctx) noexcept
 {
   if constexpr ( __crash_safe_on ) {
     __banner("FAULT (hardware): ");
@@ -1580,6 +1960,16 @@ __report_hw_fault(int sig, const void *addr) noexcept
     __d("  in-VA        ");
     __d(__va_contains(addr) ? "yes (abcmalloc reserved region)" : "no (foreign / stack / static / libc)");
     __d_nl();
+#if defined(__micron_arch_amd64)
+    const __dr_ucontext *uc = static_cast<const __dr_ucontext *>(uctx);
+    const u64 fmask = uc ? uc->sigmask : 0;
+    __dump_sched_sig_context(uc ? &fmask : nullptr);
+    if ( uc ) __d_fault_regs(*uc);
+#else
+    (void)uctx;
+    __dump_sched_sig_context(nullptr);
+#endif
+    __splat_fault_memory(addr);
     if ( __va_contains(addr) ) {
       // non-blocking: if the ledger lock is held (by us mid-op, or another thread) just skip it
       if ( !__dr.lock.test_and_set(micron::memory_order_acquire) ) {
@@ -1602,6 +1992,39 @@ __report_hw_fault(int sig, const void *addr) noexcept
             __d_i(f->free_tid);
           }
           __d_nl();
+          const uintptr_t hbase = f->key;
+          int hkind = 0;
+          usize husz = 0;
+          if ( f->hdr_shadow && !(f->hdr_shadow & __hdr_shadow_buddy_captured) )
+            hkind = 1;
+          else {
+            __arena *o = __owner_of(reinterpret_cast<const void *>(hbase));
+            if ( o && o == __tls_arena ) {
+              int k = 0;
+              usize s2 = 0;
+              if ( __guard_read([&] {
+                     k = o->__doctor_tier_kind(reinterpret_cast<addr_t *>(hbase));
+                     s2 = o->__size_of_alloc(reinterpret_cast<addr_t *>(hbase));
+                   }) ) {
+                hkind = k;
+                husz = s2;
+              }
+            }
+          }
+          if ( hkind == 1 ) {
+            __d("  header       tlsf_hdr @");
+            __d_ptr(reinterpret_cast<const void *>(hbase - __hdr_offset));
+            __d(" (base-32); raw [hdr-8, hdr+32):\n");
+            __splat_window(reinterpret_cast<const void *>(hbase - __hdr_offset), __hdr_offset);
+          } else if ( hkind == 2 && husz ) {
+            __d("  header       block_header @");
+            __d_ptr(reinterpret_cast<const void *>(hbase + husz));
+            __d(" (base+");
+            __d_u(husz);
+            __d(", buddy tail); raw [hdr-8, hdr+32):\n");
+            __splat_window(reinterpret_cast<const void *>(hbase + husz), __hdr_offset);
+          } else
+            __d("  header       (tier/tail unresolved for this block; header not splatted)\n");
         } else
           __d("  ledger       no tracked block contains this address (wild pointer / metadata)\n");
         __dr.lock.clear(micron::memory_order_release);
@@ -1611,6 +2034,7 @@ __report_hw_fault(int sig, const void *addr) noexcept
   } else {
     (void)sig;
     (void)addr;
+    (void)uctx;
   }
 }
 
@@ -1649,7 +2073,7 @@ on_double_free(byte *ptr, const char *file, int line) noexcept
   if ( !re ) return false;      // nested fault: don't recurse; let the existing handler proceed
   __scoped_lock g;
   __fault_head("double free / free of non-live block", file, line);
-  __forensics(ptr);
+  __forensics(ptr, false);
   __run_sweep_locked("double-free");
   {
     const __rec *sd = __dr.__find(reinterpret_cast<uintptr_t>(ptr));
@@ -1685,7 +2109,7 @@ on_free_result(byte *ptr, bool ok, const char *file, int line) noexcept
   const __rec *sd = __dr.__find(reinterpret_cast<uintptr_t>(ptr));
   if ( sd && sd->state != __rec_state::live ) return;
   __fault_head("unrecognised free (address not found in any tier)", file, line);
-  __forensics(ptr);
+  __forensics(ptr, false);
   __run_sweep_locked("unknown-free");
   __suggest_free_target(ptr);
   __d("  action       report emitted; free returns false (existing, non-fatal)\n\n");
@@ -1705,7 +2129,8 @@ on_corruption(byte *ptr, const char *kind, const char *file, int line) noexcept
   __d(":");
   __d_i(line);
   __d_nl();
-  __forensics(ptr);
+  __dump_sched_sig_context(nullptr);
+  __forensics(ptr, true);      // corruption: the alloc-site backtrace is warranted
   const __rec *s = __dr.__find(reinterpret_cast<uintptr_t>(ptr));
   usize usz = s ? s->req_size : 0;
   if ( __va_contains(ptr) )
@@ -1745,7 +2170,7 @@ on_bad_free(byte *ptr, usize len, const char *what, const char *file, int line) 
   __d("  call size    len=");
   __d_u(len);
   __d_nl();
-  __forensics(ptr);
+  __forensics(ptr, false);
   __run_sweep_locked("bad-free");
   __suggest_free_target(ptr);
   if constexpr ( __default_doctor_rescue ) {
@@ -1794,7 +2219,7 @@ check_free_size(byte *ptr, usize claimed, const char *file, int line) noexcept
   __d("   real block size ");
   __d_u(real);
   __d_nl();
-  __forensics(ptr);
+  __forensics(ptr, false);
   __run_sweep_locked("size-mismatch");
   __d("  help:  free with size ");
   __d_u(real ? real : req);

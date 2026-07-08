@@ -115,6 +115,7 @@ template<class T, class Maker> struct __fork_awaitable {
     __par->__child_head = &__cb;
 
     worker *__w = current_worker();
+    __par->__pushed_kind = __frame_base::__kind_fork;                          // tag before the release-publish
     bool __published = (__w != nullptr) && __w->deque.push_bottom(__par);      // publish the parent continuation
     if ( __published ) {
       __notify_work();      // wake a parked worker if any (cheap when all busy)

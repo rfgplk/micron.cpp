@@ -13,6 +13,7 @@
 #include "linux/sys/sysfs.hpp"
 
 #include "../recipes/gnu/config.hh"
+#include "../recipes/gnu/qemu.hh"
 
 #include "build.hh"
 
@@ -106,11 +107,18 @@ build_parallel(auto &cfs)
 }
 
 template<typename T = void>
-void
+int
 cicd_test_parallel(const auto &cfs)
   requires(recipes::__using_gnu)
 {
-  if ( cfs.empty() ) return;
+  using namespace recipes::gnu;
+  if ( cfs.empty() ) return 0;
+  if ( !target_runnable(cfs[0]) ) {
+    mc::set_color(mc::color::yellow);
+    mc::console("Skipping ", cfs.size(), " target(s): missing ", __missing_for(cfs[0]));
+    mc::set_color(mc::color::reset);
+    return 0;
+  }
   const u32 jobs = parallel_jobs(cfs);
   mc::set_color(mc::color::blue);
   mc::consoled("Building and testing ");
@@ -126,26 +134,40 @@ cicd_test_parallel(const auto &cfs)
 
   auto built = run_parallel(cfs.size(), jobs, [&](usize i) { return build<mc::exec_continue>(cfs[i]); });
 
+  int failed = 0;
   mc::vector<usize> runnable;
   for ( usize i = 0; i < cfs.size(); i++ ) {
     if ( mc::wexitstatus(built[i].status) != 0 ) {
       mc::set_color(mc::color::red);
       mc::console("[ ", cfs[i].target, " failed to compile ]");
       mc::set_color(mc::color::reset);
+      ++failed;
     } else
       runnable.push_back(i);
   }
 
   auto start = mc::now();
-  auto ran = run_parallel(runnable.size(), jobs, [&](usize i) { return mc::execute<mc::exec_continue>(cfs[runnable[i]].target_out); });
+  auto ran = run_parallel(runnable.size(), jobs, [&](usize i) { return run_target<mc::exec_continue>(cfs[runnable[i]]); });
   auto end = mc::now();
 
-  for ( usize i = 0; i < runnable.size(); i++ )
-    mc::console("[ ", cfs[runnable[i]].target_out, " returned: ", mc::wexitstatus(ran[i].status), " ]");
+  for ( usize i = 0; i < runnable.size(); i++ ) {
+    const int rc = verdict_of(ran[i].status);
+    const bool ok = (rc == __snowball_pass);
+    if ( !ok ) ++failed;
+    mc::set_color(ok ? mc::color::green : mc::color::red);
+    mc::console("[ ", cfs[runnable[i]].target_out, " returned: ", rc, "  ", decode_snowball(rc), " ]");
+    mc::set_color(mc::color::reset);
+  }
   mc::set_color(mc::color::yellow);
   if ( end - start > 1000 )
     mc::console("Execution took: ", (end - start) / 1000, " seconds");
   else
     mc::console("Execution took: ", (end - start), " milliseconds");
   mc::set_color(mc::color::reset);
+  if ( failed != 0 ) {
+    mc::set_color(mc::color::red);
+    mc::console(failed, " of ", cfs.size(), " test(s) FAILED");
+    mc::set_color(mc::color::reset);
+  }
+  return failed;
 }

@@ -20,10 +20,6 @@
 // can be suspended at any point (including inside arbitrary blocking code)
 //
 // the fiber control block (FCB) is embedded at the top of its own stack region (highest address)
-//
-// NOTE (frame_sp): the unified frames-on-fiber model (M3) bump-allocates coroutine frames within this same
-// segment via the frame_sp cursor; the precise stack/frame split + overflow geometry is finalized in M3. for
-// now frame_sp is initialized to the segment base and otherwise unused.
 
 namespace micron
 {
@@ -42,9 +38,6 @@ struct alignas(64) fiber {
   void *arg = nullptr;                   // user arg
   void *coro = nullptr;                  // std::coroutine_handle<>::address() (M3); void* to avoid <coroutine> here
   micron::atomic_token<u32> state{ static_cast<u32>(fiber_state::fresh) };
-  // arena reference count = (live coroutine frames on this fiber's arena) + (1 while execution is not retired).
-  // a stolen continuation's frame lives on the fiber that CREATED it even after that fiber's execution ends, so
-  // the segment must outlive execution; the last ref-drop finalizes (recycles on the owner worker, else releases).
   micron::atomic_token<u32> refs{ 1 };
   i32 owner_worker = -1;           // micthread::self() of the allocating worker (cross-worker free routing)
   bool escaped = false;            // an exception escaped entry(); the engine (cl_sched __run) fails fast on it
@@ -55,15 +48,26 @@ struct alignas(64) fiber {
 inline thread_local ar::__fiber_ctx __worker_sched_ctx{};
 inline thread_local fiber *__current_fiber = nullptr;
 
+// kernel tid, fetched once per thread now
+inline thread_local i32 __cached_tid = -1;
+
+[[gnu::always_inline]] inline i32
+__self_tid() noexcept
+{
+  i32 t = __cached_tid;
+  if ( t < 0 ) [[unlikely]]
+    t = __cached_tid = static_cast<i32>(micthread::self());
+  return t;
+}
+
 // per-worker recycle free-list, keyed by size class
 inline thread_local fiber *__seg_freelist[__seg_class_count] = {};
 
-// the C++ body the trampoline lands in (fn(arg) with arg == fiber*). runs the user entry then parks forever.
 inline void
 __micron_fiber_enter(void *p) noexcept
 {
   fiber *f = static_cast<fiber *>(p);
-  f->state.store(static_cast<u32>(fiber_state::running), micron::memory_order_release);
+  f->state.store(static_cast<u32>(fiber_state::running), micron::memory_order_relaxed);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
   try {
     f->entry(f);
@@ -108,10 +112,11 @@ create_fiber(void (*entry)(fiber *), void *arg, usize stack_size = static_cast<u
   f->coro = nullptr;
   f->frame_sp = f->region.frame_base;                  // coroutine-frame arena bump cursor (grows up)
   f->refs.store(1, micron::memory_order_relaxed);      // execution holds the initial ref
-  f->owner_worker = static_cast<i32>(micthread::self());
+  f->owner_worker = __self_tid();
   f->escaped = false;
   f->free_next = nullptr;
-  f->state.store(static_cast<u32>(fiber_state::fresh), micron::memory_order_release);
+  // relaxed: the fiber is unpublished until the creating thread resumes or hands it off
+  f->state.store(static_cast<u32>(fiber_state::fresh), micron::memory_order_relaxed);
 
   ar::make_context(&f->ctx, stack_top, &__micron_fiber_enter, f);
   return f;
@@ -128,7 +133,6 @@ resume(fiber *f, ar::__fiber_ctx *host = &__worker_sched_ctx) noexcept
   __current_fiber = prev;                        // control returned to the host
 }
 
-// called FROM INSIDE a running fiber: park and hand control back to whoever resumed us.
 [[gnu::always_inline]] inline void
 suspend_to_scheduler() noexcept
 {
@@ -144,11 +148,10 @@ current() noexcept
   return __current_fiber;
 }
 
-// finalize a fiber whose arena refcount hit zero: recycle on the owner worker, else release the region.
 inline void
 __finalize_fiber(fiber *f) noexcept
 {
-  if ( f->owner_worker == static_cast<i32>(micthread::self()) ) {
+  if ( f->owner_worker == __self_tid() ) {
     f->free_next = __seg_freelist[f->region.cls];
     __seg_freelist[f->region.cls] = f;      // keep the FCB constructed for reuse
     return;
@@ -165,19 +168,7 @@ __drop_ref(fiber *f) noexcept
   if ( f->refs.sub_fetch(1, micron::memory_order_acq_rel) == 0 ) __finalize_fiber(f);
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// coroutine-frame bump allocator (the unified cactus): promise_type::operator new draws a frame from the
-// running fiber's arena (grows up, LIFO); sized operator delete pops it.
-//
-// each frame carries a one-word owner header (the fiber whose arena it lives on) so a CROSS-FIBER free — a
-// stolen continuation completing on a thief's fiber while its frame physically lives on the victim's arena —
-// routes the LIFO pop + ref-drop to the correct arena. per-arena frees are serialized by the fork/join
-// happens-before chain (a child frees before its parent's continuation resumes), so no lock is needed.
-//
-// off-fiber creation (e.g. the sync_wait root before a driver fiber exists) falls back to the global allocator;
-// such frames carry owner == nullptr and free via ::operator delete.
-
-inline constexpr usize __frame_hdr = 16;      // owner pointer (8) padded to 16 to keep the frame 16-aligned
+inline constexpr usize __frame_hdr = 16;
 
 [[gnu::always_inline]] inline void *
 __frame_alloc(usize n) noexcept
@@ -191,8 +182,11 @@ __frame_alloc(usize n) noexcept
   }
   byte *h = reinterpret_cast<byte *>((reinterpret_cast<usize>(f->frame_sp) + 15) & ~static_cast<usize>(15));
   byte *next = h + need;
-  if ( next > f->region.frame_limit ) [[unlikely]]
-    return nullptr;      // arena exhausted -> get_return_object_on_allocation_failure
+  if ( next > f->region.frame_limit ) [[unlikely]] {
+    byte *hh = static_cast<byte *>(::operator new(need));
+    *reinterpret_cast<fiber **>(hh) = nullptr;
+    return hh + __frame_hdr;
+  }
   f->frame_sp = next;
   *reinterpret_cast<fiber **>(h) = f;
   f->refs.fetch_add(1, micron::memory_order_relaxed);      // a live frame holds a ref
@@ -213,8 +207,6 @@ __frame_free(void *p, usize) noexcept
   __drop_ref(owner);
 }
 
-// retire a fiber's EXECUTION (it returned to the scheduler). drops the execution ref; the segment is reclaimed
-// only once all frames on its arena are also freed (refs -> 0), so a stolen continuation's frame stays valid.
 inline void
 destroy_fiber(fiber *f) noexcept
 {
@@ -222,7 +214,6 @@ destroy_fiber(fiber *f) noexcept
   __drop_ref(f);
 }
 
-// drop the per-worker recycle cache, releasing all cached regions (call at worker teardown).
 inline void
 drain_freelist() noexcept
 {

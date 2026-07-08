@@ -15,24 +15,10 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // cactus fiber-stack backing memory
 //
-// raw carve/release of contiguous, double-guard-paged segments for stackful fibers. each run is a single
-// mapping, split into a persistent coroutine-frame arena (grows UP) and the fiber's transient C execution
-// stack (grows DOWN), separated by a guard page so EITHER overflow faults deterministically:
+// raw carve/release of contiguous, double-guard-paged segments for stackful fibers
 //
 //   [ low guard | coroutine-frame arena --grows up--> | mid guard | <--grows down-- C exec stack | FCB ]
 //     low                                                                                          high
-//
-// the frame arena gets the bulk (__seg_frame_ratio_num/den); promise_type::operator new bump-allocates frames
-// here (LIFO). the C exec stack runs blocking/non-coroutine code so a coroutine can suspend mid-call (stackful).
-// the FCB is embedded at the top of the C-stack region (fiber.hpp).
-//
-// primary backing is abc::__va_carve (the 256 GiB PROT_NONE reservation: 2 MiB-granule bump + lazy commit +
-// free-run reuse) so a small live fiber costs only its touched pages; fallback is a plain anonymous mmap.
-// abc::__va_contains(p) gives the SIGSEGV handler an O(1) "is this one of our fiber stacks?" test.
-//
-// the FCB and the cactus parent-link spine live in fiber.hpp; this file only knows about raw regions. the
-// per-fiber recycle free-list also lives in fiber.hpp (it recycles whole regions by size class).
-
 namespace micron
 {
 namespace fiber
@@ -74,29 +60,12 @@ __seg_class_for(usize want) noexcept
   return __seg_class_count - 1;      // clamp to the largest class
 }
 
-// carve a double-guarded fiber segment for size class `cls`. returns false on OOM (out has run==nullptr).
-[[gnu::cold]] inline bool
-__carve_region(__region &out, u32 cls) noexcept
+// [low guard | arena (all the slack) | mid guard | stack]
+[[gnu::always_inline]] inline void
+__region_geometry(__region &out, byte *run, usize total, usize stack_bytes, u32 cls, bool from_va) noexcept
 {
-  if ( cls >= __seg_class_count ) cls = __seg_class_count - 1;
   constexpr usize page = __micron_page_size_default;
-  const usize usable = __seg_size_table[cls];
-  usize frame_bytes = (usable * __seg_frame_ratio_num / __seg_frame_ratio_den + page - 1) & ~(page - 1);
-  usize stack_bytes = ((usable - frame_bytes) + page - 1) & ~(page - 1);
-  if ( stack_bytes < page ) stack_bytes = page;
-  const usize total = page + frame_bytes + page + stack_bytes;      // low guard + arena + mid guard + stack
-
-  byte *run = reinterpret_cast<byte *>(abc::__va_carve(total));
-  bool from_va = true;
-  if ( run == nullptr ) {
-    run = reinterpret_cast<byte *>(micron::addrmap(total));
-    from_va = false;
-    if ( micron::mmap_failed(run) || run == nullptr ) {
-      out = __region{};
-      return false;
-    }
-  }
-
+  const usize frame_bytes = total - stack_bytes - 2 * page;
   out.run = run;
   out.frame_base = run + page;
   out.frame_limit = out.frame_base + frame_bytes;
@@ -108,8 +77,38 @@ __carve_region(__region &out, u32 cls) noexcept
   out.total = total;
   out.from_va = from_va;
   out.cls = cls;
+}
 
-  // install both PROT_NONE guards (whole mapping is RW after carve); page-aligned by construction
+[[gnu::cold]] inline bool
+__carve_region(__region &out, u32 cls) noexcept
+{
+  if ( cls >= __seg_class_count ) cls = __seg_class_count - 1;
+  constexpr usize page = __micron_page_size_default;
+  const usize usable = __seg_size_table[cls];
+  const usize frame_want = (usable * __seg_frame_ratio_num / __seg_frame_ratio_den + page - 1) & ~(page - 1);
+  usize stack_bytes = ((usable - frame_want) + page - 1) & ~(page - 1);
+  if ( stack_bytes < page ) stack_bytes = page;
+
+  {
+    const usize want = page + frame_want + page + stack_bytes;
+    const usize total = (want + abc::__sheet_align_mask) & ~abc::__sheet_align_mask;      // granule-rounded
+    byte *run = reinterpret_cast<byte *>(abc::__va_carve_reserved(total));
+    if ( run != nullptr ) {
+      __region_geometry(out, run, total, stack_bytes, cls, true);
+      if ( abc::__va_commit(reinterpret_cast<addr_t *>(out.frame_base), out.frame_bytes) != nullptr
+           && abc::__va_commit(reinterpret_cast<addr_t *>(out.stack_base), out.stack_bytes) != nullptr ) [[likely]]
+        return true;
+      abc::__va_release(reinterpret_cast<addr_t *>(run), total);      // commit failed: hand the run back
+    }
+  }
+
+  const usize total = page + frame_want + page + stack_bytes;
+  byte *run = reinterpret_cast<byte *>(micron::addrmap(total));
+  if ( micron::mmap_failed(run) || run == nullptr ) {
+    out = __region{};
+    return false;
+  }
+  __region_geometry(out, run, total, stack_bytes, cls, false);
   (void)micron::mprotect(reinterpret_cast<addr_t *>(out.run), page, micron::prot_none);
   (void)micron::mprotect(reinterpret_cast<addr_t *>(out.mid_guard), page, micron::prot_none);
   return true;
@@ -126,9 +125,6 @@ __release_region(const __region &reg) noexcept
     micron::try_unmap(reg.run, reg.total);
 }
 
-// cheap page-level decommit that keeps the mapping (used when recycling rather than releasing); the frame
-// arena + C stack are contiguous (only the mid guard sits between, and it stays PROT_NONE), so one madvise
-// over [frame_base, stack_top) covers both committed regions.
 [[gnu::always_inline]] inline void
 __decommit_region(const __region &reg) noexcept
 {

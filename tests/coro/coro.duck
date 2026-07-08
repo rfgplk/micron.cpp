@@ -1,0 +1,14 @@
+# coro validation: build + run every tests/coro/t_*.cpp on each supported arch
+#
+#   duck tests/coro/coro.duck          (== duck batch tests/coro/coro.duck)
+#
+# separate -o dirs per arch: same basenames would otherwise collide in bin/
+
+# amd64, hosted
+test tests/coro/ -o bin/coro/x64
+
+# armv7-a (NEON, hard-float) via the Linaro cross compiler, run under qemu-arm-static
+test tests/coro/ --arm -o bin/coro/arm
+
+# aarch64 via the Linaro cross compiler, run under qemu-aarch64-static
+test tests/coro/ --arm64 -o bin/coro/arm64

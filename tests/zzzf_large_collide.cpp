@@ -13,9 +13,12 @@
 #include "../src/io/console.hpp"
 #include "../src/std.hpp"
 
+#include "../src/string/sstring.hpp"
+
+#include "../src/io/posix/file.hpp"
 #include "../src/sort/quick.hpp"
 
-float
+double
 count_equiv(mc::slice<u64> &vec)
 {
   mc::sort::quick<mc::slice<u64>>(vec.begin(), vec.end());
@@ -34,41 +37,28 @@ count_equiv(mc::slice<u64> &vec)
 
   u64 n = vec.size();
   u64 total_possible_pairs = n * (n - 1) / 2;
-  return static_cast<float>(total_pairs) / total_possible_pairs * 100.0;
+  return static_cast<double>(total_pairs) / total_possible_pairs * 100.0;
 }
 
 int
 main()
 {
-  constexpr u64 iters = 1'000'000;
+  constexpr u64 iters = 10'000'000;
   enable_scope()
   {
     mc::slice<u64> hashes(iters);
-    {
-      alignas(8) byte str[32] = {};
+    auto rand = mc::io::virtual_file("/dev/urandom");
+    mc::sstr<4096> str;
+    rand.read(str);
+    for ( u64 k = 1; k < 32; ++k ) {
       for ( usize i = 0; i < iters; ++i ) {
-        hashes[i] = mc::hashes::z64(reinterpret_cast<const byte *>(str), 123, 32);
-        for ( i32 j = 0; j < 8; ++j ) {
-          str[j] = ((i) >> (j * 8)) & 0xFF;
-        }
-      }
-      hashes.mark(iters);
-      mc::console("for zeroed = ", count_equiv(hashes));
-    }
-    for ( u64 k = 1; k < 65; ++k ) {
-      alignas(8) byte str[32] = {};
-      for ( usize i = 0; i < iters; ++i ) {
-        hashes[i] = mc::hashes::z64(reinterpret_cast<const byte *>(str), 123, 32);
-        // mc::console(hashes[i]);
-        for ( i32 j = 0; j < 8; ++j ) {
-          str[j] = ((i * k) >> (j * 8)) & 0xFF;
-          str[j + 8] = ((i * k) >> (j * 8)) & 0xFF;
-          str[j + 16] = ((i * k) >> (j * 8)) & 0xFF;
-          str[j + 24] = ((i * k) >> (j * 8)) & 0xFF;
-        }
+        hashes[i] = mc::hashes::zzzf64(&str, 123, 4096);
+        str.set_size(0);
+        rand.read(str);
       }
       hashes.mark(iters);
       mc::console("for k: ", k, " = ", count_equiv(hashes));
+      // reset
     }
   };
 }

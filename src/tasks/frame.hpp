@@ -17,18 +17,25 @@ namespace micron
 namespace coro
 {
 struct __frame_base {
-  std::coroutine_handle<> __self{};                         // this frame's own handle (resume point)
-  __frame_base *__parent = nullptr;                         // parent frame (set on fork children only; non-null => forked)
-  __frame_base *__child_head = nullptr;                     // intrusive list of THIS frame's forked children (reclaimed at join)
-  __frame_base *__sibling = nullptr;                        // next sibling in the parent's __child_head list
-  const char *__first_err = nullptr;                        // first error reported by a forked child (surfaced at co_await join)
-  micron::atomic_token<u32> __steals{ 0 };                  // # of this frame's continuations stolen since last join
-  micron::atomic_token<u32> __joins{ 0 };                   // slow-path child completions | joiner-armed bit
-  u32 __expected = 0;                                       // # slow-path completions awaited (set at join)
+  std::coroutine_handle<> __self{};             // this frame's own handle (resume point)
+  __frame_base *__parent = nullptr;             // parent frame (set on fork children only; non-null => forked)
+  __frame_base *__child_head = nullptr;         // intrusive list of THIS frame's forked children (reclaimed at join)
+  __frame_base *__sibling = nullptr;            // next sibling in the parent's __child_head list
+  const char *__first_err = nullptr;            // first error reported by a forked child (surfaced at co_await join)
+  micron::atomic_token<u32> __steals{ 0 };      // # of this frame's continuations stolen since last join
+  //   bits 0-15   credits
+  //   bits 16-30  expected credits, packed in when the joiner arms
+  //   bit  31     armed
+  micron::atomic_token<u32> __joins{ 0 };
+  u8 __pushed_kind = 0;
   const micron::atomic_token<u32> *__cancel = nullptr;      // shared cancel flag (inherited at fork)
 
   static constexpr u32 __joiner_bit = 0x80000000u;
-  static constexpr u32 __count_mask = 0x7fffffffu;
+  static constexpr u32 __credit_mask = 0x0000ffffu;
+  static constexpr u32 __expected_shift = 16;
+  static constexpr u32 __expected_mask = 0x7fffu;      // post-shift; caps outstanding steals per join epoch
+  static constexpr u8 __kind_plain = 0;                // rescheduled/requeued frame: a plain resume
+  static constexpr u8 __kind_fork = 1;                 // fork continuation: steal-countable
 };
 
 // raised when a forked child fails
