@@ -23,3 +23,25 @@
 - `src/simd/strings.hpp` is x86-only (AVX2/SSE2 + scalar fallback); no NEON yet
 - `src/math/simd/trig.hpp` + `src/math/quaternions/batched.hpp`: NEON f32 on ARM, but f64 only on amd64/arm64; arm32 double-precision trig/quaternion falls back to scalar
 - arm32: reading CNTVCT (`mrrc p15,1,…c14`) faults SIGILL under qemu/PL0
+- arm32: `tests/coro/t_parallel_{compact,scan}` abort with `except::memory_error_abc_dealloc_size` (abcmalloc's 32-bit `__ABC_EMBED` profile); unrelated to the coroutine runtime, which passes
+- arm32: `tests/coro/t_parallel_{map,quick,radix,sort}` fail to compile against the Linaro sysroot — `conflicting declaration 'typedef __time_t time_t'` / `suseconds_t` between micron's typedefs and glibc's `bits/types/time_t.h`
+
+## Compiler hazards
+- **`__attribute__((naked))` does NOT suppress the stack-protector prologue.** Under `-fstack-protector-all`
+  gcc prepends the canary spill *inside* a naked function:
+
+  ```
+  ldr r3, [pc, #..]   ; &__stack_chk_guard
+  ldr r3, [r3]
+  str r3, [sp, #4]    ; <-- ABOVE sp; a naked fn reserved no frame
+  <the naked body>
+  ```
+
+  On x86 gcc emits no canary for naked functions (and the store would land in the 128-byte red zone
+  anyway), which is why amd64 never noticed while every fiber switch and every `clone3` spawn silently
+  corrupted memory on arm32. **Every naked function must carry `__micron_no_ssp`** (`src/bits/__arch.hpp`).
+  Current users: `src/bits/__ar.hpp`, `src/linux/sys/clone.hpp`, `src/linux/sys/signal.hpp` (via
+  `naked_fn` in `src/attributes.hpp`), `src/memory/allocation/abcmalloc/doctor.hpp`.
+  `start/start.cpp` is exempt only because freestanding builds already pass `-fno-stack-protector`.
+- aarch64 gcc **ignores** `__attribute__((naked))` entirely and emits a prologue/epilogue anyway; both
+  `__ar.hpp` and `clone.hpp` work around it by emitting the routines as file-scope `asm()` blocks

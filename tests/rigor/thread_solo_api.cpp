@@ -141,7 +141,7 @@ main(int, char **)
     atomic_token<bool> never{ false };
     auto t = solo::spawn<auto_thread<>>([&never]() {
       while ( !never.get(memory_order_acquire) ) {
-        micron::pthread::cancel();
+        micron::micthread::cancel();
         micron::sleep(1);
       }
     });

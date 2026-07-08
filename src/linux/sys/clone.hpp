@@ -8,6 +8,7 @@
 
 #include "../../memory/allocation/abcmalloc/tapi.hpp"
 
+#include "../../bits/__arch.hpp"      // __micron_arch_*, __micron_no_ssp
 #include "../../errno.hpp"
 #include "../../type_traits.hpp"
 #include "../__includes.hpp"
@@ -25,7 +26,7 @@
 // raw arch specific asm clone trampolines
 
 #if defined(__micron_arch_amd64)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // entry: rdi=fn rsi=stack rdx=flags rcx=arg r8=ptid r9=tls 8(%rsp)=ctid
@@ -55,7 +56,7 @@ __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void
                "ret\n\t");
 }
 #elif defined(__micron_arch_x86)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // all args on stack; +16 after pushing the 4 callee-saved regs
@@ -121,7 +122,7 @@ asm(".text\n\t"
     "mov x8, #93\n\t"                // SYS_exit
     "svc #0\n\t");
 #elif defined(__micron_arch_arm32)
-[[maybe_unused]] static __attribute__((naked, noinline)) long
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
 __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // entry: r0=fn r1=stack r2=flags r3=arg; ptid@[sp,#0] tls@[sp,#4] ctid@[sp,#8] (+16 after push)
@@ -143,6 +144,115 @@ __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void
                "svc #0\n\t"
                "1:\n\t"
                "ldmfd sp!, {r4, r5, r6, r7}\n\t"
+               "bx lr\n\t");
+}
+#endif
+
+// clone3 child trampolines (for micthread et al.)
+#if defined(__micron_arch_amd64)
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
+{
+  // rdi=thunk rsi=payload rdx=&clone_args rcx=args_size
+  asm volatile("pushq %r12\n\t"      // preserve callee-saved (parent path restores)
+               "pushq %r13\n\t"
+               "movq %rdi, %r12\n\t"      // thunk -> r12 (survives into child)
+               "movq %rsi, %r13\n\t"      // payload -> r13
+               "movq %rdx, %rdi\n\t"      // &clone_args -> a1
+               "movq %rcx, %rsi\n\t"      // args_size  -> a2
+               "movl $435, %eax\n\t"      // SYS_clone3
+               "syscall\n\t"
+               "testq %rax, %rax\n\t"
+               "jnz 1f\n\t"               // parent -> return tid in rax
+               "xorl %ebp, %ebp\n\t"      // child: terminate unwind chain
+               "andq $-16, %rsp\n\t"      // 16-byte align for the call ABI
+               "movq %r13, %rdi\n\t"      // payload -> a1
+               "callq *%r12\n\t"          // thunk(payload)
+               "movl %eax, %edi\n\t"      // status
+               "movl $60, %eax\n\t"       // SYS_exit
+               "syscall\n\t"
+               "hlt\n\t"
+               "1:\n\t"
+               "popq %r13\n\t"
+               "popq %r12\n\t"
+               "ret\n\t");
+}
+#elif defined(__micron_arch_x86)
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
+{
+  // cdecl stack args; +16 after pushing the 4 callee-saved regs
+  asm volatile("pushl %ebp\n\t"
+               "pushl %edi\n\t"
+               "pushl %esi\n\t"
+               "pushl %ebx\n\t"
+               "movl 28(%esp), %ebx\n\t"      // &clone_args -> a1
+               "movl 32(%esp), %ecx\n\t"      // args_size  -> a2
+               "movl 20(%esp), %esi\n\t"      // thunk -> esi (callee-saved, survives into child)
+               "movl 24(%esp), %edi\n\t"      // payload -> edi
+               "movl $435, %eax\n\t"          // SYS_clone3
+               "int $0x80\n\t"
+               "testl %eax, %eax\n\t"
+               "jnz 1f\n\t"               // parent
+               "xorl %ebp, %ebp\n\t"      // child
+               "andl $-16, %esp\n\t"      // align
+               "subl $12, %esp\n\t"       // keep 16-byte alignment after the arg push
+               "pushl %edi\n\t"           // payload arg
+               "calll *%esi\n\t"          // thunk(payload)
+               "movl %eax, %ebx\n\t"      // status
+               "movl $1, %eax\n\t"        // SYS_exit
+               "int $0x80\n\t"
+               "hlt\n\t"
+               "1:\n\t"
+               "popl %ebx\n\t"
+               "popl %esi\n\t"
+               "popl %edi\n\t"
+               "popl %ebp\n\t"
+               "ret\n\t");
+}
+#elif defined(__micron_arch_arm64)
+extern "C" long __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long);
+asm(".text\n\t"
+    ".weak __micron_clone3_entry\n\t"
+    ".type __micron_clone3_entry, %function\n\t"
+    ".p2align 2\n"
+    "__micron_clone3_entry:\n\t"
+    // x0=thunk x1=payload x2=&clone_args x3=args_size
+    "stp x19, x20, [sp, #-16]!\n\t"      // preserve callee-saved
+    "mov x19, x0\n\t"                    // thunk (survives into child)
+    "mov x20, x1\n\t"                    // payload
+    "mov x0, x2\n\t"                     // &clone_args -> a0
+    "mov x1, x3\n\t"                     // args_size  -> a1
+    "mov x8, #435\n\t"                   // SYS_clone3
+    "svc #0\n\t"
+    "cbz x0, 1f\n\t"                   // child -> 1
+    "ldp x19, x20, [sp], #16\n\t"      // parent: restore + return tid
+    "ret\n\t"
+    "1:\n\t"
+    "mov x0, x20\n\t"      // payload -> a0
+    "blr x19\n\t"          // thunk(payload)
+    "mov x8, #93\n\t"      // SYS_exit
+    "svc #0\n\t");
+#elif defined(__micron_arch_arm32)
+[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
+{
+  // r0=thunk r1=payload r2=&clone_args r3=args_size
+  asm volatile("stmfd sp!, {r4, r5, r7}\n\t"      // preserve callee-saved
+               "mov r4, r0\n\t"                   // thunk (survives into child)
+               "mov r5, r1\n\t"                   // payload
+               "mov r0, r2\n\t"                   // &clone_args -> a1
+               "mov r1, r3\n\t"                   // args_size  -> a2
+               "mov r7, #435\n\t"                 // SYS_clone3
+               "svc #0\n\t"
+               "tst r0, r0\n\t"
+               "bne 1f\n\t"          // parent
+               "mov r0, r5\n\t"      // child: payload -> a1
+               "blx r4\n\t"          // thunk(payload)
+               "mov r7, #1\n\t"      // SYS_exit
+               "svc #0\n\t"
+               "1:\n\t"
+               "ldmfd sp!, {r4, r5, r7}\n\t"
                "bx lr\n\t");
 }
 #endif
@@ -238,6 +348,41 @@ auto
 clone3_kernel(clone_args &args)
 {
   return micron::syscall(SYS_clone3, &args, sizeof(args));
+}
+
+inline constexpr unsigned long micthread_flags
+    = clone_vm | clone_fs | clone_files | clone_sighand | clone_thread | clone_sysvsem | clone_settls | clone_child_cleartid;
+
+// the value the spawner seeds into the CHILD_CLEARTID word
+inline constexpr int __micthread_ctid_alive = 1;
+
+// main clone3 spawn
+inline pid_t
+clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid, int *child_tid,
+             unsigned long flags = micthread_flags)
+{
+  if ( !thunk || !stack_low || stack_size == 0 ) return -EINVAL;
+  if ( child_tid ) *child_tid = __micthread_ctid_alive;
+  clone_args args{};
+  args.flags = flags;
+  args.exit_signal = 0;      // CLONE_THREAD: no exit signal to the parent (kernel rejects otherwise)
+  args.stack = reinterpret_cast<u64>(stack_low);
+  args.stack_size = stack_size;
+  args.tls = tls;      // amd64/arm64/arm32: CLONE_SETTLS takes the raw TP (FSBASE / TPIDR / TPIDRURO)
+  args.parent_tid = reinterpret_cast<u64>(parent_tid);
+  args.child_tid = reinterpret_cast<u64>(child_tid);
+#if defined(__micron_arch_x86)
+  // i386 is the exception (WHY?!): CLONE_SETTLS expects a struct user_desc * not a raw TP (?!?!?!?!)
+  struct __i386_clone_user_desc {
+    unsigned int entry_number, base_addr, limit, flags;
+  };
+
+  __i386_clone_user_desc __i386_tls_desc{ 0xffffffffu, static_cast<unsigned int>(tls), 0xfffffu, 0x51u };
+  args.tls = reinterpret_cast<u64>(&__i386_tls_desc);
+#endif
+  long raw = ::__micron_clone3_entry(thunk, payload, &args, sizeof(args));
+  if ( micron::syscall_failed(raw) && child_tid ) *child_tid = 0;      // no child ran
+  return static_cast<pid_t>(raw);
 }
 
 auto

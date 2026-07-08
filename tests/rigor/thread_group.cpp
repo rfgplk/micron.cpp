@@ -28,14 +28,12 @@ ret_void(void)
 {
 }
 
-pthread_attr_t
+micron::thread_attr_t
 make_attrs(void)
 {
-  auto a = micron::pthread::prepare_thread(micron::pthread::thread_create_state::joinable, micron::posix::sched_other, 0);
   auto *stack = micron::addrmap(GT_STACK);
   snowball::require(!micron::mmap_failed(stack), true);
-  micron::pthread::set_stack_thread(a, stack, GT_STACK);
-  return a;
+  return micron::__thread_attr_with_stack(micron::posix::getpid(), micron::posix::sched_other, stack, GT_STACK);
 }
 }      // namespace
 
@@ -144,7 +142,7 @@ main(int, char **)
     atomic_token<bool> never{ false };
     gthread t(make_attrs(), [&never]() {
       while ( !never.get(memory_order_acquire) ) {
-        micron::pthread::cancel();
+        micron::micthread::cancel();
         micron::sleep(1);
       }
     });

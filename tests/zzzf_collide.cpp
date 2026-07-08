@@ -1,0 +1,114 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
+
+#include "snowball/snowball.hpp"
+
+#include "../src/slice.hpp"
+
+#include "../src/hash/xx.hpp"
+#include "../src/hash/zzz.hpp"
+#include "../src/io/console.hpp"
+#include "../src/std.hpp"
+
+#include "../src/sort/quick.hpp"
+
+using ::sb::require_true;
+
+float
+count_equiv(mc::slice<u64> &vec)
+{
+  mc::sort::quick<mc::slice<u64>>(vec.begin(), vec.end());
+
+  u64 total_pairs = 0;
+  u64 run = 1;
+  for ( size_t i = 1; i < vec.size(); i++ ) {
+    if ( vec[i] == vec[i - 1] ) {
+      run++;
+    } else {
+      total_pairs += run * (run - 1) / 2;
+      run = 1;
+    }
+  }
+  total_pairs += run * (run - 1) / 2;
+
+  u64 n = vec.size();
+  u64 total_possible_pairs = n * (n - 1) / 2;
+  return static_cast<float>(total_pairs) / total_possible_pairs * 100.0;
+}
+
+int
+main()
+{
+  constexpr u64 iters = 10'000;
+  enable_scope()
+  {
+    mc::slice<u64> hashes(iters);
+    {
+      alignas(8) byte str[32] = {};
+      for ( usize i = 0; i < iters; ++i ) {
+        hashes[i] = mc::hashes::zzzf64(reinterpret_cast<const byte *>(str), 123, 32);
+        for ( i32 j = 0; j < 8; ++j ) {
+          str[j] = ((i) >> (j * 8)) & 0xFF;
+        }
+      }
+      hashes.mark(iters);
+      mc::console("for zeroed = ", count_equiv(hashes));
+    }
+    for ( u64 k = 1; k < 65; ++k ) {
+      alignas(8) byte str[32] = {};
+      for ( usize i = 0; i < iters; ++i ) {
+        hashes[i] = mc::hashes::zzzf64(reinterpret_cast<const byte *>(str), 123, 32);
+        for ( i32 j = 0; j < 8; ++j ) {
+          str[j] = ((i * k) >> (j * 8)) & 0xFF;
+          str[j + 8] = ((i * k) >> (j * 8)) & 0xFF;
+          str[j + 16] = ((i * k) >> (j * 8)) & 0xFF;
+          str[j + 24] = ((i * k) >> (j * 8)) & 0xFF;
+        }
+      }
+      hashes.mark(iters);
+      mc::console("for k: ", k, " = ", count_equiv(hashes));
+    }
+
+    // hard regressions vs the zzz-family diffusion defects
+    {
+      // zero-padded tails of different lengths must stay distinct ("X" vs "X\0")
+      alignas(32) byte buf[64] = {};
+      buf[0] = 'X';
+      u64 h1 = mc::hashes::zzzf64(buf, 42, 1);
+      u64 h2 = mc::hashes::zzzf64(buf, 42, 2);
+      u64 h32 = mc::hashes::zzzf64(buf, 42, 32);
+      require_true(h1 != h2);
+      require_true(h1 != h32);
+      require_true(h2 != h32);
+
+      // the seed must matter for empty input (zzz XOR-cancels it)
+      require_true(mc::hashes::zzzf64(buf, 1, 0) != mc::hashes::zzzf64(buf, 2, 0));
+
+      // top byte of every 8-byte word must matter (dead in z/zzz)
+      alignas(32) byte a[32] = {}, b[32] = {};
+      for ( u64 i = 0; i < 32; ++i ) a[i] = b[i] = (byte)(i * 37 + 11);
+      b[7] ^= 0x80;
+      require_true(mc::hashes::zzzf64(a, 7, 32) != mc::hashes::zzzf64(b, 7, 32));
+      b[7] ^= 0x80;
+      b[31] ^= 0x80;
+      require_true(mc::hashes::zzzf64(a, 7, 32) != mc::hashes::zzzf64(b, 7, 32));
+
+      // replicated-word blocks must stay input-dependent and nonzero
+      // (guards the distinct per-state/per-lane init the fold relies on)
+      alignas(32) byte r1[32], r2[32];
+      for ( u64 j = 0; j < 32; j += 8 )
+        for ( u64 i = 0; i < 8; ++i ) {
+          r1[j + i] = (byte)(0xA0 + i);
+          r2[j + i] = (byte)(0xB0 + i);
+        }
+      u64 hr1 = mc::hashes::zzzf64(r1, 9, 32);
+      u64 hr2 = mc::hashes::zzzf64(r2, 9, 32);
+      require_true(hr1 != 0 && hr2 != 0);
+      require_true(hr1 != hr2);
+      mc::console("zzzf hard regressions passed");
+    }
+  };
+}

@@ -739,7 +739,7 @@ public:
   swap(convector<C, Alloc, Sf2> &o) noexcept
   {
     if ( static_cast<const void *>(this) == static_cast<const void *>(micron::addressof(o)) ) return;
-    __hold2 __lock(__mtx, o.__mtx);      // lock BOTH (ordered) — a one-sided lock races the other object
+    __hold2 __lock(__mtx, o.__mtx);
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
     micron::swap(__mem::capacity, o.capacity);

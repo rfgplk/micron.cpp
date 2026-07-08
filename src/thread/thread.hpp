@@ -9,7 +9,7 @@
 
 #include "../linux/__includes.hpp"
 #include "../linux/process/signals.hpp"
-#include "../linux/sys/__threads.hpp"
+#include "../linux/sys/micthread/threads.hpp"
 #include "../memory/stack_constants.hpp"
 
 #include "threads.hpp"

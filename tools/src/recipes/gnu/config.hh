@@ -110,22 +110,23 @@ struct config_t {
   bool freestanding_eh = false;      // freestanding + the micron C++ exception trampoline
   bool asan = false;
   bool ubsan = false;
-  bool tsan = false;         
-  bool lsan = false;        
-  bool cfi = false;           // x86 -fcf-protection=full / arm -mbranch-protection=
-  bool fortify = false;       // -D_FORTIFY_SOURCE=2|3
-  bool pie = false;       
-  bool static_pie = false;    // -static-pie -fPIE
-  bool relro = false;         // -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack
-  bool gc = false;            // -ffunction-sections -fdata-sections -Wl,--gc-sections
-  bool spall = true;         // -fstack-protector-all
-  bool unroll = false;        // -funroll-loops
-  bool pgo_gen = false;       // -fprofile-generate
-  bool pgo_use = false;       // -fprofile-use
-  bool no_eh = false;         // -fno-exceptions
-  bool no_rtti = false;       // -fno-rtti
-  bool strip = false;         // -Wl,--strip-all
+  bool tsan = false;
+  bool lsan = false;
+  bool cfi = false;          // x86 -fcf-protection=full / arm -mbranch-protection=
+  bool fortify = false;      // -D_FORTIFY_SOURCE=2|3
+  bool pie = false;
+  bool static_pie = false;               // -static-pie -fPIE
+  bool relro = false;                    // -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack
+  bool gc = false;                       // -ffunction-sections -fdata-sections -Wl,--gc-sections
+  bool spall = true;                     // -fstack-protector-all
+  bool unroll = false;                   // -funroll-loops
+  bool pgo_gen = false;                  // -fprofile-generate
+  bool pgo_use = false;                  // -fprofile-use
+  bool no_eh = false;                    // -fno-exceptions
+  bool no_rtti = false;                  // -fno-rtti
+  bool strip = false;                    // -Wl,--strip-all
   bool check_compileability = true;      // check include paths for updates - default true
+  bool raw_object = false;               // --raw-obj: a real machine-code object (no LTO) for an external linker
   u32 jobs{ 0 };                         // 0 = default to online cpu count when running parallel
   u32 compile_type{ __comp_type::linked };
   u32 width{ 64 };
@@ -258,6 +259,20 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
   }
 }
 
+// create every missing component of a (trailing-slash) directory path
+inline void
+__mkdir_p(const string_type &dir)
+{
+  if ( dir.empty() ) return;
+  string_type part;
+  for ( usize i = 0; i < dir.size(); ++i ) {
+    part.insert(part.end(), dir[i]);
+    if ( dir[i] != '/' || part.size() == 1 ) continue;      // "/abs" -> don't mkdir("/")
+    if ( !mc::posix::exists(part) ) mc::posix::mkdir(part.c_str(), mc::io::perm_dir_default.to_mode());
+  }
+  if ( !mc::posix::exists(dir) ) mc::posix::mkdir(dir.c_str(), mc::io::perm_dir_default.to_mode());
+}
+
 inline void
 parse_config(config_t &conf, int argc, char **argv)
 {
@@ -285,6 +300,9 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.width = 64;
     } else if ( mc::strcmp(argv[i], "--x86") == 0 ) {
       conf.arch = __arch::x86;
+    } else if ( mc::strcmp(argv[i], "--i386") == 0 ) {
+      conf.arch = __arch::x86;      // i386 == x86 at 32-bit width; runs natively on an amd64 host
+      conf.width = 32;
     } else if ( mc::strcmp(argv[i], "--arm") == 0 ) {
       conf.arch = __arch::arm;
     } else if ( mc::strcmp(argv[i], "--arm64") == 0 or mc::strcmp(argv[i], "--aarch64") == 0 ) {
@@ -386,6 +404,10 @@ parse_config(config_t &conf, int argc, char **argv)
     } else if ( mc::strcmp(argv[i], "--obj") == 0 ) {
       conf.compile_type = __comp_type::object;
       user_provided_type = true;
+    } else if ( mc::strcmp(argv[i], "--raw-obj") == 0 ) {
+      conf.compile_type = __comp_type::object;
+      conf.raw_object = true;
+      user_provided_type = true;
     } else if ( mc::strcmp(argv[i], "--asm") == 0 ) {
       conf.compile_type = __comp_type::assembly;
       user_provided_type = true;
@@ -447,7 +469,7 @@ parse_config(config_t &conf, int argc, char **argv)
       if ( __determine_source(conf, string_type{ argv[i] }) ) user_provided_out = true;
     }
   }
-  if ( !mc::posix::exists(conf.bin_dir) ) mc::posix::mkdir(conf.bin_dir.c_str(), mc::io::perm_dir_default.to_mode());
+  __mkdir_p(conf.bin_dir);
   finalize_and_infer(conf, user_provided_out, user_provided_type, user_provided_opt);
 }
 

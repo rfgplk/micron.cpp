@@ -8,10 +8,6 @@
 #include "../../bits/__arch.hpp"
 #include "../../types.hpp"
 
-// only 64 bit for now (amd64 && armv8+)
-#if !defined(__micron_arch_width_64)
-#error "micron::elf requires a 64-bit target"
-#endif
 #if !defined(__micron_os_linux)
 #error "micron::elf is linux-only"
 #endif

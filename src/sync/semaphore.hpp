@@ -78,6 +78,14 @@ public:
   {
     counter.store(init, memory_order::relaxed);
   }
+
+  // for coroutines (WIP)
+  void
+  abort() noexcept
+  {
+    counter.store(0x40000000, memory_order::release);
+    wake_futex(counter.ptr(), 0x7fffffff);
+  }
 };
 
 template<auto Fn> class semaphore

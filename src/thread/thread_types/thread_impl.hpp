@@ -14,7 +14,7 @@
 
 #include "sig_callbacks.hpp"
 
-#include "../../linux/sys/__threads.hpp"
+#include "../../linux/sys/micthread/threads.hpp"
 #include "../../linux/sys/resource.hpp"
 #include "../../linux/sys/system.hpp"
 #include "../../memory/stack_constants.hpp"
@@ -59,6 +59,8 @@ struct __thread_payload {
   atomic_token<bool> alive;
   // the child sets this true the instant it reaches __thread_kernel
   atomic_token<bool> started{ false };
+  // native park/sleep/awake/terminate control word
+  atomic_token<u32> park{ __park_run };
   // NOTE:
   // the pointer is used as the operand of a static_cast (7.6.1.8), except when the conversion is to pointer
   // to cv void, or to pointer to cv void and subsequently to pointer to cv char, cv unsigned char, or
@@ -80,12 +82,23 @@ struct __thread_payload {
   {
     alive.store(false);
     started.store(false, memory_order_release);
+    park.store(__park_run, memory_order_release);
     tag_val.store((u8)tag::none, memory_order_release);
     ret_val.store(nullptr, memory_order_release);
     deleter = nullptr;
     usage = posix::rusage_t{};
   }
 };
+
+// the running thread kernel self-exit routine
+inline void
+__micron_thread_die_impl() noexcept
+{
+  if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();
+  if ( micron::__micron_thread_alive_word )
+    static_cast<atomic_token<bool> *>(micron::__micron_thread_alive_word)->store(false, memory_order_seq_cst);
+  micthread::__exit_thread(0);
+}
 
 struct __worker_payload {
   atomic_token<u32> has_work{ 0 };             // for futex compat.
@@ -107,13 +120,13 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
   // prologue
   using ret_t = micron::invoke_result_t<Fn, Args &...>;
   __thread_handler();
-  pthread::set_cancel_state(pthread::cancel_state::enable);
-  pthread::set_cancel_type(pthread::cancel_type::deferred);
   payload->alive.store(true, memory_order_seq_cst);
   // confirm to the spawner that we actually reached our kernel
   payload->started.store(true, memory_order_seq_cst);
-  // publish this thread's alive flag so the SIGTERM handler can clear it on a forced stop (else joiners hang)
+  // publish this thread's native control state: alive flag + park word + self-exit routine, consumed by
   micron::__micron_thread_alive_word = static_cast<void *>(&payload->alive);
+  micron::__micron_thread_park = payload->park.ptr();
+  micron::__micron_thread_die = &__micron_thread_die_impl;
 
   // work
 
@@ -167,12 +180,15 @@ __worker_kernel(__worker_payload *payload)
 {
   // prologue
   __thread_handler();
-  pthread::set_cancel_state(pthread::cancel_state::enable);
-  pthread::set_cancel_type(pthread::cancel_type::deferred);
   for ( ;; ) {
     while ( payload->queue.empty() ) {
       if ( payload->should_die.get(memory_order_acquire) ) return return_force;
-      payload->has_work.store(0, memory_order_release);
+      // WARNING: consume a pending wake token via CAS 1->0 instead of an unconditional store(0)
+      // an unconditional clear races the producer/stop() path: if our store(0) lands __AFTER__
+      // the producer's store(1) and the wake fired before we reach wait_futex, the wakeup is
+      // lost and we sleep on 0 forever
+      u32 __hw_token = 1;
+      payload->has_work.compare_exchange_strong(__hw_token, 0u, memory_order_acq_rel, memory_order_acquire);
       if ( !payload->queue.empty() ) break;      // a producer raced the clear; don't sleep
       if ( payload->should_die.get(memory_order_acquire) ) return return_force;
       wait_futex(payload->has_work.ptr(), 0);
@@ -190,90 +206,169 @@ __worker_kernel(__worker_payload *payload)
   return return_success;
 }
 
-// preprepared threads, make absolutely sure attrs are configured correctly/are valid before passing to this, no error
-// checking built in
-template<typename Fn, typename... Args>
-  requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
-pthread_t
-__as_unprepared_thread_attached(const pthread_attr_t &attrs, __thread_payload *payload, Fn &&fn, Args &&...args)
+// hosted backend
+#if !defined(__micron_freestanding)
+template<auto KFn, typename... Args> struct __pth_box {
+  void *args[sizeof...(Args)];
+
+  static void *
+  trampoline(void *p)
+  {
+    auto *self = static_cast<__pth_box *>(p);
+    __invoke(self, micron::make_index_sequence<sizeof...(Args)>{});
+    __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
+    delete self;
+    return nullptr;
+  }
+
+  static void
+  destroy(__pth_box *self)
+  {
+    __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
+    delete self;
+  }
+
+private:
+  template<usize... I>
+  static void
+  __invoke(__pth_box *self, micron::index_sequence<I...>)
+  {
+    KFn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
+  }
+
+  template<usize... I>
+  static void
+  __cleanup([[maybe_unused]] __pth_box *self, micron::index_sequence<I...>)
+  {
+    (delete static_cast<Args *>(self->args[I]), ...);
+  }
+};
+#endif
+
+inline bool
+__link_valid([[maybe_unused]] pid_t tid, [[maybe_unused]] unsigned long pth) noexcept
 {
-  if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): invalid arguments");
-
-  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<micron::decay_t<Fn>, micron::decay_t<Args>...>, payload,
-                                         micron::forward<Fn>(fn), micron::forward<Args>(args)...);
-
-  if ( pid == pthread::thread_failed )
-    micron::exc<except::thread_error>("micron thread::__as_unprepared_thread_attached(): thread failed to spawn");
-
-  return pid;
+#if defined(__micron_freestanding)
+  return tid != 0;
+#else
+  return pth != 0;
+#endif
 }
 
-// worker threads
-
-template<auto Fn = __worker_kernel, typename P, typename... Args>
-pthread_t
-__as_unprepared_worker_thread_attached(const pthread_attr_t &attrs, P *payload)
+// NOTE: moving an already spawned thread (one whos kernel points back to a thread controlled control block is strictly UB
+inline void
+__thread_assert_movable_src([[maybe_unused]] pid_t tid, [[maybe_unused]] unsigned long pth)
 {
-  if ( payload == nullptr ) micron::exc<except::thread_error>("micron thread::__as_unprepared_worker_thread_attached(): invalid arguments");
-
-  pthread_t pid = pthread::create_thread(attrs, Fn, payload);
-
-  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
-
-  return pid;
+  if ( __link_valid(tid, pth) )
+    micron::exc<except::thread_error>("micron thread: cannot move a live/un-joined thread; join, cancel, or terminate it first");
 }
 
-// unprepared threads
-template<int Stack_Size, typename Fn, typename... Args>
-  requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
-pthread_t
-__as_thread_attached(__thread_payload *payload, addr_t *fstack, Fn &&fn, Args &&...args)
+// kernel tid for tgkill / identity
+inline pid_t
+__link_tid([[maybe_unused]] pid_t tid, [[maybe_unused]] unsigned long pth) noexcept
 {
-  if ( payload == nullptr || fstack == nullptr )
-    micron::exc<except::thread_error>("micron thread::__as_thread_attached(): invalid arguments");
+#if defined(__micron_freestanding)
+  return tid;
+#else
+  return pth ? static_cast<pid_t>(pthread_gettid_np(static_cast<pthread_t>(pth))) : 0;
+#endif
+}
 
-  auto attrs = pthread::prepare_thread(pthread::thread_create_state::joinable, posix::sched_other, 0);
+template<int Stack_Size, auto KFn, typename P, typename... KArgs>
+void
+__link_launch([[maybe_unused]] pid_t &tid, [[maybe_unused]] int &ctid, [[maybe_unused]] micron::__tls_frame &tls,
+              [[maybe_unused]] unsigned long &pth, P *payload, addr_t *fstack, KArgs &&...kargs)
+{
+  if ( payload == nullptr || fstack == nullptr ) micron::exc<except::thread_error>("micron thread::__link_launch(): invalid arguments");
+#if defined(__micron_freestanding)
+  micron::__tls_frame frame = micron::__tls_make_child_frame();
+  if ( frame.base == nullptr ) micron::exc<except::thread_error>("micron thread::__link_launch(): failed to build thread TLS");
+  auto reg = micthread::guard_stack(fstack, static_cast<usize>(Stack_Size));
+  pid_t t = micthread::spawn<KFn>(reg.low, reg.usable, reinterpret_cast<unsigned long>(frame.tp), &ctid, payload,
+                                  micron::forward<KArgs>(kargs)...);
+  if ( t == micthread::thread_failed ) {
+    micron::__tls_free_frame(frame);
+    micron::exc<except::thread_error>("micron thread::__link_launch(): thread failed to spawn");
+  }
+  tls = frame;
+  tid = t;
+#else
+  using box_t = __pth_box<KFn, P *, micron::decay_t<KArgs>...>;
+  auto *box = new box_t{ { reinterpret_cast<void *>(new P *(payload)),
+                           reinterpret_cast<void *>(new micron::decay_t<KArgs>(static_cast<KArgs &&>(kargs)))... } };
+  pthread_attr_t attr;
+  pthread_attr_init(&attr);
+  auto reg = micthread::guard_stack(fstack, static_cast<usize>(Stack_Size));
+  pthread_attr_setstack(&attr, reg.low, reg.usable);
+  pthread_t th{};
+  int err = pthread_create(&th, &attr, &box_t::trampoline, box);
+  pthread_attr_destroy(&attr);
+  if ( err != 0 ) {
+    box_t::destroy(box);
+    micron::exc<except::thread_error>("micron thread::__link_launch(): thread failed to spawn");
+  }
+  pth = static_cast<unsigned long>(th);
+#endif
+}
 
-  pthread::set_stack_thread(attrs, fstack, Stack_Size);
+inline int
+__link_join([[maybe_unused]] pid_t tid, [[maybe_unused]] int *ctid, [[maybe_unused]] unsigned long pth)
+{
+  if ( !__link_valid(tid, pth) ) return 0;
+#if defined(__micron_freestanding)
+  micthread::join(ctid);
+#else
+  pthread_join(static_cast<pthread_t>(pth), nullptr);
+#endif
+  return 0;
+}
 
-  pthread_t pid = pthread::create_thread(attrs, __thread_kernel<micron::decay_t<Fn>, micron::decay_t<Args>...>, payload,
-                                         micron::forward<Fn>(fn), micron::forward<Args>(args)...);
-
-  if ( pid == pthread::thread_failed ) micron::exc<except::thread_error>("micron thread::__as_thread_attached(): thread failed to spawn");
-
-  return pid;
+// non-blocking: 0 if exited/none, error::busy if still running
+inline int
+__link_try_join([[maybe_unused]] pid_t tid, [[maybe_unused]] int *ctid, [[maybe_unused]] unsigned long pth)
+{
+  if ( !__link_valid(tid, pth) ) return 0;
+#if defined(__micron_freestanding)
+  return micthread::try_join(ctid) == 0 ? 0 : static_cast<int>(error::busy);
+#else
+  return pthread_tryjoin_np(static_cast<pthread_t>(pth), nullptr) == 0 ? 0 : static_cast<int>(error::busy);
+#endif
 }
 
 struct thread_attr_t {
   ~thread_attr_t() = default;
 
   thread_attr_t(pid_t a)
-      : parent(a), pid(0), sched_policy(0), sched_priority(0), sched_niceness(0), detach_state(0), stack_size(0), stack_addr(nullptr)
+      : parent(a), pid(0), ctid(0), tls{}, pth(0), sched_policy(0), sched_priority(0), sched_niceness(0), detach_state(0), stack_size(0),
+        stack_addr(nullptr)
   {
   }
 
-  thread_attr_t(pid_t a, const pthread_attr_t &attr) : parent(a), pid(0)
+  thread_attr_t(pid_t a, const pthread_attr_t &)
+      : parent(a), pid(0), ctid(0), tls{}, pth(0), sched_policy(0), sched_priority(0), sched_niceness(0), detach_state(0), stack_size(0),
+        stack_addr(nullptr)
   {
-    pthread::get_sched_policy(attr, sched_policy);
-    pthread::get_sched_param(attr, sched_priority);      // NOTE: hacky workaround
-    sched_niceness = 0;
-    pthread::get_detach_state(attr, detach_state);
-    pthread::get_stack_thread(attr, stack_addr, stack_size);
   }
 
   void
   clear()
   {
     pid = 0;
+    ctid = 0;
+    tls = micron::__tls_frame{};
+    pth = 0;
     stack_size = 0;
     stack_addr = nullptr;
   }
 
   thread_attr_t(thread_attr_t &&o) noexcept
-      : parent(o.parent), pid(o.pid), sched_policy(o.sched_policy), sched_priority(o.sched_priority), sched_niceness(o.sched_niceness),
-        detach_state(o.detach_state), stack_size(o.stack_size), stack_addr(o.stack_addr)
+      : parent(o.parent), pid(o.pid), ctid(o.ctid), tls(o.tls), pth(o.pth), sched_policy(o.sched_policy), sched_priority(o.sched_priority),
+        sched_niceness(o.sched_niceness), detach_state(o.detach_state), stack_size(o.stack_size), stack_addr(o.stack_addr)
   {
     o.pid = 0;
+    o.ctid = 0;
+    o.tls = micron::__tls_frame{};
+    o.pth = 0;
     o.stack_size = 0;
     o.stack_addr = nullptr;
   }
@@ -284,6 +379,9 @@ struct thread_attr_t {
     if ( this == &o ) return *this;
     parent = o.parent;
     pid = o.pid;
+    ctid = o.ctid;
+    tls = o.tls;
+    pth = o.pth;
     sched_policy = o.sched_policy;
     sched_priority = o.sched_priority;
     sched_niceness = o.sched_niceness;
@@ -291,13 +389,19 @@ struct thread_attr_t {
     stack_size = o.stack_size;
     stack_addr = o.stack_addr;
     o.pid = 0;
+    o.ctid = 0;
+    o.tls = micron::__tls_frame{};
+    o.pth = 0;
     o.stack_size = 0;
     o.stack_addr = nullptr;
     return *this;
   }
 
   pid_t parent;
-  pthread_t pid;
+  pid_t pid;                    // kernel tid (freestanding; 0 = none/joined)
+  int ctid;                     // CHILD_CLEARTID join futex word (freestanding; address must stay stable while running)
+  micron::__tls_frame tls;      // per-thread TLS block (freestanding; joiner frees)
+  unsigned long pth;            // pthread_t handle (hosted backend)
   i32 sched_policy;
   u32 sched_priority;
   u32 sched_niceness;
@@ -305,5 +409,16 @@ struct thread_attr_t {
   usize stack_size;
   addr_t *stack_addr;
 };
+
+inline thread_attr_t
+__thread_attr_with_stack(pid_t parent, int policy, addr_t *stack, usize sz, int prio = 0) noexcept
+{
+  thread_attr_t a(parent);
+  a.stack_addr = stack;
+  a.stack_size = sz;
+  a.sched_policy = policy;
+  a.sched_priority = static_cast<u32>(prio);
+  return a;
+}
 
 };      // namespace micron

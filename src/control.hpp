@@ -18,9 +18,17 @@
 namespace micron
 {
 
-inline void
-alarm()
+// park points
+inline __attribute__((always_inline)) void
+cancellation_point() noexcept
 {
+  micron::__testcancel();
+}
+
+inline __attribute__((always_inline)) void
+park() noexcept
+{
+  micron::cancellation_point();
 }
 
 // a method to quickly crash a ring3 program

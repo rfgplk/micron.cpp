@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-1.7.6.0-green)
+![Version](https://img.shields.io/badge/version-1.8.0.0-yellow)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -26,6 +26,8 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 > [!WARNING]
 > micron is still in active development, and as of v0.9 has reached stability across our supported platforms. Regardless, the ABI may change at any point, and without notice.
+>
+> The current freestanding threading backend is **experimental and a work in progress**
 
 #### Features
   - a *fully functional*, templated C++ standard library implementation, designed from the **ground up** with modern principles in mind
@@ -38,7 +40,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 ##### Using the Library
 
-All necessary code is self-contained within the `src/` directory. Since *micron* is freestanding, it relies on no external sources; no other files or libraries are necessary (*with the sole exception of `pthreads` for multi-threading, more on that below*). Simply include any header file you want into your project and compile. For examples, check out the `examples/` directory (currently being added).
+All necessary code is self-contained within the `src/` directory. Since *micron* is freestanding, it relies on no external sources; no other files or libraries are necessary. Simply include any header file you want into your project and compile. Multi-threaded code builds two ways: a **hosted** default that links the system `pthread`, and an **experimental, from-scratch freestanding backend**. See *Threading & Concurrency* below. For examples, check out the `examples/` directory.
 
 
 ##### Installation
@@ -87,7 +89,7 @@ in short:
 
 ###### Is micron entirely self-sufficient?
 
-Yes, *micron* relies on no external code other than what is included in this repository. Meaning as long as you have a working `g++/clang++` compiler, you can compile and run it anywhere. The sole exception being, if you wish to use multithreading (or any thread related code), you **must** link against pthread. I will get around eventually to implementing a threading model from scratch, just haven't had the time lately. 
+Yes, *micron* relies on no external code other than what is included in this repository — meaning as long as you have a working `g++/clang++` compiler, you can compile and run it anywhere. Threading used to be the one exception: it required linking `pthread`. **That is no longer strictly true.** On the `micron-thread-tls` branch, micron ships its own freestanding threading backend. The hosted default still uses `pthread` (and auto-links it). This freestanding backend is **experimental and a work in progress**; see *Threading & Concurrency* below for what works, what doesn't yet, and how to choose a backend. 
 
 ###### Architecture Support
 
@@ -101,7 +103,23 @@ Yes, *micron* relies on no external code other than what is included in this rep
 
 > [!IMPORTANT]
 > *micron* targets **Linux specifically**. It is built directly on Linux syscalls, ABI, and kernel conventions throughout; it is **NOT** a portable POSIX library. Some code may happen to build and run on other POSIX systems (the BSDs, macOS, etc.), but this is neither guaranteed nor supported. Linux is the only supported operating system. We will release a dedicated macOS version eventually.
+>
+> The experimental freestanding threading backend (`clone3` + from-scratch TLS) carries its own per-architecture TCB code (Variant II on x86-64/i386, Variant I on ARM64/ARM32) and tracks the same support tiers above; it is exercised on amd64 today, with experimental support for the other arhces.
 
+
+##### Threading & Concurrency
+
+> [!WARNING]
+> The freestanding threading backend described here is **experimental and an active work in progress**, introduced on the `micron-thread-tls` branch. It is stable enough to test against, but it is **not** production-ready yet.
+
+micron's threading is **dual-backend**, selected at compile time via the `__micron_freestanding` macro. The *same source API* compiles against either:
+
+- **Hosted (default)** Threads are backed by the system POSIX `pthread`.
+- **Freestanding** A from-scratch backend built directly on the `clone3` syscall with micron's own per-thread thread-local storage.
+
+###### Known limitations (experimental)
+
+- Known TLS flakiness for very small (512KB) `group_thread` stacks under `-O2`; **use ≥4MB stacks** for now.
 
 ##### Code Coverage & Validation
 
@@ -160,6 +178,9 @@ All headers live under `src/` and may be included directly. Each top-level modul
 - **`math/__asm/`** -- hand-written x86 assembly kernels (rsqrt/sqrt/divps for SSE and AVX, hardware RNG)
 
 ###### Concurrency
+
+These modules build under both the hosted (`pthread`) and the **experimental** freestanding backend; see *Threading & Concurrency* above.
+
 - **`thread/`** -- thread primitives, pools, arenas, scheduling, CPU pinning, callbacks and thread-type variants
 - **`mutex/`** -- mutex / lock implementations (`spin`, `queue`, `recursive`, `unique`, `guard`, `auto`), barriers, RCU, once-flags, tokens
 - **`atomic/`** -- atomic operations, atomic flags and low-level intrinsics
@@ -176,7 +197,7 @@ All headers live under `src/` and may be included directly. Each top-level modul
 ###### Internal
 - **`bits/`** -- compile-time architecture, container, exception and syscall-code dispatch headers
 - **`asm/`** -- `_start` entry stub and C-side bootstrap
-- **`__special/`** -- compiler-required STL replacements (`initializer_list`, `index_sequence`, `pthread` shim)
+- **`__special/`** -- compiler-required STL replacements (`initializer_list`, `index_sequence`, and a transitional `pthread` shim -- not a runtime dependency; freestanding threading uses `clone3` directly)
 - **`std.hpp`** -- single mega-header that pulls in the whole library
 
 

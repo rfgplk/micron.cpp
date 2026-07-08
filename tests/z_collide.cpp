@@ -58,7 +58,7 @@ main()
     for ( u64 k = 1; k < 65; ++k ) {
       alignas(8) byte str[32] = {};
       for ( usize i = 0; i < iters; ++i ) {
-        hashes[i] = mc::hashes::zz64(reinterpret_cast<const byte *>(str), 123, 32);
+        hashes[i] = mc::hashes::z64(reinterpret_cast<const byte *>(str), 123, 32);
         // mc::console(hashes[i]);
         for ( i32 j = 0; j < 8; ++j ) {
           str[j] = ((i * k) >> (j * 8)) & 0xFF;

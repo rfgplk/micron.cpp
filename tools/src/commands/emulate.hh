@@ -12,12 +12,22 @@
 #include "../recipes/gnu/config.hh"
 
 #include "../recipes/gnu/batch.hh"
+#include "../recipes/gnu/qemu.hh"
 
+// build a single source then run it under user-mode qemu
 template<typename T = void>
-__attribute__((noreturn)) void
+int
 build_and_emulate(const recipes::gnu::config_t &conf)
   requires(recipes::__using_gnu)
 {
+  if ( !recipes::gnu::needs_emulation(conf) )
+    mc::cerror("emulate needs a cross target: pass --arm or --arm64 (a native binary should use `duck run`)");
+  if ( !recipes::gnu::target_runnable(conf) ) {
+    mc::set_color(mc::color::red);
+    mc::console("Cannot emulate: missing ", recipes::gnu::__missing_for(conf));
+    mc::set_color(mc::color::reset);
+    mc::abort();
+  }
   mc::set_color(mc::color::blue);
   mc::consoled("Building ");
   mc::set_color(mc::color::green);
@@ -51,13 +61,8 @@ build_and_emulate(const recipes::gnu::config_t &conf)
   }
   mc::set_color(mc::color::reset);
   mc::console("Emulating: ", conf.target_out);
-  // pick the qemu user-mode binary + libc sysroot for the configured cross target
-  if ( conf.arch == recipes::gnu::__arch::arm64 ) {
-    mc::uprocess_t emu_p("/usr/bin/qemu-aarch64-static", "-L", "/usr/gcc-linaro-aarch64/aarch64-none-linux-gnu/libc",
-                         conf.target_out.c_str());
-    mc::rexecute(emu_p);
-  } else {
-    mc::uprocess_t emu_p("/usr/bin/qemu-arm-static", "-L", "/usr/gcc-linaro/arm-none-linux-gnueabihf/libc", conf.target_out.c_str());
-    mc::rexecute(emu_p);
-  }
+  auto status = recipes::gnu::run_target<mc::exec_wait>(conf);
+  const int rc = recipes::gnu::verdict_of(status.status);
+  mc::console("[ ", conf.target_out, " returned: ", rc, " ]");
+  return rc;
 }

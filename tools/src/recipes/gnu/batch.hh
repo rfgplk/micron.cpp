@@ -110,11 +110,12 @@ compose(const config_t &conf, bool linking)
                            : make_flags(conf.spall ? gcc::profiling_flags::flags::stack_protector_all
                                                    : gcc::profiling_flags::flags::stack_protector_strong,
                                         gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow));
-  // LTO on by default except under sanitizers or freestanding EH
-  if ( !sanitized and !conf.freestanding_eh ) {
+  // LTO on by default except under sanitizers, freestanding EH, or a raw object
+  if ( !sanitized and !conf.freestanding_eh and !conf.raw_object ) {
     if ( !c.extensions.empty() ) c.extensions += ' ';
     c.extensions += make_flags(gcc::opt_flags::flags::lto_eight);
   }
+  if ( conf.raw_object ) __compose_add(c.extensions, "-fno-lto");      // belt-and-suspenders: force a non-LTO object
 
   // more safeties
   if ( conf.cfi ) {
@@ -128,7 +129,7 @@ compose(const config_t &conf, bool linking)
   // FORTIFY is hosted only
   if ( conf.fortify and !fs and !sanitized and conf.opt_mode != gcc::opt_flags::flags::optimize_zero )
     __compose_add(c.extensions, conf.arch == __arch::x86 ? "-D_FORTIFY_SOURCE=3" : "-D_FORTIFY_SOURCE=2");
-  if ( (conf.pie or conf.static_pie) and !fs ) __compose_add(c.extensions, "-fPIE");
+  if ( (conf.pie and !fs) or conf.static_pie ) __compose_add(c.extensions, "-fPIE");      // static-PIE needs -fPIE even under -k
   if ( conf.gc ) __compose_add(c.extensions, "-ffunction-sections -fdata-sections");
   if ( conf.unroll ) __compose_add(c.extensions, "-funroll-loops");
   if ( conf.pgo_gen and conf.pgo_use ) mc::cerror("--pgo-gen and --pgo-use are mutually exclusive");
@@ -141,9 +142,11 @@ compose(const config_t &conf, bool linking)
   // links
   if ( linking ) {
     if ( (conf.pie or conf.static_pie) and conf.static_binary ) mc::cerror("--pie/--static-pie conflicts with -s (static)");
-    if ( conf.static_pie and fs ) mc::cerror("--static-pie has no PIE-capable freestanding _start; not valid under -k");
-    if ( conf.static_pie )
+    if ( conf.static_pie ) {
       __compose_add(c.link_tail, "-static-pie");
+      // under -k the image has no _start
+      if ( fs ) __compose_add(c.link_tail, "-nostartfiles -Wl,-e,entry -Wl,--no-dynamic-linker");
+    }
     else if ( conf.pie and !fs )
       __compose_add(c.link_tail, "-pie");
     if ( conf.relro ) __compose_add(c.link_tail, "-Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack");
@@ -193,11 +196,14 @@ batch_cmp(const config_t &conf)
   const string_type freestanding_post
       = (conf.freestanding) ? make_flags(gcc::w_flags::flags::Wno_odr, gcc::w_flags::flags::Wno_lto_type_mismatch) : "";
   // the eh trampoline must live in its own TU (separate from throwing code)
-  const string_type startup_objs
-      = (conf.freestanding and linking)
-            ? (conf.freestanding_eh ? "/usr/src/mc_start/start.s /usr/src/mc_start/start.cpp /usr/src/mc_start/eh_runtime.cpp"
-                                    : "/usr/src/mc_start/start.s /usr/src/mc_start/start.cpp")
-            : "";
+  // width-aware _start: a -32 freestanding link must use the i386 crt, not the amd64 one
+  string_type startup_objs;
+  // a static-PIE freestanding image has no _start
+  if ( conf.freestanding and linking and !conf.static_pie ) {
+    startup_objs = (conf.width == 32) ? "/usr/src/mc_start/start_i386.s " : "/usr/src/mc_start/start.s ";
+    startup_objs += "/usr/src/mc_start/start.cpp";
+    if ( conf.freestanding_eh ) startup_objs += " /usr/src/mc_start/eh_runtime.cpp";
+  }
   const string_type arch_width = (conf.width == 64) ? make_flags(gcc::x86_flags::flags::m64) : make_flags(gcc::x86_flags::flags::m32);
   string_type compile_libs = (conf.freestanding or !linking) ? "" : "-lpthread";
   if ( linking and !conf.bonus_libs.empty() )
@@ -428,9 +434,12 @@ batch_cmp_aarch64(const config_t &conf)
     freestanding = linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib,
                                         gcc::linker_flags::flags::nostdlib_pp, gcc::profiling_flags::flags::nostack_protector)
                            : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector);
+    // mic-thread futex/mutex use __atomic builtins; default -moutline-atomics emits __aarch64_cas*/__aarch64_ldadd*
+    // libgcc helpers that don't resolve under -nostdlib. force them inline for EVERY freestanding aarch64 build.
+    freestanding += " -mno-outline-atomics";
     if ( conf.freestanding_eh ) {
       // arm64 uses zero-cost DWARF
-      freestanding += " -fexceptions -frtti -fasynchronous-unwind-tables -mno-outline-atomics -D__micron_eh";
+      freestanding += " -fexceptions -frtti -fasynchronous-unwind-tables -D__micron_eh";
       if ( linking ) freestanding += " -Wl,--eh-frame-hdr";
     } else {
       freestanding += " ";

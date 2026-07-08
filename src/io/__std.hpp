@@ -77,26 +77,7 @@ __close_stderr(void)
   stderr.reset();
 }
 
-void __attribute__((constructor))
-__init_io_buffer(void)
-{
-  __load_stdfd();
-  if ( !__global_buffer_stdout ) {
-    __global_buffer_stdout = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
-  }
-  if ( !__global_buffer_stderr ) {
-    __global_buffer_stderr = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
-  }
-}
-
-// drain the buffered stdout/stderr streams at process exit manually
-void __attribute__((destructor))
-__flush_io_buffer(void)
-{
-  if ( __global_buffer_stdout && stdout.open() && !stdout.has_error() ) __global_buffer_stdout->flush_to(stdout);
-  if ( __global_buffer_stderr && stderr.open() && !stderr.has_error() ) __global_buffer_stderr->flush_to(stderr);
-}
-
+// freestanding init from start
 extern "C" void
 __boot_io_buffers(void)
 {
@@ -107,6 +88,26 @@ __boot_io_buffers(void)
   if ( !__global_buffer_stderr ) {
     __global_buffer_stderr = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
   }
+}
+
+extern "C" void
+__shutdown_io_buffers(void)
+{
+  if ( __global_buffer_stdout && stdout.open() && !stdout.has_error() ) __global_buffer_stdout->flush_to(stdout);
+  if ( __global_buffer_stderr && stderr.open() && !stderr.has_error() ) __global_buffer_stderr->flush_to(stderr);
+}
+
+// hosted init via .init_array
+void gconstructor_
+__init_io_buffer(void)
+{
+  __boot_io_buffers();
+}
+
+void gdestructor_
+__flush_io_buffer(void)
+{
+  __shutdown_io_buffers();
 }
 
 #ifdef __COMPILED_WITH_GLIBC

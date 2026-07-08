@@ -8,7 +8,7 @@
 #include "../../atomic/atomic.hpp"
 #include "../../sync/yield.hpp"
 
-#include "../../linux/sys/__threads.hpp"
+#include "../../linux/sys/system.hpp"
 
 namespace micron
 {
@@ -23,12 +23,8 @@ class recursive_lock
   static usize
   current_thread() noexcept
   {
-#if defined(__micron_freestanding)
-    static thread_local char __anchor;
-    return reinterpret_cast<usize>(&__anchor);
-#else
-    return pthread::self();
-#endif
+    // kernel tid: a stable unique-per-thread identity that needs no TLS and is never 0
+    return static_cast<usize>(micron::posix::gettid());
   }
 
   void
