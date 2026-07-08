@@ -573,7 +573,8 @@ sync_wait(task<T> &&root)
       //
       // CRAZY OBSERVATION is that wrapping the new expression in
       // a comma statement, MAKES THE STORE COME OUT CORRECTLY and the assert no longer fires (?!?!)
-      // effectively stopping here, analyzing this further requires effectively recompiling gcc with proper instrumentation attached, and i don't have the time right now, patching replace_in _should_ in principle fix this
+      // effectively stopping here, analyzing this further requires effectively recompiling gcc with proper instrumentation attached, and i
+      // don't have the time right now, patching replace_in _should_ in principle fix this
       T __v = co_await micron::move(__r);
       ::new (static_cast<void *>(__s)) T(micron::move(__v));
     }(micron::move(root), slot);
