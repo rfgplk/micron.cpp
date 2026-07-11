@@ -127,6 +127,85 @@ __block_set_pair_16_nt(u8 *__restrict d, uint8x16_t v) noexcept
   __asm__("stnp %q2, %q2, [%1]" : "=m"(*reinterpret_cast<u8(*)[32]>(d)) : "r"(d), "w"(v));
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// 32/64-byte set (STP Q,Q)
+__inline_g void
+__block_set_pair_16(u8 *__restrict d, uint8x16_t v) noexcept
+{
+  __asm__("stp %q2, %q2, [%1]" : "=m"(*reinterpret_cast<u8(*)[32]>(d)) : "r"(d), "w"(v));
+}
+
+__inline_g void
+__block_set_quad_16(u8 *__restrict d, uint8x16_t v) noexcept
+{
+  __asm__("stp %q2, %q2, [%1]\n\t"
+          "stp %q2, %q2, [%1, #32]"
+          : "=m"(*reinterpret_cast<u8(*)[64]>(d))
+          : "r"(d), "w"(v));
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// 64-byte copy (2x LDP / 2x STP)
+__inline_g void
+__block_copy_64(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t0, t1, t2, t3;
+  __asm__("ldp %q0, %q1, [%4]\n\t"
+          "ldp %q2, %q3, [%4, #32]"
+          : "=w"(t0), "=w"(t1), "=w"(t2), "=w"(t3)
+          : "r"(s), "m"(*reinterpret_cast<const u8(*)[64]>(s)));
+  __asm__("stp %q2, %q3, [%1]\n\t"
+          "stp %q4, %q5, [%1, #32]"
+          : "=m"(*reinterpret_cast<u8(*)[64]>(d))
+          : "r"(d), "w"(t0), "w"(t1), "w"(t2), "w"(t3));
+}
+
+__inline_g void
+__block_move_64(u8 *d, const u8 *s) noexcept
+{
+  uint8x16_t t0, t1, t2, t3;
+  __asm__("ldp %q0, %q1, [%4]\n\t"
+          "ldp %q2, %q3, [%4, #32]"
+          : "=w"(t0), "=w"(t1), "=w"(t2), "=w"(t3)
+          : "r"(s), "m"(*reinterpret_cast<const u8(*)[64]>(s)));
+  __asm__("stp %q2, %q3, [%1]\n\t"
+          "stp %q4, %q5, [%1, #32]"
+          : "=m"(*reinterpret_cast<u8(*)[64]>(d))
+          : "r"(d), "w"(t0), "w"(t1), "w"(t2), "w"(t3));
+}
+
+__inline_g void
+__block_copy_64_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t0, t1, t2, t3;
+  __asm__("ldp %q0, %q1, [%4]\n\t"
+          "ldp %q2, %q3, [%4, #32]"
+          : "=w"(t0), "=w"(t1), "=w"(t2), "=w"(t3)
+          : "r"(s), "m"(*reinterpret_cast<const u8(*)[64]>(s)));
+  __asm__("stnp %q2, %q3, [%1]\n\t"
+          "stnp %q4, %q5, [%1, #32]"
+          : "=m"(*reinterpret_cast<u8(*)[64]>(d))
+          : "r"(d), "w"(t0), "w"(t1), "w"(t2), "w"(t3));
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// DC ZVA zero-fill (large zero memset)
+__inline_g u64
+__read_dczid(void) noexcept
+{
+  u64 v;
+  __asm__("mrs %0, dczid_el0" : "=r"(v));
+  return v;
+}
+
+// zeroes the 64-byte block at p (p must be 64-aligned); the write is not
+// expressible as an "=m" operand, hence volatile + memory clobber
+__inline_g void
+__dc_zva_64(u8 *p) noexcept
+{
+  __asm__ __volatile__("dc zva, %0" : : "r"(p) : "memory");
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 16-byte memcmp (CMEQ.16B + UMINV.B)
 __inline_g bool

@@ -1,0 +1,158 @@
+=== micron memory benchmark ===
+buffers: 16 MiB src + 16 MiB dst, 64-byte aligned
+warmup 8 reps; 7 measurements per cell; median reported
+perf events: cycles + instructions + branches + branch-misses (bbench 4-event group)
+
+[memcpy] dst=src+1MiB, hot cache, dst aligned 64, src aligned 64
+   size(B)  routine               bytes/op  cyc/byte       IPC  lat(cyc)    bmiss%
+----------------------------------------------------------------------------------
+        16  mc::memcpy                  16      0.35      2.87         5      0.00
+        16  simd::memcpy128             16      0.32      3.94         5      0.00
+        16  simd::amemcpy128            16      0.32      3.96         5      0.00
+        64  mc::memcpy                  64      0.10      4.50         6      0.00
+        64  simd::memcpy128             64      0.23      2.53        15      0.00
+        64  simd::memcpy256             64      0.10      4.29         6      0.00
+        64  simd::amemcpy128            64      0.15      3.96         9      0.00
+        64  simd::amemcpy256            64      0.10      4.17         6      0.00
+       256  mc::memcpy                 256      0.07      3.37        19      0.00
+       256  simd::memcpy128            256      0.15      2.80        39      0.00
+       256  simd::memcpy256            256      0.08      3.20        19      0.00
+       256  simd::amemcpy128           256      0.10      4.51        24      0.02
+       256  simd::amemcpy256           256      0.06      3.75        16      0.01
+      1024  mc::memcpy                1024      0.07      3.10        67      0.02
+      1024  simd::memcpy128           1024      0.13      3.06       130      1.49
+      1024  simd::memcpy256           1024      0.07      3.05        67      0.00
+      1024  simd::amemcpy128          1024      0.10      3.84       103      1.04
+      1024  simd::amemcpy256          1024      0.05      3.80        54      0.00
+      1024  simd::ntmemcpy128         1024      0.36      1.08       369      0.36
+      1024  simd::ntmemcpy256         1024      0.36      0.56       366      0.00
+      4096  mc::memcpy                4096      0.05      3.71       211      0.76
+      4096  simd::memcpy128           4096      0.09      4.16       373      0.39
+      4096  simd::memcpy256           4096      0.05      3.73       210      0.76
+      4096  simd::amemcpy128          4096      0.09      4.31       359      0.39
+      4096  simd::amemcpy256          4096      0.05      4.10       190      0.76
+      4096  simd::ntmemcpy128         4096      0.22      1.72       900      0.39
+      4096  simd::ntmemcpy256         4096      0.22      0.87       897      0.76
+     65536  mc::memcpy               65536      0.13      1.49      8271      0.05
+     65536  simd::memcpy128          65536      0.13      2.95      8339      0.02
+     65536  simd::memcpy256          65536      0.13      1.49      8252      0.05
+     65536  simd::amemcpy128         65536      0.13      2.92      8414      0.02
+     65536  simd::amemcpy256         65536      0.13      1.49      8272      0.05
+     65536  simd::ntmemcpy128        65536      0.20      1.90     12920      0.02
+     65536  simd::ntmemcpy256        65536      0.19      0.99     12449      0.05
+   1048576  mc::memcpy             1048576      0.23      0.82    239384      0.00
+   1048576  simd::memcpy128        1048576      0.23      1.63    241543      0.00
+   1048576  simd::memcpy256        1048576      0.23      0.82    239253      0.00
+   1048576  simd::amemcpy128       1048576      0.23      1.63    241960      0.00
+   1048576  simd::amemcpy256       1048576      0.23      0.82    239060      0.00
+   1048576  simd::ntmemcpy128      1048576      0.21      1.79    219221      0.00
+   1048576  simd::ntmemcpy256      1048576      0.20      0.94    209768      0.00
+
+[memset] dst aligned 64, hot cache
+   size(B)  routine               bytes/op  cyc/byte       IPC  lat(cyc)    bmiss%
+----------------------------------------------------------------------------------
+        16  mc::memset                  16      0.22      5.43         3      0.00
+        16  simd::memset128             16      0.31      3.77         5      0.00
+        16  simd::amemset128            16      0.32      3.76         5      0.00
+        64  mc::memset                  64      0.07      5.09         4      0.00
+        64  simd::memset128             64      0.08      4.91         5      0.00
+        64  simd::memset256             64      0.07      4.44         4      0.00
+        64  simd::amemset128            64      0.08      5.00         5      0.00
+       256  mc::memset                 256      0.05      3.17        12      0.00
+       256  simd::memset128            256      0.08      2.67        20      0.00
+       256  simd::memset256            256      0.06      2.18        16      0.00
+       256  simd::amemset128           256      0.08      2.68        20      0.00
+      1024  mc::memset                1024      0.04      2.72        36      0.00
+      1024  simd::memset128           1024      0.06      2.69        64      0.00
+      1024  simd::memset256           1024      0.04      2.37        40      0.00
+      1024  simd::amemset128          1024      0.06      2.73        64      0.00
+      1024  simd::ntmemset128         1024      0.36      0.48       369      0.00
+      4096  mc::memset                4096      0.03      2.56       132      1.45
+      4096  simd::memset128           4096      0.06      2.50       261      0.76
+      4096  simd::memset256           4096      0.03      2.43       138      1.47
+      4096  simd::amemset128          4096      0.06      2.51       260      0.76
+      4096  simd::ntmemset128         4096      0.22      0.73       901      0.76
+     65536  mc::memset               65536      0.09      0.83      6220      0.10
+     65536  simd::memset128          65536      0.10      1.63      6287      0.05
+     65536  simd::memset256          65536      0.09      0.83      6217      0.10
+     65536  simd::amemset128         65536      0.10      1.64      6267      0.05
+     65536  simd::ntmemset128        65536      0.18      0.89     11470      0.05
+   1048576  mc::memset             1048576      0.14      0.55    150321      0.01
+   1048576  simd::memset128        1048576      0.14      1.09    149967      0.00
+   1048576  simd::memset256        1048576      0.14      0.55    149831      0.01
+   1048576  simd::amemset128       1048576      0.14      1.09    150020      0.00
+   1048576  simd::ntmemset128      1048576      0.17      0.91    180695      0.00
+  16777216  mc::memset            16777216      0.19      0.40   3259648      0.00
+  16777216  simd::memset128       16777216      0.19      0.81   3224351      0.00
+  16777216  simd::memset256       16777216      0.20      0.40   3286311      0.00
+  16777216  simd::amemset128      16777216      0.18      0.86   3056481      0.00
+  16777216  simd::ntmemset128     16777216      0.17      0.91   2891485      0.00
+
+[memcmp] equal buffers (worst case for early-exit), hot cache
+   size(B)  routine               bytes/op  cyc/byte       IPC  lat(cyc)    bmiss%
+----------------------------------------------------------------------------------
+        16  mc::bytecmp                 16      1.52      5.01        24      0.00
+        16  simd::memcmp128             16      1.07      2.27        17      0.00
+        64  mc::bytecmp                 64      0.25      3.16        16      0.00
+        64  simd::memcmp128             64      0.42      2.60        26      0.02
+        64  simd::memcmp256             64      0.28      2.79        17      0.00
+       256  mc::bytecmp                256      0.12      3.47        30      0.00
+       256  simd::memcmp128            256      0.22      3.30        57      0.01
+       256  simd::memcmp256            256      0.13      3.25        32      0.00
+      1024  mc::bytecmp               1024      0.08      4.05        79      0.00
+      1024  simd::memcmp128           1024      0.21      3.14       213      0.89
+      1024  simd::memcmp256           1024      0.08      3.96        80      0.00
+      4096  mc::bytecmp               4096      0.07      3.87       306      0.38
+      4096  simd::memcmp128           4096      0.15      4.18       618      0.19
+      4096  simd::memcmp256           4096      0.07      3.91       302      0.38
+     65536  mc::bytecmp              65536      0.09      3.00      6158      0.02
+     65536  simd::memcmp128          65536      0.17      3.75     10937      0.01
+     65536  simd::memcmp256          65536      0.09      3.01      6127      0.02
+   1048576  mc::bytecmp            1048576      0.18      1.60    184899      0.00
+   1048576  simd::memcmp128        1048576      0.22      2.83    231564      0.00
+   1048576  simd::memcmp256        1048576      0.18      1.56    188610      0.00
+  16777216  mc::bytecmp           16777216      0.41      0.68   6931813      0.00
+  16777216  simd::memcmp128       16777216      0.44      1.40   7465328      0.00
+  16777216  simd::memcmp256       16777216      0.42      0.67   7030928      0.00
+
+[memmove] non-overlapping (forward path), hot cache
+   size(B)  routine               bytes/op  cyc/byte       IPC  lat(cyc)    bmiss%
+----------------------------------------------------------------------------------
+        16  mc::memmove                 16      0.29      3.69         4      0.00
+        16  simd::memmove128            16      0.39      4.36         6      0.00
+        64  mc::memmove                 64      0.24      3.71        15      0.01
+        64  simd::memmove128            64      0.27      2.64        17      0.00
+        64  simd::memmove256            64      0.22      3.62        14      0.00
+       256  mc::memmove                256      0.09      4.06        22      0.00
+       256  simd::memmove128           256      0.16      2.83        41      0.01
+       256  simd::memmove256           256      0.08      4.11        21      0.00
+      1024  mc::memmove               1024      0.07      3.36        70      2.38
+      1024  simd::memmove128          1024      0.13      3.07       132      1.45
+      1024  simd::memmove256          1024      0.06      4.03        57      0.00
+      4096  mc::memmove               4096      0.05      4.06       200      0.72
+      4096  simd::memmove128          4096      0.09      4.15       375      0.38
+      4096  simd::memmove256          4096      0.05      4.04       199      0.74
+     65536  mc::memmove              65536      0.13      1.49      8289      0.05
+     65536  simd::memmove128         65536      0.13      2.96      8323      0.02
+     65536  simd::memmove256         65536      0.13      1.49      8298      0.05
+   1048576  mc::memmove            1048576      0.23      0.82    239290      0.00
+   1048576  simd::memmove128       1048576      0.23      1.63    241508      0.00
+   1048576  simd::memmove256       1048576      0.23      0.82    239700      0.00
+
+[memmove] overlapping (dst = src + 64, backward path)
+   size(B)  routine               bytes/op  cyc/byte       IPC  lat(cyc)    bmiss%
+----------------------------------------------------------------------------------
+      1024  mc::memmove[ovlp]         1024      0.08      2.52        80      0.00
+      1024  simd::memmove128[ovlp]    1024      0.12      2.67       127      1.43
+      1024  simd::memmove256[ovlp]    1024      0.08      2.58        76      0.00
+      4096  mc::memmove[ovlp]         4096      0.05      3.19       213      0.72
+      4096  simd::memmove128[ovlp]    4096      0.08      3.87       335      0.38
+      4096  simd::memmove256[ovlp]    4096      0.05      3.16       214      0.73
+     65536  mc::memmove[ovlp]        65536      0.10      1.54      6679      0.05
+     65536  simd::memmove128[ovlp]   65536      0.10      3.02      6778      0.02
+     65536  simd::memmove256[ovlp]   65536      0.10      1.54      6688      0.05
+   1048576  mc::memmove[ovlp]      1048576      0.14      1.09    150271      0.00
+   1048576  simd::memmove128[ovlp] 1048576      0.16      1.92    170563      0.00
+   1048576  simd::memmove256[ovlp] 1048576      0.14      1.08    151092      0.00
+
+=== done ===

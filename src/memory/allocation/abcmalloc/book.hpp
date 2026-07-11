@@ -203,7 +203,7 @@ public:
     if ( _p == nullptr ) return false;
     if ( empty() ) micron::abort();
     if ( _p == nullptr ) micron::abort();
-    return !__book.is_tombstoned(_p);
+    return __book.is_allocated(_p) && !__book.is_tombstoned(_p);
   }
 
   // header-read fast path used by the per-class free cache
@@ -467,7 +467,7 @@ public:
     if ( _p == nullptr ) return false;
     if ( empty() ) micron::abort();
     if ( _p == nullptr ) micron::abort();
-    return !__book.is_tombstoned(_p);
+    return __book.is_allocated(_p) && !__book.is_tombstoned(_p);
   }
 
   usize

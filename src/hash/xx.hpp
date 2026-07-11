@@ -82,7 +82,7 @@ xxround(u64 acc, u64 input)
 inline __attribute__((always_inline)) u64
 xxmergeround(u64 (&v)[4])
 {
-  u64 xxh = rotl64(v[0], 1) + rotl64(v[1], 7) + rotl64(v[3], 12) + rotl64(v[3], 18);
+  u64 xxh = rotl64(v[0], 1) + rotl64(v[1], 7) + rotl64(v[2], 12) + rotl64(v[3], 18);
   v[0] = xxround(0, v[0]);
   xxh ^= v[0];
   xxh = xxh * xxprime64a + xxprime64d;

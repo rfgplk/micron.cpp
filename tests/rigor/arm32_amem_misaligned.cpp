@@ -171,7 +171,7 @@ main()
   end_test_case();
 
   print("[ARM32 a*/nt* MISALIGNED REGRESSION OK]");
-  return 0;
+  return 1;      // snowball pass sentinel (0 reads as FAIL to duck)
 }
 
 #else

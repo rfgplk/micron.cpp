@@ -17,30 +17,53 @@
 namespace micron
 {
 
-namespace __mc32
-{
-typedef u16 __una_u16 __attribute__((aligned(1), may_alias));
-typedef u32 __una_u32 __attribute__((aligned(1), may_alias));
-typedef u64 __una_u64 __attribute__((aligned(1), may_alias));
+// TODO: pull this out into plumbing, ugly like this
 
-[[gnu::always_inline]] static inline void
-__copy_2(byte *d, const byte *s) noexcept
+// cold tier selection for n > __mem_ladder_max
+[[gnu::noinline]] static __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) byte *
+__memcpy_large(byte *restrict d, const byte *restrict s, const u64 n) noexcept
 {
-  *reinterpret_cast<__una_u16 *>(d) = *reinterpret_cast<const __una_u16 *>(s);
+#if defined(__micron_arch_x86_any)
+  if ( n < __mem_rep_min ) return simd::__memcpy_bulk(d, s, n);
+  const __mem_tunables &t = __mem_tun_get();
+  if ( n >= t.nt_copy_threshold ) return simd::__memcpy_bulk_nt(d, s, n);
+  if ( n >= t.rep_movsb_threshold ) {
+    simd::__bits::__rep_movsb(d, s, static_cast<usize>(n));
+    return d;
+  }
+  return simd::__memcpy_bulk(d, s, n);
+#elif defined(__micron_arch_arm64)
+  if ( n >= __mem_nt_threshold_arm64 ) return simd::__memcpy_bulk_nt(d, s, n);
+  return simd::__memcpy_bulk(d, s, n);
+#else
+  return simd::__memcpy_bulk(d, s, n);
+#endif
 }
 
-[[gnu::always_inline]] static inline void
-__copy_4(byte *d, const byte *s) noexcept
+[[gnu::always_inline]] static inline byte *
+__memcpy_bytes(byte *restrict d, const byte *restrict s, const u64 bytes) noexcept
 {
-  *reinterpret_cast<__una_u32 *>(d) = *reinterpret_cast<const __una_u32 *>(s);
+  if ( bytes == 0 ) return d;
+  if ( bytes <= 32 ) {
+    __ml::__copy_le32(d, s, bytes);
+    return d;
+  }
+  if ( bytes <= 64 ) {
+    __ml::__copy_33_64(d, s, bytes);
+    return d;
+  }
+  if ( bytes <= 128 ) {
+    __ml::__copy_65_128(d, s, bytes);
+    return d;
+  }
+#if defined(__micron_x86_avx2)
+  if ( bytes <= 256 ) {
+    __ml::__copy_129_256(d, s, bytes);
+    return d;
+  }
+#endif
+  return __memcpy_large(d, s, bytes);
 }
-
-[[gnu::always_inline]] static inline void
-__copy_8(byte *d, const byte *s) noexcept
-{
-  *reinterpret_cast<__una_u64 *>(d) = *reinterpret_cast<const __una_u64 *>(s);
-}
-};      // namespace __mc32
 
 // NOTE: memcpy_32 (unlike other memcpies) works off of bytes and not elements
 template<typename T, typename F, typename S = u64>
@@ -48,32 +71,13 @@ template<typename T, typename F, typename S = u64>
 __memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
 {
   if ( n == 0 ) return d;
-
   byte *dest = reinterpret_cast<byte *>(d);
   const byte *src = reinterpret_cast<const byte *>(s);
-
-  if ( n >= 17 ) {
-    // NOTE: the SIMD implementation was being elided in some contexts
-    for ( S i = 0; i < n; ++i ) dest[i] = src[i];
-  } else if ( n >= 9 ) {
-    // [9, 16]: two unaligned 8-byte GPR loads
-    __mc32::__copy_8(dest, src);
-    __mc32::__copy_8(dest + n - 8, src + n - 8);
-  } else if ( n >= 5 ) {
-    // [5, 8]: two unaligned 4-byte GPR loads
-    __mc32::__copy_4(dest, src);
-    __mc32::__copy_4(dest + n - 4, src + n - 4);
-  } else if ( n >= 3 ) {
-    // [3, 4]: two unaligned 2-byte GPR load
-    __mc32::__copy_2(dest, src);
-    __mc32::__copy_2(dest + n - 2, src + n - 2);
-  } else if ( n == 2 ) {
-    __mc32::__copy_2(dest, src);
-  } else {
-    // n == 1
-    dest[0] = src[0];
+  if ( n <= 32 ) {
+    __ml::__copy_le32(dest, src, static_cast<u64>(n));
+    return d;
   }
-
+  __memcpy_bytes(dest, src, static_cast<u64>(n));
   return d;
 }
 
@@ -84,21 +88,6 @@ _rmemcpy_32(T &restrict _d, const F &restrict _s, const S n) noexcept
   T *d = &_d;
   const F *s = &_s;
   return __memcpy_32(d, s, n);
-}
-
-[[gnu::always_inline]] static inline byte *
-__memcpy_bytes(byte *restrict d, const byte *restrict s, const u64 bytes) noexcept
-{
-  if ( bytes == 0 ) return d;
-  if ( bytes < __simd_dispatch_threshold ) return __memcpy_32(d, s, bytes);
-#if defined(__micron_x86_avx512f)
-  if ( bytes >= 64 ) return simd::memcpy512<byte>(d, s, bytes);
-#endif
-#if defined(__micron_x86_avx2)
-  return simd::memcpy256<byte>(d, s, bytes);
-#else
-  return simd::memcpy128<byte>(d, s, bytes);
-#endif
 }
 
 template<typename F, typename D>
@@ -458,15 +447,8 @@ mempcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
 {
   if constexpr ( sizeof(F) == sizeof(D) && micron::is_trivially_copyable_v<F> && micron::is_trivially_copyable_v<D> ) {
     const u64 bytes = cnt * sizeof(D);
-    if ( bytes < __simd_dispatch_threshold ) {
-      __memcpy_32(dest, src, bytes);
-      return reinterpret_cast<F *>(reinterpret_cast<byte *>(dest) + bytes);
-    }
-#if defined(__micron_x86_avx2)
-    return simd::mempcpy256(dest, src, cnt);
-#else
-    return simd::mempcpy128(dest, src, cnt);
-#endif
+    __memcpy_bytes(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src), bytes);
+    return reinterpret_cast<F *>(reinterpret_cast<byte *>(dest) + bytes);
   } else {
     for ( u64 n = 0; n < cnt; n++ ) dest[n] = static_cast<F>(src[n]);
     return dest + cnt;

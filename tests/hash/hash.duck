@@ -1,0 +1,8 @@
+# hash correctness + quality suite: known-answer vectors, avalanche, collisions
+#
+#   duck tests/hash/hash.duck          (== duck batch tests/hash/hash.duck)
+#
+# amd64/x64 hosted. The meow_hash sections are x86-only (they #if-compile out on
+# other arches); rapidhash / murmur / xxhash / crc / fnv / zzz are arch-independent.
+
+test tests/hash/ -o bin/hash/x64

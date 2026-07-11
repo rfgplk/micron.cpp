@@ -16,27 +16,53 @@
 
 namespace micron
 {
+// TODO: also pull these out into plumbing
+
+// cold tier selection
+[[gnu::noinline]] static __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) byte *
+__memmove_large(byte *d, const byte *s, const u64 n) noexcept
+{
+  if ( d < s || d >= s + n ) {
+#if defined(__micron_arch_x86_any)
+    if ( n < __mem_rep_min ) return simd::__memmove_bulk_fwd(d, s, n);
+    const __mem_tunables &t = __mem_tun_get();
+    const bool disjoint = (d + n <= s) || (s + n <= d);
+    if ( disjoint && n >= t.nt_copy_threshold ) return simd::__memcpy_bulk_nt(d, s, n);
+    if ( n >= t.rep_movsb_threshold && n < t.nt_copy_threshold ) {
+      simd::__bits::__rep_movsb(d, s, static_cast<usize>(n));
+      return d;
+    }
+#elif defined(__micron_arch_arm64)
+    if ( ((d + n <= s) || (s + n <= d)) && n >= __mem_nt_threshold_arm64 ) return simd::__memcpy_bulk_nt(d, s, n);
+#endif
+    return simd::__memmove_bulk_fwd(d, s, n);
+  }
+  return simd::__memmove_bulk_bwd(d, s, n);
+}
 
 [[gnu::always_inline]] static inline byte *
 __memmove_bytes(byte *d, const byte *s, const u64 bytes) noexcept
 {
-  if ( bytes == 0 ) return d;
-  if ( bytes < __simd_dispatch_threshold ) {
-    if ( d < s ) {
-      for ( u64 i = 0; i < bytes; i++ ) d[i] = s[i];
-    } else if ( d > s ) {
-      for ( u64 i = bytes; i > 0; --i ) d[i - 1] = s[i - 1];
-    }
+  if ( d == s || bytes == 0 ) return d;
+  if ( bytes <= 32 ) {
+    __ml::__copy_le32(d, s, bytes);
     return d;
   }
-#if defined(__micron_x86_avx512f)
-  if ( bytes >= 64 ) return simd::memmove512<byte>(d, s, bytes);
-#endif
+  if ( bytes <= 64 ) {
+    __ml::__copy_33_64(d, s, bytes);
+    return d;
+  }
+  if ( bytes <= 128 ) {
+    __ml::__copy_65_128(d, s, bytes);
+    return d;
+  }
 #if defined(__micron_x86_avx2)
-  return simd::memmove256<byte>(d, s, bytes);
-#else
-  return simd::memmove128<byte>(d, s, bytes);
+  if ( bytes <= 256 ) {
+    __ml::__copy_129_256(d, s, bytes);
+    return d;
+  }
 #endif
+  return __memmove_large(d, s, bytes);
 }
 
 template<typename F, typename D>

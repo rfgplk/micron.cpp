@@ -935,9 +935,11 @@ main(void)
   sb::test_case("memcpy - cross cache line boundary");
   {
     constexpr u64 CACHE_LINE = 64;
-    alignas(CACHE_LINE) byte storage[2 * CACHE_LINE];      // aligned buffer
+    alignas(CACHE_LINE) byte storage[3 * CACHE_LINE];      // aligned buffer
     byte *src = storage + 30;                              // intentionally misaligned start
-    byte *dst = storage + CACHE_LINE + 10;                 // crosses cache line
+    // crosses the cache line at 2*CACHE_LINE; disjoint from src ([30,80) vs
+    // [118,168)) — memcpy is undefined for overlapping windows
+    byte *dst = storage + 2 * CACHE_LINE - 10;
 
     make_seq(src, 50);
     fill_pattern(dst, 50, static_cast<byte>(0xFF));

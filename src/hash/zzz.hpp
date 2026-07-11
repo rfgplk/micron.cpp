@@ -28,8 +28,9 @@ constexpr static const i8 iv[32] = { 127, -113, 94, -72, 55, -39, 21, -7, 118, -
 constexpr i64
 pack_iv64(usize off)
 {
-  return ((i64)(u8)iv[off + 0] << 0) | ((i64)(u8)iv[off + 1] << 8) | ((i64)(u8)iv[off + 2] << 16) | ((i64)(u8)iv[off + 3] << 24)
-         | ((i64)(u8)iv[off + 4] << 32) | ((i64)(u8)iv[off + 5] << 40) | ((i64)(u8)iv[off + 6] << 48) | ((i64)(u8)iv[off + 7] << 56);
+  // pack in u64 (well-defined) then reinterpret to i64
+  return (i64)(((u64)(u8)iv[off + 0] << 0) | ((u64)(u8)iv[off + 1] << 8) | ((u64)(u8)iv[off + 2] << 16) | ((u64)(u8)iv[off + 3] << 24)
+               | ((u64)(u8)iv[off + 4] << 32) | ((u64)(u8)iv[off + 5] << 40) | ((u64)(u8)iv[off + 6] << 48) | ((u64)(u8)iv[off + 7] << 56));
 }
 
 constexpr static const u64 __zzzrounds = 1;

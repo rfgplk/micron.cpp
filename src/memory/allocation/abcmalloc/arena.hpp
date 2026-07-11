@@ -1792,7 +1792,7 @@ public:
   bool
   present(addr_t *mem) const
   {
-    return mem ? __vmap_locate_at(mem) : false;
+    return mem ? (__vmap_locate_at(mem) && !__is_cached(reinterpret_cast<byte *>(mem))) : false;
   }
 
   bool
@@ -1808,10 +1808,10 @@ public:
   }
 
   bool
-  __is_cached(byte *ptr)
+  __is_cached(byte *ptr) const
   {
     bool cached = false;
-    (void)__dispatch_addr(reinterpret_cast<addr_t *>(ptr), [&](auto &tier, i32) {
+    (void)__dispatch_addr(reinterpret_cast<addr_t *>(ptr), [&](const auto &tier, i32) {
       cached = tier.__cache.contains(ptr);
       return true;
     });

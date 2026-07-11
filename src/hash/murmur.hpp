@@ -52,9 +52,10 @@ murmur(const T *key, const usize len, const u32 seed)
     k2 *= c1;
     s2 ^= k2;
 
-    k2 = rotl64(k2, 31);
-    k2 += k1;
-    k2 = k2 * 5 + 0x38495ab5;
+    // fix
+    s2 = rotl64(s2, 31);
+    s2 += s1;
+    s2 = s2 * 5 + 0x38495ab5;
   }
   const u8 *tail = (const u8 *)(key + nblocks * 16);
 
@@ -156,9 +157,9 @@ murmur(const T *key, const usize len)
     k2 *= c1;
     s2 ^= k2;
 
-    k2 = rotl64(k2, 31);
-    k2 += k1;
-    k2 = k2 * 5 + 0x38495ab5;
+    s2 = rotl64(s2, 31);
+    s2 += s1;
+    s2 = s2 * 5 + 0x38495ab5;
   }
   const u8 *tail = (const u8 *)(key + nblocks * 16);
 

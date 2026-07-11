@@ -155,7 +155,7 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
     // type is literal, can be stored.
     ret_t __ret_val_storage = fn(args...);
     u64 __ret_raw = 0;
-    __builtin_memcpy(&__ret_raw, &__ret_val_storage, sizeof(ret_t));
+    micron::cbytecpy<sizeof(ret_t)>(reinterpret_cast<byte *>(&__ret_raw), reinterpret_cast<const byte *>(&__ret_val_storage));
     payload->deleter = nullptr;
     payload->tag_val.store((u8)__thread_payload::tag::literal, memory_order_release);
     payload->ret_val.store(reinterpret_cast<byte *>(__ret_raw), memory_order_release);

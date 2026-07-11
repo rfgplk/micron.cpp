@@ -317,7 +317,7 @@ public:
     if ( static_cast<__thread_payload::tag>(payload.tag_val.get(memory_order_acquire)) == __thread_payload::tag::literal ) {
       byte *p = payload.ret_val.get(memory_order_acquire);
       u64 raw = reinterpret_cast<u64>(p);
-      __builtin_memcpy(&val, &raw, sizeof(R));
+      micron::cbytecpy<sizeof(R)>(reinterpret_cast<byte *>(&val), reinterpret_cast<const byte *>(&raw));
     }
     return val;
   }

@@ -8,6 +8,7 @@
 #include "../namespace.hpp"
 
 #include "../__bits/__asm_blocks_amd64.hpp"
+#include "../__bits/__vec_ld.hpp"
 
 namespace micron
 {
@@ -1203,6 +1204,319 @@ memmem256(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
   return nullptr;
 }
 #endif
+
+#if defined(__micron_x86_avx2)
+
+__attribute__((nonnull)) inline u8 *
+__memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept
+{
+  const __m256i vv = __bits::__broadcast_byte_32(v);
+  __bits::__block_set_32(d, vv);
+  u8 *p = reinterpret_cast<u8 *>((reinterpret_cast<uintptr_t>(d) + 32) & ~static_cast<uintptr_t>(31));
+  u8 *const e = d + n;
+  for ( ; p + 128 <= e; p += 128 ) {
+    __bits::__block_set_32_a(p, vv);
+    __bits::__block_set_32_a(p + 32, vv);
+    __bits::__block_set_32_a(p + 64, vv);
+    __bits::__block_set_32_a(p + 96, vv);
+  }
+  __bits::__block_set_32(e - 128, vv);
+  __bits::__block_set_32(e - 96, vv);
+  __bits::__block_set_32(e - 64, vv);
+  __bits::__block_set_32(e - 32, vv);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memset_bulk_nt(u8 *__restrict d, const u8 v, const u64 n) noexcept
+{
+  const __m256i vv = __bits::__broadcast_byte_32(v);
+  __bits::__block_set_32(d, vv);
+  u8 *p = reinterpret_cast<u8 *>((reinterpret_cast<uintptr_t>(d) + 32) & ~static_cast<uintptr_t>(31));
+  u8 *const e = d + n;
+  for ( ; p + 128 <= e; p += 128 ) {
+    __bits::__block_set_32_nt(p, vv);
+    __bits::__block_set_32_nt(p + 32, vv);
+    __bits::__block_set_32_nt(p + 64, vv);
+    __bits::__block_set_32_nt(p + 96, vv);
+  }
+  __bits::__sfence();
+  __bits::__block_set_32(e - 128, vv);
+  __bits::__block_set_32(e - 96, vv);
+  __bits::__block_set_32(e - 64, vv);
+  __bits::__block_set_32(e - 32, vv);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept
+{
+  const __m256i vv = __bits::__broadcast_word_32(w);
+  u64 i = 0;
+  for ( ; i + 128 <= n; i += 128 ) {
+    __bits::__block_set_32(d + i, vv);
+    __bits::__block_set_32(d + i + 32, vv);
+    __bits::__block_set_32(d + i + 64, vv);
+    __bits::__block_set_32(d + i + 96, vv);
+  }
+  for ( ; i + 32 <= n; i += 32 ) __bits::__block_set_32(d + i, vv);
+  if ( i < n ) __bits::__block_set_32(d + n - 32, vv);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
+{
+  __bits::__block_copy_32(d, s);
+  const u64 off = 32 - (reinterpret_cast<uintptr_t>(d) & 31);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem >= 128; rem -= 128, pd += 128, ps += 128 ) {
+    __bits::__block_copy_32_sa(pd, ps);
+    __bits::__block_copy_32_sa(pd + 32, ps + 32);
+    __bits::__block_copy_32_sa(pd + 64, ps + 64);
+    __bits::__block_copy_32_sa(pd + 96, ps + 96);
+  }
+  __bits::__block_copy_32(d + n - 128, s + n - 128);
+  __bits::__block_copy_32(d + n - 96, s + n - 96);
+  __bits::__block_copy_32(d + n - 64, s + n - 64);
+  __bits::__block_copy_32(d + n - 32, s + n - 32);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memcpy_bulk_nt(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
+{
+  __bits::__block_copy_32(d, s);
+  const u64 off = 32 - (reinterpret_cast<uintptr_t>(d) & 31);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem >= 128; rem -= 128, pd += 128, ps += 128 ) {
+    __bits::__prefetch_t0(ps + 256);
+    __bits::__prefetch_t0(ps + 320);
+    __bits::__block_copy_32_nt(pd, ps);
+    __bits::__block_copy_32_nt(pd + 32, ps + 32);
+    __bits::__block_copy_32_nt(pd + 64, ps + 64);
+    __bits::__block_copy_32_nt(pd + 96, ps + 96);
+  }
+  __bits::__sfence();
+  __bits::__block_copy_32(d + n - 128, s + n - 128);
+  __bits::__block_copy_32(d + n - 96, s + n - 96);
+  __bits::__block_copy_32(d + n - 64, s + n - 64);
+  __bits::__block_copy_32(d + n - 32, s + n - 32);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept
+{
+  const __ml::__v32 h = __ml::__ld32(s);
+  const __ml::__v32 t0 = __ml::__ld32(s + n - 128);
+  const __ml::__v32 t1 = __ml::__ld32(s + n - 96);
+  const __ml::__v32 t2 = __ml::__ld32(s + n - 64);
+  const __ml::__v32 t3 = __ml::__ld32(s + n - 32);
+  const u64 off = 32 - (reinterpret_cast<uintptr_t>(d) & 31);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem >= 128; rem -= 128, pd += 128, ps += 128 ) {
+    __bits::__block_move_32_sa(pd, ps);
+    __bits::__block_move_32_sa(pd + 32, ps + 32);
+    __bits::__block_move_32_sa(pd + 64, ps + 64);
+    __bits::__block_move_32_sa(pd + 96, ps + 96);
+  }
+  __ml::__st32(d + n - 128, t0);
+  __ml::__st32(d + n - 96, t1);
+  __ml::__st32(d + n - 64, t2);
+  __ml::__st32(d + n - 32, t3);
+  __ml::__st32(d, h);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept
+{
+  const __ml::__v32 t = __ml::__ld32(s + n - 32);
+  const __ml::__v32 h0 = __ml::__ld32(s);
+  const __ml::__v32 h1 = __ml::__ld32(s + 32);
+  const __ml::__v32 h2 = __ml::__ld32(s + 64);
+  const __ml::__v32 h3 = __ml::__ld32(s + 96);
+  u8 *pe = reinterpret_cast<u8 *>(reinterpret_cast<uintptr_t>(d + n) & ~static_cast<uintptr_t>(31));
+  const u8 *pse = s + (pe - d);
+  while ( static_cast<u64>(pe - d) > 128 ) {
+    pe -= 128;
+    pse -= 128;
+    __bits::__block_move_32_sa(pe + 96, pse + 96);
+    __bits::__block_move_32_sa(pe + 64, pse + 64);
+    __bits::__block_move_32_sa(pe + 32, pse + 32);
+    __bits::__block_move_32_sa(pe, pse);
+  }
+  __ml::__st32(d, h0);
+  __ml::__st32(d + 32, h1);
+  __ml::__st32(d + 64, h2);
+  __ml::__st32(d + 96, h3);
+  __ml::__st32(d + n - 32, t);
+  return d;
+}
+
+#else
+// SSE2 fallback variants
+__attribute__((nonnull)) inline u8 *
+__memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept
+{
+  const __m128i vv = __bits::__broadcast_byte_16(v);
+  __bits::__block_set_16(d, vv);
+  u8 *p = reinterpret_cast<u8 *>((reinterpret_cast<uintptr_t>(d) + 16) & ~static_cast<uintptr_t>(15));
+  u8 *const e = d + n;
+  for ( ; p + 64 <= e; p += 64 ) {
+    __bits::__block_set_16_a(p, vv);
+    __bits::__block_set_16_a(p + 16, vv);
+    __bits::__block_set_16_a(p + 32, vv);
+    __bits::__block_set_16_a(p + 48, vv);
+  }
+  __bits::__block_set_16(e - 64, vv);
+  __bits::__block_set_16(e - 48, vv);
+  __bits::__block_set_16(e - 32, vv);
+  __bits::__block_set_16(e - 16, vv);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memset_bulk_nt(u8 *__restrict d, const u8 v, const u64 n) noexcept
+{
+  const __m128i vv = __bits::__broadcast_byte_16(v);
+  __bits::__block_set_16(d, vv);
+  u8 *p = reinterpret_cast<u8 *>((reinterpret_cast<uintptr_t>(d) + 16) & ~static_cast<uintptr_t>(15));
+  u8 *const e = d + n;
+  for ( ; p + 64 <= e; p += 64 ) {
+    __bits::__block_set_16_nt(p, vv);
+    __bits::__block_set_16_nt(p + 16, vv);
+    __bits::__block_set_16_nt(p + 32, vv);
+    __bits::__block_set_16_nt(p + 48, vv);
+  }
+  __bits::__sfence();
+  __bits::__block_set_16(e - 64, vv);
+  __bits::__block_set_16(e - 48, vv);
+  __bits::__block_set_16(e - 32, vv);
+  __bits::__block_set_16(e - 16, vv);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept
+{
+  const __m128i vv = __bits::__broadcast_word_16(w);
+  u64 i = 0;
+  for ( ; i + 64 <= n; i += 64 ) {
+    __bits::__block_set_16(d + i, vv);
+    __bits::__block_set_16(d + i + 16, vv);
+    __bits::__block_set_16(d + i + 32, vv);
+    __bits::__block_set_16(d + i + 48, vv);
+  }
+  for ( ; i + 16 <= n; i += 16 ) __bits::__block_set_16(d + i, vv);
+  if ( i < n ) __bits::__block_set_16(d + n - 16, vv);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
+{
+  __bits::__block_copy_16(d, s);
+  const u64 off = 16 - (reinterpret_cast<uintptr_t>(d) & 15);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem >= 64; rem -= 64, pd += 64, ps += 64 ) {
+    __bits::__block_copy_16_sa(pd, ps);
+    __bits::__block_copy_16_sa(pd + 16, ps + 16);
+    __bits::__block_copy_16_sa(pd + 32, ps + 32);
+    __bits::__block_copy_16_sa(pd + 48, ps + 48);
+  }
+  __bits::__block_copy_16(d + n - 64, s + n - 64);
+  __bits::__block_copy_16(d + n - 48, s + n - 48);
+  __bits::__block_copy_16(d + n - 32, s + n - 32);
+  __bits::__block_copy_16(d + n - 16, s + n - 16);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memcpy_bulk_nt(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
+{
+  __bits::__block_copy_16(d, s);
+  const u64 off = 16 - (reinterpret_cast<uintptr_t>(d) & 15);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem >= 64; rem -= 64, pd += 64, ps += 64 ) {
+    __bits::__prefetch_t0(ps + 256);
+    __bits::__block_copy_16_nt(pd, ps);
+    __bits::__block_copy_16_nt(pd + 16, ps + 16);
+    __bits::__block_copy_16_nt(pd + 32, ps + 32);
+    __bits::__block_copy_16_nt(pd + 48, ps + 48);
+  }
+  __bits::__sfence();
+  __bits::__block_copy_16(d + n - 64, s + n - 64);
+  __bits::__block_copy_16(d + n - 48, s + n - 48);
+  __bits::__block_copy_16(d + n - 32, s + n - 32);
+  __bits::__block_copy_16(d + n - 16, s + n - 16);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept
+{
+  const __ml::__v16 h = __ml::__ld16(s);
+  const __ml::__v16 t0 = __ml::__ld16(s + n - 64);
+  const __ml::__v16 t1 = __ml::__ld16(s + n - 48);
+  const __ml::__v16 t2 = __ml::__ld16(s + n - 32);
+  const __ml::__v16 t3 = __ml::__ld16(s + n - 16);
+  const u64 off = 16 - (reinterpret_cast<uintptr_t>(d) & 15);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem >= 64; rem -= 64, pd += 64, ps += 64 ) {
+    __bits::__block_move_16_sa(pd, ps);
+    __bits::__block_move_16_sa(pd + 16, ps + 16);
+    __bits::__block_move_16_sa(pd + 32, ps + 32);
+    __bits::__block_move_16_sa(pd + 48, ps + 48);
+  }
+  __ml::__st16(d + n - 64, t0);
+  __ml::__st16(d + n - 48, t1);
+  __ml::__st16(d + n - 32, t2);
+  __ml::__st16(d + n - 16, t3);
+  __ml::__st16(d, h);
+  return d;
+}
+
+__attribute__((nonnull)) inline u8 *
+__memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept
+{
+  const __ml::__v16 t = __ml::__ld16(s + n - 16);
+  const __ml::__v16 h0 = __ml::__ld16(s);
+  const __ml::__v16 h1 = __ml::__ld16(s + 16);
+  const __ml::__v16 h2 = __ml::__ld16(s + 32);
+  const __ml::__v16 h3 = __ml::__ld16(s + 48);
+  u8 *pe = reinterpret_cast<u8 *>(reinterpret_cast<uintptr_t>(d + n) & ~static_cast<uintptr_t>(15));
+  const u8 *pse = s + (pe - d);
+  while ( static_cast<u64>(pe - d) > 64 ) {
+    pe -= 64;
+    pse -= 64;
+    __bits::__block_move_16_sa(pe + 48, pse + 48);
+    __bits::__block_move_16_sa(pe + 32, pse + 32);
+    __bits::__block_move_16_sa(pe + 16, pse + 16);
+    __bits::__block_move_16_sa(pe, pse);
+  }
+  __ml::__st16(d, h0);
+  __ml::__st16(d + 16, h1);
+  __ml::__st16(d + 32, h2);
+  __ml::__st16(d + 48, h3);
+  __ml::__st16(d + n - 16, t);
+  return d;
+}
+
+#endif      // __micron_x86_avx2
 
 };      // namespace simd
 };      // namespace micron

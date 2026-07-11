@@ -46,7 +46,12 @@
 #include "../../src/math/rng/engines.hpp"
 #include "../../src/mutex/mutex.hpp"
 #include "../../src/new.hpp"
+#ifndef ABC_RIGOR_ST_ONLY
+// MT worker harness (run_workers). Single-threaded consumers -- e.g. the standalone
+// abcmalloc mirror, where pulling micron's thread subsystem would drag in a second
+// allocator copy and ODR-collide -- define ABC_RIGOR_ST_ONLY to skip it.
 #include "../../src/thread/threads.hpp"
+#endif
 
 namespace abctest
 {
@@ -461,6 +466,7 @@ struct live_registry {
 // micron::thread is mmap-backed and movable-but-not-here: we placement-new each
 // thread in-place (no move => no double-join from the unnulled attr pid) and
 // join+destroy them explicitly. mmap stacks mean no parent-stack 32-thread cliff.
+#ifndef ABC_RIGOR_ST_ONLY
 template<typename Ctx>
 inline void
 run_workers(void (*fn)(Ctx *), Ctx *ctx, usize n) noexcept
@@ -475,5 +481,6 @@ run_workers(void (*fn)(Ctx *), Ctx *ctx, usize n) noexcept
     pool[i].~T();
   }
 }
+#endif
 
 };      // namespace abctest

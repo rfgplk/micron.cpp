@@ -9,12 +9,12 @@
 
 namespace micron
 {
-u32
+inline u32
 bernstein_32(const byte *data, usize sz)
 {
   u32 hash = 5381;
-  while ( --sz ) {
-    hash = (hash * 33) + static_cast<u32>(*(data + sz));      // moves backwords
+  for ( usize i = 0; i < sz; ++i ) {
+    hash = (hash * 33) + static_cast<u32>(data[i]);
   }
   return hash;
 }

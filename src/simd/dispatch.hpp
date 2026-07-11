@@ -7,7 +7,7 @@
 
 #include "../bits/__arch.hpp"
 
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_freestanding)
 #include "../../external/x86/x86.h"
 #endif
 
@@ -23,7 +23,7 @@ namespace micron
 namespace simd
 {
 
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_freestanding)
 
 struct __simd_flags {
   char fma;

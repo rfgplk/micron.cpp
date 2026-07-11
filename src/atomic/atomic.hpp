@@ -99,6 +99,19 @@ template<is_atomic_type T> struct atomic_token {
     return atom::sub_fetch(&v, set, (int)order);
   };
 
+  // was missing
+  T
+  fetch_or(T set, memory_order order) noexcept
+  {
+    return atom::fetch_or(&v, set, (int)order);
+  };
+
+  T
+  fetch_and(T set, memory_order order) noexcept
+  {
+    return atom::fetch_and(&v, set, (int)order);
+  };
+
   bool
   compare_and_swap(const T old, const T new_, const memory_order success = memory_order_seq_cst,
                    const memory_order failure = memory_order_seq_cst) noexcept
