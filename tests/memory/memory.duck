@@ -1,0 +1,25 @@
+# micron memory-routine validation battery: exhaustive small/overlap/pattern/
+# large-tier tests plus the existing rigor files, on all supported arches.
+# Cross lines run under qemu-*-static; missing toolchains are skipped.
+test tests/memory/ -o bin/memory/x64
+test tests/rigor/memcpy.cpp -o bin/memory/rigor_x64
+test tests/rigor/memmove.cpp -o bin/memory/rigor_x64
+test tests/rigor/memset.cpp -o bin/memory/rigor_x64
+test tests/rigor/mem_simd.cpp -o bin/memory/rigor_x64
+# cross lines are static (-s): no arm sysroot loader on this host, qemu runs static binaries directly
+test tests/memory/ --arm64 -s --def MEM_RIGOR_LITE -o bin/memory/arm64
+test tests/rigor/memcpy.cpp --arm64 -s -o bin/memory/rigor_arm64
+test tests/rigor/memmove.cpp --arm64 -s -o bin/memory/rigor_arm64
+test tests/rigor/memset.cpp --arm64 -s -o bin/memory/rigor_arm64
+test tests/rigor/mem_simd.cpp --arm64 -s -o bin/memory/rigor_arm64
+test tests/memory/ --arm -s --def MEM_RIGOR_LITE -o bin/memory/arm32
+test tests/rigor/memcpy.cpp --arm -s -o bin/memory/rigor_arm32
+test tests/rigor/memmove.cpp --arm -s -o bin/memory/rigor_arm32
+test tests/rigor/memset.cpp --arm -s -o bin/memory/rigor_arm32
+test tests/rigor/mem_simd.cpp --arm -s -o bin/memory/rigor_arm32
+test tests/rigor/arm32_amem_misaligned.cpp --arm -s -o bin/memory/rigor_arm32
+# i386: compile+codegen gate only (see tests/memory/i386_gate.sh; hosted -m32
+# needs glibc-devel.i686 and the freestanding 32-bit runtime has pre-existing
+# issues unrelated to mem*). Run separately: sh tests/memory/i386_gate.sh
+# freestanding C-ABI shim link gate (compile+link only; start objs from /usr/src/mc_start)
+build tests/memory/free/cabi_shims_freestanding.cpp -k -o bin/memory/free

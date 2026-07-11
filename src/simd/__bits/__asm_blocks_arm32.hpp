@@ -98,6 +98,12 @@ __block_set_16_a(u8 *__restrict d, uint8x16_t v) noexcept
   __asm__("vst1.8 {%q2}, [%1]" : "=m"(*reinterpret_cast<u8(*)[16]>(d)) : "r"(d), "w"(v));
 }
 
+__inline_g void
+__pld(const u8 *p) noexcept
+{
+  __asm__("pld [%0]" : : "r"(p));
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 16-byte memcmp (VCEQ.I8)
 __inline_g uint8x16_t

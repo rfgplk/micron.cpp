@@ -255,10 +255,15 @@ call_on_stack([[maybe_unused]] void *stack_top, [[maybe_unused]] void (*fn)(void
 
 // fiber CPU contexts
 //
-// NOTE: by default our swap will _NOT_ save/restore the FP control state, by benchmarking was measured at ~half the total switch cost
+// NOTE: by default our swap will _NOT_ save/restore the FP control state (measured 6.9 vs 8.4 cyc/switch hot)
 // every fiber instead starts with the thread's current FP env
 // code that changes rounding/exception modes must NEVER hold that change across a suspend point
 // unless compiled with -DMICRON_FIBER_FPENV
+//
+// under FPENV only the control modes (rounding, exception masks) are per-fiber; the sticky MXCSR status bits are masked out at save
+//
+// ldmxcsr/fldcw serialize the pipeline (~50 cyc each) whenever the loaded word differs from the live one
+// letting sticky status bits ride along makes every switch a real control word change (measured 113 cyc/switch)
 
 #if defined(__micron_arch_amd64)
 
@@ -283,6 +288,9 @@ static_assert(__builtin_offsetof(__fiber_ctx, fcw) == 0x44, "amd64 __fiber_ctx f
 [[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
 __micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noexcept
 {
+  // WARNING: xmm0 through xmm15 aren't saved explicitly
+  // red zones are _technically_ ignored (investigate)
+  // TODO: maybe do it via another macro? would suck up too many cycles unconditionally
   asm volatile("movq %rbx, 0x00(%rdi)\n\t"
                "movq %rbp, 0x08(%rdi)\n\t"
                "movq %r12, 0x10(%rdi)\n\t"
@@ -295,6 +303,7 @@ __micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noex
                "movq %rax, 0x30(%rdi)\n\t"
 #if defined(MICRON_FIBER_FPENV)
                "stmxcsr 0x40(%rdi)\n\t"
+               "andl $-64, 0x40(%rdi)\n\t"      // drop sticky status bits (0-5); control modes only
                "fnstcw 0x44(%rdi)\n\t"
                "ldmxcsr 0x40(%rsi)\n\t"      // restore *to
                "fldcw 0x44(%rsi)\n\t"
@@ -329,8 +338,13 @@ make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) n
   ctx->r12 = reinterpret_cast<u64>(arg);
   ctx->r13 = reinterpret_cast<u64>(fn);
 #if defined(MICRON_FIBER_FPENV)
-  ctx->mxcsr = 0x1F80;      // default: all SSE exceptions masked, round-to-nearest
-  ctx->fcw = 0x037F;        // default x87 control word
+  // seed from the live control state, status bits masked
+  u32 __mx;
+  u16 __cw;
+  asm volatile("stmxcsr %0" : "=m"(__mx));
+  asm volatile("fnstcw %0" : "=m"(__cw));
+  ctx->mxcsr = __mx & ~0x3Fu;
+  ctx->fcw = __cw;
 #endif
 }
 
@@ -368,6 +382,7 @@ __micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept
 #if defined(MICRON_FIBER_FPENV)
 #if defined(__SSE__)
                "stmxcsr 0x18(%eax)\n\t"
+               "andl $-64, 0x18(%eax)\n\t"      // drop sticky status bits (0-5); control modes only
 #endif
                "fnstcw 0x1c(%eax)\n\t"
 #endif
@@ -406,8 +421,15 @@ make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) n
   ctx->esi = reinterpret_cast<u32>(arg);
   ctx->edi = reinterpret_cast<u32>(fn);
 #if defined(MICRON_FIBER_FPENV)
-  ctx->mxcsr = 0x1F80;
-  ctx->fcw = 0x037F;
+  // live-seed, status bits masked
+  u16 __cw;
+  asm volatile("fnstcw %0" : "=m"(__cw));
+  ctx->fcw = __cw;
+#if defined(__SSE__)
+  u32 __mx;
+  asm volatile("stmxcsr %0" : "=m"(__mx));
+  ctx->mxcsr = __mx & ~0x3Fu;
+#endif
 #endif
 }
 

@@ -19,30 +19,60 @@
 namespace micron
 {
 
+// TODO: also move this out into plubming
+
+// cold tier selection
+[[gnu::noinline]] static __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) byte *
+__memset_large(byte *restrict d, const byte v, const u64 n) noexcept
+{
+#if defined(__micron_arch_x86_any)
+  if ( n < __mem_rep_min ) return simd::__memset_bulk(d, v, n);
+  const __mem_tunables &t = __mem_tun_get();
+  if ( n >= t.nt_set_threshold ) return simd::__memset_bulk_nt(d, v, n);
+  if ( n >= t.rep_stosb_threshold ) {
+    simd::__bits::__rep_stosb(d, v, static_cast<usize>(n));
+    return d;
+  }
+  return simd::__memset_bulk(d, v, n);
+#elif defined(__micron_arch_arm64)
+  if ( v == 0 && n >= __mem_zva_min ) return simd::__memset_bulk_zero(d, n);
+  if ( n >= __mem_nt_threshold_arm64 ) return simd::__memset_bulk_nt(d, v, n);
+  return simd::__memset_bulk(d, v, n);
+#else
+  return simd::__memset_bulk(d, v, n);
+#endif
+}
+
 [[gnu::always_inline]] static inline byte *
 __memset_bytes(byte *restrict d, const byte v, const u64 bytes) noexcept
 {
   if ( bytes == 0 ) return d;
-  if ( bytes < __simd_dispatch_threshold ) {
-    if ( bytes % 4 == 0 ) [[likely]]
-      for ( u64 n = 0; n < bytes; n += 4 ) {
-        d[n] = v;
-        d[n + 1] = v;
-        d[n + 2] = v;
-        d[n + 3] = v;
-      }
-    else
-      for ( u64 n = 0; n < bytes; n++ ) d[n] = v;
+  const u64 w = static_cast<u64>(broadcast_byte(v));
+  if ( bytes <= 32 ) {
+    __ml::__set_le32(d, w, bytes);
     return d;
   }
-#if defined(__micron_x86_avx512f)
-  if ( bytes >= 64 ) return simd::memset512<byte>(d, v, bytes);
-#endif
+  if ( bytes <= 64 ) {
+    __ml::__set_33_64(d, w, bytes);
+    return d;
+  }
+  if ( bytes <= 128 ) {
+    __ml::__set_65_128(d, w, bytes);
+    return d;
+  }
 #if defined(__micron_x86_avx2)
-  return simd::memset256<byte>(d, v, bytes);
-#else
-  return simd::memset128<byte>(d, v, bytes);
+  if ( bytes <= 256 ) {
+    __ml::__set_129_256(d, w, bytes);
+    return d;
+  }
 #endif
+  return __memset_large(d, v, bytes);
+}
+
+[[gnu::noinline]] static __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) byte *
+__memset_words_large(byte *restrict d, const u64 w, const u64 n) noexcept
+{
+  return simd::__wordset_bulk(d, w, n);
 }
 
 [[gnu::always_inline]] static inline byte *
@@ -51,21 +81,11 @@ __memset_words(byte *restrict d, const u64 w, const u64 bytes) noexcept
   if ( bytes == 0 ) return d;
   const byte b0 = static_cast<byte>(w);
   if ( w == broadcast_byte(b0) ) return __memset_bytes(d, b0, bytes);
-  if ( bytes < __simd_dispatch_threshold ) {
-    const u64 wn = bytes / sizeof(u64);
-    for ( u64 i = 0; i < wn; i++ ) __builtin_memcpy(d + i * sizeof(u64), &w, sizeof(u64));
-    const u64 rem = bytes % sizeof(u64);
-    if ( rem ) {
-      const byte *wb = reinterpret_cast<const byte *>(&w);
-      for ( u64 i = 0; i < rem; i++ ) d[wn * sizeof(u64) + i] = wb[i];
-    }
+  if ( bytes <= 64 ) {
+    __ml::__wset_le64(d, w, bytes);
     return d;
   }
-#if defined(__micron_x86_avx2)
-  return simd::wordset256(d, w, bytes);
-#else
-  return simd::wordset128(d, w, bytes);
-#endif
+  return __memset_words_large(d, w, bytes);
 }
 
 template<typename T>

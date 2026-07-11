@@ -115,7 +115,50 @@ __block_set_16_nt(u8 *__restrict d, __m128i v) noexcept
   __asm__("movntdq %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d)) : "x"(v));
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// ERMS rep-string leaves
+__inline_g void
+__rep_movsb(u8 *d, const u8 *s, usize n) noexcept
+{
+  __asm__ __volatile__("rep movsb" : "+D"(d), "+S"(s), "+c"(n) : : "memory");
+}
+
+__inline_g void
+__rep_stosb(u8 *d, u8 v, usize n) noexcept
+{
+  __asm__ __volatile__("rep stosb" : "+D"(d), "+c"(n) : "a"(v) : "memory");
+}
+
+__inline_g void
+__sfence(void) noexcept
+{
+  __asm__ __volatile__("sfence" ::: "memory");
+}
+
+// no outputs must be volatile
+__inline_g void
+__prefetch_t0(const u8 *p) noexcept
+{
+  __asm__("prefetcht0 %0" : : "m"(*p));
+}
+
+__inline_g void
+__block_copy_16_sa(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  __m128i t;
+  __asm__("movdqu %1, %0" : "=x"(t) : "m"(*reinterpret_cast<const __m128i *>(s)));
+  __asm__("movdqa %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d)) : "x"(t));
+}
+
+__inline_g void
+__block_move_16_sa(u8 *d, const u8 *s) noexcept
+{
+  __m128i t;
+  __asm__("movdqu %1, %0" : "=x"(t) : "m"(*reinterpret_cast<const __m128i *>(s)));
+  __asm__("movdqa %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d)) : "x"(t));
+}
+
+// %%%%%%%%%%%%%%%%%%%%
 // 16-byte memcmp early-exit (SSE2)
 __inline_g u32
 __block_neq_mask_16(const u8 *a, const u8 *b) noexcept
@@ -193,6 +236,21 @@ __inline_g_T("avx2") void __block_move_32(u8 *d, const u8 *s) noexcept
   __m256i t;
   __asm__("vmovdqu %1, %0" : "=v"(t) : "m"(*reinterpret_cast<const __m256i *>(s)));
   __asm__("vmovdqu %1, %0" : "=m"(*reinterpret_cast<__m256i *>(d)) : "v"(t));
+}
+
+// unaligned load + ALIGNED store: bulk-loop bodies (dst pre-aligned)
+__inline_g_T("avx2") void __block_copy_32_sa(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  __m256i t;
+  __asm__("vmovdqu %1, %0" : "=v"(t) : "m"(*reinterpret_cast<const __m256i *>(s)));
+  __asm__("vmovdqa %1, %0" : "=m"(*reinterpret_cast<__m256i *>(d)) : "v"(t));
+}
+
+__inline_g_T("avx2") void __block_move_32_sa(u8 *d, const u8 *s) noexcept
+{
+  __m256i t;
+  __asm__("vmovdqu %1, %0" : "=v"(t) : "m"(*reinterpret_cast<const __m256i *>(s)));
+  __asm__("vmovdqa %1, %0" : "=m"(*reinterpret_cast<__m256i *>(d)) : "v"(t));
 }
 
 __inline_g_T("avx2") __m256i __broadcast_byte_32(u8 b) noexcept

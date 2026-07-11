@@ -54,11 +54,13 @@ current_worker() noexcept
   return __cur_worker;
 }
 
+alignas(64) inline micron::atomic_token<u32> __cl_searchers{ 0 };      // workers in the pre-park search spin
+
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+inline constexpr u32 __cl_max_searchers = 2;
 // separate cachelines: every __notify_work read of sleepers must not contend with signal RMWs
 alignas(64) inline micron::atomic_token<u32> __cl_signal{ 0 };
 alignas(64) inline micron::atomic_token<u32> __cl_sleepers{ 0 };
-alignas(64) inline micron::atomic_token<u32> __cl_searchers{ 0 };      // workers in the pre-park search spin
-inline constexpr u32 __cl_max_searchers = 2;
 
 [[gnu::always_inline]] inline void
 __notify_work() noexcept
@@ -68,6 +70,43 @@ __notify_work() noexcept
     micron::wake_futex(__cl_signal.ptr(), 1);
   }
 }
+#else
+struct alignas(64) __cl_parkslot {
+  micron::atomic_token<u32> epoch{ 0 };
+};
+
+inline __cl_parkslot __cl_park[32];
+alignas(64) inline micron::atomic_token<u32> __cl_sleeper_mask{ 0 };      // bit i: worker i parked (or committing to park)
+
+// claim-and-wake one parked worker
+template<bool Strong>
+[[gnu::always_inline]] inline void
+__cl_wake_one() noexcept
+{
+  u32 __m;
+  if constexpr ( Strong )
+    __m = __cl_sleeper_mask.fetch_or(0, micron::memory_order_seq_cst);
+  else
+    __m = __cl_sleeper_mask.get(micron::memory_order_relaxed);
+  while ( __m != 0 ) {
+    const u32 __i = static_cast<u32>(__builtin_ctz(__m));
+    const u32 __bit = 1u << __i;
+    const u32 __old = __cl_sleeper_mask.fetch_and(~__bit, micron::memory_order_acq_rel);
+    if ( __old & __bit ) {      // claimed an actual sleeper
+      __cl_park[__i].epoch.fetch_add(1, micron::memory_order_release);
+      micron::wake_futex(__cl_park[__i].epoch.ptr(), 1);
+      return;
+    }
+    __m = __old & ~__bit;      // raced the sleepers own clear
+  }
+}
+
+[[gnu::always_inline]] inline void
+__notify_work() noexcept
+{
+  if ( __cl_sleeper_mask.get(micron::memory_order_relaxed) != 0 ) __cl_wake_one<false>();
+}
+#endif
 
 [[gnu::always_inline]] inline void
 __count_take(__frame_base *fb) noexcept

@@ -5,6 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// NOTE: pulls directly from the local micron source tree via relative includes
+// (../../src), so no system-wide install is required and tests always build
+// against the in-tree headers rather than a stale /usr/include/micron copy.
 #include "../../src/std.hpp"
 
 #include "../../src/concepts.hpp"
