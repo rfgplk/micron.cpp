@@ -74,9 +74,9 @@ make_flags(const mc::constarray<F> flags)
 }
 
 struct composed_t {
-  string_type sanitize;   
-  string_type extensions; 
-  string_type link_tail;  
+  string_type sanitize;
+  string_type extensions;
+  string_type link_tail;
 };
 
 inline void
@@ -146,8 +146,7 @@ compose(const config_t &conf, bool linking)
       __compose_add(c.link_tail, "-static-pie");
       // under -k the image has no _start
       if ( fs ) __compose_add(c.link_tail, "-nostartfiles -Wl,-e,entry -Wl,--no-dynamic-linker");
-    }
-    else if ( conf.pie and !fs )
+    } else if ( conf.pie and !fs )
       __compose_add(c.link_tail, "-pie");
     if ( conf.relro ) __compose_add(c.link_tail, "-Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack");
     if ( conf.gc ) __compose_add(c.link_tail, "-Wl,--gc-sections");
@@ -212,11 +211,13 @@ batch_cmp(const config_t &conf)
       compile_libs += n;
     }
   string_type compile_objs = "";
-  if ( !conf.bonus_objs.empty() )
+  if ( !conf.bonus_objs.empty() ) {
     for ( auto &n : conf.bonus_objs ) {
       compile_objs += n;
       compile_objs += " ";
     }
+    compile_objs.pop_back();
+  }
   const string_type flags_warn_base = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
 
   // no more useless cast + floats
@@ -282,7 +283,8 @@ batch_cmp(const config_t &conf)
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
   if ( conf.freestanding )
-    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
+    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static,
+                        __cz.link_tail);
   else
     return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
 };
@@ -335,11 +337,13 @@ batch_cmp_armv7(const config_t &conf)
       compile_libs += n;
     }
   string_type compile_objs = "";
-  if ( !conf.bonus_objs.empty() )
+  if ( !conf.bonus_objs.empty() ) {
     for ( auto &n : conf.bonus_objs ) {
       compile_objs += n;
       compile_objs += " ";
     }
+    compile_objs.pop_back();
+  }
   const string_type flags_warn_base = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
 
   // no more useless cast + floats
@@ -407,7 +411,8 @@ batch_cmp_armv7(const config_t &conf)
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
   if ( conf.freestanding )
-    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
+    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static,
+                        __cz.link_tail);
   else
     return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
 };
@@ -460,11 +465,13 @@ batch_cmp_aarch64(const config_t &conf)
       compile_libs += n;
     }
   string_type compile_objs = "";
-  if ( !conf.bonus_objs.empty() )
+  if ( !conf.bonus_objs.empty() ) {
     for ( auto &n : conf.bonus_objs ) {
       compile_objs += n;
       compile_objs += " ";
     }
+    compile_objs.pop_back();
+  }
   const string_type flags_warn_base = make_flags(gcc::w_flags::flags::Wall, gcc::w_flags::flags::Wextra, gcc::w_flags::flags::pedantic);
 
   const string_type flags_warn_extra = make_flags(
@@ -530,7 +537,8 @@ batch_cmp_aarch64(const config_t &conf)
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
   if ( conf.freestanding )
-    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
+    return make_command(command_pre, conf.target, startup_objs, command_post, compile_objs, "-o", conf.target_out, libs_static,
+                        __cz.link_tail);
   else
     return make_command(command_pre, conf.target, command_post, compile_objs, "-o", conf.target_out, libs_static, __cz.link_tail);
 };
@@ -593,11 +601,13 @@ batch_gas(const config_t &conf)
   }
   if ( !includes_location.empty() ) includes_location.pop_back();
   string_type compile_objs = "";
-  if ( !conf.bonus_objs.empty() )
+  if ( !conf.bonus_objs.empty() ) {
     for ( auto &n : conf.bonus_objs ) {
       compile_objs += n;
       compile_objs += " ";
     }
+    compile_objs.pop_back();
+  }
 
   string_type command_pre = make_command(conf.compiler_path, comp_type, main_flags, debug_flags, bin_type, freestanding);
   string_type command_post = make_command(defines_flags, includes_location);
