@@ -80,11 +80,15 @@ struct __mem_tunables {
   usize nt_set_threshold;
   usize rep_movsb_threshold;
   usize rep_stosb_threshold;
-  bool probed;
 };
 
 inline constinit __mem_tunables __mem_tun
-    = { __mem_nt_threshold_default, __mem_nt_threshold_default, __mem_tier_disabled, __mem_tier_disabled, false };
+    = { __mem_nt_threshold_default, __mem_nt_threshold_default, __mem_tier_disabled, __mem_tier_disabled };
+
+// 0 = unprobed
+// 1 = a thread is probing
+// 2 = published
+inline u32 __mem_tun_state = 0;
 
 #if defined(__micron_arch_x86_any) && !defined(MICRON_MEM_NO_PROBE)
 [[gnu::cold, gnu::noinline]] inline void
@@ -135,7 +139,6 @@ __mem_probe() noexcept
   __mem_tun.rep_movsb_threshold = movsb < nt_copy ? movsb : nt_copy;
   __mem_tun.rep_stosb_threshold = stosb < nt_set ? stosb : nt_set;
   __asm__ __volatile__("" ::: "memory");
-  __mem_tun.probed = true;
 }
 #endif
 
@@ -143,8 +146,15 @@ __mem_probe() noexcept
 __mem_tun_get() noexcept
 {
 #if defined(__micron_arch_x86_any) && !defined(MICRON_MEM_NO_PROBE)
-  if ( !__mem_tun.probed ) [[unlikely]]
-    __mem_probe();
+  if ( __atomic_load_n(&__mem_tun_state, __ATOMIC_ACQUIRE) != 2u ) [[unlikely]] {
+    u32 __exp = 0u;
+    if ( __atomic_compare_exchange_n(&__mem_tun_state, &__exp, 1u, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) ) {
+      __mem_probe();
+      __atomic_store_n(&__mem_tun_state, 2u, __ATOMIC_RELEASE);
+    } else {
+      while ( __atomic_load_n(&__mem_tun_state, __ATOMIC_ACQUIRE) != 2u ) __asm__ __volatile__("pause");      // wait for the winner
+    }
+  }
 #endif
   return __mem_tun;
 }

@@ -328,7 +328,7 @@ prep_futex_wake(sqe *s, u32 *word, u32 nwake, u64 mask = futex_match_any) noexce
 struct ring {
   i32 fd = -1;
   u32 features = 0;
-  u32 to_submit = 0;
+  u32 to_submit = 0;      // unsubmitted sqe count; accessed atomically (see advance_sq/enter) - a parked sentinel may enter() lock-free
   u32 *sq_head = nullptr;
   u32 *sq_tail = nullptr;
   u32 *sq_mask = nullptr;
@@ -445,16 +445,20 @@ struct ring {
   advance_sq() noexcept
   {
     atom::store(sq_tail, *sq_tail + 1, __ATOMIC_RELEASE);
-    ++to_submit;
+    atom::fetch_add(&to_submit, 1u, __ATOMIC_ACQ_REL);
   }
 
   long
   enter(u32 wait_nr = 0) noexcept
   {
-    const u32 __n = to_submit;
-    to_submit = 0;
+    const u32 __n = atom::exchange(&to_submit, 0u, __ATOMIC_ACQ_REL);
     long r = __io_uring_enter(fd, __n, wait_nr, wait_nr != 0 ? enter_getevents : 0u, nullptr, 0);
-    if ( r < 0 && r == -4 /*EINTR*/ && wait_nr != 0 ) return 0;      // caller re-checks the CQ
+    if ( r >= 0 ) {
+      if ( static_cast<u32>(r) < __n ) atom::fetch_add(&to_submit, __n - static_cast<u32>(r), __ATOMIC_ACQ_REL);
+      return r;
+    }
+    atom::fetch_add(&to_submit, __n, __ATOMIC_ACQ_REL);
+    if ( r == -4 /*EINTR*/ && wait_nr != 0 ) return 0;
     return r;
   }
 

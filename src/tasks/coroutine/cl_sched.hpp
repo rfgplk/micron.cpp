@@ -319,8 +319,11 @@ struct engine {
     (void)__io.ring.enter(1);      // block: ANY cqe ends the park
     __try_drain_io();
     if ( __io.park_fired.get(micron::memory_order_acquire) == 0 ) {
-      // woken by io, our ftxwait is still armed: cancel it and drain until its cqe
-      __io_submit(__io_tag_cancel, [](micron::uring::sqe *__s) { micron::uring::prep_cancel(__s, __io_tag_park); });
+      while ( !__io_submit(__io_tag_cancel, [](micron::uring::sqe *__s) { micron::uring::prep_cancel(__s, __io_tag_park); }) ) {
+        if ( __io.park_fired.get(micron::memory_order_acquire) != 0 ) break;    
+        (void)__io.ring.enter(1);
+        __try_drain_io();
+      }
       while ( __io.park_fired.get(micron::memory_order_acquire) == 0 ) {
         (void)__io.ring.enter(1);
         __try_drain_io();

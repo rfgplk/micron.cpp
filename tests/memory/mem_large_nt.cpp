@@ -133,7 +133,8 @@ main()
   const micron::__mem_tunables saved = micron::__mem_tun;
   // rep window [2048, 16384), NT >= 16384; sizes below __mem_rep_min (2048)
   // short-circuit to the bulk loop
-  micron::__mem_tun = { 16384, 16384, 2048, 2048, true };
+  micron::__mem_tun = { 16384, 16384, 2048, 2048 };
+  micron::__mem_tun_state = 2;      // mark published so __mem_tun_get() keeps these forced values (no re-probe)
   const u64 tier_sizes[] = { 255, 1024, 2047, 2048, 2049, 4096, 8192, 16383, 16384, 16385, 65536 };
   for ( u32 which = 0; which < 4; ++which )
     for ( u64 n : tier_sizes )
@@ -144,7 +145,8 @@ main()
           sb::require(false);
         }
   // NT disabled entirely (tier boundary edge)
-  micron::__mem_tun = { micron::__mem_tier_disabled, micron::__mem_tier_disabled, 2048, 2048, true };
+  micron::__mem_tun = { micron::__mem_tier_disabled, micron::__mem_tier_disabled, 2048, 2048 };
+  micron::__mem_tun_state = 2;
   for ( u32 which = 0; which < 4; ++which )
     for ( u64 n : tier_sizes )
       if ( !run_case(n, 1, which) ) {

@@ -187,9 +187,12 @@ template<typename R = hash64_t, u32 seed = default_seed_32>
 inline __attribute__((always_inline)) auto
 hash(const char *data)
 {
-  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
-    return hash64<seed>(data);
-  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> ) {
+    if constexpr ( seed == default_seed_32 )
+      return hash64(data);
+    else
+      return hash64<seed>(data);
+  } else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(data);
 }
 
@@ -197,9 +200,12 @@ template<typename R = hash64_t, is_container_or_string T, u32 seed = default_see
 inline __attribute__((always_inline)) auto
 hash(const T &data)
 {
-  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
-    return hash64<seed>(data);
-  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> ) {
+    if constexpr ( seed == default_seed_32 )
+      return hash64(data);
+    else
+      return hash64<seed>(data);
+  } else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(data);
 }
 
@@ -207,9 +213,12 @@ template<typename R = hash64_t, u32 seed = default_seed_32>
 inline __attribute__((always_inline)) auto
 hash(const byte *data, usize len)
 {
-  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
-    return hash64<seed>(data, len);
-  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> ) {
+    if constexpr ( seed == default_seed_32 )
+      return hash64(data, len);
+    else
+      return hash64<seed>(data, len);
+  } else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(data, len);
 }
 
@@ -218,9 +227,12 @@ template<typename R = hash64_t, typename F, u32 seed = default_seed_32>
 inline __attribute__((always_inline)) auto
 hash(const F data)
 {
-  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
-    return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(F));
-  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> ) {
+    if constexpr ( seed == default_seed_32 )
+      return hash64(reinterpret_cast<const byte *>(&data), sizeof(F));
+    else
+      return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(F));
+  } else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(F));
 }
 
@@ -230,9 +242,12 @@ template<typename R = hash64_t, u32 seed = default_seed_32>
 inline __attribute__((always_inline)) auto
 hash(const uint128_t &data)
 {
-  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
-    return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(uint128_t));
-  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> ) {
+    if constexpr ( seed == default_seed_32 )
+      return hash64(reinterpret_cast<const byte *>(&data), sizeof(uint128_t));
+    else
+      return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(uint128_t));
+  } else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(uint128_t));
 }
 
@@ -240,9 +255,12 @@ template<typename R = hash64_t, u32 seed = default_seed_32>
 inline __attribute__((always_inline)) auto
 hash(const int128_t &data)
 {
-  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> )
-    return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(int128_t));
-  else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
+  if constexpr ( sizeof(R) == 8 or micron::is_same_v<R, hash64_t> ) {
+    if constexpr ( seed == default_seed_32 )
+      return hash64(reinterpret_cast<const byte *>(&data), sizeof(int128_t));
+    else
+      return hash64<seed>(reinterpret_cast<const byte *>(&data), sizeof(int128_t));
+  } else if constexpr ( micron::is_same_v<R, hash128_t> or micron::is_convertible_v<R, hash128_t> )
     return hash128<seed>(reinterpret_cast<const byte *>(&data), sizeof(int128_t));
 }
 #endif

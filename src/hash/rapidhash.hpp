@@ -90,6 +90,34 @@ rapid_read32(const u8 *p) noexcept
   return (u64)v;
 }
 
+inline __attribute__((always_inline)) u64
+rapid_finalize(u64 a, u64 b, u64 seed, usize i, const u64 *secret) noexcept
+{
+  a ^= secret[1];
+  b ^= seed;
+  rapid_mum(&a, &b);
+  return rapid_mix(a ^ secret[7], b ^ secret[1] ^ i);
+}
+
+inline __attribute__((always_inline)) void
+rapid_short(const u8 *p, usize len, u64 &seed, u64 &a, u64 &b) noexcept
+{
+  if ( len >= 4 ) {
+    seed ^= len;
+    if ( len >= 8 ) {
+      a = rapid_read64(p);
+      b = rapid_read64(p + len - 8);
+    } else {
+      a = rapid_read32(p);
+      b = rapid_read32(p + len - 4);
+    }
+  } else if ( len > 0 ) {
+    a = (((u64)p[0]) << 45) | p[len - 1];
+    b = p[len >> 1];
+  } else
+    a = b = 0;
+}
+
 inline u64
 rapidhash_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept
 {
@@ -98,22 +126,7 @@ rapidhash_internal(const void *key, usize len, u64 seed, const u64 *secret) noex
   u64 a = 0, b = 0;
   usize i = len;
   if ( __rapid_likely(len <= 16) ) {
-    if ( len >= 4 ) {
-      seed ^= len;
-      if ( len >= 8 ) {
-        const u8 *plast = p + len - 8;
-        a = rapid_read64(p);
-        b = rapid_read64(plast);
-      } else {
-        const u8 *plast = p + len - 4;
-        a = rapid_read32(p);
-        b = rapid_read32(plast);
-      }
-    } else if ( len > 0 ) {
-      a = (((u64)p[0]) << 45) | p[len - 1];
-      b = p[len >> 1];
-    } else
-      a = b = 0;
+    rapid_short(p, len, seed, a, b);
   } else {
     if ( len > 112 ) {
       u64 see1 = seed, see2 = seed;
@@ -158,10 +171,7 @@ rapidhash_internal(const void *key, usize len, u64 seed, const u64 *secret) noex
     a = rapid_read64(p + i - 16) ^ i;
     b = rapid_read64(p + i - 8);
   }
-  a ^= secret[1];
-  b ^= seed;
-  rapid_mum(&a, &b);
-  return rapid_mix(a ^ secret[7], b ^ secret[1] ^ i);
+  return rapid_finalize(a, b, seed, i, secret);
 }
 
 inline u64
@@ -172,22 +182,7 @@ rapidhash_micro_internal(const void *key, usize len, u64 seed, const u64 *secret
   u64 a = 0, b = 0;
   usize i = len;
   if ( __rapid_likely(len <= 16) ) {
-    if ( len >= 4 ) {
-      seed ^= len;
-      if ( len >= 8 ) {
-        const u8 *plast = p + len - 8;
-        a = rapid_read64(p);
-        b = rapid_read64(plast);
-      } else {
-        const u8 *plast = p + len - 4;
-        a = rapid_read32(p);
-        b = rapid_read32(plast);
-      }
-    } else if ( len > 0 ) {
-      a = (((u64)p[0]) << 45) | p[len - 1];
-      b = p[len >> 1];
-    } else
-      a = b = 0;
+    rapid_short(p, len, seed, a, b);
   } else {
     if ( i > 80 ) {
       u64 see1 = seed, see2 = seed;
@@ -221,10 +216,7 @@ rapidhash_micro_internal(const void *key, usize len, u64 seed, const u64 *secret
     a = rapid_read64(p + i - 16) ^ i;
     b = rapid_read64(p + i - 8);
   }
-  a ^= secret[1];
-  b ^= seed;
-  rapid_mum(&a, &b);
-  return rapid_mix(a ^ secret[7], b ^ secret[1] ^ i);
+  return rapid_finalize(a, b, seed, i, secret);
 }
 
 inline u64
@@ -235,22 +227,7 @@ rapidhash_nano_internal(const void *key, usize len, u64 seed, const u64 *secret)
   u64 a = 0, b = 0;
   usize i = len;
   if ( __rapid_likely(len <= 16) ) {
-    if ( len >= 4 ) {
-      seed ^= len;
-      if ( len >= 8 ) {
-        const u8 *plast = p + len - 8;
-        a = rapid_read64(p);
-        b = rapid_read64(plast);
-      } else {
-        const u8 *plast = p + len - 4;
-        a = rapid_read32(p);
-        b = rapid_read32(plast);
-      }
-    } else if ( len > 0 ) {
-      a = (((u64)p[0]) << 45) | p[len - 1];
-      b = p[len >> 1];
-    } else
-      a = b = 0;
+    rapid_short(p, len, seed, a, b);
   } else {
     if ( i > 48 ) {
       u64 see1 = seed, see2 = seed;
@@ -273,10 +250,7 @@ rapidhash_nano_internal(const void *key, usize len, u64 seed, const u64 *secret)
     a = rapid_read64(p + i - 16) ^ i;
     b = rapid_read64(p + i - 8);
   }
-  a ^= secret[1];
-  b ^= seed;
-  rapid_mum(&a, &b);
-  return rapid_mix(a ^ secret[7], b ^ secret[1] ^ i);
+  return rapid_finalize(a, b, seed, i, secret);
 }
 
 #undef __rapid_likely

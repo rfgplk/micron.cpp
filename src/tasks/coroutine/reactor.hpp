@@ -76,7 +76,7 @@ __io_submit(u64 __ud, Fill &&__fill) noexcept
   __io_lock(__io.sq_lk);
   micron::uring::sqe *__s = __io.ring.get_sqe();
   if ( __s == nullptr ) {
-    __io.ring.enter(0);      // flush a full SQ once
+    __io.ring.enter(0);
     __s = __io.ring.get_sqe();
     if ( __s == nullptr ) {
       __io_unlock(__io.sq_lk);
@@ -86,9 +86,9 @@ __io_submit(u64 __ud, Fill &&__fill) noexcept
   __fill(__s);
   __s->user_data = __ud;
   __io.ring.advance_sq();
-  long __r = __io.ring.enter(0);
+  (void)__io.ring.enter(0);
   __io_unlock(__io.sq_lk);
-  return __r >= 0;
+  return true;
 }
 
 };      // namespace coro

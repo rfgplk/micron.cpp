@@ -15,18 +15,6 @@ constexpr u32 fnv1a_32_prime = 16777619u;
 constexpr u64 fnv1a_64_basis = 14695981039346656037ULL;
 constexpr u64 fnv1a_64_prime = 1099511628211ULL;
 
-template<u32 seed = 0>
-inline u32
-fnv1a_32(const byte *data, usize sz)
-{
-  u32 hash = fnv1a_32_basis ^ seed;
-  for ( usize i = 0; i < sz; ++i ) {
-    hash ^= static_cast<u32>(data[i]);
-    hash *= fnv1a_32_prime;
-  }
-  return hash;
-}
-
 inline u32
 fnv1a_32(const byte *data, u32 seed, usize sz)
 {
@@ -38,16 +26,11 @@ fnv1a_32(const byte *data, u32 seed, usize sz)
   return hash;
 }
 
-template<u64 seed = 0>
-inline u64
-fnv1a_64(const byte *data, usize sz)
+template<u32 seed = 0>
+inline u32
+fnv1a_32(const byte *data, usize sz)
 {
-  u64 hash = fnv1a_64_basis ^ seed;
-  for ( usize i = 0; i < sz; ++i ) {
-    hash ^= static_cast<u64>(data[i]);
-    hash *= fnv1a_64_prime;
-  }
-  return hash;
+  return fnv1a_32(data, seed, sz);  
 }
 
 inline u64
@@ -59,5 +42,12 @@ fnv1a_64(const byte *data, u64 seed, usize sz)
     hash *= fnv1a_64_prime;
   }
   return hash;
+}
+
+template<u64 seed = 0>
+inline u64
+fnv1a_64(const byte *data, usize sz)
+{
+  return fnv1a_64(data, seed, sz); 
 }
 }      // namespace micron
