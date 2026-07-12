@@ -14,6 +14,7 @@
 
 namespace micron
 {
+// NOTE: everything here must be inline so we avoid multiple definition ODRs
 
 // NOTE: the raw mmap syscall returns -ERRNO on failure
 inline __attribute__((always_inline)) addr_t *
@@ -28,51 +29,51 @@ mmap(addr_t *__restrict addr, usize len, int prot, int flags, int fd, posix::off
 }
 
 // addr_t *mmap64();
-int
+inline int
 munmap(addr_t *__restrict addr, usize len)
 {
   return (int)micron::syscall(SYS_munmap, addr, len);
 }
 
-int
+inline int
 mprotect(addr_t *addr, usize len, int prot)
 {
   return (int)micron::syscall(SYS_mprotect, addr, len, prot);
 }
 
-int
+inline int
 msync(addr_t *addr, usize len, int flags)
 {
   return (int)micron::syscall(SYS_msync, addr, len, flags);
 }
 
-int
+inline int
 madvise(addr_t *addr, usize len, int advice)
 {
 
   return (int)micron::syscall(SYS_madvise, addr, len, advice);
 };
 
-int
+inline int
 mlock(const addr_t *addr, usize len)
 {
   return (int)micron::syscall(SYS_mlock, addr, len);
 }
 
-int
+inline int
 munlock(const addr_t *addr, usize len)
 {
   return (int)micron::syscall(SYS_munlock, addr, len);
 }
 
-int
+inline int
 memfd_create(const char *name, unsigned int flags)
 {
   return (int)micron::syscall(SYS_memfd_create, name, flags);
 }
 
 #if !defined(__micron_arch_arm32)
-int
+inline int
 memfd_secret(const char *name, unsigned int flags)
 {
   return (int)micron::syscall(SYS_memfd_secret, name, flags);
@@ -80,13 +81,13 @@ memfd_secret(const char *name, unsigned int flags)
 #endif
 
 // mlockall flags (mcl_current / mcl_future / mcl_onfault) live in mmap_bits.hpp
-int
+inline int
 mlockall(int flags)
 {
   return static_cast<int>(micron::syscall(SYS_mlockall, flags));
 }
 
-int
+inline int
 munlockall(void)
 {
   return static_cast<int>(micron::syscall(SYS_munlockall));
@@ -97,19 +98,19 @@ constexpr int mremap_maymove = 1;
 constexpr int mremap_fixed = 2;
 constexpr int mremap_dontunmap = 4;
 
-addr_t *
+inline addr_t *
 mremap(addr_t *old_addr, usize old_size, usize new_size, int flags)
 {
   return reinterpret_cast<addr_t *>(micron::syscall(SYS_mremap, old_addr, old_size, new_size, flags, 0));
 }
 
-addr_t *
+inline addr_t *
 mremap(addr_t *old_addr, usize old_size, usize new_size, int flags, addr_t *new_addr)
 {
   return reinterpret_cast<addr_t *>(micron::syscall(SYS_mremap, old_addr, old_size, new_size, flags, new_addr));
 }
 
-int
+inline int
 mincore(addr_t *addr, usize length, unsigned char *vec)
 {
   return static_cast<int>(micron::syscall(SYS_mincore, addr, length, vec));
@@ -129,13 +130,13 @@ brk(T *addr)
   return micron::syscall(SYS_brk, addr);
 }
 
-addr_t *
+inline addr_t *
 brk(nullptr_t t [[maybe_unused]])
 {
   return reinterpret_cast<addr_t *>(micron::syscall(SYS_brk, 0));
 }
 
-addr_t *
+inline addr_t *
 sbrk(intptr_t increment)
 {
   addr_t *__program_break = nullptr;

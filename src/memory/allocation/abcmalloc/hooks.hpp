@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../../../math/__asm/hw.hpp"
 #include "../../../math/generic.hpp"
 #include "../../../types.hpp"
 #include "__sys.hpp"
@@ -52,7 +53,7 @@ __calculate_space_cache(usize sz)
 {
   // x^2 * ln(x * sqrt(x))
   // WARNING: square in double; usize sz*sz wraps at sz >= 2^16 on width-32
-  u64 t = static_cast<u64>((double)sz * (double)sz * micron::math::logf128((double)sz * __builtin_sqrt((double)sz)));
+  u64 t = static_cast<u64>((double)sz * (double)sz * micron::math::logf128((double)sz * micron::math::hw::sqrt_sd((double)sz)));
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   u64 pages = static_cast<u64>(t_2);
@@ -65,7 +66,7 @@ inline usize
 __calculate_space_small(usize sz)
 {
   // new equation: x * sqrt(x) * 400 smooth sublinear-in-class growth; 4 MiB at sz=513, ~128 MiB at sz=4095
-  u64 t = static_cast<u64>(static_cast<double>(sz) * __builtin_sqrt(static_cast<double>(sz)) * 400.0);
+  u64 t = static_cast<u64>(static_cast<double>(sz) * micron::math::hw::sqrt_sd(static_cast<double>(sz)) * 400.0);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   u64 pages = static_cast<u64>(t_2);
@@ -109,7 +110,7 @@ __calculate_space_huge(usize sz)
   // sqrt(x) * ln(x)^2 * 125; aggressive at the floor, tapers at the top
   double f_sz = static_cast<double>(sz);
   double lg = static_cast<double>(micron::math::logf128(static_cast<flong>(sz)));
-  u64 t = static_cast<u64>(__builtin_sqrt(f_sz) * lg * lg * 125.0);
+  u64 t = static_cast<u64>(micron::math::hw::sqrt_sd(f_sz) * lg * lg * 125.0);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   u64 pages = static_cast<u64>(t_2);

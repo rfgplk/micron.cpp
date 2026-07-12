@@ -1,0 +1,72 @@
+#  duck tests/verify_compile.duck        (== duck batch tests/verify_compile.duck)
+#  duck batch parallel tests/verify_compile.duck   (pool every cell concurrently)
+#
+# {amd64, arm64, arm32, i386} x {-O0 -O1 -O2 -O3 -Ofast, debug (-g)} x hosted/freestanding
+
+# hosted
+
+# ---- amd64 (x86-64) ----
+compile tests/compiletests/ --x86 -O0 --raw-obj -o bin/compiletests/amd64_O0
+compile tests/compiletests/ --x86 -O1 --raw-obj -o bin/compiletests/amd64_O1
+compile tests/compiletests/ --x86 -O2 --raw-obj -o bin/compiletests/amd64_O2
+compile tests/compiletests/ --x86 -O3 --raw-obj -o bin/compiletests/amd64_O3
+compile tests/compiletests/ --x86 -Ofast --raw-obj -o bin/compiletests/amd64_Ofast
+compile tests/compiletests/ --x86 -g --raw-obj -o bin/compiletests/amd64_debug
+
+# ---- arm64 (armv8-a) ----
+compile tests/compiletests/ --arm64 -O0 --raw-obj -o bin/compiletests/arm64_O0
+compile tests/compiletests/ --arm64 -O1 --raw-obj -o bin/compiletests/arm64_O1
+compile tests/compiletests/ --arm64 -O2 --raw-obj -o bin/compiletests/arm64_O2
+compile tests/compiletests/ --arm64 -O3 --raw-obj -o bin/compiletests/arm64_O3
+compile tests/compiletests/ --arm64 -Ofast --raw-obj -o bin/compiletests/arm64_Ofast
+compile tests/compiletests/ --arm64 -g --raw-obj -o bin/compiletests/arm64_debug
+
+# ---- arm32 (armv7-a, NEON, hard-float) ----
+compile tests/compiletests/ --arm -O0 --raw-obj -o bin/compiletests/arm32_O0
+compile tests/compiletests/ --arm -O1 --raw-obj -o bin/compiletests/arm32_O1
+compile tests/compiletests/ --arm -O2 --raw-obj -o bin/compiletests/arm32_O2
+compile tests/compiletests/ --arm -O3 --raw-obj -o bin/compiletests/arm32_O3
+compile tests/compiletests/ --arm -Ofast --raw-obj -o bin/compiletests/arm32_Ofast
+compile tests/compiletests/ --arm -g --raw-obj -o bin/compiletests/arm32_debug
+
+# ---- i386 (x86, 32-bit) ----
+compile tests/compiletests/ --i386 -O0 --raw-obj -o bin/compiletests/i386_O0
+compile tests/compiletests/ --i386 -O1 --raw-obj -o bin/compiletests/i386_O1
+compile tests/compiletests/ --i386 -O2 --raw-obj -o bin/compiletests/i386_O2
+compile tests/compiletests/ --i386 -O3 --raw-obj -o bin/compiletests/i386_O3
+compile tests/compiletests/ --i386 -Ofast --raw-obj -o bin/compiletests/i386_Ofast
+compile tests/compiletests/ --i386 -g --raw-obj -o bin/compiletests/i386_debug
+
+# freestanding
+
+# ---- amd64 (x86-64) ----
+compile tests/compiletests/ --x86 -O0 --raw-obj -o bin/compiletests/amd64_O0 -ke
+compile tests/compiletests/ --x86 -O1 --raw-obj -o bin/compiletests/amd64_O1 -ke
+compile tests/compiletests/ --x86 -O2 --raw-obj -o bin/compiletests/amd64_O2 -ke
+compile tests/compiletests/ --x86 -O3 --raw-obj -o bin/compiletests/amd64_O3 -ke
+compile tests/compiletests/ --x86 -Ofast --raw-obj -o bin/compiletests/amd64_Ofast -ke
+compile tests/compiletests/ --x86 -g --raw-obj -o bin/compiletests/amd64_debug -ke
+
+# ---- arm64 (armv8-a) ----
+compile tests/compiletests/ --arm64 -O0 --raw-obj -o bin/compiletests/arm64_O0 -ke
+compile tests/compiletests/ --arm64 -O1 --raw-obj -o bin/compiletests/arm64_O1 -ke
+compile tests/compiletests/ --arm64 -O2 --raw-obj -o bin/compiletests/arm64_O2 -ke
+compile tests/compiletests/ --arm64 -O3 --raw-obj -o bin/compiletests/arm64_O3 -ke
+compile tests/compiletests/ --arm64 -Ofast --raw-obj -o bin/compiletests/arm64_Ofast -ke
+compile tests/compiletests/ --arm64 -g --raw-obj -o bin/compiletests/arm64_debug -ke
+
+# ---- arm32 (armv7-a, NEON, hard-float) ----
+compile tests/compiletests/ --arm -O0 --raw-obj -o bin/compiletests/arm32_O0 -ke
+compile tests/compiletests/ --arm -O1 --raw-obj -o bin/compiletests/arm32_O1 -ke
+compile tests/compiletests/ --arm -O2 --raw-obj -o bin/compiletests/arm32_O2 -ke
+compile tests/compiletests/ --arm -O3 --raw-obj -o bin/compiletests/arm32_O3 -ke
+compile tests/compiletests/ --arm -Ofast --raw-obj -o bin/compiletests/arm32_Ofast -ke
+compile tests/compiletests/ --arm -g --raw-obj -o bin/compiletests/arm32_debug -ke
+
+# ---- i386 (x86, 32-bit) ----
+compile tests/compiletests/ --i386 -O0 --raw-obj -o bin/compiletests/i386_O0 -ke
+compile tests/compiletests/ --i386 -O1 --raw-obj -o bin/compiletests/i386_O1 -ke
+compile tests/compiletests/ --i386 -O2 --raw-obj -o bin/compiletests/i386_O2 -ke
+compile tests/compiletests/ --i386 -O3 --raw-obj -o bin/compiletests/i386_O3 -ke
+compile tests/compiletests/ --i386 -Ofast --raw-obj -o bin/compiletests/i386_Ofast -ke
+compile tests/compiletests/ --i386 -g --raw-obj -o bin/compiletests/i386_debug -ke

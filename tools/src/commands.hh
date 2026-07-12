@@ -94,7 +94,8 @@ parse_main(int argc, char **argv)
       parallel = true;
       fi = 3;
     }
-    if ( argc != fi + 1 ) mc::cerror("Must provide a sole path to a valid batchfile");
+    if ( parallel ? argc <= fi : argc != fi + 1 )
+      mc::cerror("Must provide a path to a valid batchfile");
     if ( !mc::posix::exists(argv[fi]) ) mc::cerror("File doesn't exist");
     mc::string batchfile;
     auto __f = mc::io::open_file(argv[fi]);

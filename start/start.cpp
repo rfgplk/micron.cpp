@@ -14,15 +14,24 @@
 
 #include <micron/exit.hpp>      // micron::exit + __exit_internal::__push
 
+// WARNING: freestanding libm symbols; needed otherwise all __builtin calls will fail if you compile at a low enough optimization level
+// (where the fallback isn't inlined)
+#include <micron/math/__gcc_math_syms.hpp>
+
 // call user declared main from out __micron_user_main
 // NOTE: we need to surpress Wodr because the compiler complains about multiple main definitions; we're okay though
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wodr"
 extern "C" int __micron_user_main(int argc, char **argv, char **envp) __asm__("main");
-extern "C" void __boot_io_buffers(void);
 #pragma GCC diagnostic pop
 
 // microns entry/exit points
+// __boot_io_buffers is optional
+extern "C" __attribute__((weak)) void
+__boot_io_buffers(void)
+{
+}
+
 extern "C" __attribute__((weak)) void
 __boot_io_sigpipe(void)
 {
@@ -513,19 +522,8 @@ __aeabi_atexit(void *object, void (*destructor)(void *), void *dso_handle) noexc
   return __cxa_atexit(destructor, object, dso_handle);
 }
 
-// NOTE: AEABI fns must use the soft-float core-register PCS regardless of -mfloat-abi
-// without pcs("aapcs") a hard-float build receives float/double args in s0/d0
-__attribute__((used, weak, pcs("aapcs"))) double
-fma(double a, double b, double c) noexcept
-{
-  return a * b + c;
-}
-
-__attribute__((used, weak, pcs("aapcs"))) float
-fmaf(float a, float b, float c) noexcept
-{
-  return a * b + c;
-}
+// fma/fmaf are libm (not AEABI) symbols; they now live at __gcc_math_syms.hpp
+// everything below are strictly AEABI symbols
 
 __attribute__((used)) unsigned long long
 __udivdi3(unsigned long long n, unsigned long long d) noexcept
