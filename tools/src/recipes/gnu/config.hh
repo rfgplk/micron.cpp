@@ -473,6 +473,17 @@ parse_config(config_t &conf, int argc, char **argv)
   finalize_and_infer(conf, user_provided_out, user_provided_type, user_provided_opt);
 }
 
+inline void
+__warn_if_flag_source(const char *src)
+{
+  if ( src == nullptr or src[0] != '-' ) return;
+  mc::set_color(mc::color::yellow);
+  mc::console("WARNING: '", src,
+              "' looks like a flag but was passed as the source argument; "
+              "flags should come last, after the source. See 'duck help'.");
+  mc::set_color(mc::color::reset);
+}
+
 // directory mode: gather sources from argv[0] if it is a directory, else behave like single
 inline __attribute__((always_inline)) mc::vector<config_t>
 parse_argv_build(int argc, char **argv)
@@ -499,6 +510,7 @@ parse_argv_build(int argc, char **argv)
     for ( auto &n : files )
       if ( match_ext(n.d_name) ) sources.emplace_back(n.d_name);
   } else {
+    __warn_if_flag_source(argv[0]);
     sources.emplace_back(argv[0]);
     __dir_mode = false;
   }
@@ -532,6 +544,7 @@ inline __attribute__((always_inline)) config_t
 parse_argv_build_single(int argc, char **argv)
 {
   config_t conf{};
+  __warn_if_flag_source(argv[0]);
   conf.target = argv[0];
   // placeholder, update correctly in parse_config
   conf.standard = gcc::__standard_cxx26;

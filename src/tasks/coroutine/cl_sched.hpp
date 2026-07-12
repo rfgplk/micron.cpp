@@ -320,7 +320,7 @@ struct engine {
     __try_drain_io();
     if ( __io.park_fired.get(micron::memory_order_acquire) == 0 ) {
       while ( !__io_submit(__io_tag_cancel, [](micron::uring::sqe *__s) { micron::uring::prep_cancel(__s, __io_tag_park); }) ) {
-        if ( __io.park_fired.get(micron::memory_order_acquire) != 0 ) break;    
+        if ( __io.park_fired.get(micron::memory_order_acquire) != 0 ) break;
         (void)__io.ring.enter(1);
         __try_drain_io();
       }

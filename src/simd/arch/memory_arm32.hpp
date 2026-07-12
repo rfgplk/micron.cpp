@@ -469,38 +469,64 @@ __memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept
 __attribute__((nonnull)) inline u8 *
 __wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept
 {
+  // WARNING: n must be > 64 and n % period[8] == 0, not guarding behind branch
+  // dst is aligned for the bulk loop by rotating the pattern to the aligned
+  // phase
   const uint8x16_t vv = __bits::__broadcast_word_16(w);
-  u64 i = 0;
-  for ( ; i + 64 <= n; i += 64 ) {
-    __bits::__block_set_16(d + i, vv);
-    __bits::__block_set_16(d + i + 16, vv);
-    __bits::__block_set_16(d + i + 32, vv);
-    __bits::__block_set_16(d + i + 48, vv);
+  if ( n <= 256 ) {
+    u64 i = 0;
+    for ( ; i + 16 <= n; i += 16 ) __bits::__block_set_16(d + i, vv);
+    if ( i < n ) __bits::__block_set_16(d + n - 16, vv);
+    return d;
   }
-  for ( ; i + 16 <= n; i += 16 ) __bits::__block_set_16(d + i, vv);
-  if ( i < n ) __bits::__block_set_16(d + n - 16, vv);
+  __bits::__block_set_16(d, vv);
+  u8 *p = reinterpret_cast<u8 *>((reinterpret_cast<uintptr_t>(d) + 16) & ~static_cast<uintptr_t>(15));
+  const u32 rot = (static_cast<u32>(p - d) & 7u) * 8u;
+  const u64 w2 = rot ? ((w >> rot) | (w << (64u - rot))) : w;
+  const uint8x16_t vv2 = __bits::__broadcast_word_16(w2);
+  u8 *const e = d + n;
+  for ( ; p + 64 <= e; p += 64 ) {
+    __bits::__block_set_16_a(p, vv2);
+    __bits::__block_set_16_a(p + 16, vv2);
+    __bits::__block_set_16_a(p + 32, vv2);
+    __bits::__block_set_16_a(p + 48, vv2);
+  }
+  for ( ; p + 16 <= e; p += 16 ) __bits::__block_set_16_a(p, vv2);
+  if ( p < e ) __bits::__block_set_16(e - 16, vv);
   return d;
 }
 
 __attribute__((nonnull)) inline u8 *
 __memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
 {
-  __bits::__block_copy_16(d, s);
+  // NOTE: batch all 4 loads before any store
+  // in order cores (ones we care about) an interleaved vld1/vst1 pairing stalls on NEON load to store latency every 16 B block
+  const __ml::__v16 h = __ml::__ld16(s);
+  const __ml::__v16 t0 = __ml::__ld16(s + n - 64);
+  const __ml::__v16 t1 = __ml::__ld16(s + n - 48);
+  const __ml::__v16 t2 = __ml::__ld16(s + n - 32);
+  const __ml::__v16 t3 = __ml::__ld16(s + n - 16);
+  __ml::__st16(d, h);
   const u64 off = 16 - (reinterpret_cast<uintptr_t>(d) & 15);
   u8 *pd = d + off;
   const u8 *ps = s + off;
   u64 rem = n - off;
   for ( ; rem >= 64; rem -= 64, pd += 64, ps += 64 ) {
     __bits::__pld(ps + 256);
-    __bits::__block_copy_16(pd, ps);
-    __bits::__block_copy_16(pd + 16, ps + 16);
-    __bits::__block_copy_16(pd + 32, ps + 32);
-    __bits::__block_copy_16(pd + 48, ps + 48);
+    __ml::__v16 a = __ml::__ld16(ps);
+    __ml::__v16 b = __ml::__ld16(ps + 16);
+    __ml::__v16 c = __ml::__ld16(ps + 32);
+    __ml::__v16 e = __ml::__ld16(ps + 48);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st16(pd, a);
+    __ml::__st16(pd + 16, b);
+    __ml::__st16(pd + 32, c);
+    __ml::__st16(pd + 48, e);
   }
-  __bits::__block_copy_16(d + n - 64, s + n - 64);
-  __bits::__block_copy_16(d + n - 48, s + n - 48);
-  __bits::__block_copy_16(d + n - 32, s + n - 32);
-  __bits::__block_copy_16(d + n - 16, s + n - 16);
+  __ml::__st16(d + n - 64, t0);
+  __ml::__st16(d + n - 48, t1);
+  __ml::__st16(d + n - 32, t2);
+  __ml::__st16(d + n - 16, t3);
   return d;
 }
 
@@ -518,10 +544,15 @@ __memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept
   u64 rem = n - off;
   for ( ; rem >= 64; rem -= 64, pd += 64, ps += 64 ) {
     __bits::__pld(ps + 256);
-    __bits::__block_move_16(pd, ps);
-    __bits::__block_move_16(pd + 16, ps + 16);
-    __bits::__block_move_16(pd + 32, ps + 32);
-    __bits::__block_move_16(pd + 48, ps + 48);
+    __ml::__v16 a = __ml::__ld16(ps);
+    __ml::__v16 b = __ml::__ld16(ps + 16);
+    __ml::__v16 c = __ml::__ld16(ps + 32);
+    __ml::__v16 e = __ml::__ld16(ps + 48);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st16(pd, a);
+    __ml::__st16(pd + 16, b);
+    __ml::__st16(pd + 32, c);
+    __ml::__st16(pd + 48, e);
   }
   __ml::__st16(d + n - 64, t0);
   __ml::__st16(d + n - 48, t1);
@@ -544,10 +575,15 @@ __memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept
   while ( static_cast<u64>(pe - d) > 64 ) {
     pe -= 64;
     pse -= 64;
-    __bits::__block_move_16(pe + 48, pse + 48);
-    __bits::__block_move_16(pe + 32, pse + 32);
-    __bits::__block_move_16(pe + 16, pse + 16);
-    __bits::__block_move_16(pe, pse);
+    __ml::__v16 a = __ml::__ld16(pse + 48);
+    __ml::__v16 b = __ml::__ld16(pse + 32);
+    __ml::__v16 c = __ml::__ld16(pse + 16);
+    __ml::__v16 e = __ml::__ld16(pse);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st16(pe + 48, a);
+    __ml::__st16(pe + 32, b);
+    __ml::__st16(pe + 16, c);
+    __ml::__st16(pe, e);
   }
   __ml::__st16(d, h0);
   __ml::__st16(d + 16, h1);

@@ -94,6 +94,26 @@ __st32(byte *p, __v32 v) noexcept
 }
 #endif
 
+// scheduling for batched bulk loops
+// makes every subsequent store dependent on all four loaded values
+[[gnu::always_inline]] static inline void
+__pin4(__v16 &a, __v16 &b, __v16 &c, __v16 &e) noexcept
+{
+#if defined(__micron_arch_x86_any)
+  __asm__("" : "+x"(a), "+x"(b), "+x"(c), "+x"(e));
+#else
+  __asm__("" : "+w"(a), "+w"(b), "+w"(c), "+w"(e));
+#endif
+}
+
+#if defined(__micron_x86_avx2)
+[[gnu::always_inline]] static inline void
+__pin4(__v32 &a, __v32 &b, __v32 &c, __v32 &e) noexcept
+{
+  __asm__("" : "+x"(a), "+x"(b), "+x"(c), "+x"(e));
+}
+#endif
+
 #pragma GCC diagnostic pop
 
 };      // namespace __ml

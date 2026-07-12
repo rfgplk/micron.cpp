@@ -675,6 +675,19 @@ vreinterpret_u16_u8(uint8x8_t v) noexcept
   return (uint16x4_t)v;
 }
 
+// was missing
+__inline_g uint32x2_t
+vreinterpret_u32_u8(uint8x8_t v) noexcept
+{
+  return (uint32x2_t)v;
+}
+
+__inline_g uint8x8_t
+vreinterpret_u8_u32(uint32x2_t v) noexcept
+{
+  return (uint8x8_t)v;
+}
+
 __inline_g f32
 vgetq_lane_f32(float32x4_t v, const int lane) noexcept
 {
@@ -1588,6 +1601,12 @@ __mc_vmull(u32, "u32", uint32x2_t, uint64x2_t);
 
 #undef __mc_vmull
 
+__inline_g int32x4_t
+vmull_n_s16(int16x4_t a, signed short b) noexcept
+{
+  return vmull_s16(a, (int16x4_t){ b, b, b, b });
+}
+
 __inline_g int16x8_t
 vqdmulhq_s16(int16x8_t a, int16x8_t b) noexcept
 {
@@ -2494,6 +2513,24 @@ vrev16q_u8(uint8x16_t v) noexcept
   return __builtin_shufflevector(v, v, 1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14);
 }
 
+__inline_g uint8x8_t
+vrev64_u8(uint8x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 7, 6, 5, 4, 3, 2, 1, 0);
+}
+
+__inline_g uint8x8_t
+vrev32_u8(uint8x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 3, 2, 1, 0, 7, 6, 5, 4);
+}
+
+__inline_g uint8x8_t
+vrev16_u8(uint8x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2, 5, 4, 7, 6);
+}
+
 __inline_g int8x16x2_t
 vzipq_s8(int8x16_t a, int8x16_t b) noexcept
 {
@@ -2609,6 +2646,18 @@ vtrnq_f32(float32x4_t a, float32x4_t b) noexcept
   r.val[0] = __builtin_shufflevector(a, b, 0, 4, 2, 6);
   r.val[1] = __builtin_shufflevector(a, b, 1, 5, 3, 7);
   return r;
+}
+
+__inline_g float32x4_t
+vtrn1q_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 2, 6);
+}
+
+__inline_g float32x4_t
+vtrn2q_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 5, 3, 7);
 }
 
 __inline_g int8x16x2_t
@@ -2916,6 +2965,12 @@ __mc_vld1q_lane(f32, float32x4_t, float);
 
 #undef __mc_vld1q_lane
 
+__inline_g void
+vst1_lane_u32(unsigned int *p, uint32x2_t v, const int lane) noexcept
+{
+  *p = v[lane];
+}
+
 #define __mc_vld2q_8(SUF, TBASE, ETYPE)                                                                                                    \
   __inline_g TBASE##x2_t vld2q_##SUF(const ETYPE *p) noexcept                                                                              \
   {                                                                                                                                        \
@@ -3145,6 +3200,52 @@ __inline_g void
 vst4q_f32(float *p, float32x4x4_t v) noexcept
 {
   for ( int i = 0; i < 4; ++i ) {
+    p[i * 4 + 0] = v.val[0][i];
+    p[i * 4 + 1] = v.val[1][i];
+    p[i * 4 + 2] = v.val[2][i];
+    p[i * 4 + 3] = v.val[3][i];
+  }
+}
+
+__inline_g uint8x16x3_t
+vld3q_u8(const unsigned char *p) noexcept
+{
+  uint8x16x3_t r;
+  for ( int i = 0; i < 16; ++i ) {
+    r.val[0][i] = p[i * 3 + 0];
+    r.val[1][i] = p[i * 3 + 1];
+    r.val[2][i] = p[i * 3 + 2];
+  }
+  return r;
+}
+
+__inline_g uint8x16x4_t
+vld4q_u8(const unsigned char *p) noexcept
+{
+  uint8x16x4_t r;
+  for ( int i = 0; i < 16; ++i ) {
+    r.val[0][i] = p[i * 4 + 0];
+    r.val[1][i] = p[i * 4 + 1];
+    r.val[2][i] = p[i * 4 + 2];
+    r.val[3][i] = p[i * 4 + 3];
+  }
+  return r;
+}
+
+__inline_g void
+vst3q_u8(unsigned char *p, uint8x16x3_t v) noexcept
+{
+  for ( int i = 0; i < 16; ++i ) {
+    p[i * 3 + 0] = v.val[0][i];
+    p[i * 3 + 1] = v.val[1][i];
+    p[i * 3 + 2] = v.val[2][i];
+  }
+}
+
+__inline_g void
+vst4q_u8(unsigned char *p, uint8x16x4_t v) noexcept
+{
+  for ( int i = 0; i < 16; ++i ) {
     p[i * 4 + 0] = v.val[0][i];
     p[i * 4 + 1] = v.val[1][i];
     p[i * 4 + 2] = v.val[2][i];
@@ -3564,6 +3665,12 @@ vdup_n_f32(float v) noexcept
 {
   float32x2_t r = { v, v };
   return r;
+}
+
+__inline_g float32x2_t
+vdup_lane_f32(float32x2_t v, const int lane) noexcept
+{
+  return vdup_n_f32(v[lane]);
 }
 
 __inline_g i8

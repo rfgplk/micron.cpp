@@ -882,6 +882,19 @@ fms(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
 {
   return vfmsq_f32(a, b, c);
 }
+#else
+// no hardware FMA (e.g. armv7 -mfpu=neon): fall back to multiply-accumulate (a + b*c) / (a - b*c)
+__inline_neon float32x4_t
+fma(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+{
+  return vmlaq_f32(a, b, c);
+}
+
+__inline_neon float32x4_t
+fms(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+{
+  return vmlsq_f32(a, b, c);
+}
 #endif
 
 #if defined(__micron_arch_arm64)
@@ -1030,6 +1043,19 @@ fms_f64(float64x2_t acc, float64x2_t a, float64x2_t b) noexcept
   return vfmsq_f64(acc, a, b);
 }
 #endif
+#else
+// no hardware FMA (e.g. armv7 -mfpu=neon): fall back to multiply-accumulate
+__inline_neon float32x4_t
+fma_f32(float32x4_t acc, float32x4_t a, float32x4_t b) noexcept
+{
+  return vmlaq_f32(acc, a, b);
+}
+
+__inline_neon float32x4_t
+fms_f32(float32x4_t acc, float32x4_t a, float32x4_t b) noexcept
+{
+  return vmlsq_f32(acc, a, b);
+}
 #endif
 
 __inline_neon float32x4_t

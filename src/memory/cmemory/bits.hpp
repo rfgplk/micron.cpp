@@ -145,7 +145,8 @@ __mem_probe() noexcept
 [[gnu::always_inline]] static inline const __mem_tunables &
 __mem_tun_get() noexcept
 {
-#if defined(__micron_arch_x86_any) && !defined(MICRON_MEM_NO_PROBE)
+  // if we're in freestanding mode tunables get primed in _start
+#if defined(__micron_arch_x86_any) && !defined(MICRON_MEM_NO_PROBE) && !defined(__micron_freestanding)
   if ( __atomic_load_n(&__mem_tun_state, __ATOMIC_ACQUIRE) != 2u ) [[unlikely]] {
     u32 __exp = 0u;
     if ( __atomic_compare_exchange_n(&__mem_tun_state, &__exp, 1u, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) ) {
@@ -173,6 +174,24 @@ __mem_route_info() noexcept
   const __mem_tunables &t = __mem_tun_get();
   return { __mem_ladder_max, t.rep_movsb_threshold, t.rep_stosb_threshold, t.nt_copy_threshold, t.nt_set_threshold };
 }
+
+};      // namespace micron
+
+#if defined(__micron_freestanding)
+// tunables probe for freestanding
+// [[used]] because nothing in our TU references this, might get culled otherwise
+extern "C" __attribute__((used)) inline void
+__micron_mem_init(void) noexcept
+{
+#if defined(__micron_arch_x86_any) && !defined(MICRON_MEM_NO_PROBE)
+  micron::__mem_probe();
+  __atomic_store_n(&micron::__mem_tun_state, 2u, __ATOMIC_RELEASE);
+#endif
+}
+#endif
+
+namespace micron
+{
 
 namespace __ml
 {

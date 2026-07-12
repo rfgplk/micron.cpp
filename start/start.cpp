@@ -38,6 +38,10 @@ __shutdown_io_buffers(void)
 {
 }
 
+// mem* tunables probe
+// resolves to null when the binary never pulls in cmemory
+extern "C" __attribute__((weak)) void __micron_mem_init(void) noexcept;
+
 extern "C" {
 char **environ = nullptr;
 }
@@ -96,6 +100,9 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
 
   // primary stack region
   micron::__stack_init(auxv);
+
+  // probe mem tunables
+  if ( __micron_mem_init ) __micron_mem_init();
 
   // NOTE: we must register shutdown io first so it lands at the bottom of the atexit stack,
   // ensuring it runs last

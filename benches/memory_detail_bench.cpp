@@ -395,6 +395,13 @@ s_wordset(u8 *d, u64 n)
   mc::wordset128(d, 0x0102030405060708ULL, n);
 #endif
 }
+
+// dispatch-path wordset (__memset_words -> __wordset_bulk), n must be 8-aligned
+static void
+s_wordset_mc(u8 *d, u64 n)
+{
+  mc::typeset<u64>(d, 0x0102030405060708ULL, n / 8);
+}
 #endif
 
 struct mparams {
@@ -657,6 +664,11 @@ sec_c_align()
       cell_set("memset0", "micron", s_mc0, n, offs[di], false);
       cell_set("memset0", "libc", s_libc0, n, offs[di], false);
     }
+
+#if defined(__micron_arch_x86_any)
+  for ( u64 n : sizes )
+    for ( u32 di = 0; di < noffs; ++di ) cell_set("wordsetd", "micron", s_wordset_mc, n, offs[di], false);
+#endif
 
   for ( u64 n : { (u64)64, (u64)256 } )
     for ( u64 off : { (u64)4095, (u64)4065 } ) {

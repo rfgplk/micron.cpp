@@ -30,7 +30,7 @@ template<u32 seed = 0>
 inline u32
 fnv1a_32(const byte *data, usize sz)
 {
-  return fnv1a_32(data, seed, sz);  
+  return fnv1a_32(data, seed, sz);
 }
 
 inline u64
@@ -48,6 +48,6 @@ template<u64 seed = 0>
 inline u64
 fnv1a_64(const byte *data, usize sz)
 {
-  return fnv1a_64(data, seed, sz); 
+  return fnv1a_64(data, seed, sz);
 }
 }      // namespace micron
