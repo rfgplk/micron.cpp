@@ -207,7 +207,8 @@ batch_cmp(const config_t &conf)
   string_type compile_libs = (conf.freestanding or !linking) ? "" : "-lpthread";
   if ( linking and !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
-      compile_libs += " -l";
+      if ( !compile_libs.empty() ) compile_libs += ' ';
+      compile_libs += "-l";
       compile_libs += n;
     }
   string_type compile_objs = "";
@@ -333,7 +334,8 @@ batch_cmp_armv7(const config_t &conf)
   string_type compile_libs = (conf.freestanding or !linking) ? "" : "-lpthread";
   if ( linking and !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
-      compile_libs += " -l";
+      if ( !compile_libs.empty() ) compile_libs += ' ';
+      compile_libs += "-l";
       compile_libs += n;
     }
   string_type compile_objs = "";
@@ -461,7 +463,8 @@ batch_cmp_aarch64(const config_t &conf)
   string_type compile_libs = (conf.freestanding or !linking) ? "" : "-lpthread";
   if ( linking and !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
-      compile_libs += " -l";
+      if ( !compile_libs.empty() ) compile_libs += ' ';
+      compile_libs += "-l";
       compile_libs += n;
     }
   string_type compile_objs = "";

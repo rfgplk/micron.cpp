@@ -19,6 +19,12 @@
 #include "cr.hpp"
 #include "generic.hpp"
 
+#include "bits/exp.hpp"
+#include "bits/hyp.hpp"
+#include "bits/log.hpp"
+#include "bits/manip.hpp"
+#include "bits/special.hpp"
+
 #pragma GCC diagnostic push
 // we are deliberately (re)defining functions the compiler knows as builtins
 #pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
@@ -119,6 +125,87 @@ fmal(long double a, long double b, long double c) noexcept
 {
   return a * b + c;
 }
+
+// missing __builtin_* symbols (these should be almost all of them, although these libm fns fmax fmin fdim ldexp frexp modf scalbn nextafter
+// ilogb remquo lrint llrint lround llround still don't exist in micron)
+
+// inverse trig
+__MC_M1(asin, micron::math::mkbits::trig_ns::asin<f64>(x), micron::math::mkbits::trig_ns::asin<f32>(x),
+        static_cast<long double>(micron::math::mkbits::trig_ns::asin<f64>(static_cast<double>(x))))
+__MC_M1(acos, micron::math::mkbits::trig_ns::acos<f64>(x), micron::math::mkbits::trig_ns::acos<f32>(x),
+        static_cast<long double>(micron::math::mkbits::trig_ns::acos<f64>(static_cast<double>(x))))
+__MC_M1(atan, micron::math::mkbits::trig_ns::atan<f64>(x), micron::math::mkbits::trig_ns::atan<f32>(x),
+        static_cast<long double>(micron::math::mkbits::trig_ns::atan<f64>(static_cast<double>(x))))
+
+// hyperbolic
+__MC_M1(sinh, micron::math::mkbits::hyp_ns::sinh<f64>(x), micron::math::mkbits::hyp_ns::sinh<f32>(x),
+        static_cast<long double>(micron::math::mkbits::hyp_ns::sinh<f64>(static_cast<double>(x))))
+__MC_M1(cosh, micron::math::mkbits::hyp_ns::cosh<f64>(x), micron::math::mkbits::hyp_ns::cosh<f32>(x),
+        static_cast<long double>(micron::math::mkbits::hyp_ns::cosh<f64>(static_cast<double>(x))))
+__MC_M1(tanh, micron::math::mkbits::hyp_ns::tanh<f64>(x), micron::math::mkbits::hyp_ns::tanh<f32>(x),
+        static_cast<long double>(micron::math::mkbits::hyp_ns::tanh<f64>(static_cast<double>(x))))
+__MC_M1(asinh, micron::math::mkbits::hyp_ns::asinh<f64>(x), micron::math::mkbits::hyp_ns::asinh<f32>(x),
+        static_cast<long double>(micron::math::mkbits::hyp_ns::asinh<f64>(static_cast<double>(x))))
+__MC_M1(acosh, micron::math::mkbits::hyp_ns::acosh<f64>(x), micron::math::mkbits::hyp_ns::acosh<f32>(x),
+        static_cast<long double>(micron::math::mkbits::hyp_ns::acosh<f64>(static_cast<double>(x))))
+__MC_M1(atanh, micron::math::mkbits::hyp_ns::atanh<f64>(x), micron::math::mkbits::hyp_ns::atanh<f32>(x),
+        static_cast<long double>(micron::math::mkbits::hyp_ns::atanh<f64>(static_cast<double>(x))))
+
+// exp/log tail
+__MC_M1(exp10, micron::math::mkbits::exp_ns::exp10<f64>(x), micron::math::mkbits::exp_ns::exp10<f32>(x),
+        static_cast<long double>(micron::math::mkbits::exp_ns::exp10<f64>(static_cast<double>(x))))
+__MC_M1(expm1, micron::math::mkbits::exp_ns::expm1<f64>(x), micron::math::mkbits::exp_ns::expm1<f32>(x),
+        static_cast<long double>(micron::math::mkbits::exp_ns::expm1<f64>(static_cast<double>(x))))
+__MC_M1(log1p, micron::math::mkbits::log_ns::log1p<f64>(x), micron::math::mkbits::log_ns::log1p<f32>(x),
+        static_cast<long double>(micron::math::mkbits::log_ns::log1p<f64>(static_cast<double>(x))))
+__MC_M1(logb, micron::math::mkbits::manip::logb<f64>(x), micron::math::mkbits::manip::logb<f32>(x),
+        static_cast<long double>(micron::math::mkbits::manip::logb<f64>(static_cast<double>(x))))
+
+// error fn / gamma
+__MC_M1(erf, micron::math::mkbits::special_ns::erf<f64>(x), micron::math::mkbits::special_ns::erf<f32>(x),
+        static_cast<long double>(micron::math::mkbits::special_ns::erf<f64>(static_cast<double>(x))))
+__MC_M1(erfc, micron::math::mkbits::special_ns::erfc<f64>(x), micron::math::mkbits::special_ns::erfc<f32>(x),
+        static_cast<long double>(micron::math::mkbits::special_ns::erfc<f64>(static_cast<double>(x))))
+__MC_M1(tgamma, micron::math::mkbits::special_ns::tgamma<f64>(x), micron::math::mkbits::special_ns::tgamma<f32>(x),
+        static_cast<long double>(micron::math::mkbits::special_ns::tgamma<f64>(static_cast<double>(x))))
+__MC_M1(lgamma, micron::math::mkbits::special_ns::lgamma<f64>(x), micron::math::mkbits::special_ns::lgamma<f32>(x),
+        static_cast<long double>(micron::math::mkbits::special_ns::lgamma<f64>(static_cast<double>(x))))
+
+// bessel
+__MC_M1(j0, micron::math::mkbits::special_ns::j0<f64>(x), micron::math::mkbits::special_ns::j0<f32>(x),
+        static_cast<long double>(micron::math::mkbits::special_ns::j0<f64>(static_cast<double>(x))))
+__MC_M1(j1, micron::math::mkbits::special_ns::j1<f64>(x), micron::math::mkbits::special_ns::j1<f32>(x),
+        static_cast<long double>(micron::math::mkbits::special_ns::j1<f64>(static_cast<double>(x))))
+__MC_M1(y0, micron::math::mkbits::special_ns::y0<f64>(x), micron::math::mkbits::special_ns::y0<f32>(x),
+        static_cast<long double>(micron::math::mkbits::special_ns::y0<f64>(static_cast<double>(x))))
+__MC_M1(y1, micron::math::mkbits::special_ns::y1<f64>(x), micron::math::mkbits::special_ns::y1<f32>(x),
+        static_cast<long double>(micron::math::mkbits::special_ns::y1<f64>(static_cast<double>(x))))
+
+extern "C" __attribute__((weak)) double
+atan2(double y, double x) noexcept
+{
+  return micron::math::mkbits::trig_ns::atan2<f64>(y, x);
+}
+
+extern "C" __attribute__((weak)) float
+atan2f(float y, float x) noexcept
+{
+  return micron::math::mkbits::trig_ns::atan2<f32>(y, x);
+}
+
+extern "C" __attribute__((weak)) long double
+atan2l(long double y, long double x) noexcept
+{
+  return static_cast<long double>(micron::math::mkbits::trig_ns::atan2<f64>(static_cast<double>(y), static_cast<double>(x)));
+}
+
+static_assert(micron::math::mkbits::trig_ns::atan2<f64>(1.0, 0.0) > 1.5707 && micron::math::mkbits::trig_ns::atan2<f64>(1.0, 0.0) < 1.5709,
+              "atan2 kernel takes (ordinate, abscissa): atan2(y=1, x=0) must be +pi/2");
+static_assert(micron::math::mkbits::trig_ns::atan2<f64>(0.0, -1.0) > 3.1415
+                  && micron::math::mkbits::trig_ns::atan2<f64>(0.0, -1.0) < 3.1417,
+              "atan2 kernel takes (ordinate, abscissa): atan2(y=0, x=-1) must be +pi");
+static_assert(micron::math::mkbits::trig_ns::atan2<f64>(-1.0, 0.0) < -1.5707,
+              "atan2 kernel takes (ordinate, abscissa): atan2(y=-1, x=0) must be -pi/2");
 
 #undef __MC_M1
 #undef __MC_M2

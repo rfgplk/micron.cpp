@@ -68,12 +68,15 @@ rexecute(const T &t, A &__argv)
   while ( itr < buf.end() ) {
     itr_f = micron::format::find(buf, itr, char(0x0));
     if ( itr_f == nullptr ) {
-      argv.emplace_back(const_cast<char *>(itr));
+      if ( *itr != char(0x0) ) argv.emplace_back(const_cast<char *>(itr));
       break;
     }
-    argv.emplace_back(const_cast<char *>(itr));
+    // NOTE: collapse runs of spaces, don't pass it to execve
+    // if this breaks something, revert it later
+    if ( itr_f != itr ) argv.emplace_back(const_cast<char *>(itr));
     itr = ++itr_f;
   }
+  argv.push_back(nullptr);
   micron::inplace_spawn(pid, t.c_str(), &argv[0], environ);
   __builtin_unreachable();
 }
@@ -173,12 +176,15 @@ execute(const T &t, A &__argv)
   while ( itr < buf.end() ) {
     itr_f = micron::format::find(buf, itr, char(0x0));
     if ( itr_f == nullptr ) {
-      argv.emplace_back(const_cast<char *>(itr));
+      if ( *itr != char(0x0) ) argv.emplace_back(const_cast<char *>(itr));
       break;
     }
-    argv.emplace_back(const_cast<char *>(itr));
+    // NOTE: collapse runs of spaces, don't pass it to execve
+    // if this breaks something, revert it later
+    if ( itr_f != itr ) argv.emplace_back(const_cast<char *>(itr));
     itr = ++itr_f;
   }
+  argv.push_back(nullptr);
   if ( micron::spawn(status.pid, t.c_str(), &argv[0], environ) ) {
     exc<except::system_error>("micron process failed to start posix_spawn");
   }
