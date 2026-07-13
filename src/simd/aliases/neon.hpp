@@ -1140,6 +1140,13 @@ get_lane_i32(int32x4_t a) noexcept
 }
 
 template<int LANE>
+__inline_neon uint32_t
+get_lane_u32(uint32x4_t a) noexcept
+{
+  return vgetq_lane_u32(a, LANE);
+}
+
+template<int LANE>
 __inline_neon long long
 get_lane_i64(int64x2_t a) noexcept
 {
@@ -1151,6 +1158,13 @@ __inline_neon float32x4_t
 set_lane_f32(float v, float32x4_t a) noexcept
 {
   return vsetq_lane_f32(v, a, LANE);
+}
+
+template<int LANE>
+__inline_neon uint32x4_t
+set_lane_u32(uint32_t v, uint32x4_t a) noexcept
+{
+  return vsetq_lane_u32(v, a, LANE);
 }
 
 #if defined(__micron_arch_arm64)
@@ -1706,6 +1720,25 @@ __inline_neon uint8x8_t
 pairwise_add_u8(uint8x8_t a, uint8x8_t b) noexcept
 {
   return vpadd_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+pairwise_add_long_u8(uint8x16_t v) noexcept
+{
+  return vpaddlq_u8(v);
+}
+
+__inline_neon uint32x4_t
+pairwise_add_acc_u16(uint32x4_t acc, uint16x8_t v) noexcept
+{
+  return vpadalq_u16(acc, v);
+}
+
+template<int IMM>
+__inline_neon uint8x16_t
+ext_u8(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vextq_u8(a, b, IMM);
 }
 
 template<int LANE>

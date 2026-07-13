@@ -454,6 +454,9 @@ template<is_movable_object T> struct slice: public __immutable_memory_resource<T
     return __mem::length;
   }
 
+  // NOTE: this returns the allocated _capacity_ on purpose, the point of slice is to logically represent the _whole_ section of
+  // addressable/valid memory it received from the allocator (whatever it may be), and since we do _not_ explictly track the requested
+  // _size_, size(void) after the contructor is the only way to keep track of requested size other than an external variable
   size_t
   max_size() const
   {

@@ -115,6 +115,18 @@ setr_i32(int x, int y, int z, int w) noexcept
 }
 
 __inline_sse __m128i
+set_i64(long long hi, long long lo) noexcept
+{
+  return _mm_set_epi64x(hi, lo);
+}
+
+__inline_sse __m128i
+setr_i64(long long lo, long long hi) noexcept
+{
+  return _mm_set_epi64x(hi, lo);
+}
+
+__inline_sse __m128i
 set_i8(char b15, char b14, char b13, char b12, char b11, char b10, char b9, char b8, char b7, char b6, char b5, char b4, char b3, char b2,
        char b1, char b0) noexcept
 {
@@ -1116,6 +1128,20 @@ __inline_sse __m128i
 shr_i64(__m128i a, int n) noexcept
 {
   return _mm_srli_epi64(a, n);
+}
+
+template<int IMM>
+__inline_sse __m128i
+bsrl_i128(__m128i a) noexcept
+{
+  return _mm_bsrli_si128(a, IMM);
+}
+
+template<int IMM>
+__inline_sse __m128i
+bsll_i128(__m128i a) noexcept
+{
+  return _mm_bslli_si128(a, IMM);
 }
 
 __inline_sse __m128i

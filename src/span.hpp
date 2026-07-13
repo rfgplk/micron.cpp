@@ -140,9 +140,8 @@ public:
 
   span(span &&o)
   {
-    for ( size_type i = 0; i < o.length; ++i ) new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
+    __impl_container::move(micron::addr(stack[0]), micron::addr(o.stack[0]), o.length);
     length = o.length;
-    __impl_container::destroy(micron::addr(o.stack[0]), o.length);
     o.length = 0;
   }
 
@@ -150,9 +149,8 @@ public:
   {
     if ( o.length > N ) [[unlikely]]
       exc<except::library_error>("error micron::span(): source span exceeds stack capacity N");
-    for ( size_type i = 0; i < o.length; ++i ) new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
+    __impl_container::move(micron::addr(stack[0]), micron::addr(o.stack[0]), o.length);
     length = o.length;
-    __impl_container::destroy(micron::addr(o.stack[0]), o.length);
     o.length = 0;
   }
 
@@ -171,9 +169,9 @@ public:
   {
     if ( this == micron::addressof(o) ) return *this;
     __impl_container::destroy(micron::addr(stack[0]), length);
-    for ( size_type i = 0; i < o.length; ++i ) new (micron::addr(stack[i])) T(micron::move(o.stack[i]));
+    length = 0;   
+    __impl_container::move(micron::addr(stack[0]), micron::addr(o.stack[0]), o.length);
     length = o.length;
-    __impl_container::destroy(micron::addr(o.stack[0]), o.length);
     o.length = 0;
     return *this;
   }

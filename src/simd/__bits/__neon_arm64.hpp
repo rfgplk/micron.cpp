@@ -3090,6 +3090,23 @@ vpaddlq_u32(uint32x4_t v) noexcept
   return lo + hi;
 }
 
+#define __mc_vpadalq(SUF, ASM, T_ACC, T_IN, LA, LB)                                                                                         \
+  __inline_g T_ACC vpadalq_##SUF(T_ACC a, T_IN b) noexcept                                                                                  \
+  {                                                                                                                                         \
+    T_ACC r = a;                                                                                                                            \
+    __asm__(ASM " %0." LA ", %1." LB : "+w"(r) : "w"(b));                                                                                   \
+    return r;                                                                                                                               \
+  }
+
+__mc_vpadalq(s8, "sadalp", int16x8_t, int8x16_t, "8h", "16b");
+__mc_vpadalq(s16, "sadalp", int32x4_t, int16x8_t, "4s", "8h");
+__mc_vpadalq(s32, "sadalp", int64x2_t, int32x4_t, "2d", "4s");
+__mc_vpadalq(u8, "uadalp", uint16x8_t, uint8x16_t, "8h", "16b");
+__mc_vpadalq(u16, "uadalp", uint32x4_t, uint16x8_t, "4s", "8h");
+__mc_vpadalq(u32, "uadalp", uint64x2_t, uint32x4_t, "2d", "4s");
+
+#undef __mc_vpadalq
+
 __inline_g int8x16_t
 vrev16q_s8(int8x16_t v) noexcept
 {

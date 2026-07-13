@@ -116,6 +116,10 @@
 #include "__bits/__neon_aes.hpp"
 #endif
 
+#if defined(__micron_arm_pmull) || defined(__ARM_FEATURE_PMULL) || defined(__ARM_FEATURE_CRYPTO)
+#include "__bits/__neon_pmull.hpp"
+#endif
+
 #if defined(__micron_arm_crc32) || defined(__ARM_FEATURE_CRC32)
 #include "__bits/__neon_crc32.hpp"
 #endif
@@ -134,6 +138,10 @@
 
 #if defined(__micron_arm_aes) || defined(__ARM_FEATURE_AES) || defined(__ARM_FEATURE_CRYPTO)
 #include "__bits/__neon_aes.hpp"
+#endif
+
+#if defined(__micron_arm_pmull) || defined(__ARM_FEATURE_PMULL) || defined(__ARM_FEATURE_CRYPTO) || defined(__micron_arm_crypto)
+#include "__bits/__neon_pmull.hpp"
 #endif
 
 #if defined(__micron_arm_crc32) || defined(__ARM_FEATURE_CRC32)

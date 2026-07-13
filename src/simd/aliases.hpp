@@ -19,8 +19,10 @@
 
 #if defined(__micron_arch_arm64) && defined(__micron_arm_neon)
 #include "aliases/neon.hpp"
+#include "aliases/neon_aes.hpp"
 #endif
 
 #if defined(__micron_arch_arm32) && defined(__micron_arm_neon)
 #include "aliases/neon.hpp"
+#include "aliases/neon_aes.hpp"
 #endif

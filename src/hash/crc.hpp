@@ -158,7 +158,18 @@ constexpr auto crc64_rocksoft_refl_lut = []() {
   return t;
 }();
 
-}      // namespace crc
+};      // namespace crc
+
+};      // namespace micron
+
+// we're pulling this in like this because i don't want to refactor and pull crc out to crc_scalar|crc_lut right now
+// TODO: make crc a master include header and split the above and below code into separate headers to resolve the include spaghetti
+
+// crc_simd depends on the tables above
+#include "crc_simd.hpp"
+
+namespace micron
+{
 
 constexpr u16
 crc16_t10dif(u16 init_crc, const u8 *buf, usize len) noexcept
@@ -251,6 +262,12 @@ crc32_iscsi(u32 init_crc, const T &obj) noexcept
 constexpr u64
 crc64_ecma_norm(u64 init_crc, const u8 *buf, usize len) noexcept
 {
+#if defined(__micron_crc_clmul)
+  if !consteval {
+    if ( len >= crc::__simd::__clmul_min )
+      return crc::__simd::__crc64_norm_clmul<0x42F0E1EBA9EA3693ull>(init_crc, buf, len, crc::crc64_ecma_norm_lut.data);
+  }
+#endif
   u64 crc = init_crc;
   for ( usize i = 0; i < len; ++i ) crc = (crc << 8) ^ crc::crc64_ecma_norm_lut.data[((crc >> 56) ^ buf[i]) & 0xFFu];
   return crc;
@@ -295,6 +312,12 @@ crc64_ecma_refl(u64 init_crc, const T &obj) noexcept
 constexpr u64
 crc64_iso_norm(u64 init_crc, const u8 *buf, usize len) noexcept
 {
+#if defined(__micron_crc_clmul)
+  if !consteval {
+    if ( len >= crc::__simd::__clmul_min )
+      return crc::__simd::__crc64_norm_clmul<0x1Bull>(init_crc, buf, len, crc::crc64_iso_norm_lut.data);
+  }
+#endif
   u64 crc = init_crc;
   for ( usize i = 0; i < len; ++i ) crc = (crc << 8) ^ crc::crc64_iso_norm_lut.data[((crc >> 56) ^ buf[i]) & 0xFFu];
   return crc;
@@ -339,6 +362,12 @@ crc64_iso_refl(u64 init_crc, const T &obj) noexcept
 constexpr u64
 crc64_jones_norm(u64 init_crc, const u8 *buf, usize len) noexcept
 {
+#if defined(__micron_crc_clmul)
+  if !consteval {
+    if ( len >= crc::__simd::__clmul_min )
+      return crc::__simd::__crc64_norm_clmul<0x95AC9329AC4BC9B5ull>(init_crc, buf, len, crc::crc64_jones_norm_lut.data);
+  }
+#endif
   u64 crc = init_crc;
   for ( usize i = 0; i < len; ++i ) crc = (crc << 8) ^ crc::crc64_jones_norm_lut.data[((crc >> 56) ^ buf[i]) & 0xFFu];
   return crc;
@@ -383,6 +412,12 @@ crc64_jones_refl(u64 init_crc, const T &obj) noexcept
 constexpr u64
 crc64_rocksoft_norm(u64 init_crc, const u8 *buf, usize len) noexcept
 {
+#if defined(__micron_crc_clmul)
+  if !consteval {
+    if ( len >= crc::__simd::__clmul_min )
+      return crc::__simd::__crc64_norm_clmul<0x6B2B957C8AF67BE0ull>(init_crc, buf, len, crc::crc64_rocksoft_norm_lut.data);
+  }
+#endif
   u64 crc = init_crc;
   for ( usize i = 0; i < len; ++i ) crc = (crc << 8) ^ crc::crc64_rocksoft_norm_lut.data[((crc >> 56) ^ buf[i]) & 0xFFu];
   return crc;

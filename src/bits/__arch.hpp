@@ -305,7 +305,10 @@ inline constexpr unsigned __micron_width = __wordsize;
 #if defined(__ARM_FEATURE_CRYPTO)
 #define __micron_arm_crypto 1
 #endif
-#if defined(__ARM_FEATURE_PMULL)
+// WARNING: (a wtf warning)__ARM_FEATURE_PMULL alone isn't defined by GCC (apparently?!?!) AArch64 at all
+// per ACLE, on AArch64 it is __ARM_FEATURE_AES that covers AESE/AESD/AESMC/AESIMC *and* PMULL/PMULL2
+// __ARM_FEATURE_PMULL is in practice an AArch32 spelling
+#if defined(__ARM_FEATURE_PMULL) || defined(__ARM_FEATURE_CRYPTO) || (defined(__micron_arch_arm64) && defined(__ARM_FEATURE_AES))
 #define __micron_arm_pmull 1
 #endif
 #if defined(__ARM_FEATURE_RNG)
