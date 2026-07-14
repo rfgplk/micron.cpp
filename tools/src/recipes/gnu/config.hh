@@ -5,6 +5,8 @@
 #include "memory/addr.hpp"
 #include "vector/vector.hpp"
 
+#include "../../splat.hh"
+
 namespace recipes
 {
 namespace gnu
@@ -509,7 +511,8 @@ parse_config(config_t &conf, int argc, char **argv)
       if ( __determine_source(conf, string_type{ argv[i] }) ) user_provided_out = true;
     }
   }
-  __mkdir_p(conf.bin_dir);
+  // splat only prints the command; it must not build the output tree that command would write into
+  if ( !splat::active() ) __mkdir_p(conf.bin_dir);
   finalize_and_infer(conf, user_provided_out, user_provided_type, user_provided_opt);
 }
 
@@ -517,6 +520,7 @@ inline void
 __warn_if_flag_source(const char *src)
 {
   if ( src == nullptr or src[0] != '-' ) return;
+  if ( splat::active() ) return;
   mc::set_color(mc::color::yellow);
   mc::console("WARNING: '", src,
               "' looks like a flag but was passed as the source argument; "

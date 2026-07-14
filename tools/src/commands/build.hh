@@ -53,14 +53,20 @@ build(const recipes::gnu::config_t &conf)
   return status;
 }
 
+inline void
+recipe_debug(recipes::gnu::config_t &conf)
+{
+  conf.mode = recipes::gnu::__opt_modes::debug;
+  conf.warnings = true;
+  conf.opt_mode = gcc::opt_flags::flags::optimize_debug;
+}
+
 template <typename T = void>
 int
 build_debug(recipes::gnu::config_t &conf)
   requires(recipes::__using_gnu)
 {
-  conf.mode = recipes::gnu::__opt_modes::debug;
-  conf.warnings = true;
-  conf.opt_mode = gcc::opt_flags::flags::optimize_debug;
+  recipe_debug(conf);
   mc::set_color(mc::color::blue);
   mc::consoled("Building in debug mode ");
   mc::set_color(mc::color::green);

@@ -73,6 +73,20 @@ __suppress_core_dumps()
   (void)mc::posix::prlimit_in(0, mc::posix::rlimit_core, rl);
 }
 
+inline string_type
+run_command(const config_t &conf)
+{
+  const emu_t e = emulator_for(conf);
+  if ( e.qemu == nullptr ) return conf.target_out;
+
+  string_type command{ e.qemu };
+  command.append(string_type{ " -L " });
+  command.append(string_type{ e.sysroot });
+  command.append(string_type{ " " });
+  command.append(conf.target_out);
+  return command;
+}
+
 template<bool Wait = mc::exec_wait>
 inline mc::status_t
 run_target(const config_t &conf)
@@ -82,11 +96,7 @@ run_target(const config_t &conf)
   if ( e.qemu == nullptr ) return mc::execute<Wait>(conf.target_out);
 
   string_type qemu{ e.qemu };
-  string_type command{ e.qemu };
-  command.append(string_type{ " -L " });
-  command.append(string_type{ e.sysroot });
-  command.append(string_type{ " " });
-  command.append(conf.target_out);
+  string_type command = run_command(conf);
   return mc::execute<Wait>(qemu, command);
 }
 

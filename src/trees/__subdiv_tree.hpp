@@ -551,6 +551,20 @@ public:
 
   template<typename Fn>
   void
+  query(const box_type &q, Fn &&fn) const
+  {
+    const_cast<pr_tree *>(this)->query(q, [&](const point_type &p, Value &v) { fn(p, static_cast<const Value &>(v)); });
+  }
+
+  template<typename Fn>
+  void
+  query_radius(const point_type &c, F r, Fn &&fn) const
+  {
+    const_cast<pr_tree *>(this)->query_radius(c, r, [&](const point_type &p, Value &v) { fn(p, static_cast<const Value &>(v)); });
+  }
+
+  template<typename Fn>
+  void
   nearest(const point_type &p, usize k, Fn &&fn) noexcept
   {
     if ( __root == nil || k == 0 ) return;

@@ -8,6 +8,8 @@
 #include "commands/emulate.hh"
 #include "commands/test.hh"
 
+#include "splat.hh"
+
 #include "../../src/io/io.hpp"
 
 enum class __modes : i32 { build, batch, link, compile, debug, emulate, run, make, test, doctor, recipes, __end };
@@ -51,12 +53,88 @@ match(char **argv) -> __modes
   return __modes::__end;
 }
 
+// duck splat <cmdline>: emit the command(s) we would have issued
+template <typename T = void>
+inline int
+splat_dispatch(__modes mode, int argc, char **argv)
+  requires(recipes::__using_gnu)
+{
+  using namespace recipes::gnu;
+  auto emit = [](const string_type &command) { mc::console(command); };
+
+  switch ( mode ) {
+  case __modes::build :
+  case __modes::test : {
+    const int fi = ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) ? 3 : 2;
+    if ( argc <= fi ) mc::cerror("splat requires at least one source");
+    for ( auto &conf : parse_argv_build(argc - fi, argv + fi) ) {
+      emit(batch(conf));
+      // test compiles each target and then runs it; splat shows both, in that order
+      if ( mode == __modes::test ) emit(run_command(conf));
+    }
+    break;
+  }
+  case __modes::compile :
+  case __modes::link : {
+    for ( auto &conf : parse_argv_build(argc - 2, argv + 2) ) emit(batch(conf));
+    break;
+  }
+  case __modes::debug : {
+    for ( auto &conf : parse_argv_build(argc - 2, argv + 2) ) {
+      recipe_debug(conf);
+      emit(batch(conf));
+    }
+    break;
+  }
+  case __modes::doctor : {
+    for ( auto &conf : parse_argv_build(argc - 2, argv + 2) ) {
+      recipe_doctor(conf);
+      emit(batch(conf));
+    }
+    break;
+  }
+  case __modes::run : {
+    config_t conf = parse_argv_build_single(argc - 2, argv + 2);
+    emit(batch(conf));
+    emit(conf.target_out);      // run execs the binary directly, never under qemu
+    break;
+  }
+  case __modes::emulate : {
+    config_t conf = parse_argv_build_single(argc - 2, argv + 2);
+    emit(batch(conf));
+    emit(run_command(conf));
+    break;
+  }
+  // batch is handled by parse_main; make/recipes are reserved. nothing to issue for any of them
+  case __modes::batch :
+  case __modes::make :
+  case __modes::recipes : {
+    break;
+  }
+  case __modes::__end : {
+    mc::cerror("Invalid command argument provided");
+  }
+  };
+  return 0;
+}
+
 template <typename T = void>
 inline int
 parse_main(int argc, char **argv)
   requires(recipes::__using_gnu)
 {
   using namespace recipes::gnu;
+  if ( argc >= 2 and argv[1] != nullptr and mc::strcmp(argv[1], "splat") == 0 ) {
+    if ( argc < 3 ) mc::cerror("splat must be followed by a duck command line, ie duck splat build src/main.cpp");
+    const bool __was_splatting = splat::__active;
+    splat::__active = true;
+    mc::vector<char *> __argv;
+    __argv.push_back(argv[0]);
+    for ( int i = 2; i < argc; ++i ) __argv.push_back(argv[i]);
+    const int r = parse_main(static_cast<int>(__argv.size()), __argv.data());
+    splat::__active = __was_splatting;
+    return r;
+  }
   // duck <recipe>.duck  is equal to duck batch <recipe>.duck
   if ( argc >= 2 and argv[1] != nullptr and string_type{ argv[1] }.ends_with(".duck") ) {
     mc::vector<char *> __argv;
@@ -68,14 +146,16 @@ parse_main(int argc, char **argv)
   }
   if ( argc < 3 ) [[unlikely]] {
     if ( argc == 2 )
-      if ( (mc::strcmp(argv[1], "help") == 0) or (mc::strcmp(argv[1], "--help")) or (mc::strcmp(argv[1], "--h"))
-           or (mc::strcmp(argv[1], "-h")) ) {
+      if ( (mc::strcmp(argv[1], "help") == 0) or (mc::strcmp(argv[1], "--help") == 0) or (mc::strcmp(argv[1], "--h") == 0)
+           or (mc::strcmp(argv[1], "-h") == 0) ) {
         help();
         return 0;
       }
     mc::cerror("Invalid command arguments provided");
   }
   auto mode = match(argv);
+  // splat: emit what we would have run then stop
+  if ( splat::active() and mode != __modes::batch ) return splat_dispatch(mode, argc, argv);
   switch ( mode ) {
   case __modes::build : {
     if ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) {
@@ -97,6 +177,8 @@ parse_main(int argc, char **argv)
     if ( parallel ? argc <= fi : argc != fi + 1 )
       mc::cerror("Must provide a path to a valid batchfile");
     if ( !mc::posix::exists(argv[fi]) ) mc::cerror("File doesn't exist");
+    // there is nothing to pool when we only print
+    if ( splat::active() ) parallel = false;
     mc::string batchfile;
     auto __f = mc::io::open_file(argv[fi]);
     mc::io::read(__f, batchfile);

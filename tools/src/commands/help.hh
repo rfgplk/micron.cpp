@@ -50,6 +50,11 @@ help(void)
   mc::console("    batch      execute a script of duck command lines (one per line)");
   mc::console("               `batch parallel` pools build/compile/link lines into one");
   mc::console("               concurrent run; other lines execute after the pool drains");
+  mc::console("    splat      print the command(s) duck would issue, verbatim, and run nothing");
+  mc::console("               takes any duck command line: `duck splat build src/main.cpp -g -ke`");
+  mc::console("               a batchfile is splatted line by line, not run:");
+  mc::console("                   duck splat verify_compile.duck");
+  mc::console("               `parallel` is accepted and ignored; a nested splat is a noop");
   mc::console("    make       scaffold a new project from template          (reserved)");
   mc::console("    recipes    list/select build recipes                     (reserved)");
   mc::console("    help       print this screen");
@@ -275,4 +280,7 @@ help(void)
   mc::console("    duck build src/hot.cpp --perf         # -O3 + unroll (FP-safe)");
   mc::console("    duck build.duck                       # implicit batch (== duck batch ...)");
   mc::console("    duck batch scripts/build_all.duck     # script of duck commands");
+  mc::console("    duck splat build src/main.cpp -g -ke  # print the g++ line, compile nothing");
+  mc::console("    duck splat verify_compile.duck        # print every command the matrix would run");
+  mc::console("    sh -c \"$(duck splat build src/x.cpp)\"  # ...and run one verbatim");
 }
