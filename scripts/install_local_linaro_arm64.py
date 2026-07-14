@@ -22,7 +22,7 @@ def main():
         for f in files:
             if (
                 f.endswith((".h", ".hh", ".hpp", ".c", ".cc", ".cpp"))
-                or f in ("initializer_list", "index_sequence", "pthread")
+                or f in ("coroutine", "initializer_list", "index_sequence", "pthread")
             ):
                 src_file = os.path.join(root, f)
                 rel_path = os.path.relpath(src_file, src_path)
@@ -36,7 +36,7 @@ def main():
         for f in files:
             if (
                 f.endswith((".h", ".hh", ".hpp", ".c", ".cc", ".cpp"))
-                or f in ("initializer_list", "index_sequence", "pthread")
+                or f in ("coroutine", "initializer_list", "index_sequence", "pthread")
             ):
                 src_file = os.path.join(root, f)
                 rel_path = os.path.relpath(src_file, src_path)

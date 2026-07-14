@@ -22,7 +22,7 @@ fi
 find "$SRC" -type f | while IFS= read -r file; do
     base=$(basename "$file")
     case "$base" in
-        *.h|*.hh|*.hpp|*.c|*.cc|*.cpp|initializer_list|index_sequence|pthread)
+        *.h|*.hh|*.hpp|*.c|*.cc|*.cpp|coroutine|initializer_list|index_sequence|pthread)
             rel="${file#$SRC/}"
             dest_file="$DEST/$rel"
             dest_dir=$(dirname "$dest_file")
