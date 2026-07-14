@@ -37,7 +37,7 @@ COMMON_FLAGS=(
   -fno-omit-frame-pointer
   -fsanitize=address
   -fno-sanitize-recover=all
-  -mavx2 -mbmi -march=native
+  -march=native
   -Wall -Wextra -Wpedantic
   -Wno-variadic-macros -Wno-inline
   -DRIGOR_ITERS=1500

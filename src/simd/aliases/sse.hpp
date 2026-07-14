@@ -22,7 +22,12 @@ namespace sse
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpedantic"
 
+// dispatch according to sse class
 #define __inline_sse [[gnu::always_inline, gnu::artificial]] static inline
+#define __inline_sse3 [[gnu::always_inline, gnu::artificial, gnu::target("sse3")]] static inline
+#define __inline_ssse3 [[gnu::always_inline, gnu::artificial, gnu::target("ssse3")]] static inline
+#define __inline_sse41 [[gnu::always_inline, gnu::artificial, gnu::target("sse4.1")]] static inline
+#define __inline_sse42 [[gnu::always_inline, gnu::artificial, gnu::target("sse4.2")]] static inline
 
 __inline_sse __m128
 zero_f32() noexcept
@@ -242,13 +247,13 @@ load_scalar_f64(const double *p) noexcept
   return _mm_load_sd(p);
 }
 
-__inline_sse __m128i
+__inline_sse3 __m128i
 load_dqu_i128(const __m128i *p) noexcept
 {
   return _mm_lddqu_si128(p);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 load_stream_i128(const __m128i *p) noexcept
 {
   return _mm_stream_load_si128(p);
@@ -524,37 +529,37 @@ sqrt_f64(__m128d a) noexcept
   return _mm_sqrt_pd(a);
 }
 
-__inline_sse __m128
+__inline_sse3 __m128
 hadd_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_hadd_ps(a, b);
 }
 
-__inline_sse __m128
+__inline_sse3 __m128
 hsub_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_hsub_ps(a, b);
 }
 
-__inline_sse __m128
+__inline_sse3 __m128
 addsub_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_addsub_ps(a, b);
 }
 
-__inline_sse __m128d
+__inline_sse3 __m128d
 hadd_f64(__m128d a, __m128d b) noexcept
 {
   return _mm_hadd_pd(a, b);
 }
 
-__inline_sse __m128d
+__inline_sse3 __m128d
 hsub_f64(__m128d a, __m128d b) noexcept
 {
   return _mm_hsub_pd(a, b);
 }
 
-__inline_sse __m128d
+__inline_sse3 __m128d
 addsub_f64(__m128d a, __m128d b) noexcept
 {
   return _mm_addsub_pd(a, b);
@@ -674,13 +679,13 @@ mul_hi_u16(__m128i a, __m128i b) noexcept
   return _mm_mulhi_epu16(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 mul_lo_i32(__m128i a, __m128i b) noexcept
 {
   return _mm_mullo_epi32(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 mul_2x32_to_2x64_s(__m128i a, __m128i b) noexcept
 {
   return _mm_mul_epi32(a, b);
@@ -698,13 +703,13 @@ madd_i16(__m128i a, __m128i b) noexcept
   return _mm_madd_epi16(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 madd_u8s8(__m128i a, __m128i b) noexcept
 {
   return _mm_maddubs_epi16(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 mul_hi_round_i16(__m128i a, __m128i b) noexcept
 {
   return _mm_mulhrs_epi16(a, b);
@@ -728,73 +733,73 @@ sad_u8(__m128i a, __m128i b) noexcept
   return _mm_sad_epu8(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 abs_i8(__m128i a) noexcept
 {
   return _mm_abs_epi8(a);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 abs_i16(__m128i a) noexcept
 {
   return _mm_abs_epi16(a);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 abs_i32(__m128i a) noexcept
 {
   return _mm_abs_epi32(a);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 sign_i8(__m128i a, __m128i b) noexcept
 {
   return _mm_sign_epi8(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 sign_i16(__m128i a, __m128i b) noexcept
 {
   return _mm_sign_epi16(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 sign_i32(__m128i a, __m128i b) noexcept
 {
   return _mm_sign_epi32(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 hadd_i16(__m128i a, __m128i b) noexcept
 {
   return _mm_hadd_epi16(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 hadd_i32(__m128i a, __m128i b) noexcept
 {
   return _mm_hadd_epi32(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 hadd_sat_i16(__m128i a, __m128i b) noexcept
 {
   return _mm_hadds_epi16(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 hsub_i16(__m128i a, __m128i b) noexcept
 {
   return _mm_hsub_epi16(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 hsub_i32(__m128i a, __m128i b) noexcept
 {
   return _mm_hsub_epi32(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 hsub_sat_i16(__m128i a, __m128i b) noexcept
 {
   return _mm_hsubs_epi16(a, b);
@@ -824,49 +829,49 @@ max_i16(__m128i a, __m128i b) noexcept
   return _mm_max_epi16(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 min_i8(__m128i a, __m128i b) noexcept
 {
   return _mm_min_epi8(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 max_i8(__m128i a, __m128i b) noexcept
 {
   return _mm_max_epi8(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 min_u16(__m128i a, __m128i b) noexcept
 {
   return _mm_min_epu16(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 max_u16(__m128i a, __m128i b) noexcept
 {
   return _mm_max_epu16(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 min_i32(__m128i a, __m128i b) noexcept
 {
   return _mm_min_epi32(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 max_i32(__m128i a, __m128i b) noexcept
 {
   return _mm_max_epi32(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 min_u32(__m128i a, __m128i b) noexcept
 {
   return _mm_min_epu32(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 max_u32(__m128i a, __m128i b) noexcept
 {
   return _mm_max_epu32(a, b);
@@ -962,7 +967,7 @@ eq_i32(__m128i a, __m128i b) noexcept
   return _mm_cmpeq_epi32(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 eq_i64(__m128i a, __m128i b) noexcept
 {
   return _mm_cmpeq_epi64(a, b);
@@ -986,7 +991,7 @@ gt_i32(__m128i a, __m128i b) noexcept
   return _mm_cmpgt_epi32(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse42 __m128i
 gt_i64(__m128i a, __m128i b) noexcept
 {
   return _mm_cmpgt_epi64(a, b);
@@ -1222,7 +1227,7 @@ pack_satu_i16(__m128i a, __m128i b) noexcept
   return _mm_packus_epi16(a, b);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 pack_satu_i32(__m128i a, __m128i b) noexcept
 {
   return _mm_packus_epi32(a, b);
@@ -1300,7 +1305,7 @@ unpack_hi_f64(__m128d a, __m128d b) noexcept
   return _mm_unpackhi_pd(a, b);
 }
 
-__inline_sse __m128i
+__inline_ssse3 __m128i
 shuffle_v_i8(__m128i a, __m128i mask) noexcept
 {
   return _mm_shuffle_epi8(a, mask);
@@ -1408,91 +1413,91 @@ extract_low_f64(__m128d a) noexcept
   return _mm_cvtsd_f64(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_i8_to_i16(__m128i a) noexcept
 {
   return _mm_cvtepi8_epi16(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_i8_to_i32(__m128i a) noexcept
 {
   return _mm_cvtepi8_epi32(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_i8_to_i64(__m128i a) noexcept
 {
   return _mm_cvtepi8_epi64(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_i16_to_i32(__m128i a) noexcept
 {
   return _mm_cvtepi16_epi32(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_i16_to_i64(__m128i a) noexcept
 {
   return _mm_cvtepi16_epi64(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_i32_to_i64(__m128i a) noexcept
 {
   return _mm_cvtepi32_epi64(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_u8_to_i16(__m128i a) noexcept
 {
   return _mm_cvtepu8_epi16(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_u8_to_i32(__m128i a) noexcept
 {
   return _mm_cvtepu8_epi32(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_u8_to_i64(__m128i a) noexcept
 {
   return _mm_cvtepu8_epi64(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_u16_to_i32(__m128i a) noexcept
 {
   return _mm_cvtepu16_epi32(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_u16_to_i64(__m128i a) noexcept
 {
   return _mm_cvtepu16_epi64(a);
 }
 
-__inline_sse __m128i
+__inline_sse41 __m128i
 widen_u32_to_i64(__m128i a) noexcept
 {
   return _mm_cvtepu32_epi64(a);
 }
 
-__inline_sse int
+__inline_sse41 int
 testz_i128(__m128i a, __m128i b) noexcept
 {
   return _mm_testz_si128(a, b);
 }
 
-__inline_sse int
+__inline_sse41 int
 testc_i128(__m128i a, __m128i b) noexcept
 {
   return _mm_testc_si128(a, b);
 }
 
-__inline_sse int
+__inline_sse41 int
 testnzc_i128(__m128i a, __m128i b) noexcept
 {
   return _mm_testnzc_si128(a, b);
@@ -1728,6 +1733,10 @@ div_scalar_f64(__m128d a, __m128d b) noexcept
 }
 
 #undef __inline_sse
+#undef __inline_sse3
+#undef __inline_ssse3
+#undef __inline_sse41
+#undef __inline_sse42
 
 #pragma GCC diagnostic pop
 

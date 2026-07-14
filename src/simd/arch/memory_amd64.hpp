@@ -533,7 +533,7 @@ memset256(T *__restrict src, const u8 in, const u64 count) noexcept
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 32;
 
-  const i256 v = __bits::__broadcast_byte_32(in);
+  const auto v = __bits::__broadcast_byte_32(in);
 
   for ( u64 i = 0; i < n; i++ ) __bits::__block_set_32(s + i * 32, v);
 
@@ -596,7 +596,7 @@ amemset256(T *__restrict src, const u8 in, const u64 count) noexcept
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 32;
 
-  const i256 v = __bits::__broadcast_byte_32(in);
+  const auto v = __bits::__broadcast_byte_32(in);
 
   for ( u64 i = 0; i < n; i++ ) __bits::__block_set_32_a(s + i * 32, v);
 
@@ -661,7 +661,7 @@ ntmemset256(T *__restrict src, const u8 in, const u64 count) noexcept
   const u64 bytes = count * sizeof(T);
   const u64 n = bytes / 32;
 
-  const i256 v = __bits::__broadcast_byte_32(in);
+  const auto v = __bits::__broadcast_byte_32(in);
 
   for ( u64 i = 0; i < n; i++ ) __bits::__block_set_32_nt(s + i * 32, v);
 
@@ -897,12 +897,11 @@ wordset128(u8 *__restrict src, const u64 in, const u64 bytes) noexcept
   return src;
 }
 
-#if defined(__micron_x86_avx2)
-__attribute__((nonnull, target("avx2"))) static inline u8 *
+__attribute__((nonnull)) static inline u8 *
 wordset256(u8 *__restrict src, const u64 in, const u64 bytes) noexcept
 {
   const u64 n = bytes / 32;
-  const __m256i v = __bits::__broadcast_word_32(in);
+  const auto v = __bits::__broadcast_word_32(in);
   for ( u64 i = 0; i < n; i++ ) __bits::__block_set_32(src + i * 32, v);
   const u64 rem = bytes % 32;
   if ( rem ) {
@@ -912,7 +911,6 @@ wordset256(u8 *__restrict src, const u64 in, const u64 bytes) noexcept
   }
   return src;
 }
-#endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memchr - byte search
@@ -938,9 +936,8 @@ memchr128(const T *src, u8 c, const u64 count) noexcept
   return nullptr;
 }
 
-#if defined(__micron_x86_avx2)
 template<typename T>
-__attribute__((nonnull, target("avx2"))) T *
+__attribute__((nonnull)) T *
 memchr256(const T *src, u8 c, const u64 count) noexcept
 {
   const auto *p = reinterpret_cast<const u8 *>(src);
@@ -959,7 +956,6 @@ memchr256(const T *src, u8 c, const u64 count) noexcept
 
   return nullptr;
 }
-#endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memrchr - reverse byte search
@@ -988,9 +984,8 @@ memrchr128(const T *src, u8 c, const u64 count) noexcept
   return nullptr;
 }
 
-#if defined(__micron_x86_avx2)
 template<typename T>
-__attribute__((nonnull, target("avx2"))) T *
+__attribute__((nonnull)) T *
 memrchr256(const T *src, u8 c, const u64 count) noexcept
 {
   const auto *p = reinterpret_cast<const u8 *>(src);
@@ -1012,7 +1007,6 @@ memrchr256(const T *src, u8 c, const u64 count) noexcept
 
   return nullptr;
 }
-#endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // mempcpy - memcpy returning d + n
@@ -1041,9 +1035,8 @@ mempcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
   return reinterpret_cast<T *>(d + bytes);
 }
 
-#if defined(__micron_x86_avx2)
 template<typename T>
-__attribute__((nonnull, target("avx2"))) T *
+__attribute__((nonnull)) T *
 mempcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
 {
   static_assert(micron::is_trivially_copyable_v<T>, "mempcpy256 requires trivially copyable type");
@@ -1065,7 +1058,6 @@ mempcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcep
 
   return reinterpret_cast<T *>(d + bytes);
 }
-#endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // memmem
@@ -1132,9 +1124,8 @@ memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
   return nullptr;
 }
 
-#if defined(__micron_x86_avx2)
 template<typename T>
-__attribute__((target("avx2"))) T *
+T *
 memmem256(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
 {
   const auto *h = reinterpret_cast<const u8 *>(hay);
@@ -1203,7 +1194,6 @@ memmem256(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
 
   return nullptr;
 }
-#endif
 
 #if defined(__micron_x86_avx2)
 

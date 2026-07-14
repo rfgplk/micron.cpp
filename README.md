@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-1.8.2.2-green)
+![Version](https://img.shields.io/badge/version-1.8.3.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -67,10 +67,27 @@ The same exact steps as above. If you are cross compiling on amd64 for arm32 or 
 In order to compile micron binaries in freestanding mode (not linking against glibc or any system objects), you'll first need to run `scripts/install_start.py` which copies over all the `start/` files (containing _start and various other init code) to `/usr/src/mc_start`. Then you'll need to compile your binaries by providing the path to the start source files, example: 
 
 ```bash
-/usr/bin/g++ -std=c++26 -Ofast -mavx2 -mbmi -march=native -fmodulo-sched -fmodulo-sched-allow-regmoves -fgcse-sm -fgcse-las -ffreestanding -nostdlib -nostdlib++ -fno-stack-protector -fno-exceptions -fno-rtti -m64 -Wall -Wextra -Wpedantic -Wno-variadic-macros -Wno-inline -flto=8 -Wno-odr -Wno-lto-type-mismatch -Wno-variadic-macros -Wno-inline tools/src/main.cc /usr/src/mc_start/start.s /usr/src/mc_start/start.cpp -I./src -L./libs/ -o bin/duck
+/usr/bin/g++ -std=c++26 -Ofast -march=native -fmodulo-sched -fmodulo-sched-allow-regmoves -fgcse-sm -fgcse-las -ffreestanding -nostdlib -nostdlib++ -fno-stack-protector -fno-exceptions -fno-rtti -m64 -Wall -Wextra -Wpedantic -Wno-variadic-macros -Wno-inline -flto=8 -Wno-odr -Wno-lto-type-mismatch -Wno-variadic-macros -Wno-inline tools/src/main.cc /usr/src/mc_start/start.s /usr/src/mc_start/start.cpp -I./src -L./libs/ -o bin/duck
 ```
 
 This installation guide serves only as a rough suggestion, exact paths may depend on your use case and configuration.
+
+###### x86 ISA levels
+
+micron's x86 floor is **SSE2**, it runs on any amd64 CPU, back to 2003.
+Tiers are natively dispatched via `duck --isa`:
+
+```bash
+duck compile src/ --x86 --isa base    # -march=x86-64      SSE2                  any x86-64 (2003+)
+duck compile src/ --x86 --isa v2      # -march=x86-64-v2   +SSE4.2, POPCNT       Nehalem  (2008+)
+duck compile src/ --x86 --isa v3      # -march=x86-64-v3   +AVX2, BMI1/2, FMA    Haswell  (2013+)
+duck compile src/ --x86 --isa v4      # -march=x86-64-v4   +AVX-512              Skylake-X (2017+)
+duck compile src/ --x86               # -march=native (default) -- whatever this box is
+```
+
+The invariant is that **no function emits an instruction its build flags did not authorize**, so an
+`--isa base` binary contains no AVX/AVX2/BMI/SSE4 instructions at all and genuinely executes on a
+pre-AVX2 core.
 
 ##### Philosophy
 
@@ -140,7 +157,7 @@ All headers live under `src/` and may be included directly. Each top-level modul
 - **`queue/`** -- FIFO queues (`queue`, `conqueue`, `iqueue`, `lambda_queue`, `spsc_queue`)
 - **`stacks/`** -- LIFO stacks (`stack`, `fstack`, `istack`, `sstack`, `constack`, `cactus`)
 - **`linux/`** -- Linux/POSIX layer covering syscalls, sysctl, polling, users and ELF parsing
-- **`hash/`** -- hash function family (`zzz`, `xxhash`, `fnv`, `murmur`, `crc`, `bernstein`, `fib`, `checksum`); prefer `zzz`
+- **`hash/`** -- hash function family (`zzz`, `xxhash`, `fnv`, `murmur`, `crc`, `bernstein`, `fib`, `checksum`).
 - **`sort/`** -- sorting algorithms (quick, merge, heap, radix, bitonic, comb, counting, insertion, bubble, stable, selection)
 - **`algorithm/`** -- generic container algorithms (`find`, `filter`, `fold`, `accumulate`, arithmetic, data, unroll) plus a functional-programming variant suite (`fp*`)
 - **`simd/`** -- SIMD primitives, intrinsics, dispatch and per-architecture backends (`amd64`, `arm32`, `arm64`) for 128/256/512-bit registers and NEON

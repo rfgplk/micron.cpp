@@ -20,7 +20,32 @@ __is_cpp_standard(const string_type &__std)
 
 enum __arch : u32 { x86 = 0, arm, arm64 };
 
+// x86 ISA level
+//   base -> -march=x86-64
+//   v2   -> -march=x86-64-v2
+//   v3   -> -march=x86-64-v3
+//   v4   -> -march=x86-64-v4
+//   native -> -march=native
+enum __isa : u32 { native = 0, base, v2, v3, v4 };
+
 enum __compilers : u32 { gnucc = 0, clang, nasm };
+
+inline const char *
+__isa_march(u32 isa)
+{
+  switch ( isa ) {
+  case __isa::base:
+    return "-march=x86-64";
+  case __isa::v2:
+    return "-march=x86-64-v2";
+  case __isa::v3:
+    return "-march=x86-64-v3";
+  case __isa::v4:
+    return "-march=x86-64-v4";
+  default:
+    return "-march=native";
+  }
+}
 
 enum __languages : u32 { cpp = 0, c, lasm, gas };
 
@@ -131,6 +156,7 @@ struct config_t {
   u32 compile_type{ __comp_type::linked };
   u32 width{ 64 };
   u32 arch{ __arch::x86 };
+  u32 isa{ __isa::native };      // x86 only; --isa base|v2|v3|v4|native
   u32 compiler{ __compilers::gnucc };
   u32 language{ __languages::cpp };
   u32 mode{ __opt_modes::optimized };
@@ -307,6 +333,20 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.arch = __arch::arm;
     } else if ( mc::strcmp(argv[i], "--arm64") == 0 or mc::strcmp(argv[i], "--aarch64") == 0 ) {
       conf.arch = __arch::arm64;
+    } else if ( mc::strcmp(argv[i], "--isa") == 0 ) {
+      if ( ++i >= argc ) mc::cerror("the --isa flag must be followed by one of: base, v2, v3, v4, native");
+      if ( mc::strcmp(argv[i], "base") == 0 or mc::strcmp(argv[i], "v1") == 0 )
+        conf.isa = __isa::base;
+      else if ( mc::strcmp(argv[i], "v2") == 0 )
+        conf.isa = __isa::v2;
+      else if ( mc::strcmp(argv[i], "v3") == 0 )
+        conf.isa = __isa::v3;
+      else if ( mc::strcmp(argv[i], "v4") == 0 )
+        conf.isa = __isa::v4;
+      else if ( mc::strcmp(argv[i], "native") == 0 )
+        conf.isa = __isa::native;
+      else
+        mc::cerror("unknown --isa level (expected base, v2, v3, v4 or native)");
     } else if ( mc::strcmp(argv[i], "-i") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the -i flag must be followed by a path");
       // first user -i replaces the default ./src; subsequent -i flags accumulate

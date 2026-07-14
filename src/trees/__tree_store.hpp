@@ -158,6 +158,28 @@ public:
     mem_.length = 0;
     free_head_ = nil;
   }
+
+  // pre-size the slab so subsequent allocate() calls never grow (the noexcept-hot-path
+  // discipline: reserve at init where a throw is acceptable, then insert freely)
+  void
+  reserve(usize n_slots)
+  {
+    if ( mem_.capacity < n_slots ) mem_.expand(n_slots - mem_.capacity);
+  }
+
+  // high-water slot count (reset()/rebuild-friendly arenas never deallocate, so this is
+  // exactly the number of live slots) + the reserved capacity, both in SLOT units
+  [[nodiscard, gnu::always_inline]] usize
+  slots_used() const noexcept
+  {
+    return mem_.length;
+  }
+
+  [[nodiscard, gnu::always_inline]] usize
+  slots_reserved() const noexcept
+  {
+    return mem_.capacity;
+  }
 };
 
 };      // namespace __tree_store

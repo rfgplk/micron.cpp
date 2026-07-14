@@ -155,6 +155,11 @@ test_v128_float(void)
   end_test_case();
 }
 
+// v256 needs AVX2, exactly as v512 below needs AVX-512F: there is no narrower form of a 256-bit
+// vector class, so below AVX2 ms::w* is not declared at all (see simd/simd.hpp). this used to be
+// ungated only because the build recipe forced -mavx2 on every x86 compile.
+#if defined(__micron_x86_avx2)
+
 static void
 test_v256(void)
 {
@@ -189,6 +194,8 @@ test_v256(void)
 
   end_test_case();
 }
+
+#endif      // __micron_x86_avx2
 
 #if defined(__AVX512F__)
 
@@ -226,7 +233,11 @@ main()
   test_v128_arith();
   test_v128_compare();
   test_v128_float();
+#if defined(__micron_x86_avx2)
   test_v256();
+#else
+  print("[v256 needs AVX2 - skipped at this ISA level]");
+#endif
 #if defined(__AVX512F__)
   test_v512();
 #else

@@ -22,7 +22,7 @@ namespace avx2
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpedantic"
 
-#define __inline_avx [[gnu::always_inline, gnu::artificial]] static inline
+#define __inline_avx [[gnu::always_inline, gnu::artificial, gnu::target("avx2")]] static inline
 
 __inline_avx __m256i
 add_i8(__m256i a, __m256i b) noexcept

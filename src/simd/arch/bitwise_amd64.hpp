@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../bits/__arch.hpp"
 #include "../namespace.hpp"
 
 namespace micron
@@ -32,6 +33,7 @@ find_first_set_128(const void *_ptr, usize len, const char b)
 inline usize
 find_first_set_256(const void *_ptr, usize len, const char b)
 {
+#if defined(__micron_x86_avx2)
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
   i256 char_reg = _mm256_set1_epi8(b);
   usize i = 0;
@@ -44,6 +46,9 @@ find_first_set_256(const void *_ptr, usize len, const char b)
   for ( ; i < len; ++i )
     if ( ptr[i] == b ) return i;
   return len;
+#else
+  return find_first_set_128(_ptr, len, b);
+#endif
 }
 
 inline usize
@@ -66,6 +71,7 @@ count_set_128(const void *_ptr, usize len, const char b)
 inline usize
 count_set_256(const void *_ptr, usize len, const char b)
 {
+#if defined(__micron_x86_avx2)
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
   i256 char_reg = _mm256_set1_epi8(b);
   usize i = 0;
@@ -78,6 +84,9 @@ count_set_256(const void *_ptr, usize len, const char b)
   for ( ; i < len; ++i )
     if ( ptr[i] == b ) ++cnt;
   return cnt;
+#else
+  return count_set_128(_ptr, len, b);
+#endif
 }
 
 inline bool
@@ -101,6 +110,7 @@ any_set_128(const void *_ptr, usize len, const char b)
 inline bool
 any_set_256(const void *_ptr, usize len, const char b)
 {
+#if defined(__micron_x86_avx2)
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
   i256 char_reg = _mm256_set1_epi8(b);
   usize i = 0;
@@ -114,6 +124,9 @@ any_set_256(const void *_ptr, usize len, const char b)
   for ( ; i < len; ++i )
     if ( ptr[i] == b ) return true;
   return false;
+#else
+  return any_set_128(_ptr, len, b);
+#endif
 }
 
 inline bool
@@ -137,6 +150,7 @@ all_set_128(const void *_ptr, usize len, const char b)
 inline bool
 all_set_256(const void *_ptr, usize len, const char b)
 {
+#if defined(__micron_x86_avx2)
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
   i256 char_reg = _mm256_set1_epi8(b);
   usize i = 0;
@@ -150,6 +164,9 @@ all_set_256(const void *_ptr, usize len, const char b)
   for ( ; i < len; ++i )
     if ( ptr[i] != b ) return false;
   return true;
+#else
+  return all_set_128(_ptr, len, b);
+#endif
 }
 
 inline bool
@@ -173,6 +190,7 @@ none_set_128(const void *_ptr, usize len, const char b)
 inline bool
 none_set_256(const void *_ptr, usize len, const char b)
 {
+#if defined(__micron_x86_avx2)
   const unsigned char *ptr = static_cast<const unsigned char *>(_ptr);
   i256 char_reg = _mm256_set1_epi8(b);
   usize i = 0;
@@ -186,6 +204,9 @@ none_set_256(const void *_ptr, usize len, const char b)
   for ( ; i < len; ++i )
     if ( ptr[i] == b ) return false;
   return true;
+#else
+  return none_set_128(_ptr, len, b);
+#endif
 }
 
 };      // namespace simd

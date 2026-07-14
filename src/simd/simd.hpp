@@ -46,26 +46,30 @@ using packet2d = v128<d128, __vd>;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 256-bit (x86 only; no NEON v256 implementation)
 
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx)
+using wfloat = v256<f256, __vf>;
+using wdouble = v256<d256, __vd>;
+
+using packet8f = v256<f256, __vf>;
+using packet4d = v256<d256, __vd>;
+#endif
+
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx2)
 using w8 = v256<i256, __v8>;
 using w16 = v256<i256, __v16>;
 using w32 = v256<i256, __v32>;
 using w64 = v256<i256, __v64>;
-using wfloat = v256<f256, __vf>;
-using wdouble = v256<d256, __vd>;
 
 using packet32c = v256<i256, __v8>;
 using packet16s = v256<i256, __v16>;
 using packet8i = v256<i256, __v32>;
 using packet4l = v256<i256, __v64>;
-using packet8f = v256<f256, __vf>;
-using packet4d = v256<d256, __vd>;
 #endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 512-bit (x86 only)
 
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx512f)
 using z8 = v512<i512, __v8>;
 using z16 = v512<i512, __v16>;
 using z32 = v512<i512, __v32>;
@@ -90,9 +94,11 @@ concept is_simd_class
 #if !defined(__micron_arch_arm32)
       or micron::same_as<T, vdouble>
 #endif
-#if defined(__micron_arch_x86_any)
-      or micron::same_as<T, w8> or micron::same_as<T, w16> or micron::same_as<T, w32> or micron::same_as<T, w64>
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx)
       or micron::same_as<T, wfloat> or micron::same_as<T, wdouble>
+#endif
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx2)
+      or micron::same_as<T, w8> or micron::same_as<T, w16> or micron::same_as<T, w32> or micron::same_as<T, w64>
 #endif
     ;
 
@@ -121,21 +127,28 @@ using packet4f = simd::packet4f;
 using packet2d = simd::packet2d;
 #endif
 
-#if defined(__micron_arch_x86_any)
+// these must carry the SAME gates as the definitions above, or they name types that do not exist
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx)
+using wfloat = simd::wfloat;
+using wdouble = simd::wdouble;
+
+using packet8f = simd::packet8f;
+using packet4d = simd::packet4d;
+#endif
+
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx2)
 using w8 = simd::w8;
 using w16 = simd::w16;
 using w32 = simd::w32;
 using w64 = simd::w64;
-using wfloat = simd::wfloat;
-using wdouble = simd::wdouble;
 
 using packet32c = simd::packet32c;
 using packet16s = simd::packet16s;
 using packet8i = simd::packet8i;
 using packet4l = simd::packet4l;
-using packet8f = simd::packet8f;
-using packet4d = simd::packet4d;
+#endif
 
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx512f)
 using z8 = simd::z8;
 using z16 = simd::z16;
 using z32 = simd::z32;

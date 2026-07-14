@@ -10,6 +10,12 @@
 #include "../../simd/types.hpp"
 #include "../../types.hpp"
 
+// a packed vector backend exists only for these defined ISA extenstions
+#if (defined(__micron_x86_avx2) && defined(__micron_x86_fma))                                                                               \
+    || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
+#define __micron_math_packed 1
+#endif
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #pragma GCC diagnostic ignored "-Wpedantic"

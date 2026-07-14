@@ -2,6 +2,40 @@
 #  duck batch parallel tests/verify_compile.duck   (pool every cell concurrently)
 #
 # {amd64, arm64, arm32, i386} x {-O0 -O1 -O2 -O3 -Ofast, debug (-g)} x hosted/freestanding
+#   plus  amd64 x {base, v2, v3, v4} ISA levels
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# x86 ISA levels
+#   base = -march=x86-64     
+#   v2   = -march=x86-64-v2 
+#   v3   = -march=x86-64-v3 
+#   v4   = -march=x86-64-v4 
+#
+# if you break the SSE2 fallbacks, `base` and `v2` go red here first.
+
+compile tests/compiletests/ --x86 --isa base -O0 --raw-obj -o bin/compiletests/amd64_base_O0
+compile tests/compiletests/ --x86 --isa base -O2 --raw-obj -o bin/compiletests/amd64_base_O2
+compile tests/compiletests/ --x86 --isa base -Ofast --raw-obj -o bin/compiletests/amd64_base_Ofast
+compile tests/compiletests/ --x86 --isa base -g --raw-obj -o bin/compiletests/amd64_base_debug
+compile tests/compiletests/ --x86 --isa v2 -O0 --raw-obj -o bin/compiletests/amd64_v2_O0
+compile tests/compiletests/ --x86 --isa v2 -O2 --raw-obj -o bin/compiletests/amd64_v2_O2
+compile tests/compiletests/ --x86 --isa v2 -Ofast --raw-obj -o bin/compiletests/amd64_v2_Ofast
+compile tests/compiletests/ --x86 --isa v2 -g --raw-obj -o bin/compiletests/amd64_v2_debug
+compile tests/compiletests/ --x86 --isa v3 -O2 --raw-obj -o bin/compiletests/amd64_v3_O2
+compile tests/compiletests/ --x86 --isa v3 -Ofast --raw-obj -o bin/compiletests/amd64_v3_Ofast
+compile tests/compiletests/ --x86 --isa v4 -O2 --raw-obj -o bin/compiletests/amd64_v4_O2
+compile tests/compiletests/ --x86 --isa v4 -Ofast --raw-obj -o bin/compiletests/amd64_v4_Ofast
+
+# the same, freestanding
+compile tests/compiletests/ --x86 --isa base -O2 --raw-obj -o bin/compiletests/amd64_base_O2_k -ke
+compile tests/compiletests/ --x86 --isa base -Ofast --raw-obj -o bin/compiletests/amd64_base_Ofast_k -ke
+compile tests/compiletests/ --x86 --isa v2 -O2 --raw-obj -o bin/compiletests/amd64_v2_O2_k -ke
+compile tests/compiletests/ --x86 --isa v3 -O2 --raw-obj -o bin/compiletests/amd64_v3_O2_k -ke
+compile tests/compiletests/ --x86 --isa v4 -O2 --raw-obj -o bin/compiletests/amd64_v4_O2_k -ke
+
+# and link real binaries at the two ends of the range
+compile tests/compiletests/ --x86 --isa base -O2 -o bin/compiletests/amd64_base_O2_link
+compile tests/compiletests/ --x86 --isa v4 -O2 -o bin/compiletests/amd64_v4_O2_link
 
 # hosted
 

@@ -231,6 +231,36 @@ main(void)
   }
   sb::end_test_case();
 
+  sb::test_case("reserve_nodes: pre-sized arena never grows under insert; clear() retains the slab");
+  {
+    const box3 uni = mkbox(0, 0, 0, 500, 500, 500);
+    micron::octree<int, float, 4, 10> o(uni);
+    o.reserve_nodes(256);
+    const usize cap0 = o.nodes_reserved();
+    sb::require(cap0 >= 256);
+    u64 rng = 0x9E3779B97F4A7C15ull;
+    for ( int i = 0; i < 200; ++i ) {
+      vec3 p{ static_cast<float>(splitmix64(rng++) % 500), static_cast<float>(splitmix64(rng++) % 500),
+              static_cast<float>(splitmix64(rng++) % 500) };
+      o.insert(p, i);
+    }
+    sb::require(o.nodes_used() <= o.nodes_reserved());
+    sb::require(o.nodes_reserved() == cap0);      // never grew past the reservation
+    // clear retains the slab: a rebuild allocates ZERO new capacity
+    o.clear();
+    sb::require(o.size() == 0);
+    sb::require(o.nodes_reserved() == cap0);
+    rng = 0x9E3779B97F4A7C15ull;
+    for ( int i = 0; i < 200; ++i ) {
+      vec3 p{ static_cast<float>(splitmix64(rng++) % 500), static_cast<float>(splitmix64(rng++) % 500),
+              static_cast<float>(splitmix64(rng++) % 500) };
+      o.insert(p, i);
+    }
+    sb::require(o.nodes_reserved() == cap0);
+    sb::require(o.size() == 200);
+  }
+  sb::end_test_case();
+
   sb::print("=== ALL TESTS PASSED ===");
   return 1;
 }

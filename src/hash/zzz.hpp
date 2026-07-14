@@ -8,7 +8,7 @@
 #include "../bits/__arch.hpp"
 #if defined(__micron_arch_arm_any)
 #include "zzz_arm.hpp"
-#else
+#elif defined(__micron_x86_avx2)
 
 #include "../simd/aliases.hpp"
 #include "../simd/simd.hpp"
@@ -702,4 +702,4 @@ zzzf128(const u8 *data, usize sz)
 };      // namespace hashes
 };      // namespace micron
 
-#endif      // !__micron_arch_arm_any
+#endif

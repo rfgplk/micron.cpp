@@ -12,12 +12,24 @@
 
 #include "../types.hpp"
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// crc_simd code
+//  .. __micron_crc_clmul   crc64 normal-form fold; pclmul
+//  .. __micron_crc32_clmul reflected crc32 fold; hard requires SSE4.1
+// NOTE: apparently every x86 part that has PCLMUL (>Westmere) also has SSE4.1, so this never actually excludes a real
+// CPU
 #if defined(__micron_arch_x86_any) && defined(__micron_x86_pclmul)
 #define __micron_crc_clmul 1
-#include "../simd/aliases.hpp"
+#if defined(__micron_x86_sse4_1)
+#define __micron_crc32_clmul 1
+#endif
+#include "../simd/aliases/aes.hpp"
+#include "../simd/aliases/sse.hpp"
 #elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_pmull) && defined(__micron_arm_neon)
 #define __micron_crc_clmul 1
-#include "../simd/aliases.hpp"
+#define __micron_crc32_clmul 1
+#include "../simd/aliases/neon.hpp"
+#include "../simd/aliases/neon_aes.hpp"
 #endif
 
 namespace micron
@@ -146,9 +158,72 @@ __crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept
   return crc;
 }
 
-#else      // ARM (AArch64 pmull/pmull2, AArch32 vmull.p64) — same identity, same constants
+#if defined(__micron_crc32_clmul)
+
+// reflected CRC-32 (gzip poly), 4-way 64 B/iter fold + Barrett reduction (spliced in from czlib)
+//
+// NOTE: do not merge these with __fold_k; you will get a plausible looking wrong answer
+[[gnu::target("pclmul,sse4.1")]] static inline u32
+__crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept
+{
+  // the (long long) casts are the declared parameter type of set_i64, not a width assumption
+  const __v128 mults = __sse::set_i64((long long)0xccaa009eULL, (long long)0xae689191ULL);
+  const __v128 mults4 = __sse::set_i64((long long)0x1d9513d7ULL, (long long)0x8f352d95ULL);
+  const __v128 barrett = __sse::set_i64((long long)0x1db710641ULL, (long long)0xb4e5b025f7011641ULL);
+
+  __v128 x0 = __sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p));
+  x0 = __sse::xor_i128(x0, __sse::broadcast_i32_to_i128((int)(init ^ 0xFFFFFFFFu)));
+  p += 16;
+  len -= 16;
+
+  if ( len >= 48 ) {
+    __v128 x1 = __sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p));
+    __v128 x2 = __sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p + 16));
+    __v128 x3 = __sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p + 32));
+    p += 48;
+    len -= 48;
+    while ( len >= 64 ) {
+      x0 = __sse::xor_i128(__sse::xor_i128(__sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p)), __clm::clmul_64<0x00>(x0, mults4)),
+                           __clm::clmul_64<0x11>(x0, mults4));
+      x1 = __sse::xor_i128(
+          __sse::xor_i128(__sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p + 16)), __clm::clmul_64<0x00>(x1, mults4)),
+          __clm::clmul_64<0x11>(x1, mults4));
+      x2 = __sse::xor_i128(
+          __sse::xor_i128(__sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p + 32)), __clm::clmul_64<0x00>(x2, mults4)),
+          __clm::clmul_64<0x11>(x2, mults4));
+      x3 = __sse::xor_i128(
+          __sse::xor_i128(__sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p + 48)), __clm::clmul_64<0x00>(x3, mults4)),
+          __clm::clmul_64<0x11>(x3, mults4));
+      p += 64;
+      len -= 64;
+    }
+    x0 = __sse::xor_i128(__sse::xor_i128(x1, __clm::clmul_64<0x00>(x0, mults)), __clm::clmul_64<0x11>(x0, mults));
+    x0 = __sse::xor_i128(__sse::xor_i128(x2, __clm::clmul_64<0x00>(x0, mults)), __clm::clmul_64<0x11>(x0, mults));
+    x0 = __sse::xor_i128(__sse::xor_i128(x3, __clm::clmul_64<0x00>(x0, mults)), __clm::clmul_64<0x11>(x0, mults));
+  }
+  while ( len >= 16 ) {
+    const __v128 d = __sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p));
+    x0 = __sse::xor_i128(__sse::xor_i128(d, __clm::clmul_64<0x00>(x0, mults)), __clm::clmul_64<0x11>(x0, mults));
+    p += 16;
+    len -= 16;
+  }
+  x0 = __sse::xor_i128(__clm::clmul_64<0x10>(x0, mults), __sse::bsrl_i128<8>(x0));
+  __v128 x1 = __clm::clmul_64<0x00>(x0, barrett);
+  x1 = __clm::clmul_64<0x10>(x1, barrett);
+  x0 = __sse::xor_i128(x0, x1);
+  const u32 r = (u32)__sse::extract_i32_imm<2>(x0);
+
+  return __crc32_refl_slice8(p, len, r) ^ 0xFFFFFFFFu;
+}
+
+#endif
+
+#else
+
+// ARM branch
 
 namespace __nc = micron::simd::neon_crypto;
+namespace __neon = micron::simd::neon;
 
 using __v128 = uint8x16_t;
 
@@ -231,11 +306,46 @@ __crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept
   return crc;
 }
 
-#endif      // arch
+// reflected CRC-32, 16 B/iter PMULL fold
+static inline u32
+__crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept
+{
+  alignas(16) static constexpr u64 k_mults[2] = { 0xae689191ULL, 0xccaa009eULL };      // x^159, x^95
+  alignas(16) static constexpr u64 k_x95[2] = { 0xccaa009eULL, 0 };                    // x^95 mod G
+  alignas(16) static constexpr u64 k_mu[2] = { 0xb4e5b025f7011641ULL, 0 };             // floor(x^95 / G)
+  alignas(16) static constexpr u64 k_g[2] = { 0x1db710641ULL, 0 };                     // G(x)
+
+  const __v128 mults = __nc::load_u8q(reinterpret_cast<const u8 *>(k_mults));
+  const __v128 m_x95 = __nc::load_u8q(reinterpret_cast<const u8 *>(k_x95));
+  const __v128 b_mu = __nc::load_u8q(reinterpret_cast<const u8 *>(k_mu));
+  const __v128 b_g = __nc::load_u8q(reinterpret_cast<const u8 *>(k_g));
+
+  __v128 x0 = __nc::load_u8q(p);
+  const uint32x4_t xi = __neon::set_lane_u32<0>(init ^ 0xFFFFFFFFu, __neon::splat_u32(0));
+  x0 = __nc::xor_q(x0, (__v128)xi);      // fold the conditioned register into the first 4 bytes
+  p += 16;
+  len -= 16;
+  while ( len >= 16 ) {
+    const __v128 d = __nc::load_u8q(p);
+    x0 = __nc::xor_q(__nc::xor_q(d, __nc::clmul_lo(x0, mults)), __nc::clmul_hi(x0, mults));
+    p += 16;
+    len -= 16;
+  }
+  x0 = __nc::xor_q(__nc::clmul_lo(x0, m_x95), __neon::ext_u8<8>(x0, __neon::splat_u8(0)));
+  __v128 t = __nc::clmul_lo(x0, b_mu);
+  t = __nc::clmul_lo(t, b_g);
+  x0 = __nc::xor_q(x0, t);
+  const u32 r = __neon::get_lane_u32<2>((uint32x4_t)x0);
+
+  return __crc32_refl_slice8(p, len, r) ^ 0xFFFFFFFFu;
+}
+
+#endif
 
 inline constexpr usize __clmul_min = 64;
+inline constexpr usize __clmul32_min = 16;
 
-#endif      // __micron_crc_clmul
+#endif
 
 };      // namespace __simd
 };      // namespace crc

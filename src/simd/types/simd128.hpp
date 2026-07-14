@@ -57,6 +57,18 @@ private:
   }
 
   static inline i128
+  __mullo_epi32_c(i128 a, i128 b)
+  {
+#if defined(__micron_x86_sse4_1)
+    return _mm_mullo_epi32(a, b);
+#else
+    const i128 ev = _mm_mul_epu32(a, b);                                        // lanes 0, 2
+    const i128 od = _mm_mul_epu32(_mm_srli_si128(a, 4), _mm_srli_si128(b, 4));  // lanes 1, 3
+    return _mm_unpacklo_epi32(_mm_shuffle_epi32(ev, _MM_SHUFFLE(0, 0, 2, 0)), _mm_shuffle_epi32(od, _MM_SHUFFLE(0, 0, 2, 0)));
+#endif
+  }
+
+  static inline i128
   __shr8(i128 v, int i)
   {
     if constexpr ( micron::is_signed_v<F> ) {
@@ -757,7 +769,7 @@ public:
         static_assert(!__is_8_wide<F>(), "SSE has no epi8 multiply");
       }
       if constexpr ( __is_16_wide<F>() ) value = _mm_mullo_epi16(value, o.value);
-      if constexpr ( __is_32_wide<F>() ) value = _mm_mullo_epi32(value, o.value);
+      if constexpr ( __is_32_wide<F>() ) value = __mullo_epi32_c(value, o.value);
       if constexpr ( __is_64_wide<F>() ) {
         static_assert(!__is_64_wide<F>(), "SSE/AVX have no epi64 multiply");
       }
@@ -882,7 +894,11 @@ public:
     } else if constexpr ( micron::is_same_v<T, d128> ) {
       return (_mm_movemask_pd(value) == 0x0);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
+#if defined(__micron_x86_sse4_1)
       return (_mm_testz_si128(value, value) != 0);
+#else
+      return (_mm_movemask_epi8(_mm_cmpeq_epi8(value, _mm_setzero_si128())) == 0xFFFF);
+#endif
     }
   }
 
@@ -894,7 +910,11 @@ public:
     } else if constexpr ( micron::is_same_v<T, d128> ) {
       return (_mm_movemask_pd(value) == 0x3);
     } else if constexpr ( micron::is_same_v<T, i128> ) {
+#if defined(__micron_x86_sse4_1)
       return (_mm_testc_si128(value, __all_ones_si128()) != 0);
+#else
+      return (_mm_movemask_epi8(_mm_cmpeq_epi8(value, __all_ones_si128())) == 0xFFFF);
+#endif
     }
   }
 
@@ -1212,7 +1232,7 @@ public:
         static_assert(!__is_8_wide<F>(), "SSE has no epi8 multiply");
       }
       if constexpr ( __is_16_wide<F>() ) value = _mm_mullo_epi16(value, _mm_set1_epi16(x));
-      if constexpr ( __is_32_wide<F>() ) value = _mm_mullo_epi32(value, _mm_set1_epi32(x));
+      if constexpr ( __is_32_wide<F>() ) value = __mullo_epi32_c(value, _mm_set1_epi32(x));
 
       if constexpr ( __is_64_wide<F>() ) {
         static_assert(!__is_64_wide<F>(), "SSE/AVX have no epi64 multiply");
@@ -1252,7 +1272,7 @@ public:
         static_assert(!__is_8_wide<F>(), "SSE has no epi8 multiply");
       }
       if constexpr ( __is_16_wide<F>() ) _d.value = _mm_mullo_epi16(value, _mm_set1_epi16(x));
-      if constexpr ( __is_32_wide<F>() ) _d.value = _mm_mullo_epi32(value, _mm_set1_epi32(x));
+      if constexpr ( __is_32_wide<F>() ) _d.value = __mullo_epi32_c(value, _mm_set1_epi32(x));
     }
     return _d;
   }
@@ -1270,7 +1290,7 @@ public:
         static_assert(!__is_8_wide<F>(), "SSE has no epi8 multiply");
       }
       if constexpr ( __is_16_wide<F>() ) _d.value = _mm_mullo_epi16(value, x.value);
-      if constexpr ( __is_32_wide<F>() ) _d.value = _mm_mullo_epi32(value, x.value);
+      if constexpr ( __is_32_wide<F>() ) _d.value = __mullo_epi32_c(value, x.value);
       if constexpr ( __is_64_wide<F>() ) {
         static_assert(!__is_64_wide<F>(), "SSE has no epi64 multiply");
       }

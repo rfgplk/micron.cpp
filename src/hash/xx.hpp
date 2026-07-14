@@ -10,6 +10,7 @@
 #include "../memory/memory.hpp"
 #include "../tuple.hpp"
 #include "../types.hpp"
+#include "__load.hpp"
 
 namespace micron
 {
@@ -61,11 +62,17 @@ rotl64(const u64 x, const i8 r)
 }
 */
 
-inline __attribute__((always_inline)) u32
-xxround_32(u32 acc, u32 input)
+constexpr u32
+__xxrotl32(u32 x, i32 r) noexcept
+{
+  return (x << r) | (x >> (32 - r));
+}
+
+constexpr u32
+xxround_32(u32 acc, u32 input) noexcept
 {
   acc += input * xxprime32b;
-  acc = rotl32(acc, 13);
+  acc = __xxrotl32(acc, 13);
   acc *= xxprime32a;
   return acc;
 }
@@ -133,40 +140,38 @@ xxhash_final(u64 xxhash, const byte *ptr, usize len)
   return xxhash;
 }
 
-/*
-template <u32 seed>
-inline u32
-xxhash32(const byte *src, usize len)
+// for lz4 czlib code (spliced in from there)
+constexpr u32
+xxhash32(const byte *src, usize len, u32 seed = 0) noexcept
 {
-  if ((((usize)src) & 7) != 0 ) [[unlikely]]
-    exc<except::library_error>("micron::hash::xxhash src isn't aligned");
-  //xstate state = init_seed<seed>();
-  u64 xxhash = 0;
-  if ( len >= 32 ) [[likely]] {
-    const byte *const end = src + len;
-    const byte *const limit = end - 15;
-    u32 v[4];
-    v[0] = seed + xxprime32a + xxprime32b;
-    v[1] = seed + xxprime32b;
-    v[2] = seed;
-    v[3] = seed - xxprime32a;
-
-    do {
-      v[0] = xxround32(v[0], *reinterpret_cast<const u64 *>(src));
-      v[1] = xxround32(v[1], *reinterpret_cast<const u64 *>(src + 4));
-      v[2] = xxround32(v[2], *reinterpret_cast<const u64 *>(src + 8));
-      v[3] = xxround32(v[3], *reinterpret_cast<const u64 *>(src + 12));
-      src += 16;
-    } while ( src < limit );
-
-    xxhash = rotl32(v[0], 1) + rotl32(v[1], 7) + rotl32(v[2], 12) + rotl32(v[3], 18);
+  usize i = 0;
+  u32 h = 0;
+  if ( len >= 16 ) {
+    u32 v1 = seed + xxprime32a + xxprime32b;
+    u32 v2 = seed + xxprime32b;
+    u32 v3 = seed;
+    u32 v4 = seed - xxprime32a;
+    for ( ; i + 16 <= len; i += 16 ) {
+      v1 = xxround_32(v1, __load32(src + i));
+      v2 = xxround_32(v2, __load32(src + i + 4));
+      v3 = xxround_32(v3, __load32(src + i + 8));
+      v4 = xxround_32(v4, __load32(src + i + 12));
+    }
+    h = __xxrotl32(v1, 1) + __xxrotl32(v2, 7) + __xxrotl32(v3, 12) + __xxrotl32(v4, 18);
   } else {
-    xxhash = seed + xxprime64e;
+    h = seed + xxprime32e;
   }
-  xxhash += static_cast<u32>(len);
-  return xxhash_final_32(xxhash, src, len);
+  h += static_cast<u32>(len);
+  for ( ; i + 4 <= len; i += 4 ) h = __xxrotl32(h + __load32(src + i) * xxprime32c, 17) * xxprime32d;
+  for ( ; i < len; ++i ) h = __xxrotl32(h + u32(src[i]) * xxprime32e, 11) * xxprime32a;
+  h ^= h >> 15;
+  h *= xxprime32b;
+  h ^= h >> 13;
+  h *= xxprime32c;
+  h ^= h >> 16;
+  return h;
 }
-*/
+
 template<u64 seed>
 inline u64
 xxhash64(const byte *src, usize len)

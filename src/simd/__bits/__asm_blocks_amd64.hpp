@@ -336,6 +336,110 @@ __inline_g_T("avx2") u32 __block_eq_mask_32_a(const u8 *p, u8 c) noexcept
   return m;
 }
 
+#else
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// 32-byte leaves (SSE2)
+
+__inline_g void
+__block_copy_32(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  __block_copy_16(d, s);
+  __block_copy_16(d + 16, s + 16);
+}
+
+__inline_g void
+__block_copy_32_a(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  __block_copy_16_a(d, s);
+  __block_copy_16_a(d + 16, s + 16);
+}
+
+__inline_g void
+__block_copy_32_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  __block_copy_16_nt(d, s);
+  __block_copy_16_nt(d + 16, s + 16);
+}
+
+__inline_g void
+__block_move_32(u8 *d, const u8 *s) noexcept
+{
+  __m128i t0, t1;
+  __asm__("movdqu %1, %0" : "=x"(t0) : "m"(*reinterpret_cast<const __m128i *>(s)));
+  __asm__("movdqu %1, %0" : "=x"(t1) : "m"(*reinterpret_cast<const __m128i *>(s + 16)));
+  __asm__("movdqu %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d)) : "x"(t0));
+  __asm__("movdqu %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d + 16)) : "x"(t1));
+}
+
+__inline_g void
+__block_copy_32_sa(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  __block_copy_16_sa(d, s);
+  __block_copy_16_sa(d + 16, s + 16);
+}
+
+__inline_g void
+__block_move_32_sa(u8 *d, const u8 *s) noexcept
+{
+  __m128i t0, t1;
+  __asm__("movdqu %1, %0" : "=x"(t0) : "m"(*reinterpret_cast<const __m128i *>(s)));
+  __asm__("movdqu %1, %0" : "=x"(t1) : "m"(*reinterpret_cast<const __m128i *>(s + 16)));
+  __asm__("movdqa %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d)) : "x"(t0));
+  __asm__("movdqa %1, %0" : "=m"(*reinterpret_cast<__m128i *>(d + 16)) : "x"(t1));
+}
+
+__inline_g __m128i
+__broadcast_byte_32(u8 b) noexcept
+{
+  return __broadcast_byte_16(b);
+}
+
+__inline_g __m128i
+__broadcast_word_32(u64 w) noexcept
+{
+  return __broadcast_word_16(w);
+}
+
+__inline_g void
+__block_set_32(u8 *__restrict d, __m128i v) noexcept
+{
+  __block_set_16(d, v);
+  __block_set_16(d + 16, v);
+}
+
+__inline_g void
+__block_set_32_a(u8 *__restrict d, __m128i v) noexcept
+{
+  __block_set_16_a(d, v);
+  __block_set_16_a(d + 16, v);
+}
+
+__inline_g void
+__block_set_32_nt(u8 *__restrict d, __m128i v) noexcept
+{
+  __block_set_16_nt(d, v);
+  __block_set_16_nt(d + 16, v);
+}
+
+__inline_g u32
+__block_neq_mask_32(const u8 *a, const u8 *b) noexcept
+{
+  return __block_neq_mask_16(a, b) | (__block_neq_mask_16(a + 16, b + 16) << 16);
+}
+
+__inline_g u32
+__block_eq_mask_32(const u8 *p, u8 c) noexcept
+{
+  return __block_eq_mask_16(p, c) | (__block_eq_mask_16(p + 16, c) << 16);
+}
+
+__inline_g u32
+__block_eq_mask_32_a(const u8 *p, u8 c) noexcept
+{
+  return __block_eq_mask_16_a(p, c) | (__block_eq_mask_16_a(p + 16, c) << 16);
+}
+
 #endif      // __micron_x86_avx2
 
 #undef __inline_g

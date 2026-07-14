@@ -161,15 +161,14 @@ compose(const config_t &conf, bool linking)
 string_type
 batch_cmp(const config_t &conf)
 {
-  const string_type main_flags = (conf.mode == __opt_modes::optimized
-                                      ? make_flags(conf.opt_mode, gcc::x86_flags::flags::mavx2, gcc::x86_flags::flags::mbmi,
-
-                                                   gcc::x86_flags::flags::march_native, gcc::opt_flags::flags::modulo_sched,
-                                                   gcc::opt_flags::flags::modulo_sched_allow_regmoves, gcc::opt_flags::flags::gcse_sm,
-                                                   gcc::opt_flags::flags::gcse_las)
-                                      : make_flags(conf.opt_mode, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three,
-                                                   gcc::debug_flags::flags::gcolumn_info, gcc::debug_flags::flags::ginline_points,
-                                                   gcc::debug_flags::flags::gstatement_frontiers, gcc::x86_flags::flags::march_native));
+  string_type main_flags = (conf.mode == __opt_modes::optimized
+                                ? make_flags(conf.opt_mode, gcc::opt_flags::flags::modulo_sched,
+                                             gcc::opt_flags::flags::modulo_sched_allow_regmoves, gcc::opt_flags::flags::gcse_sm,
+                                             gcc::opt_flags::flags::gcse_las)
+                                : make_flags(conf.opt_mode, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three,
+                                             gcc::debug_flags::flags::gcolumn_info, gcc::debug_flags::flags::ginline_points,
+                                             gcc::debug_flags::flags::gstatement_frontiers));
+  __compose_add(main_flags, __isa_march(conf.isa));
   const string_type comp_type = (conf.compile_type == __comp_type::object)         ? "-c"
                                 : (conf.compile_type == __comp_type::assembly)     ? "-S"
                                 : (conf.compile_type == __comp_type::preprocessed) ? "-E"

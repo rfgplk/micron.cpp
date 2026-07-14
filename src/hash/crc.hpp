@@ -7,6 +7,7 @@
 
 #include "../concepts.hpp"
 #include "../types.hpp"
+#include "__load.hpp"
 
 namespace micron
 {
@@ -47,6 +48,17 @@ constexpr auto crc32_gzip_refl_lut = []() {
     for ( int j = 0; j < 8; ++j ) crc = (crc & 1u) ? ((crc >> 1) ^ 0xEDB88320u) : (crc >> 1);
     t.data[i] = crc;
   }
+  return t;
+}();
+
+// slice-by-8 extension of crc32_gzip_refl_lut
+constexpr auto crc32_gzip_refl_slice8_lut = []() {
+  struct __table {
+    u32 data[8][256]{};
+  } t;
+  for ( u32 i = 0; i < 256u; ++i ) t.data[0][i] = crc32_gzip_refl_lut.data[i];
+  for ( u32 k = 1; k < 8u; ++k )
+    for ( u32 i = 0; i < 256u; ++i ) t.data[k][i] = (t.data[k - 1][i] >> 8) ^ t.data[0][t.data[k - 1][i] & 0xFFu];
   return t;
 }();
 
@@ -158,6 +170,31 @@ constexpr auto crc64_rocksoft_refl_lut = []() {
   return t;
 }();
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// reflected CRC-32 scalar kernels
+constexpr u32
+__crc32_refl_bytewise(const u8 *p, usize len, u32 r) noexcept
+{
+  for ( usize i = 0; i < len; ++i ) r = (r >> 8) ^ crc32_gzip_refl_lut.data[(r ^ p[i]) & 0xFFu];
+  return r;
+}
+
+constexpr u32
+__crc32_refl_slice8(const u8 *p, usize len, u32 r) noexcept
+{
+  const auto &t = crc32_gzip_refl_slice8_lut.data;
+  while ( len >= 8 ) {
+    const u32 a = hashes::__load32(p) ^ r;
+    const u32 b = hashes::__load32(p + 4);
+    r = t[7][a & 0xFFu] ^ t[6][(a >> 8) & 0xFFu] ^ t[5][(a >> 16) & 0xFFu] ^ t[4][a >> 24] ^ t[3][b & 0xFFu] ^ t[2][(b >> 8) & 0xFFu]
+        ^ t[1][(b >> 16) & 0xFFu] ^ t[0][b >> 24];
+    p += 8;
+    len -= 8;
+  }
+  while ( len-- ) r = (r >> 8) ^ crc32_gzip_refl_lut.data[(r ^ *p++) & 0xFFu];
+  return r;
+}
+
 };      // namespace crc
 
 };      // namespace micron
@@ -218,9 +255,12 @@ crc32_ieee(u32 init_crc, const T &obj) noexcept
 constexpr u32
 crc32_gzip_refl(u32 init_crc, const u8 *buf, usize len) noexcept
 {
-  u32 crc = init_crc ^ 0xFFFFFFFFu;
-  for ( usize i = 0; i < len; ++i ) crc = (crc >> 8) ^ crc::crc32_gzip_refl_lut.data[(crc ^ buf[i]) & 0xFFu];
-  return crc ^ 0xFFFFFFFFu;
+#if defined(__micron_crc32_clmul)
+  if !consteval {
+    if ( len >= crc::__simd::__clmul32_min ) return crc::__simd::__crc32_refl_clmul(init_crc, buf, len);
+  }
+#endif
+  return crc::__crc32_refl_slice8(buf, len, init_crc ^ 0xFFFFFFFFu) ^ 0xFFFFFFFFu;
 }
 
 template<is_iterable C>

@@ -469,6 +469,26 @@ public:
     __arena.reset();
   }
 
+  // pre-size the node arena so insert() never allocates past this point (reserve at init,
+  // where a throw is acceptable; the arena slab is retained across clear())
+  void
+  reserve_nodes(usize n)
+  {
+    __arena.reserve(n);
+  }
+
+  [[nodiscard, gnu::always_inline]] usize
+  nodes_used() const noexcept
+  {
+    return __arena.slots_used();
+  }
+
+  [[nodiscard, gnu::always_inline]] usize
+  nodes_reserved() const noexcept
+  {
+    return __arena.slots_reserved();
+  }
+
   bool
   insert(const point_type &p, const Value &v)
   {

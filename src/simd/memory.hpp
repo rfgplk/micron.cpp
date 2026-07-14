@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../bits/__arch.hpp"
+
 #if defined(__micron_arm_neon) && defined(__micron_arch_arm64)
 #include "arch/memory_arm64.hpp"
 #elif defined(__micron_arm_neon) && defined(__micron_arch_arm32)

@@ -9,7 +9,7 @@
 #
 # usage: sh tests/memory/i386_gate.sh   (from the repo root; exit 0 = pass)
 set -e
-FLAGS="-std=c++26 -Ofast -m32 -mavx2 -mbmi -mfma -ffreestanding -fno-exceptions -fno-rtti -fext-numeric-literals -Wall -Wextra"
+FLAGS="-std=c++26 -Ofast -m32 -march=x86-64 -ffreestanding -fno-exceptions -fno-rtti -fext-numeric-literals -Wall -Wextra"
 for f in tests/memory/mem_exhaustive_small.cpp \
          tests/memory/mem_overlap_exhaustive.cpp \
          tests/memory/mem_fill_patterns.cpp \

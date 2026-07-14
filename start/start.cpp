@@ -466,6 +466,78 @@ __attribute__((used, visibility("hidden"))) void *__dso_handle = &__dso_handle;
 
 }      // extern "C"
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// popcount
+
+extern "C" [[gnu::weak]] int
+__popcountsi2(unsigned int v) noexcept
+{
+  v = v - ((v >> 1) & 0x55555555u);
+  v = (v & 0x33333333u) + ((v >> 2) & 0x33333333u);
+  v = (v + (v >> 4)) & 0x0f0f0f0fu;
+  return (int)((v * 0x01010101u) >> 24);
+}
+
+extern "C" [[gnu::weak]] int
+__popcountdi2(unsigned long long v) noexcept
+{
+#if defined(__micron_arch_width_64)
+  v = v - ((v >> 1) & 0x5555555555555555ull);
+  v = (v & 0x3333333333333333ull) + ((v >> 2) & 0x3333333333333333ull);
+  v = (v + (v >> 4)) & 0x0f0f0f0f0f0f0f0full;
+  return (int)((v * 0x0101010101010101ull) >> 56);
+#else
+  return __popcountsi2((unsigned int)v) + __popcountsi2((unsigned int)(v >> 32));
+#endif
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// mem* freestanding fallbacks
+//
+// weak, wherever we include cmemory those fns will win over these, these are effectively shimmed on purpose
+
+extern "C" [[gnu::weak]] __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) void *
+memcpy(void *__restrict d, const void *__restrict s, __SIZE_TYPE__ n) noexcept
+{
+  unsigned char *dp = static_cast<unsigned char *>(d);
+  const unsigned char *sp = static_cast<const unsigned char *>(s);
+  for ( __SIZE_TYPE__ i = 0; i < n; ++i ) dp[i] = sp[i];
+  return d;
+}
+
+extern "C" [[gnu::weak]] __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) void *
+memmove(void *d, const void *s, __SIZE_TYPE__ n) noexcept
+{
+  unsigned char *dp = static_cast<unsigned char *>(d);
+  const unsigned char *sp = static_cast<const unsigned char *>(s);
+  if ( dp == sp or n == 0 ) return d;
+  if ( dp < sp ) {
+    for ( __SIZE_TYPE__ i = 0; i < n; ++i ) dp[i] = sp[i];
+  } else {
+    for ( __SIZE_TYPE__ i = n; i-- > 0; ) dp[i] = sp[i];
+  }
+  return d;
+}
+
+extern "C" [[gnu::weak]] __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) void *
+memset(void *d, int c, __SIZE_TYPE__ n) noexcept
+{
+  unsigned char *dp = static_cast<unsigned char *>(d);
+  for ( __SIZE_TYPE__ i = 0; i < n; ++i ) dp[i] = static_cast<unsigned char>(c);
+  return d;
+}
+
+extern "C" [[gnu::weak]] __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) int
+memcmp(const void *a, const void *b, __SIZE_TYPE__ n) noexcept
+{
+  const unsigned char *ap = static_cast<const unsigned char *>(a);
+  const unsigned char *bp = static_cast<const unsigned char *>(b);
+  for ( __SIZE_TYPE__ i = 0; i < n; ++i ) {
+    if ( ap[i] != bp[i] ) return ap[i] < bp[i] ? -1 : 1;
+  }
+  return 0;
+}
+
 #if defined(__micron_arch_arm32)
 
 // armv7-a does not have hardware 64-bit divide, 64-bit count-trailing-zeros,

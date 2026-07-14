@@ -46,6 +46,11 @@ class type_info
 public:
   virtual ~type_info();
 
+  // WARNING: the deleting dtors of this hierarchy would otherwise call the global sized
+  // ::operator delete (_ZdlPvm / _ZdlPvj), which a -nostdlib link that never sees
+  // memory/new.hpp cannot satisfy
+  static void operator delete(void *, __SIZE_TYPE__) noexcept { }
+
   const char *
   name() const noexcept
   {

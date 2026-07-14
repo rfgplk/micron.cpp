@@ -292,6 +292,9 @@ acos(F x) noexcept
   return mkbits::cordic_ns::acos<F>(x);
 }
 
+// packed forms: these forward to the mk::*_cordic kernels in math/simd/cordic.hpp, which only exist
+// where there is a vector backend
+#if defined(__micron_math_packed)
 template<mk::packed_real V>
 [[nodiscard, gnu::always_inline]] inline V
 sin(V x) noexcept
@@ -320,6 +323,7 @@ sincos(V x, V &s, V &c) noexcept
   s = mk::sin_cordic(x);
   c = mk::cos_cordic(x);
 }
+#endif
 };      // namespace cordic
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -824,6 +828,10 @@ dot3(F a0, F a1, F a2, F b0, F b1, F b2) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // simd overloads
 // TODO: think about moving this to a separate file
+//
+// every one of these forwards to a packed mk::* kernel from math/simd/*.hpp, so the whole block only
+// exists where there is a vector backend
+#if defined(__micron_math_packed)
 
 namespace trig
 {
@@ -963,6 +971,8 @@ fabs(V x) noexcept
 }
 };      // namespace manip
 
+#endif  
+
 };      // namespace mk
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1079,6 +1089,9 @@ sincos_cordic(F x, F &s, F &c) noexcept
 
 #undef __micron_math_export_cordic
 
+// these pull the *packed* mk::{sin,cos,tan,sincos}[_cordic] into micron::math alongside the scalar
+// forms exported above, so they exist only where a vector backend does
+#if defined(__micron_math_packed)
 using mk::cos;
 using mk::cos_cordic;
 using mk::sin;
@@ -1087,6 +1100,7 @@ using mk::sincos;
 using mk::sincos_cordic;
 using mk::tan;
 using mk::tan_cordic;
+#endif 
 
 // hyp
 __micron_math_export_fn(sinh, hyp);

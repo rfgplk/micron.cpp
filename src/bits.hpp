@@ -92,7 +92,7 @@ static const unsigned char BitReverseTable256[256] = {
 // rotrs
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotl32(const T x, const i8 r)
 {
   if constexpr ( __has_builtin(__builtin_rotateleft32) )
@@ -102,7 +102,7 @@ rotl32(const T x, const i8 r)
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotl64(const T x, const i8 r)
 {
   if constexpr ( __has_builtin(__builtin_rotateleft64) )
@@ -112,7 +112,7 @@ rotl64(const T x, const i8 r)
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotr32(const T x, const i8 r)
 {
   if constexpr ( __has_builtin(__builtin_rotateright32) )
@@ -122,7 +122,7 @@ rotr32(const T x, const i8 r)
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotr64(const T x, const i8 r)
 {
   if constexpr ( __has_builtin(__builtin_rotateright64) )
@@ -132,35 +132,35 @@ rotr64(const T x, const i8 r)
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotl16(const T x, const i8 r)
 {
   return static_cast<T>(((x << r) | (x >> (16 - r))) & 0xFFFF);
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotr16(const T x, const i8 r)
 {
   return static_cast<T>(((x >> r) | (x << (16 - r))) & 0xFFFF);
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotl8(const T x, const i8 r)
 {
   return static_cast<T>(((x << r) | (x >> (8 - r))) & 0xFF);
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotr8(const T x, const i8 r)
 {
   return static_cast<T>(((x >> r) | (x << (8 - r))) & 0xFF);
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotl(const T x, const i8 r)
 {
   constexpr int w = sizeof(T) * 8;
@@ -170,7 +170,7 @@ rotl(const T x, const i8 r)
 }
 
 template<typename T>
-inline __attribute__((always_inline)) T
+inline __attribute__((always_inline)) constexpr T
 rotr(const T x, const i8 r)
 {
   constexpr int w = sizeof(T) * 8;
