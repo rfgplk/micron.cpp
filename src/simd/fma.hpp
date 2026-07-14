@@ -9,6 +9,9 @@
 #include "simd.hpp"
 #include "types.hpp"
 
+// WARNING: x86 only, no NEON version yet
+#if defined(__micron_arch_x86_any)
+
 namespace micron
 {
 namespace simd
@@ -139,3 +142,5 @@ fms(T &o, T &b, T &c)
 };      // namespace micron
 
 #pragma GCC diagnostic pop
+
+#endif

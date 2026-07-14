@@ -21,6 +21,7 @@
 
 ## Platform / Arch gaps
 - `src/simd/strings.hpp` is x86-only (AVX2/SSE2 + scalar fallback); no NEON yet
+- `src/simd/fma.hpp` is x86-only (`_mm_fmadd_*` / `_mm256_fmadd_*`)
 - `src/math/simd/trig.hpp` + `src/math/quaternions/batched.hpp`: NEON f32 on ARM, but f64 only on amd64/arm64; arm32 double-precision trig/quaternion falls back to scalar
 - arm32: reading CNTVCT (`mrrc p15,1,…c14`) faults SIGILL under qemu/PL0
 - arm32: `tests/coro/t_parallel_{compact,scan}` abort with `except::memory_error_abc_dealloc_size` (abcmalloc's 32-bit `__ABC_EMBED` profile); unrelated to the coroutine runtime, which passes

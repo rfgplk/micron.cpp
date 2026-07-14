@@ -970,7 +970,7 @@ public:
   load(B *mem)
   {
     if ( !is_aligned<128>(mem) ) return *this;      // silent fail
-    value = load<T, B>(mem);
+    value = ::micron::simd::load<T, B>(mem);
     return *this;
   }
 

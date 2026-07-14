@@ -73,33 +73,6 @@ __scalar_cnt(int32x4_t cnt) noexcept
   return static_cast<int>(vgetq_lane_s64(vreinterpretq_s64_s32(cnt), 0));
 }
 
-__attribute__((always_inline)) static inline uint16x8_t
-__expand_mask_u16(uint8_t k) noexcept
-{
-  static const uint16_t bp[8] = { 1, 2, 4, 8, 16, 32, 64, 128 };
-  uint16x8_t m = vdupq_n_u16(k);
-  uint16x8_t p = vld1q_u16(bp);
-  return vceqq_u16(vandq_u16(m, p), p);
-}
-
-__attribute__((always_inline)) static inline uint32x4_t
-__expand_mask_u32(uint8_t k) noexcept
-{
-  static const uint32_t bp[4] = { 1, 2, 4, 8 };
-  uint32x4_t m = vdupq_n_u32(k);
-  uint32x4_t p = vld1q_u32(bp);
-  return vceqq_u32(vandq_u32(m, p), p);
-}
-
-__attribute__((always_inline)) static inline uint64x2_t
-__expand_mask_u64(uint8_t k) noexcept
-{
-  static const uint64_t bp[2] = { 1, 2 };
-  uint64x2_t m = vdupq_n_u64(k);
-  uint64x2_t p = vld1q_u64(bp);
-  return vceqq_u64(vandq_u64(m, p), p);
-}
-
 __attribute__((always_inline)) static inline int32x4_t
 __neon_bslli(int32x4_t v, int n) noexcept
 {

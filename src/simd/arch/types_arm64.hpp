@@ -147,5 +147,46 @@ neon_all_ones_si256(void) noexcept
   return r;
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// lane-mask expansion
+//
+// moved here (from math/shifts), used to be duplicated, causing TU compile include issues
+
+__attribute__((always_inline)) static inline uint16x8_t
+__expand_mask_u16(uint8_t k) noexcept
+{
+  static const uint16_t bp[8] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+  uint16x8_t m = vdupq_n_u16(k), p = vld1q_u16(bp);
+  return vceqq_u16(vandq_u16(m, p), p);
+}
+
+__attribute__((always_inline)) static inline uint8x16_t
+__expand_mask_u8(uint16_t k) noexcept
+{
+  static const uint8_t bp[16] = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
+
+  uint8x16_t sel = vld1q_u8(bp);
+  uint8x8_t lo = vdup_n_u8(static_cast<uint8_t>(k & 0xFFu));
+  uint8x8_t hi = vdup_n_u8(static_cast<uint8_t>((k >> 8) & 0xFFu));
+  uint8x16_t m = vcombine_u8(lo, hi);
+  return vceqq_u8(vandq_u8(m, sel), sel);
+}
+
+__attribute__((always_inline)) static inline uint32x4_t
+__expand_mask_u32(uint8_t k) noexcept
+{
+  static const uint32_t bp[4] = { 1, 2, 4, 8 };
+  uint32x4_t m = vdupq_n_u32(k), p = vld1q_u32(bp);
+  return vceqq_u32(vandq_u32(m, p), p);
+}
+
+__attribute__((always_inline)) static inline uint64x2_t
+__expand_mask_u64(uint8_t k) noexcept
+{
+  static const uint64_t bp[2] = { 1, 2 };
+  uint64x2_t m = vdupq_n_u64(k), p = vld1q_u64(bp);
+  return vceqq_u64(vandq_u64(m, p), p);
+}
+
 };      // namespace simd
 };      // namespace micron
