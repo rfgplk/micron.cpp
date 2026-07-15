@@ -2,9 +2,14 @@
 
 #include "config.hh"
 
+#include "chrono.hpp"
 #include "io/io.hpp"
 #include "linux/process/exec.hpp"
+#include "linux/process/signals.hpp"
+#include "linux/process/wait.hpp"
 #include "linux/sys/limits.hpp"
+#include "linux/sys/system.hpp"
+#include "linux/sys/time.hpp"
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // user-mode qemu routing for cross targets
@@ -103,10 +108,40 @@ run_target(const config_t &conf)
 // snowball codes
 //   1   -> the success sentinel
 //   6   -> sb::require() failure  (__abort -> sys_exit(6))
+//   124 -> killed by --timeout (see run_target_timed); matches coreutils timeout(1)
 //   139 -> SIGSEGV (128+11), usually spawned-thread TLS / stack-canary corruption
 //   134 -> SIGABRT (128+6), an uncaught throw reaching terminate
 //   0   -> ran off the end without hitting the sentinel
 inline constexpr int __snowball_pass = 1;
+inline constexpr int __snowball_timeout = 124;
+
+template<bool Wait = mc::exec_wait>
+inline mc::status_t
+run_target_timed(const config_t &conf)
+{
+  if ( conf.timeout == 0 ) return run_target<Wait>(conf);
+
+  mc::status_t st = run_target<mc::exec_continue>(conf);      // spawn, don't block
+  const auto deadline = mc::now() + static_cast<mc::fduration_t>(conf.timeout) * 1'000.0;      // now() is ms
+
+  for ( ;; ) {
+    int ws = 0;
+    if ( mc::wait4(st.pid, &ws, mc::wnohang, nullptr) == st.pid ) {      // exited on its own
+      st.status = ws;
+      return st;
+    }
+    if ( mc::now() >= deadline ) break;
+    mc::timespec_t ts{ 0, 5'000'000 };      // 5 ms; a test that finishes fast shouldn't pay for the poll
+    mc::nanosleep(ts);
+  }
+
+  mc::posix::kill(st.pid, static_cast<int>(mc::signal::kill9));
+  int ws = 0;
+  mc::wait4(st.pid, &ws, 0, nullptr);      // reap it, or we leak a zombie into the rest of the sweep
+
+  st.status = mc::w_exitcode(__snowball_timeout, 0);
+  return st;
+}
 
 inline int
 verdict_of(int wait_status)
@@ -123,6 +158,8 @@ decode_snowball(int rc)
     return "PASS";
   case 6:
     return "FAIL (require)";
+  case 124:
+    return "FAIL (timed out)";
   case 128 + 11:
     return "FAIL (SIGSEGV)";
   case 128 + 6:

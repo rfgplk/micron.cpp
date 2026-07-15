@@ -59,7 +59,7 @@ cicd_test(const auto &cfs)
     mc::console(needs_emulation(conf) ? "Emulating: " : "Testing: ", conf.target_out);
 
     auto start = mc::now();
-    auto status = run_target<mc::exec_wait>(conf);
+    auto status = run_target_timed<mc::exec_wait>(conf);      // --timeout <sec>, else identical to run_target
     auto end = mc::now();
     stats.emplace_back(conf.target_out, verdict_of(status.status));
     if ( end - start > 1000 )

@@ -143,6 +143,10 @@ help(void)
   mc::console("    --gc              dead-strip unused sections (-ffunction-sections");
   mc::console("                      -fdata-sections, -Wl,--gc-sections); pairs with -k");
   mc::console("    --unroll          -funroll-loops");
+  mc::console("    --fp              -fno-omit-frame-pointer; perf's --call-graph fp needs it.");
+  mc::console("                      NOT implied by --perf: it costs a register, so it is a");
+  mc::console("                      pessimization and --perf should not apply one behind your back");
+  mc::console("    --no-lto          drop the default -flto=8 (single-TU targets; benchmarks)");
   mc::console("    --pgo-gen         instrument for PGO (-fprofile-generate);  hosted only");
   mc::console("    --pgo-use         use PGO data (-fprofile-use -fprofile-correction)");
   mc::console("    --no-eh           -fno-exceptions   (C++ only; explicit opt-in)");
@@ -174,7 +178,11 @@ help(void)
   mc::console("    --cfi             control-flow integrity:  x86 -fcf-protection=full,");
   mc::console("                      arm64 -mbranch-protection=standard, arm -mbranch-protection=pac-ret");
   mc::console("    --fortify         -D_FORTIFY_SOURCE=3 (x86) / =2 (arm); needs -O>0, hosted");
-  mc::console("    --spall           -fstack-protector-all (replaces the default -strong)");
+  mc::console("    --spall           -fstack-protector-all. This is already the default; the flag");
+  mc::console("                      is a no-op kept for explicitness");
+  mc::console("    --no-ssp          -fno-stack-protector -- no canary at all. For benchmarks: the");
+  mc::console("                      default -all puts a canary on every function, a tax that scales");
+  mc::console("                      with call density and so biases a measurement against its floor");
   mc::console("    --pie             position-independent executable  (-fPIE -pie)");
   mc::console("    --static-pie      static PIE (-static-pie -fPIE);  conflicts with -s");
   mc::console("    --relro           full RELRO (-Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack)");
@@ -183,6 +191,8 @@ help(void)
   mc::console("                      to --cfi --relro under -k; drops --pie under -s)");
   mc::console("    -f                force build:  skip include-mtime change detection");
   mc::console("    -j <N>            cap for the parallel commands (default: online cpus)");
+  mc::console("    --timeout <sec>   `test` only: SIGKILL a target that outruns <sec> and grade it");
+  mc::console("                      124 (FAIL, timed out). Default 0 = wait forever.");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

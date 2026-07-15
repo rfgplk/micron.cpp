@@ -146,6 +146,9 @@ struct config_t {
   bool relro = false;                    // -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack
   bool gc = false;                       // -ffunction-sections -fdata-sections -Wl,--gc-sections
   bool spall = true;                     // -fstack-protector-all
+  bool no_ssp = false;                   // --no-ssp: -fno-stack-protector (overrides spall)
+  bool no_lto = false;                   // --no-lto: drop the otherwise-default -flto=8
+  bool frame_pointer = false;            // --fp: -fno-omit-frame-pointer (perf --call-graph fp)
   bool unroll = false;                   // -funroll-loops
   bool pgo_gen = false;                  // -fprofile-generate
   bool pgo_use = false;                  // -fprofile-use
@@ -155,6 +158,8 @@ struct config_t {
   bool check_compileability = true;      // check include paths for updates - default true
   bool raw_object = false;               // --raw-obj: a real machine-code object (no LTO) for an external linker
   u32 jobs{ 0 };                         // 0 = default to online cpu count when running parallel
+  u32 timeout{ 0 };                      // --timeout <sec>
+                                         // 0 = wait forever, which is duck's historical behavior
   u32 compile_type{ __comp_type::linked };
   u32 width{ 64 };
   u32 arch{ __arch::x86 };
@@ -388,6 +393,14 @@ parse_config(config_t &conf, int argc, char **argv)
         jobs = jobs * 10 + static_cast<u32>(*p - '0');
       }
       conf.jobs = jobs ? jobs : 1;
+    } else if ( mc::strcmp(argv[i], "--timeout") == 0 ) {
+      if ( ++i >= argc ) mc::cerror("the --timeout flag must be followed by a duration in seconds");
+      u32 secs = 0;
+      for ( const char *p = argv[i]; *p; ++p ) {
+        if ( *p < '0' or *p > '9' ) mc::cerror("the --timeout flag must be followed by a positive integer (seconds)");
+        secs = secs * 10 + static_cast<u32>(*p - '0');
+      }
+      conf.timeout = secs;
     } else if ( mc::strcmp(argv[i], "--asan") == 0 ) {
       conf.asan = true;
     } else if ( mc::strcmp(argv[i], "--ubsan") == 0 ) {
@@ -410,6 +423,12 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.gc = true;
     } else if ( mc::strcmp(argv[i], "--spall") == 0 ) {
       conf.spall = true;
+    } else if ( mc::strcmp(argv[i], "--no-ssp") == 0 ) {
+      conf.no_ssp = true;
+    } else if ( mc::strcmp(argv[i], "--no-lto") == 0 ) {
+      conf.no_lto = true;
+    } else if ( mc::strcmp(argv[i], "--fp") == 0 ) {
+      conf.frame_pointer = true;
     } else if ( mc::strcmp(argv[i], "--unroll") == 0 ) {
       conf.unroll = true;
     } else if ( mc::strcmp(argv[i], "--pgo-gen") == 0 ) {
@@ -491,6 +510,7 @@ parse_config(config_t &conf, int argc, char **argv)
       user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-Ofast") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_fast;
+      //conf.no_ssp = true; // also disable the stack protector
       user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-Oz") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_z;

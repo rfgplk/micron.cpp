@@ -102,20 +102,22 @@ compose(const config_t &conf, bool linking)
   if ( conf.tsan ) __compose_add(c.sanitize, "-fsanitize=thread -fno-omit-frame-pointer");
   if ( conf.lsan and !conf.asan ) __compose_add(c.sanitize, "-fsanitize=leak");      // asan already covers leak
 
+  // stack protector: --no-ssp (none) > default (all) > --spall unset (strong)
+  const auto __ssp = conf.no_ssp ? gcc::profiling_flags::flags::nostack_protector
+                     : conf.spall
+                         ? gcc::profiling_flags::flags::stack_protector_all
+                         : gcc::profiling_flags::flags::stack_protector_strong;
   c.extensions = fs ? (cpp ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals) : string_type{})
-                    : (cpp ? make_flags(conf.spall ? gcc::profiling_flags::flags::stack_protector_all
-                                                   : gcc::profiling_flags::flags::stack_protector_strong,
-                                        gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow,
-                                        gcc::cpp_flags::flags::ext_numeric_literals)
-                           : make_flags(conf.spall ? gcc::profiling_flags::flags::stack_protector_all
-                                                   : gcc::profiling_flags::flags::stack_protector_strong,
-                                        gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow));
-  // LTO on by default except under sanitizers, freestanding EH, or a raw object
-  if ( !sanitized and !conf.freestanding_eh and !conf.raw_object ) {
+                    : (cpp ? make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection,
+                                        gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals)
+                           : make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection,
+                                        gcc::profiling_flags::flags::strict_overflow));
+  // LTO on by default except under sanitizers, freestanding EH, a raw object, or an explicit --no-lto
+  if ( !sanitized and !conf.freestanding_eh and !conf.raw_object and !conf.no_lto ) {
     if ( !c.extensions.empty() ) c.extensions += ' ';
     c.extensions += make_flags(gcc::opt_flags::flags::lto_eight);
   }
-  if ( conf.raw_object ) __compose_add(c.extensions, "-fno-lto");      // belt-and-suspenders: force a non-LTO object
+  if ( conf.raw_object or conf.no_lto ) __compose_add(c.extensions, "-fno-lto");
 
   // more safeties
   if ( conf.cfi ) {
@@ -132,6 +134,8 @@ compose(const config_t &conf, bool linking)
   if ( (conf.pie and !fs) or conf.static_pie ) __compose_add(c.extensions, "-fPIE");      // static-PIE needs -fPIE even under -k
   if ( conf.gc ) __compose_add(c.extensions, "-ffunction-sections -fdata-sections");
   if ( conf.unroll ) __compose_add(c.extensions, "-funroll-loops");
+  // --fp. asan/tsan already inject this above; don't emit it twice
+  if ( conf.frame_pointer and !conf.asan and !conf.tsan ) __compose_add(c.extensions, "-fno-omit-frame-pointer");
   if ( conf.pgo_gen and conf.pgo_use ) mc::cerror("--pgo-gen and --pgo-use are mutually exclusive");
   if ( (conf.pgo_gen or conf.pgo_use) and fs ) mc::cerror("PGO needs a hosted runtime; not valid under -k");
   if ( conf.pgo_gen ) __compose_add(c.extensions, "-fprofile-generate");
