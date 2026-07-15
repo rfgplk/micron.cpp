@@ -3090,12 +3090,12 @@ vpaddlq_u32(uint32x4_t v) noexcept
   return lo + hi;
 }
 
-#define __mc_vpadalq(SUF, ASM, T_ACC, T_IN, LA, LB)                                                                                         \
-  __inline_g T_ACC vpadalq_##SUF(T_ACC a, T_IN b) noexcept                                                                                  \
-  {                                                                                                                                         \
-    T_ACC r = a;                                                                                                                            \
-    __asm__(ASM " %0." LA ", %1." LB : "+w"(r) : "w"(b));                                                                                   \
-    return r;                                                                                                                               \
+#define __mc_vpadalq(SUF, ASM, T_ACC, T_IN, LA, LB)                                                                                        \
+  __inline_g T_ACC vpadalq_##SUF(T_ACC a, T_IN b) noexcept                                                                                 \
+  {                                                                                                                                        \
+    T_ACC r = a;                                                                                                                           \
+    __asm__(ASM " %0." LA ", %1." LB : "+w"(r) : "w"(b));                                                                                  \
+    return r;                                                                                                                              \
   }
 
 __mc_vpadalq(s8, "sadalp", int16x8_t, int8x16_t, "8h", "16b");
@@ -3776,6 +3776,12 @@ vmlaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
   return a + b * c;
 }
 
+__inline_g float32x4_t
+vmlsq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+{
+  return a - b * c;
+}
+
 __inline_g uint8x16_t
 vqtbl1q_u8(uint8x16_t table, uint8x16_t idx) noexcept
 {
@@ -3788,6 +3794,178 @@ vqtbx1q_u8(uint8x16_t fallback, uint8x16_t table, uint8x16_t idx) noexcept
   uint8x16_t tbl = vqtbl1q_u8(table, idx);
   uint8x16_t inrange = vqtbl1q_u8(vdupq_n_u8(0xff), idx);
   return vbslq_u8(inrange, tbl, fallback);
+}
+
+__inline_g float32x4_t
+vcvtq_f32_u32(uint32x4_t v) noexcept
+{
+  return __builtin_convertvector(v, float32x4_t);
+}
+
+__inline_g int32x4_t
+vmull_n_s16(int16x4_t a, signed short b) noexcept
+{
+  return vmull_s16(a, (int16x4_t){ b, b, b, b });
+}
+
+__inline_g void
+vst1_lane_u32(unsigned int *p, uint32x2_t v, const int lane) noexcept
+{
+  *p = v[lane];
+}
+
+__inline_g uint32x4_t
+vrshrq_n_u32(uint32x4_t v, const int n) noexcept
+{
+  return (v + vdupq_n_u32(1u << (n - 1))) >> n;
+}
+
+__inline_g uint8x8_t
+vmax_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  uint8x8_t m = a > b;
+  return (a & m) | (b & ~m);
+}
+
+__inline_g uint8x8_t
+vmin_u8(uint8x8_t a, uint8x8_t b) noexcept
+{
+  uint8x8_t m = a < b;
+  return (a & m) | (b & ~m);
+}
+
+__inline_g uint32x2_t
+vpmax_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return (uint32x2_t){ a[0] > a[1] ? a[0] : a[1], b[0] > b[1] ? b[0] : b[1] };
+}
+
+__inline_g uint8x8_t
+vrev16_u8(uint8x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 1, 0, 3, 2, 5, 4, 7, 6);
+}
+
+__inline_g uint8x8_t
+vrev32_u8(uint8x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 3, 2, 1, 0, 7, 6, 5, 4);
+}
+
+__inline_g uint8x8_t
+vrev64_u8(uint8x8_t v) noexcept
+{
+  return __builtin_shufflevector(v, v, 7, 6, 5, 4, 3, 2, 1, 0);
+}
+
+__inline_g int16x8x2_t
+vtrnq_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  int16x8x2_t r;
+  r.val[0] = __builtin_shufflevector(a, b, 0, 8, 2, 10, 4, 12, 6, 14);
+  r.val[1] = __builtin_shufflevector(a, b, 1, 9, 3, 11, 5, 13, 7, 15);
+  return r;
+}
+
+__inline_g int32x4x2_t
+vtrnq_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  int32x4x2_t r;
+  r.val[0] = __builtin_shufflevector(a, b, 0, 4, 2, 6);
+  r.val[1] = __builtin_shufflevector(a, b, 1, 5, 3, 7);
+  return r;
+}
+
+__inline_g uint8x16x3_t
+vld3q_u8(const unsigned char *p) noexcept
+{
+  uint8x16x3_t r;
+  for ( int i = 0; i < 16; ++i ) {
+    r.val[0][i] = p[i * 3 + 0];
+    r.val[1][i] = p[i * 3 + 1];
+    r.val[2][i] = p[i * 3 + 2];
+  }
+  return r;
+}
+
+__inline_g uint8x16x4_t
+vld4q_u8(const unsigned char *p) noexcept
+{
+  uint8x16x4_t r;
+  for ( int i = 0; i < 16; ++i ) {
+    r.val[0][i] = p[i * 4 + 0];
+    r.val[1][i] = p[i * 4 + 1];
+    r.val[2][i] = p[i * 4 + 2];
+    r.val[3][i] = p[i * 4 + 3];
+  }
+  return r;
+}
+
+__inline_g float32x4x3_t
+vld3q_f32(const float *p) noexcept
+{
+  float32x4x3_t r;
+  for ( int i = 0; i < 4; ++i ) {
+    r.val[0][i] = p[i * 3 + 0];
+    r.val[1][i] = p[i * 3 + 1];
+    r.val[2][i] = p[i * 3 + 2];
+  }
+  return r;
+}
+
+__inline_g float32x4x4_t
+vld4q_f32(const float *p) noexcept
+{
+  float32x4x4_t r;
+  for ( int i = 0; i < 4; ++i ) {
+    r.val[0][i] = p[i * 4 + 0];
+    r.val[1][i] = p[i * 4 + 1];
+    r.val[2][i] = p[i * 4 + 2];
+    r.val[3][i] = p[i * 4 + 3];
+  }
+  return r;
+}
+
+__inline_g void
+vst3q_u8(unsigned char *p, uint8x16x3_t v) noexcept
+{
+  for ( int i = 0; i < 16; ++i ) {
+    p[i * 3 + 0] = v.val[0][i];
+    p[i * 3 + 1] = v.val[1][i];
+    p[i * 3 + 2] = v.val[2][i];
+  }
+}
+
+__inline_g void
+vst4q_u8(unsigned char *p, uint8x16x4_t v) noexcept
+{
+  for ( int i = 0; i < 16; ++i ) {
+    p[i * 4 + 0] = v.val[0][i];
+    p[i * 4 + 1] = v.val[1][i];
+    p[i * 4 + 2] = v.val[2][i];
+    p[i * 4 + 3] = v.val[3][i];
+  }
+}
+
+__inline_g void
+vst3q_f32(float *p, float32x4x3_t v) noexcept
+{
+  for ( int i = 0; i < 4; ++i ) {
+    p[i * 3 + 0] = v.val[0][i];
+    p[i * 3 + 1] = v.val[1][i];
+    p[i * 3 + 2] = v.val[2][i];
+  }
+}
+
+__inline_g void
+vst4q_f32(float *p, float32x4x4_t v) noexcept
+{
+  for ( int i = 0; i < 4; ++i ) {
+    p[i * 4 + 0] = v.val[0][i];
+    p[i * 4 + 1] = v.val[1][i];
+    p[i * 4 + 2] = v.val[2][i];
+    p[i * 4 + 3] = v.val[3][i];
+  }
 }
 
 #pragma GCC diagnostic pop

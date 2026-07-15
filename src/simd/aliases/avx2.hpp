@@ -912,6 +912,20 @@ loadu_i256(const __m256i *p) noexcept
   return _mm256_loadu_si256(p);
 }
 
+template<int IMM>
+__inline_avx __m128i
+extract_i128(__m256i a) noexcept
+{
+  return _mm256_extracti128_si256(a, IMM);
+}
+
+template<int IMM>
+__inline_avx __m256i
+insert_i128(__m256i a, __m128i b) noexcept
+{
+  return _mm256_inserti128_si256(a, b, IMM);
+}
+
 #undef __inline_avx
 
 #pragma GCC diagnostic pop

@@ -1064,6 +1064,12 @@ mla(float32x4_t acc, float32x4_t a, float32x4_t b) noexcept
   return vmlaq_f32(acc, a, b);
 }
 
+__inline_neon float32x4_t
+mls(float32x4_t acc, float32x4_t a, float32x4_t b) noexcept
+{
+  return vmlsq_f32(acc, a, b);
+}
+
 #if defined(__micron_arch_arm64) || defined(__micron_arm_directed_rounding)
 __inline_neon float32x4_t
 floor(float32x4_t a) noexcept
@@ -2329,6 +2335,415 @@ __inline_neon uint8x16_t
 dup_u8(unsigned char c) noexcept
 {
   return vdupq_n_u8(c);
+}
+
+__inline_neon uint8x16_t
+ge(int8x16_t a, int8x16_t b) noexcept
+{
+  return vcgeq_s8(a, b);
+}
+
+__inline_neon uint16x8_t
+ge(int16x8_t a, int16x8_t b) noexcept
+{
+  return vcgeq_s16(a, b);
+}
+
+__inline_neon uint32x4_t
+ge(int32x4_t a, int32x4_t b) noexcept
+{
+  return vcgeq_s32(a, b);
+}
+
+__inline_neon uint8x16_t
+ge(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vcgeq_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+ge(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vcgeq_u16(a, b);
+}
+
+__inline_neon uint32x4_t
+ge(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vcgeq_u32(a, b);
+}
+
+__inline_neon uint32x4_t
+ge(float32x4_t a, float32x4_t b) noexcept
+{
+  return vcgeq_f32(a, b);
+}
+
+__inline_neon uint8x16_t
+le(int8x16_t a, int8x16_t b) noexcept
+{
+  return vcleq_s8(a, b);
+}
+
+__inline_neon uint16x8_t
+le(int16x8_t a, int16x8_t b) noexcept
+{
+  return vcleq_s16(a, b);
+}
+
+__inline_neon uint32x4_t
+le(int32x4_t a, int32x4_t b) noexcept
+{
+  return vcleq_s32(a, b);
+}
+
+__inline_neon uint8x16_t
+le(uint8x16_t a, uint8x16_t b) noexcept
+{
+  return vcleq_u8(a, b);
+}
+
+__inline_neon uint16x8_t
+le(uint16x8_t a, uint16x8_t b) noexcept
+{
+  return vcleq_u16(a, b);
+}
+
+__inline_neon uint32x4_t
+le(uint32x4_t a, uint32x4_t b) noexcept
+{
+  return vcleq_u32(a, b);
+}
+
+__inline_neon uint32x4_t
+le(float32x4_t a, float32x4_t b) noexcept
+{
+  return vcleq_f32(a, b);
+}
+
+#if defined(__micron_arch_arm64)
+__inline_neon uint64x2_t
+ge(float64x2_t a, float64x2_t b) noexcept
+{
+  return vcgeq_f64(a, b);
+}
+
+__inline_neon uint64x2_t
+le(float64x2_t a, float64x2_t b) noexcept
+{
+  return vcleq_f64(a, b);
+}
+#endif
+
+__inline_neon float32x4_t
+convert_u32_to_f32(uint32x4_t a) noexcept
+{
+  return vcvtq_f32_u32(a);
+}
+
+__inline_neon uint8x8_t
+narrow_satu(int16x8_t v) noexcept
+{
+  return vqmovun_s16(v);
+}
+
+__inline_neon int32x4_t
+mul_long_n(int16x4_t a, short b) noexcept
+{
+  return vmull_n_s16(a, b);
+}
+
+template<int LANE>
+__inline_neon float
+get_lane_f32(float32x2_t a) noexcept
+{
+  return vget_lane_f32(a, LANE);
+}
+
+template<int LANE>
+__inline_neon uint16_t
+get_lane_u16(uint16x4_t a) noexcept
+{
+  return vget_lane_u16(a, LANE);
+}
+
+template<int LANE>
+__inline_neon uint32_t
+get_lane_u32(uint32x2_t a) noexcept
+{
+  return vget_lane_u32(a, LANE);
+}
+
+template<int LANE>
+__inline_neon void
+store_lane_u32(uint32_t *p, uint32x2_t v) noexcept
+{
+  vst1_lane_u32(p, v, LANE);
+}
+
+__inline_neon int16x4_t
+splat_h_i16(signed short v) noexcept
+{
+  return vdup_n_s16(v);
+}
+
+__inline_neon uint16x4_t
+splat_h_u16(unsigned short v) noexcept
+{
+  return vdup_n_u16(v);
+}
+
+__inline_neon uint32x2_t
+splat_h_u32(unsigned int v) noexcept
+{
+  return vdup_n_u32(v);
+}
+
+template<int N>
+__inline_neon int16x8_t
+shl_i16(int16x8_t a) noexcept
+{
+  return vshlq_n_s16(a, N);
+}
+
+template<int N>
+__inline_neon uint16x8_t
+shl_u16(uint16x8_t a) noexcept
+{
+  return vshlq_n_u16(a, N);
+}
+
+template<int N>
+__inline_neon int16x8_t
+shr_arith_i16(int16x8_t a) noexcept
+{
+  return vshrq_n_s16(a, N);
+}
+
+template<int N>
+__inline_neon uint16x8_t
+shr_imm_u16(uint16x8_t a) noexcept
+{
+  return vshrq_n_u16(a, N);
+}
+
+template<int N>
+__inline_neon uint32x4_t
+shr_imm_u32(uint32x4_t a) noexcept
+{
+  return vshrq_n_u32(a, N);
+}
+
+template<int N>
+__inline_neon uint32x4_t
+shr_round_u32(uint32x4_t a) noexcept
+{
+  return vrshrq_n_u32(a, N);
+}
+
+template<int IMM>
+__inline_neon float32x4_t
+ext_f32(float32x4_t a, float32x4_t b) noexcept
+{
+  return vextq_f32(a, b, IMM);
+}
+
+__inline_neon int16x8_t
+select(uint16x8_t mask, int16x8_t a, int16x8_t b) noexcept
+{
+  return vbslq_s16(mask, a, b);
+}
+
+__inline_neon float32x2_t
+add(float32x2_t a, float32x2_t b) noexcept
+{
+  return vadd_f32(a, b);
+}
+
+__inline_neon uint8x8_t
+max(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return vmax_u8(a, b);
+}
+
+__inline_neon uint8x8_t
+min(uint8x8_t a, uint8x8_t b) noexcept
+{
+  return vmin_u8(a, b);
+}
+
+__inline_neon float32x2_t
+pairwise_add_f32(float32x2_t a, float32x2_t b) noexcept
+{
+  return vpadd_f32(a, b);
+}
+
+__inline_neon uint32x2_t
+pairwise_max_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return vpmax_u32(a, b);
+}
+
+__inline_neon int16x8_t
+reinterpret_s16_from_s32(int32x4_t a) noexcept
+{
+  return vreinterpretq_s16_s32(a);
+}
+
+__inline_neon int16x8_t
+reinterpret_s16_from_u16(uint16x8_t a) noexcept
+{
+  return vreinterpretq_s16_u16(a);
+}
+
+__inline_neon int32x4_t
+reinterpret_s32_from_s16(int16x8_t a) noexcept
+{
+  return vreinterpretq_s32_s16(a);
+}
+
+__inline_neon uint16x8_t
+reinterpret_u16_from_s16(int16x8_t a) noexcept
+{
+  return vreinterpretq_u16_s16(a);
+}
+
+__inline_neon uint8x16_t
+reinterpret_u8_from_u16(uint16x8_t a) noexcept
+{
+  return vreinterpretq_u8_u16(a);
+}
+
+__inline_neon uint32x2_t
+reinterpret_u32_from_u8(uint8x8_t a) noexcept
+{
+  return vreinterpret_u32_u8(a);
+}
+
+__inline_neon uint8x8_t
+reinterpret_u8_from_u32(uint32x2_t a) noexcept
+{
+  return vreinterpret_u8_u32(a);
+}
+
+__inline_neon float32x4_t
+rev64(float32x4_t a) noexcept
+{
+  return vrev64q_f32(a);
+}
+
+__inline_neon uint8x8_t
+rev16(uint8x8_t a) noexcept
+{
+  return vrev16_u8(a);
+}
+
+__inline_neon uint8x8_t
+rev32(uint8x8_t a) noexcept
+{
+  return vrev32_u8(a);
+}
+
+__inline_neon uint8x8_t
+rev64(uint8x8_t a) noexcept
+{
+  return vrev64_u8(a);
+}
+
+__inline_neon float32x4_t
+trn1(float32x4_t a, float32x4_t b) noexcept
+{
+  return vtrn1q_f32(a, b);
+}
+
+__inline_neon float32x4_t
+trn2(float32x4_t a, float32x4_t b) noexcept
+{
+  return vtrn2q_f32(a, b);
+}
+
+__inline_neon int16x8_t
+trn1(int16x8_t a, int16x8_t b) noexcept
+{
+  return vtrn1q_s16(a, b);
+}
+
+__inline_neon int16x8_t
+trn2(int16x8_t a, int16x8_t b) noexcept
+{
+  return vtrn2q_s16(a, b);
+}
+
+__inline_neon int32x4_t
+trn1(int32x4_t a, int32x4_t b) noexcept
+{
+  return vtrn1q_s32(a, b);
+}
+
+__inline_neon int32x4_t
+trn2(int32x4_t a, int32x4_t b) noexcept
+{
+  return vtrn2q_s32(a, b);
+}
+
+__inline_neon int16x8x2_t
+trn(int16x8_t a, int16x8_t b) noexcept
+{
+  return vtrnq_s16(a, b);
+}
+
+__inline_neon int32x4x2_t
+trn(int32x4_t a, int32x4_t b) noexcept
+{
+  return vtrnq_s32(a, b);
+}
+
+__inline_neon uint8x16x3_t
+load3_u8(const unsigned char *p) noexcept
+{
+  return vld3q_u8(p);
+}
+
+__inline_neon float32x4x3_t
+load3_f32(const float *p) noexcept
+{
+  return vld3q_f32(p);
+}
+
+__inline_neon uint8x16x4_t
+load4_u8(const unsigned char *p) noexcept
+{
+  return vld4q_u8(p);
+}
+
+__inline_neon float32x4x4_t
+load4_f32(const float *p) noexcept
+{
+  return vld4q_f32(p);
+}
+
+__inline_neon void
+store3_u8(unsigned char *p, uint8x16x3_t v) noexcept
+{
+  vst3q_u8(p, v);
+}
+
+__inline_neon void
+store3_f32(float *p, float32x4x3_t v) noexcept
+{
+  vst3q_f32(p, v);
+}
+
+__inline_neon void
+store4_u8(unsigned char *p, uint8x16x4_t v) noexcept
+{
+  vst4q_u8(p, v);
+}
+
+__inline_neon void
+store4_f32(float *p, float32x4x4_t v) noexcept
+{
+  vst4q_f32(p, v);
 }
 
 #undef __inline_neon
