@@ -16,7 +16,7 @@ constexpr static const int MICRON_ABI = 8;
 constexpr static const int MICRON_VERSION_MAJOR = 0x1000;
 constexpr static const int MICRON_VERSION_MINOR = 0x0800;
 constexpr static const int MICRON_VERSION_PATCH = 0x0030;
-constexpr static const int MICRON_VERSION_HOTFIX = 0x0000;
+constexpr static const int MICRON_VERSION_HOTFIX = 0x0001;
 
 enum kernel_support : int { kernel_linux = 0, kernel_darwin = 1 };
 
