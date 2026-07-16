@@ -61,21 +61,21 @@ __micron_trig_binary_fn(fmod, rem, fmod);
 #undef __micron_trig_binary_fn
 
 inline float
-frexp(float x, int *e) noexcept
+frexp(float x, int *exponent) noexcept
 {
-  return float(mkbits::manip::frexp<f32>(f32(x), e));
+  return float(mkbits::manip::frexp<f32>(f32(x), exponent));
 }
 
 inline double
-frexp(double x, int *e) noexcept
+frexp(double x, int *exponent) noexcept
 {
-  return double(mkbits::manip::frexp<f64>(f64(x), e));
+  return double(mkbits::manip::frexp<f64>(f64(x), exponent));
 }
 
 inline long double
-frexp(long double x, int *e) noexcept
+frexp(long double x, int *exponent) noexcept
 {
-  return static_cast<long double>(mkbits::manip::frexp<f64>(f64(x), e));
+  return static_cast<long double>(mkbits::manip::frexp<f64>(f64(x), exponent));
 }
 
 constexpr float

@@ -10,6 +10,11 @@
 
 #include "../types.hpp"
 
+// -Wshadow reports this as "shadowing library function 'operator new'", which is exactly what this
+// header is for
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+
 template<typename P>
 void *
 operator new(usize size, P *ptr)
@@ -17,3 +22,5 @@ operator new(usize size, P *ptr)
   (void)size;
   return ptr;
 }
+
+#pragma GCC diagnostic pop

@@ -930,13 +930,12 @@ public:
     return *this;
   }
 
-  // byte/element fast-fill iff T itself is fundamental
   template<typename F>
   carray &
   operator=(const F &o)
     requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<T>)
   {
-    micron::ctypeset<N>(micron::addr(stack[0]), o);
+    micron::ctypeset<N>(micron::addr(stack[0]), static_cast<T>(o));
     return *this;
   }
 
@@ -950,18 +949,20 @@ public:
   }
 
   template<is_constexpr_container A>
+    requires(micron::has_static_size<A>)
   carray &
   operator=(const A &o)
   {
-    if constexpr ( N <= A::length )
+    if constexpr ( N <= A::static_size )
       __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o[0]));
     else
-      __impl_container::copy_assign<A::length, T>(micron::addr(stack[0]), micron::addr(o[0]));
+      __impl_container::copy_assign<A::static_size, T>(micron::addr(stack[0]), micron::addr(o[0]));
     return *this;
   }
 
+  // source sized only at runtime
   template<is_container A>
-    requires(!micron::is_same_v<A, carray>)
+    requires(!micron::is_same_v<A, carray> and !micron::has_static_size<A>)
   carray &
   operator=(const A &o)
   {
@@ -1258,7 +1259,7 @@ public:
   fill(const F &o)
     requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<T>)
   {
-    micron::ctypeset<N>(micron::addr(stack[0]), o);
+    micron::ctypeset<N>(micron::addr(stack[0]), static_cast<T>(o));
     return *this;
   }
 

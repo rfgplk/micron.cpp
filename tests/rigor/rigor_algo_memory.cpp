@@ -207,6 +207,89 @@ main()
     int dst[8] = {};
     micron::copy<8>(src, dst);
     for ( int i = 0; i < 8; ++i ) require(dst[i], src[i]);
+
+    static_assert(micron::is_pointer_v<decltype(micron::copy<8>(src, dst))>,
+                  "copy<N>(arr,arr) must return F* — copy() is the pointer variant");
+    int *ps = src, *pd = dst;
+    static_assert(micron::is_pointer_v<decltype(micron::copy<8>(ps, pd))>,
+                  "copy<N>(ptr,ptr) must return F* — copy() is the pointer variant");
+  }
+  end_test_case();
+
+  test_case("copy<N>(arr,arr) writes exactly N elements (no overrun)");
+  {
+    int src[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+    struct {
+      int dst[8];
+      int canary[56];
+    } g = {};
+
+    micron::copy<8>(src, g.dst);
+    for ( int i = 0; i < 8; ++i ) require(g.dst[i], src[i]);
+    for ( int i = 0; i < 56; ++i ) require(g.canary[i], 0);
+  }
+  end_test_case();
+
+  test_case("copy<N>(ptr,ptr) writes exactly N elements (no overrun)");
+  {
+    int src[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+    struct {
+      int dst[8];
+      int canary[8];
+    } g = {};
+
+    int *ps = src, *pd = g.dst;
+    micron::copy<8>(ps, pd);
+    for ( int i = 0; i < 8; ++i ) require(g.dst[i], src[i]);
+    for ( int i = 0; i < 8; ++i ) require(g.canary[i], 0);
+  }
+  end_test_case();
+
+  test_case("copy<N>(arr,arr) of a struct element type writes exactly N elements");
+  {
+    struct S {
+      int x[4];
+    };
+
+    S src[4] = { { { 1, 2, 3, 4 } }, { { 5, 6, 7, 8 } }, { { 9, 10, 11, 12 } }, { { 13, 14, 15, 16 } } };
+
+    struct {
+      S dst[4];
+      S canary[12];      // 192B — what the reference binding used to spill into
+    } g = {};
+
+    micron::copy<4>(src, g.dst);
+    for ( int i = 0; i < 4; ++i )
+      for ( int j = 0; j < 4; ++j ) require(g.dst[i].x[j], src[i].x[j]);
+    for ( int i = 0; i < 12; ++i )
+      for ( int j = 0; j < 4; ++j ) require(g.canary[i].x[j], 0);
+  }
+  end_test_case();
+
+  test_case("rcopy<N>(ref,ref) copies N objects from the first element");
+  {
+    struct P {
+      int a, b;
+    };
+
+    P src[4] = { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+
+    struct {
+      P dst[4];
+      P canary[4];
+    } g = {};
+
+    micron::rcopy<4>(src[0], g.dst[0]);
+    for ( int i = 0; i < 4; ++i ) {
+      require(g.dst[i].a, src[i].a);
+      require(g.dst[i].b, src[i].b);
+    }
+    for ( int i = 0; i < 4; ++i ) {
+      require(g.canary[i].a, 0);
+      require(g.canary[i].b, 0);
+    }
   }
   end_test_case();
 

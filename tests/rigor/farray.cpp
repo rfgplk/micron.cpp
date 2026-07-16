@@ -174,6 +174,99 @@ main()
   end_test_case();
 
   // ---------------------------------------------------------------- //
+  test_case("operator[](from,to) full-range slice does not throw");
+  {
+    micron::farray<int, 8> a = make_seq<int, 8>(1);      // 1..8
+
+    auto full = a[0, 8];
+    require(full.size(), usize(8));
+    for ( usize i = 0; i < 8; ++i ) require(full[i], a[i]);
+
+    auto part = a[2, 5];
+    require(part.size(), usize(3));
+    for ( usize i = 0; i < 3; ++i ) require(part[i], a[i + 2]);
+
+    // still rejects genuinely out-of-range and empty/inverted ranges
+    require_throw([&]() { (void)a[0, 9]; });
+    require_throw([&]() { (void)a[4, 4]; });
+    require_throw([&]() { (void)a[5, 2]; });
+  }
+  end_test_case();
+
+  // ---------------------------------------------------------------- //
+  test_case("fill() with a value wider than the element type stays in bounds");
+  {
+    struct {
+      micron::farray<u8, 64> a;
+      u8 canary[256];
+    } g;
+
+    for ( int i = 0; i < 256; ++i ) g.canary[i] = 0xAB;
+
+    g.a.fill(1);
+
+    for ( usize i = 0; i < 64; ++i ) require(static_cast<int>(g.a[i]), 1);
+    for ( int i = 0; i < 256; ++i ) require(static_cast<int>(g.canary[i]), 0xAB);
+  }
+  end_test_case();
+
+  // ---------------------------------------------------------------- //
+  test_case("fill() with a double literal into a float array stays in bounds");
+  {
+    struct {
+      micron::farray<float, 16> a;
+      u8 canary[128];
+    } g;
+
+    for ( int i = 0; i < 128; ++i ) g.canary[i] = 0xAB;
+
+    g.a.fill(1.0);      // double value, float elements
+
+    for ( usize i = 0; i < 16; ++i ) require(g.a[i], 1.0f);
+    for ( int i = 0; i < 128; ++i ) require(static_cast<int>(g.canary[i]), 0xAB);
+  }
+  end_test_case();
+
+  // ---------------------------------------------------------------- //
+  test_case("assignment from a runtime-sized container");
+  {
+    micron::vector<int> v;
+    for ( int i = 1; i <= 8; ++i ) v.push_back(i);
+
+    micron::farray<int, 64> d(0x7f7f7f7f);      // sentinel past index 8 must survive
+    d = v;
+
+    for ( usize i = 0; i < 8; ++i ) require(d[i], static_cast<int>(i + 1));
+    for ( usize i = 8; i < 64; ++i ) require(d[i], 0x7f7f7f7f);
+  }
+  end_test_case();
+
+  // ---------------------------------------------------------------- //
+  test_case("assignment from a larger runtime-sized container clamps to N");
+  {
+    micron::vector<int> v;
+    for ( int i = 1; i <= 64; ++i ) v.push_back(i);
+
+    micron::farray<int, 8> d;
+    d = v;
+
+    for ( usize i = 0; i < 8; ++i ) require(d[i], static_cast<int>(i + 1));
+  }
+  end_test_case();
+
+  // ---------------------------------------------------------------- //
+  test_case("assignment from a smaller compile-time-sized farray copies min(N, A::static_size)");
+  {
+    micron::farray<int, 8> src = make_seq<int, 8>(1);      // 1..8
+    micron::farray<int, 64> d(0x7f7f7f7f);
+    d = src;
+
+    for ( usize i = 0; i < 8; ++i ) require(d[i], src[i]);
+    for ( usize i = 8; i < 64; ++i ) require(d[i], 0x7f7f7f7f);
+  }
+  end_test_case();
+
+  // ---------------------------------------------------------------- //
   test_case("scalar assignment fills all elements");
   {
     micron::farray<int, 16> a = make_seq<int, 16>(1);

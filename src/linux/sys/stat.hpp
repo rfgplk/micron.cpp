@@ -164,15 +164,15 @@ stat(const char *path, stat64_t &buf) -> i32
 #endif
 
 auto
-statx(int dirfd, const char *__restrict path, int flags, unsigned int mask, statx_t &__restrict buf) -> i32
+statx(int dirfd, const char *__restrict path, int flags, unsigned int req_mask, statx_t &__restrict buf) -> i32
 {
-  return static_cast<i32>(micron::syscall(SYS_statx, dirfd, path, flags, mask, &buf));
+  return static_cast<i32>(micron::syscall(SYS_statx, dirfd, path, flags, req_mask, &buf));
 }
 
 auto
-statx(posix::fd_t dirfd, const char *__restrict path, int flags, unsigned int mask, statx_t &__restrict buf) -> i32
+statx(posix::fd_t dirfd, const char *__restrict path, int flags, unsigned int req_mask, statx_t &__restrict buf) -> i32
 {
-  return static_cast<i32>(micron::syscall(SYS_statx, dirfd.fd, path, flags, mask, &buf));
+  return static_cast<i32>(micron::syscall(SYS_statx, dirfd.fd, path, flags, req_mask, &buf));
 }
 };      // namespace posix
 };      // namespace micron

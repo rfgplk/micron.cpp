@@ -470,27 +470,29 @@ public:
   template<typename F>
   conarray &
   operator=(const F &o)
-    requires micron::is_fundamental_v<F>
+    requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<T>)
   {
     __hold __lock(__mtx);
-    micron::ctypeset<N>(micron::addr(stack[0]), o);
+    micron::ctypeset<N>(micron::addr(stack[0]), static_cast<T>(o));
     return *this;
   }
 
   template<is_constexpr_container A>
+    requires(micron::has_static_size<A>)
   conarray &
   operator=(const A &o)
   {
     __hold __lock(__mtx);
-    if constexpr ( N <= A::length )
+    if constexpr ( N <= A::static_size )
       __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o[0]));
     else
-      __impl_container::copy_assign<A::length, T>(micron::addr(stack[0]), micron::addr(o[0]));
+      __impl_container::copy_assign<A::static_size, T>(micron::addr(stack[0]), micron::addr(o[0]));
     return *this;
   }
 
+  // source sized only at runtime
   template<is_container A>
-    requires(!micron::is_same_v<A, conarray>)
+    requires(!micron::is_same_v<A, conarray> and !micron::has_static_size<A>)
   conarray &
   operator=(const A &o)
   {
@@ -883,10 +885,10 @@ public:
   template<typename F>
   conarray &
   fill(const F &o)
-    requires micron::is_fundamental_v<F>
+    requires(micron::is_fundamental_v<F> && micron::is_fundamental_v<T>)
   {
     __hold __lock(__mtx);
-    micron::ctypeset<N>(micron::addr(stack[0]), o);
+    micron::ctypeset<N>(micron::addr(stack[0]), static_cast<T>(o));
     return *this;
   }
 

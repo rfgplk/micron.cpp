@@ -99,7 +99,7 @@ enable_fast_fp() noexcept
 {
 }
 #endif
-extern "C" __attribute__((used, visibility("default"))) int
+extern "C" __attribute__((used, visibility("default"), noreturn)) int
 __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noexcept
 {
   environ = envp;
