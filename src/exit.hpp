@@ -9,6 +9,11 @@
 #include "syscall.hpp"
 #include "types.hpp"
 
+extern "C" {
+// strong definition in io/__std.hpp, weakly stubbed in start.cpp
+extern void __shutdown_io_buffers(void) __attribute__((weak));
+}
+
 namespace micron
 {
 
@@ -50,9 +55,11 @@ quick_exit(const int s)
   __builtin_unreachable();
 }
 
+// on abort we must drain buffers before exiting, otherwise data will be dropped
 __attribute__((noreturn)) inline void
 abort(void)
 {
+  if ( __shutdown_io_buffers ) __shutdown_io_buffers();
   sys_group_exit(6);
   __builtin_unreachable();
 }
@@ -60,6 +67,7 @@ abort(void)
 __attribute__((noreturn)) inline void
 abort(int ret)
 {
+  if ( __shutdown_io_buffers ) __shutdown_io_buffers();
   sys_group_exit(ret);
   __builtin_unreachable();
 }

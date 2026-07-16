@@ -328,11 +328,11 @@ printk(S &s, char c)
   return s.put(c);
 }
 
-// single byte (renders as its glyph, historical behavior)
+// NOTE: binds a nonconst byte lvalue only
 template<output_sink S, typename T>
-  requires(micron::is_same_v<micron::remove_cvref_t<T>, byte> && sizeof(T) == 1)
+  requires(micron::is_same_v<T, byte> && sizeof(T) == 1)
 inline max_t
-printk(S &s, const T &x)
+printk(S &s, T &x)
 {
   return s.put(static_cast<char>(x));
 }

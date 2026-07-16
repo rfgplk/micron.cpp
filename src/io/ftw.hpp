@@ -5,7 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../concepts.hpp"
 #include "../tuple.hpp"
+#include "../type_traits.hpp"
 #include "paths.hpp"
 #include "os/iosys.hpp"
 
@@ -24,20 +26,33 @@ struct node_id {
 
 constexpr u32 ftw_max_depth = 100;
 
-inline void
-walk(path &&p, micron::fvector<path_t> &out, node_id *chain, u32 depth, collect what)
+template<typename Sink>
+inline bool
+walk(path &&p, Sink &&sink, node_id *chain, u32 depth, collect what, bool is_root = false)
 {
-  if ( depth >= ftw_max_depth ) return;
+  if ( depth >= ftw_max_depth ) return true;
 
   // entries collected at this level
-  micron::fvector<path_t> coll = (what == collect::files) ? p.files() : (what == collect::all ? p.all() : p.dirs());
+  micron::fvector<path_t> coll;
+  try {
+    coll = (what == collect::files) ? p.files() : (what == collect::all ? p.all() : p.dirs());
+  } catch ( except::__base_exception & ) {
+    if ( is_root ) throw;
+    return true;
+  }
   for ( auto &n : coll ) {
     if ( n == "." || n == ".." ) continue;
-    out.push_back(p.join(n.c_str()));
+    if ( !sink(p.join(n.c_str())) ) return false;
   }
 
   // recurse into sub-directories only
-  micron::fvector<path_t> subdirs = p.dirs();
+  micron::fvector<path_t> subdirs;
+  try {
+    subdirs = p.dirs();
+  } catch ( except::__base_exception & ) {
+    if ( is_root ) throw;
+    return true;
+  }
   for ( auto &n : subdirs ) {
     if ( n == "." || n == ".." ) continue;
     path_t child = p.join(n.c_str());
@@ -56,17 +71,15 @@ walk(path &&p, micron::fvector<path_t> &out, node_id *chain, u32 depth, collect 
     if ( seen ) continue;      // directory cycle -> skip
 
     chain[depth] = id;
-    try {
-      walk(path(child.c_str()), out, chain, depth + 1, what);
-    } catch ( except::__base_exception & ) {
-    }
+    if ( !walk(path(child.c_str()), sink, chain, depth + 1, what) ) return false;
   }
+  return true;
 }
 
-inline micron::fvector<path_t>
-run(path &&p, collect what)
+template<typename Sink>
+inline bool
+run_sink(path &&p, Sink &&sink, collect what)
 {
-  micron::fvector<path_t> out;
   node_id chain[ftw_max_depth];
   u32 start = 0;
   posix::stat_t st{};
@@ -74,8 +87,41 @@ run(path &&p, collect what)
     chain[0] = node_id{ st.st_dev, static_cast<posix::ino64_t>(st.st_ino) };
     start = 1;
   }
-  walk(micron::move(p), out, chain, start, what);
+  return walk(micron::move(p), sink, chain, start, what, true);
+}
+
+inline micron::fvector<path_t>
+run(path &&p, collect what)
+{
+  micron::fvector<path_t> out;
+  run_sink(
+      micron::move(p),
+      [&out](path_t &&x) {
+        out.push_back(micron::move(x));
+        return true;
+      },
+      what);
   return out;
+}
+
+template<typename Fn>
+inline usize
+visit(path &&p, Fn &&fn, collect what)
+{
+  usize n = 0;
+  run_sink(
+      micron::move(p),
+      [&](path_t &&x) -> bool {
+        ++n;
+        if constexpr ( micron::is_convertible_v<micron::invoke_result_t<Fn, const path_t &>, bool> )
+          return static_cast<bool>(fn(x));
+        else {
+          fn(x);
+          return true;
+        }
+      },
+      what);
+  return n;
 }
 }      // namespace __ftw
 
@@ -95,6 +141,49 @@ inline auto
 ftw_files(path &&p)
 {
   return __ftw::run(micron::move(p), __ftw::collect::files);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// visitor forms
+// stops the walk on false
+template<typename Fn>
+  requires micron::invocable<Fn, const path_t &>
+inline usize
+ftw(path &&p, Fn &&fn)
+{
+  return __ftw::visit(micron::move(p), micron::forward<Fn>(fn), __ftw::collect::dirs);
+}
+
+template<typename Fn>
+  requires micron::invocable<Fn, const path_t &>
+inline usize
+ftw_all(path &&p, Fn &&fn)
+{
+  return __ftw::visit(micron::move(p), micron::forward<Fn>(fn), __ftw::collect::all);
+}
+
+template<typename Fn>
+  requires micron::invocable<Fn, const path_t &>
+inline usize
+ftw_files(path &&p, Fn &&fn)
+{
+  return __ftw::visit(micron::move(p), micron::forward<Fn>(fn), __ftw::collect::files);
+}
+
+// left fold over every visited path
+template<typename R, typename Fn>
+  requires fn_fold<Fn, R, const path_t &>
+inline R
+ftw_fold(path &&p, R init, Fn &&fn)
+{
+  __ftw::run_sink(
+      micron::move(p),
+      [&](path_t &&x) -> bool {
+        init = fn(micron::move(init), x);
+        return true;
+      },
+      __ftw::collect::all);
+  return init;
 }
 };      // namespace io
 };      // namespace micron

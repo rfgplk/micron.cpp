@@ -11,6 +11,7 @@
 #include "../string/strings.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
+#include "fn.hpp"
 #include "io.hpp"
 #include "paths.hpp"
 #include "os/iosys.hpp"
@@ -552,6 +553,51 @@ public:
   {
     return write_bytes(buf.begin(), buf.size());
   }
+
+  template<chunk_fn Fn>
+  max_t
+  each_chunk(Fn &&fn, usize chunk_sz = 4096u)
+  {
+    if ( !__r_open ) return -error::bad_fd;
+    micron::buffer win(chunk_sz ? chunk_sz : 4096u);
+    max_t total = 0;
+    for ( ;; ) {
+      max_t n = posix::read(fd[__r], win.begin(), win.size());
+      if ( n < 0 ) [[unlikely]] {
+        if ( -n == error::interrupted ) continue;
+        if ( -n == error::try_again ) break;      // nonblock: drained
+        return total ? total : n;
+      }
+      if ( n == 0 ) break;      // EOF: all writers closed
+      fn(static_cast<const byte *>(win.begin()), static_cast<usize>(n));
+      total += n;
+    }
+    return total;
+  }
+
+  // producer loop: fn fills dst (<= cap) and returns bytes produced; 0 ends. a
+  // blocking write end blocks while the pipe is full; a nonblocking one surfaces the
+  // partial total. producer overrun (n > cap) is -EINVAL
+  template<producer_fn Fn>
+  max_t
+  write_with(Fn &&fn, usize chunk_sz = 4096u)
+  {
+    if ( !__w_open ) return -error::bad_fd;
+    micron::buffer win(chunk_sz ? chunk_sz : 4096u);
+    max_t total = 0;
+    for ( ;; ) {
+      usize n = fn(win.begin(), win.size());
+      if ( n == 0 ) break;
+      if ( n > win.size() ) [[unlikely]]
+        return -error::invalid_arg;
+      max_t w = _write_all(fd[__w], win.begin(), n);
+      if ( w < 0 ) [[unlikely]]
+        return total ? total : w;
+      total += w;
+      if ( static_cast<usize>(w) < n ) break;      // short write: stop
+    }
+    return total;
+  }
 };
 
 class npipe
@@ -841,6 +887,50 @@ public:
     max_t n = posix::read(_fd, out.begin(), hint);
     if ( n < 0 ) n = 0;
     return out;
+  }
+
+  // drain read loop
+  template<chunk_fn Fn>
+  max_t
+  each_chunk(Fn &&fn, usize chunk_sz = 4096u)
+  {
+    if ( !valid() ) return -error::bad_fd;
+    micron::buffer win(chunk_sz ? chunk_sz : 4096u);
+    max_t total = 0;
+    for ( ;; ) {
+      max_t n = posix::read(_fd, win.begin(), win.size());
+      if ( n < 0 ) [[unlikely]] {
+        if ( -n == error::interrupted ) continue;
+        if ( -n == error::try_again ) break;
+        return total ? total : n;
+      }
+      if ( n == 0 ) break;
+      fn(static_cast<const byte *>(win.begin()), static_cast<usize>(n));
+      total += n;
+    }
+    return total;
+  }
+
+  // producer loop: same policy as upipe::write_with
+  template<producer_fn Fn>
+  max_t
+  write_with(Fn &&fn, usize chunk_sz = 4096u)
+  {
+    if ( !valid() ) return -error::bad_fd;
+    micron::buffer win(chunk_sz ? chunk_sz : 4096u);
+    max_t total = 0;
+    for ( ;; ) {
+      usize n = fn(win.begin(), win.size());
+      if ( n == 0 ) break;
+      if ( n > win.size() ) [[unlikely]]
+        return -error::invalid_arg;
+      max_t w = _write_all(_fd, win.begin(), n);
+      if ( w < 0 ) [[unlikely]]
+        return total ? total : w;
+      total += w;
+      if ( static_cast<usize>(w) < n ) break;
+    }
+    return total;
   }
 
   template<is_string T>

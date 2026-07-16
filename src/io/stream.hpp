@@ -12,6 +12,7 @@
 #include "../pointer.hpp"
 #include "../types.hpp"
 
+#include "__lines.hpp"
 #include "os/iosys.hpp"
 
 namespace micron
@@ -435,6 +436,27 @@ public:
   data() noexcept
   {
     return __buffer->begin();
+  }
+
+  // left fold over the buffered bytes (in-memory, cannot fail)
+  template<typename R, typename Fn>
+    requires fn_fold<Fn, R, byte>
+  R
+  fold(R init, Fn &&fn) const
+  {
+    const byte *p = __buffer->begin();
+    for ( max_t i = 0; i < __size; ++i ) init = fn(micron::move(init), p[i]);
+    return init;
+  }
+
+  // visit each line of the buffered content
+  template<typename Fn>
+    requires micron::invocable<Fn, const micron::string &>
+  usize
+  each_line(Fn &&fn) const
+  {
+    if ( __size <= 0 ) return 0;
+    return __split_lines_mem(__buffer->begin(), static_cast<usize>(__size), micron::forward<Fn>(fn));
   }
 
   max_t

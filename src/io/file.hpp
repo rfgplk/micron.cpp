@@ -10,7 +10,9 @@
 
 #include "../memory_block.hpp"
 
+#include "__lines.hpp"
 #include "__serial_core.hpp"
+#include "fn.hpp"
 #include "format.hpp"
 #include "os/os_file.hpp"
 #include "paths.hpp"
@@ -23,6 +25,20 @@ namespace micron
 {
 namespace io
 {
+
+template<typename T>
+concept __bulk_value = (is_string<T> || is_contiguous_container<T>) && micron::is_trivially_copyable_v<typename T::value_type>;
+
+template<typename T>
+concept __framed_value
+    = is_node_container<T> || (is_iterable_container<T> && !is_string<T> && !micron::is_trivially_copyable_v<typename T::value_type>);
+
+template<typename T>
+concept __object_value = micron::is_trivially_copyable_v<T> && !is_string<T> && !is_iterable_container<T> && !is_node_container<T>
+                         && !micron::is_pointer_v<T> && !micron::is_array_v<T> && !fn_like<T>;
+
+template<typename T>
+concept __readable_value = __bulk_value<T> || __framed_value<T> || __object_value<T>;
 
 class file: public os_file
 {
@@ -73,9 +89,103 @@ class file: public os_file
       c._buf_set_length(elems);
   }
 
+  template<typename T>
+    requires __readable_value<T>
+  max_t
+  __read_value(T &out)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if constexpr ( __bulk_value<T> ) {
+      stat<STAT_OVERRIDE>();
+      const usize total = static_cast<usize>(sd.st_size);
+      const posix::off64_t at = tell();
+      const usize remaining = (at >= 0 && total > static_cast<usize>(at)) ? total - static_cast<usize>(at) : 0;
+      if ( remaining == 0 ) {
+        // virtual files (/proc, /sys) fstat to size 0; grow chunk-by-chunk until EOF
+        max_t got = 0;
+        if constexpr ( sizeof(typename T::value_type) == 1 && requires(T t, typename T::value_type v) { t.push_back(v); } ) {
+          byte chunk[4096];
+          for ( ;; ) {
+            max_t r = posix::read(__handle.fd, chunk, sizeof(chunk));
+            if ( r < 0 ) [[unlikely]] {
+              if ( -r == error::interrupted ) continue;
+              return r;
+            }
+            if ( r == 0 ) break;
+            for ( max_t i = 0; i < r; ++i ) out.push_back(static_cast<typename T::value_type>(chunk[i]));
+            got += r;
+          }
+        }
+        return got;
+      }
+      const usize elems = remaining / sizeof(typename T::value_type);
+      if constexpr ( requires(T t, usize n) { t.reserve(n); } ) out.reserve(elems + 1);
+      // a fixed-capacity destination that cannot hold the remainder is an error, not a silent
+      // prefix: modify() reads this count back as the file's old size, so reporting a short
+      // read as a complete one makes it truncate away the tail it never saw.
+      if constexpr ( requires(const T &t) { t.max_size(); } ) {
+        if ( elems > out.max_size() ) [[unlikely]]
+          return -error::file_too_big;
+      }
+      max_t got = __read_loop(out.data(), elems * sizeof(typename T::value_type));
+      if ( got < 0 ) [[unlikely]]
+        return got;
+      if ( got > 0 ) __set_length(out, static_cast<usize>(got) / sizeof(typename T::value_type));
+      return got;
+    } else if constexpr ( __framed_value<T> ) {
+      const posix::off64_t at = tell();
+      if ( at < 0 ) [[unlikely]]
+        return at;
+      stat<STAT_OVERRIDE>();
+      if ( static_cast<usize>(sd.st_size) <= static_cast<usize>(at) ) return 0;
+      return read(out);      // non-throwing framed read
+    } else {
+      // trivially-copyable object: a short read is corruption
+      max_t got = __read_loop(static_cast<void *>(micron::addressof(out)), sizeof(T));
+      if ( got < 0 ) [[unlikely]]
+        return got;
+      if ( static_cast<usize>(got) != sizeof(T) ) [[unlikely]]
+        return -error::io_error;
+      return got;
+    }
+  }
+
+  // rebind __handle onto fname after a rename swapped a new inode in behind it. F_GETFL
+  // reports the access mode and status flags but never O_CREAT/O_TRUNC/O_EXCL (those are
+  // consumed by open and not retained), so reusing them cannot re-truncate the new file.
+  i32
+  __rebind(void)
+  {
+    const i32 fl = get_status_flags();
+    if ( fl < 0 ) [[unlikely]]
+      return fl;
+    const bool keep_cloexec = is_cloexec();      // an fd flag, not reported by F_GETFL
+    const i32 nfd = static_cast<i32>(posix::openat(posix::at_fdcwd, fname.c_str(), fl | (keep_cloexec ? posix::o_cloexec : 0), 0u));
+    if ( nfd < 0 ) [[unlikely]]
+      return nfd;
+    posix::close(__handle.fd);
+    __handle.fd = nfd;
+    micron::zero(&sd);      // new inode: every cached stat field is stale
+    return 0;
+  }
+
+  // byte length the write tiers will emit for v (same constexpr dispatch as write())
+  template<typename T>
+  static max_t
+  __marshal_size(const T &v)
+  {
+    if constexpr ( __bulk_value<T> )
+      return static_cast<max_t>(v.size() * sizeof(typename T::value_type));
+    else if constexpr ( __framed_value<T> )
+      return serialize::framed_size(v);
+    else
+      return static_cast<max_t>(sizeof(T));
+  }
+
 public:
   using os_file::os_file;
-  using os_file::operator=;      
+  using os_file::operator=;
 
   file() = default;
   ~file() = default;
@@ -127,10 +237,10 @@ public:
     return __write_loop(out.data(), static_cast<usize>(n));
   }
 
-  // (d) trivially-copyable plain objects -> sizeof dump; pointers are refused (use (ptr, len))
+  // (d) trivially-copyable plain objects -> sizeof dump; pointers are refused
   template<typename T>
     requires(micron::is_trivially_copyable_v<T> && !is_string<T> && !is_iterable_container<T> && !is_node_container<T>
-             && !micron::is_pointer_v<T> && !micron::is_array_v<T>)
+             && !micron::is_pointer_v<T> && !micron::is_array_v<T> && !fn_like<T>)
   max_t
   write(const T &obj)
   {
@@ -196,12 +306,13 @@ public:
       }
       return out;
     }
-    usize elems = remaining / sizeof(typename T::value_type);
+    const usize elems = remaining / sizeof(typename T::value_type);
     if constexpr ( requires(T t, usize n) { t.reserve(n); } ) out.reserve(elems + 1);
-    // never write past the destinations physical capacity
     if constexpr ( requires(const T &t) { t.max_size(); } ) {
-      const usize cap = out.max_size();
-      if ( elems > cap ) elems = cap;
+      if ( elems > out.max_size() ) [[unlikely]] {
+        exc<except::io_error>("micron::io::file::read: destination cannot hold the file");
+        return out;      // exc<> may return; never read past capacity
+      }
     }
     max_t got = __read_loop(out.data(), elems * sizeof(typename T::value_type));
     if ( got < 0 ) [[unlikely]]      // EIO/EISDIR/EBADF etc
@@ -257,10 +368,10 @@ public:
     return out;
   }
 
-  // (d) trivially-copyable plain objects
+  // (d) trivially-copyable plain objects; callables are refused
   template<typename T>
     requires(micron::is_trivially_copyable_v<T> && !is_string<T> && !is_iterable_container<T> && !is_node_container<T>
-             && !micron::is_pointer_v<T> && !micron::is_array_v<T>)
+             && !micron::is_pointer_v<T> && !micron::is_array_v<T> && !fn_like<T>)
   max_t
   read(T &obj)
   {
@@ -277,6 +388,225 @@ public:
     if ( p == nullptr ) [[unlikely]]
       return -error::invalid_arg;
     return __read_loop(p, n);
+  }
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // functional io
+
+  // producer write
+  //   f.write([]{ return build_report(); });
+  template<typename Fn>
+    requires(fn_like<Fn> && micron::is_invocable_v<Fn> && !micron::is_void_v<micron::invoke_result_t<Fn>>)
+  max_t
+  write(Fn &&fn)
+  {
+    return write(micron::forward<Fn>(fn)());
+  }
+
+  // consumer read
+  //   f.read([](micron::vector<int> v){ ... });
+  template<typename Fn>
+    requires(fn_deducible<Fn> && fn_arity_v<Fn> == 1 && micron::is_default_constructible_v<fn_arg0_t<Fn>> && __readable_value<fn_arg0_t<Fn>>
+             && micron::is_invocable_v<Fn, fn_arg0_exact_t<Fn>>
+             && micron::distinct<__unit_if_void_t<micron::invoke_result_t<Fn, fn_arg0_exact_t<Fn>>>, io::error_t>)
+  auto
+  read(Fn &&fn) -> micron::option<__unit_if_void_t<micron::invoke_result_t<Fn, fn_arg0_exact_t<Fn>>>, io::error_t>
+  {
+    using A0 = fn_arg0_exact_t<Fn>;
+    using Ret = micron::option<__unit_if_void_t<micron::invoke_result_t<Fn, A0>>, io::error_t>;
+    fn_arg0_t<Fn> val{};
+    if ( max_t r = __read_value(val); r < 0 ) [[unlikely]]
+      return Ret{ io::error_t(static_cast<i32>(r)) };
+    if constexpr ( micron::is_void_v<micron::invoke_result_t<Fn, A0>> ) {
+      micron::forward<Fn>(fn)(micron::forward<A0>(val));
+      return Ret{ unit_t{} };
+    } else {
+      return Ret{ micron::forward<Fn>(fn)(micron::forward<A0>(val)) };
+    }
+  }
+
+  // read-modify-write over the whole file
+  //   pure:     T -> T        f.modify([](micron::string s){ return transform(s); });
+  //   in-place: void(T&)      f.modify([](micron::string &s){ s += "\n"; });
+  // in-place rewrite, not crash-atomic
+  template<typename Fn>
+    requires(fn_deducible<Fn> && fn_arity_v<Fn> == 1 && micron::is_default_constructible_v<fn_arg0_t<Fn>> && __readable_value<fn_arg0_t<Fn>>
+             && ((micron::is_void_v<fn_ret_t<Fn>> && micron::same_as<fn_arg0_exact_t<Fn>, fn_arg0_t<Fn> &>)
+                 || micron::same_as<micron::remove_cvref_t<fn_ret_t<Fn>>, fn_arg0_t<Fn>>))
+  max_t
+  modify(Fn &&fn)
+  {
+    using T = fn_arg0_t<Fn>;
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    // O_APPEND forces every write to EOF, so the rewrite below would land past the old content
+    // and the trailing truncate would then cut the file down to the new length -- destroying
+    // both versions. There is no way to rewrite in place through an append-only handle.
+    if ( i32 fl = get_status_flags(); fl < 0 ) [[unlikely]]
+      return fl;
+    else if ( fl & posix::o_append ) [[unlikely]]
+      return -error::invalid_arg;
+    if ( posix::off64_t s = seek_to(0); s < 0 ) [[unlikely]]
+      return s;
+    T val{};
+    const max_t old_bytes = __read_value(val);      // empty file: default T, fn still applied
+    if ( old_bytes < 0 ) [[unlikely]]
+      return old_bytes;
+    if constexpr ( micron::is_void_v<fn_ret_t<Fn>> )
+      micron::forward<Fn>(fn)(val);
+    else
+      val = micron::forward<Fn>(fn)(micron::move(val));
+    const max_t need = __marshal_size(val);
+    if ( need < 0 ) [[unlikely]]
+      return need;
+    if ( posix::off64_t s = seek_to(0); s < 0 ) [[unlikely]]
+      return s;
+    max_t n = write(val);
+    if ( n < 0 ) [[unlikely]]
+      return n;
+    if ( n != need ) [[unlikely]]      // short write: old tail may survive past new content
+      return -error::io_error;
+    if ( n < old_bytes )
+      if ( i32 t = truncate(static_cast<posix::off64_t>(n)); t != 0 ) [[unlikely]]
+        return t;
+    return n;
+  }
+
+  // crash atomic modify via atomic_replace (tmp + fsync + rename + dir-fsync)
+  template<typename Fn>
+    requires(fn_deducible<Fn> && fn_arity_v<Fn> == 1 && micron::is_default_constructible_v<fn_arg0_t<Fn>> && __readable_value<fn_arg0_t<Fn>>
+             && ((micron::is_void_v<fn_ret_t<Fn>> && micron::same_as<fn_arg0_exact_t<Fn>, fn_arg0_t<Fn> &>)
+                 || micron::same_as<micron::remove_cvref_t<fn_ret_t<Fn>>, fn_arg0_t<Fn>>))
+  max_t
+  modify_atomic(Fn &&fn)
+  {
+    using T = fn_arg0_t<Fn>;
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( posix::off64_t s = seek_to(0); s < 0 ) [[unlikely]]
+      return s;
+    T val{};
+    if ( max_t r = __read_value(val); r < 0 ) [[unlikely]]
+      return r;
+    if constexpr ( micron::is_void_v<fn_ret_t<Fn>> )
+      micron::forward<Fn>(fn)(val);
+    else
+      val = micron::forward<Fn>(fn)(micron::move(val));
+    if constexpr ( __bulk_value<T> ) {
+      if ( i32 r = atomic_replace(val); r != 0 ) [[unlikely]]
+        return r;
+      return static_cast<max_t>(val.size() * sizeof(typename T::value_type));
+    } else if constexpr ( __framed_value<T> ) {
+      max_t need = serialize::framed_size(val);
+      if ( need < 0 ) [[unlikely]]
+        return need;
+      micron::buffer out(static_cast<usize>(need));
+      max_t n = serialize::frame_into(out.data(), out.size(), val);
+      if ( n < 0 ) [[unlikely]]
+        return n;
+      if ( i32 r = atomic_replace(static_cast<const void *>(out.data()), static_cast<usize>(n)); r != 0 ) [[unlikely]]
+        return r;
+      return n;
+    } else {
+      if ( i32 r = atomic_replace(static_cast<const void *>(micron::addressof(val)), sizeof(T)); r != 0 ) [[unlikely]]
+        return r;
+      return static_cast<max_t>(sizeof(T));
+    }
+  }
+
+  // stream the file's remainder through fn in fixed windows
+  template<chunk_fn Fn>
+  max_t
+  read_with(Fn &&fn)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    micron::buffer win(fp_window);
+    max_t total = 0;
+    for ( ;; ) {
+      max_t r = __read_loop(win.data(), fp_window);
+      if ( r < 0 ) [[unlikely]]
+        return r;      // a mid-stream failure is a failure: `total` here would be a plausible
+                       // short count the caller cannot tell apart from a clean smaller file
+      if ( r == 0 ) break;
+      fn(static_cast<const byte *>(win.data()), static_cast<usize>(r));
+      total += r;
+    }
+    return total;
+  }
+
+  // producer streaming
+  template<producer_fn Fn>
+  max_t
+  write_with(Fn &&fn)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    micron::buffer win(fp_window);
+    max_t total = 0;
+    for ( ;; ) {
+      usize n = fn(win.data(), fp_window);
+      if ( n == 0 ) break;
+      if ( n > fp_window ) [[unlikely]]
+        return -error::invalid_arg;
+      max_t w = __write_loop(win.data(), n);
+      if ( w < 0 ) [[unlikely]]
+        return w;      // as in read_with: a byte count cannot express "and then it failed"
+      if ( static_cast<usize>(w) != n ) [[unlikely]]
+        return -error::io_error;
+      total += w;
+    }
+    return total;
+  }
+
+  // apply fn to every line of the file's remainder
+  template<typename Fn>
+    requires(line_fn<Fn> || micron::is_invocable_v<Fn, const micron::string &>)
+  max_t
+  each_line(Fn &&fn)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    __line_cursor cur(__handle.fd);
+    max_t count = 0;
+    while ( cur.next() ) {
+      if constexpr ( line_fn<Fn> )
+        fn(cur.line().c_str(), cur.line().size());
+      else
+        fn(cur.line());
+      ++count;
+    }
+    if ( i32 e = cur.error() ) [[unlikely]]
+      return e;
+    return count;
+  }
+
+  // left fold over lines: fn(R, line) -> R with either line shape
+  template<typename R, typename Fn>
+    requires(micron::distinct<R, io::error_t> && (line_fold_raw<Fn, R> || line_fold_str<Fn, R>))
+  auto
+  fold_lines(R init, Fn &&fn) -> micron::option<R, io::error_t>
+  {
+    using Ret = micron::option<R, io::error_t>;
+    if ( i32 __e = __check() ) [[unlikely]]
+      return Ret{ io::error_t(__e) };
+    __line_cursor cur(__handle.fd);
+    while ( cur.next() ) {
+      if constexpr ( line_fold_raw<Fn, R> )
+        init = fn(micron::move(init), cur.line().c_str(), cur.line().size());
+      else
+        init = fn(micron::move(init), cur.line());
+    }
+    if ( i32 e = cur.error() ) [[unlikely]]
+      return Ret{ io::error_t(e) };
+    return Ret{ micron::move(init) };
+  }
+
+  // lazy single-pass line range over the remainder
+  lines_range
+  lines(usize chunk_sz = __lines::chunk)
+  {
+    return lines_range(__handle.fd, chunk_sz);
   }
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -426,8 +756,8 @@ public:
       }
     }
 
-    micron::zero(&sd);
-    return 0;
+    // the contents are on disk, but this handle still refers to the replaced inode
+    return __rebind();
   }
 
   template<is_string T>

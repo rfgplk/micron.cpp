@@ -57,16 +57,22 @@ concept node_chain = requires(const T t) {
   { t.ibegin()->data };
 };
 
+template<typename T, typename K, typename V>
+concept __kv_rebuildable = requires(T t, K k, V v) { t.insert(micron::move(k), micron::move(v)); }
+                           || requires(T t, K k, V v) { t.insert_unhash(micron::move(k), micron::move(v)); };
+
 template<typename T>
-concept kv_key_iter = requires(const T t) {
-  { t.begin()->key };
-  { t.begin()->value };
+concept kv_key_iter = requires(const T c, T t) {
+  { c.begin()->key };
+  { c.begin()->value };
+  requires __kv_rebuildable<T, micron::remove_cvref_t<decltype(c.begin()->key)>, micron::remove_cvref_t<decltype(c.begin()->value)>>;
 };
 
 template<typename T>
-concept kv_ab_iter = requires(const T t) {
-  { (*t.begin()).a };
-  { (*t.begin()).b };
+concept kv_ab_iter = requires(const T c, T t) {
+  { (*c.begin()).a };
+  { (*c.begin()).b };
+  requires __kv_rebuildable<T, micron::remove_cvref_t<decltype((*c.begin()).a)>, micron::remove_cvref_t<decltype((*c.begin()).b)>>;
 } && !kv_key_iter<T>;
 
 template<typename T>
@@ -97,8 +103,7 @@ concept iterable_generic = requires(const T t) {
 inline void
 __put_bytes(byte *dst, usize &off, const void *src, usize n) noexcept
 {
-  micron::bytecpy(dst + off, static_cast<const byte *>(src),
-                  n);     
+  micron::bytecpy(dst + off, static_cast<const byte *>(src), n);
   off += n;
 }
 
@@ -113,7 +118,7 @@ __get_bytes(const byte *src, usize len, usize &off, void *dst, usize n) noexcept
 {
   if ( off + n > len ) [[unlikely]]
     return false;
-  micron::bytecpy(static_cast<byte *>(dst), src + off, n);     
+  micron::bytecpy(static_cast<byte *>(dst), src + off, n);
   off += n;
   return true;
 }
@@ -277,7 +282,7 @@ unframe_element(const byte *src, usize len, usize &off, E &out) noexcept
     u64 cnt = 0;
     if ( !__get_u64(src, len, off, cnt) ) [[unlikely]]
       return -error::invalid_arg;
-    if ( cnt > (len - off) / sizeof(typename U::value_type) ) [[unlikely]]  
+    if ( cnt > (len - off) / sizeof(typename U::value_type) ) [[unlikely]]
       return -error::invalid_arg;
     const usize nbytes = static_cast<usize>(cnt) * sizeof(typename U::value_type);
     out = U();

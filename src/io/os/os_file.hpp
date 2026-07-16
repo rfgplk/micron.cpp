@@ -650,7 +650,9 @@ public:
   inline auto
   size(void) const
   {
-    stat();
+    __alive();
+    if ( stat() != 0 ) [[unlikely]]
+      exc<except::io_error>("micron::os_file::size, fstat failed.");
     return sd.st_size;
   }
 

@@ -159,26 +159,28 @@ public:
   {
     if ( i32 __e = __check() ) [[unlikely]]
       return __e;
-    stat<STAT_OVERRIDE>();
+    if ( i32 e = stat<STAT_OVERRIDE>(); e != 0 ) [[unlikely]]
+      return e;
     const usize need = static_cast<usize>(sd.st_size);
     if ( need == 0 ) {
       data._buf_set_length(0);
       return 0;
     }
-    data.reserve(need + 1);
+    constexpr usize esz = sizeof(typename T::value_type);
+    data.reserve(need / esz + 1);
     byte *p = reinterpret_cast<byte *>(data.data());
     usize got = 0;
     while ( got < need ) {
       max_t r = posix::pread(__handle.fd, p + got, need - got, static_cast<posix::off64_t>(got));
       if ( r < 0 ) [[unlikely]] {
         if ( -r == error::interrupted ) continue;
-        data._buf_set_length(got);
+        data._buf_set_length(got / esz);
         return r;
       }
       if ( r == 0 ) break;
       got += static_cast<usize>(r);
     }
-    data._buf_set_length(got);
+    data._buf_set_length(got / esz);
     return static_cast<max_t>(got);
   }
 
@@ -302,6 +304,26 @@ public:
     return data;
   }
 
+  // mutate the resident buffer in place; persisting stays explicit
+  template<typename Fn>
+    requires(micron::invocable<Fn, T &> && micron::is_void_v<micron::invoke_result_t<Fn, T &>>)
+  cached_file &
+  modify(Fn &&fn)
+  {
+    micron::forward<Fn>(fn)(data);
+    return *this;
+  }
+
+  // pure form: data = fn(data)
+  template<typename Fn>
+    requires fn_codomain<Fn, T>
+  cached_file &
+  modify(Fn &&fn)
+  {
+    data = micron::forward<Fn>(fn)(micron::move(data));
+    return *this;
+  }
+
   auto
   get_fd(void) const
   {
@@ -397,7 +419,8 @@ public:
   {
     if ( i32 __e = __check() ) [[unlikely]]
       return __e;
-    stat<STAT_OVERRIDE>();
+    if ( i32 e = stat<STAT_OVERRIDE>(); e != 0 ) [[unlikely]]
+      return e;
     posix::off64_t dst_off = sd.st_size;
     usize done = 0;
     while ( done < len ) {
@@ -440,7 +463,8 @@ public:
 
     posix::off64_t src_off = 0;
     usize src_sz = static_cast<usize>(const_cast<cached_file<U> &>(other).size());
-    stat<STAT_OVERRIDE>();
+    if ( i32 e = stat<STAT_OVERRIDE>(); e != 0 ) [[unlikely]]
+      return e;
     posix::off64_t dst_off = sd.st_size;
 
     micron::buffer win(chunk_sz);
@@ -579,9 +603,11 @@ public:
   {
     if ( i32 __e = __check() ) [[unlikely]]
       return __e;
-    stat<STAT_OVERRIDE>();
+    if ( i32 e = stat<STAT_OVERRIDE>(); e != 0 ) [[unlikely]]
+      return e;
     usize file_sz = static_cast<usize>(sd.st_size);
-    data.reserve(file_sz + 1);
+    constexpr usize esz = sizeof(typename T::value_type);
+    data.reserve(file_sz / esz + 1);
 
     micron::buffer win(chunk_sz);
     posix::off64_t off = 0;
@@ -592,7 +618,7 @@ public:
       if ( n < 0 && -n == error::interrupted ) continue;
       if ( n <= 0 ) break;
       fn(win.begin(), static_cast<usize>(n));
-      data.append(reinterpret_cast<const typename T::value_type *>(win.begin()), static_cast<usize>(n));      // raw bytes, not a T object
+      data.append(reinterpret_cast<const typename T::value_type *>(win.begin()), static_cast<usize>(n) / esz);
       off += n;
       total += n;
     }

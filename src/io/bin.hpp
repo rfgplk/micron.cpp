@@ -11,7 +11,10 @@
 #include "../memory_block.hpp"
 #include "../pointer.hpp"
 #include "../string/strings.hpp"
+#include "../sum.hpp"
 #include "../types.hpp"
+
+#include "bits.hpp"
 
 #include "io.hpp"
 #include "os/os_file.hpp"
@@ -520,6 +523,60 @@ public:
   as_range(void) const noexcept
   {
     return window(0, __buf_valid);
+  }
+
+  // left fold across the whole file, one window at a time
+  // requires an allocated window buffer
+  template<typename R, typename Fn>
+    requires fn_fold<Fn, R, bin_range_t>
+  micron::option<R, io::error_t>
+  fold(R init, Fn &&fn)
+  {
+    using Ret = micron::option<R, io::error_t>;
+    if ( i32 __e = __check() ) [[unlikely]]
+      return Ret{ io::error_t(__e) };
+    if ( !__buf ) [[unlikely]]
+      return Ret{ io::error_t(-error::invalid_arg) };
+    const usize fsz = static_cast<usize>(size());
+    posix::off_t off = 0;
+    while ( static_cast<usize>(off) < fsz ) {
+      max_t n = fill(off);
+      if ( n < 0 ) [[unlikely]] {
+        if ( -n == error::interrupted ) continue;
+        return Ret{ io::error_t(static_cast<i32>(n)) };
+      }
+      if ( n == 0 ) break;
+      init = fn(micron::move(init), as_range());
+      off += static_cast<posix::off_t>(n);
+    }
+    return Ret{ micron::move(init) };
+  }
+
+  // visit each window across the whole file; returns total bytes visited or -errno
+  template<typename Fn>
+    requires micron::invocable<Fn, bin_range_t>
+  max_t
+  each_window(Fn &&fn)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( !__buf ) [[unlikely]]
+      return -error::invalid_arg;
+    const usize fsz = static_cast<usize>(size());
+    posix::off_t off = 0;
+    max_t total = 0;
+    while ( static_cast<usize>(off) < fsz ) {
+      max_t n = fill(off);
+      if ( n < 0 ) [[unlikely]] {
+        if ( -n == error::interrupted ) continue;
+        return total ? total : n;
+      }
+      if ( n == 0 ) break;
+      fn(as_range());
+      total += n;
+      off += static_cast<posix::off_t>(n);
+    }
+    return total;
   }
 
   byte

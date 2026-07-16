@@ -441,6 +441,17 @@ struct dir: public os_file {
     }
   }
 
+  // left fold over the cached entry universe
+  template<typename R, typename Fn>
+    requires fn_fold<Fn, R, const posix::__impl_dir &>
+  R
+  fold(R init, Fn &&fn)
+  {
+    get_children();
+    for ( const auto &e : _entries ) init = fn(micron::move(init), e);
+    return init;
+  }
+
   const micron::vector<posix::__impl_dir> &
   list(void)
   {

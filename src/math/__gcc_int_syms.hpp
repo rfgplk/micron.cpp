@@ -5,13 +5,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// FREESTANDING LIBGCC INTEGER SYMBOLS (32-BIT TARGETS)
+// FREESTANDING LIBGCC INTEGER SYMBOLS
 //
-// WARNING: NOT FOR EXTERNAL USE. on 32-bit targets the compiler lowers 64-bit
-// division/modulo to libgcc calls (__udivdi3 & friends); freestanding -nostdlib links have
-// no libgcc, so any u64 divide reachable from a freestanding TU fails to link. these are
-// weak shift-subtract implementations, the same shim mechanism as __gcc_math_syms.hpp.
-// NEVER call these directly; write normal division and let the compiler lower it.
+// WARNING: NOT FOR EXTERNAL USE. FREESTANDING -NOSTDLIB LINKS HAVE NO LIBGCC, BUT THE
+// COMPILER STILL LOWERS SOME INTEGER BUILTINS TO LIBGCC CALLS
 
 #include "../types.hpp"
 
@@ -96,10 +93,64 @@ __ffsdi2(unsigned long long x) noexcept
   return x ? 1 + __ctzdi2(x) : 0;
 }
 
+#endif
+
 extern "C" __attribute__((weak)) int
-__popcountdi2(unsigned long long x) noexcept
+__popcountsi2(unsigned int v) noexcept
 {
-  return __builtin_popcount(static_cast<unsigned>(x)) + __builtin_popcount(static_cast<unsigned>(x >> 32));
+  v = v - ((v >> 1) & 0x55555555u);
+  v = (v & 0x33333333u) + ((v >> 2) & 0x33333333u);
+  v = (v + (v >> 4)) & 0x0f0f0f0fu;
+  return (int)((v * 0x01010101u) >> 24);
 }
 
-#endif      // 32-bit targets only
+extern "C" __attribute__((weak)) int
+__popcountdi2(unsigned long long v) noexcept
+{
+#if defined(__x86_64__) || defined(__aarch64__)
+  v = v - ((v >> 1) & 0x5555555555555555ull);
+  v = (v & 0x3333333333333333ull) + ((v >> 2) & 0x3333333333333333ull);
+  v = (v + (v >> 4)) & 0x0f0f0f0f0f0f0f0full;
+  return (int)((v * 0x0101010101010101ull) >> 56);
+#else
+  return __popcountsi2((unsigned int)v) + __popcountsi2((unsigned int)(v >> 32));
+#endif
+}
+
+#if defined(__SIZEOF_INT128__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+
+extern "C" __attribute__((weak, optimize("-fno-tree-loop-distribute-patterns"))) unsigned __int128
+__udivti3(unsigned __int128 n, unsigned __int128 d) noexcept
+{
+  if ( d == 0 ) __builtin_trap();
+  unsigned __int128 q = 0;
+  unsigned __int128 r = 0;
+  for ( int i = 0; i < 128; ++i ) {
+    r = (r << 1) | static_cast<unsigned __int128>(n >> 127);
+    n <<= 1;
+    q <<= 1;
+    if ( r >= d ) {
+      r -= d;
+      q |= 1;
+    }
+  }
+  return q;
+}
+
+extern "C" __attribute__((weak, optimize("-fno-tree-loop-distribute-patterns"))) unsigned __int128
+__umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
+{
+  if ( d == 0 ) __builtin_trap();
+  unsigned __int128 r = 0;
+  for ( int i = 0; i < 128; ++i ) {
+    r = (r << 1) | static_cast<unsigned __int128>(n >> 127);
+    n <<= 1;
+    if ( r >= d ) r -= d;
+  }
+  return r;
+}
+
+#pragma GCC diagnostic pop
+#endif

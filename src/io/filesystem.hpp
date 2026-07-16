@@ -82,8 +82,36 @@ __mode_is_append(const io::modes m) noexcept
 }
 
 inline constexpr bool
+__mode_has_trunc(const io::modes m) noexcept
+{
+  return m == io::modes::large || m == io::modes::write || m == io::modes::readwritecreate;
+}
+
+inline constexpr bool
+__mode_has_excl(const io::modes m) noexcept
+{
+  return m == io::modes::create;
+}
+
+inline constexpr bool
+__mode_is_direct(const io::modes m) noexcept
+{
+  return m == io::modes::largeread || m == io::modes::large;
+}
+
+inline constexpr bool
+__mode_is_noatime(const io::modes m) noexcept
+{
+  return m == io::modes::quiet;
+}
+
+inline constexpr bool
 __mode_serviceable(const io::modes cached, const io::modes want) noexcept
 {
+  // O_TRUNC must empty the file and O_EXCL must fail when it exists
+  if ( __mode_has_trunc(want) || __mode_has_excl(want) ) return false;
+  if ( __mode_is_direct(want) != __mode_is_direct(cached) ) return false;
+  if ( __mode_is_noatime(want) && !__mode_is_noatime(cached) ) return false;
   if ( __mode_is_append(want) ) return __mode_can_write(cached);                                   // append
   if ( __mode_can_write(want) ) return __mode_can_write(cached) && !__mode_is_append(cached);      // positioned write
   return __mode_can_read(cached);                                                                  // read
