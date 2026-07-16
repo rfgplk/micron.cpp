@@ -5,1000 +5,468 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../algorithm/memory.hpp"
 #include "../concepts.hpp"
+#include "../maps/heap_swiss.hpp"
+#include "../memory/pointers/unique.hpp"
 #include "../memory_block.hpp"
-#include "../pointer.hpp"
-#include "../string/strings.hpp"
-#include "io.hpp"
-
-#include "paths.hpp"
-#include "posix/file.hpp"
+#include "../mutex/mutex.hpp"
+#include "../vector/vector.hpp"
 
 #include "file.hpp"
+#include "format.hpp"
+#include "paths.hpp"
 
-#include "../mutex/locks.hpp"
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// io::basic_filesystem
+// path-keyed cache of open io::file handles plus the full set of
+// path-based filesystem operations
+//   * queries never open descriptors as a side effect
+//   * only operator[]/open/create/at insert handles into the cache
+//   * data-path operations return signed max_t (>= 0 count, < 0 negative errno) and never
+//     throw; implicit opens (operator[]/apply on a missing entry) construct io::file, which
+//     throws except::io_error on failure
+//   * lock is a policy (micron::null_lock = single-threaded, zero cost; micron::mutex =
+//     concurrent)
+//   * Cap > 0 bounds the cache with LRU eviction of the coldest handle
 
 namespace micron
 {
-namespace fsys
+namespace io
 {
 
-constexpr static const usize __max_fs = ~static_cast<usize>(0);
+// address-stable cache entry; io::file lives in its own heap allocation via a unique_pointer, so heap_swiss_map rehashes (which move its
+// entries) only relocates the unique_pointer
+struct __fs_entry {
+  micron::unique_pointer<io::file> fp;
+  io::modes mode = io::modes::read;
 
-template<io::modes __default_mode = io::modes::read, usize N = 256> class system
+  __fs_entry() = default;
+
+  __fs_entry(micron::unique_pointer<io::file> &&p, io::modes m) : fp(micron::move(p)), mode(m) { }
+
+  __fs_entry(__fs_entry &&) noexcept = default;
+  __fs_entry &operator=(__fs_entry &&) noexcept = default;
+
+  // copy duplicates the descriptor (io::file copy dup()s the fd)
+  // WARNING: present ONLY to satisfy heap_swiss_maps is_copy_constructible_v
+  __fs_entry(const __fs_entry &o)
+      : fp(o.fp ? micron::unique_pointer<io::file>(*o.fp) : micron::unique_pointer<io::file>()), mode(o.mode) { }
+
+  __fs_entry &
+  operator=(const __fs_entry &o)
+  {
+    fp = o.fp ? micron::unique_pointer<io::file>(*o.fp) : micron::unique_pointer<io::file>();
+    mode = o.mode;
+    return *this;
+  }
+};
+
+inline constexpr bool
+__mode_can_read(const io::modes m) noexcept
 {
-  micron::unique_pointer<fsys::file<>> entries[N];
-  usize sz;
+  // every mode maps to O_RDONLY or O_RDWR except the two write-only ones
+  return m != io::modes::write && m != io::modes::append;
+}
 
-  auto
-  __find_fd(const io::path_t &p) -> int
+inline constexpr bool
+__mode_can_write(const io::modes m) noexcept
+{
+  return m == io::modes::large || m == io::modes::readwrite || m == io::modes::write || m == io::modes::readwritecreate
+         || m == io::modes::append || m == io::modes::appendread;
+}
+
+inline constexpr bool
+__mode_is_append(const io::modes m) noexcept
+{
+  return m == io::modes::append || m == io::modes::appendread;
+}
+
+inline constexpr bool
+__mode_serviceable(const io::modes cached, const io::modes want) noexcept
+{
+  if ( __mode_is_append(want) ) return __mode_can_write(cached);                                   // append
+  if ( __mode_can_write(want) ) return __mode_can_write(cached) && !__mode_is_append(cached);      // positioned write
+  return __mode_can_read(cached);                                                                  // read
+}
+
+template<io::modes DefaultMode = io::modes::read, class Lock = micron::null_lock, usize Cap = 0> class basic_filesystem
+{
+  static constexpr bool __single_threaded = micron::is_same_v<Lock, micron::null_lock>;
+
+  micron::heap_swiss_map<micron::string, __fs_entry> __open;
+  mutable Lock __mtx;
+  micron::vector<micron::string> __recency;      // only maintained when Cap > 0
+
+  struct __scope {
+    Lock &m;
+
+    __scope(Lock &l) : m(l) { m.lock(); }
+
+    ~__scope() { m.unlock(); }
+  };
+
+  static micron::string
+  __key(const io::path_t &p)
   {
-    for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == p ) return (*entries[i]).get_fd();
-    return -1;
+    io::path_t pr = io::prune(p);
+    return micron::string(pr.c_str());
   }
 
-  auto
-  __find_id(const io::path_t &p) -> usize
+  void
+  __touch(const micron::string &k)
   {
-    for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == p ) return i;
-    return __max_fs;
-  }
-
-  auto &
-  __find(const io::path_t &p)
-  {
-    for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == p ) return *entries[i];
-    exc<except::filesystem_error>("micron fsys wasn't able to find file");
-  }
-
-  inline __attribute__((always_inline)) usize
-  __locate(const io::path_t &p)
-  {
-    auto _id = __find_id(p);
-    if ( _id == __max_fs ) {
-      this->operator[](p);
-      _id = sz - 1;
+    if constexpr ( Cap > 0 ) {
+      for ( usize i = 0; i < __recency.size(); i++ ) {
+        if ( __recency[i] == k ) {
+          for ( usize j = i; j + 1 < __recency.size(); j++ ) __recency[j] = micron::move(__recency[j + 1]);
+          __recency.pop_back();
+          break;
+        }
+      }
+      __recency.push_back(k);
+      if ( __recency.size() > Cap ) {
+        // flush the coldest handle before auto-evicting it, matching close()/evict() and the dtor
+        if ( __fs_entry *e = __open.find(__recency[0]); e != nullptr && e->fp ) e->fp->flush_data();
+        __open.erase(__recency[0]);
+        for ( usize j = 0; j + 1 < __recency.size(); j++ ) __recency[j] = micron::move(__recency[j + 1]);
+        __recency.pop_back();
+      }
     }
-    return _id;
   }
 
-  inline __attribute__((always_inline)) usize
-  __locate(const io::path_t &p, const io::modes mode)
+  void
+  __drop_recency(const micron::string &k)
   {
-    auto _id = __find_id(p);
-    if ( _id == __max_fs ) {
-      __limit();
-      entries[sz] = new fsys::file<>(p.c_str(), mode);
-      ++sz;
-      _id = sz - 1;
+    if constexpr ( Cap > 0 ) {
+      for ( usize i = 0; i < __recency.size(); i++ ) {
+        if ( __recency[i] == k ) {
+          for ( usize j = i; j + 1 < __recency.size(); j++ ) __recency[j] = micron::move(__recency[j + 1]);
+          __recency.pop_back();
+          return;
+        }
+      }
     }
-    return _id;
   }
 
-  inline __attribute__((always_inline)) void
-  __set_perms(io::linux_permissions &perms, io::permission_types x)
+  io::file &
+  __get_or_open(const micron::string &k, io::modes m)
   {
-    if ( x == io::permission_types::owner_read )
-      perms.owner.read = true;
-    else if ( x == io::permission_types::owner_write )
-      perms.owner.write = true;
-    else if ( x == io::permission_types::owner_execute )
-      perms.owner.execute = true;
-    else if ( x == io::permission_types::group_read )
-      perms.group.read = true;
-    else if ( x == io::permission_types::group_write )
-      perms.group.write = true;
-    else if ( x == io::permission_types::group_execute )
-      perms.group.execute = true;
-    else if ( x == io::permission_types::others_read )
-      perms.others.read = true;
-    else if ( x == io::permission_types::others_write )
-      perms.others.write = true;
-    else if ( x == io::permission_types::others_execute )
-      perms.others.execute = true;
-  }
-
-  inline __attribute__((always_inline)) void
-  __limit()
-  {
-    if ( sz == N ) exc<except::filesystem_error>("micron::fsys too many file handles open");
+    if ( __fs_entry *e = __open.find(k); e != nullptr ) {
+      // cache hit
+      if ( !__mode_serviceable(e->mode, m) ) {
+        *e->fp = io::file(k.c_str(), m);
+        e->mode = m;
+      }
+      __touch(k);
+      return *e->fp;
+    }
+    auto ins = __open.emplace(k, __fs_entry{ micron::unique_pointer<io::file>(k.c_str(), m), m });
+    __touch(k);
+    return *ins.b->fp;
   }
 
 public:
-  ~system()
+  using lock_type = Lock;
+
+  ~basic_filesystem()
   {
-    for ( usize i = 0; i < sz; i++ )
-      if ( entries[i] ) entries[i]->sync();
+    __open.for_each([](const micron::string &, __fs_entry &e) {
+      if ( e.fp ) e.fp->flush_data();
+    });
   }
 
-  system() : entries{ nullptr }, sz(0) { }
+  basic_filesystem() : __open(), __mtx(), __recency() { }
 
-  system(const io::path_t &p, const io::modes c = __default_mode) : entries{ nullptr }, sz(0) { file(p, c); }
+  basic_filesystem(const basic_filesystem &) = delete;
+  basic_filesystem &operator=(const basic_filesystem &) = delete;
 
-  template<typename... T>
-    requires((micron::same_as<T, io::path_t> && ...))
-  system(const T &...t)
-  {
-    (file(t, __default_mode), ...);
-  }
+  basic_filesystem(basic_filesystem &&o) noexcept : __open(micron::move(o.__open)), __mtx(), __recency(micron::move(o.__recency)) { }
 
-  system(const system &) = delete;
-  system &operator=(const system &) = delete;
-
-  system(system &&o) noexcept : sz(o.sz)
-  {
-    for ( usize i = 0; i < N; i++ ) entries[i] = micron::move(o.entries[i]);
-    o.sz = 0;
-  }
-
-  system &
-  operator=(system &&o) noexcept
+  basic_filesystem &
+  operator=(basic_filesystem &&o) noexcept
   {
     if ( this == &o ) return *this;
-    for ( usize i = 0; i < sz; i++ )
-      if ( entries[i] ) entries[i]->sync();
-    for ( usize i = 0; i < N; i++ ) entries[i] = micron::move(o.entries[i]);
-    sz = o.sz;
-    o.sz = 0;
+    __open = micron::move(o.__open);
+    __recency = micron::move(o.__recency);
     return *this;
   }
 
-  auto &
-  operator[](const io::path_t &p, const io::modes c = __default_mode, const posix::node_types nd = posix::node_types::regular_file)
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // handle cache
+  io::file &
+  operator[](const io::path_t &p)
+    requires __single_threaded
   {
-    __limit();
-    for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == p ) return *entries[i];
-    return append(p, c, nd);
+    return __get_or_open(__key(p), DefaultMode);
   }
 
-  inline auto &
-  append(const io::path_t &p, const io::modes c = __default_mode, const posix::node_types nd = posix::node_types::regular_file)
+  io::file &
+  operator[](const io::path_t &p, const io::modes m)
+    requires __single_threaded
   {
-    __limit();
-    if ( nd == posix::node_types::regular_file ) return file(p, c);
-    exc<except::filesystem_error>("micron::fsys[] path wasn't a file");
+    return __get_or_open(__key(p), m);
   }
 
-  inline void
-  remove(const io::path_t &p)
+  io::file &
+  open(const io::path_t &p, const io::modes m = DefaultMode)
+    requires __single_threaded
   {
-    for ( usize i = 0; i < sz; i++ ) {
-      if ( entries[i]->name() == p ) {
-        entries[i]->sync();
-        for ( usize j = i + 1; j < sz; j++ ) entries[j - 1] = micron::move(entries[j]);
-        --sz;
-        entries[sz].reset();
-        return;
-      }
-    }
+    return __get_or_open(__key(p), m);
   }
 
-  inline void
-  remove(fsys::file<> &fref)
+  io::file &
+  create(const io::path_t &p, const io::modes m = io::modes::readwritecreate)
+    requires __single_threaded
   {
-    for ( usize i = 0; i < sz; i++ ) {
-      if ( *entries[i] == fref ) {
-        entries[i]->sync();
-        for ( usize j = i + 1; j < sz; j++ ) entries[j - 1] = micron::move(entries[j]);
-        --sz;
-        entries[sz].reset();
-        return;
-      }
-    }
+    return __get_or_open(__key(p), m);
   }
 
-  void to_persist() = delete;
+  io::file &
+  at(const io::path_t &p)
+    requires __single_threaded
+  {
+    __fs_entry *e = __open.find(__key(p));
+    if ( e == nullptr || !e->fp ) exc<except::filesystem_error>("micron::io::filesystem::at(): path not open");
+    return *e->fp;
+  }
 
+  template<typename Fn>
   auto
-  list(void) const
+  apply(const io::path_t &p, const io::modes m, Fn &&fn)
   {
-    micron::vector<micron::sstr<posix::name_max>> names;
-    for ( usize i = 0; i < sz; i++ ) names.push_back(entries[i]->name());
-    return names;
+    __scope g(__mtx);
+    return fn(__get_or_open(__key(p), m));
   }
 
-  auto &
-  file(const io::path_t &p, const io::modes mode = __default_mode)
-  {
-    __limit();
-    entries[sz] = new fsys::file<>(p.c_str(), mode);
-    return *entries[sz++];
-  }
-
-  void
-  rename(const io::path_t &from, const io::path_t &to)
-  {
-    auto f_id = __find_id(from);
-    if ( f_id == __max_fs ) {
-      this->operator[](from);
-      f_id = sz - 1;
-    }
-    auto t_id = __find_id(to);
-    if ( t_id == __max_fs ) {
-      this->operator[](to);
-      t_id = sz - 1;
-    }
-    posix::rename(from.c_str(), to.c_str());
-  }
-
-  void
-  move(const io::path_t &from, const io::path_t &to)
-  {
-    auto f_id = __find_id(from);
-    if ( f_id == __max_fs ) {
-      this->operator[](from);
-      f_id = sz - 1;
-    }
-    auto t_id = __find_id(to);
-    if ( t_id == __max_fs ) {
-      this->operator[](to);
-      t_id = sz - 1;
-    }
-    posix::rename(from.c_str(), to.c_str());
-  }
-
-  void
-  copy(const io::path_t &from, const io::path_t &to)
-  {
-    auto f_id = __find_id(from);
-    if ( f_id == __max_fs ) {
-      this->operator[](from);
-      f_id = sz - 1;
-    }
-    auto t_id = __find_id(to);
-    if ( t_id == __max_fs ) {
-      this->operator[](to);
-      t_id = sz - 1;
-    }
-    micron::string buf;
-    entries[f_id]->operator>>(buf);
-    entries[t_id]->operator=(buf);
-    sync();
-  }
-
-  template<typename... Paths>
-  void
-  copy_list(const io::path_t &from, const Paths &...to)
-  {
-    (copy(from, to), ...);
-  }
-
-  bool
-  is_opened(const io::path_t &path) const
-  {
-    for ( usize i = 0; i < sz; i++ )
-      if ( entries[i]->name() == path ) return true;
-    return false;
-  }
-
-  bool
-  equivalent(const io::path_t &path, const io::path_t &cmp) const
-  {
-    return path == cmp;
-  }
-
-  bool
-  exists(const io::path_t &path) const
-  {
-    return (posix::access(path.c_str(), posix::access_ok) == 0);
-  }
-
-  bool
-  accessible(const io::path_t &path) const
-  {
-    return (posix::access(path.c_str(), posix::read_ok | posix::execute_ok) == 0);
-  }
-
+  template<typename Fn>
   auto
-  permissions(const io::path_t &path) const
+  apply(const io::path_t &p, Fn &&fn)
   {
-    usize id = __locate(path);
-    return entries[id]->permissions();
-  }
-
-  auto
-  set_permissions(const io::path_t &path, const io::linux_permissions &perms)
-  {
-    usize id = __locate(path);
-    return entries[id]->set_permissions(perms);
-  }
-
-  template<typename... Args>
-  auto
-  set_permissions(const io::path_t &path, Args... args)
-  {
-    usize id = __locate(path);
-    struct io::linux_permissions perms = { { false, false, false }, { false, false, false }, { false, false, false } };
-    (__set_perms(perms, args), ...);
-    return entries[id]->set_permissions(perms);
-  }
-
-  auto
-  file_type_at(const io::path_t &p) const
-  {
-    return posix::get_type_at(p.c_str());
-  }
-
-  auto
-  file_type(const io::path_t &p)      // non-const: opens/caches a handle via operator[]
-  {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return posix::node_types::not_found;
-    return posix::get_type(f);
+    return apply(p, DefaultMode, static_cast<Fn &&>(fn));
   }
 
   bool
-  is_virtual_file(const io::path_t &p)
+  is_open(const io::path_t &p) const
   {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return posix::is_virtual_file(f);
-  }
-
-  bool
-  is_regular_file(const io::path_t &p)
-  {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return posix::is_file(f);
-  }
-
-  bool
-  is_block_device(const io::path_t &p)
-  {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return posix::is_block_device(f);
-  }
-
-  bool
-  is_directory(const io::path_t &p)
-  {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return posix::is_dir(f);
-  }
-
-  bool
-  is_socket(const io::path_t &p)
-  {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return posix::is_socket(f);
-  }
-
-  bool
-  is_symlink(const io::path_t &p)
-  {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return posix::is_symlink(f);
-  }
-
-  bool
-  is_fifo(const io::path_t &p)
-  {
-    auto f = __find_fd(p);
-    if ( f == -1 ) f = this->operator[](p).get_fd();
-    if ( f == -1 ) return false;
-    return posix::is_fifo(f);
-  }
-
-  bool
-  is_regular_file(void) const
-  {
-    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_file((*entries[sz - 1]).get_fd());
-    return false;
-  }
-
-  bool
-  is_block_device(void) const
-  {
-    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_block_device((*entries[sz - 1]).get_fd());
-    return false;
-  }
-
-  bool
-  is_directory(void) const
-  {
-    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_dir((*entries[sz - 1]).get_fd());
-    return false;
-  }
-
-  bool
-  is_socket(void) const
-  {
-    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_socket((*entries[sz - 1]).get_fd());
-    return false;
-  }
-
-  bool
-  is_symlink(void) const
-  {
-    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_symlink((*entries[sz - 1]).get_fd());
-    return false;
-  }
-
-  bool
-  is_fifo(void) const
-  {
-    if ( sz != 0 && !!entries[sz - 1] ) return posix::is_fifo((*entries[sz - 1]).get_fd());
-    return false;
+    __scope g(__mtx);
+    return __open.contains(__key(p));
   }
 
   usize
-  open_count() const noexcept
+  count(void) const
   {
-    return sz;
-  }
-
-  usize
-  max_handles() const noexcept
-  {
-    return N;
-  }
-
-  bool
-  handles_full() const noexcept
-  {
-    return sz == N;
-  }
-
-  bool
-  handles_empty() const noexcept
-  {
-    return sz == 0;
-  }
-
-  void
-  sync()
-  {
-    for ( usize i = 0; i < sz; i++ ) entries[i]->sync();
-  }
-
-  void
-  flush_all()
-  {
-    for ( usize i = 0; i < sz; i++ ) entries[i]->flush();
+    __scope g(__mtx);
+    return __open.size();
   }
 
   void
   close(const io::path_t &p)
   {
-    remove(p);
-  }
-
-  auto &
-  set(const io::path_t &p, const usize s)
-  {
-    return entries[__locate(p)]->set(s);
-  }
-
-  auto &
-  set_start(const io::path_t &p)
-  {
-    return entries[__locate(p)]->set_start();
-  }
-
-  auto &
-  set_end(const io::path_t &p)
-  {
-    return entries[__locate(p)]->set_end();
-  }
-
-  usize
-  seek_pos(const io::path_t &p)
-  {
-    return entries[__locate(p)]->seek_pos();
+    __scope g(__mtx);
+    micron::string k = __key(p);
+    if ( __fs_entry *e = __open.find(k); e != nullptr && e->fp ) e->fp->flush_data();
+    __drop_recency(k);
+    __open.erase(k);      // io::file dtor closes the fd
   }
 
   void
-  load(const io::path_t &p)
+  evict(const io::path_t &p)
   {
-    entries[__locate(p)]->load();
+    close(p);
   }
 
   void
-  load_kernel(const io::path_t &p)
+  clear(void)
   {
-    entries[__locate(p)]->load_kernel();
+    __scope g(__mtx);
+    __open.for_each([](const micron::string &, __fs_entry &e) {
+      if ( e.fp ) e.fp->flush_data();
+    });
+    __open.clear();
+    if constexpr ( Cap > 0 ) __recency.clear();
+  }
+
+  micron::vector<micron::string>
+  list(void) const
+  {
+    __scope g(__mtx);
+    micron::vector<micron::string> out;
+    out.reserve(__open.size() + 1);
+    __open.for_each([&out](const micron::string &k, const __fs_entry &) { out.push_back(k); });
+    return out;
+  }
+
+  max_t
+  sync(const io::path_t &p)
+  {
+    __scope g(__mtx);
+    __fs_entry *e = __open.find(__key(p));
+    if ( e == nullptr || !e->fp ) return -error::bad_fd;
+    return e->fp->flush();
   }
 
   void
-  write(const io::path_t &p)
+  sync(void)
   {
-    entries[__locate(p, io::modes::write)]->write();
+    __scope g(__mtx);
+    __open.for_each([](const micron::string &, __fs_entry &e) {
+      if ( e.fp ) e.fp->flush();
+    });
   }
 
-  void
-  flush(const io::path_t &p)
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // universal data path
+  template<typename C>
+  max_t
+  read(const io::path_t &p, C &out)
   {
-    entries[__locate(p, io::modes::write)]->flush();
+    __scope g(__mtx);
+    io::file &f = __get_or_open(__key(p), DefaultMode);
+    if ( max_t r = f.seek_to(0); r < 0 ) return r;
+    if constexpr ( (is_string<C> || is_contiguous_container<C>) && micron::is_trivially_copyable_v<typename C::value_type> ) {
+      out = f.template read<C>();
+      return static_cast<max_t>(out.size() * sizeof(typename C::value_type));
+    } else {
+      return f.read(out);      // framed tiers already consume the whole remainder
+    }
   }
 
-  void
-  clear(const io::path_t &p)
+  template<typename C>
+  max_t
+  write(const io::path_t &p, const C &c)
   {
-    entries[__locate(p)]->clear();
+    __scope g(__mtx);
+    io::file &f = __get_or_open(__key(p), io::modes::readwritecreate);
+    if ( max_t r = f.seek_to(0); r < 0 ) return r;
+    max_t n = f.write(c);
+    if ( n >= 0 ) f.truncate(static_cast<posix::off64_t>(n));
+    return n;
   }
 
-  void
-  read_bytes(const io::path_t &p, usize sz_)
+  template<typename C>
+  max_t
+  append(const io::path_t &p, const C &c)
   {
-    entries[__locate(p)]->read_bytes(sz_);
+    __scope g(__mtx);
+    io::file &f = __get_or_open(__key(p), io::modes::appendread);
+    if ( max_t r = f.seek_end(); r < 0 ) return r;
+    return f.write(c);
   }
 
-  void
-  write_bytes(const io::path_t &p, usize sz_)
+  max_t
+  truncate(const io::path_t &p, usize n)
   {
-    entries[__locate(p, io::modes::write)]->write_bytes(sz_);
+    __scope g(__mtx);
+    io::file &f = __get_or_open(__key(p), io::modes::readwrite);
+    return f.truncate(static_cast<posix::off64_t>(n));
   }
 
-  void
-  load_buffer(const io::path_t &p, const byte *b, const usize n)
-  {
-    entries[__locate(p)]->load_buffer(b, n);
-  }
-
-  auto
-  buffer_size(const io::path_t &p)
-  {
-    return entries[__locate(p)]->buffer_size();
-  }
-
-  void
-  push(const io::path_t &p, micron::string &&str)
-  {
-    entries[__locate(p, io::modes::write)]->push(micron::move(str));
-  }
-
-  void
-  push_copy(const io::path_t &p, const micron::string &str)
-  {
-    entries[__locate(p, io::modes::write)]->push_copy(str);
-  }
-
-  auto
-  pull(const io::path_t &p)
-  {
-    return entries[__locate(p)]->pull();
-  }
-
-  const auto &
-  get(const io::path_t &p)
-  {
-    return entries[__locate(p)]->get();
-  }
-
-  auto
-  load_and_pull(const io::path_t &p)
-  {
-    return entries[__locate(p)]->load_and_pull();
-  }
-
-  usize
-  count(const io::path_t &p)
-  {
-    return entries[__locate(p)]->count();
-  }
-
-  system &
-  operator<<(const io::path_t &p)
-  {
-
-    __locate(p);
-    return *this;
-  }
-
-  template<is_string T>
-  system &
-  write_string(const io::path_t &p, const T &str)
-  {
-    entries[__locate(p, io::modes::write)]->operator<<(str);
-    return *this;
-  }
-
-  template<is_string T>
-  system &
-  write_string(const io::path_t &p, T &&str)
-  {
-    entries[__locate(p, io::modes::write)]->operator<<(micron::move(str));
-    return *this;
-  }
-
-  template<is_string T>
-  system &
-  read_string(const io::path_t &p, T &str)
-  {
-    entries[__locate(p)]->operator>>(str);
-    return *this;
-  }
-
-  bool
-  empty(const io::path_t &p)
-  {
-    return entries[__locate(p)]->empty();
-  }
-
-  bool
-  is_regular(const io::path_t &p)
-  {
-    return entries[__locate(p)]->is_regular();
-  }
-
-  bool
-  is_virtual(const io::path_t &p)
-  {
-    return entries[__locate(p)]->is_virtual();
-  }
-
-  auto
-  permissions_mode(const io::path_t &p)
-  {
-    return entries[__locate(p)]->permissions_mode();
-  }
-
-  auto
-  perms(const io::path_t &p)
-  {
-    return entries[__locate(p)]->perms();
-  }
-
-  auto
-  owner(const io::path_t &p)
-  {
-    return entries[__locate(p)]->owner();
-  }
-
-  auto
-  group(const io::path_t &p)
-  {
-    return entries[__locate(p)]->group();
-  }
-
-  auto
-  inode_number(const io::path_t &p)
-  {
-    return entries[__locate(p)]->inode_number();
-  }
-
-  auto
-  hard_links(const io::path_t &p)
-  {
-    return entries[__locate(p)]->hard_links();
-  }
-
-  auto
-  size(const io::path_t &p)
-  {
-    return entries[__locate(p)]->size();
-  }
-
-  auto
-  modified_time(const io::path_t &p)
-  {
-    return entries[__locate(p)]->modified_time();
-  }
-
-  auto
-  accessed_time(const io::path_t &p)
-  {
-    return entries[__locate(p)]->accessed_time();
-  }
-
-  auto
-  changed_time(const io::path_t &p)
-  {
-    return entries[__locate(p)]->changed_time();
-  }
-
-  bool
-  owned_by_me(const io::path_t &p)
-  {
-    return entries[__locate(p)]->owned_by_me();
-  }
-
-  auto
-  as_path(const io::path_t &p)
-  {
-    return entries[__locate(p)]->as_path();
-  }
-
-  auto
-  fullpath(const io::path_t &p)
-  {
-    return entries[__locate(p)]->fullpath();
-  }
-
-  auto
-  basename(const io::path_t &p)
-  {
-    return entries[__locate(p)]->basename();
-  }
-
-  auto
-  extension(const io::path_t &p)
-  {
-    return entries[__locate(p)]->extension();
-  }
-
-  auto
-  stem(const io::path_t &p)
-  {
-    return entries[__locate(p)]->stem();
-  }
-
-  byte
-  read_u8(const io::path_t &p, posix::off_t off)
-  {
-    return entries[__locate(p)]->read_u8(off);
-  }
-
-  i8
-  read_i8(const io::path_t &p, posix::off_t off)
-  {
-    return entries[__locate(p)]->read_i8(off);
-  }
-
-  u16
-  read_u16le(const io::path_t &p, posix::off_t off)
-  {
-    return entries[__locate(p)]->read_u16le(off);
-  }
-
-  u16
-  read_u16be(const io::path_t &p, posix::off_t off)
-  {
-    return entries[__locate(p)]->read_u16be(off);
-  }
-
-  i16
-  read_i16le(const io::path_t &p, posix::off_t off)
-  {
-    return entries[__locate(p)]->read_i16le(off);
-  }
-
-  i16
-  read_i16be(const io::path_t &p, posix::off_t off)
-  {
-    return entries[__locate(p)]->read_i16be(off);
-  }
-
-  u32
-  read_u32le(const io::path_t &p, posix::off_t off)
-  {
-    return entries[__locate(p)]->read_u32le(off);
-  }
-
-  u32
-  read_u32be(const io::path_t &p, posix::off_t off)
-  {
-    return entries[__locate(p)]->read_u32be(off);
-  }
-
+  template<typename C>
   i32
-  read_i32le(const io::path_t &p, posix::off_t off)
+  atomic_replace(const io::path_t &p, const C &c)
   {
-    return entries[__locate(p)]->read_i32le(off);
+    __scope g(__mtx);
+    io::file &f = __get_or_open(__key(p), io::modes::readwrite);
+    return f.atomic_replace(c);
   }
 
-  i32
-  read_i32be(const io::path_t &p, posix::off_t off)
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // path queries
+  bool
+  exists(const io::path_t &p) const
   {
-    return entries[__locate(p)]->read_i32be(off);
+    return posix::exists(p.c_str());
   }
 
-  u64
-  read_u64le(const io::path_t &p, posix::off_t off)
+  bool
+  lexists(const io::path_t &p) const
   {
-    return entries[__locate(p)]->read_u64le(off);
+    return posix::lexists(p.c_str());
   }
 
-  u64
-  read_u64be(const io::path_t &p, posix::off_t off)
+  bool
+  accessible(const io::path_t &p) const
   {
-    return entries[__locate(p)]->read_u64be(off);
+    return posix::access(p.c_str(), posix::access_ok) == 0;
   }
 
-  i64
-  read_i64le(const io::path_t &p, posix::off_t off)
+  bool
+  readable(const io::path_t &p) const
   {
-    return entries[__locate(p)]->read_i64le(off);
+    return posix::is_readable(p.c_str());
   }
 
-  i64
-  read_i64be(const io::path_t &p, posix::off_t off)
+  bool
+  writable(const io::path_t &p) const
   {
-    return entries[__locate(p)]->read_i64be(off);
+    return posix::is_writable(p.c_str());
   }
 
-  micron::buffer
-  slice(const io::path_t &p, posix::off_t off, usize len)
+  bool
+  executable(const io::path_t &p) const
   {
-    return entries[__locate(p)]->slice(off, len);
+    return posix::is_executable(p.c_str());
   }
 
-  void
-  slice_into(const io::path_t &p, micron::buffer &dst, posix::off_t off, usize len)
+  bool
+  is_regular_file(const io::path_t &p) const
   {
-    entries[__locate(p)]->slice_into(dst, off, len);
+    return posix::is_file(p.c_str());
   }
 
-  void
-  hex_at(const io::path_t &p, char *dst, posix::off_t off, usize len)
+  bool
+  is_directory(const io::path_t &p) const
   {
-    entries[__locate(p)]->hex_at(dst, off, len);
+    return posix::is_dir(p.c_str());
   }
 
-  io::bin_match_t
-  search(const io::path_t &p, const byte *pat, usize plen, usize window_sz = fsys::file<>::default_search_window)
+  bool
+  is_symlink(const io::path_t &p) const
   {
-    return entries[__locate(p)]->search(pat, plen, window_sz);
+    return posix::is_symlink(p.c_str());
   }
 
-  io::bin_match_t
-  search(const io::path_t &p, const char *pat, usize window_sz = fsys::file<>::default_search_window)
+  bool
+  is_socket(const io::path_t &p) const
   {
-    return entries[__locate(p)]->search(pat, window_sz);
+    return posix::is_socket(p.c_str());
   }
 
-  template<is_string Tp>
-  io::bin_match_t
-  search(const io::path_t &p, const Tp &pat, usize window_sz = fsys::file<>::default_search_window)
+  bool
+  is_fifo(const io::path_t &p) const
   {
-    return entries[__locate(p)]->search(pat, window_sz);
+    return posix::is_fifo(p.c_str());
   }
 
-  io::bin_match_t
-  search_file(const io::path_t &p, const byte *pat, usize plen, usize w = fsys::file<>::default_search_window)
+  bool
+  is_pipe(const io::path_t &p) const
   {
-    return search(p, pat, plen, w);
+    return is_fifo(p);
   }
 
-  io::bin_match_t
-  search_file(const io::path_t &p, const char *pat, usize w = fsys::file<>::default_search_window)
+  bool
+  is_block_device(const io::path_t &p) const
   {
-    return search(p, pat, w);
+    return posix::is_block_device(p.c_str());
   }
 
-  template<is_string Tp>
-  io::bin_match_t
-  search_file(const io::path_t &p, const Tp &pat, usize w = fsys::file<>::default_search_window)
+  bool
+  is_char_device(const io::path_t &p) const
   {
-    return search(p, pat, w);
+    return posix::is_char_device(p.c_str());
   }
 
-  micron::vector<io::bin_match_t>
-  find_all(const io::path_t &p, const byte *pat, usize plen, usize window_sz = fsys::file<>::default_search_window)
+  bool
+  is_device(const io::path_t &p) const
   {
-    return entries[__locate(p)]->find_all(pat, plen, window_sz);
+    return is_block_device(p) || is_char_device(p);
   }
 
-  micron::vector<io::bin_match_t>
-  find_all(const io::path_t &p, const char *pat, usize window_sz = fsys::file<>::default_search_window)
+  posix::node_types
+  file_type(const io::path_t &p) const
   {
-    return entries[__locate(p)]->find_all(pat, window_sz);
-  }
-
-  template<is_string Tp>
-  micron::vector<io::bin_match_t>
-  find_all(const io::path_t &p, const Tp &pat, usize window_sz = fsys::file<>::default_search_window)
-  {
-    return entries[__locate(p)]->find_all(pat, window_sz);
-  }
-
-  io::bin_stats_t
-  analyse(const io::path_t &p, usize window_sz = fsys::file<>::default_search_window)
-  {
-    return entries[__locate(p)]->analyse(window_sz);
-  }
-
-  double
-  entropy(const io::path_t &p, usize window_sz = fsys::file<>::default_search_window)
-  {
-    return entries[__locate(p)]->entropy(window_sz);
-  }
-
-  template<int SZ, int CK>
-  void
-  to_stream(const io::path_t &p, io::stream<SZ, CK> &s)
-  {
-    entries[__locate(p)]->to_stream(s);
-  }
-
-  template<int SZ, int CK>
-  void
-  from_stream(const io::path_t &p, io::stream<SZ, CK> &s)
-  {
-    entries[__locate(p, io::modes::write)]->from_stream(s);
-  }
-
-  template<int SZ, int CK>
-  void
-  flush_to_stream(const io::path_t &p, io::stream<SZ, CK> &s)
-  {
-    entries[__locate(p)]->flush_to_stream(s);
-  }
-
-  template<io::encode_fn Fn, is_string Tp>
-  void
-  write_encoded(const io::path_t &p, Fn &&fn, const Tp &src)
-  {
-    entries[__locate(p, io::modes::write)]->write_encoded(micron::forward<Fn>(fn), src);
-  }
-
-  template<io::encode_fn Fn>
-  void
-  write_encoded(const io::path_t &p, Fn &&fn, const byte *src, usize src_len)
-  {
-    entries[__locate(p, io::modes::write)]->write_encoded(micron::forward<Fn>(fn), src, src_len);
-  }
-
-  template<io::encode_fn Fn, is_string Tp>
-  void
-  append_encoded(const io::path_t &p, Fn &&fn, const Tp &src)
-  {
-    entries[__locate(p, io::modes::append)]->append_encoded(micron::forward<Fn>(fn), src);
-  }
-
-  void
-  truncate(const io::path_t &p, usize new_size)
-  {
-    entries[__locate(p, io::modes::write)]->truncate(new_size);
-  }
-
-  void
-  append_file(const io::path_t &dst, const io::path_t &src, usize chunk_sz = 65536u)
-  {
-    usize d_id = __locate(dst, io::modes::appendread);
-    usize s_id = __locate(src);
-    entries[d_id]->append_file(*entries[s_id], chunk_sz);
-  }
-
-  void
-  append_raw(const io::path_t &p, const byte *data_ptr, usize len)
-  {
-    entries[__locate(p, io::modes::appendread)]->append_raw(data_ptr, len);
-  }
-
-  template<is_string Tp>
-  void
-  append_raw(const io::path_t &p, const Tp &str)
-  {
-    entries[__locate(p, io::modes::appendread)]->append_raw(str);
-  }
-
-  void
-  copy_to(const io::path_t &src, const char *dest_path, usize chunk_sz = 65536u)
-  {
-    entries[__locate(src)]->copy_to(dest_path, chunk_sz);
-  }
-
-  template<is_string Tp>
-  void
-  copy_to(const io::path_t &src, const Tp &dest_path, usize chunk_sz = 65536u)
-  {
-    entries[__locate(src)]->copy_to(dest_path, chunk_sz);
-  }
-
-  i32
-  compare_to(const io::path_t &a, const io::path_t &b, usize chunk_sz = 65536u)
-  {
-    usize a_id = __locate(a);
-    usize b_id = __locate(b);
-    return entries[a_id]->compare_to(*entries[b_id], chunk_sz);
+    stat_t st{};
+    return posix::get_type(p.c_str(), st);
   }
 
   bool
@@ -1007,115 +475,611 @@ public:
     return posix::is_same_file(a.c_str(), b.c_str());
   }
 
-  template<io::intercept_fn Fn>
-  void
-  load_intercepted(const io::path_t &p, Fn &&fn, usize chunk_sz = 65536u)
+  posix::off64_t
+  file_size(const io::path_t &p) const
   {
-    entries[__locate(p)]->load_intercepted(micron::forward<Fn>(fn), chunk_sz);
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return -1;
+    return st.st_size;
   }
 
-  void
-  atomic_replace(const io::path_t &p, const byte *new_data, usize new_len)
+  posix::off64_t
+  lsize(const io::path_t &p) const
   {
-    entries[__locate(p, io::modes::write)]->atomic_replace(new_data, new_len);
+    stat_t st{};
+    if ( posix::lstat(p.c_str(), st) != 0 ) return -1;
+    return st.st_size;
   }
 
-  template<is_string Tp>
-  void
-  atomic_replace(const io::path_t &p, const Tp &str)
+  time64_t
+  mtime(const io::path_t &p) const
   {
-    entries[__locate(p, io::modes::write)]->atomic_replace(str);
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return 0;
+    return st.st_mtime;
   }
 
-  void
-  atomic_replace(const io::path_t &p, const micron::buffer &buf)
+  time64_t
+  atime(const io::path_t &p) const
   {
-    entries[__locate(p, io::modes::write)]->atomic_replace(buf);
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return 0;
+    return st.st_atime;
   }
 
-  void
-  reopen(const io::path_t &p, const io::modes mode)
+  time64_t
+  ctime(const io::path_t &p) const
   {
-    entries[__locate(p)]->reopen(p, mode);
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return 0;
+    return st.st_ctime;
   }
 
-  void
-  reopen(const io::path_t &p, const io::modes mode, const usize buf_sz)
+  posix::ino64_t
+  inode(const io::path_t &p) const
   {
-    entries[__locate(p)]->reopen(p, mode, buf_sz);
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return 0;
+    return st.st_ino;
   }
 
-  void
-  swap(const io::path_t &a, const io::path_t &b)
+  posix::nlink_t
+  hard_links(const io::path_t &p) const
   {
-    usize a_id = __locate(a);
-    usize b_id = __locate(b);
-    entries[a_id]->swap(*entries[b_id]);
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return 0;
+    return st.st_nlink;
   }
 
-  fsys::file<> &
-  at(const io::path_t &p)
+  posix::uid_t
+  owner(const io::path_t &p) const
   {
-    return *entries[__locate(p)];
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return static_cast<posix::uid_t>(-1);
+    return st.st_uid;
   }
 
-  const fsys::file<> &
-  at(const io::path_t &p) const
+  posix::gid_t
+  group(const io::path_t &p) const
   {
-    usize id = __find_id(p);
-    if ( id == __max_fs ) exc<except::filesystem_error>("micron::fsys::system::at(): file not open.");
-    return *entries[id];
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return static_cast<posix::gid_t>(-1);
+    return st.st_gid;
   }
 
-  fsys::file<> &
-  at(usize idx)
+  io::linux_permissions
+  permissions(const io::path_t &p) const
   {
-    if ( idx >= sz ) exc<except::filesystem_error>("micron::fsys::system::at(): index out of range.");
-    return *entries[idx];
+    stat_t st{};
+    if ( posix::stat(p.c_str(), st) != 0 ) return io::linux_permissions::none();
+    io::linux_permissions perms = io::linux_permissions::from_mode(st.st_mode);
+    perms.setuid = (st.st_mode & posix::s_isuid) != 0;
+    perms.setgid = (st.st_mode & posix::s_isgid) != 0;
+    perms.sticky = (st.st_mode & posix::s_isvtx) != 0;
+    return perms;
   }
 
-  const fsys::file<> &
-  at(usize idx) const
+  max_t
+  set_permissions(const io::path_t &p, const io::linux_permissions &perms)
   {
-    if ( idx >= sz ) exc<except::filesystem_error>("micron::fsys::system::at(): index out of range.");
-    return *entries[idx];
+    return posix::chmod(p.c_str(), perms.full_mode());
   }
 
-  auto &
-  create(const io::path_t &p, const io::modes mode = io::modes::write)
+  max_t
+  chmod(const io::path_t &p, const io::linux_permissions &perms)
   {
-    return file(p, mode);
+    return set_permissions(p, perms);
   }
 
-  void
+  max_t
+  chown(const io::path_t &p, posix::uid_t uid, posix::gid_t gid)
+  {
+    return posix::chown(p.c_str(), uid, gid);
+  }
+
+  max_t
+  lchown(const io::path_t &p, posix::uid_t uid, posix::gid_t gid)
+  {
+    return posix::lchown(p.c_str(), uid, gid);
+  }
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // path mutations
+  max_t
+  rename(const io::path_t &from, const io::path_t &to)
+  {
+    __scope g(__mtx);
+    micron::string kf = __key(from), kt = __key(to);
+    __drop_recency(kf);
+    __open.erase(kf);
+    __drop_recency(kt);
+    __open.erase(kt);
+    return posix::rename(from.c_str(), to.c_str());
+  }
+
+  max_t
+  move(const io::path_t &from, const io::path_t &to)
+  {
+    max_t r = rename(from, to);
+    if ( r == 0 || -r != error::cross_device_link ) return r;
+    // EXDEV: byte copy then unlink the source (non-atomic across filesystems)
+    if ( max_t c = copy(from, to); c < 0 ) return c;
+    return unlink(from);
+  }
+
+  // copy_file_range -> sendfile -> pread/pwrite loop
+  max_t
+  copy(const io::path_t &from, const io::path_t &to)
+  {
+    __scope g(__mtx);
+    {
+      micron::string kt = __key(to);
+      __drop_recency(kt);
+      __open.erase(kt);
+    }
+    posix::fd_t src{ static_cast<i32>(posix::open(from.c_str(), posix::o_rdonly | posix::o_cloexec)) };
+    if ( !src ) return src.fd;
+    stat_t st{};
+    if ( posix::fstat(src, st) < 0 ) {      // was ignored -> dst could be created with mode 0
+      posix::close(src.fd);
+      return -error::io_error;
+    }
+    {
+      stat_t dst_st{};      // refuse same-file copy: O_TRUNC would empty the shared inode before the read
+      if ( posix::stat(to.c_str(), dst_st) == 0 && dst_st.st_dev == st.st_dev && dst_st.st_ino == st.st_ino ) {
+        posix::close(src.fd);
+        return -error::invalid_arg;
+      }
+    }
+    posix::fd_t dst{ static_cast<i32>(
+        posix::open(to.c_str(), posix::o_wronly | posix::o_create | posix::o_trunc | posix::o_cloexec, st.st_mode & 0777u)) };
+    if ( !dst ) {
+      posix::close(src.fd);
+      return dst.fd;
+    }
+
+    max_t total = 0;
+    bool cfr_ok = true, sf_ok = true;
+    for ( ;; ) {
+      max_t n = -1;
+      if ( cfr_ok ) {
+        n = posix::copy_file_range(src.fd, nullptr, dst.fd, nullptr, 1u << 20, 0u);
+        if ( n < 0 && (-n == error::cross_device_link || -n == error::invalid_arg || -n == error::bad_syscall) ) {
+          cfr_ok = false;
+          continue;
+        }
+      } else if ( sf_ok ) {
+        n = posix::sendfile(dst, src, nullptr, 1u << 20);
+        if ( n < 0 && (-n == error::invalid_arg || -n == error::bad_syscall) ) {
+          sf_ok = false;
+          continue;
+        }
+      } else {
+        byte buf[65536];
+        n = posix::read(src.fd, buf, sizeof(buf));
+        if ( n > 0 ) {
+          const usize want = static_cast<usize>(n);
+          usize off = 0;
+          while ( off < want ) {
+            max_t w = posix::write(dst.fd, buf + off, want - off);
+            if ( w < 0 ) {
+              if ( -w == error::interrupted ) continue;
+              n = w;
+              break;
+            }
+            if ( w == 0 ) {      // no progress on a > 0 request: treat as I/O failure, never silent truncation
+              n = -error::io_error;
+              break;
+            }
+            off += static_cast<usize>(w);
+          }
+        }
+      }
+      if ( n < 0 && -n == error::interrupted ) continue;
+      if ( n < 0 ) {
+        posix::close(src.fd);
+        posix::close(dst.fd);
+        return n;
+      }
+      if ( n == 0 ) break;
+      total += n;
+    }
+    posix::fsync(dst.fd);
+    posix::close(src.fd);
+    posix::close(dst.fd);
+    return total;
+  }
+
+  template<typename... P>
+  max_t
+  copy_list(const io::path_t &from, P &&...to)
+  {
+    max_t total = 0;
+    max_t rs[] = { copy(from, static_cast<P &&>(to))... };
+    for ( max_t r : rs ) {
+      if ( r < 0 ) return r;
+      total += r;
+    }
+    return total;
+  }
+
+  max_t
   unlink(const io::path_t &p)
   {
-    if ( __find_id(p) != __max_fs ) remove(p);
-    posix::unlink(p.c_str());
+    __scope g(__mtx);
+    micron::string k = __key(p);
+    __drop_recency(k);
+    __open.erase(k);
+    return posix::unlink(p.c_str());
   }
 
-  template<typename Fn>
-  void
-  sync_if(Fn &&pred)
+  max_t
+  remove(const io::path_t &p)
   {
-    for ( usize i = 0; i < sz; i++ )
-      if ( pred(*entries[i]) ) entries[i]->sync();
+    return unlink(p);
   }
 
-  template<typename Fn>
-  void
-  for_each(Fn &&fn)
+  max_t
+  mkdir(const io::path_t &p, u32 mode = posix::mode_dir)
   {
-    for ( usize i = 0; i < sz; i++ ) fn(*entries[i]);
+    return posix::mkdir(p.c_str(), mode);
   }
 
-  template<typename Fn>
-  void
-  for_each(Fn &&fn) const
+  max_t
+  mkdir_p(const io::path_t &p, u32 mode = posix::mode_dir)
   {
-    for ( usize i = 0; i < sz; i++ ) fn(static_cast<const fsys::file<> &>(*entries[i]));
+    return posix::mkdir_p(p.c_str(), mode);
+  }
+
+  max_t
+  rmdir(const io::path_t &p)
+  {
+    return posix::rmdir(p.c_str());
+  }
+
+  max_t
+  symlink(const io::path_t &target, const io::path_t &linkpath)
+  {
+    return posix::symlink(target.c_str(), linkpath.c_str());
+  }
+
+  max_t
+  hardlink(const io::path_t &oldpath, const io::path_t &newpath)
+  {
+    return posix::link(oldpath.c_str(), newpath.c_str());
+  }
+
+  max_t
+  readlink(const io::path_t &p, char *buf, usize cap) const
+  {
+    return posix::readlink(p.c_str(), buf, cap);
+  }
+
+  io::path_t
+  readlink(const io::path_t &p) const
+  {
+    char buf[posix::path_max];
+    max_t n = posix::readlink(p.c_str(), buf, sizeof(buf) - 1);
+    if ( n < 0 ) return io::path_t();
+    buf[n] = '\0';
+    return io::path_t(buf);
+  }
+
+  max_t
+  touch(const io::path_t &p)
+  {
+    if ( !posix::exists(p.c_str()) ) {
+      posix::fd_t fd{ static_cast<i32>(
+          posix::openat(posix::at_fdcwd, p.c_str(), posix::o_wronly | posix::o_create | posix::o_cloexec, posix::mode_file)) };
+      if ( !fd ) return fd.fd;
+      posix::close(fd.fd);
+      return 0;
+    }
+    return posix::utimensat(posix::at_fdcwd, p.c_str(), nullptr, 0);      // both timestamps -> now
+  }
+
+  max_t
+  utimes(const io::path_t &p, time64_t atime_s, time64_t mtime_s)
+  {
+    timespec_t ts[2]{};
+    ts[0].tv_sec = atime_s;
+    ts[1].tv_sec = mtime_s;
+    return posix::utimensat(posix::at_fdcwd, p.c_str(), ts, 0);
+  }
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // xattr passthroughs
+  max_t
+  xattr_get(const io::path_t &p, const char *name, void *value, usize sz) const
+  {
+    return posix::getxattr(p.c_str(), name, value, sz);
+  }
+
+  max_t
+  xattr_set(const io::path_t &p, const char *name, const void *value, usize sz, i32 flags = 0)
+  {
+    return posix::setxattr(p.c_str(), name, value, sz, flags);
+  }
+
+  max_t
+  xattr_list(const io::path_t &p, char *out, usize sz) const
+  {
+    return posix::listxattr(p.c_str(), out, sz);
+  }
+
+  max_t
+  xattr_remove(const io::path_t &p, const char *name)
+  {
+    return posix::removexattr(p.c_str(), name);
+  }
+
+  io::file
+  tmpfile(const io::path_t &dir)
+  {
+    i32 fd = static_cast<i32>(
+        posix::openat(posix::at_fdcwd, dir.c_str(), posix::o_tmpfile | posix::o_rdwr | posix::o_cloexec, posix::mode_file));
+    if ( fd < 0 )      // O_TMPFILE unsupported (common on tmpfs/overlay/network) or dir not writable: surface it
+      exc<except::io_error>("micron::io::filesystem::tmpfile: O_TMPFILE open failed");
+    return io::file(fd_t{ fd }, dir.c_str());
   }
 };
 
-};      // namespace fsys
+template<io::modes DefaultMode = io::modes::read, usize Cap = 0> using filesystem = basic_filesystem<DefaultMode, micron::null_lock, Cap>;
+
+template<io::modes DefaultMode = io::modes::read, usize Cap = 0>
+using concurrent_filesystem = basic_filesystem<DefaultMode, micron::mutex, Cap>;
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// io::rooted_filesystem
+// every operation resolves relative to one pinned directory fd via the *at syscall family
+
+class rooted_filesystem
+{
+  micron::heap_swiss_map<io::path_t, __fs_entry> __open;
+  fd_t __root;
+  io::path_t __root_path;
+
+  io::file &
+  __get_or_open(const io::path_t &k, io::modes m, const open_opts &opts = {})
+  {
+    if ( __fs_entry *e = __open.find(k); e != nullptr ) {
+      if ( !__mode_serviceable(e->mode, m) ) {
+        i32 fd = static_cast<i32>(posix::openat(__root, k.c_str(), compose_open_flags(m, opts), opts.perms));
+        if ( fd < 0 )      // reopen failed: surface it rather than silently returning a stale wrong-mode handle
+          exc<except::filesystem_error>("micron::io::rooted_filesystem: reopen for requested mode failed");
+        *e->fp = io::file(fd_t{ fd }, k.c_str());
+        e->mode = m;
+      }
+      return *e->fp;
+    }
+    i32 fd = static_cast<i32>(posix::openat(__root, k.c_str(), compose_open_flags(m, opts), opts.perms));
+    if ( fd < 0 )      // do NOT cache a failed open: a poisoned entry denies the path permanently even after it appears
+      exc<except::filesystem_error>("micron::io::rooted_filesystem: openat failed");
+    auto ins = __open.emplace(k, __fs_entry{ micron::unique_pointer<io::file>(fd_t{ fd }, k.c_str()), m });
+    return *ins.b->fp;
+  }
+
+public:
+  ~rooted_filesystem()
+  {
+    __open.for_each([](const io::path_t &, __fs_entry &e) {
+      if ( e.fp ) e.fp->flush_data();
+    });
+    if ( __root.fd >= 0 ) posix::close(__root.fd);
+  }
+
+  rooted_filesystem() = delete;
+
+  explicit rooted_filesystem(const io::path_t &root) : __open(), __root(posix::invalid_fd), __root_path(io::prune(root))
+  {
+    i32 fd = static_cast<i32>(posix::open(__root_path.c_str(), posix::o_path | posix::o_directory | posix::o_cloexec));
+    if ( fd < 0 ) exc<except::filesystem_error>("micron::io::rooted_filesystem: cannot open root directory");
+    __root.fd = fd;
+  }
+
+  rooted_filesystem(const rooted_filesystem &) = delete;
+  rooted_filesystem &operator=(const rooted_filesystem &) = delete;
+
+  rooted_filesystem(rooted_filesystem &&o) noexcept
+      : __open(micron::move(o.__open)), __root(o.__root), __root_path(micron::move(o.__root_path))
+  {
+    o.__root = posix::invalid_fd;
+  }
+
+  rooted_filesystem &
+  operator=(rooted_filesystem &&o) noexcept
+  {
+    if ( this == &o ) return *this;
+    __open.clear();
+    if ( __root.fd >= 0 ) posix::close(__root.fd);
+    __open = micron::move(o.__open);
+    __root = o.__root;
+    __root_path = micron::move(o.__root_path);
+    o.__root = posix::invalid_fd;
+    return *this;
+  }
+
+  const io::path_t &
+  root(void) const
+  {
+    return __root_path;
+  }
+
+  fd_t
+  root_fd(void) const
+  {
+    return __root;
+  }
+
+  io::file &
+  operator[](const io::path_t &rel, const io::modes m = io::modes::read)
+  {
+    return __get_or_open(io::prune(rel), m);
+  }
+
+  io::file &
+  open(const io::path_t &rel, const io::modes m = io::modes::read, const open_opts &opts = {})
+  {
+    return __get_or_open(io::prune(rel), m, opts);
+  }
+
+  bool
+  is_open(const io::path_t &rel) const
+  {
+    return __open.contains(io::prune(rel));
+  }
+
+  void
+  close(const io::path_t &rel)
+  {
+    io::path_t k = io::prune(rel);
+    // flush before dropping
+    if ( __fs_entry *e = __open.find(k); e != nullptr && e->fp ) e->fp->flush_data();
+    __open.erase(k);
+  }
+
+  void
+  clear(void)
+  {
+    __open.for_each([](const io::path_t &, __fs_entry &e) {
+      if ( e.fp ) e.fp->flush_data();
+    });
+    __open.clear();
+  }
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // *at-based queries
+  bool
+  exists(const io::path_t &rel) const
+  {
+    return posix::faccessat(__root.fd, rel.c_str(), posix::access_ok, 0) == 0;
+  }
+
+  posix::node_types
+  file_type(const io::path_t &rel) const
+  {
+    stat_t st{};
+    if ( posix::fstatat(__root, rel.c_str(), st, 0) != 0 ) return posix::node_types::not_found;
+    return posix::get_type(st);
+  }
+
+  bool
+  is_regular_file(const io::path_t &rel) const
+  {
+    return file_type(rel) == posix::node_types::regular_file;
+  }
+
+  bool
+  is_directory(const io::path_t &rel) const
+  {
+    return file_type(rel) == posix::node_types::directory;
+  }
+
+  bool
+  is_symlink(const io::path_t &rel) const
+  {
+    stat_t st{};
+    if ( posix::fstatat(__root, rel.c_str(), st, posix::at_symlink_nofollow) != 0 ) return false;
+    return posix::__impl::stat_is_lnk(st);
+  }
+
+  posix::off64_t
+  file_size(const io::path_t &rel) const
+  {
+    stat_t st{};
+    if ( posix::fstatat(__root, rel.c_str(), st, 0) != 0 ) return -1;
+    return st.st_size;
+  }
+
+  time64_t
+  mtime(const io::path_t &rel) const
+  {
+    stat_t st{};
+    if ( posix::fstatat(__root, rel.c_str(), st, 0) != 0 ) return 0;
+    return st.st_mtime;
+  }
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // *at-based mutations
+  max_t
+  rename(const io::path_t &from, const io::path_t &to)
+  {
+    __open.erase(io::prune(from));
+    __open.erase(io::prune(to));
+    return posix::renameat(__root.fd, from.c_str(), __root.fd, to.c_str());
+  }
+
+  max_t
+  unlink(const io::path_t &rel)
+  {
+    __open.erase(io::prune(rel));
+    return posix::unlinkat(__root.fd, rel.c_str(), 0);
+  }
+
+  max_t
+  mkdir(const io::path_t &rel, u32 mode = posix::mode_dir)
+  {
+    return posix::mkdirat(__root.fd, rel.c_str(), mode);
+  }
+
+  max_t
+  rmdir(const io::path_t &rel)
+  {
+    return posix::unlinkat(__root.fd, rel.c_str(), posix::at_removedir);
+  }
+
+  max_t
+  symlink(const io::path_t &target, const io::path_t &linkpath)
+  {
+    return posix::symlinkat(target.c_str(), __root.fd, linkpath.c_str());
+  }
+
+  max_t
+  hardlink(const io::path_t &oldpath, const io::path_t &newpath)
+  {
+    return posix::linkat(__root.fd, oldpath.c_str(), __root.fd, newpath.c_str(), 0);
+  }
+
+  max_t
+  readlink(const io::path_t &rel, char *buf, usize cap) const
+  {
+    return posix::readlinkat(__root.fd, rel.c_str(), buf, cap);
+  }
+
+  max_t
+  chmod(const io::path_t &rel, const io::linux_permissions &perms)
+  {
+    return posix::fchmodat(__root.fd, rel.c_str(), perms.full_mode(), 0);
+  }
+
+  max_t
+  chown(const io::path_t &rel, posix::uid_t uid, posix::gid_t gid)
+  {
+    return posix::fchownat(__root.fd, rel.c_str(), uid, gid, 0);
+  }
+
+  max_t
+  touch(const io::path_t &rel)
+  {
+    if ( !exists(rel) ) {
+      i32 fd = static_cast<i32>(posix::openat(__root, rel.c_str(), posix::o_wronly | posix::o_create | posix::o_cloexec, posix::mode_file));
+      if ( fd < 0 ) return fd;
+      posix::close(fd);
+      return 0;
+    }
+    return posix::utimensat(__root.fd, rel.c_str(), nullptr, 0);
+  }
+
+  io::file
+  tmpfile(void)
+  {
+    i32 fd = static_cast<i32>(posix::openat(__root, ".", posix::o_tmpfile | posix::o_rdwr | posix::o_cloexec, posix::mode_file));
+    if ( fd < 0 )      // O_TMPFILE unsupported or root not writable: surface it, don't adopt a buried errno
+      exc<except::io_error>("micron::io::rooted_filesystem::tmpfile: O_TMPFILE open failed");
+    return io::file(fd_t{ fd }, __root_path.c_str());
+  }
+};
+
+};      // namespace io
+
 };      // namespace micron

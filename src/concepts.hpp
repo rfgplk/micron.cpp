@@ -318,6 +318,26 @@ concept has_cstr = requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
 
+// contiguity is opt-in via the contiguous_tag now
+template<typename T>
+concept is_contiguous_container
+    = is_iterable_container<T> && requires { typename micron::remove_cvref_t<T>::contiguous_tag; };
+
+// element-iterable but neither contiguous nor a string: list, doublelist, maps, sets, trees
+template<typename T>
+concept is_node_container = requires(T t) {
+  { t.begin() };
+  { t.end() };
+} && !is_iterable_container<T> && !has_cstr<T>;
+
+template<typename T>
+concept is_printable_container = requires(T t) {
+  { t.cbegin() } -> micron::same_as<typename T::const_iterator>;
+  { t.cend() } -> micron::same_as<typename T::const_iterator>;
+  { t.begin() } -> micron::same_as<typename T::iterator>;
+  { t.end() } -> micron::same_as<typename T::iterator>;
+} && !has_cstr<T>;
+
 template<typename T>
 concept is_char_ptr
     = micron::is_same_v<T, char *> || micron::is_same_v<T, schar *> || micron::is_same_v<T, wide *> || micron::is_same_v<T, unicode8 *>

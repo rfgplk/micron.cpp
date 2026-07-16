@@ -15,7 +15,7 @@
 
 #include "../src/string/sstring.hpp"
 
-#include "../src/io/posix/file.hpp"
+#include "../src/io/os/os_file.hpp"
 #include "../src/sort/quick.hpp"
 
 double

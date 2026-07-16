@@ -301,6 +301,7 @@ path_exists(const char *path)
 }
 
 template<typename T>
+  requires(!micron::is_pointer_v<T>)
 inline max_t
 write_all(fd_t fd, const T &buf, usize len)
 {

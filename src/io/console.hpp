@@ -191,7 +191,7 @@ cerror(const T &...str)
   set_color(color::red, style::bold);
   io::errorln(str...);
   set_color_reset();
-  (exc_silent<except::standard_error>(str), ...);
+  ( [&] { if constexpr ( requires { except::standard_error(str); } ) exc_silent<except::standard_error>(str); }(), ... );
 }
 
 template<typename... T>
@@ -218,7 +218,7 @@ __micron_log(const char *FILEMACRO, int line, const T &...str)
 
 // WARNING: partially TS
 
-// TODO: optimize
+// NOTE: since io_v3 these are obsolete/deprecated, should use echo() instead
 
 inline void
 console_newline(void)

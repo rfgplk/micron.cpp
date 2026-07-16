@@ -1,0 +1,28 @@
+=== MICRON io_v3 FILE DATA-PATH (median-of-5, wall-ns, tmpfs) ===
+type                  op            elems       bytes   ns/op   GiB/s   x-mc
+--------------------------------------------------------------------------------
+file/open             existing(rd)     0             0     2837.28        0.00      0.00
+file/open             create(rwc)      0             0     2530.46        0.00      0.00
+
+file/write            string        4096          4096     1181.58        3.23     25.13
+file/write            vector<u32>   1024          4096     1179.61        3.23     25.09
+file/write            list<i32>(fr) 1024          4096    14739.34        0.26    313.46
+file/write            string       65536         65536     5366.71       11.37      2.28
+file/write            vector<u32>  16384         65536     5325.51       11.46      2.26
+file/write            list<i32>(fr)16384         65536   233313.17        0.26     98.91
+file/write            string     1048576       1048576    90539.80       10.79      2.40
+file/write            vector<u32> 262144       1048576    74119.48       13.18      1.96
+file/write            pod              1            16      871.49        0.02    519.83
+
+file/read             vector<u32>   1024          4096     1691.80        2.25     49.10
+file/read             string        4096          4096     1825.49        2.09     52.99
+file/read             vector<u32>  16384         65536     7918.43        7.71      3.52
+file/read             string       65536         65536     8216.10        7.43      3.65
+file/read             vector<u32> 262144       1048576   356871.03        2.74     11.70
+file/read             string     1048576       1048576   746478.25        1.31     24.48
+
+cached/load           string       65536         65536     4717.52       12.94      2.31
+cached/flush          string(+stage)65536        65536    12904.79        4.73      6.32
+cached/append         string        4096          4096     1904.83        2.00     52.89
+
+atomic/replace        ptr,len          1         65536    35644.70        1.71     17.52

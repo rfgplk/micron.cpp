@@ -11,7 +11,7 @@
 #include "../../linux/sys/input.hpp"
 #include "../../linux/sys/ioctl.hpp"
 #include "../../types.hpp"
-#include "../posix/iosys.hpp"
+#include "../os/iosys.hpp"
 
 #include "../../errno.hpp"
 

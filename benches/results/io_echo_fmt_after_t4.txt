@@ -1,0 +1,19 @@
+=== MICRON io_v3 ECHO/PRINTK FORMAT -> memory sink (median-of-5) ===
+type                  op            elems       bytes   ns/op   GiB/s   x-raw
+--------------------------------------------------------------------------------
+int                   raw(put)         1             6        4.56        1.22      1.00
+int                   format           1             6       19.77        0.28      4.33
+f64(ryu)              raw(put)         1            16        4.06        3.67      1.00
+f64(ryu)              format           1            16       58.67        0.25     14.46
+string                raw(put)         1            19        3.54        5.00      1.00
+string                format           1            19        6.84        2.59      1.93
+vector<int>           raw(put)        16            98        3.99       22.86      1.00
+vector<int>           format          16            98      259.56        0.35     65.02
+hswiss<u64,u64>       raw(put)        16           262        7.65       31.91      1.00
+hswiss<u64,u64>       format          16           262      588.18        0.41     76.91
+echo-concat           raw(put)         6            36        4.72        7.10      1.00
+echo-concat           format           6            36       75.14        0.45     15.91
+literal-heavy         raw(put)         2            34        9.44        3.36      1.00
+literal-heavy         format           2            34       81.47        0.39      8.63
+pad{:>40}             raw(put)         1            40        4.73        7.88      1.00
+pad{:>40}             format           1            40       48.04        0.78     10.16

@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../io/filesystem.hpp"
+#include "../../io/fsys.hpp"
 #include "../../memory/cmemory.hpp"
 #include "../../string/strings.hpp"
 #include "../../syscall.hpp"
@@ -237,8 +237,7 @@ read_proc_stat(pid_t pid = 0)
 {
   proc_stat_t s{};
   micron::string raw;
-  fsys::system<micron::io::rd> sys;
-  sys[__impl::proc_path(pid, "stat").c_str()] >> raw;
+  io::open_file(__impl::proc_path(pid, "stat").c_str()) >> raw;
   if ( raw.empty() ) return s;
 
   const char *p = raw.cbegin();
@@ -298,8 +297,7 @@ read_proc_status(pid_t pid = 0)
 {
   proc_status_t s{};
   micron::string raw;
-  fsys::system<micron::io::rd> sys;
-  sys[__impl::proc_path(pid, "status").c_str()] >> raw;
+  io::open_file(__impl::proc_path(pid, "status").c_str()) >> raw;
   if ( raw.empty() ) return s;
 
   const char *p = raw.cbegin();

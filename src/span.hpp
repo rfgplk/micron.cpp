@@ -35,6 +35,7 @@ public:
   template<is_regular_object U, usize M> friend class span;
 
   using category_type = slice_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
   using safety_type = safe_tag;

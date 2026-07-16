@@ -13,7 +13,7 @@
 #include "../types.hpp"
 #include "io.hpp"
 #include "paths.hpp"
-#include "posix/iosys.hpp"
+#include "os/iosys.hpp"
 #include "stream.hpp"
 
 #include "../attributes.hpp"
@@ -24,15 +24,13 @@ namespace micron
 namespace io
 {
 
-// freestanding init via start
 extern "C" void
 __boot_io_sigpipe(void)
 {
   micron::ignore(micron::signal::pipe);
 }
 
-// hosted init via .init_array
-void gconstructor_
+inline void gconstructor_
 __micron_io_ignore_sigpipe(void)
 {
   __boot_io_sigpipe();
@@ -112,7 +110,7 @@ class upipe
   }
 
 public:
-  int fd[2];
+  int fd[2] = { -1, -1 };      // init so a missed open failure degrades safely (never close a garbage fd)
 
   enum class utype { upipe_reader = 0, upipe_writer = 1 };
 
@@ -132,18 +130,18 @@ public:
 
   upipe() : __r_open(true), __w_open(true), tp(utype::upipe_writer)
   {
-    if ( posix::pipe(fd) == -1 ) exc<except::io_error>("micron::upipe failed to open pipe");
+    if ( posix::pipe(fd) < 0 ) exc<except::io_error>("micron::upipe failed to open pipe");
   }
 
   explicit upipe(utype t) : __r_open(true), __w_open(true), tp(t)
   {
-    if ( posix::pipe(fd) == -1 ) exc<except::io_error>("micron::upipe failed to open pipe");
+    if ( posix::pipe(fd) < 0 ) exc<except::io_error>("micron::upipe failed to open pipe");
   }
 
   explicit upipe(bool cloexec) : __r_open(true), __w_open(true), tp(utype::upipe_writer)
   {
     i32 flags = cloexec ? posix::o_cloexec : 0;
-    if ( static_cast<i32>(micron::syscall(SYS_pipe2, fd, flags)) == -1 ) exc<except::io_error>("micron::upipe(pipe2) failed to open pipe");
+    if ( static_cast<i32>(micron::syscall(SYS_pipe2, fd, flags)) < 0 ) exc<except::io_error>("micron::upipe(pipe2) failed to open pipe");
   }
 
   upipe(const upipe &) = delete;
@@ -603,10 +601,10 @@ public:
 
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str), _fd(-1), _open(false), _owns_file(true)
   {
-    if ( micron::mkfifo(pipe_name.c_str(), static_cast<posix::mode_t>(perms)) == -1 )
-      exc<except::io_error>("micron::npipe(mkfifo) failed to create pipe");
+    if ( micron::mkfifo(pipe_name.c_str(), static_cast<posix::mode_t>(perms)) < 0 )
+      exc<except::io_error>("micron::npipe(mkfifo) failed to create pipe (EEXIST = path already exists)");
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), posix::o_rdwr));
-    if ( _fd == -1 ) exc<except::io_error>("micron::npipe(open) failed to open pipe file");
+    if ( _fd < 0 ) exc<except::io_error>("micron::npipe(open) failed to open pipe file");
     _open = true;
   }
 
@@ -614,7 +612,7 @@ public:
       : pipe_name(str), _fd(-1), _open(false), _owns_file(false)
   {
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), flags));
-    if ( _fd == -1 ) exc<except::io_error>("micron::npipe(open existing) failed to open pipe file");
+    if ( _fd < 0 ) exc<except::io_error>("micron::npipe(open existing) failed to open pipe file");
     _open = true;
   }
 
@@ -687,7 +685,7 @@ public:
   {
     if ( _open ) close();
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), flags));
-    if ( _fd == -1 ) exc<except::io_error>("micron::npipe::reopen failed");
+    if ( _fd < 0 ) exc<except::io_error>("micron::npipe::reopen failed");
     _open = true;
   }
 

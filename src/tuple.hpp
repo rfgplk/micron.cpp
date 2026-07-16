@@ -195,8 +195,11 @@ template<typename T, typename F> struct pair {
 
   constexpr pair() : a(T()), b(F()) { }
 
+  // default-constructs then assigns, so reference members can never use these; without the
+  // exclusion braced { k, v } proxy pairs (map iterators) select this ctor and hard-error
   template<typename C>
-    requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
+    requires(((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
+             and !micron::is_reference_v<T> and !micron::is_reference_v<F>)
   constexpr pair(std::initializer_list<C> &&lst)
   {
     // fix
@@ -213,7 +216,8 @@ template<typename T, typename F> struct pair {
   }
 
   template<typename C>
-    requires((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
+    requires(((micron::is_same_v<T, C>) or (micron::is_same_v<F, C>) or ((micron::is_convertible_v<T, C>) or micron::is_convertible_v<F, C>))
+             and !micron::is_reference_v<T> and !micron::is_reference_v<F>)
   constexpr pair &
   operator=(std::initializer_list<C> &&lst)
   {

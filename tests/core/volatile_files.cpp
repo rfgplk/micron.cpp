@@ -11,7 +11,7 @@
 
 #include "../src/io/stream.hpp"
 
-#include "../src/io/posix/volatile.hpp"
+#include "../src/io/os/volatile.hpp"
 
 #include "../src/control.hpp"
 #include "../src/errno.hpp"

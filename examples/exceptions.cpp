@@ -3,7 +3,7 @@
 //
 // See also:
 //   examples/control.cpp     — process / signal handling
-//   examples/filesystem.cpp  — exceptions thrown by fsys::file
+//   examples/filesystem.cpp  — exceptions thrown by io::cached_file
 //
 // Key differences from std::
 //   - All exceptions inherit from micron::except::__base_exception

@@ -9,7 +9,7 @@
 #include "../string/format.hpp"
 #include "../string/strings.hpp"
 #include "../vector/fvector.hpp"
-#include "posix/dir.hpp"
+#include "os/dir.hpp"
 
 #include "realpath.hpp"
 
@@ -41,6 +41,7 @@ class path
     return out;
   }
 
+  // NOTE: filesystem paths are trusted
   static path_t
   __join(const path_t &base, const path_t &rel)
   {

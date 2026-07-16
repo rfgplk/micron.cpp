@@ -1,0 +1,19 @@
+=== MICRON io_v3 FILESYSTEM (median-of-5, wall-ns) ===
+category              op                     N       bytes   ns/op   GiB/s  x-base
+--------------------------------------------------------------------------------
+query                 open+fstat+close 1             0     2462.64        0.00      1.00
+query                 exists           1             0     1006.10        0.00      0.41
+query                 is_regular       1             0     1007.60        0.00      0.41
+query                 file_size        1             0     1007.78        0.00      0.41
+
+cache                 miss_open       64             0     4035.39        0.00      1.00
+cache                 hit_cached       1             0      525.88        0.00      0.13
+
+lru                   cap8_churn64    64             0     5029.59        0.00      1.25
+lru                   cap64_hit64     64             0      748.12        0.00      1.42
+
+copy                  copy_64k         1         65536    36269.44        1.68      1.00
+copy                  copy_4m          1       4194304  1225579.34        3.19      1.00
+
+oneshot               read_file        1          4096     3314.60        1.15      1.35
+oneshot               write_file       1          4096     3976.17        0.96      1.00

@@ -40,7 +40,7 @@ main(void)
   mc::string str;
   mc::string assertfile;
   mc::string binfile;
-  mc::fsys::system<mc::io::rwc> sys;      //("build.ninja");
+  mc::io::filesystem<mc::io::rwc> sys;      //("build.ninja");
   // for(size_t i = 0; i < 100000; i++)
   {
     // sys["TODO", mc::io::rw]; or this
@@ -66,8 +66,8 @@ main(void)
     auto p = sys.list();
     mc::console("!!!!!!!!!");
     for ( const auto &n : p ) mc::console(n);
-    mc::console("Is opened /usr/include/err.h: ", sys.is_opened("/usr/include/err.h"));
-    mc::console("Is opened /tmp/second: ", sys.is_opened("/tmp/second"));
+    mc::console("Is opened /usr/include/err.h: ", sys.is_open("/usr/include/err.h"));
+    mc::console("Is opened /tmp/second: ", sys.is_open("/tmp/second"));
     // mc::console(str);
     // mc::console(sys.is_regular_file("/tmp/testing"));
     // mc::console(sys.is_directory("/tmp/newfile"));

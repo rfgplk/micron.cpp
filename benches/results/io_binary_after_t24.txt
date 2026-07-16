@@ -1,0 +1,36 @@
+=== MICRON io_v3 BINARY analysis (median-of-5) ===
+file=16MiB  window=64KiB  (/dev/shm)
+type                  op            elems       bytes   ns/op   GiB/s   x-bs
+--------------------------------------------------------------------------------
+memcpy                raw(1MiB)        0       1048576    62217.45       15.70      1.00
+memcpy                raw(16MiB)       0      16777216  1203178.13       12.99      1.00
+
+search                memchr(b0)       4         65536       85.49      713.94      1.00
+search                kmp(miss)        4         65536    66152.77        0.92    773.81
+search                kmp(hit@0)       4             4       46.55        0.08      0.54
+find_all              kmp(file)        4      16777216 15003303.50        1.04     12.47
+search                memchr(b0)      16         65536       64.25      950.04      1.00
+search                kmp(miss)       16         65536    49797.82        1.23    775.12
+search                kmp(hit@0)      16            16       66.43        0.22      1.03
+find_all              kmp(file)       16      16777216 15081648.83        1.04     12.53
+search                memchr(b0)     256         65536       64.19      950.93      1.00
+search                kmp(miss)      256         65536    50784.95        1.20    791.23
+search                kmp(hit@0)     256           256      370.44        0.64      5.77
+find_all              kmp(file)      256      16777216 14983040.67        1.04     12.45
+
+analyse               histogram        0       1048576  1392768.22        0.70     22.39
+analyse               histogram        0      16777216 22448305.50        0.70     18.66
+entropy               file(pread)      0      16777216 24248219.00        0.64     20.15
+
+read_win              u16le            2             0        1.88        0.00      1.00
+read_win              u16be            2             0        1.64        0.00      0.87
+read_win              u32le            4             0        1.87        0.00      1.00
+read_win              u32be            4             0        1.62        0.00      0.87
+read_win              u64le            8             0        1.87        0.00      1.00
+read_win              u64be            8             0        1.63        0.00      0.87
+read_at               u16le_at         2             0      540.70        0.00    287.15
+read_at               u32le_at         4             0      478.36        0.00    255.76
+read_at               u64le_at         8             0      450.55        0.00    240.33
+
+slice                 try_slice        0          4096      603.99        6.32      1.00
+slice                 slice(alloc)     0          4096      564.59        6.76      0.93

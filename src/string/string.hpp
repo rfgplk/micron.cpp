@@ -200,6 +200,7 @@ class hstring: private Alloc, public __mutable_memory_resource<T, Alloc>
 
 public:
   using category_type = string_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef T value_type;

@@ -85,6 +85,41 @@ public:
   mutex &operator=(const mutex &) = delete;
 };
 
+// no-op lock satisfying is_mutex; lock-policy parameter for single-threaded
+// instantiations, every call compiles to nothing
+class null_lock
+{
+public:
+  ~null_lock() = default;
+  null_lock() = default;
+
+  void
+  lock() noexcept
+  {
+  }
+
+  bool
+  try_lock() noexcept
+  {
+    return true;
+  }
+
+  void
+  unlock() noexcept
+  {
+  }
+
+  bool
+  is_locked() const noexcept
+  {
+    return false;
+  }
+
+  null_lock(const null_lock &) = delete;
+  null_lock(null_lock &&) = delete;
+  null_lock &operator=(const null_lock &) = delete;
+};
+
 class weak_mutex
 {
   atomic_token<bool> tk;

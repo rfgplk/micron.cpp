@@ -8,7 +8,7 @@
 #include "../memory/memory.hpp"
 #include "../types.hpp"
 #include "__std.hpp"
-#include "posix/iosys.hpp"
+#include "os/iosys.hpp"
 
 #include "../errno.hpp"
 
@@ -140,12 +140,12 @@ read(i32 fd, T &buf)
       if ( buf.max_size() <= need ) buf.reserve(need + 1);
       usize got = 0;
       while ( got < need ) {
-        const max_t r = posix::read(fd, buf.data() + got, need - got);
+        const max_t r = posix::read(fd, reinterpret_cast<byte *>(buf.data()) + got, need - got);
         if ( r < 0 ) return r;
         if ( r == 0 ) break;
         got += static_cast<usize>(r);
       }
-      buf.set_size(got);
+      buf.set_size(got / sizeof(typename T::value_type));
       return static_cast<max_t>(got);
     }
   }
@@ -171,12 +171,12 @@ read(fd_t fd, T &buf)
       if ( buf.max_size() <= need ) buf.reserve(need + 1);
       usize got = 0;
       while ( got < need ) {
-        const max_t r = posix::read(fd.fd, buf.data() + got, need - got);
+        const max_t r = posix::read(fd.fd, reinterpret_cast<byte *>(buf.data()) + got, need - got);
         if ( r < 0 ) return r;
         if ( r == 0 ) break;
         got += static_cast<usize>(r);
       }
-      buf.set_size(got);
+      buf.set_size(got / sizeof(typename T::value_type));
       return static_cast<max_t>(got);
     }
   }
@@ -289,7 +289,7 @@ fwrite(T &ref, usize num, const fd_t &handle)
       return num;
     }
     __global_buffer_stdout->append(ref, num);
-    if ( simd::any_set_128(ref, num, __global_buffer_flush) ) goto force_flush_out;
+    if ( __stdout_line_buffered && simd::any_set_128(ref, num, __global_buffer_flush) ) goto force_flush_out;
     return num;
   } else if ( handle == stderr ) {
     if ( __global_buffer_stderr->full(num * sizeof(byte)) ) {
@@ -314,33 +314,34 @@ fwrite(T *ptr, usize num, const fd_t &handle)
   if ( ptr == nullptr ) [[unlikely]]
     return -error::invalid_arg;
   if ( handle.has_error() or handle.closed() ) return -error::bad_fd;
-  // differentiate depending on handle, maintains cache loc.
+  const usize nbytes = num * sizeof(T);
   if ( handle == stdout ) {
-    if ( __global_buffer_stdout->full(num * sizeof(byte)) ) {
+    if ( __global_buffer_stdout->full(nbytes) ) {
       (*__global_buffer_stdout) >> handle;
-      posix::write(handle.fd, ptr, num);
+      if ( max_t __w = posix::write_all(handle, reinterpret_cast<const byte *>(ptr), nbytes); __w < 0 ) return __w;
       return num;
     force_flush_out:
       (*__global_buffer_stdout) >> handle;
       return num;
     }
     __global_buffer_stdout->append(ptr, num);
-    if ( simd::any_set_128(ptr, num, __global_buffer_flush) ) goto force_flush_out;
+    if ( __stdout_line_buffered && simd::any_set_128(ptr, nbytes, __global_buffer_flush) ) goto force_flush_out;
     return num;
   } else if ( handle == stderr ) {
-    if ( __global_buffer_stderr->full(num * sizeof(byte)) ) {
+    if ( __global_buffer_stderr->full(nbytes) ) {
       (*__global_buffer_stderr) >> handle;
-      posix::write(handle.fd, ptr, num);
+      if ( max_t __w = posix::write_all(handle, reinterpret_cast<const byte *>(ptr), nbytes); __w < 0 ) return __w;
       return num;
     force_flush_err:
       (*__global_buffer_stderr) >> handle;
       return num;
     }
     __global_buffer_stderr->append(ptr, num);
-    if ( simd::any_set_128(ptr, num, __global_buffer_flush) ) goto force_flush_err;
+    if ( simd::any_set_128(ptr, nbytes, __global_buffer_flush) ) goto force_flush_err;
     return num;
   }
-  return posix::write(handle.fd, ptr, num);
+  if ( max_t __w = posix::write_all(handle, reinterpret_cast<const byte *>(ptr), nbytes); __w < 0 ) return __w;
+  return num;
 }
 
 void

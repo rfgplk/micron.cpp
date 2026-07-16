@@ -132,6 +132,7 @@ class ivector: private Alloc, public __immutable_memory_resource<T, Alloc>
 
 public:
   using category_type = vector_tag;
+  using contiguous_tag = void;
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
   typedef usize size_type;

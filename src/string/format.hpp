@@ -3133,6 +3133,113 @@ template<typename T> struct formatter<T *, micron::enable_if_t<!micron::is_same_
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// container / map / pair formatters (io_v3): these stream into a growable hstring via the
+// write_str protocol - the fixed scratch-buffer write() contract cannot hold arbitrary-size
+// containers. the parsed spec is applied PER ELEMENT (echof("{:x}", vec) renders each
+// element in hex); framing is fixed: containers "{ a, b }", maps "{ k: v }", pairs "[a, b]".
+
+namespace __impl
+{
+
+// map iterator dialect detection, structural (heap_swiss carries map_tag yet derefs .a/.b)
+template<typename T>
+concept __fmt_kv_key = requires(const T t) {
+  { t.begin()->key };
+  { t.begin()->value };
+};
+
+template<typename T>
+concept __fmt_kv_ab = requires(const T t) {
+  { (*t.begin()).a };
+  { (*t.begin()).b };
+} && !__fmt_kv_key<T>;
+
+template<typename E>
+inline void
+fmt_element(hstring<schar> &out, const E &e, const fmt_spec &spec)
+{
+  using U = micron::remove_cvref_t<E>;
+  if constexpr ( requires(char *b, const U &v) { formatter<U>::write(b, usize{}, v, spec); } ) {
+    char buf[__fmt_buf_size];
+    usize n = formatter<U>::write(buf, __fmt_buf_size, e, spec);
+    apply_padding(out, buf, n, spec);
+  } else if constexpr ( requires(hstring<schar> &o, const U &v) { formatter<U>::write_str(o, v, spec); } ) {
+    formatter<U>::write_str(out, e, spec);
+  } else {
+    static_assert(sizeof(U) == 0, "micron::format: element type has no formatter");
+  }
+}
+
+};      // namespace __impl
+
+template<typename T>
+struct formatter<T, micron::enable_if_t<micron::is_printable_container<T> && !micron::is_string_v<T> && !is_tagged_map<T>
+                                        && !is_swiss_map<T> && !__impl::__fmt_kv_ab<T>>> {
+  static inline void
+  write_str(hstring<schar> &out, const T &val, const __impl::fmt_spec &spec)
+  {
+    out.append("{ ", 2);
+    bool first = true;
+    for ( auto itr = val.cbegin(); itr != val.cend(); ++itr ) {
+      if ( !first ) out.append(", ", 2);
+      __impl::fmt_element(out, static_cast<const typename T::value_type &>(*itr), spec);
+      first = false;
+    }
+    out.append(" }", 2);
+  }
+};
+
+template<typename T> struct formatter<T, micron::enable_if_t<__impl::__fmt_kv_key<T> && is_tagged_map<T>>> {
+  static inline void
+  write_str(hstring<schar> &out, const T &val, const __impl::fmt_spec &spec)
+  {
+    out.append("{ ", 2);
+    bool first = true;
+    for ( auto itr = val.begin(); itr != val.end(); ++itr ) {
+      if ( !itr->key ) continue;
+      if ( !first ) out.append(", ", 2);
+      char kbuf[__impl::__fmt_buf_size];
+      usize kn = __impl::fmt_uint_to_buf(kbuf, __impl::__fmt_buf_size, static_cast<u64>(itr->key), 10, false);
+      out.append(kbuf, kn);
+      out.append(": ", 2);
+      __impl::fmt_element(out, itr->value, spec);
+      first = false;
+    }
+    out.append(" }", 2);
+  }
+};
+
+template<typename T> struct formatter<T, micron::enable_if_t<__impl::__fmt_kv_ab<T> && !micron::is_string_v<T>>> {
+  static inline void
+  write_str(hstring<schar> &out, const T &val, const __impl::fmt_spec &spec)
+  {
+    out.append("{ ", 2);
+    bool first = true;
+    for ( auto itr = val.begin(); itr != val.end(); ++itr ) {
+      if ( !first ) out.append(", ", 2);
+      auto entry = *itr;
+      __impl::fmt_element(out, entry.a, spec);
+      out.append(": ", 2);
+      __impl::fmt_element(out, entry.b, spec);
+      first = false;
+    }
+    out.append(" }", 2);
+  }
+};
+
+template<typename A, typename B> struct formatter<micron::pair<A, B>> {
+  static inline void
+  write_str(hstring<schar> &out, const micron::pair<A, B> &val, const __impl::fmt_spec &spec)
+  {
+    out.append("[", 1);
+    __impl::fmt_element(out, val.a, spec);
+    out.append(", ", 2);
+    __impl::fmt_element(out, val.b, spec);
+    out.append("]", 1);
+  }
+};
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // format_value
 
 template<typename T>
@@ -3224,9 +3331,19 @@ format_one(hstring<schar> &out, const char *spec_start, const char *spec_end, us
     return;
   }
   fmt_spec spec = parse_spec(spec_start, spec_end);
-  char buf[__fmt_buf_size];
-  usize n = formatter<T>::write(buf, __fmt_buf_size, val, spec);
-  apply_padding(out, buf, n, spec);
+  using U = micron::remove_cvref_t<T>;
+  if constexpr ( requires(char *b, const U &v) { formatter<U>::write(b, usize{}, v, spec); } ) {
+    char buf[__fmt_buf_size];
+    usize n = formatter<U>::write(buf, __fmt_buf_size, val, spec);
+    apply_padding(out, buf, n, spec);
+  } else if constexpr ( requires(hstring<schar> &o, const U &v) { formatter<U>::write_str(o, v, spec); } ) {
+    // containers/maps/pairs stream into the output; the spec applies per element
+    hstring<schar> tmp;
+    formatter<U>::write_str(tmp, val, spec);
+    apply_padding(out, tmp.c_str(), tmp.size(), spec);
+  } else {
+    static_assert(sizeof(U) == 0, "micron::format: no formatter for this argument type");
+  }
 }
 
 }      // namespace __impl

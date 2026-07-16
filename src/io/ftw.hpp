@@ -6,9 +6,8 @@
 #pragma once
 
 #include "../tuple.hpp"
-#include "console.hpp"
 #include "paths.hpp"
-#include "posix/iosys.hpp"
+#include "os/iosys.hpp"
 
 namespace micron
 {
@@ -42,6 +41,7 @@ walk(path &&p, micron::fvector<path_t> &out, node_id *chain, u32 depth, collect 
   for ( auto &n : subdirs ) {
     if ( n == "." || n == ".." ) continue;
     path_t child = p.join(n.c_str());
+    // NOTE:: paths are trusted; not racefree against an attacker swapping child for a symlink between the check and the open
     if ( posix::is_symlink(child.c_str()) ) continue;      // WARNING: do NOT follow symlinks
 
     posix::stat_t st{};

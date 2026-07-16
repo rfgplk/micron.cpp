@@ -2612,6 +2612,18 @@ vtrnq_s16(int16x8_t a, int16x8_t b) noexcept
   return r;
 }
 
+__inline_g int16x8_t
+vtrn1q_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 8, 2, 10, 4, 12, 6, 14);
+}
+
+__inline_g int16x8_t
+vtrn2q_s16(int16x8_t a, int16x8_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 9, 3, 11, 5, 13, 7, 15);
+}
+
 __inline_g uint16x8x2_t
 vtrnq_u16(uint16x8_t a, uint16x8_t b) noexcept
 {
@@ -2628,6 +2640,18 @@ vtrnq_s32(int32x4_t a, int32x4_t b) noexcept
   r.val[0] = __builtin_shufflevector(a, b, 0, 4, 2, 6);
   r.val[1] = __builtin_shufflevector(a, b, 1, 5, 3, 7);
   return r;
+}
+
+__inline_g int32x4_t
+vtrn1q_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 0, 4, 2, 6);
+}
+
+__inline_g int32x4_t
+vtrn2q_s32(int32x4_t a, int32x4_t b) noexcept
+{
+  return __builtin_shufflevector(a, b, 1, 5, 3, 7);
 }
 
 __inline_g uint32x4x2_t

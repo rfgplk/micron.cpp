@@ -10,15 +10,21 @@
 #include "../string/strings.hpp"
 #include "../syscall.hpp"
 #include "../types.hpp"
-#include "posix/iosys.hpp"
+#include "os/iosys.hpp"
 
 namespace micron
 {
-
-inline char *
-realpath(const char *__restrict path, char *__restrict resolved_path)
+namespace io
 {
-  if ( !path ) {
+
+// resolve `path` into `dst`, whose capacity is `dstcap` BYTES (including the terminating
+// NUL). Returns `dst` on success, nullptr on failure: open error, readlink error, or the
+// resolved path would not fit in `dstcap` (reported as failure/ENAMETOOLONG rather than a
+// silently truncated result). This is the sized core every overload routes through.
+inline char *
+realpath_into(const char *__restrict path, char *__restrict dst, usize dstcap)
+{
+  if ( !path || !dst || dstcap == 0 ) {
     return nullptr;
   }
 
@@ -30,20 +36,6 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
 #endif
   if ( fd < 0 ) {
     return nullptr;
-  }
-
-  char *result_buf = resolved_path;
-  bool allocated = false;
-
-  if ( !resolved_path ) {
-#if defined(__micron_arch_width_32)
-    max_t __m = micron::syscall(SYS_mmap2, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0);
-#else
-    max_t __m = micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0);
-#endif
-    if ( micron::syscall_failed(__m) ) return nullptr;
-    result_buf = reinterpret_cast<char *>(__m);
-    allocated = true;
   }
 
   char proc_path[32];
@@ -79,24 +71,51 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
   }
   proc_path[i] = '\0';
 
+  // never fill past the destination (leave room for the NUL), and never past PATH_MAX-1
+  // which is the kernel path-length ceiling. This is the bound that was missing before.
+  const usize cap = dstcap < posix::path_max ? dstcap : posix::path_max;
 #if defined(__micron_syscall_generic)
   // asm-generic ABI (arm64) has no legacy readlink syscall; route via readlinkat
-  max_t len = (micron::syscall(SYS_readlinkat, posix::at_fdcwd, proc_path, result_buf, posix::path_max - 1));
+  max_t len = (micron::syscall(SYS_readlinkat, posix::at_fdcwd, proc_path, dst, cap - 1));
 #else
-  max_t len = (micron::syscall(SYS_readlink, proc_path, result_buf, posix::path_max - 1));
+  max_t len = (micron::syscall(SYS_readlink, proc_path, dst, cap - 1));
 #endif
 
   close(fd);
   if ( len < 0 ) {
-    if ( allocated ) {
-      micron::syscall(SYS_munmap, result_buf, posix::path_max);
-    }
+    return nullptr;
+  }
+  // readlink truncates silently: a return of exactly bufsiz means the target did not fit.
+  // Report that as failure (ENAMETOOLONG) instead of handing back a truncated path.
+  if ( static_cast<usize>(len) >= cap - 1 ) {
     return nullptr;
   }
 
-  result_buf[len] = '\0';
+  dst[len] = '\0';
+  return dst;
+}
 
-  return result_buf;
+inline char *
+realpath(const char *__restrict path, char *__restrict resolved_path)
+{
+  if ( resolved_path )
+    // caller-supplied buffer: its documented contract is a capacity of >= PATH_MAX bytes.
+    return realpath_into(path, resolved_path, posix::path_max);
+
+  // allocate a PATH_MAX scratch buffer FIRST, then resolve into it. No descriptor is
+  // opened until realpath_into, so an mmap failure here cannot leak an fd (was a leak).
+#if defined(__micron_arch_width_32)
+  max_t __m = micron::syscall(SYS_mmap2, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0);
+#else
+  max_t __m = micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0);
+#endif
+  if ( micron::syscall_failed(__m) ) return nullptr;
+  char *buf = reinterpret_cast<char *>(__m);
+  if ( !realpath_into(path, buf, posix::path_max) ) {
+    micron::syscall(SYS_munmap, buf, posix::path_max);
+    return nullptr;
+  }
+  return buf;
 }
 
 template<usize N = posix::path_max, usize M, typename T>
@@ -104,7 +123,7 @@ inline sstring<N>
 realpath(const sstring<M, T> &path)
 {
   sstring<N> result;
-  char *res = realpath(path.c_str(), result.data());
+  char *res = realpath_into(path.c_str(), result.data(), N * sizeof(T));
 
   if ( !res ) {
     result.clear();
@@ -119,7 +138,9 @@ template<usize N, typename T = schar>
 inline char *
 realpath(const char *path, sstring<N, T> &resolved)
 {
-  char *res = realpath(path, resolved.data());
+  // pass the sstring's REAL capacity (N*sizeof(T) bytes) so an over-long resolved path
+  // fails cleanly instead of overflowing the inline buffer (was the critical overflow).
+  char *res = realpath_into(path, resolved.data(), N * sizeof(T));
   if ( res ) {
     resolved.adjust_size();
   } else {
@@ -134,5 +155,10 @@ realpath(const sstring<M, U> &path, sstring<N, T> &resolved)
 {
   return realpath(path.c_str(), resolved);
 }
+
+};      // namespace io
+
+// all io code lives in micron::io as of io_v3
+using io::realpath;
 
 };      // namespace micron

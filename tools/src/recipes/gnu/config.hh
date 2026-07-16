@@ -1,6 +1,7 @@
 #pragma once
 
 #include "flags.hh"
+#include "io/console.hpp"
 #include "io/fsys.hpp"
 #include "memory/addr.hpp"
 #include "vector/vector.hpp"

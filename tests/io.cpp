@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../src/io/console.hpp"
+#include "../src/io/cached_file.hpp"
 #include "../src/io/filesystem.hpp"
 #include "../src/std.hpp"
 #include "../src/string/format.hpp"
@@ -13,7 +14,7 @@ int
 main(void)
 {
   {
-    mc::fsys::file f("/usr/include/c++/15/cstddef", mc::io::modes::read, 4096);
+    mc::io::cached_file f("/usr/include/c++/16/cstddef", mc::io::modes::read, 4096);
     mc::infolog(f.name());
     try {
       f.read_bytes(2500);
@@ -26,7 +27,7 @@ main(void)
     mc::console_newline();
     mc::console_newline();
     mc::console_newline();
-    mc::fsys::file d("/usr/include/c++/15/atomic", mc::io::modes::read, 4096);
+    mc::io::cached_file d("/usr/include/c++/16/atomic", mc::io::modes::read, 4096);
     try {
       d.set(85);
       d.read_bytes(39);
@@ -38,7 +39,7 @@ main(void)
       return 0;
     }
     mc::ustr8 file_contents(micron::move(d.pull()));
-    d.reopen("/usr/include/c++/15/cmath");
+    d.reopen("/usr/include/c++/16/cmath");
 
     d.load();
     mc::infolog(d.get());

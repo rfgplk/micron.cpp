@@ -20,7 +20,7 @@
 #include "../../linux/io.hpp"
 #include "../../vector/vector.hpp"
 
-#include "file.hpp"
+#include "os_file.hpp"
 
 namespace micron
 {
@@ -312,7 +312,7 @@ concept size_predicate = requires(P p, posix::off_t sz) {
   { p(sz) } -> same_as<bool>;
 };
 
-struct dir: public file {
+struct dir: public os_file {
 
   micron::vector<posix::__impl_dir> _entries;
 
@@ -320,7 +320,7 @@ struct dir: public file {
 
   ~dir() = default;
 
-  dir() : file(), _entries() { }
+  dir() : os_file(), _entries() { }
 
   dir(const char *str) { __open_dir(str); }
 
@@ -330,14 +330,14 @@ struct dir: public file {
 
   template<is_string T> dir(const T &str) { __open_dir(str.c_str()); }
 
-  dir(const dir &o) : file(o), _entries(o._entries), _ctx{} { }
+  dir(const dir &o) : os_file(o), _entries(o._entries), _ctx{} { }
 
-  dir(dir &&o) noexcept : file(micron::move(o)), _entries(micron::move(o._entries)), _ctx(o._ctx) { micron::zero(&o._ctx); }
+  dir(dir &&o) noexcept : os_file(micron::move(o)), _entries(micron::move(o._entries)), _ctx(o._ctx) { micron::zero(&o._ctx); }
 
   dir &
   operator=(dir &&o) noexcept
   {
-    file::operator=(micron::move(o));
+    os_file::operator=(micron::move(o));
     _entries = micron::move(o._entries);
     _ctx = o._ctx;
     micron::zero(&o._ctx);
@@ -347,7 +347,7 @@ struct dir: public file {
   dir &
   operator=(const dir &o)
   {
-    file::operator=(o);
+    os_file::operator=(o);
     _entries = o._entries;
     _ctx = {};
     return *this;
@@ -459,6 +459,12 @@ struct dir: public file {
     return _entries;
   }
 
+  // WARNING: rebuilds the entry cache from scratch -- clear() ends the lifetime of every cached
+  // element, then the directory is re-read -- so it INVALIDATES all outstanding iterators and
+  // references obtained from begin()/end()/for_each_entry(). Every mutating child op
+  // (make_child_dir / remove_child[_dir] / rename_child / symlink_child / link_child) calls this
+  // on success, so do NOT mutate the directory while iterating it: collect the names first, then
+  // mutate. (Same contract as std::vector::erase invalidating iterators.)
   void
   refresh(void)
   {
@@ -1071,6 +1077,8 @@ private:
     }
   }
 
+  // NOTE: paths are trusted; opened by absolute path without O_NOFOLLOW and navigation, we do not defend against symlink swaps / TOCTOU on
+  // purpose
   inline void
   __open_dir(const char *str)
   {

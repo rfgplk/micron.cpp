@@ -99,6 +99,7 @@ template<is_regular_object T, usize N = 64, bool Sf = true> class svector
 
 public:
   using category_type = vector_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
   typedef usize size_type;

@@ -12,7 +12,7 @@
 #include "../pointer.hpp"
 #include "../types.hpp"
 
-#include "posix/iosys.hpp"
+#include "os/iosys.hpp"
 
 namespace micron
 {
@@ -643,9 +643,19 @@ template<int __sz = __buffer_size, int __chnk = __buffer_packet> class stream_vi
   }
 
   usize
+  __cap() const noexcept
+  {
+    usize bs = static_cast<usize>(__buffer->size());
+    usize ts = static_cast<usize>(__sz);
+    return bs < ts ? bs : ts;
+  }
+
+  usize
   __raw_append(const byte *src, usize len)
   {
-    usize avail = static_cast<usize>(__sz) - static_cast<usize>(__size);
+    usize cap = __cap();
+    usize used = static_cast<usize>(__size);
+    usize avail = used < cap ? cap - used : 0;
     usize take = len < avail ? len : avail;
     micron::memcpy(__buffer->begin() + __size, src, take);
     __size += static_cast<max_t>(take);
@@ -738,9 +748,10 @@ public:
   operator<<(const fd_t &in)
   {
     __check_fd(in, "io::stream_view operator<<: fd_t is closed or has an error");
+    const usize cap = __cap();      // bound reads by the real viewed-buffer size, not __sz
     do {
-      if ( static_cast<usize>(__size) >= static_cast<usize>(__sz) ) break;      // buffer full
-      usize avail = static_cast<usize>(__sz) - static_cast<usize>(__size);
+      if ( static_cast<usize>(__size) >= cap ) break;      // buffer full
+      usize avail = cap - static_cast<usize>(__size);
       usize chunk = static_cast<usize>(__chnk) < avail ? static_cast<usize>(__chnk) : avail;
       max_t bytes_read = posix::read(in.fd, __buffer->at_pointer(__size), chunk);
       if ( bytes_read < 0 ) {
@@ -749,7 +760,7 @@ public:
       }
       if ( bytes_read == 0 ) break;      // EOF
       __size += bytes_read;
-    } while ( static_cast<usize>(__size) < static_cast<usize>(__sz) );
+    } while ( static_cast<usize>(__size) < cap );
     __intercept();
     return *this;
   }

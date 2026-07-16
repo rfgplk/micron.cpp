@@ -645,6 +645,7 @@ class carray
 
 public:
   using category_type = array_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
   typedef usize size_type;

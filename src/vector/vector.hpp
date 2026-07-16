@@ -109,6 +109,7 @@ template<typename T, class Alloc = micron::allocator_serial<>, bool Sf = true> c
 
 public:
   using category_type = vector_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef usize size_type;
@@ -1060,6 +1061,7 @@ class vector<T, Alloc, Sf>: public __mutable_memory_resource_move_only<T, Alloc>
 
 public:
   using category_type = vector_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef usize size_type;

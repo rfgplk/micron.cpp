@@ -14,8 +14,8 @@
 #include "../types.hpp"
 
 #include "io.hpp"
+#include "os/os_file.hpp"
 #include "paths.hpp"
-#include "posix/file.hpp"
 
 namespace micron
 {
@@ -180,7 +180,7 @@ fast_log2(double x)
 
 }      // namespace __bin_impl
 
-template<is_string T = micron::string> class binary: public io::file
+template<is_string T = micron::string> class binary: public os_file
 {
 
   micron::sstr<io::max_name> __fname;
@@ -265,10 +265,10 @@ public:
 
   ~binary() = default;
 
-  binary() : io::file(), __fname(), __buf(nullptr), __buf_sz(0), __buf_valid(0), __buf_off(0), __seek(0) { }
+  binary() : os_file(), __fname(), __buf(nullptr), __buf_sz(0), __buf_valid(0), __buf_off(0), __seek(0) { }
 
   binary(const char *name, io::modes mode = io::modes::read, usize buf_sz = __default_buf_size)
-      : io::file(name, mode), __fname(name), __buf(new micron::buffer(buf_sz)), __buf_sz(buf_sz), __buf_valid(0), __buf_off(0),
+      : os_file(name, mode), __fname(name), __buf(new micron::buffer(buf_sz)), __buf_sz(buf_sz), __buf_valid(0), __buf_off(0),
         __seek(mode == io::modes::append || mode == io::modes::appendread ? static_cast<usize>(size()) : 0)
   {
   }
@@ -282,13 +282,13 @@ public:
   }
 
   binary(const binary &o)
-      : io::file(o), __fname(o.__fname), __buf(o.__buf), __buf_sz(o.__buf_sz), __buf_valid(o.__buf_valid), __buf_off(o.__buf_off),
+      : os_file(o), __fname(o.__fname), __buf(o.__buf), __buf_sz(o.__buf_sz), __buf_valid(o.__buf_valid), __buf_off(o.__buf_off),
         __seek(o.__seek)
   {
   }
 
   binary(binary &&o) noexcept
-      : io::file(micron::move(o)), __fname(micron::move(o.__fname)), __buf(micron::move(o.__buf)), __buf_sz(o.__buf_sz),
+      : os_file(micron::move(o)), __fname(micron::move(o.__fname)), __buf(micron::move(o.__buf)), __buf_sz(o.__buf_sz),
         __buf_valid(o.__buf_valid), __buf_off(o.__buf_off), __seek(o.__seek)
   {
     o.__buf_sz = 0;
@@ -300,7 +300,7 @@ public:
   binary &
   operator=(binary &&o) noexcept
   {
-    io::file::operator=(micron::move(o));
+    os_file::operator=(micron::move(o));
     __fname = micron::move(o.__fname);
     __buf = micron::move(o.__buf);
     __buf_sz = o.__buf_sz;
@@ -317,7 +317,7 @@ public:
   binary &
   operator=(const binary &o)
   {
-    io::file::operator=(o);
+    os_file::operator=(o);
     __fname = o.__fname;
     __buf = o.__buf;
     __buf_sz = o.__buf_sz;
@@ -449,7 +449,11 @@ public:
   buf_covers(posix::off_t off, usize len) const noexcept
   {
     if ( !__buf || __buf_valid == 0 ) return false;
-    return off >= __buf_off && (static_cast<usize>(off) + len) <= (static_cast<usize>(__buf_off) + __buf_valid);
+    // overflow safe
+    if ( off < __buf_off ) return false;
+    const usize delta = static_cast<usize>(off) - static_cast<usize>(__buf_off);
+    if ( delta > __buf_valid ) return false;
+    return len <= static_cast<usize>(__buf_valid) - delta;
   }
 
   max_t
@@ -750,8 +754,7 @@ public:
       usize pos = __bin_impl::kmp_search(work.begin() + from, work_fill - from, pat, pat_len, table);
       if ( pos < work_fill - from ) {
         const usize w = from + pos;
-        usize file_pos = static_cast<usize>(file_off) + w;
-        if ( w >= overlap ) file_pos = static_cast<usize>(file_off) + (w - overlap);
+        const usize file_pos = static_cast<usize>(file_off) + w - overlap;
         return { true, file_pos, pat_len };
       }
 
@@ -815,8 +818,7 @@ public:
         usize pos = __bin_impl::kmp_search(work.begin() + scan, work_fill - scan, pat, pat_len, table);
         if ( pos == work_fill - scan ) break;
 
-        usize abs = static_cast<usize>(file_off) + (scan + pos);
-        if ( (scan + pos) >= overlap ) abs = static_cast<usize>(file_off) + ((scan + pos) - overlap);
+        const usize abs = static_cast<usize>(file_off) + (scan + pos) - overlap;
 
         out.push_back({ true, abs, pat_len });
         scan += pos + pat_len;
@@ -1042,6 +1044,171 @@ public:
     return H;
   }
 
+  bin_stats_t
+  analyse_file(void)
+  {
+    __require_buf();
+    bin_stats_t st{};
+    usize freq[256] = {};
+    usize total = 0;
+    usize cur_zero = 0, cur_nz = 0;
+
+    posix::off_t off = 0;
+    usize file_sz = static_cast<usize>(size());
+
+    while ( static_cast<usize>(off) < file_sz ) {
+      max_t n = posix::pread(__handle.fd, __buf->begin(), __buf_sz, off);
+      if ( n <= 0 ) break;
+      const byte *p = __buf->begin();
+      for ( max_t i = 0; i < n; ++i ) {
+        byte b = p[i];
+        freq[b]++;
+        total++;
+        if ( b == 0x00 ) {
+          st.zero_bytes++;
+          if ( ++cur_zero > st.longest_zero_run ) st.longest_zero_run = cur_zero;
+          cur_nz = 0;
+        } else {
+          if ( ++cur_nz > st.longest_nonzero_run ) st.longest_nonzero_run = cur_nz;
+          cur_zero = 0;
+        }
+        if ( b >= 0x20 && b <= 0x7e ) st.printable_bytes++;
+        if ( b >= 0x80 ) st.high_bytes++;
+      }
+      off += n;
+    }
+
+    st.total_bytes = total;
+    for ( usize i = 0; i < 256; ++i ) st.freq[i] = freq[i];
+
+    double H = 0.0;
+    for ( usize i = 0; i < 256; ++i ) {
+      if ( !freq[i] ) continue;
+      double pi = static_cast<double>(freq[i]) / static_cast<double>(total);
+      H -= pi * __bin_impl::fast_log2(pi);
+    }
+    st.entropy = H;
+
+    return st;
+  }
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // absolute integer reads
+  byte
+  read_u8_at(posix::off_t off) const
+  {
+    byte v{};
+    if ( read_exact(&v, 1, off) != 1 ) return byte{ 0 };
+    return v;
+  }
+
+  i8
+  read_i8_at(posix::off_t off) const
+  {
+    return static_cast<i8>(read_u8_at(off));
+  }
+
+  u16
+  read_u16le_at(posix::off_t off) const
+  {
+    byte p[2]{};
+    if ( read_exact(p, 2, off) != 2 ) return u16{ 0 };
+    return static_cast<u16>(p[0]) | (static_cast<u16>(p[1]) << 8);
+  }
+
+  u16
+  read_u16be_at(posix::off_t off) const
+  {
+    byte p[2]{};
+    if ( read_exact(p, 2, off) != 2 ) return u16{ 0 };
+    return (static_cast<u16>(p[0]) << 8) | static_cast<u16>(p[1]);
+  }
+
+  i16
+  read_i16le_at(posix::off_t off) const
+  {
+    return static_cast<i16>(read_u16le_at(off));
+  }
+
+  i16
+  read_i16be_at(posix::off_t off) const
+  {
+    return static_cast<i16>(read_u16be_at(off));
+  }
+
+  u32
+  read_u32le_at(posix::off_t off) const
+  {
+    byte p[4]{};
+    if ( read_exact(p, 4, off) != 4 ) return u32{ 0 };
+    return static_cast<u32>(p[0]) | (static_cast<u32>(p[1]) << 8) | (static_cast<u32>(p[2]) << 16) | (static_cast<u32>(p[3]) << 24);
+  }
+
+  u32
+  read_u32be_at(posix::off_t off) const
+  {
+    byte p[4]{};
+    if ( read_exact(p, 4, off) != 4 ) return u32{ 0 };
+    return (static_cast<u32>(p[0]) << 24) | (static_cast<u32>(p[1]) << 16) | (static_cast<u32>(p[2]) << 8) | static_cast<u32>(p[3]);
+  }
+
+  i32
+  read_i32le_at(posix::off_t off) const
+  {
+    return static_cast<i32>(read_u32le_at(off));
+  }
+
+  i32
+  read_i32be_at(posix::off_t off) const
+  {
+    return static_cast<i32>(read_u32be_at(off));
+  }
+
+  u64
+  read_u64le_at(posix::off_t off) const
+  {
+    byte p[8]{};
+    if ( read_exact(p, 8, off) != 8 ) return u64{ 0 };
+    return static_cast<u64>(p[0]) | (static_cast<u64>(p[1]) << 8) | (static_cast<u64>(p[2]) << 16) | (static_cast<u64>(p[3]) << 24)
+           | (static_cast<u64>(p[4]) << 32) | (static_cast<u64>(p[5]) << 40) | (static_cast<u64>(p[6]) << 48)
+           | (static_cast<u64>(p[7]) << 56);
+  }
+
+  u64
+  read_u64be_at(posix::off_t off) const
+  {
+    byte p[8]{};
+    if ( read_exact(p, 8, off) != 8 ) return u64{ 0 };
+    return (static_cast<u64>(p[0]) << 56) | (static_cast<u64>(p[1]) << 48) | (static_cast<u64>(p[2]) << 40) | (static_cast<u64>(p[3]) << 32)
+           | (static_cast<u64>(p[4]) << 24) | (static_cast<u64>(p[5]) << 16) | (static_cast<u64>(p[6]) << 8) | static_cast<u64>(p[7]);
+  }
+
+  i64
+  read_i64le_at(posix::off_t off) const
+  {
+    return static_cast<i64>(read_u64le_at(off));
+  }
+
+  i64
+  read_i64be_at(posix::off_t off) const
+  {
+    return static_cast<i64>(read_u64be_at(off));
+  }
+
+  max_t
+  try_slice(micron::buffer &dst, posix::off_t off, usize len) const
+  {
+    if ( __handle.closed() ) [[unlikely]]
+      return -error::bad_fd;
+    if ( dst.size() < len ) dst.resize(len);
+    max_t n = read_exact(dst.begin(), len, off);
+    if ( n < 0 ) [[unlikely]]
+      return n;
+    if ( static_cast<usize>(n) < len ) [[unlikely]]
+      return -error::invalid_arg;
+    return n;
+  }
+
   void
   hex_string(char *dst, usize off, usize len) const
   {
@@ -1060,7 +1227,7 @@ public:
   {
     sync();
     close();
-    io::file::operator=(micron::move(io::file(name, mode)));
+    os_file::operator=(micron::move(os_file(name, mode)));
     __fname = name;
     __seek = (mode == io::modes::append || mode == io::modes::appendread ? static_cast<usize>(size()) : 0);
     __buf_valid = 0;
