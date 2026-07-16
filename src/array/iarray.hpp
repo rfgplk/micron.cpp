@@ -236,12 +236,13 @@ public:
     return slice<T>(data(), data() + N);
   }
 
+  // slices are half-open, so to == N is legal and must yield the end pointer
   template<class C>
   inline __attribute__((always_inline)) const slice<T>
   operator[](size_type from, size_type to) const
   {
     if ( from >= to or from > N or to > N ) exc<except::library_error>("micron::iarray operator[] out of allocated memory range.");
-    return slice<T>(get(from), get(to));
+    return slice<T>(cbegin() + from, cbegin() + to);
   }
 
   inline T &

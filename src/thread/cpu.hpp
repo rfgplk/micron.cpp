@@ -958,8 +958,8 @@ public:
   core(unsigned n) const
   {
     __ensure_probed_full();
-    static const core_info_t __empty{};
-    if ( !data_ || n >= 256 ) return __empty;      // data_ null after an mmap failure, or n past the 256-entry array
+    static const core_info_t __empty_core{};
+    if ( !data_ || n >= 256 ) return __empty_core;
     return data_->cores[n];
   }
 

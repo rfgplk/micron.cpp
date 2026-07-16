@@ -358,18 +358,19 @@ public:
     return slice<T>(cbegin(), cend());
   }
 
+  // slices are half-open, so to == N is legal and must yield the end pointer
   inline __attribute__((always_inline)) const slice<T>
   operator[](size_type from, size_type to) const
   {
     if ( from >= to or from > N or to > N ) exc<except::library_error>("micron::farray operator[] out of allocated memory range.");
-    return slice<T>(get(from), get(to));
+    return slice<T>(cbegin() + from, cbegin() + to);
   }
 
   inline __attribute__((always_inline)) slice<T>
   operator[](size_type from, size_type to)
   {
     if ( from >= to or from > N or to > N ) exc<except::library_error>("micron::farray operator[] out of allocated memory range.");
-    return slice<T>(get(from), get(to));
+    return slice<T>(begin() + from, begin() + to);
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,25 +400,27 @@ public:
   }
 
   template<is_constexpr_container A>
+    requires(micron::has_static_size<A>)
   farray &
   operator=(const A &o)
   {
-    if constexpr ( N <= A::length )
+    if constexpr ( N <= A::static_size )
       __impl_container::copy_assign<N, T>(&stack[0], micron::addr(o[0]));
     else
-      __impl_container::copy_assign<A::length, T>(&stack[0], micron::addr(o[0]));
+      __impl_container::copy_assign<A::static_size, T>(&stack[0], micron::addr(o[0]));
     return *this;
   }
 
+  // source sized only at runtime
   template<is_container A>
-    requires(!micron::is_same_v<A, farray>)
+    requires(!micron::is_same_v<A, farray> and !micron::has_static_size<A>)
   farray &
   operator=(const A &o)
   {
     if ( N <= o.size() )
       __impl_container::copy_assign<N, T>(&stack[0], micron::addr(o[0]));
     else
-      micron::copy_n(&o[0], &stack[0], o.size() * sizeof(T));
+      micron::copy_n(&o[0], &stack[0], o.size());
     return *this;
   }
 
@@ -797,7 +800,7 @@ public:
   fill(const F &o)
     requires micron::is_fundamental_v<F>
   {
-    micron::ctypeset<N>(micron::addr(stack[0]), o);
+    micron::ctypeset<N>(micron::addr(stack[0]), static_cast<T>(o));
     return *this;
   }
 

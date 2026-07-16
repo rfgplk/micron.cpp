@@ -295,8 +295,15 @@ concept is_container = requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
 
+// NOTE: a lambda body is not part of the immediate context, so anything ill formed inside the consteval lambda is a hard error rather than
+// a substitution failure
 template<typename C>
-concept is_constexpr_container = requires {
+concept is_constexpr_container = requires(C &c) {
+  C{};
+  c.size();
+  c.begin();
+  c.end();
+} and requires {
   []() consteval {
     C c{};
     auto n = c.size();
@@ -320,8 +327,7 @@ concept has_cstr = requires(T t) {
 
 // contiguity is opt-in via the contiguous_tag now
 template<typename T>
-concept is_contiguous_container
-    = is_iterable_container<T> && requires { typename micron::remove_cvref_t<T>::contiguous_tag; };
+concept is_contiguous_container = is_iterable_container<T> && requires { typename micron::remove_cvref_t<T>::contiguous_tag; };
 
 // element-iterable but neither contiguous nor a string: list, doublelist, maps, sets, trees
 template<typename T>

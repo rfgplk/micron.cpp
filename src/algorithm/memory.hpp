@@ -177,11 +177,11 @@ copy(const T *restrict src, F *restrict dst)
 
 template<usize N, typename T, typename F>
 F &
-copy(const T &restrict src, F &restrict dst)
+rcopy(const T &restrict src, F &restrict dst)
 {
 #if __micron_x86_simd_width >= 256
   if constexpr ( (N / sizeof(T)) <= 32 )
-    __memcpy_32(dst, src, N * sizeof(T));
+    _rmemcpy_32(dst, src, N * sizeof(T));
   else if constexpr ( (N * sizeof(T)) % 32 == 0 )
     simd::rmemcpy256(dst, src, N);
   else if constexpr ( (N * sizeof(T)) % 16 == 0 )
@@ -190,7 +190,7 @@ copy(const T &restrict src, F &restrict dst)
     crmemcpy<N>(dst, src);
 #elif __micron_x86_simd_width >= 128
   if constexpr ( (N / sizeof(T)) <= 32 )
-    __memcpy_32(dst, src, N * sizeof(T));
+    _rmemcpy_32(dst, src, N * sizeof(T));
   else if constexpr ( (N * sizeof(T)) % 16 == 0 )
     simd::rmemcpy128(dst, src, N);
   else
