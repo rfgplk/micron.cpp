@@ -165,7 +165,7 @@ public:
   ivector(usize n, Args &&...args) : __mem(n)
   {
     usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
     } catch ( ... ) {
@@ -215,7 +215,7 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( const T &value : lst ) {
           new (micron::addr(__mem::memory[i])) T(value);

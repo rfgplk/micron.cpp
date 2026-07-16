@@ -82,6 +82,7 @@ private:
   __try_open(backend_tag_t tag) noexcept
   {
     if ( tag == backend_tag_t::none ) return false;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       if ( tag == backend_tag_t::x11 ) {
         __x11.open(x11_lib());
@@ -97,6 +98,17 @@ private:
       __copy_msg(tag == backend_tag_t::x11 ? __x11_last_err : __wl_last_err, "unknown");
       return false;
     }
+#else
+    // below the eh gate open() aborts instead of throwing, so a failed probe cannot be reported as
+    // false. Acceptable: gfx dlopens libX11/libwayland and is unreachable in a freestanding build.
+    if ( tag == backend_tag_t::x11 ) {
+      __x11.open(x11_lib());
+    } else {      // wayland
+      __wl.open(wayland_lib());
+    }
+    __backend = tag;
+    return true;
+#endif
   }
 
   [[noreturn]] static void

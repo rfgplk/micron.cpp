@@ -334,6 +334,29 @@ struct dir: public os_file {
 
   dir(dir &&o) noexcept : os_file(micron::move(o)), _entries(micron::move(o._entries)), _ctx(o._ctx) { micron::zero(&o._ctx); }
 
+  // non-throwing counterpart of the (const char *) ctor, for callers that must tolerate an
+  // unreadable directory (see __ftw::walk). On failure the returned dir carries a negative -errno
+  // in its handle and valid() is false -- the same contract as io::fsys::open_file. This exists
+  // because exc<> aborts rather than throws once __use_exceptions is false, so a catch-based skip
+  // cannot work in a freestanding build.
+  // NB: no exists()/is_dir() pre-probe -- O_DIRECTORY already reports ENOTDIR, and leaving them out
+  // also closes the check-then-open race the throwing ctor has (see ISSUES.md).
+  static dir
+  try_open(const char *str) noexcept
+  {
+    dir d;
+    if ( !posix::verify(str) ) {
+      d.__handle.fd = -error::invalid_arg;
+      return d;
+    }
+    d.__handle.fd = posix::open(str, posix::o_rdonly | posix::o_directory | posix::o_cloexec);
+    if ( d.__handle.fd >= 0 ) {
+      d.fname = str;
+      micron::zero(&d.sd);
+    }
+    return d;
+  }
+
   dir &
   operator=(dir &&o) noexcept
   {

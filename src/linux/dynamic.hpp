@@ -20,7 +20,7 @@ public:
 
   explicit host_dso(const char *soname) : __mod(elf::host_find(soname))
   {
-    if ( !__mod ) throw except::library_error("host_dso: soname not present in host");
+    if ( !__mod ) exc<except::library_error>("host_dso: soname not present in host");
   }
 
   bool

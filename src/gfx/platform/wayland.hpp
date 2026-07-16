@@ -161,6 +161,14 @@ public:
     return __display;
   }
 
+  // the bound registry; callers that need globals this class does not bind itself (uxin binds
+  // wl_seat, for instance) add their own listener to it
+  wl_registry *
+  registry() const noexcept
+  {
+    return __registry;
+  }
+
   wl_compositor *
   compositor() const noexcept
   {

@@ -60,7 +60,7 @@ public:
       __impl_container::zero<N, T>(micron::addr(stack[0]));
     } else {
       size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( ; i < N; ++i ) new (micron::addr(stack[i])) T{};
       } catch ( ... ) {
@@ -95,7 +95,7 @@ public:
   {
     if ( lst.size() > N ) exc<except::runtime_error>("micron::iarray iarray(init_list): init_list too large.");
     size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( auto &&value : lst ) {
         new (micron::addr(stack[i])) T(value);

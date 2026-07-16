@@ -71,7 +71,7 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( const T &value : lst ) {
           new (addr(__mem::memory[i])) T(value);
@@ -127,7 +127,7 @@ public:
   fvector(size_type n, Args... args) : __mem(n)
   {
     size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < n; i++ ) new (addr(__mem::memory[i])) T(args...);
     } catch ( ... ) {

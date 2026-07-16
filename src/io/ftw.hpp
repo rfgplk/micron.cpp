@@ -33,12 +33,14 @@ walk(path &&p, Sink &&sink, node_id *chain, u32 depth, collect what, bool is_roo
   if ( depth >= ftw_max_depth ) return true;
 
   // entries collected at this level
+  // NB: this must stay exception-free. An unreadable sub-directory (EACCES) is skipped, not fatal,
+  // and that cannot be expressed with try/catch: below the eh gate exc<> aborts instead of
+  // throwing, so a catch-based skip would kill the process mid-walk. try_*() report instead.
   micron::fvector<path_t> coll;
-  try {
-    coll = (what == collect::files) ? p.files() : (what == collect::all ? p.all() : p.dirs());
-  } catch ( except::__base_exception & ) {
-    if ( is_root ) throw;
-    return true;
+  if ( const i32 r = (what == collect::files) ? p.try_files(coll) : (what == collect::all ? p.try_all(coll) : p.try_dirs(coll));
+       r < 0 ) {
+    if ( is_root ) exc_e<except::io_error>(r, "micron::io::ftw, failed to open root directory.");
+    return true;      // unreadable sub-directory -> skip
   }
   for ( auto &n : coll ) {
     if ( n == "." || n == ".." ) continue;
@@ -47,11 +49,9 @@ walk(path &&p, Sink &&sink, node_id *chain, u32 depth, collect what, bool is_roo
 
   // recurse into sub-directories only
   micron::fvector<path_t> subdirs;
-  try {
-    subdirs = p.dirs();
-  } catch ( except::__base_exception & ) {
-    if ( is_root ) throw;
-    return true;
+  if ( const i32 r = p.try_dirs(subdirs); r < 0 ) {
+    if ( is_root ) exc_e<except::io_error>(r, "micron::io::ftw, failed to open root directory.");
+    return true;      // unreadable sub-directory -> skip
   }
   for ( auto &n : subdirs ) {
     if ( n == "." || n == ".." ) continue;

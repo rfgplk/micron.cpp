@@ -27,13 +27,16 @@ template<class Type> class shared_pointer: private __internal_pointer_alloc<shar
   static shared_handler<Type> *
   __make_control(Type *p)
   {
-
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       return __alloc::__impl_alloc(p, static_cast<count_t>(1));
     } catch ( ... ) {
       __delete(p);
       throw;
     }
+#else
+    return __alloc::__impl_alloc(p, static_cast<count_t>(1));
+#endif
   }
 
 public:
