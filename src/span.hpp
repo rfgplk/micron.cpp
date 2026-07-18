@@ -170,7 +170,7 @@ public:
   {
     if ( this == micron::addressof(o) ) return *this;
     __impl_container::destroy(micron::addr(stack[0]), length);
-    length = 0;   
+    length = 0;
     __impl_container::move(micron::addr(stack[0]), micron::addr(o.stack[0]), o.length);
     length = o.length;
     o.length = 0;

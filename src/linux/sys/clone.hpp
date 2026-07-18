@@ -10,6 +10,7 @@
 
 #include "../../bits/__arch.hpp"      // __micron_arch_*, __micron_no_ssp
 #include "../../errno.hpp"
+#include "../../kernel.hpp"
 #include "../../type_traits.hpp"
 #include "../__includes.hpp"
 
@@ -357,20 +358,16 @@ inline constexpr unsigned long micthread_flags
 inline constexpr int __micthread_ctid_alive = 1;
 
 // main clone3 spawn
+// >=5.3 (clone3)
+inline kernel::probe_gate __clone3_gate{};
+
 inline pid_t
 clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid, int *child_tid,
              unsigned long flags = micthread_flags)
 {
   if ( !thunk || !stack_low || stack_size == 0 ) return -EINVAL;
   if ( child_tid ) *child_tid = __micthread_ctid_alive;
-  clone_args args{};
-  args.flags = flags;
-  args.exit_signal = 0;      // CLONE_THREAD: no exit signal to the parent (kernel rejects otherwise)
-  args.stack = reinterpret_cast<u64>(stack_low);
-  args.stack_size = stack_size;
-  args.tls = tls;      // amd64/arm64/arm32: CLONE_SETTLS takes the raw TP (FSBASE / TPIDR / TPIDRURO)
-  args.parent_tid = reinterpret_cast<u64>(parent_tid);
-  args.child_tid = reinterpret_cast<u64>(child_tid);
+  unsigned long tls_arg = tls;
 #if defined(__micron_arch_x86)
   // i386 is the exception (WHY?!): CLONE_SETTLS expects a struct user_desc * not a raw TP (?!?!?!?!)
   struct __i386_clone_user_desc {
@@ -378,9 +375,28 @@ clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_s
   };
 
   __i386_clone_user_desc __i386_tls_desc{ 0xffffffffu, static_cast<unsigned int>(tls), 0xfffffu, 0x51u };
-  args.tls = reinterpret_cast<u64>(&__i386_tls_desc);
+  tls_arg = reinterpret_cast<unsigned long>(&__i386_tls_desc);
 #endif
-  long raw = ::__micron_clone3_entry(thunk, payload, &args, sizeof(args));
+  long raw;
+  if ( __clone3_gate.open(kernel::feature::clone3) ) [[likely]] {
+    clone_args args{};
+    args.flags = flags;
+    args.exit_signal = 0;
+    args.stack = reinterpret_cast<u64>(stack_low);
+    args.stack_size = stack_size;
+    args.tls = tls_arg;
+    args.parent_tid = reinterpret_cast<u64>(parent_tid);
+    args.child_tid = reinterpret_cast<u64>(child_tid);
+    raw = ::__micron_clone3_entry(thunk, payload, &args, sizeof(args));
+    if ( !(micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS) ) [[likely]] {
+      if ( micron::syscall_failed(raw) && child_tid ) *child_tid = 0;      // no child ran
+      return static_cast<pid_t>(raw);
+    }
+    __clone3_gate.demote();
+  }
+  byte *top = reinterpret_cast<byte *>(stack_low) + stack_size;
+  raw = ::__micron_clone_entry(thunk, top, flags, payload, reinterpret_cast<int *>(parent_tid), reinterpret_cast<void *>(tls_arg),
+                               child_tid);
   if ( micron::syscall_failed(raw) && child_tid ) *child_tid = 0;      // no child ran
   return static_cast<pid_t>(raw);
 }
@@ -484,9 +500,11 @@ __fork_clone(int exit_signal)
   clone_args.child_tid = 0;
   clone_args.tls = 0;
 
-  long raw = posix::clone3_kernel(clone_args);
+  long raw = -ENOSYS;
+  if ( kernel::has(kernel::feature::clone3) ) [[likely]]
+    raw = posix::clone3_kernel(clone_args);
   if ( micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS ) {
-    // clone3 unavailable (pre-5.3 kernel, or under qemu-user) -> legacy fork/clone fallback
+    // clone3 unavailable (pre-5.3 kernel, or under qemu-user)
     raw = posix::fork_kernel();
   }
   return static_cast<pid_t>(raw);

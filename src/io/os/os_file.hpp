@@ -1586,6 +1586,7 @@ public:
     return micron::splice(src.fd, nullptr, __handle.fd, nullptr, count, flags);
   }
 
+  // cross-fs copies need >=5.3
   max_t
   copy_range_to(os_file &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
   {

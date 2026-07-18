@@ -2,9 +2,8 @@
 #include "../src/io/serial.hpp"
 #include "../src/list.hpp"
 #include "../src/maps/heap_swiss.hpp"
-#include "../src/vector/vector.hpp"
 #include "../src/strings.hpp"
-
+#include "../src/vector/vector.hpp"
 
 using namespace micron;
 
@@ -27,10 +26,12 @@ main()
     micron::string s("hello-tier-a");
     micron::vector<u32> v;
     for ( u32 i = 0; i < 100; ++i ) v.push_back(i * 7);
+
     struct pod_t {
       i32 a;
       f32 b;
     } p{ 42, 2.5f };
+
     CHECK(f.write(s) == (max_t)s.size());
     CHECK(f.write(v) == (max_t)(100 * sizeof(u32)));
     CHECK(f.write(p) == (max_t)sizeof(p));

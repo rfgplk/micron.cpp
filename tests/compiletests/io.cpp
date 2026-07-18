@@ -30,9 +30,6 @@
 #include "../../src/vector/vector.hpp"
 
 #if defined(__STDC_HOSTED__) && __STDC_HOSTED__ == 0
-// freestanding 32-bit links have no libgcc: pick up the weak 64-bit div/mod shims here
-// until the installed start.cpp snapshot (which includes them via __gcc_math_syms.hpp)
-// is refreshed
 #include "../../src/math/__gcc_int_syms.hpp"
 #endif
 
@@ -48,12 +45,14 @@ struct pod_t {
 // hard-error instead of evaluating to false
 struct tc_functor {
   int v;
+
   int
   operator()(int) const
   {
     return v;
   }
 };
+
 template<typename T>
 concept __can_write = requires(micron::io::file &g, T t) { g.write(t); };
 template<typename T>
@@ -65,12 +64,12 @@ concept __reads_as_consumer = requires(micron::io::file &g, T t) {
   { g.read(t) } -> micron::same_as<micron::option<int, micron::io::error_t>>;
 };
 inline constexpr auto __generic_lambda = [](auto) { };
-static_assert(!__can_write<tc_functor>);                     // no closure byte-dump
-static_assert(!__can_write_cl<tc_functor>);                  // the const-lvalue trap
-static_assert(__reads_as_consumer<tc_functor>);              // consumer read, NOT tier-d fill
-static_assert(!__can_write<decltype(__generic_lambda)>);     // generic lambdas constrained away
+static_assert(!__can_write<tc_functor>);                      // no closure byte-dump
+static_assert(!__can_write_cl<tc_functor>);                   // the const-lvalue trap
+static_assert(__reads_as_consumer<tc_functor>);               // consumer read, NOT tier-d fill
+static_assert(!__can_write<decltype(__generic_lambda)>);      // generic lambdas constrained away
 static_assert(!__can_read<decltype(__generic_lambda)>);
-static_assert(__can_write<pod_t>);                           // PODs still tier (d)
+static_assert(__can_write<pod_t>);      // PODs still tier (d)
 static_assert(__can_read<pod_t>);
 
 int
@@ -97,14 +96,14 @@ main()
   micron::vector<micron::string> vs;
   micron::hswiss<u64, u64> m;
   pod_t p{ 1, 2.f };
-  (void)f.write(s);           // tier a
-  (void)f.write(v);           // tier b
-  (void)f.write(l);           // tier c (framed)
-  (void)f.write(vs);          // tier c (non-TC contiguous)
-  (void)f.write(m);           // tier c (map)
-  (void)f.write(p);           // tier d
-  (void)f.write("lit");       // literal
-  (void)f.write(s.data(), 1); // ptr+len
+  (void)f.write(s);                // tier a
+  (void)f.write(v);                // tier b
+  (void)f.write(l);                // tier c (framed)
+  (void)f.write(vs);               // tier c (non-TC contiguous)
+  (void)f.write(m);                // tier c (map)
+  (void)f.write(p);                // tier d
+  (void)f.write("lit");            // literal
+  (void)f.write(s.data(), 1);      // ptr+len
   (void)f.read<micron::string>();
   (void)f.read<micron::vector<u32>>();
   (void)f.read<micron::list<i32>>();
@@ -136,6 +135,7 @@ main()
   // oneshots
   (void)micron::io::exists("/tmp/compiletest_io");
   if ( auto r = micron::io::read_file("/tmp/compiletest_io"); r.is_first() ) (void)r;
+  (void)micron::io::read_file("/tmp/compiletest_io", s);
   (void)micron::io::write_file("/tmp/compiletest_io", v);
   (void)micron::io::copy("/tmp/compiletest_io", "/tmp/compiletest_io2");
   (void)micron::io::unlink("/tmp/compiletest_io2");
@@ -150,8 +150,8 @@ main()
   (void)micron::format::format("v = {}", v);
 
   // functional layer: file members (fn.hpp / __lines.hpp)
-  (void)f.write([] { return micron::string("p"); });      // producer (lambda)
-  (void)f.write(+[] { return micron::string("p"); });     // producer (fn pointer)
+  (void)f.write([] { return micron::string("p"); });       // producer (lambda)
+  (void)f.write(+[] { return micron::string("p"); });      // producer (fn pointer)
   if ( auto r = f.read([](micron::string sv) { return sv.size(); }); r.is_first() ) (void)r;
   (void)f.read([](micron::vector<u32> vv) { (void)vv; });      // void consumer -> option<unit_t, _>
   (void)f.modify([](micron::string sv) { return sv; });        // pure T -> T

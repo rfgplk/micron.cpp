@@ -73,6 +73,21 @@ read_lines(const io::path_t &p)
   return Ret{ micron::move(out) };
 }
 
+template<typename C>
+  requires requires(C c, micron::string s) { c.push_back(micron::move(s)); }
+max_t
+read_lines(const io::path_t &p, C &target)
+{
+  io::file f = open_file(p, io::modes::read);
+  if ( !f.valid() ) [[unlikely]]
+    return f.raw_fd();
+  if constexpr ( requires(C c) { c.fast_clear(); } )
+    target.fast_clear();
+  else if constexpr ( requires(C c) { c.clear(); } )
+    target.clear();
+  return f.each_line([&target](const char *s, usize len) { target.push_back(micron::string(s, s + len)); });
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // curried forms
 

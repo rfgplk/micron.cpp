@@ -15,6 +15,9 @@
 #include "../maps/hopscotch.hpp"
 #include "../tuple.hpp"
 
+#include "../bits/__print.hpp"
+#include "../settle_fwd.hpp"
+
 #include "../array.hpp"
 #include "../slice.hpp"
 #include "../vector.hpp"
@@ -3133,26 +3136,10 @@ template<typename T> struct formatter<T *, micron::enable_if_t<!micron::is_same_
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// container / map / pair formatters (io_v3): these stream into a growable hstring via the
-// write_str protocol - the fixed scratch-buffer write() contract cannot hold arbitrary-size
-// containers. the parsed spec is applied PER ELEMENT (echof("{:x}", vec) renders each
-// element in hex); framing is fixed: containers "{ a, b }", maps "{ k: v }", pairs "[a, b]".
+// container / map / pair formatters
 
 namespace __impl
 {
-
-// map iterator dialect detection, structural (heap_swiss carries map_tag yet derefs .a/.b)
-template<typename T>
-concept __fmt_kv_key = requires(const T t) {
-  { t.begin()->key };
-  { t.begin()->value };
-};
-
-template<typename T>
-concept __fmt_kv_ab = requires(const T t) {
-  { (*t.begin()).a };
-  { (*t.begin()).b };
-} && !__fmt_kv_key<T>;
 
 template<typename E>
 inline void
@@ -3170,60 +3157,57 @@ fmt_element(hstring<schar> &out, const E &e, const fmt_spec &spec)
   }
 }
 
+struct __fmt_out {
+  hstring<schar> &__o;
+  const fmt_spec &__spec;
+
+  void
+  raw(const char *p, usize n)
+  {
+    __o.append(p, n);
+  }
+
+  void
+  num(u64 v)
+  {
+    char buf[__fmt_buf_size];
+    usize n = fmt_uint_to_buf(buf, __fmt_buf_size, v, 10, false);
+    __o.append(buf, n);
+  }
+
+  template<typename E>
+  void
+  elem(const E &e)
+  {
+    fmt_element(__o, e, __spec);
+  }
+};
+
 };      // namespace __impl
 
-template<typename T>
-struct formatter<T, micron::enable_if_t<micron::is_printable_container<T> && !micron::is_string_v<T> && !is_tagged_map<T>
-                                        && !is_swiss_map<T> && !__impl::__fmt_kv_ab<T>>> {
-  static inline void
-  write_str(hstring<schar> &out, const T &val, const __impl::fmt_spec &spec)
+template<> struct formatter<micron::settle_note> {
+  static inline usize
+  write(char *buf, usize buf_sz, const micron::settle_note &val, const __impl::fmt_spec &)
   {
-    out.append("{ ", 2);
-    bool first = true;
-    for ( auto itr = val.cbegin(); itr != val.cend(); ++itr ) {
-      if ( !first ) out.append(", ", 2);
-      __impl::fmt_element(out, static_cast<const typename T::value_type &>(*itr), spec);
-      first = false;
-    }
-    out.append(" }", 2);
+    usize n = 0;
+    usize k = micron::strlen(val.pre);
+    if ( k > buf_sz - n ) k = buf_sz - n;
+    micron::bytecpy(buf + n, val.pre, k);
+    n += k;
+    if ( val.has_id && n < buf_sz ) n += __impl::fmt_int_to_buf(buf + n, buf_sz - n, val.id, 10, false);
+    k = micron::strlen(val.post);
+    if ( k > buf_sz - n ) k = buf_sz - n;
+    micron::bytecpy(buf + n, val.post, k);
+    return n + k;
   }
 };
 
-template<typename T> struct formatter<T, micron::enable_if_t<__impl::__fmt_kv_key<T> && is_tagged_map<T>>> {
+template<typename T> struct formatter<T, micron::enable_if_t<micron::__print::printable<T> && !micron::is_string_v<T>>> {
   static inline void
   write_str(hstring<schar> &out, const T &val, const __impl::fmt_spec &spec)
   {
-    out.append("{ ", 2);
-    bool first = true;
-    for ( auto itr = val.begin(); itr != val.end(); ++itr ) {
-      if ( !itr->key ) continue;
-      if ( !first ) out.append(", ", 2);
-      char kbuf[__impl::__fmt_buf_size];
-      usize kn = __impl::fmt_uint_to_buf(kbuf, __impl::__fmt_buf_size, static_cast<u64>(itr->key), 10, false);
-      out.append(kbuf, kn);
-      out.append(": ", 2);
-      __impl::fmt_element(out, itr->value, spec);
-      first = false;
-    }
-    out.append(" }", 2);
-  }
-};
-
-template<typename T> struct formatter<T, micron::enable_if_t<__impl::__fmt_kv_ab<T> && !micron::is_string_v<T>>> {
-  static inline void
-  write_str(hstring<schar> &out, const T &val, const __impl::fmt_spec &spec)
-  {
-    out.append("{ ", 2);
-    bool first = true;
-    for ( auto itr = val.begin(); itr != val.end(); ++itr ) {
-      if ( !first ) out.append(", ", 2);
-      auto entry = *itr;
-      __impl::fmt_element(out, entry.a, spec);
-      out.append(": ", 2);
-      __impl::fmt_element(out, entry.b, spec);
-      first = false;
-    }
-    out.append(" }", 2);
+    __impl::__fmt_out o{ out, spec };
+    micron::__print::render(o, val);
   }
 };
 
@@ -3349,6 +3333,7 @@ format_one(hstring<schar> &out, const char *spec_start, const char *spec_end, us
 }      // namespace __impl
 
 template<typename... Args>
+  requires(!micron::any_settling<Args...>)
 inline hstring<schar>
 format(const char *fmt, const Args &...args)
 {
@@ -3408,6 +3393,15 @@ format(const char *fmt, const Args &...args)
     }
   }
   return out;
+}
+
+// settling form
+template<typename... Args>
+  requires(micron::any_settling<Args...>)
+inline hstring<schar>
+format(const char *fmt, Args &&...args)
+{
+  return micron::__settle_impl::__then([&](const auto &...v) { return micron::format::format(fmt, v...); }, micron::forward<Args>(args)...);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -73,7 +73,24 @@ class volatile_t
       while ( remaining > 0 ) {
         usize want = remaining < chunk ? remaining : chunk;
         max_t n = micron::copy_file_range(src_fd, &src_off, __handle.fd, &dst_off, want, 0u);
-        if ( n <= 0 ) break;
+        if ( n < 0 ) {
+          // cross-fs copy_file_range needs >=5.3
+          if ( -n == 18 /*EXDEV*/ || -n == 38 /*ENOSYS*/ || -n == 22 /*EINVAL*/ ) {
+            byte __buf[16384];
+            while ( remaining > 0 ) {
+              usize __want = remaining < sizeof(__buf) ? remaining : sizeof(__buf);
+              max_t r = posix::pread(src_fd, __buf, __want, src_off);
+              if ( r <= 0 ) break;
+              max_t w = posix::pwrite(__handle.fd, __buf, static_cast<usize>(r), dst_off);
+              if ( w <= 0 ) break;
+              src_off += w;
+              dst_off += w;
+              remaining -= static_cast<usize>(w);
+            }
+          }
+          break;
+        }
+        if ( n == 0 ) break;
         remaining -= static_cast<usize>(n);
       }
     } else {
@@ -100,9 +117,6 @@ public:
   micron::sstr<max_name> fname;
   fd_t __handle;
   mutable stat_t sd;
-  // live-mmap tracking so unmap()/close() use the EXACT mapped length (a recomputed size()
-  // can differ from the length actually mapped and munmap would then tear down adjacent
-  // regions, or leak the mapping if close() runs first).
   mutable void *__map_addr = nullptr;
   mutable usize __map_len = 0;
 
@@ -730,6 +744,7 @@ public:
     return splice_from(src.raw_fd(), count, src_off, dst_off, flags);
   }
 
+  // memfd <-> real fs is always cross-fs: needs >=5.3
   max_t
   copy_to(os_file &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
   {
@@ -746,6 +761,7 @@ public:
     return micron::copy_file_range(__handle.fd, sp, dst.__handle.fd, dp, count, 0u);
   }
 
+  // cross-fs (real fs -> memfd): needs >=5.3
   max_t
   copy_from(const os_file &src, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1)
   {

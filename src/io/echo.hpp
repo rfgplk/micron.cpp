@@ -20,6 +20,9 @@
 #include "../string/conversions/floating_point.hpp"
 #include "../string/format.hpp"
 
+#include "../bits/__print.hpp"
+#include "../settle_fwd.hpp"
+
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // io printing engine + echo, the primary universal print facility
 // (supersedes console effectively)
@@ -202,18 +205,6 @@ template<int SZ, int CK> struct stream_sink {
   }
 };
 
-template<typename T>
-concept __kv_key_iter = requires(const T t) {
-  { t.begin()->key };
-  { t.begin()->value };
-};
-
-template<typename T>
-concept __kv_ab_iter = requires(const T t) {
-  { (*t.begin()).a };
-  { (*t.begin()).b };
-} && !__kv_key_iter<T>;
-
 // fd-backed sinks expose target() (used for the wide/unicode fput special cases)
 template<typename S>
 concept fd_backed_sink = requires(const S s) {
@@ -284,17 +275,9 @@ template<output_sink S, typename T>
   requires(micron::is_pointer_v<T> && !is_char_ptr<T>)
 max_t printk(S &s, const T &x);
 
-template<output_sink S, is_printable_container T>
-  requires(!__kv_key_iter<T> && !__kv_ab_iter<T> && !micron::is_arithmetic_v<T>)
-max_t printk(S &s, const T &ctr);
-
-template<output_sink S, __kv_key_iter T>
-  requires(!has_cstr<T>)
-max_t printk(S &s, const T &m);
-
-template<output_sink S, __kv_ab_iter T>
-  requires(!has_cstr<T>)
-max_t printk(S &s, const T &m);
+template<output_sink S, typename T>
+  requires micron::__print::printable<T>
+max_t printk(S &s, const T &x);
 
 template<output_sink S, typename A, typename B> max_t printk(S &s, const pair<A, B> &p);
 
@@ -326,15 +309,6 @@ inline max_t
 printk(S &s, char c)
 {
   return s.put(c);
-}
-
-// NOTE: binds a nonconst byte lvalue only
-template<output_sink S, typename T>
-  requires(micron::is_same_v<T, byte> && sizeof(T) == 1)
-inline max_t
-printk(S &s, T &x)
-{
-  return s.put(static_cast<char>(x));
 }
 
 // raw sized print
@@ -373,6 +347,20 @@ printk(S &s, const fd_t &f)
   char buf[24];
   usize n = __impl::arith_to_buf(buf, 24, static_cast<i64>(f.fd));
   return s.put(buf, n);
+}
+
+template<output_sink S>
+inline max_t
+printk(S &s, const micron::settle_note &n)
+{
+  max_t t = s.put(n.pre, micron::strlen(n.pre));
+  if ( n.has_id ) {
+    char buf[24];
+    usize k = __impl::arith_to_buf(buf, 24, n.id);
+    t += s.put(buf, k);
+  }
+  t += s.put(n.post, micron::strlen(n.post));
+  return t;
 }
 
 // arithmetic
@@ -420,85 +408,43 @@ printk(S &s, const volatile T &x)
   return printk(s, copy);
 }
 
-// container (non-string, non-map): { a, b, c }
-template<output_sink S, is_printable_container T>
-  requires(!__kv_key_iter<T> && !__kv_ab_iter<T> && !micron::is_arithmetic_v<T>)
-max_t
-printk(S &s, const T &ctr)
-{
-  max_t t = s.put("{ ", 2);
-  bool first = true;
-  for ( auto itr = ctr.cbegin(); itr != ctr.cend(); ++itr ) {
-    if ( !first ) t += s.put(", ", 2);
-    // NOTE: value_type-cast on purpose - deducing from *itr mishandles cv-qualified and
-    // proxy iterators (historical printk comment preserved)
-    t += printk(s, static_cast<const typename T::value_type &>(*itr));
-    first = false;
-  }
-  t += s.put(" }", 2);
-  return t;
-}
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// classified containers
 
-// node-chain containers (micron::list / doublelist)
+template<output_sink S> struct __sink_out {
+  S &__s;
+  max_t __t = 0;
+
+  void
+  raw(const char *p, usize n)
+  {
+    __t += __s.put(p, n);
+  }
+
+  void
+  num(u64 v)
+  {
+    char buf[24];
+    usize n = __impl::arith_to_buf(buf, 24, v);
+    __t += __s.put(buf, n);
+  }
+
+  template<typename E>
+  void
+  elem(const E &e)
+  {
+    __t += printk(__s, e);
+  }
+};
+
 template<output_sink S, typename T>
-  requires(requires(const T t) {
-    { t.ibegin()->next };
-    { t.ibegin()->data };
-  } && !is_printable_container<T> && !has_cstr<T>)
+  requires micron::__print::printable<T>
 max_t
-printk(S &s, const T &lst)
+printk(S &s, const T &x)
 {
-  max_t t = s.put("{ ", 2);
-  bool first = true;
-  for ( auto *p = lst.ibegin(); p != nullptr; p = p->next ) {
-    if ( !first ) t += s.put(", ", 2);
-    t += printk(s, p->data);
-    first = false;
-  }
-  t += s.put(" }", 2);
-  return t;
-}
-
-// key/value-node maps (hopscotch, robin): { hash: value, ... }
-template<output_sink S, __kv_key_iter T>
-  requires(!has_cstr<T>)
-max_t
-printk(S &s, const T &m)
-{
-  max_t t = s.put("{ ", 2);
-  bool first = true;
-  for ( auto itr = m.begin(); itr != m.end(); ++itr ) {
-    if ( !itr->key ) continue;
-    if ( !first ) t += s.put(", ", 2);
-    char kbuf[24];
-    usize kn = __impl::arith_to_buf(kbuf, 24, static_cast<u64>(itr->key));
-    t += s.put(kbuf, kn);
-    t += s.put(": ", 2);
-    t += printk(s, itr->value);
-    first = false;
-  }
-  t += s.put(" }", 2);
-  return t;
-}
-
-// pair-dialect maps (stack/heap swiss)
-template<output_sink S, __kv_ab_iter T>
-  requires(!has_cstr<T>)
-max_t
-printk(S &s, const T &m)
-{
-  max_t t = s.put("{ ", 2);
-  bool first = true;
-  for ( auto itr = m.begin(); itr != m.end(); ++itr ) {
-    if ( !first ) t += s.put(", ", 2);
-    auto entry = *itr;
-    t += printk(s, entry.a);
-    t += s.put(": ", 2);
-    t += printk(s, entry.b);
-    first = false;
-  }
-  t += s.put(" }", 2);
-  return t;
+  __sink_out<S> o{ s };
+  micron::__print::render(o, x);
+  return o.__t;
 }
 
 // pair: [a, b]
@@ -587,12 +533,26 @@ run(S &s, bool newline, const Ts &...args)
 // echo / echon
 
 template<typename First, typename... Rest>
-  requires(!echo_target<First>)
+  requires(!echo_target<First> && !micron::any_settling<First, Rest...>)
 inline max_t
 echo(const First &first, const Rest &...rest)
 {
   stdout_sink s;
   return __echo_impl::run(s, true, first, rest...);
+}
+
+// settling form
+template<typename First, typename... Rest>
+  requires(!echo_target<First> && micron::any_settling<First, Rest...>)
+inline max_t
+echo(First &&first, Rest &&...rest)
+{
+  return micron::__settle_impl::__then(
+      [](const auto &...v) -> max_t {
+        stdout_sink s;
+        return __echo_impl::run(s, true, v...);
+      },
+      micron::forward<First>(first), micron::forward<Rest>(rest)...);
 }
 
 inline max_t
@@ -604,7 +564,7 @@ echo(void)
 
 // no trailing newline
 template<typename First, typename... Rest>
-  requires(!echo_target<First>)
+  requires(!echo_target<First> && !micron::any_settling<First, Rest...>)
 inline max_t
 echon(const First &first, const Rest &...rest)
 {
@@ -614,9 +574,24 @@ echon(const First &first, const Rest &...rest)
   return r;
 }
 
+template<typename First, typename... Rest>
+  requires(!echo_target<First> && micron::any_settling<First, Rest...>)
+inline max_t
+echon(First &&first, Rest &&...rest)
+{
+  return micron::__settle_impl::__then(
+      [](const auto &...v) -> max_t {
+        stdout_sink s;
+        max_t r = __echo_impl::run(s, false, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward<First>(first), micron::forward<Rest>(rest)...);
+}
+
 // redirecting forms
 template<typename Target, typename... Ts>
-  requires echo_target<Target>
+  requires(echo_target<Target> && !micron::any_settling<Ts...>)
 inline max_t
 echo(Target &&tgt, const Ts &...args)
 {
@@ -647,7 +622,16 @@ echo(Target &&tgt, const Ts &...args)
 }
 
 template<typename Target, typename... Ts>
-  requires echo_target<Target>
+  requires(echo_target<Target> && micron::any_settling<Ts...>)
+inline max_t
+echo(Target &&tgt, Ts &&...args)
+{
+  return micron::__settle_impl::__then([&](const auto &...v) -> max_t { return micron::io::echo(micron::forward<Target>(tgt), v...); },
+                                       micron::forward<Ts>(args)...);
+}
+
+template<typename Target, typename... Ts>
+  requires(echo_target<Target> && !micron::any_settling<Ts...>)
 inline max_t
 echon(Target &&tgt, const Ts &...args)
 {
@@ -677,13 +661,20 @@ echon(Target &&tgt, const Ts &...args)
   }
 }
 
+template<typename Target, typename... Ts>
+  requires(echo_target<Target> && micron::any_settling<Ts...>)
+inline max_t
+echon(Target &&tgt, Ts &&...args)
+{
+  return micron::__settle_impl::__then([&](const auto &...v) -> max_t { return micron::io::echon(micron::forward<Target>(tgt), v...); },
+                                       micron::forward<Ts>(args)...);
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // echof / echofn: explicit micron::format {} strings
 namespace __echo_impl
 {
 
-// emit `n` copies of `fill` in coalesced chunks (one s.put per <=64 bytes) instead of
-// one put(fill) per character — wide padding specs are otherwise O(width) sink calls.
 template<output_sink S>
 inline max_t
 __put_fill_run(S &s, char fill, usize n)
@@ -830,6 +821,7 @@ format_to_sink(S &s, const char *fmt, const Args &...args)
 };      // namespace __echo_impl
 
 template<typename... Args>
+  requires(!micron::any_settling<Args...>)
 inline max_t
 echof(const char *fmt, const Args &...args)
 {
@@ -840,6 +832,16 @@ echof(const char *fmt, const Args &...args)
 }
 
 template<typename... Args>
+  requires(micron::any_settling<Args...>)
+inline max_t
+echof(const char *fmt, Args &&...args)
+{
+  return micron::__settle_impl::__then([&](const auto &...v) -> max_t { return micron::io::echof(fmt, v...); },
+                                       micron::forward<Args>(args)...);
+}
+
+template<typename... Args>
+  requires(!micron::any_settling<Args...>)
 inline max_t
 echofn(const char *fmt, const Args &...args)
 {
@@ -849,8 +851,17 @@ echofn(const char *fmt, const Args &...args)
   return r;
 }
 
+template<typename... Args>
+  requires(micron::any_settling<Args...>)
+inline max_t
+echofn(const char *fmt, Args &&...args)
+{
+  return micron::__settle_impl::__then([&](const auto &...v) -> max_t { return micron::io::echofn(fmt, v...); },
+                                       micron::forward<Args>(args)...);
+}
+
 template<typename Target, typename... Args>
-  requires echo_target<Target>
+  requires(echo_target<Target> && !micron::any_settling<Args...>)
 inline max_t
 echof(Target &&tgt, const char *fmt, const Args &...args)
 {
@@ -885,7 +896,17 @@ echof(Target &&tgt, const char *fmt, const Args &...args)
 }
 
 template<typename Target, typename... Args>
-  requires echo_target<Target>
+  requires(echo_target<Target> && micron::any_settling<Args...>)
+inline max_t
+echof(Target &&tgt, const char *fmt, Args &&...args)
+{
+  return micron::__settle_impl::__then(
+      [&](const auto &...v) -> max_t { return micron::io::echof(micron::forward<Target>(tgt), fmt, v...); },
+      micron::forward<Args>(args)...);
+}
+
+template<typename Target, typename... Args>
+  requires(echo_target<Target> && !micron::any_settling<Args...>)
 inline max_t
 echofn(Target &&tgt, const char *fmt, const Args &...args)
 {
@@ -915,6 +936,16 @@ echofn(Target &&tgt, const char *fmt, const Args &...args)
   }
 }
 
+template<typename Target, typename... Args>
+  requires(echo_target<Target> && micron::any_settling<Args...>)
+inline max_t
+echofn(Target &&tgt, const char *fmt, Args &&...args)
+{
+  return micron::__settle_impl::__then(
+      [&](const auto &...v) -> max_t { return micron::io::echofn(micron::forward<Target>(tgt), fmt, v...); },
+      micron::forward<Args>(args)...);
+}
+
 inline void
 flush(void)
 {
@@ -922,6 +953,7 @@ flush(void)
 }
 
 template<typename... T>
+  requires(!micron::any_settling<T...>)
 inline void
 print(const T &...str)
 {
@@ -934,12 +966,23 @@ template<typename... T>
 void
 print(T &&...str)
 {
-  stdout_sink s;
-  (printk(s, str), ...);
-  flush();
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          stdout_sink s;
+          (printk(s, v), ...);
+          flush();
+        },
+        micron::forward<T>(str)...);
+  } else {
+    stdout_sink s;
+    (printk(s, str), ...);
+    flush();
+  }
 }
 
 template<typename... T>
+  requires(!micron::any_settling<T...>)
 inline void
 printn(const T &...str)
 {
@@ -951,11 +994,21 @@ template<typename... T>
 void
 printn(T &&...str)
 {
-  stdout_sink s;
-  (printkn(s, str), ...);
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          stdout_sink s;
+          (printkn(s, v), ...);
+        },
+        micron::forward<T>(str)...);
+  } else {
+    stdout_sink s;
+    (printkn(s, str), ...);
+  }
 }
 
 template<typename... T>
+  requires(!micron::any_settling<T...>)
 inline void
 println(const T &...str)
 {
@@ -966,6 +1019,24 @@ println(const T &...str)
   } else {
     (printkn(s, str), ...);
   }
+}
+
+template<typename... T>
+  requires(micron::any_settling<T...>)
+inline void
+println(T &&...str)
+{
+  micron::__settle_impl::__then(
+      [](const auto &...v) {
+        stdout_sink s;
+        if constexpr ( sizeof...(v) > 1 ) {
+          (printk(s, v), ...);
+          s.put('\n');
+        } else {
+          (printkn(s, v), ...);
+        }
+      },
+      micron::forward<T>(str)...);
 }
 
 template<typename... T>
@@ -985,25 +1056,53 @@ template<typename... T>
 inline void
 error(T &&...str)
 {
-  stderr_sink s;
-  (printk(s, str), ...);
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          stderr_sink s;
+          (printk(s, v), ...);
+        },
+        micron::forward<T>(str)...);
+  } else {
+    stderr_sink s;
+    (printk(s, str), ...);
+  }
 }
 
 template<typename... T>
 inline void
 errorn(T &&...str)
 {
-  stderr_sink s;
-  ((printk(s, str), s.put('\n')), ...);
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          stderr_sink s;
+          ((printk(s, v), s.put('\n')), ...);
+        },
+        micron::forward<T>(str)...);
+  } else {
+    stderr_sink s;
+    ((printk(s, str), s.put('\n')), ...);
+  }
 }
 
 template<typename... T>
 inline void
 errorln(T &&...str)
 {
-  stderr_sink s;
-  (printk(s, str), ...);
-  s.put('\n');
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          stderr_sink s;
+          (printk(s, v), ...);
+          s.put('\n');
+        },
+        micron::forward<T>(str)...);
+  } else {
+    stderr_sink s;
+    (printk(s, str), ...);
+    s.put('\n');
+  }
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

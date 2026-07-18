@@ -826,7 +826,7 @@ inline bool
 is_readable(const char *p)
 {
 #if defined(__micron_syscall_generic)
-  return micron::syscall(SYS_faccessat2, posix::at_fdcwd, p, posix::r_ok, 0) == 0;
+  return micron::syscall(SYS_faccessat, posix::at_fdcwd, p, posix::r_ok) == 0;
 #else
   return micron::syscall(SYS_access, p, posix::r_ok) == 0;
 #endif
@@ -836,7 +836,7 @@ inline bool
 is_writable(const char *p)
 {
 #if defined(__micron_syscall_generic)
-  return micron::syscall(SYS_faccessat2, posix::at_fdcwd, p, posix::w_ok, 0) == 0;
+  return micron::syscall(SYS_faccessat, posix::at_fdcwd, p, posix::w_ok) == 0;
 #else
   return micron::syscall(SYS_access, p, posix::w_ok) == 0;
 #endif
@@ -846,7 +846,7 @@ inline bool
 is_executable(const char *p)
 {
 #if defined(__micron_syscall_generic)
-  return micron::syscall(SYS_faccessat2, posix::at_fdcwd, p, posix::x_ok, 0) == 0;
+  return micron::syscall(SYS_faccessat, posix::at_fdcwd, p, posix::x_ok) == 0;
 #else
   return micron::syscall(SYS_access, p, posix::x_ok) == 0;
 #endif
@@ -876,19 +876,19 @@ is_executable(const T &s)
 inline bool
 is_readable_at(posix::fd_t d, const char *p)
 {
-  return micron::syscall(SYS_faccessat2, d.fd, p, posix::r_ok, 0) == 0;
+  return micron::syscall(SYS_faccessat, d.fd, p, posix::r_ok) == 0;
 }
 
 inline bool
 is_writable_at(posix::fd_t d, const char *p)
 {
-  return micron::syscall(SYS_faccessat2, d.fd, p, posix::w_ok, 0) == 0;
+  return micron::syscall(SYS_faccessat, d.fd, p, posix::w_ok) == 0;
 }
 
 inline bool
 is_executable_at(posix::fd_t d, const char *p)
 {
-  return micron::syscall(SYS_faccessat2, d.fd, p, posix::x_ok, 0) == 0;
+  return micron::syscall(SYS_faccessat, d.fd, p, posix::x_ok) == 0;
 }
 
 inline bool

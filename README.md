@@ -199,7 +199,7 @@ These modules build under both the hosted (`pthread`) and the freestanding backe
 - **`tasks/`** -- lightweight task abstraction
 
 ###### OS and I/O
-- **`io/`** -- high-level I/O: files, filesystems (incl. concurrent), paths, pipes, streams, formatting, console, serial, stdin/stdout/stderr, FTW, real-path resolution
+- **`io/`** -- high-level I/O: files, filesystems (incl. concurrent), paths, pipes, streams, formatting, console, serial, stdin/stdout/stderr, FTW, real-path resolution, **flash (io_uring-native file I/O)**
 - **`io/posix/`** -- POSIX I/O wrappers (block, dir, file, terminal, volatile, iosys)
 - **`io/term/`** -- ANSI terminal helpers
 - **`io/uxin/`** -- input-device layer (event devices, key mapping, polling, virtual devices, Wayland reader)

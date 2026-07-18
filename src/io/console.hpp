@@ -191,7 +191,11 @@ cerror(const T &...str)
   set_color(color::red, style::bold);
   io::errorln(str...);
   set_color_reset();
-  ( [&] { if constexpr ( requires { except::standard_error(str); } ) exc_silent<except::standard_error>(str); }(), ... );
+  (
+      [&] {
+        if constexpr ( requires { except::standard_error(str); } ) exc_silent<except::standard_error>(str);
+      }(),
+      ...);
 }
 
 template<typename... T>

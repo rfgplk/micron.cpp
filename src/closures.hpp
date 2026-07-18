@@ -53,8 +53,7 @@ template<typename R, typename... Args> struct function_traits<R (*)(Args...) noe
 template<typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...) noexcept>: function_traits<R(Args...)> {
 };
 
-template<typename C, typename R, typename... Args>
-struct function_traits<R (C::*)(Args...) const noexcept>: function_traits<R(Args...)> {
+template<typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...) const noexcept>: function_traits<R(Args...)> {
 };
 
 // callable objects (functors/lambdas)

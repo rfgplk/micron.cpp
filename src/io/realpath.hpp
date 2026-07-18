@@ -90,8 +90,7 @@ realpath_into(const char *__restrict path, char *__restrict dst, usize dstcap)
 inline char *
 realpath(const char *__restrict path, char *__restrict resolved_path)
 {
-  if ( resolved_path )
-    return realpath_into(path, resolved_path, posix::path_max);
+  if ( resolved_path ) return realpath_into(path, resolved_path, posix::path_max);
 
 #if defined(__micron_arch_width_32)
   max_t __m = micron::syscall(SYS_mmap2, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0);

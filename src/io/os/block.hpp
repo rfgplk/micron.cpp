@@ -94,7 +94,8 @@ struct block: public os_file {
   }
 
   block(const block &o)
-      : os_file(o), _buf(o._buf), _buf_off(o._buf_off), _buf_valid(o._buf_valid), _buf_dirty(false), _info(o._info), _info_valid(o._info_valid)
+      : os_file(o), _buf(o._buf), _buf_off(o._buf_off), _buf_valid(o._buf_valid), _buf_dirty(false), _info(o._info),
+        _info_valid(o._info_valid)
   {
   }
 
@@ -112,7 +113,8 @@ struct block: public os_file {
   operator=(block &&o) noexcept
   {
     if ( this == &o ) return *this;
-    if ( _buf_dirty && __handle.fd >= 0 ) flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
+    if ( _buf_dirty && __handle.fd >= 0 )
+      flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
     os_file::operator=(micron::move(o));
     _buf = micron::move(o._buf);
     _buf_off = o._buf_off;
@@ -131,7 +133,8 @@ struct block: public os_file {
   operator=(const block &o)
   {
     if ( this == &o ) return *this;
-    if ( _buf_dirty && __handle.fd >= 0 ) flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
+    if ( _buf_dirty && __handle.fd >= 0 )
+      flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
     os_file::operator=(o);
     _buf = o._buf;
     _buf_off = o._buf_off;
@@ -203,7 +206,8 @@ struct block: public os_file {
   void
   resize_buf(usize new_sz)
   {
-    if ( _buf_dirty && __handle.fd >= 0 ) flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
+    if ( _buf_dirty && __handle.fd >= 0 )
+      flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
     _buf.recreate(new_sz);
     invalidate_buf();
   }
@@ -212,7 +216,8 @@ struct block: public os_file {
   fill(posix::off_t dev_offset = 0)
   {
     __alive();
-    if ( _buf_dirty && __handle.fd >= 0 ) flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
+    if ( _buf_dirty && __handle.fd >= 0 )
+      flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
     max_t n = posix::pread(__handle.fd, _buf.begin(), _buf.size(), dev_offset);
     if ( n > 0 ) {
       _buf_off = dev_offset;

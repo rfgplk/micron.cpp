@@ -147,6 +147,66 @@ read_file(const io::path_t &p)
   return micron::option<T, io::error_t>{ micron::move(out) };
 }
 
+template<typename T>
+  requires((is_string<T> || is_contiguous_container<T>) && sizeof(typename T::value_type) == 1)
+max_t
+read_file(const io::path_t &p, T &target)
+{
+  io::file f = open_file(p, io::modes::read);
+  if ( !f.valid() ) [[unlikely]]
+    return f.raw_fd();
+  const posix::off64_t sz = f.size();
+  if ( sz > 0 ) {
+    if constexpr ( requires(T t, usize n) {
+                     t.reserve(n);
+                     t.set_size(n);
+                   } ) {
+      target.reserve(static_cast<usize>(sz) + 1);
+      target.set_size(static_cast<usize>(sz));
+      max_t r = f.read(target);
+      if ( r < 0 ) [[unlikely]] {
+        target.set_size(0);
+        return r;
+      }
+      target.set_size(static_cast<usize>(r));
+      return r;
+    } else {
+      if constexpr ( requires(T t) { t.max_size(); } ) {
+        if ( static_cast<usize>(sz) > target.max_size() ) [[unlikely]]
+          return -error::file_too_big;
+      }
+      max_t r = f.read(static_cast<void *>(target.data()), static_cast<usize>(sz));
+      if ( r < 0 ) [[unlikely]]
+        return r;
+      if constexpr ( requires(T t, usize n) { t.set_size(n); } ) target.set_size(static_cast<usize>(r));
+      return r;
+    }
+  }
+  if constexpr ( requires(T t, typename T::value_type v) { t.push_back(v); } ) {
+    if constexpr ( requires(T t) { t.fast_clear(); } )
+      target.fast_clear();
+    else if constexpr ( requires(T t) { t.clear(); } )
+      target.clear();
+    else if constexpr ( requires(T t, usize n) { t.set_size(n); } )
+      target.set_size(0);
+    byte chunk[4096];
+    max_t total = 0;
+    for ( ;; ) {
+      max_t r = f.read(static_cast<void *>(chunk), sizeof(chunk));
+      if ( r < 0 ) [[unlikely]] {
+        if ( -r == error::interrupted ) continue;
+        return r;
+      }
+      if ( r == 0 ) break;
+      for ( max_t i = 0; i < r; ++i ) target.push_back(static_cast<typename T::value_type>(chunk[i]));
+      total += r;
+    }
+    return total;
+  } else {
+    return f.read(target);
+  }
+}
+
 // create/truncate p and write c through the universal marshalling tiers
 template<typename C>
 max_t

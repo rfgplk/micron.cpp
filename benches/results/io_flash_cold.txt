@@ -1,0 +1,107 @@
+# bench=io_flash tier=fixed sq_entries=256 cq_entries=512
+# k=5 warmup=2 dir=/var/tmp/mc_io_flash_bench cold=1
+layer,case,n,bytes,ns_per_op,gib_s,sqe,cqe,rt,x_base
+posix/oneshot,fadvise(normal),1,0,319.71,0.0,0,0,0,0.0
+flash/oneshot,fadvise(normal),1,0,824.54,0.0,1,1,1,2.58
+posix/oneshot,fsync,1,0,449517.0,0.0,0,0,0,0.0
+flash/oneshot,fsync,1,0,417603.48,0.0,1,1,1,0.93
+posix/oneshot,statx(path),1,0,2199.38,0.0,0,0,0,0.0
+flash/oneshot,statx(fd),1,0,14083.35,0.0,1,1,1,6.40
+posix/rw,pread 4B,1,4,992.59,0.0,0,0,0,0.0
+flash/rw,pread 4B,1,4,1915.86,0.0,1,1,1,1.93
+flash/rw,pread 4B (eng hoisted),1,4,1848.10,0.0,1,1,1,1.86
+posix/open,raw openat+close,1,0,4721.77,0.0,0,0,0,0.0
+posix/open,io::file,1,0,6746.53,0.0,0,0,0,1.43
+flash/open,open_file+close,1,0,6454.46,0.0,2,2,2,1.37
+ctrl/sstr,sstr<4096>(cstr),1,0,435.57,0.0,0,0,0,0.0
+ctrl/sstr,sstr<128>(cstr),1,0,40.87,0.0,0,0,0,0.0
+posix/whole,read_file,1,1024,76718.65,0.1,0,0,0,0.0
+flash/whole,read_file,1,1024,1383124.85,0.0,4,4,4,18.3
+flash/whole,read_file(p,target),1,1024,10377.27,0.9,4,4,4,0.14
+posix/whole,write_file,1,1024,5004284.33,0.0,0,0,0,0.0
+flash/whole,write_file,1,1024,1334918.89,0.0,3,3,3,0.27
+flash/whole,write_file_sync,1,1024,1964857.0,0.0,4,4,4,0.39
+posix/whole,read_file,1,65536,989485.14,0.6,0,0,0,0.0
+flash/whole,read_file,1,65536,414363.50,0.15,4,4,4,0.42
+flash/whole,read_file(p,target),1,65536,54902.90,1.11,4,4,4,0.6
+posix/whole,write_file,1,65536,2690202.50,0.2,0,0,0,0.0
+flash/whole,write_file,1,65536,846396.60,0.7,3,3,3,0.31
+flash/whole,write_file_sync,1,65536,6691427.0,0.1,4,4,4,2.49
+posix/whole,read_file,1,1048576,7713150.0,0.13,0,0,0,0.0
+flash/whole,read_file,1,1048576,11264251.50,0.9,5,5,5,1.46
+flash/whole,read_file(p,target),1,1048576,246327.13,3.96,5,5,5,0.3
+posix/whole,write_file,1,1048576,6830865.50,0.14,0,0,0,0.0
+flash/whole,write_file,1,1048576,3413626.91,0.29,3,3,3,0.50
+flash/whole,write_file_sync,1,1048576,6310499.0,0.15,4,4,4,0.92
+flash/chain,open->read->close,1,1024,28475.52,0.3,3,3,1,0.0
+posix/batch,serial read_file xN,8,32768,7888764.17,0.0,0,0,0,0.0
+flash/batch,serial read_file xN,8,32768,1951833.64,0.2,32,32,32,0.25
+flash/batch,read_files(N),8,32768,1850625.78,0.2,32,32,1,0.23
+posix/batch,serial statx xN,8,0,40587.23,0.0,0,0,0,0.0
+flash/batch,serial stat xN,8,0,7003468.0,0.0,8,8,8,172.55
+flash/batch,stat_many(N),8,0,81763.95,0.0,8,8,1,2.1
+posix/batch,serial read_file xN,32,131072,4912968.0,0.2,0,0,0,0.0
+flash/batch,serial read_file xN,32,131072,5156916.0,0.2,128,128,128,1.5
+flash/batch,read_files(N),32,131072,3234862.17,0.4,128,128,1,0.66
+posix/batch,serial statx xN,32,0,143747.5,0.0,0,0,0,0.0
+flash/batch,serial stat xN,32,0,859959.12,0.0,32,32,32,5.98
+flash/batch,stat_many(N),32,0,218127.83,0.0,32,32,1,1.52
+posix/batch,serial read_file xN,128,524288,21499840.0,0.2,0,0,0,0.0
+flash/batch,serial read_file xN,128,524288,58035793.0,0.1,512,512,512,2.70
+flash/batch,read_files(N),128,524288,10985068.0,0.4,512,512,1,0.51
+posix/batch,serial statx xN,128,0,576377.92,0.0,0,0,0,0.0
+flash/batch,serial stat xN,128,0,4203742.0,0.0,128,128,128,7.29
+flash/batch,stat_many(N),128,0,971762.0,0.0,128,128,1,1.69
+posix/batch,serial read_file xN,512,2097152,146997313.0,0.1,0,0,0,0.0
+flash/batch,serial read_file xN,512,2097152,182557352.0,0.1,2048,2048,2048,1.24
+flash/batch,read_files(N),512,2097152,44988917.0,0.4,2048,2048,3,0.31
+posix/batch,serial statx xN,512,0,2670810.0,0.0,0,0,0,0.0
+flash/batch,serial stat xN,512,0,16740721.0,0.0,512,512,512,6.27
+flash/batch,stat_many(N),512,0,4846213.50,0.0,512,512,3,1.81
+flash/queue,QD=1 x 4K,1,4096,3294.66,1.16,1,1,1,0.0
+flash/queue,QD=4 x 4K,4,4096,2770.75,1.38,4,4,1,0.0
+flash/queue,QD=16 x 4K,16,4096,2551.89,1.49,16,16,1,0.0
+flash/queue,QD=64 x 4K,64,4096,2777.36,1.37,64,64,1,0.0
+flash/queue,QD=128 x 4K,128,4096,3002.13,1.27,128,128,1,0.0
+flash/queue,QD=1 x 64K,1,65536,12712.25,4.80,1,1,1,0.0
+flash/queue,QD=4 x 64K,4,65536,15366.53,3.97,4,4,1,0.0
+flash/queue,QD=16 x 64K,16,65536,10787.98,5.66,16,16,1,0.0
+flash/queue,QD=64 x 64K,64,65536,16862.10,3.62,64,64,1,0.0
+flash/queue,QD=128 x 64K,128,65536,16462.26,3.71,128,128,1,0.0
+ctrl/mem,memcpy,1,4096,147.17,25.92,0,0,0,0.0
+posix/rw,pread,1,4096,1486.33,2.57,0,0,0,10.10
+flash/rw,pread,1,4096,1612.93,2.37,1,1,1,1.9
+posix/rw,pwrite,1,4096,2963.74,1.29,0,0,0,20.14
+flash/rw,pwrite,1,4096,3809.80,1.0,1,1,1,1.29
+ctrl/mem,memcpy,1,16384,823.57,18.53,0,0,0,0.0
+posix/rw,pread,1,16384,3537.96,4.31,0,0,0,4.30
+flash/rw,pread,1,16384,4227.43,3.61,1,1,1,1.19
+posix/rw,pwrite,1,16384,5258.41,2.90,0,0,0,6.38
+flash/rw,pwrite,1,16384,6680.23,2.28,1,1,1,1.27
+ctrl/mem,memcpy,1,65536,3521.87,17.33,0,0,0,0.0
+posix/rw,pread,1,65536,11058.74,5.52,0,0,0,3.14
+flash/rw,pread,1,65536,11107.13,5.50,1,1,1,1.0
+posix/rw,pwrite,1,65536,14137.28,4.32,0,0,0,4.1
+flash/rw,pwrite,1,65536,16210.47,3.77,1,1,1,1.15
+ctrl/mem,memcpy,1,262144,12612.83,19.36,0,0,0,0.0
+posix/rw,pread,1,262144,36110.74,6.76,0,0,0,2.86
+flash/rw,pread,1,262144,34876.1,7.0,1,1,1,0.97
+posix/rw,pwrite,1,262144,50792.38,4.81,0,0,0,4.3
+flash/rw,pwrite,1,262144,55545.19,4.40,1,1,1,1.9
+ctrl/mem,memcpy,1,1048576,74815.35,13.5,0,0,0,0.0
+posix/rw,pread,1,1048576,155706.43,6.27,0,0,0,2.8
+flash/rw,pread,1,1048576,156765.5,6.23,1,1,1,1.1
+posix/rw,pwrite,1,1048576,203512.49,4.80,0,0,0,2.72
+flash/rw,pwrite,1,1048576,209613.70,4.66,1,1,1,1.3
+ctrl/mem,memcpy,1,4194304,264030.75,14.79,0,0,0,0.0
+posix/rw,pread,1,4194304,1052344.10,3.71,0,0,0,3.99
+flash/rw,pread,1,4194304,1037341.16,3.77,1,1,1,0.99
+posix/rw,pwrite,1,4194304,832035.80,4.69,0,0,0,3.15
+flash/rw,pwrite,1,4194304,848739.85,4.60,1,1,1,1.2
+flash/rw,pread (heap buf),1,4096,2134.27,1.79,1,1,1,0.0
+flash/fixed,read_fixed,1,4096,2690.98,1.42,1,1,1,1.26
+flash/rw,pread (heap buf),1,65536,7147.88,8.54,1,1,1,0.0
+flash/fixed,read_fixed,1,65536,11091.27,5.50,1,1,1,1.55
+flash/rw,pread (heap buf),1,262144,33063.43,7.38,1,1,1,0.0
+flash/fixed,read_fixed,1,262144,32511.62,7.51,1,1,1,0.98
+flash/engine,init+shutdown,1,0,61235.60,0.0,0,0,0,0.0

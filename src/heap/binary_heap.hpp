@@ -161,5 +161,20 @@ public:
     if ( __mem::length == 0 ) exc<except::library_error>("micron::binary_heap::max() is empty.");
     return __mem::memory[0];
   }
+
+  // visits in heap array order, not sorted order
+  template<typename Fn>
+  void
+  for_each(Fn &&fn)
+  {
+    for ( usize i = 0; i < __mem::length; ++i ) fn(__mem::memory[i]);
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    for ( usize i = 0; i < __mem::length; ++i ) fn(static_cast<const T &>(__mem::memory[i]));
+  }
 };
 };      // namespace micron

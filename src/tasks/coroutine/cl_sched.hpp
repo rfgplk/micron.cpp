@@ -233,8 +233,8 @@ struct engine {
       w->active.store(0, micron::memory_order_release);
       if ( !stopping.get(micron::memory_order_acquire) ) {
 #if defined(MICRON_CORO_URING)
-        // uring core
-        if ( __io.live && __io.pending.get(micron::memory_order_relaxed) != 0 ) {
+        // uring core (>=6.7; pre-6.7 rings take the plain futex path)
+        if ( __io.live && __io.futex_ok.get(micron::memory_order_acquire) != 0 && __io.pending.get(micron::memory_order_relaxed) != 0 ) {
           i32 __exp = -1;
           if ( __io.sentinel.compare_exchange_strong(__exp, static_cast<i32>(w->id), micron::memory_order_acq_rel,
                                                      micron::memory_order_acquire) ) {
@@ -279,6 +279,7 @@ struct engine {
   __dispatch_cqe(const micron::uring::cqe &__c) noexcept
   {
     if ( __c.user_data == __io_tag_park ) {
+      if ( __c.res == -22 || __c.res == -95 ) __io.futex_ok.store(0, micron::memory_order_release);
       __io.park_fired.store(1, micron::memory_order_release);
       return;
     }
@@ -459,6 +460,7 @@ start_coroutine_runtime(u32 nworkers = 0) noexcept
   for ( u32 i = 0; i < nworkers; ++i ) e->workers[i].id = i;
 #if defined(MICRON_CORO_URING)
   __io.live = (__io.ring.init(256u, 0) == 0);
+  __io.futex_ok.store(__io.live && micron::kernel::has(micron::kernel::feature::uring_futex) ? 1u : 0u, micron::memory_order_relaxed);
   __io.sentinel.store(-1, micron::memory_order_relaxed);
   __io.pending.store(0, micron::memory_order_relaxed);
 #endif

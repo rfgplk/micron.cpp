@@ -7,6 +7,8 @@
 
 #include "../../memory/addr.hpp"
 
+#include "../../errno.hpp"
+#include "../../kernel.hpp"
 #include "../../syscall.hpp"
 #include "../sys/fcntl.hpp"
 #include "../sys/stat.hpp"
@@ -683,6 +685,7 @@ eventfd(unsigned int initval, i32 flags)
 constexpr unsigned int close_range_unshare = (1U << 1);
 constexpr unsigned int close_range_cloexec = (1U << 2);
 
+// >=5.9
 i32
 close_range(unsigned int first, unsigned int last, unsigned int flags)
 {
@@ -702,6 +705,7 @@ constexpr u64 resolve_beneath = 0x08;
 constexpr u64 resolve_in_root = 0x10;
 constexpr u64 resolve_cached = 0x20;
 
+// >=5.6
 i32
 openat2(i32 dirfd, const char *path, open_how &how)
 {
@@ -870,22 +874,33 @@ i32
 access(const char *path, i32 mode)
 {
 #if defined(__micron_syscall_generic)
-  return static_cast<i32>(micron::syscall(SYS_faccessat2, at_fdcwd, path, mode, 0));
+  // arm64 has no access(2)
+  return static_cast<i32>(micron::syscall(SYS_faccessat, at_fdcwd, path, mode));
 #else
   return static_cast<i32>(micron::syscall(SYS_access, path, mode));
 #endif
 }
 
+// >=5.8 for nonzero flags
+inline kernel::probe_gate __faccessat2_gate{};
+
 i32
 faccessat(i32 dirfd, const char *name, i32 mode, i32 flags)
 {
-  return static_cast<i32>(micron::syscall(SYS_faccessat2, dirfd, name, mode, flags));
+  if ( flags == 0 ) return static_cast<i32>(micron::syscall(SYS_faccessat, dirfd, name, mode));
+  if ( __faccessat2_gate.open(kernel::feature::faccessat2) ) [[likely]] {
+    i32 r = static_cast<i32>(micron::syscall(SYS_faccessat2, dirfd, name, mode, flags));
+    if ( r != -ENOSYS ) [[likely]]
+      return r;
+    __faccessat2_gate.demote();
+  }
+  return -ENOSYS;
 }
 
 i32
 faccessat(fd_t dirfd, const char *name, i32 mode, i32 flags)
 {
-  return static_cast<i32>(micron::syscall(SYS_faccessat2, dirfd.fd, name, mode, flags));
+  return faccessat(dirfd.fd, name, mode, flags);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -999,6 +1014,7 @@ tee(fd_t fd_in, fd_t fd_out, usize len, u32 flags)
   return micron::syscall(SYS_tee, fd_in.fd, fd_out.fd, len, flags);
 }
 
+// cross-fs copies need >=5.3
 max_t
 copy_file_range(i32 fd_in, posix::off64_t *off_in, i32 fd_out, posix::off64_t *off_out, usize len, u32 flags)
 {

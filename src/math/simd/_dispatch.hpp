@@ -11,8 +11,7 @@
 #include "../../types.hpp"
 
 // a packed vector backend exists only for these defined ISA extenstions
-#if (defined(__micron_x86_avx2) && defined(__micron_x86_fma))                                                                               \
-    || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
+#if ( defined(__micron_x86_avx2) && defined(__micron_x86_fma) ) || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
 #define __micron_math_packed 1
 #endif
 

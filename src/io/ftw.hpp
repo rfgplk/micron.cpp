@@ -8,8 +8,8 @@
 #include "../concepts.hpp"
 #include "../tuple.hpp"
 #include "../type_traits.hpp"
-#include "paths.hpp"
 #include "os/iosys.hpp"
+#include "paths.hpp"
 
 namespace micron
 {
@@ -37,8 +37,7 @@ walk(path &&p, Sink &&sink, node_id *chain, u32 depth, collect what, bool is_roo
   // and that cannot be expressed with try/catch: below the eh gate exc<> aborts instead of
   // throwing, so a catch-based skip would kill the process mid-walk. try_*() report instead.
   micron::fvector<path_t> coll;
-  if ( const i32 r = (what == collect::files) ? p.try_files(coll) : (what == collect::all ? p.try_all(coll) : p.try_dirs(coll));
-       r < 0 ) {
+  if ( const i32 r = (what == collect::files) ? p.try_files(coll) : (what == collect::all ? p.try_all(coll) : p.try_dirs(coll)); r < 0 ) {
     if ( is_root ) exc_e<except::io_error>(r, "micron::io::ftw, failed to open root directory.");
     return true;      // unreadable sub-directory -> skip
   }

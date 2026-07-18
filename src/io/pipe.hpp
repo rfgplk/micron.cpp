@@ -13,8 +13,8 @@
 #include "../types.hpp"
 #include "fn.hpp"
 #include "io.hpp"
-#include "paths.hpp"
 #include "os/iosys.hpp"
+#include "paths.hpp"
 #include "stream.hpp"
 
 #include "../attributes.hpp"

@@ -47,8 +47,7 @@ struct locked_stdout_sink {
   {
     if ( __p_buffer_stdout->full(n) ) {
       (*__p_buffer_stdout) >> io::stdout;
-      if ( n >= static_cast<usize>(__global_buffer_size) )     
-        return posix::write_all(io::stdout, reinterpret_cast<const byte *>(p), n);
+      if ( n >= static_cast<usize>(__global_buffer_size) ) return posix::write_all(io::stdout, reinterpret_cast<const byte *>(p), n);
     }
     __p_buffer_stdout->append(reinterpret_cast<const byte *>(p), n);
     return static_cast<max_t>(n);
@@ -65,13 +64,13 @@ struct locked_stdout_sink {
   static max_t
   flush(void)
   {
-    (*__p_buffer_stdout) >> io::stdout;  
+    (*__p_buffer_stdout) >> io::stdout;
     return 0;
   }
 };
 
 template<typename First, typename... Rest>
-  requires(!echo_target<First>)
+  requires(!echo_target<First> && !micron::any_settling<First, Rest...>)
 inline max_t
 pecho(const First &first, const Rest &...rest)
 {
@@ -95,7 +94,7 @@ pecho(void)
 }
 
 template<typename First, typename... Rest>
-  requires(!echo_target<First>)
+  requires(!echo_target<First> && !micron::any_settling<First, Rest...>)
 inline max_t
 pechon(const First &first, const Rest &...rest)
 {
@@ -108,6 +107,7 @@ pechon(const First &first, const Rest &...rest)
 }
 
 template<typename... Args>
+  requires(!micron::any_settling<Args...>)
 inline max_t
 pechof(const char *fmt, const Args &...args)
 {
@@ -121,6 +121,7 @@ pechof(const char *fmt, const Args &...args)
 }
 
 template<typename... Args>
+  requires(!micron::any_settling<Args...>)
 inline max_t
 pechofn(const char *fmt, const Args &...args)
 {
@@ -133,6 +134,7 @@ pechofn(const char *fmt, const Args &...args)
 }
 
 template<typename... T>
+  requires(!micron::any_settling<T...>)
 inline max_t
 pprint(const T &...str)
 {
@@ -146,6 +148,7 @@ pprint(const T &...str)
 }
 
 template<typename... T>
+  requires(!micron::any_settling<T...>)
 inline max_t
 pprintln(const T &...str)
 {
@@ -160,6 +163,7 @@ pprintln(const T &...str)
 }
 
 template<typename... T>
+  requires(!micron::any_settling<T...>)
 inline max_t
 pprintn(const T &...str)
 {
@@ -170,6 +174,87 @@ pprintn(const T &...str)
   ((r += printkn(s, str)), ...);
   s.flush();
   return r;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%
+// settling forms
+//
+// WARNING: __then settles before __plock is taken
+
+template<typename First, typename... Rest>
+  requires(!echo_target<First> && micron::any_settling<First, Rest...>)
+inline max_t
+pecho(First &&first, Rest &&...rest)
+{
+  return micron::__settle_impl::__then(
+      [](const auto &...v) -> max_t {
+        __pecho_impl::__plock g;
+        __pecho_impl::__ensure_stdout();
+        locked_stdout_sink s;
+        max_t r = __echo_impl::run(s, true, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward<First>(first), micron::forward<Rest>(rest)...);
+}
+
+template<typename First, typename... Rest>
+  requires(!echo_target<First> && micron::any_settling<First, Rest...>)
+inline max_t
+pechon(First &&first, Rest &&...rest)
+{
+  return micron::__settle_impl::__then(
+      [](const auto &...v) -> max_t {
+        __pecho_impl::__plock g;
+        __pecho_impl::__ensure_stdout();
+        locked_stdout_sink s;
+        max_t r = __echo_impl::run(s, false, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward<First>(first), micron::forward<Rest>(rest)...);
+}
+
+template<typename... Args>
+  requires(micron::any_settling<Args...>)
+inline max_t
+pechof(const char *fmt, Args &&...args)
+{
+  return micron::__settle_impl::__then([&](const auto &...v) -> max_t { return micron::io::pechof(fmt, v...); },
+                                       micron::forward<Args>(args)...);
+}
+
+template<typename... Args>
+  requires(micron::any_settling<Args...>)
+inline max_t
+pechofn(const char *fmt, Args &&...args)
+{
+  return micron::__settle_impl::__then([&](const auto &...v) -> max_t { return micron::io::pechofn(fmt, v...); },
+                                       micron::forward<Args>(args)...);
+}
+
+template<typename... T>
+  requires(micron::any_settling<T...>)
+inline max_t
+pprint(T &&...str)
+{
+  return micron::__settle_impl::__then([](const auto &...v) -> max_t { return micron::io::pprint(v...); }, micron::forward<T>(str)...);
+}
+
+template<typename... T>
+  requires(micron::any_settling<T...>)
+inline max_t
+pprintln(T &&...str)
+{
+  return micron::__settle_impl::__then([](const auto &...v) -> max_t { return micron::io::pprintln(v...); }, micron::forward<T>(str)...);
+}
+
+template<typename... T>
+  requires(micron::any_settling<T...>)
+inline max_t
+pprintn(T &&...str)
+{
+  return micron::__settle_impl::__then([](const auto &...v) -> max_t { return micron::io::pprintn(v...); }, micron::forward<T>(str)...);
 }
 
 };      // namespace io

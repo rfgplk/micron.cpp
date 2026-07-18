@@ -90,19 +90,21 @@ main()
     sb::require(now.is_first(), true);
     sb::require(now.cast<mc::string>() == mc::string("xy"), true);      // tail truncated
     sb::require(f.modify([](mc::string &s) { s += "z123"; }), 6);       // in-place grow
-    sb::require(mio::modify(base, [](mc::string s) {
-      s += "!";
-      return s;
-    }),
+    sb::require(mio::modify(base,
+                            [](mc::string s) {
+                              s += "!";
+                              return s;
+                            }),
                 7);
     sb::require(mio::modify(mio::path_t("/tmp/micron_io_fp/missing"), [](mc::string s) { return s; }) < 0, true);
 
     const mio::path_t empty_p("/tmp/micron_io_fp/empty");
     put(empty_p, "");
-    sb::require(mio::modify(empty_p, [](mc::string s) {
-      s += "seeded";
-      return s;
-    }),
+    sb::require(mio::modify(empty_p,
+                            [](mc::string s) {
+                              s += "seeded";
+                              return s;
+                            }),
                 6);
   }
 
@@ -167,11 +169,11 @@ main()
       lf.rewind();
       return lf.each_line([](const mc::string &) { });
     };
-    sb::require(count_lines(""), 0);              // empty file
-    sb::require(count_lines("a\nb\n"), 2);        // trailing '\n': no empty final line
-    sb::require(count_lines("a\nb"), 2);          // final unterminated line emitted
-    sb::require(count_lines("a\n\n"), 2);         // "a", ""
-    sb::require(count_lines("\n"), 1);            // one empty line
+    sb::require(count_lines(""), 0);            // empty file
+    sb::require(count_lines("a\nb\n"), 2);      // trailing '\n': no empty final line
+    sb::require(count_lines("a\nb"), 2);        // final unterminated line emitted
+    sb::require(count_lines("a\n\n"), 2);       // "a", ""
+    sb::require(count_lines("\n"), 1);          // one empty line
 
     // CRLF strip + content check via fold_lines (both shapes)
     sb::require(lf.modify([](mc::string) { return mc::string("x\r\ny\r\nz"); }), 7);
@@ -274,8 +276,7 @@ main()
     sb::require(counted.is_first(), true);
     sb::require(counted.cast<usize>(), 1ull);
 
-    auto chained
-        = mc::and_then(mio::read_file(base), [](mc::string s) { return mc::option<usize, mio::error_t>{ s.size() }; });
+    auto chained = mc::and_then(mio::read_file(base), [](mc::string s) { return mc::option<usize, mio::error_t>{ s.size() }; });
     sb::require(chained.is_first(), true);
     sb::require(chained.cast<usize>(), 4ull);
 
@@ -284,8 +285,7 @@ main()
     sb::require(fallback.is_first(), true);
     sb::require(fallback.cast<mc::string>() == mc::string("fb"), true);
 
-    sb::require(mc::value(mio::read_file(mio::path_t("/tmp/micron_io_fp/nope")), mc::string("dflt")) == mc::string("dflt"),
-                true);
+    sb::require(mc::value(mio::read_file(mio::path_t("/tmp/micron_io_fp/nope")), mc::string("dflt")) == mc::string("dflt"), true);
 
     auto lifted = mio::to_option(mio::write_file(base, mc::string("zz")));
     sb::require(lifted.is_first(), true);
@@ -300,6 +300,58 @@ main()
       return s;
     });
     sb::require(mc_fn(base), 7);
+  }
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // caller-provided-target overloads: read_file(p, target) / read_lines(p, target)
+  {
+    const mio::path_t tp("/tmp/micron_io_fp/target.txt");
+    put(tp, "0123456789");
+
+    // string target reuse: second read replaces contents and shrinks the size
+    mc::string s;
+    sb::require(mio::read_file(tp, s), 10);
+    sb::require(s == mc::string("0123456789"), true);
+    put(tp, "abc");
+    sb::require(mio::read_file(tp, s), 3);
+    sb::require(s == mc::string("abc"), true);
+    sb::require(s.size(), 3ull);
+
+    // vector<byte> target
+    mc::vector<byte> v;
+    sb::require(mio::read_file(tp, v), 3);
+    sb::require(v.size(), 3ull);
+    sb::require(v[0] == static_cast<byte>('a'), true);
+
+    // fixed-capacity targets: buffer fill (allocator rounds its capacity up), sstr fill, and
+    // file_too_big when the target cannot hold the file
+    micron::buffer b(3);
+    sb::require(mio::read_file(tp, b), 3);
+    sb::require(b[2] == static_cast<byte>('c'), true);
+    mc::sstr<8> ss;
+    sb::require(mio::read_file(tp, ss), 3);
+    sb::require(ss.size(), 3ull);
+    sb::require(ss[2] == 'c', true);
+    mc::sstr<2> tiny;
+    sb::require(mio::read_file(tp, tiny), static_cast<max_t>(-mc::error::file_too_big));
+
+    // error path: missing file -> negative errno, target untouched
+    sb::require(mio::read_file(mio::path_t("/tmp/micron_io_fp/nope2"), s) < 0, true);
+    sb::require(s == mc::string("abc"), true);
+
+    // virtual file (/proc): size-0 chunk path replaces prior contents
+    sb::require(mio::read_file(mio::path_t("/proc/self/status"), s) > 0, true);
+    sb::require(s.size() > 0, true);
+
+    // read_lines target: replaced across calls, returns the line count
+    const mio::path_t lp2("/tmp/micron_io_fp/lines2.txt");
+    put(lp2, "a\nb\nc\n");
+    mc::vector<mc::string> ls;
+    sb::require(mio::read_lines(lp2, ls), 3);
+    put(lp2, "x\ny\n");
+    sb::require(mio::read_lines(lp2, ls), 2);
+    sb::require(ls.size(), 2ull);
+    sb::require(mio::read_lines(mio::path_t("/tmp/micron_io_fp/nope3"), ls) < 0, true);
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

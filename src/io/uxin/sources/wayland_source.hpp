@@ -44,8 +44,8 @@ class wayland_source
       self->__seat_version = use_ver;
 
       static wl_seat_listener_t listener{ &__on_seat_capabilities, &__on_seat_name };
-      self->__lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(self->__seat), reinterpret_cast<void (**)(void)>(&listener),
-                                         self);
+      self->__lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(self->__seat),
+                                         reinterpret_cast<void (**)(void)>(&listener), self);
     }
   }
 
@@ -66,8 +66,8 @@ class wayland_source
         &__on_p_enter,       &__on_p_leave,     &__on_p_motion,        &__on_p_button,    &__on_p_axis,         &__on_p_frame,
         &__on_p_axis_source, &__on_p_axis_stop, &__on_p_axis_discrete, &__on_p_axis_v120, &__on_p_axis_rel_dir,
       };
-      self->__lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(self->pointer_), reinterpret_cast<void (**)(void)>(&plistener),
-                                         self);
+      self->__lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(self->pointer_),
+                                         reinterpret_cast<void (**)(void)>(&plistener), self);
     }
     if ( (caps & wl_seat_capability_keyboard) && !self->keyboard_ ) {
       void *p = self->__lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(seat), wl_seat_ops::wl_seat_get_keyboard,
@@ -76,8 +76,8 @@ class wayland_source
       static wl_keyboard_listener_t klistener{
         &__on_k_keymap, &__on_k_enter, &__on_k_leave, &__on_k_key, &__on_k_modifiers, &__on_k_repeat_info,
       };
-      self->__lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(self->keyboard_), reinterpret_cast<void (**)(void)>(&klistener),
-                                         self);
+      self->__lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(self->keyboard_),
+                                         reinterpret_cast<void (**)(void)>(&klistener), self);
     }
   }
 
@@ -277,7 +277,8 @@ public:
     __lib = __dpy->lib();
 
     static gfx::platform::wl_registry_listener_t reg_listener{ &__on_global, &__on_global_remove };
-    __lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(__dpy->registry()), reinterpret_cast<void (**)(void)>(&reg_listener), this);
+    __lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(__dpy->registry()),
+                                 reinterpret_cast<void (**)(void)>(&reg_listener), this);
     __lib->wl_display_roundtrip(__dpy->display());
     __lib->wl_display_roundtrip(__dpy->display());
 
@@ -327,17 +328,18 @@ public:
   {
     if ( !__lib ) return;
     if ( keyboard_ ) {
-      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(keyboard_), wl_seat_ops::wl_keyboard_release, nullptr, __seat_version,
-                                    1 /*WL_MARSHAL_FLAG_DESTROY*/);
+      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(keyboard_), wl_seat_ops::wl_keyboard_release, nullptr,
+                                    __seat_version, 1 /*WL_MARSHAL_FLAG_DESTROY*/);
       keyboard_ = nullptr;
     }
     if ( pointer_ ) {
-      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(pointer_), wl_seat_ops::wl_pointer_release, nullptr, __seat_version,
-                                    1);
+      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(pointer_), wl_seat_ops::wl_pointer_release, nullptr,
+                                    __seat_version, 1);
       pointer_ = nullptr;
     }
     if ( __seat ) {
-      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(__seat), wl_seat_ops::wl_seat_release, nullptr, __seat_version, 1);
+      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(__seat), wl_seat_ops::wl_seat_release, nullptr,
+                                    __seat_version, 1);
       __seat = nullptr;
     }
   }

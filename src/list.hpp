@@ -361,5 +361,19 @@ public:
   {
     return 0xFFFFFFFFFFFFFFF;
   }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn)
+  {
+    for ( list_node_t *ptr = root; ptr != nullptr; ptr = ptr->next ) fn(ptr->data);
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    for ( const list_node_t *ptr = root; ptr != nullptr; ptr = ptr->next ) fn(static_cast<const T &>(ptr->data));
+  }
 };
 };      // namespace micron

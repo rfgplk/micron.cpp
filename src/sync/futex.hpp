@@ -31,7 +31,7 @@ constexpr static const u32 futex_wait_bitset = 9;
 constexpr static const u32 futex_wake_bitset = 10;
 constexpr static const u32 futex_wait_requeue_pi = 11;
 constexpr static const u32 futex_cmp_requeue_pi = 12;
-constexpr static const u32 futex_futex_lock_pi2 = 13;
+constexpr static const u32 futex_futex_lock_pi2 = 13;      // >=5.14
 constexpr static const u32 futex_private_flag = 128;
 constexpr static const u32 futex_clock_realtime = 256;
 

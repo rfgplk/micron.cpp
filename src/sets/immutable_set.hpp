@@ -67,6 +67,20 @@ public:
   {
     return __m.contains(k);
   }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn)
+  {
+    __m.for_each([&](const K &k, const auto &) { fn(k); });
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    __m.for_each([&](const K &k, const auto &) { fn(k); });
+  }
 };
 
 };      // namespace micron

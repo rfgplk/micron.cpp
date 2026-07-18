@@ -134,7 +134,8 @@ struct wl_seat_listener_t {
 };
 
 struct wl_pointer_listener_t {
-  void (*enter)(void *data, gfx::platform::wl_pointer *p, u32 serial, gfx::platform::wl_surface *s, i32 surface_x_fixed, i32 surface_y_fixed);
+  void (*enter)(void *data, gfx::platform::wl_pointer *p, u32 serial, gfx::platform::wl_surface *s, i32 surface_x_fixed,
+                i32 surface_y_fixed);
   void (*leave)(void *data, gfx::platform::wl_pointer *p, u32 serial, gfx::platform::wl_surface *s);
   void (*motion)(void *data, gfx::platform::wl_pointer *p, u32 time, i32 surface_x_fixed, i32 surface_y_fixed);
   void (*button)(void *data, gfx::platform::wl_pointer *p, u32 serial, u32 time, u32 button, u32 state);
