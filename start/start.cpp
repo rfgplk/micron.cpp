@@ -281,7 +281,7 @@ __aeabi_idiv(int n, int d) noexcept
   unsigned int q;
   unsigned int r;
   __udivmod32(un, ud, q, r);
-  return neg ? -static_cast<int>(q) : static_cast<int>(q);
+  return neg ? static_cast<int>(0u - q) : static_cast<int>(q);
 }
 
 __attribute__((naked, used)) void
@@ -364,7 +364,8 @@ __aeabi_ul2d(unsigned long long x) noexcept
 __attribute__((used, pcs("aapcs"))) double
 __aeabi_l2d(long long x) noexcept
 {
-  if ( x < 0 ) return -__aeabi_ul2d(static_cast<unsigned long long>(-x));
+  // WARNING: 0ull - x, not -x: negating LLONG_MIN as a long long is signed overflow UB
+  if ( x < 0 ) return -__aeabi_ul2d(0ull - static_cast<unsigned long long>(x));
   return __aeabi_ul2d(static_cast<unsigned long long>(x));
 }
 
@@ -406,7 +407,7 @@ __aeabi_d2lz(double x) noexcept
   if ( x >= 9223372036854775808.0 ) return 0x7FFFFFFFFFFFFFFFLL;
   if ( x < -9223372036854775808.0 ) return static_cast<long long>(0x8000000000000000ULL);
   if ( x >= 0.0 ) return static_cast<long long>(__aeabi_d2ulz(x));
-  return -static_cast<long long>(__aeabi_d2ulz(-x));
+  return static_cast<long long>(0ull - __aeabi_d2ulz(-x));
 }
 
 __attribute__((used, pcs("aapcs"))) unsigned long long

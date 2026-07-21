@@ -80,7 +80,7 @@ template<usize Stack_Size = thread_stack_size> class async_thread
   __release(void)
   {
     // async_thread does NOT own its stack (the arena does); it DOES own its from-scratch TLS block
-    micron::__tls_free_frame(attributes.tls);
+    micron::__tls_release_frame(attributes.tls);
     attributes.clear();
   }
 

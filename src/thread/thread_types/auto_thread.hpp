@@ -76,7 +76,7 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
     }
     micron::czero<Stack_Size>(fstack);
     // free this thread's from-scratch TLS block (the spawner owns it; safe now the thread is reaped)
-    micron::__tls_free_frame(__tls);
+    micron::__tls_release_frame(__tls);
     __tls = micron::__tls_frame{};
     __ctid = 0;
     __pth = 0;

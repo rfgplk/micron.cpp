@@ -2309,7 +2309,7 @@ to_integer(const T &o)
     ++p;
   u32 acc = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
+  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
 }
 
 inline i32
@@ -2326,7 +2326,7 @@ to_integer(const char *buf)
     ++p;
   u32 acc = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
+  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
 }
 
 inline i32
@@ -2344,7 +2344,7 @@ to_integer(const char *buf, usize len)
     ++p;
   u32 acc = 0;
   while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
+  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
 }
 
 template<usize N>
@@ -2512,7 +2512,7 @@ to_long(const T &o)
     ++p;
   u64 acc = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
+  return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
 // to_long: null-terminated c-string
@@ -2530,7 +2530,7 @@ to_long(const char *buf)
     ++p;
   u64 acc = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
+  return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
 // to_long: bounded c-string
@@ -2549,7 +2549,7 @@ to_long(const char *buf, usize len)
     ++p;
   u64 acc = 0;
   while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
+  return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
 template<usize N>
