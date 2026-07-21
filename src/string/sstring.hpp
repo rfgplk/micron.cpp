@@ -2253,6 +2253,109 @@ public:
     memory[length] = 0x0;
   }
 
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // truncating appends
+
+  // this keeps the write in range for the compiler so stringop-overflow doesn't complain
+  inline void
+  __nul_term() noexcept
+  {
+    if ( length < N ) memory[length] = 0x0;
+  }
+
+  // free element slots, reserving the NUL slot (mirrors __size_check)
+  inline constexpr size_type
+  room(void) const noexcept
+  {
+    return (length < N) ? ((N - 1) - length) : 0;
+  }
+
+  inline bool
+  try_append(T ch) noexcept
+  {
+    if ( room() == 0 ) return false;
+    memory[length++] = ch;
+    __nul_term();
+    return true;
+  }
+
+  inline bool
+  try_append(const T *s, size_type n) noexcept
+  {
+    if ( s == nullptr ) return false;
+    const size_type r = room();
+    const size_type k = (n < r) ? n : r;
+    if ( k ) micron::memcpy(&memory[length], s, k);
+    length += k;
+    __nul_term();
+    return k == n;
+  }
+
+  inline bool
+  try_append(const T *s) noexcept
+  {
+    if ( s == nullptr ) return false;
+    size_type n = 0;
+    while ( s[n] ) ++n;
+    return try_append(s, n);
+  }
+
+  template<size_type M, typename F, bool X>
+    requires(sizeof(F) == sizeof(T))
+  inline bool
+  try_append(const sstring<M, F, X> &o) noexcept
+  {
+    return try_append(reinterpret_cast<const T *>(o.memory), o.length);
+  }
+
+  template<typename I>
+    requires micron::is_integral_v<I>
+  inline bool
+  try_append_int(I v) noexcept
+  {
+    T tmp[24];
+    size_type n = 0;
+    using U = micron::make_unsigned_t<I>;
+    U u;
+    bool neg = false;
+    if constexpr ( micron::is_signed_v<I> ) {
+      if ( v < 0 ) {
+        neg = true;
+        u = static_cast<U>(-(v + 1)) + 1u;      // UB otherwise
+      } else
+        u = static_cast<U>(v);
+    } else
+      u = static_cast<U>(v);
+    do {
+      tmp[n++] = static_cast<T>('0' + static_cast<unsigned>(u % 10u));
+      u /= 10u;
+    } while ( u && n < 24 );
+    if ( neg && n < 24 ) tmp[n++] = static_cast<T>('-');
+    if ( n > room() ) return false;      // all-or-nothing
+    while ( n ) memory[length++] = tmp[--n];
+    __nul_term();
+    return true;
+  }
+
+  template<typename I>
+    requires micron::is_integral_v<I>
+  inline bool
+  try_append_hex(I v, bool upper = false) noexcept
+  {
+    const char *d = upper ? "0123456789ABCDEF" : "0123456789abcdef";
+    T tmp[24];
+    size_type n = 0;
+    auto u = static_cast<micron::make_unsigned_t<I>>(v);
+    do {
+      tmp[n++] = static_cast<T>(d[u & 0xFu]);
+      u >>= 4;
+    } while ( u && n < 24 );
+    if ( n > room() ) return false;
+    while ( n ) memory[length++] = tmp[--n];
+    __nul_term();
+    return true;
+  }
+
   inline sstring &
   operator+=(char ch)
   {

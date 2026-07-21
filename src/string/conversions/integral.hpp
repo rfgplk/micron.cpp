@@ -13,6 +13,130 @@
 
 namespace micron
 {
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// range parsers; hstring mid alloc free
+
+template<typename T = char>
+bool
+try_parse_uint64(const T *p, usize n, u64 &out)
+{
+  out = 0;
+  if ( p == nullptr || n == 0 ) return false;
+  const T *ptr = p, *end = p + n;
+  bool any = false;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr != end && *ptr == '+' ) ++ptr;
+  if ( ptr == end ) return false;
+  if ( *ptr == '-' ) return false;
+  constexpr u64 mx = 0xFFFFFFFFFFFFFFFFull;
+  constexpr u64 mx_d = mx / 10, mx_m = mx % 10;
+  u64 acc = 0;
+  while ( ptr != end ) {
+    char c = static_cast<char>(*ptr);
+    if ( c < '0' || c > '9' ) {
+      while ( ptr != end && *ptr == ' ' ) ++ptr;
+      break;
+    }
+    u64 d = static_cast<u64>(c - '0');
+    any = true;
+    if ( acc > mx_d || (acc == mx_d && d > mx_m) ) return false;
+    acc = acc * 10 + d;
+    ++ptr;
+  }
+  if ( !any || ptr != end ) return false;
+  out = acc;
+  return true;
+}
+
+template<typename T = char>
+bool
+try_parse_int64(const T *p, usize n, i64 &out)
+{
+  out = 0;
+  if ( p == nullptr || n == 0 ) return false;
+  const T *ptr = p, *end = p + n;
+  bool neg = false, any = false;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr == end ) return false;
+  if ( *ptr == '-' ) {
+    neg = true;
+    ++ptr;
+  } else if ( *ptr == '+' )
+    ++ptr;
+  if ( ptr == end ) return false;
+  i64 acc = 0;
+  constexpr i64 lim = -0x7FFFFFFFFFFFFFFFuLL - 1;
+  constexpr i64 lim_div = lim / 10;
+  constexpr i64 lim_mod = -(lim % 10);
+  while ( ptr != end ) {
+    char c = static_cast<char>(*ptr);
+    if ( c < '0' || c > '9' ) {
+      while ( ptr != end && *ptr == ' ' ) ++ptr;
+      break;
+    }
+    int d = c - '0';
+    any = true;
+    if ( acc < lim_div || (acc == lim_div && d > lim_mod) ) return false;
+    acc = acc * 10 - d;
+    ++ptr;
+  }
+  if ( !any || ptr != end ) return false;
+  if ( neg )
+    out = acc;
+  else {
+    if ( acc == lim ) return false;
+    out = -acc;
+  }
+  return true;
+}
+
+// optional "0x"/"0X" prefix
+template<typename T = char>
+bool
+try_parse_hex64(const T *p, usize n, u64 &out)
+{
+  out = 0;
+  if ( p == nullptr || n == 0 ) return false;
+  const T *ptr = p, *end = p + n;
+  bool any = false;
+  while ( ptr != end && *ptr == ' ' ) ++ptr;
+  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') ) ptr += 2;
+  if ( ptr == end ) return false;
+  u64 acc = 0;
+  while ( ptr != end ) {
+    int dv = __impl::hex_digit_val(*ptr);
+    if ( dv < 0 ) {
+      while ( ptr != end && *ptr == ' ' ) ++ptr;
+      break;
+    }
+    if ( acc > (0xFFFFFFFFFFFFFFFFull >> 4) ) return false;
+    acc = (acc << 4) | static_cast<u64>(dv);
+    any = true;
+    ++ptr;
+  }
+  if ( !any || ptr != end ) return false;
+  out = acc;
+  return true;
+}
+
+template<typename T = char>
+bool
+try_parse_hex_bytes(const T *p, usize n, u8 *out, usize nbytes)
+{
+  if ( p == nullptr || out == nullptr ) return false;
+  if ( n != nbytes * 2 ) return false;
+  for ( usize i = 0; i < nbytes; ++i ) {
+    int hi = __impl::hex_digit_val(p[2 * i]);
+    int lo = __impl::hex_digit_val(p[2 * i + 1]);
+    if ( hi < 0 || lo < 0 ) return false;
+  }
+  for ( usize i = 0; i < nbytes; ++i )
+    out[i] = static_cast<u8>((__impl::hex_digit_val(p[2 * i]) << 4) | __impl::hex_digit_val(p[2 * i + 1]));
+  return true;
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // string to ints
 
@@ -224,46 +348,14 @@ string_to_uint_base(const micron::hstring<T> &buf, u32 base)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // try_* variants
 
+// hstring forms
 template<typename T = char>
 bool
 try_string_to_int64(const micron::hstring<T> &buf, i64 &out)
 {
   out = 0;
   if ( buf.empty() ) return false;
-  const T *ptr = buf.begin(), *end = buf.end();
-  bool neg = false, any = false;
-  while ( ptr != end && *ptr == ' ' ) ++ptr;
-  if ( ptr == end ) return false;
-  if ( *ptr == '-' ) {
-    neg = true;
-    ++ptr;
-  } else if ( *ptr == '+' )
-    ++ptr;
-  if ( ptr == end ) return false;
-  i64 acc = 0;
-  constexpr i64 lim = -0x7FFFFFFFFFFFFFFFuLL - 1;
-  constexpr i64 lim_div = lim / 10;
-  constexpr i64 lim_mod = -(lim % 10);
-  while ( ptr != end ) {
-    char c = *ptr;
-    if ( c < '0' || c > '9' ) {
-      while ( ptr != end && *ptr == ' ' ) ++ptr;
-      break;
-    }
-    int d = c - '0';
-    any = true;
-    if ( acc < lim_div || (acc == lim_div && d > lim_mod) ) return false;
-    acc = acc * 10 - d;
-    ++ptr;
-  }
-  if ( !any || ptr != end ) return false;
-  if ( neg )
-    out = acc;
-  else {
-    if ( acc == lim ) return false;
-    out = -acc;
-  }
-  return true;
+  return try_parse_int64<T>(buf.begin(), buf.size(), out);
 }
 
 template<typename T = char>
@@ -272,30 +364,7 @@ try_string_to_uint64(const micron::hstring<T> &buf, u64 &out)
 {
   out = 0;
   if ( buf.empty() ) return false;
-  const T *ptr = buf.begin(), *end = buf.end();
-  bool any = false;
-  while ( ptr != end && *ptr == ' ' ) ++ptr;
-  if ( ptr != end && *ptr == '+' ) ++ptr;
-  if ( ptr == end ) return false;
-  if ( ptr != end && *ptr == '-' ) return false;
-  constexpr u64 mx = 0xFFFFFFFFFFFFFFFFull;
-  constexpr u64 mx_d = mx / 10, mx_m = mx % 10;
-  u64 acc = 0;
-  while ( ptr != end ) {
-    char c = *ptr;
-    if ( c < '0' || c > '9' ) {
-      while ( ptr != end && *ptr == ' ' ) ++ptr;
-      break;
-    }
-    u64 d = static_cast<u64>(c - '0');
-    any = true;
-    if ( acc > mx_d || (acc == mx_d && d > mx_m) ) return false;
-    acc = acc * 10 + d;
-    ++ptr;
-  }
-  if ( !any || ptr != end ) return false;
-  out = acc;
-  return true;
+  return try_parse_uint64<T>(buf.begin(), buf.size(), out);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

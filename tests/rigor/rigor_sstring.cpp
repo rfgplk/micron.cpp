@@ -1213,11 +1213,220 @@ run_newops(void)
   end_test_case();
 }
 
+// truncating appends (try_append / try_append_int / try_append_hex)
+template<typename T, bool Sf>
+static bool
+ta_eq(const micron::sstring<64, T, Sf> &s, const char *lit)
+{
+  usize n = 0;
+  while ( lit[n] ) ++n;
+  if ( s.size() != n ) return false;
+  for ( usize i = 0; i < n; ++i )
+    if ( s[i] != static_cast<T>(lit[i]) ) return false;
+  return s[n] == static_cast<T>(0);      // NUL must survive every clip
+}
+
+template<usize N, typename T, bool Sf>
+static void
+ta_fill(micron::sstring<N, T, Sf> &s, usize k)
+{
+  for ( usize i = 0; i < k; ++i ) s.push_back(static_cast<T>('a'));
+}
+
+template<typename T, bool Sf>
+static void
+run_try_append(void)
+{
+  using S64 = micron::sstring<64, T, Sf>;
+
+  test_case("ss try_append room()");
+  {
+    S64 s;
+    require(s.room() == 63u);
+    ta_fill(s, 10);
+    require(s.room() == 53u);
+    ta_fill(s, 53);
+    require(s.room() == 0u);
+  }
+  end_test_case();
+
+  test_case("ss try_append exact fit / one over / far over");
+  {
+    micron::sstring<8, T, Sf> s;
+    const T seven[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 0 };
+    require(s.try_append(seven) == true);      // 7 chars + NUL == cap 8
+    require(s.size() == 7u);
+    require(s.room() == 0u);
+    require(s[7] == static_cast<T>(0));
+
+    micron::sstring<8, T, Sf> o;
+    const T eight[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 0 };
+    require(o.try_append(eight) == false);      // one over -> clipped, no throw
+    require(o.size() == 7u);
+    require(o[7] == static_cast<T>(0));
+
+    micron::sstring<8, T, Sf> f;
+    const T many[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 0 };
+    require(f.try_append(many) == false);
+    require(f.size() == 7u);
+    require(f[7] == static_cast<T>(0));
+  }
+  end_test_case();
+
+  test_case("ss try_append onto a full buffer is a refused no-op");
+  {
+    micron::sstring<8, T, Sf> s;
+    ta_fill(s, 7);
+    require(s.room() == 0u);
+    require(s.try_append(static_cast<T>('X')) == false);
+    require(s.size() == 7u);
+    const T more[] = { 'm', 'o', 'r', 'e', 0 };
+    require(s.try_append(more) == false);
+    require(s.size() == 7u);
+    for ( usize i = 0; i < 7; ++i ) require(s[i] == static_cast<T>('a'));
+    require(s[7] == static_cast<T>(0));
+  }
+  end_test_case();
+
+  test_case("ss try_append char-wise to the boundary");
+  {
+    micron::sstring<4, T, Sf> s;
+    require(s.try_append(static_cast<T>('a')) == true);
+    require(s.try_append(static_cast<T>('b')) == true);
+    require(s.try_append(static_cast<T>('c')) == true);
+    require(s.try_append(static_cast<T>('d')) == false);      // cap 4 holds 3
+    require(s.size() == 3u);
+    require(s[3] == static_cast<T>(0));
+  }
+  end_test_case();
+
+  test_case("ss try_append empty / null");
+  {
+    S64 s;
+    const T empty[] = { 0 };
+    require(s.try_append(empty) == true);      // vacuous success
+    require(s.size() == 0u);
+    require(s.try_append(static_cast<const T *>(nullptr)) == false);
+    require(s.size() == 0u);
+    require(s.try_append(static_cast<const T *>(nullptr), 4u) == false);
+    require(s.size() == 0u);
+  }
+  end_test_case();
+
+  test_case("ss try_append counted");
+  {
+    micron::sstring<8, T, Sf> s;
+    const T src[] = { 'a', 'b', 'c', 'd', 'e', 'f', 0 };
+    require(s.try_append(src, 3u) == true);
+    require(s.size() == 3u);
+    require(s.try_append(src, 6u) == false);      // 3 + 6 > 7 -> clips at 7
+    require(s.size() == 7u);
+    require(s[7] == static_cast<T>(0));
+    require(s.try_append(src, 0u) == true);      // zero-length is a success no-op
+    require(s.size() == 7u);
+  }
+  end_test_case();
+
+  test_case("ss try_append sstring source");
+  {
+    micron::sstring<8, T, Sf> s;
+    micron::sstring<16, T, Sf> src;
+    ta_fill(src, 3);
+    require(s.try_append(src) == true);
+    require(s.size() == 3u);
+    micron::sstring<16, T, Sf> big;
+    ta_fill(big, 12);
+    require(s.try_append(big) == false);      // clips at N-1
+    require(s.size() == 7u);
+    require(s[7] == static_cast<T>(0));
+  }
+  end_test_case();
+
+  test_case("ss try_append_int values");
+  {
+    S64 s;
+    require(s.try_append_int(0) == true);
+    require(ta_eq(s, "0"));
+    s.clear();
+    require(s.try_append_int(-4321) == true);
+    require(ta_eq(s, "-4321"));
+    s.clear();
+    require(s.try_append_int(static_cast<i64>(-0x7FFFFFFFFFFFFFFFLL - 1)) == true);
+    require(ta_eq(s, "-9223372036854775808"));
+    s.clear();
+    require(s.try_append_int(0xFFFFFFFFFFFFFFFFuLL) == true);
+    require(ta_eq(s, "18446744073709551615"));
+  }
+  end_test_case();
+
+  test_case("ss try_append_int is all-or-nothing");
+  {
+    micron::sstring<8, T, Sf> s;
+    require(s.try_append_int(1234567u) == true);      // 7 digits fit
+    require(s.size() == 7u);
+    s.clear();
+    require(s.try_append_int(12345678u) == false);      // 8 digits do not
+    require(s.size() == 0u);                            // and NOTHING was written
+    require(s.try_append_int(-1234567) == false);       // sign pushes it over
+    require(s.size() == 0u);
+  }
+  end_test_case();
+
+  test_case("ss try_append_hex");
+  {
+    S64 s;
+    require(s.try_append_hex(0u) == true);
+    require(ta_eq(s, "0"));
+    s.clear();
+    require(s.try_append_hex(0x1a2bu) == true);
+    require(ta_eq(s, "1a2b"));
+    s.clear();
+    require(s.try_append_hex(0x1a2bu, true) == true);
+    require(ta_eq(s, "1A2B"));
+    micron::sstring<4, T, Sf> t;
+    require(t.try_append_hex(0xdeadbeefu) == false);      // 8 digits, room 3
+    require(t.size() == 0u);                              // all-or-nothing
+  }
+  end_test_case();
+
+  test_case("ss try_append interops with the checked ops");
+  {
+    S64 s;
+    const T abc[] = { 'a', 'b', 'c', 0 };
+    require(s.try_append(abc) == true);
+    s += static_cast<T>('d');
+    require(s.size() == 4u);
+    require(s.find(static_cast<T>('c')) == 2u);
+    s.clear();
+    require(s.size() == 0u);
+    require(s.try_append(abc) == true);      // usable again after clear
+    require(ta_eq(s, "abc"));
+  }
+  end_test_case();
+
+  test_case("ss try_append mixed build (path-builder shape)");
+  {
+    S64 p;
+    const T pfx[] = { '/', 't', 'm', 'p', '/', 0 };
+    const T leaf[] = { 'b', 'e', 'e', '.', 'l', 'o', 'g', 0 };
+    bool ok = true;
+    ok &= p.try_append(pfx);
+    ok &= p.try_append_int(1000u);
+    ok &= p.try_append(static_cast<T>('/'));
+    ok &= p.try_append(leaf);
+    require(ok == true);
+    require(ta_eq(p, "/tmp/1000/bee.log"));
+  }
+  end_test_case();
+}
+
 template<typename T>
 static void
 run_all(const char *tyname)
 {
   sb::print("--- sstring<", tyname, "> ---");
+  run_try_append<T, true>();
+  run_try_append<T, false>();
   run_edges<T>();
   run_props<T>();
   run_accessors<T>();
