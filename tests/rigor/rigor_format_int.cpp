@@ -546,6 +546,114 @@ main()
   }
   end_test_case();
 
+  test_case("try_parse_uint64 basics");
+  {
+    u64 out = 0;
+    require_true(micron::try_parse_uint64("12345", 5, out));
+    require(out, u64(12345));
+    require_true(micron::try_parse_uint64("0", 1, out));
+    require(out, u64(0));
+    require_true(micron::try_parse_uint64("18446744073709551615", 20, out));
+    require(out, u64(0xFFFFFFFFFFFFFFFFull));
+    require_true(micron::try_parse_uint64("  42  ", 6, out));      // padding tolerated
+    require(out, u64(42));
+  }
+  end_test_case();
+
+  test_case("try_parse_uint64 rejects");
+  {
+    u64 out = 7;
+    require_false(micron::try_parse_uint64("xyz", 3, out));
+    require_false(micron::try_parse_uint64("-1", 2, out));                       // no sign
+    require_false(micron::try_parse_uint64("12a", 3, out));                      // trailing junk
+    require_false(micron::try_parse_uint64("", 0, out));                         // empty
+    require_false(micron::try_parse_uint64(static_cast<const char *>(nullptr), 4, out));
+    require_false(micron::try_parse_uint64("18446744073709551616", 20, out));    // overflow
+  }
+  end_test_case();
+
+  test_case("try_parse_uint64 honours the length (no NUL needed)");
+  {
+    u64 out = 0;
+    const char win[] = "1234abcd";
+    require_true(micron::try_parse_uint64(win, 4, out));      // borrowed window, not a C string
+    require(out, u64(1234));
+    require_false(micron::try_parse_uint64(win, 5, out));      // 'a' is now in range
+  }
+  end_test_case();
+
+  test_case("try_parse_int64 basics + rejects");
+  {
+    i64 out = 0;
+    require_true(micron::try_parse_int64("12345", 5, out));
+    require(out, i64(12345));
+    require_true(micron::try_parse_int64("-9999", 5, out));
+    require(out, i64(-9999));
+    require_true(micron::try_parse_int64("-9223372036854775808", 20, out));
+    require(out, i64(-0x7FFFFFFFFFFFFFFFLL - 1));
+    require_false(micron::try_parse_int64("not a number", 12, out));
+    require_false(micron::try_parse_int64("9223372036854775808", 19, out));      // +max overflow
+    require_false(micron::try_parse_int64("-", 1, out));
+    require_false(micron::try_parse_int64("", 0, out));
+  }
+  end_test_case();
+
+  test_case("try_parse_hex64");
+  {
+    u64 out = 0;
+    require_true(micron::try_parse_hex64("1a2b", 4, out));
+    require(out, u64(0x1a2b));
+    require_true(micron::try_parse_hex64("0xDEAD", 6, out));      // prefix tolerated
+    require(out, u64(0xDEAD));
+    require_true(micron::try_parse_hex64("FFFFFFFFFFFFFFFF", 16, out));
+    require(out, u64(0xFFFFFFFFFFFFFFFFull));
+    require_false(micron::try_parse_hex64("1g", 2, out));                     // bad digit
+    require_false(micron::try_parse_hex64("0x", 2, out));                     // prefix only
+    require_false(micron::try_parse_hex64("", 0, out));
+    require_false(micron::try_parse_hex64("10000000000000000", 17, out));     // overflow
+  }
+  end_test_case();
+
+  test_case("try_parse_hex_bytes");
+  {
+    u8 buf[4] = { 0, 0, 0, 0 };
+    require_true(micron::try_parse_hex_bytes("0a1bff00", 8, buf, 4));
+    require(buf[0], u8(0x0a));
+    require(buf[1], u8(0x1b));
+    require(buf[2], u8(0xff));
+    require(buf[3], u8(0x00));
+    require_true(micron::try_parse_hex_bytes("0A1BFF00", 8, buf, 4));      // case insensitive
+    require(buf[1], u8(0x1b));
+    require_false(micron::try_parse_hex_bytes("0a1bff", 6, buf, 4));       // too short
+    require_false(micron::try_parse_hex_bytes("0a1bff0000", 10, buf, 4));  // too long
+    require_false(micron::try_parse_hex_bytes("0a1bffzz", 8, buf, 4));     // bad digit
+    require(buf[3], u8(0x00));                                             // untouched on reject
+  }
+  end_test_case();
+
+  test_case("try_parse_* agree with the hstring spellings");
+  {
+    const char *cases[] = { "0", "1", "42", "-1", "-42", "12345", "18446744073709551615", "x", "", "  9  ", "1a" };
+    for ( usize i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i ) {
+      usize n = 0;
+      while ( cases[i][n] ) ++n;
+      auto h = mk_hstring(cases[i]);
+
+      i64 a = 0, b = 0;
+      bool oka = micron::try_string_to_int64(h, a);
+      bool okb = micron::try_parse_int64(cases[i], n, b);
+      require(oka, okb);
+      if ( oka ) require(a, b);
+
+      u64 c = 0, d = 0;
+      bool okc = micron::try_string_to_uint64(h, c);
+      bool okd = micron::try_parse_uint64(cases[i], n, d);
+      require(okc, okd);
+      if ( okc ) require(c, d);
+    }
+  }
+  end_test_case();
+
   sb::print("=== FORMAT/INT RIGOR SUITE PASSED ===");
   return 1;
 }
