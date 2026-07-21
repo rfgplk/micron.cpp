@@ -10,7 +10,6 @@
 #include "allocation/__internal.hpp"
 // #define ALLOCATOR_DEBUG 1
 #ifdef ALLOCATOR_DEBUG
-#include "../io/console.hpp"
 #define ALLOC_MESSAGE(x, ...)                                                                                                              \
   if constexpr ( __micron_global__alloc_debug == true ) {                                                                                  \
     micron::_micron_log(__FILE__, __LINE__, x, ##__VA_ARGS__);                                                                             \

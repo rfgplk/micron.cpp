@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../gl/__bits/__wayland_types.hpp"
+#include "../../gfx/platform/__bits/__wayland_types.hpp"
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // wl_seat / wl_pointer / wl_keyboard / wl_touch
@@ -17,22 +17,22 @@ namespace micron
 namespace uxin
 {
 
-extern const gl::wl_interface __wl_seat_interface;
-extern const gl::wl_interface __wl_pointer_interface;
-extern const gl::wl_interface __wl_keyboard_interface;
-extern const gl::wl_interface __wl_touch_interface;
+extern const gfx::platform::wl_interface __wl_seat_interface;
+extern const gfx::platform::wl_interface __wl_pointer_interface;
+extern const gfx::platform::wl_interface __wl_keyboard_interface;
+extern const gfx::platform::wl_interface __wl_touch_interface;
 
-inline const gl::wl_interface *__wl_pointer_types_set_cursor[] = {
+inline const gfx::platform::wl_interface *__wl_pointer_types_set_cursor[] = {
   nullptr,                     // serial (uint)
   nullptr /*wl_surface*/,      // we don't pass a wl_surface here from uxin
   nullptr,                     // hotspot_x (int)
   nullptr,                     // hotspot_y (int)
 };
-inline const gl::wl_message __wl_pointer_methods[] = {
+inline const gfx::platform::wl_message __wl_pointer_methods[] = {
   { "set_cursor", "u?oii", __wl_pointer_types_set_cursor },
   { "release", "3", nullptr },
 };
-inline const gl::wl_message __wl_pointer_events[] = {
+inline const gfx::platform::wl_message __wl_pointer_events[] = {
   { "enter", "uoff", nullptr },
   { "leave", "uo", nullptr },
   { "motion", "uff", nullptr },
@@ -45,7 +45,7 @@ inline const gl::wl_message __wl_pointer_events[] = {
   { "axis_value120", "8ui", nullptr },
   { "axis_relative_direction", "9uu", nullptr },
 };
-inline constexpr gl::wl_interface __wl_pointer_interface = {
+inline constexpr gfx::platform::wl_interface __wl_pointer_interface = {
   "wl_pointer",
   9,
   sizeof(__wl_pointer_methods) / sizeof(__wl_pointer_methods[0]),
@@ -54,14 +54,14 @@ inline constexpr gl::wl_interface __wl_pointer_interface = {
   __wl_pointer_events,
 };
 
-inline const gl::wl_message __wl_keyboard_methods[] = {
+inline const gfx::platform::wl_message __wl_keyboard_methods[] = {
   { "release", "3", nullptr },
 };
-inline const gl::wl_message __wl_keyboard_events[] = {
+inline const gfx::platform::wl_message __wl_keyboard_events[] = {
   { "keymap", "uhu", nullptr }, { "enter", "uoa", nullptr },       { "leave", "uo", nullptr },
   { "key", "uuuu", nullptr },   { "modifiers", "uuuuu", nullptr }, { "repeat_info", "4ii", nullptr },
 };
-inline constexpr gl::wl_interface __wl_keyboard_interface = {
+inline constexpr gfx::platform::wl_interface __wl_keyboard_interface = {
   "wl_keyboard",
   9,
   sizeof(__wl_keyboard_methods) / sizeof(__wl_keyboard_methods[0]),
@@ -71,32 +71,32 @@ inline constexpr gl::wl_interface __wl_keyboard_interface = {
 };
 
 // TODO: expand
-inline const gl::wl_message __wl_touch_methods[] = {
+inline const gfx::platform::wl_message __wl_touch_methods[] = {
   { "release", "3", nullptr },
 };
-inline const gl::wl_message __wl_touch_events[] = {
+inline const gfx::platform::wl_message __wl_touch_events[] = {
   { "down", "uuoiff", nullptr }, { "up", "uui", nullptr },     { "motion", "uiff", nullptr },     { "frame", "", nullptr },
   { "cancel", "", nullptr },     { "shape", "6iff", nullptr }, { "orientation", "6if", nullptr },
 };
-inline constexpr gl::wl_interface __wl_touch_interface = {
+inline constexpr gfx::platform::wl_interface __wl_touch_interface = {
   "wl_touch", 9, 1, __wl_touch_methods, 7, __wl_touch_events,
 };
 
-inline const gl::wl_interface *__wl_seat_types_get_pointer[] = { &__wl_pointer_interface };
-inline const gl::wl_interface *__wl_seat_types_get_keyboard[] = { &__wl_keyboard_interface };
-inline const gl::wl_interface *__wl_seat_types_get_touch[] = { &__wl_touch_interface };
+inline const gfx::platform::wl_interface *__wl_seat_types_get_pointer[] = { &__wl_pointer_interface };
+inline const gfx::platform::wl_interface *__wl_seat_types_get_keyboard[] = { &__wl_keyboard_interface };
+inline const gfx::platform::wl_interface *__wl_seat_types_get_touch[] = { &__wl_touch_interface };
 
-inline const gl::wl_message __wl_seat_methods[] = {
+inline const gfx::platform::wl_message __wl_seat_methods[] = {
   { "get_pointer", "n", __wl_seat_types_get_pointer },
   { "get_keyboard", "n", __wl_seat_types_get_keyboard },
   { "get_touch", "n", __wl_seat_types_get_touch },
   { "release", "5", nullptr },
 };
-inline const gl::wl_message __wl_seat_events[] = {
+inline const gfx::platform::wl_message __wl_seat_events[] = {
   { "capabilities", "u", nullptr },
   { "name", "2s", nullptr },
 };
-inline constexpr gl::wl_interface __wl_seat_interface = {
+inline constexpr gfx::platform::wl_interface __wl_seat_interface = {
   "wl_seat",
   9,
   sizeof(__wl_seat_methods) / sizeof(__wl_seat_methods[0]),
@@ -129,31 +129,32 @@ inline constexpr u32 wl_keyboard_key_state_pressed = 1;
 
 // callbacks
 struct wl_seat_listener_t {
-  void (*capabilities)(void *data, gl::wl_seat *seat, u32 caps);
-  void (*name)(void *data, gl::wl_seat *seat, const char *name);
+  void (*capabilities)(void *data, gfx::platform::wl_seat *seat, u32 caps);
+  void (*name)(void *data, gfx::platform::wl_seat *seat, const char *name);
 };
 
 struct wl_pointer_listener_t {
-  void (*enter)(void *data, gl::wl_pointer *p, u32 serial, gl::wl_surface *s, i32 surface_x_fixed, i32 surface_y_fixed);
-  void (*leave)(void *data, gl::wl_pointer *p, u32 serial, gl::wl_surface *s);
-  void (*motion)(void *data, gl::wl_pointer *p, u32 time, i32 surface_x_fixed, i32 surface_y_fixed);
-  void (*button)(void *data, gl::wl_pointer *p, u32 serial, u32 time, u32 button, u32 state);
-  void (*axis)(void *data, gl::wl_pointer *p, u32 time, u32 axis, i32 value_fixed);
-  void (*frame)(void *data, gl::wl_pointer *p);
-  void (*axis_source)(void *data, gl::wl_pointer *p, u32 axis_source);
-  void (*axis_stop)(void *data, gl::wl_pointer *p, u32 time, u32 axis);
-  void (*axis_discrete)(void *data, gl::wl_pointer *p, u32 axis, i32 discrete);
-  void (*axis_value120)(void *data, gl::wl_pointer *p, u32 axis, i32 value120);
-  void (*axis_relative_direction)(void *data, gl::wl_pointer *p, u32 axis, u32 direction);
+  void (*enter)(void *data, gfx::platform::wl_pointer *p, u32 serial, gfx::platform::wl_surface *s, i32 surface_x_fixed,
+                i32 surface_y_fixed);
+  void (*leave)(void *data, gfx::platform::wl_pointer *p, u32 serial, gfx::platform::wl_surface *s);
+  void (*motion)(void *data, gfx::platform::wl_pointer *p, u32 time, i32 surface_x_fixed, i32 surface_y_fixed);
+  void (*button)(void *data, gfx::platform::wl_pointer *p, u32 serial, u32 time, u32 button, u32 state);
+  void (*axis)(void *data, gfx::platform::wl_pointer *p, u32 time, u32 axis, i32 value_fixed);
+  void (*frame)(void *data, gfx::platform::wl_pointer *p);
+  void (*axis_source)(void *data, gfx::platform::wl_pointer *p, u32 axis_source);
+  void (*axis_stop)(void *data, gfx::platform::wl_pointer *p, u32 time, u32 axis);
+  void (*axis_discrete)(void *data, gfx::platform::wl_pointer *p, u32 axis, i32 discrete);
+  void (*axis_value120)(void *data, gfx::platform::wl_pointer *p, u32 axis, i32 value120);
+  void (*axis_relative_direction)(void *data, gfx::platform::wl_pointer *p, u32 axis, u32 direction);
 };
 
 struct wl_keyboard_listener_t {
-  void (*keymap)(void *data, gl::wl_keyboard *k, u32 format, i32 fd, u32 size);
-  void (*enter)(void *data, gl::wl_keyboard *k, u32 serial, gl::wl_surface *s, void *keys_array);
-  void (*leave)(void *data, gl::wl_keyboard *k, u32 serial, gl::wl_surface *s);
-  void (*key)(void *data, gl::wl_keyboard *k, u32 serial, u32 time, u32 key, u32 state);
-  void (*modifiers)(void *data, gl::wl_keyboard *k, u32 serial, u32 depressed, u32 latched, u32 locked, u32 group);
-  void (*repeat_info)(void *data, gl::wl_keyboard *k, i32 rate, i32 delay);
+  void (*keymap)(void *data, gfx::platform::wl_keyboard *k, u32 format, i32 fd, u32 size);
+  void (*enter)(void *data, gfx::platform::wl_keyboard *k, u32 serial, gfx::platform::wl_surface *s, void *keys_array);
+  void (*leave)(void *data, gfx::platform::wl_keyboard *k, u32 serial, gfx::platform::wl_surface *s);
+  void (*key)(void *data, gfx::platform::wl_keyboard *k, u32 serial, u32 time, u32 key, u32 state);
+  void (*modifiers)(void *data, gfx::platform::wl_keyboard *k, u32 serial, u32 depressed, u32 latched, u32 locked, u32 group);
+  void (*repeat_info)(void *data, gfx::platform::wl_keyboard *k, i32 rate, i32 delay);
 };
 
 };      // namespace uxin

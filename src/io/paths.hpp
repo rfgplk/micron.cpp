@@ -9,7 +9,7 @@
 #include "../string/format.hpp"
 #include "../string/strings.hpp"
 #include "../vector/fvector.hpp"
-#include "posix/dir.hpp"
+#include "os/dir.hpp"
 
 #include "realpath.hpp"
 
@@ -41,6 +41,7 @@ class path
     return out;
   }
 
+  // NOTE: filesystem paths are trusted
   static path_t
   __join(const path_t &base, const path_t &rel)
   {
@@ -94,6 +95,20 @@ class path
     for ( const auto &n : d.get_children() )
       if ( pred(n) ) out.emplace_back(n.d_name);
     return out;
+  }
+
+  // non-throwing sibling of __list: appends to `out` and returns 0, or returns a negative -errno
+  // if the directory could not be opened. Nothing on this path can raise -- dir::try_open adopts
+  // an errno-carrying handle, and get_children()/_read_entries() only run once valid() holds.
+  template<typename Pred>
+  i32
+  __try_list(Pred pred, micron::fvector<path_t> &out) const
+  {
+    dir d = dir::try_open(__p.c_str());
+    if ( !d.valid() ) return d.__handle.fd;      // fd_t carries the negative errno inline
+    for ( const auto &n : d.get_children() )
+      if ( pred(n) ) out.emplace_back(n.d_name);
+    return 0;
   }
 
 public:
@@ -823,6 +838,28 @@ public:
   all() const
   {
     return __list([](const posix::__impl_dir &) { return true; });
+  }
+
+  // non-throwing forms of files()/dirs()/all(): fill `out`, return 0 on success or a negative
+  // -errno if this directory could not be opened. For callers that must tolerate an unreadable
+  // directory in every build -- exc<> aborts rather than throws once __use_exceptions is false,
+  // so a catch-based skip is not portable across the eh gate. See __ftw::walk.
+  i32
+  try_files(micron::fvector<path_t> &out) const
+  {
+    return __try_list([this](const posix::__impl_dir &e) { return file(e.d_name.c_str()); }, out);
+  }
+
+  i32
+  try_dirs(micron::fvector<path_t> &out) const
+  {
+    return __try_list([this](const posix::__impl_dir &e) { return directory(e.d_name.c_str()); }, out);
+  }
+
+  i32
+  try_all(micron::fvector<path_t> &out) const
+  {
+    return __try_list([](const posix::__impl_dir &) { return true; }, out);
   }
 
   auto

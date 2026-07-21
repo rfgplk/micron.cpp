@@ -227,6 +227,7 @@ keyctl_restrict(key_serial_t keyring, const char *type, const char *restriction)
                                  reinterpret_cast<unsigned long>(restriction)));
 }
 
+// >=5.10
 inline auto
 keyctl_move_key(key_serial_t key, key_serial_t from, key_serial_t to, u32 flags) -> i32
 {

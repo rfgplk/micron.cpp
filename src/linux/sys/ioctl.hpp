@@ -222,5 +222,12 @@ constexpr static const u64 tiocpkt_nostop = 16;
 constexpr static const u64 tiocpkt_dostop = 32;
 constexpr static const u64 tiocpkt_ioctl = 64;
 constexpr static const u64 tiocser_temt = 0x01;
+
+inline bool
+isatty(i32 fd) noexcept
+{
+  alignas(8) unsigned char __t[64];
+  return micron::posix::ioctl(fd, tcgets, &__t[0]) >= 0;
+}
 };      // namespace posix
 }      // namespace micron

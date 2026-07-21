@@ -167,14 +167,14 @@ class pmap
   {
     __chain *head = nullptr;
     __chain **tail = &head;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
       for ( const __chain *c = src; c; c = c->next ) {
         *tail = new __chain(c->h, c->key, c->value);
         tail = &(*tail)->next;
       }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       __destroy_chain(head);      // a throwing K/V copy must not leak the partial chain
       throw;
@@ -360,7 +360,7 @@ class pmap
     __chain *head = nullptr;
     __chain **tail = &head;
     bool replaced = false;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
       for ( const __chain *c = src; c; c = c->next ) {
@@ -372,7 +372,7 @@ class pmap
         }
         tail = &(*tail)->next;
       }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       __destroy_chain(head);
       throw;
@@ -387,7 +387,7 @@ class pmap
     __chain *head = nullptr;
     __chain **tail = &head;
     bool dropped = false;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
       for ( const __chain *c = src; c; c = c->next ) {
@@ -398,7 +398,7 @@ class pmap
         *tail = new __chain(c->h, c->key, c->value);
         tail = &(*tail)->next;
       }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       __destroy_chain(head);
       throw;
@@ -446,13 +446,13 @@ class pmap
       __child_absorb(&cs[__phys_idx(bm, idx)], h, k, v);
     };
 
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
       place(l->h, l->key, l->value);
       for ( const __chain *c = l->overflow; c; c = c->next ) place(c->h, c->key, c->value);
       __child_absorb(&cs[__phys_idx(bm, __idx_at(new_h, depth))], new_h, new_k, micron::move(new_v));
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       __release(__tag_internal_ptr(in));
       throw;

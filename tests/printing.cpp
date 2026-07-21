@@ -6,6 +6,8 @@
 #include "../src/io/console.hpp"
 #include "../src/std.hpp"
 #include "../src/string/strings.hpp"
+#include <string>
+#include <vector>
 
 #include "../src/bitfield.hpp"
 #include "../src/math/generic.hpp"

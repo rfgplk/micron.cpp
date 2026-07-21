@@ -10,6 +10,7 @@
 #include "type_traits.hpp"
 #include "types.hpp"
 
+#include "except.hpp"
 #include "memory/actions.hpp"
 
 #include "numerics.hpp"
@@ -247,6 +248,29 @@ public:
     return *reinterpret_cast<const micron::decay_t<T> *>(storage);
   }
 
+  template<typename Fn>
+  constexpr void
+  visit(Fn &&fn) const
+  {
+    if ( !has_value() ) return;
+    bool found = false;
+    (
+        [&]<typename T>() {
+          if ( !found && is<T>() ) {
+            found = true;
+            fn(cast<T>());
+          }
+        }.template operator()<Ts>(),
+        ...);
+  }
+
+  template<typename Fn>
+  constexpr void
+  visit(Fn &&fn)
+  {
+    static_cast<const any &>(*this).visit(micron::forward<Fn>(fn));
+  }
+
   template<typename T>
     requires(__impl::type_in_pack_v<micron::decay_t<T>, Ts...> && !micron::same_as<micron::decay_t<T>, any>)
   any &
@@ -306,6 +330,7 @@ public:
     requires(__impl::type_in_pack_v<T, Ts...>)
   operator T &() &
   {
+    if ( !is<T>() ) micron::exc<except::logic_error>("any: implicit unwrap of an inactive alternative");
     return cast<T>();
   }
 
@@ -313,6 +338,7 @@ public:
     requires(__impl::type_in_pack_v<T, Ts...>)
   operator const T &() const &
   {
+    if ( !is<T>() ) micron::exc<except::logic_error>("any: implicit unwrap of an inactive alternative");
     return cast<T>();
   }
 
@@ -320,6 +346,7 @@ public:
     requires(__impl::type_in_pack_v<T, Ts...>)
   operator T() &&
   {
+    if ( !is<T>() ) micron::exc<except::logic_error>("any: implicit unwrap of an inactive alternative");
     return micron::move(cast<T>());
   }
 
@@ -649,6 +676,7 @@ public:
     requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator U &() &
   {
+    if ( !is<U>() ) micron::exc<except::logic_error>("option: implicit unwrap of the inactive alternative");
     return cast<U>();
   }
 
@@ -656,6 +684,7 @@ public:
     requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator const U &() const &
   {
+    if ( !is<U>() ) micron::exc<except::logic_error>("option: implicit unwrap of the inactive alternative");
     return cast<U>();
   }
 
@@ -663,6 +692,7 @@ public:
     requires((!micron::is_void_v<U>) && (micron::same_as<micron::decay_t<U>, T> || micron::same_as<micron::decay_t<U>, F>))
   operator U() &&
   {
+    if ( !is<U>() ) micron::exc<except::logic_error>("option: implicit unwrap of the inactive alternative");
     return micron::move(cast<U>());
   }
 };

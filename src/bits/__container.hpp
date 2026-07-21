@@ -46,7 +46,7 @@ deep_copy(T *__restrict dest, T *__restrict src, usize cnt)
     for ( usize i = 0; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
   } else {
     usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
     } catch ( ... ) {
@@ -67,7 +67,7 @@ deep_copy(T *__restrict dest, const T *__restrict src, usize cnt)
     for ( usize i = 0; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
   } else {
     usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < cnt; ++i ) new (addr(dest[i])) T(src[i]);
     } catch ( ... ) {
@@ -116,7 +116,7 @@ deep_move(T *__restrict dest, T *__restrict src, usize cnt)
   } else {
     // WARNING: if move ctor throws at i,/ already-constructed dest[0..i-1] are destroyed; rethrow exception
     usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < cnt; ++i ) {
         new (addr(dest[i])) T(micron::move(src[i]));
@@ -150,7 +150,7 @@ deep_copy(T *__restrict dest, T *__restrict src)
     for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(src[i]);
   } else {
     usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < N; ++i ) new (addr(dest[i])) T(src[i]);
     } catch ( ... ) {
@@ -171,7 +171,7 @@ deep_copy(T *__restrict dest, const T *__restrict src)
     for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(src[i]);
   } else {
     usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < N; ++i ) new (addr(dest[i])) T(src[i]);
     } catch ( ... ) {
@@ -218,7 +218,7 @@ deep_move(T *__restrict dest, T *__restrict src)
     }
   } else {
     usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < N; ++i ) {
         new (addr(dest[i])) T(micron::move(src[i]));
@@ -246,7 +246,7 @@ deep_move_init(T *__restrict dest, T *__restrict src)
     for ( usize i = 0; i < N; ++i ) new (addr(dest[i])) T(micron::move(src[i]));
   } else {
     usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < N; ++i ) new (addr(dest[i])) T(micron::move(src[i]));
     } catch ( ... ) {
@@ -454,7 +454,7 @@ inline void
 fill_gap(T *base, usize length, usize p, usize cnt, Fn &&fn)
 {
   if ( cnt == 0 ) return;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
   usize k = 0;
   try {
     for ( ; k < cnt; ++k ) fn(p + k);
@@ -623,7 +623,7 @@ construct(T *__restrict src, const T &val)
     } else {
       // throwing element ctor: unwind the already-built prefix on throw
       usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( ; i < N; ++i ) new (addr(src[i])) T(val);
       } catch ( ... ) {
@@ -649,7 +649,7 @@ construct(T *__restrict src, const T &val, usize cnt)
     } else {
       // throwing element ctor: unwind the already-built prefix on throw
       usize i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( ; i < cnt; ++i ) new (addr(src[i])) T(val);
       } catch ( ... ) {

@@ -81,7 +81,7 @@ class cactus_stack
     for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) ++cnt;
 
     size_type pos = cnt;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( i32 c = src.__head; c != __none; c = src.__slot(c)->parent ) {
         --pos;

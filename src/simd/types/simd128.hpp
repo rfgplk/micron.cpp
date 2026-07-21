@@ -62,8 +62,8 @@ private:
 #if defined(__micron_x86_sse4_1)
     return _mm_mullo_epi32(a, b);
 #else
-    const i128 ev = _mm_mul_epu32(a, b);                                        // lanes 0, 2
-    const i128 od = _mm_mul_epu32(_mm_srli_si128(a, 4), _mm_srli_si128(b, 4));  // lanes 1, 3
+    const i128 ev = _mm_mul_epu32(a, b);                                            // lanes 0, 2
+    const i128 od = _mm_mul_epu32(_mm_srli_si128(a, 4), _mm_srli_si128(b, 4));      // lanes 1, 3
     return _mm_unpacklo_epi32(_mm_shuffle_epi32(ev, _MM_SHUFFLE(0, 0, 2, 0)), _mm_shuffle_epi32(od, _MM_SHUFFLE(0, 0, 2, 0)));
 #endif
   }

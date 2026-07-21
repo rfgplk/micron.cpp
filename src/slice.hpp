@@ -189,6 +189,7 @@ template<typename T> struct ptr_range {
 template<is_movable_object T> struct slice: public __immutable_memory_resource<T, micron::allocator_serial<>> {
   using __mem = __immutable_memory_resource<T, micron::allocator_serial<>>;
   using category_type = slice_tag;
+  using contiguous_tag = void;
   using mutability_type = immutable_tag;
   using memory_type = heap_tag;
   using safety_type = unsafe_tag;

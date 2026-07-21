@@ -26,8 +26,7 @@ main()
     for ( int i = 0; i < 10; i++ ) vec.push_back(i);
     vec.erase(vec.begin());
     vec.erase(vec.begin() + 3);
-    vec.erase(vec.begin() + 7);
-    vec.erase(vec.begin() + 9);
+    vec.erase(vec.begin() + 5);
     micron::console(vec);
   };
   enable_scope()

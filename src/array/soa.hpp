@@ -151,7 +151,7 @@ class soa
   __grow_to_impl(usize new_cap, void **new_cols, micron::index_sequence<Is...> seq)
   {
     usize done = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       (((new_cols[Is] = __raw_new<__col_t<Is>>(new_cap)), ++done), ...);
     } catch ( ... ) {
@@ -196,7 +196,7 @@ class soa
   __emplace_at(usize idx, micron::index_sequence<Is...> seq, Ts &&...vs)
   {
     usize done = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       (((void)(new (__as<Is>(__cols[Is]) + idx) __col_t<Is>(micron::forward<Ts>(vs))), ++done), ...);
     } catch ( ... ) {

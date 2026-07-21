@@ -10,6 +10,8 @@
 #include "../../../memory/mman.hpp"
 #include "../../../types.hpp"
 
+#include "../../../attach/landlord.hpp"
+
 #include "../../elf/auxv.hpp"
 
 #include "../../io/sys.hpp"
@@ -137,26 +139,37 @@ __tls_make_frame(const byte *image, u64 filesz, u64 memsz, u64 align, usize page
   if ( page_sz == 0 ) page_sz = 4096;
   const u64 p_align = align ? align : __micron_tls_min_align;
   if ( p_align > page_sz ) return f;      // bad align
+  // variant II seats the host image at base + surplus, so a surplus that isn't a multiple of p_align
+  // misaligns every host thread_local in this frame; refuse rather than hand back a poisoned frame
+  if ( !__attach_surplus_fits_align(p_align) ) return f;
   const u64 block = __tls_round_up(memsz, p_align);
 
 #if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
-  // Variant II: [ image_block | TCB ]
-  // tp = base + block
-  const u64 alloc = __tls_round_up(block + __micron_tcb_sz, page_sz);
+  // Variant II: [ surplus S | image_block | TCB ]
+  // tp = base + S + block; host tpoffs unchanged
+  const u64 surplus = __micron_tls_surplus;
+  const u64 alloc = __tls_round_up(surplus + block + __micron_tcb_sz, page_sz);
   byte *base = __tls_raw_mmap(static_cast<usize>(alloc));
   if ( !base ) return f;
-  byte *tp = base + block;
-  for ( u64 i = 0; i < filesz; ++i ) base[i] = image[i];
+  byte *tp = base + surplus + block;
+  byte *image_dst = base + surplus;
+  for ( u64 i = 0; i < filesz; ++i ) image_dst[i] = image[i];
   *reinterpret_cast<void **>(tp) = tp;      // TCB self-pointer (%fs:0 == tp)
   f = __tls_frame{ base, static_cast<usize>(alloc), tp, block };
 #elif defined(__micron_arch_arm64) || defined(__micron_arch_arm32)
-  // Variant I: [ TCB | pad | image_block ]
+  // Variant I: [ TCB | pad | image_block | pad | surplus S ]
   // tp = base; no self-pointer
   // WARNING: armv7/armv8+ exec model resolves a thread_local at PT_TLS offset to read_tp + round_up(tcbhead, p_align) + o,
   // the image __MUST__ start at p_align past the TCB, not at tcbhead
   const u64 head = (sizeof(void *) == 8) ? __arm64_tcbhead_sz : __arm_tcbhead_sz;
   const u64 head_aligned = __tls_round_up(head, p_align);
-  const u64 alloc = __tls_round_up(head_aligned + block, page_sz);
+  u64 alloc;
+  if constexpr ( __micron_tls_surplus == 0 ) {
+    alloc = __tls_round_up(head_aligned + block, page_sz);
+  } else {
+    const u64 surplus_base_off = __tls_round_up(head_aligned + block, __micron_tls_surplus_align);
+    alloc = __tls_round_up(surplus_base_off + __micron_tls_surplus, page_sz);
+  }
   byte *base = __tls_raw_mmap(static_cast<usize>(alloc));
   if ( !base ) return f;
   byte *image_dst = base + head_aligned;
@@ -200,14 +213,44 @@ inline __tls_frame
 __tls_make_child_frame() noexcept
 {
   __tls_frame f = __tls_make_frame_cached();
-  if ( f.base ) __tls_seed_tcb_from_current(f);
+  if ( f.base ) {
+    __tls_seed_tcb_from_current(f);
+#if defined(__micron_attach_capable)
+    // WARNING: join the registry before seeding, never after
+    __attach_frame_register(f.base);
+    // seed every attached guest's thread_locals into this frame's surplus
+    __attach_copy_registered_tdata(f.base);
+#endif
+  }
   return f;
 }
 
 inline void
 __tls_free_frame(const __tls_frame &f) noexcept
 {
-  if ( f.base ) micron::munmap(reinterpret_cast<addr_t *>(f.base), f.size);
+  if ( !f.base ) return;
+#if defined(__micron_attach_capable)
+  // leave the registry before the pages go away, so no assign() walk can write into them
+  __attach_frame_unregister(f.base);
+#endif
+  micron::munmap(reinterpret_cast<addr_t *>(f.base), f.size);
 }
+
+#if defined(__micron_attach_capable)
+inline int
+__attach_make_child_frame(__tls_frame *out) noexcept
+{
+  __tls_frame frame = __tls_make_child_frame();
+  if ( frame.base == nullptr ) return -1;
+  *out = frame;
+  return 0;
+}
+
+inline void
+__attach_free_frame(const __tls_frame *f) noexcept
+{
+  if ( f ) __tls_free_frame(*f);
+}
+#endif
 
 };      // namespace micron

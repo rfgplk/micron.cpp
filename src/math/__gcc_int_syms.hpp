@@ -12,9 +12,12 @@
 
 #include "../types.hpp"
 
+// WARNING: USED IS NOT OPTIONAL HERE WEAK ALONE ISN'T ENOUGH
+#define __mc_libgcc_sym __attribute__((weak, used, retain))
+
 #if !defined(__x86_64__) && !defined(__aarch64__)
 
-extern "C" __attribute__((weak)) unsigned long long
+extern "C" __mc_libgcc_sym unsigned long long
 __udivmoddi4(unsigned long long n, unsigned long long d, unsigned long long *rem) noexcept
 {
   if ( d == 0 ) {
@@ -33,13 +36,13 @@ __udivmoddi4(unsigned long long n, unsigned long long d, unsigned long long *rem
   return q;
 }
 
-extern "C" __attribute__((weak)) unsigned long long
+extern "C" __mc_libgcc_sym unsigned long long
 __udivdi3(unsigned long long n, unsigned long long d) noexcept
 {
   return __udivmoddi4(n, d, nullptr);
 }
 
-extern "C" __attribute__((weak)) unsigned long long
+extern "C" __mc_libgcc_sym unsigned long long
 __umoddi3(unsigned long long n, unsigned long long d) noexcept
 {
   unsigned long long r = 0;
@@ -47,17 +50,18 @@ __umoddi3(unsigned long long n, unsigned long long d) noexcept
   return r;
 }
 
-extern "C" __attribute__((weak)) long long
+extern "C" __mc_libgcc_sym long long
 __divdi3(long long n, long long d) noexcept
 {
   bool neg = (n < 0) != (d < 0);
   unsigned long long un = n < 0 ? 0ull - static_cast<unsigned long long>(n) : static_cast<unsigned long long>(n);
   unsigned long long ud = d < 0 ? 0ull - static_cast<unsigned long long>(d) : static_cast<unsigned long long>(d);
   unsigned long long q = __udivmoddi4(un, ud, nullptr);
-  return neg ? -static_cast<long long>(q) : static_cast<long long>(q);
+  // WARNING: unsigned negate -- LLONG_MIN / 1 yields q == 2^63 and negating that as a long long is UB
+  return neg ? static_cast<long long>(0ull - q) : static_cast<long long>(q);
 }
 
-extern "C" __attribute__((weak)) long long
+extern "C" __mc_libgcc_sym long long
 __moddi3(long long n, long long d) noexcept
 {
   unsigned long long un = n < 0 ? 0ull - static_cast<unsigned long long>(n) : static_cast<unsigned long long>(n);
@@ -69,7 +73,7 @@ __moddi3(long long n, long long d) noexcept
 
 // 64-bit bit-scans: higher optimization levels lower __builtin_ctzll/clzll on u64 to these
 // on 32-bit targets instead of the two-half inline sequence
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __ctzdi2(unsigned long long x) noexcept
 {
   if ( x == 0 ) return 64;
@@ -78,7 +82,7 @@ __ctzdi2(unsigned long long x) noexcept
   return 32 + __builtin_ctz(static_cast<unsigned>(x >> 32));
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __clzdi2(unsigned long long x) noexcept
 {
   if ( x == 0 ) return 64;
@@ -87,7 +91,7 @@ __clzdi2(unsigned long long x) noexcept
   return 32 + __builtin_clz(static_cast<unsigned>(x));
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __ffsdi2(unsigned long long x) noexcept
 {
   return x ? 1 + __ctzdi2(x) : 0;
@@ -95,7 +99,7 @@ __ffsdi2(unsigned long long x) noexcept
 
 #endif
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __popcountsi2(unsigned int v) noexcept
 {
   v = v - ((v >> 1) & 0x55555555u);
@@ -104,7 +108,7 @@ __popcountsi2(unsigned int v) noexcept
   return (int)((v * 0x01010101u) >> 24);
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __popcountdi2(unsigned long long v) noexcept
 {
 #if defined(__x86_64__) || defined(__aarch64__)
@@ -121,7 +125,7 @@ __popcountdi2(unsigned long long v) noexcept
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 
-extern "C" __attribute__((weak, optimize("-fno-tree-loop-distribute-patterns"))) unsigned __int128
+extern "C" __mc_libgcc_sym __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) unsigned __int128
 __udivti3(unsigned __int128 n, unsigned __int128 d) noexcept
 {
   if ( d == 0 ) __builtin_trap();
@@ -139,7 +143,7 @@ __udivti3(unsigned __int128 n, unsigned __int128 d) noexcept
   return q;
 }
 
-extern "C" __attribute__((weak, optimize("-fno-tree-loop-distribute-patterns"))) unsigned __int128
+extern "C" __mc_libgcc_sym __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) unsigned __int128
 __umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
 {
   if ( d == 0 ) __builtin_trap();
@@ -154,3 +158,5 @@ __umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
 
 #pragma GCC diagnostic pop
 #endif
+
+#undef __mc_libgcc_sym

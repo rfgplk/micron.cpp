@@ -99,6 +99,7 @@ template<is_regular_object T, usize N = 64, bool Sf = true> class svector
 
 public:
   using category_type = vector_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
   typedef usize size_type;
@@ -197,7 +198,7 @@ public:
 
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( const T &value : lst ) {
           new (micron::addr(stack[i])) T(value);

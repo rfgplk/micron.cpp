@@ -98,13 +98,13 @@ struct lib_t {
 
     if ( !xkb_context_new || !xkb_keymap_new_from_string || !xkb_state_new || !xkb_state_update_key || !xkb_state_update_mask
          || !xkb_state_key_get_one_sym ) {
-      throw except::library_error("xkbcommon: required entry points missing in libxkbcommon.so.0");
+      exc<except::library_error>("xkbcommon: required entry points missing in libxkbcommon.so.0");
     }
   }
 };
 
 inline lib_t &
-xkb_lib() noexcept(false)
+xkb_lib() noexcept(!micron::except::__use_exceptions)
 {
   static lib_t lib;
   return lib;
@@ -130,12 +130,12 @@ public:
     auto &xl = xkb_lib();
     reset();
     __ctx = xl.xkb_context_new(XKB_CONTEXT_NO_FLAGS);
-    if ( !__ctx ) throw except::library_error("xkbcommon: xkb_context_new failed");
+    if ( !__ctx ) exc<except::library_error>("xkbcommon: xkb_context_new failed");
     __keymap = xl.xkb_keymap_new_from_string(__ctx, keymap_string, XKB_KEYMAP_FORMAT_TEXT_V1, XKB_KEYMAP_COMPILE_NO_FLAGS);
     if ( !__keymap ) {
       xl.xkb_context_unref(__ctx);
       __ctx = nullptr;
-      throw except::library_error("xkbcommon: xkb_keymap_new_from_string failed — keymap may be malformed");
+      exc<except::library_error>("xkbcommon: xkb_keymap_new_from_string failed — keymap may be malformed");
     }
     __state = xl.xkb_state_new(__keymap);
     if ( !__state ) {
@@ -143,7 +143,7 @@ public:
       __keymap = nullptr;
       xl.xkb_context_unref(__ctx);
       __ctx = nullptr;
-      throw except::library_error("xkbcommon: xkb_state_new failed");
+      exc<except::library_error>("xkbcommon: xkb_state_new failed");
     }
   }
 

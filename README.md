@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-1.8.3.1-green)
+![Version](https://img.shields.io/badge/version-1.9.0.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -199,7 +199,7 @@ These modules build under both the hosted (`pthread`) and the freestanding backe
 - **`tasks/`** -- lightweight task abstraction
 
 ###### OS and I/O
-- **`io/`** -- high-level I/O: files, filesystems (incl. concurrent), paths, pipes, streams, formatting, console, serial, stdin/stdout/stderr, FTW, real-path resolution
+- **`io/`** -- high-level I/O: files, filesystems (incl. concurrent), paths, pipes, streams, formatting, console, serial, stdin/stdout/stderr, FTW, real-path resolution, **flash (io_uring-native file I/O)**
 - **`io/posix/`** -- POSIX I/O wrappers (block, dir, file, terminal, volatile, iosys)
 - **`io/term/`** -- ANSI terminal helpers
 - **`io/uxin/`** -- input-device layer (event devices, key mapping, polling, virtual devices, Wayland reader)

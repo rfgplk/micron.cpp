@@ -84,7 +84,7 @@ class immutable_map
       __release(r);
       exc<except::critical_error>("immutable_map: node allocation failed (out of memory)");
     }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     [[maybe_unused]] bool key_built = false;
     try {
 #endif
@@ -92,14 +92,14 @@ class immutable_map
         n->key = static_cast<Kf &&>(k);
       else
         new (micron::addr(n->key)) K(static_cast<Kf &&>(k));
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       key_built = true;
 #endif
       if constexpr ( micron::is_trivially_copyable_v<V> )
         n->value = static_cast<Vf &&>(v);
       else
         new (micron::addr(n->value)) V(static_cast<Vf &&>(v));
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       if constexpr ( !micron::is_trivially_destructible_v<K> )
         if ( key_built ) n->key.~K();
@@ -129,7 +129,7 @@ class immutable_map
       __release(r);
       exc<except::critical_error>("immutable_map: node allocation failed (out of memory)");
     }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     [[maybe_unused]] bool key_built = false;
     try {
 #endif
@@ -137,11 +137,11 @@ class immutable_map
         n->key = static_cast<Kf &&>(k);
       else
         new (micron::addr(n->key)) K(static_cast<Kf &&>(k));
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       key_built = true;
 #endif
       new (micron::addr(n->value)) V(micron::forward<Args>(args)...);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       if constexpr ( !micron::is_trivially_destructible_v<K> )
         if ( key_built ) n->key.~K();

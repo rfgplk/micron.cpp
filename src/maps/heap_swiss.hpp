@@ -148,7 +148,7 @@ class heap_swiss_map
   __alloc_storage(usize n_slots)
   {
     u8 *ctrl = new u8[n_slots + __group];
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
       chunk<byte> blk = Alloc::create(n_slots * sizeof(__hs_entry));
@@ -158,7 +158,7 @@ class heap_swiss_map
       __n_slots = n_slots;
       __cap_mask = n_slots - 1u;
       __growth_left = n_slots * __load_num / __load_denom;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       delete[] ctrl;
       throw;
@@ -245,10 +245,11 @@ class heap_swiss_map
     u8 *old_ctrl = __ctrl;
     __hs_entry *old_entries = __entries;
     usize old_n = __n_slots;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    // rollback-only: read solely by the catch below, so they must not be declared without it
     usize old_mask = __cap_mask;
     usize old_size = __size;
     usize old_growth = __growth_left;
-#ifndef __micron_freestanding
     try {
 #endif
       __ctrl = nullptr;
@@ -258,7 +259,7 @@ class heap_swiss_map
       __size = 0;
       __growth_left = 0;
       __alloc_storage(new_n_slots);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       __ctrl = old_ctrl;
       __entries = old_entries;

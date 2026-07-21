@@ -13,7 +13,7 @@
 #include "../src/io/console.hpp"
 #include "../src/std.hpp"
 
-#include "../src/io/posix/file.hpp"
+#include "../src/io/os/os_file.hpp"
 
 int
 main()

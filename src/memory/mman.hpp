@@ -73,6 +73,7 @@ memfd_create(const char *name, unsigned int flags)
 }
 
 #if !defined(__micron_arch_arm32)
+// >=5.14 (and CONFIG_SECRETMEM / secretmem.enable=1)
 inline int
 memfd_secret(const char *name, unsigned int flags)
 {
@@ -96,7 +97,7 @@ munlockall(void)
 // mremap flags
 constexpr int mremap_maymove = 1;
 constexpr int mremap_fixed = 2;
-constexpr int mremap_dontunmap = 4;
+constexpr int mremap_dontunmap = 4;      // >=5.7
 
 inline addr_t *
 mremap(addr_t *old_addr, usize old_size, usize new_size, int flags)

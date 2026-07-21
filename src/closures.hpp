@@ -43,6 +43,19 @@ template<typename C, typename R, typename... Args> struct function_traits<R (C::
 template<typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...) const>: function_traits<R(Args...)> {
 };
 
+// noexcept variants
+template<typename R, typename... Args> struct function_traits<R(Args...) noexcept>: function_traits<R(Args...)> {
+};
+
+template<typename R, typename... Args> struct function_traits<R (*)(Args...) noexcept>: function_traits<R(Args...)> {
+};
+
+template<typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...) noexcept>: function_traits<R(Args...)> {
+};
+
+template<typename C, typename R, typename... Args> struct function_traits<R (C::*)(Args...) const noexcept>: function_traits<R(Args...)> {
+};
+
 // callable objects (functors/lambdas)
 template<typename F> struct function_traits: function_traits<decltype(&F::operator())> {
 };

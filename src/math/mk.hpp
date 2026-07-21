@@ -971,7 +971,7 @@ fabs(V x) noexcept
 }
 };      // namespace manip
 
-#endif  
+#endif
 
 };      // namespace mk
 
@@ -1100,7 +1100,7 @@ using mk::sincos;
 using mk::sincos_cordic;
 using mk::tan;
 using mk::tan_cordic;
-#endif 
+#endif
 
 // hyp
 __micron_math_export_fn(sinh, hyp);

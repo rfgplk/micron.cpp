@@ -25,8 +25,7 @@ namespace avx512
 #pragma GCC push_options
 #pragma GCC target("avx512f,avx512bw,avx512dq,avx512vl")
 
-#define __inline_avx512                                                                                                                    \
-  [[gnu::always_inline, gnu::artificial, gnu::target("avx512f,avx512bw,avx512dq,avx512vl")]] static inline
+#define __inline_avx512 [[gnu::always_inline, gnu::artificial, gnu::target("avx512f,avx512bw,avx512dq,avx512vl")]] static inline
 
 __inline_avx512 __m512
 zero_f32() noexcept

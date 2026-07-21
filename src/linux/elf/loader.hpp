@@ -346,39 +346,39 @@ inline module_t
 __load_module_from_path(const char *path, const load_opts_t &opts = {})
 {
   i32 fd = posix::open(path, posix::o_rdonly);
-  if ( fd < 0 ) throw except::library_error("elf: open failed");
+  if ( fd < 0 ) exc<except::library_error>("elf: open failed");
 
   ehdr_t eh;
   if ( posix::pread(fd, &eh, sizeof(eh), 0) != static_cast<max_t>(sizeof(eh)) ) {
     posix::close(fd);
-    throw except::library_error("elf: short ehdr read");
+    exc<except::library_error>("elf: short ehdr read");
   }
   if ( eh.ident[ei_mag0] != mag0 || eh.ident[ei_mag1] != mag1 || eh.ident[ei_mag2] != mag2 || eh.ident[ei_mag3] != mag3 ) {
     posix::close(fd);
-    throw except::library_error("elf: bad magic");
+    exc<except::library_error>("elf: bad magic");
   }
   if ( eh.ident[ei_class] != elfclass64 || eh.ident[ei_data] != elfdata2lsb || eh.machine != expected_machine ) {
     posix::close(fd);
-    throw except::library_error("elf: wrong class/data/machine");
+    exc<except::library_error>("elf: wrong class/data/machine");
   }
   if ( eh.type != et_dyn ) {
     posix::close(fd);
-    throw except::library_error("elf: not a shared object");
+    exc<except::library_error>("elf: not a shared object");
   }
 
   if ( eh.phentsize != sizeof(phdr_t) || eh.phnum == 0 ) {
     posix::close(fd);
-    throw except::library_error("elf: bad phdr table");
+    exc<except::library_error>("elf: bad phdr table");
   }
 
   phdr_t phdrs[64];
   if ( eh.phnum > 64 ) {
     posix::close(fd);
-    throw except::library_error("elf: too many phdrs");
+    exc<except::library_error>("elf: too many phdrs");
   }
   if ( posix::pread(fd, phdrs, sizeof(phdr_t) * eh.phnum, eh.phoff) != static_cast<max_t>(sizeof(phdr_t) * eh.phnum) ) {
     posix::close(fd);
-    throw except::library_error("elf: short phdr read");
+    exc<except::library_error>("elf: short phdr read");
   }
 
   usize vaddr_min = ~usize(0);
@@ -391,7 +391,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
       const usize end = phdrs[i].vaddr + phdrs[i].memsz;
       if ( end < phdrs[i].vaddr ) {      // vaddr + memsz overflow on a crafted/corrupt phdr
         posix::close(fd);
-        throw except::library_error("elf: PT_LOAD vaddr+memsz overflow");
+        exc<except::library_error>("elf: PT_LOAD vaddr+memsz overflow");
       }
       if ( end > vaddr_max ) vaddr_max = end;
     } else if ( phdrs[i].type == pt_dynamic ) {
@@ -402,7 +402,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
   }
   if ( vaddr_min == ~usize(0) || !dyn_ph ) {
     posix::close(fd);
-    throw except::library_error("elf: no PT_LOAD / PT_DYNAMIC");
+    exc<except::library_error>("elf: no PT_LOAD / PT_DYNAMIC");
   }
   vaddr_min = __page_floor(vaddr_min);
   vaddr_max = __page_ceil(vaddr_max);
@@ -411,7 +411,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
   u8 *base = reinterpret_cast<u8 *>(micron::mmap(nullptr, span, prot_none, map_private | map_anonymous, -1, 0));
   if ( mmap_failed(base) ) {
     posix::close(fd);
-    throw except::library_error("elf: reserve mmap failed");
+    exc<except::library_error>("elf: reserve mmap failed");
   }
 
   for ( half i = 0; i < eh.phnum; ++i ) {
@@ -430,7 +430,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     if ( ((phdrs[i].vaddr - phdrs[i].offset) & (__runtime_page_size() - 1)) != 0 ) {
       micron::munmap(reinterpret_cast<addr_t *>(base), span);
       posix::close(fd);
-      throw except::library_error("elf: PT_LOAD vaddr/offset not page-congruent (rebuild with max-page-size)");
+      exc<except::library_error>("elf: PT_LOAD vaddr/offset not page-congruent (rebuild with max-page-size)");
     }
 
     if ( phdrs[i].filesz ) {
@@ -441,7 +441,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
       if ( mmap_failed(got) ) {
         micron::munmap(reinterpret_cast<addr_t *>(base), span);
         posix::close(fd);
-        throw except::library_error("elf: segment mmap failed");
+        exc<except::library_error>("elf: segment mmap failed");
       }
       if ( mem_end > file_end ) {
         u8 *bgot = reinterpret_cast<u8 *>(micron::mmap(reinterpret_cast<addr_t *>(target + file_end), mem_end - file_end,
@@ -449,7 +449,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
         if ( mmap_failed(bgot) ) {
           micron::munmap(reinterpret_cast<addr_t *>(base), span);
           posix::close(fd);
-          throw except::library_error("elf: bss tail mmap failed");
+          exc<except::library_error>("elf: bss tail mmap failed");
         }
       }
       const usize bss_start = segoff + phdrs[i].filesz;
@@ -464,7 +464,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
       if ( mmap_failed(got) ) {
         micron::munmap(reinterpret_cast<addr_t *>(base), span);
         posix::close(fd);
-        throw except::library_error("elf: bss mmap failed");
+        exc<except::library_error>("elf: bss mmap failed");
       }
     }
   }
@@ -491,7 +491,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
   if ( !__apply_rela_table(m, m.dyn.rela, m.dyn.relasz, opts.reloc) || !__apply_rela_table(m, m.dyn.jmprel, m.dyn.pltrelsz, opts.reloc) ) {
     __loaded_modules = m.next;      // unlink the partially-relocated module before unwinding
     micron::munmap(reinterpret_cast<addr_t *>(base), span);
-    throw except::library_error("elf: unsupported relocation (static TLS / TLSDESC / COPY) — refusing to load module with corrupt TLS");
+    exc<except::library_error>("elf: unsupported relocation (static TLS / TLSDESC / COPY) — refusing to load module with corrupt TLS");
   }
 
   __apply_relr(m);
@@ -509,7 +509,7 @@ load(const char *soname, const char *runpath = nullptr, const load_opts_t &opts 
 {
   path_str_t resolved = resolve_soname(soname, runpath);
   if ( resolved.empty() ) {
-    throw except::library_error("elf: soname not found in search paths");
+    exc<except::library_error>("elf: soname not found in search paths");
   }
   return __load_module_from_path(resolved.c_str(), opts);
 }

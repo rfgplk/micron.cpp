@@ -28,6 +28,7 @@ namespace micron
 template<usize N, is_scalar_literal T = schar, bool Sf = true>
 struct alignas(N * sizeof(T) >= 32 ? 32 : (N * sizeof(T) >= 16 ? 16 : alignof(T))) sstring {
   using category_type = string_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = stack_tag;
   typedef T value_type;

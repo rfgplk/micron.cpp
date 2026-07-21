@@ -522,14 +522,14 @@ template<typename F>
 bool
 __is_at_heap(F &ref) noexcept
 {
-  return abc::within(reinterpret_cast<addr_t *>(ref));
+  return abc::within(reinterpret_cast<addr_t *>(&ref));
 }
 
 template<typename F>
 bool
 __is_at_heap(const F &ref) noexcept
 {
-  return abc::within(reinterpret_cast<addr_t *const>(ref));
+  return abc::within(reinterpret_cast<addr_t *const>(&ref));
 }
 
 template<typename F>

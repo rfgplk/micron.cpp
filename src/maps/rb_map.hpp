@@ -116,6 +116,7 @@ class rb_map
     auto *nv = static_cast<V *>(::operator new(sizeof(V) * new_cap));
     usize moved = 0;
     if ( __n_soa > 0 ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( ; moved < __n_soa; ++moved ) {
           new (nk + moved) K(micron::move(__keys[moved]));
@@ -138,6 +139,12 @@ class rb_map
         ::operator delete(nh);
         throw;
       }
+#else
+      for ( ; moved < __n_soa; ++moved ) {
+        new (nk + moved) K(micron::move(__keys[moved]));
+        new (nv + moved) V(micron::move(__values[moved]));
+      }
+#endif
       micron::memcpy(reinterpret_cast<byte *>(nh), reinterpret_cast<byte *>(__hashes), __n_soa * sizeof(hash64_t));
       micron::memcpy(reinterpret_cast<byte *>(nn), reinterpret_cast<byte *>(__next), __n_soa * sizeof(i32));
       micron::memcpy(reinterpret_cast<byte *>(nb), reinterpret_cast<byte *>(__home_bin), __n_soa * sizeof(i32));
@@ -261,6 +268,7 @@ class rb_map
     auto *snap = total ? static_cast<__tree_entry *>(::operator new(sizeof(__tree_entry) * total)) : nullptr;
     usize w = 0;
 
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( usize i = 0; i < __n_soa; ++i ) {
         new (snap + w) __tree_entry(__hashes[i], micron::move(__keys[i]), micron::move(__values[i]));
@@ -271,6 +279,12 @@ class rb_map
       if ( snap ) ::operator delete(snap);
       throw;
     }
+#else
+    for ( usize i = 0; i < __n_soa; ++i ) {
+      new (snap + w) __tree_entry(__hashes[i], micron::move(__keys[i]), micron::move(__values[i]));
+      ++w;
+    }
+#endif
     for ( usize i = 0; i < __n_soa; ++i ) {
       __keys[i].~K();
       __values[i].~V();
@@ -278,6 +292,7 @@ class rb_map
     __n_soa = 0;
 
     if ( __bins ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( usize i = 0; i < __n_bins; ++i ) {
           __tree_t *t = __bins[i].tree;
@@ -299,6 +314,16 @@ class rb_map
         __total = 0;
         throw;
       }
+#else
+      for ( usize i = 0; i < __n_bins; ++i ) {
+        __tree_t *t = __bins[i].tree;
+        if ( !t ) continue;
+        while ( !t->empty() ) {
+          new (snap + w) __tree_entry(t->extract_min());
+          ++w;
+        }
+      }
+#endif
       for ( usize i = 0; i < __n_bins; ++i )
         if ( __bins[i].tree ) delete __bins[i].tree;
       ::operator delete(__bins);
@@ -316,7 +341,9 @@ class rb_map
     __total = 0;
 
     usize consumed = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
+#endif
       for ( ; consumed < w; ++consumed ) {
         __tree_entry &e = snap[consumed];
         usize bi = __bin_of(e.hash);
@@ -342,11 +369,13 @@ class rb_map
         }
         e.~__tree_entry();
       }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       for ( usize j = consumed; j < w; ++j ) snap[j].~__tree_entry();
       if ( snap ) ::operator delete(snap);
       throw;
     }
+#endif
     if ( snap ) ::operator delete(snap);
   }
 
@@ -590,12 +619,16 @@ public:
     if ( __n_soa == __cap_soa ) __grow_soa();
     i32 ix = static_cast<i32>(__n_soa);
     new (__keys + ix) K(micron::forward<KK>(k));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       new (__values + ix) V(micron::forward<VV>(v));
     } catch ( ... ) {
       __keys[ix].~K();
       throw;
     }
+#else
+    new (__values + ix) V(micron::forward<VV>(v));
+#endif
     __hashes[ix] = h;
     __next[ix] = b.list_head;
     __home_bin[ix] = static_cast<i32>(bi);

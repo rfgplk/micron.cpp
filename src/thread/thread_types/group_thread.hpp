@@ -87,7 +87,7 @@ template<usize Stack_Size = thread_stack_size> class group_thread
     if ( attributes.stack_addr != nullptr ) {
       micron::try_unmap(attributes.stack_addr, Stack_Size);
     }
-    micron::__tls_free_frame(attributes.tls);      // free this thread's from-scratch TLS block
+    micron::__tls_release_frame(attributes.tls);      // free this thread's from-scratch TLS block
     attributes.clear();
     payload.alive.store(false, memory_order_seq_cst);
     if ( static_cast<__thread_payload::tag>(payload.tag_val.get(memory_order_acquire)) == __thread_payload::tag::heap ) {

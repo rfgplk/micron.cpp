@@ -346,7 +346,63 @@ struct openmode {
   int md;
 };
 
-class file
+// per-open knobs orthogonal to the modes axis; aggregate with defaults, libjkr socket_opts_t
+// style. NOTE: sync is opt-in (io_v3 dropped the historical implicit O_SYNC on writable modes)
+// and cloexec is opt-out.
+struct open_opts {
+  bool sync = false;
+  bool direct = false;
+  bool nonblock = false;
+  bool cloexec = true;
+  bool noatime = false;
+  u32 perms = 0644;
+};
+
+inline constexpr i32
+compose_open_flags(const modes mode, const open_opts &o) noexcept
+{
+  i32 f = 0;
+  switch ( mode ) {
+  case modes::largeread:
+    f = posix::o_rdonly | posix::o_direct | posix::o_largefile;
+    break;
+  case modes::large:
+    f = posix::o_rdwr | posix::o_create | posix::o_trunc | posix::o_direct | posix::o_largefile;
+    break;
+  case modes::quiet:
+    f = posix::o_rdonly | posix::o_noatime;
+    break;
+  case modes::create:
+    f = posix::o_rdonly | posix::o_create | posix::o_excl;
+    break;
+  case modes::read:
+    f = posix::o_rdonly;
+    break;
+  case modes::readwrite:
+    f = posix::o_rdwr;
+    break;
+  case modes::write:
+    f = posix::o_wronly | posix::o_create | posix::o_trunc;
+    break;
+  case modes::readwritecreate:
+    f = posix::o_rdwr | posix::o_create | posix::o_trunc;
+    break;
+  case modes::append:
+    f = posix::o_wronly | posix::o_create | posix::o_append;
+    break;
+  case modes::appendread:
+    f = posix::o_rdwr | posix::o_create | posix::o_append;
+    break;
+  }
+  if ( o.sync ) f |= posix::o_sync;
+  if ( o.direct ) f |= posix::o_direct;
+  if ( o.nonblock ) f |= posix::o_nonblock;
+  if ( o.cloexec ) f |= posix::o_cloexec;
+  if ( o.noatime ) f |= posix::o_noatime;
+  return f;
+}
+
+class os_file
 {
 protected:
   // accepted inode types for __open_linux's post-open fstat guard (bitmask); subclasses opening
@@ -364,93 +420,90 @@ protected:
   __alive(void) const
   {
     if ( __handle.fd == posix::invalid_fd ) [[unlikely]] {
-      exc<except::io_error>("micron::file, fd isn't open.");
+      exc<except::io_error>("micron::os_file, fd isn't open.");
       return false;
     } else if ( __handle.has_error() ) [[unlikely]] {
       errno = -__handle.fd;
-      exc<except::io_error>("micron::file, fd has an error.");
+      exc<except::io_error>("micron::os_file, fd has an error.");
       return false;
     }
     return true;
   }
 
-  inline __attribute__((always_inline)) long int
-  __syscall_open(const char *str, const modes mode)
+  // non-throwing data-path guard: 0 when the handle is usable, negative -errno otherwise
+  inline i32
+  __check(void) const noexcept
   {
-    switch ( mode ) {
-    case modes::largeread:
-      return posix::open(str, posix::o_rdonly | posix::o_sync | posix::o_direct | posix::o_largefile);
-    case modes::large:
-      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_trunc | posix::o_sync | posix::o_direct | posix::o_largefile,
-                         0644u);
-    case modes::quiet:
-      return posix::open(str, posix::o_rdonly | posix::o_noatime, 0644u);
-    case modes::create:
-      return posix::open(str, posix::o_rdonly | posix::o_create | posix::o_excl, 0644u);
-    case modes::read:
-      return posix::open(str, posix::o_rdonly);
-    case modes::readwrite:
-      return posix::open(str, posix::o_rdwr | posix::o_sync);
-    case modes::write:
-      return posix::open(str, posix::o_wronly | posix::o_create | posix::o_trunc | posix::o_sync, 0644u);
-    case modes::readwritecreate:
-      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_trunc | posix::o_sync, 0644u);
-    case modes::append:
-      return posix::open(str, posix::o_wronly | posix::o_create | posix::o_append | posix::o_sync, 0644u);
-    case modes::appendread:
-      return posix::open(str, posix::o_rdwr | posix::o_create | posix::o_append | posix::o_sync, 0644u);
-    }
-    return -1;
+    if ( __handle.fd == posix::invalid_fd ) [[unlikely]]
+      return -error::bad_fd;
+    if ( __handle.has_error() ) [[unlikely]]
+      return __handle.fd;      // fd_t carries the negative errno inline
+    return 0;
+  }
+
+  inline __attribute__((always_inline)) long int
+  __syscall_open(const char *str, const modes mode, const open_opts &opts = {})
+  {
+    return posix::open(str, compose_open_flags(mode, opts), opts.perms);
   }
 
   template<typename T>
   inline __attribute__((always_inline)) void
-  __open_linux(const T &str, const modes mode, u32 __accept = __nt_default)
+  __open_linux(const T &str, const modes mode, u32 __accept = __nt_default, const open_opts &opts = {})
   {
-    if ( !posix::verify(str) ) exc<except::io_error>("error in creating micron::file, malformed string.");
+    if ( !posix::verify(str) ) exc<except::io_error>("error in creating micron::os_file, malformed string.");
 
     const bool __read_mode = (mode != modes::append && mode != modes::create && mode != modes::readwritecreate);
 
-    if ( __read_mode && !posix::exists(str) ) exc<except::io_error>("micron::file file doesn't exist");
-
+    // No pre-open exists() probe: open() reports ENOENT itself (one fewer syscall, and no
+    // TOCTOU race with the open). This also fixes the create-mode bug — modes::write /
+    // modes::large / modes::appendread carry O_CREAT but were being rejected here on a
+    // missing path; they can now actually create the file.
     if constexpr ( is_string<T> ) {
-      __handle.fd = static_cast<int>(__syscall_open(str.c_str(), mode));
+      __handle.fd = static_cast<int>(__syscall_open(str.c_str(), mode, opts));
     } else {
-      __handle.fd = static_cast<int>(__syscall_open(str, mode));
+      __handle.fd = static_cast<int>(__syscall_open(str, mode, opts));
     }
 
-    if ( __handle.has_error() ) exc<except::io_error>("micron::file failed to open");
+    if ( __handle.has_error() ) exc<except::io_error>("micron::os_file failed to open");
+
+    micron::zero(&sd);      // default: lazy stat cache (creating modes keep it lazy)
 
     // WARNING: validate file type via fstat on the opened fd rather than via the path-based posix::is_file
-    // the path-based variants were misclassified regular files on ARM32 + qemu
+    // the path-based variants were misclassified regular files on ARM32 + qemu.
+    // The fstat result also SEEDS the stat cache (sd) so the first size()/metadata access
+    // after a read-mode open is free (no redundant second fstat).
     if ( __read_mode ) {
-      stat_t __st{};
-      if ( posix::fstat(__handle, __st) != 0 ) {
+      if ( posix::fstat(__handle, sd) != 0 ) {
+        micron::zero(&sd);
         posix::close(__handle.fd);
         __handle.fd = posix::invalid_fd.fd;
-        exc<except::io_error>("micron::file fstat failed after open");
+        exc<except::io_error>("micron::os_file fstat failed after open");
       }
-      const u32 __got = posix::__impl::stat_is_reg(__st)    ? __nt_reg
-                        : posix::__impl::stat_is_chr(__st)  ? __nt_chr
-                        : posix::__impl::stat_is_dir(__st)  ? __nt_dir
-                        : posix::__impl::stat_is_fifo(__st) ? __nt_fifo
-                        : posix::__impl::stat_is_blk(__st)  ? __nt_blk
-                        : posix::__impl::stat_is_sock(__st) ? __nt_sock
-                        : posix::__impl::stat_is_lnk(__st)  ? __nt_lnk
-                                                            : 0u;
+      const u32 __got = posix::__impl::stat_is_reg(sd)    ? __nt_reg
+                        : posix::__impl::stat_is_chr(sd)  ? __nt_chr
+                        : posix::__impl::stat_is_dir(sd)  ? __nt_dir
+                        : posix::__impl::stat_is_fifo(sd) ? __nt_fifo
+                        : posix::__impl::stat_is_blk(sd)  ? __nt_blk
+                        : posix::__impl::stat_is_sock(sd) ? __nt_sock
+                        : posix::__impl::stat_is_lnk(sd)  ? __nt_lnk
+                                                          : 0u;
       if ( !(__got & __accept) ) {
+        micron::zero(&sd);      // do not leave a valid stat on a rejected handle
         posix::close(__handle.fd);
         __handle.fd = posix::invalid_fd.fd;
-        exc<except::io_error>("micron::file file isn't an accepted type (check type)");
+        exc<except::io_error>("micron::os_file file isn't an accepted type (check type)");
       }
     }
 
     fname = str;
-    micron::zero(&sd);
   }
 
   // subclasses opening non-regular nodes call this with their accepted-type mask
-  template<typename T> file(const T &str, const modes mode, u32 __accept) { __open_linux(str, mode, __accept); }
+  template<typename T> os_file(const T &str, const modes mode, u32 __accept, const open_opts &opts = {})
+  {
+    __open_linux(str, mode, __accept, opts);
+  }
 
 public:
   micron::sstr<max_name> fname;
@@ -458,37 +511,41 @@ public:
   // NOTE: complete and total hack, we technically need to mutate this within methods that should otherwise be const
   mutable stat_t sd;
 
-  ~file() { close(); }
+  ~os_file() { close(); }
 
-  file(void) : fname(), __handle(-1), sd() { }
+  os_file(void) : fname(), __handle(-1), sd() { }
 
-  file(const char *str) { __open_linux(str, modes::read); }
+  // adopt an already-open descriptor; ownership transfers (the dtor will close it) and
+  // recorded_name is bookkeeping only - no open/stat is performed
+  os_file(fd_t adopt, const char *recorded_name) : fname(recorded_name), __handle(adopt), sd() { }
 
-  file(const micron::sstr<max_name> &str) { __open_linux(str, modes::read); }
+  os_file(const char *str) { __open_linux(str, modes::read); }
 
-  file(const micron::string &str) { __open_linux(str, modes::read); }
+  os_file(const micron::sstr<max_name> &str) { __open_linux(str, modes::read); }
 
-  file(const char *str, const modes mode) { __open_linux(str, mode); }
+  os_file(const micron::string &str) { __open_linux(str, modes::read); }
 
-  file(const micron::sstr<max_name> &str, const modes mode) { __open_linux(str, mode); }
+  os_file(const char *str, const modes mode, const open_opts &opts = {}) { __open_linux(str, mode, __nt_default, opts); }
 
-  template<is_string T> file(const T &str) { __open_linux(str, modes::read); }
+  os_file(const micron::sstr<max_name> &str, const modes mode, const open_opts &opts = {}) { __open_linux(str, mode, __nt_default, opts); }
 
-  template<is_string T> file(const T &str, const modes mode) { __open_linux(str, mode); }
+  template<is_string T> os_file(const T &str) { __open_linux(str, modes::read); }
 
-  file(const file &o) : fname(o.fname), __handle(posix::invalid_fd), sd(o.sd)
+  template<is_string T> os_file(const T &str, const modes mode, const open_opts &opts = {}) { __open_linux(str, mode, __nt_default, opts); }
+
+  os_file(const os_file &o) : fname(o.fname), __handle(posix::invalid_fd), sd(o.sd)
   {
     if ( o.__handle.fd >= 0 ) __handle.fd = static_cast<i32>(posix::dup(o.__handle.fd));
   }
 
-  file(file &&o) noexcept : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd)
+  os_file(os_file &&o) noexcept : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd)
   {
     o.__handle = posix::invalid_fd;
     micron::zero(&o.sd);
   }
 
-  file &
-  operator=(file &&o) noexcept
+  os_file &
+  operator=(os_file &&o) noexcept
   {
     if ( this == &o ) return *this;
     close();      // release our current fd first (else leaked); then steal o's
@@ -500,8 +557,8 @@ public:
     return *this;
   }
 
-  file &
-  operator=(const file &o)
+  os_file &
+  operator=(const os_file &o)
   {
     if ( this == &o ) return *this;
     close();      // release our current fd first (was leaked); then dup the source's
@@ -513,7 +570,7 @@ public:
   }
 
   // reopening
-  file &
+  os_file &
   operator=(const char *name)
   {
     if ( !name ) return *this;
@@ -523,7 +580,7 @@ public:
     return *this;
   }
 
-  file &
+  os_file &
   operator=(const micron::sstr<max_name> &name)
   {
     if ( name.empty() ) return *this;
@@ -534,7 +591,7 @@ public:
   }
 
   template<is_string T>
-  file &
+  os_file &
   operator=(const T &name)
   {
     if ( name.empty() ) return *this;
@@ -552,62 +609,64 @@ public:
     __handle.fd = posix::invalid_fd.fd;
   }
 
+  // NOTE: paths are trusted; we do not defend against path swapping/TOCTOU
   bool
-  reopen(const modes mode = modes::read)
+  reopen(const modes mode = modes::read, const open_opts &opts = {})
   {
     if ( fname.size() == 0 ) return false;
     close();
-    __handle.fd = static_cast<int>(__syscall_open(fname.c_str(), mode));
+    __handle.fd = static_cast<int>(__syscall_open(fname.c_str(), mode, opts));
     micron::zero(&sd);
     return !__handle.has_error();
   }
 
   bool
-  reopen(const char *name, const modes mode)
+  reopen(const char *name, const modes mode, const open_opts &opts = {})
   {
     if ( !name ) return false;
     fname = name;
     if ( fname.size() == 0 ) return false;
     close();
-    __handle.fd = static_cast<int>(__syscall_open(fname.c_str(), mode));
+    __handle.fd = static_cast<int>(__syscall_open(fname.c_str(), mode, opts));
     micron::zero(&sd);
     return !__handle.has_error();
   }
 
   template<bool B = STAT_EXISTING>
-  inline void
-  stat(void) const
+  inline i32
+  stat(void) const noexcept
   {
     if constexpr ( B == STAT_EXISTING ) {
-      if ( !micron::is_zero(&sd) ) return;
-      __alive();
-      if ( posix::fstat(__handle, sd) != 0 ) exc<except::io_error>("micron::file, fstat failed.");      // fstat returns -errno, not -1
-    } else if constexpr ( B == STAT_OVERRIDE ) {
-      __alive();
-      if ( posix::fstat(__handle, sd) != 0 ) exc<except::io_error>("micron::file, fstat failed.");      // fstat returns -errno, not -1
+      if ( !micron::is_zero(&sd) ) return 0;
     }
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    i32 r = static_cast<i32>(posix::fstat(__handle, sd));      // fstat returns -errno, not -1
+    if ( r != 0 ) [[unlikely]]
+      micron::zero(&sd);
+    return r;
   }
 
   inline auto
   size(void) const
   {
     __alive();
-    stat();
+    if ( stat() != 0 ) [[unlikely]]
+      exc<except::io_error>("micron::os_file::size, fstat failed.");
     return sd.st_size;
   }
 
   inline auto
   is_system_virtual(void)
   {
-    __alive();
-    stat();
+    if ( stat() != 0 ) [[unlikely]]
+      return false;
     return (posix::major(sd.st_dev) == 0);
   }
 
   inline auto
   owner(void)
   {
-    __alive();
     stat();
     return micron::tie({ sd.st_uid, sd.st_gid });
   }
@@ -615,7 +674,6 @@ public:
   inline auto
   access(void)
   {
-    __alive();
     stat();
     return micron::tie({ sd.st_atime, sd.st_mtime });
   }
@@ -623,7 +681,6 @@ public:
   inline auto
   modified(void)
   {
-    __alive();
     stat();
     return sd.st_mtime;
   }
@@ -631,7 +688,6 @@ public:
   inline linux_permissions
   permissions(void)
   {
-    __alive();
     stat();
     linux_permissions perms = linux_permissions::from_mode(sd.st_mode);
     perms.setuid = (sd.st_mode & posix::s_isuid) != 0;
@@ -643,7 +699,8 @@ public:
   inline void
   set_permissions(const linux_permissions &perms)
   {
-    __alive();
+    if ( __check() != 0 ) [[unlikely]]
+      return;
     posix::fchmod(__handle, perms.full_mode());
     micron::zero(&sd);      // invalidate cached stat
   }
@@ -657,7 +714,7 @@ public:
   bool
   valid(void) const noexcept
   {
-    return !__handle.closed();
+    return __handle.fd >= 0;      // negative-errno-carrying handles (adopt path) are invalid too
   }
 
   explicit
@@ -693,7 +750,6 @@ public:
   posix::ino64_t
   inode(void)
   {
-    __alive();
     stat();
     return sd.st_ino;
   }
@@ -701,7 +757,6 @@ public:
   posix::dev_t
   device(void)
   {
-    __alive();
     stat();
     return sd.st_dev;
   }
@@ -709,7 +764,6 @@ public:
   posix::dev_t
   rdev(void)
   {
-    __alive();
     stat();
     return sd.st_rdev;
   }
@@ -717,7 +771,6 @@ public:
   posix::nlink_t
   link_count(void)
   {
-    __alive();
     stat();
     return sd.st_nlink;
   }
@@ -725,7 +778,6 @@ public:
   posix::uid_t
   uid(void)
   {
-    __alive();
     stat();
     return sd.st_uid;
   }
@@ -733,7 +785,6 @@ public:
   posix::gid_t
   gid(void)
   {
-    __alive();
     stat();
     return sd.st_gid;
   }
@@ -741,7 +792,6 @@ public:
   time64_t
   atime(void)
   {
-    __alive();
     stat();
     return sd.st_atime;
   }
@@ -749,7 +799,6 @@ public:
   time64_t
   mtime(void)
   {
-    __alive();
     stat();
     return sd.st_mtime;
   }
@@ -757,7 +806,6 @@ public:
   time64_t
   ctime(void)
   {
-    __alive();
     stat();
     return sd.st_ctime;
   }
@@ -765,7 +813,6 @@ public:
   posix::blksize_t
   blksize(void)
   {
-    __alive();
     stat();
     return sd.st_blksize;
   }
@@ -773,7 +820,6 @@ public:
   posix::blkcnt_t
   blocks(void)
   {
-    __alive();
     stat();
     return sd.st_blocks;
   }
@@ -781,7 +827,6 @@ public:
   posix::mode_t
   mode(void)
   {
-    __alive();
     stat();
     return sd.st_mode;
   }
@@ -796,7 +841,6 @@ public:
   bool
   is_regular(void)
   {
-    __alive();
     stat();
     return posix::__impl::stat_is_reg(__sd());
   }
@@ -804,7 +848,6 @@ public:
   bool
   is_directory(void)
   {
-    __alive();
     stat();
     return posix::__impl::stat_is_dir(__sd());
   }
@@ -812,7 +855,6 @@ public:
   bool
   is_symlink(void)
   {
-    __alive();
     stat();
     return posix::__impl::stat_is_lnk(__sd());
   }
@@ -820,7 +862,6 @@ public:
   bool
   is_fifo(void)
   {
-    __alive();
     stat();
     return posix::__impl::stat_is_fifo(__sd());
   }
@@ -828,7 +869,6 @@ public:
   bool
   is_socket(void)
   {
-    __alive();
     stat();
     return posix::__impl::stat_is_sock(__sd());
   }
@@ -836,7 +876,6 @@ public:
   bool
   is_block_device(void)
   {
-    __alive();
     stat();
     return posix::__impl::stat_is_blk(__sd());
   }
@@ -844,7 +883,6 @@ public:
   bool
   is_char_device(void)
   {
-    __alive();
     stat();
     return posix::__impl::stat_is_chr(__sd());
   }
@@ -888,7 +926,6 @@ public:
   bool
   mode_user_read(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_irusr);
   }
@@ -896,7 +933,6 @@ public:
   bool
   mode_user_write(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_iwusr);
   }
@@ -904,7 +940,6 @@ public:
   bool
   mode_user_exec(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_ixusr);
   }
@@ -912,7 +947,6 @@ public:
   bool
   mode_group_read(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_irgrp);
   }
@@ -920,7 +954,6 @@ public:
   bool
   mode_group_write(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_iwgrp);
   }
@@ -928,7 +961,6 @@ public:
   bool
   mode_group_exec(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_ixgrp);
   }
@@ -936,7 +968,6 @@ public:
   bool
   mode_other_read(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_iroth);
   }
@@ -944,7 +975,6 @@ public:
   bool
   mode_other_write(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_iwoth);
   }
@@ -952,7 +982,6 @@ public:
   bool
   mode_other_exec(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_ixoth);
   }
@@ -960,7 +989,6 @@ public:
   bool
   has_setuid(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_isuid);
   }
@@ -968,7 +996,6 @@ public:
   bool
   has_setgid(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_isgid);
   }
@@ -976,7 +1003,6 @@ public:
   bool
   has_sticky(void)
   {
-    __alive();
     stat();
     return posix::__impl::mode_bit(__sd(), posix::s_isvtx);
   }
@@ -984,7 +1010,8 @@ public:
   i32
   set_owner(posix::uid_t uid, posix::gid_t gid)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     i32 r = (micron::fchown(__handle.fd, uid, gid));
     if ( r == 0 ) micron::zero(&sd);
     return r;
@@ -993,16 +1020,16 @@ public:
   bool
   is_owned_by(posix::uid_t uid)
   {
-    __alive();
-    stat();
+    if ( stat() != 0 ) [[unlikely]]
+      return false;
     return sd.st_uid == uid;
   }
 
   bool
   is_in_group(posix::gid_t gid)
   {
-    __alive();
-    stat();
+    if ( stat() != 0 ) [[unlikely]]
+      return false;
     return sd.st_gid == gid;
   }
 
@@ -1012,36 +1039,42 @@ public:
   max_t
   read(T &buf) const
   {
-    __alive();
-    return posix::read(__handle.fd, buf.data(), buf.max_size());
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    // max_size() is an ELEMENT count; the syscall wants BYTES (else wide value_types read
+    // only 1/sizeof of capacity).
+    return posix::read(__handle.fd, buf.data(), buf.max_size() * sizeof(typename T::value_type));
   }
 
   template<is_iterable_container T>
   max_t
   write(const T &buf)
   {
-    __alive();
-    return posix::write(__handle.fd, buf.data(), buf.size());
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return posix::write(__handle.fd, buf.data(), buf.size() * sizeof(typename T::value_type));
   }
 
   template<is_iterable_container T>
   max_t
   read_all(T &buf) const
   {
-    __alive();
-    return posix::read_all(__handle, buf.data(), buf.max_size());
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return posix::read_all(__handle, buf.data(), buf.max_size() * sizeof(typename T::value_type));
   }
 
   template<is_iterable_container T>
   max_t
   write_all(const T &buf)
   {
-    __alive();
-    return posix::write_all(__handle, buf.data(), buf.size());
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return posix::write_all(__handle, buf.data(), buf.size() * sizeof(typename T::value_type));
   }
 
   template<is_iterable_container T>
-  file &
+  os_file &
   operator>>(T &buf)
   {
     rewind();
@@ -1050,7 +1083,7 @@ public:
   }
 
   template<is_string T>
-  file &
+  os_file &
   operator>>(T &str)
   {
     rewind();
@@ -1059,7 +1092,7 @@ public:
   }
 
   template<is_iterable_container T>
-  file &
+  os_file &
   operator<<(const T &buf)
   {
     write(buf);
@@ -1067,17 +1100,17 @@ public:
   }
 
   template<is_string T>
-  file &
+  os_file &
   operator<<(const T &str)
   {
     write(str);
     return *this;
   }
 
-  file &
+  os_file &
   operator<<(const char *str)
   {
-    if ( !__alive() || str == nullptr ) return *this;
+    if ( __check() != 0 || str == nullptr ) return *this;
     posix::write(__handle.fd, str, micron::strlen(str));
     return *this;
   }
@@ -1086,7 +1119,8 @@ public:
   max_t
   pread(T &buf, usize len, posix::off64_t offset) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return micron::pread(__handle.fd, buf.data(), len, offset);
   }
 
@@ -1094,63 +1128,9 @@ public:
   max_t
   pwrite(const T &buf, usize len, posix::off64_t offset)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return micron::pwrite(__handle.fd, buf.data(), len, offset);
-  }
-
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // raw pointers
-  template<typename T>
-
-  [[deprecated("prefer using T& reference overloads")]] max_t
-  read(T *buf, usize len) const
-  {
-    __alive();
-    return posix::read(__handle.fd, buf, len);
-  }
-
-  template<typename T>
-
-  [[deprecated("prefer using T& reference overloads")]] max_t
-  write(const T *buf, usize len)
-  {
-    __alive();
-    return posix::write(__handle.fd, buf, len);
-  }
-
-  template<typename T>
-
-  [[deprecated("prefer using T& reference overloads")]] max_t
-  read_all(T *buf, usize len) const
-  {
-    __alive();
-    return posix::read_all(__handle, buf, len);
-  }
-
-  template<typename T>
-
-  [[deprecated("prefer using T& reference overloads")]] max_t
-  write_all(const T *buf, usize len)
-  {
-    __alive();
-    return posix::write_all(__handle, buf, len);
-  }
-
-  template<typename T>
-
-  [[deprecated("prefer using T& reference overloads")]] max_t
-  pread(T *buf, usize len, posix::off64_t offset) const
-  {
-    __alive();
-    return micron::pread(__handle.fd, buf, len, offset);
-  }
-
-  template<typename T>
-  [[deprecated("prefer using T& reference overloads")]] max_t
-  pwrite(const T *buf, usize len, posix::off64_t offset)
-  {
-    __alive();
-    return micron::pwrite(__handle.fd, buf, len, offset);
   }
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1160,7 +1140,8 @@ public:
   max_t
   read(T &buf, usize len) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::read(__handle.fd, micron::voidify(buf), len);
   }
 
@@ -1168,7 +1149,8 @@ public:
   max_t
   write(const T &buf, usize len)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::write(__handle.fd, micron::voidify(buf), len);
   }
 
@@ -1176,7 +1158,8 @@ public:
   max_t
   read_all(T &buf, usize len) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::read_all(__handle, micron::voidify(buf), len);
   }
 
@@ -1184,7 +1167,8 @@ public:
   max_t
   write_all(const T &buf, usize len)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::write_all(__handle, micron::voidify(buf), len);
   }
 
@@ -1192,7 +1176,8 @@ public:
   max_t
   pread(T &buf, usize len, posix::off64_t offset) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return micron::pread(__handle.fd, micron::voidify(buf), len, offset);
   }
 
@@ -1200,49 +1185,54 @@ public:
   max_t
   pwrite(const T &buf, usize len, posix::off64_t offset)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return micron::pwrite(__handle.fd, micron::voidify(buf), len, offset);
   }
 
   posix::off64_t
   seek_to(posix::off64_t offset)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::seek_to(__handle, offset);
   }
 
   posix::off64_t
   seek_by(posix::off64_t delta)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::seek_by(__handle, delta);
   }
 
   posix::off64_t
   seek_end(posix::off64_t off = 0)
   {
-    __alive();
-    return posix::lseek(__handle, -off, posix::seek_end);      // SEEK_END-relative; was seek_to(2 - off) -> absolute byte 2-off
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return posix::lseek(__handle, -off, posix::seek_end);
   }
 
   posix::off64_t
   tell(void) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::tell(__handle);
   }
 
   void
   rewind(void)
   {
-    __alive();
     seek_to(0);
   }
 
   i32
   truncate(posix::off64_t length)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     i32 r = posix::truncate(__handle, length);
     if ( r == 0 ) micron::zero(&sd);
     return r;
@@ -1257,28 +1247,32 @@ public:
   i32
   flush(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::flush(__handle);
   }
 
   i32
   flush_data(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::flush_data(__handle);
   }
 
   i32
   sync(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return flush();
   }
 
   i32
   chmod(posix::mode_t mode)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     i32 r = (micron::fchmod(__handle.fd, mode));
     if ( r == 0 ) micron::zero(&sd);
     return r;
@@ -1293,7 +1287,8 @@ public:
   i32
   chown(posix::uid_t uid, posix::gid_t gid)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     i32 r = (micron::fchown(__handle.fd, uid, gid));
     if ( r == 0 ) micron::zero(&sd);
     return r;
@@ -1302,7 +1297,8 @@ public:
   i32
   rename(const char *newpath)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     if ( fname.size() == 0 ) return -1;
     i32 r = (micron::rename(fname.c_str(), newpath));
     if ( r == 0 ) fname = newpath;
@@ -1313,14 +1309,16 @@ public:
   i32
   rename(const T &newpath)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return rename(newpath.c_str());
   }
 
   i32
   unlink(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     if ( fname.size() == 0 ) return -1;
     return micron::unlink(fname.c_str());
   }
@@ -1328,7 +1326,8 @@ public:
   i32
   link(const char *newpath) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     if ( fname.size() == 0 ) return -1;
     return micron::link(fname.c_str(), newpath);
   }
@@ -1337,14 +1336,16 @@ public:
   i32
   link(const T &newpath) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return link(newpath.c_str());
   }
 
   i32
   symlink(const char *linkpath) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     if ( fname.size() == 0 ) return -1;
     return micron::symlink(fname.c_str(), linkpath);
   }
@@ -1353,49 +1354,56 @@ public:
   i32
   symlink(const T &linkpath) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return symlink(linkpath.c_str());
   }
 
   fd_t
   dup(void) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return fd_t{ __e };
     return fd_t{ micron::dup(__handle.fd) };
   }
 
   fd_t
   dup2(i32 target) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return fd_t{ __e };
     return fd_t{ micron::dup2(__handle.fd, target) };
   }
 
   i32
   get_status_flags(void) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::fcntl(__handle.fd, posix::f_getfl);
   }
 
   i32
   set_status_flags(i32 flags)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::fcntl(__handle.fd, posix::f_setfl, flags);
   }
 
   i32
   get_fd_flags(void) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::fcntl(__handle.fd, posix::f_getfd);
   }
 
   i32
   set_fd_flags(i32 flags)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::fcntl(__handle.fd, posix::f_setfd, flags);
   }
 
@@ -1441,14 +1449,16 @@ public:
   auto
   fcntl(i32 cmd, Args &&...args)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::fcntl(__handle.fd, cmd, args...);
   }
 
   i32
   lock_shared(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     posix::flock_t fl{ 0, static_cast<i16>(posix::seek_set), 0, 0, 0 };
     return (posix::fcntl(__handle.fd, posix::f_setlkw, &fl));
   }
@@ -1456,7 +1466,8 @@ public:
   i32
   lock_exclusive(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     posix::flock_t fl{ 1, static_cast<i16>(posix::seek_set), 0, 0, 0 };
     return (posix::fcntl(__handle.fd, posix::f_setlkw, &fl));
   }
@@ -1464,7 +1475,8 @@ public:
   i32
   try_lock_shared(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     posix::flock_t fl{ 0, static_cast<i16>(posix::seek_set), 0, 0, 0 };
     return (posix::fcntl(__handle.fd, posix::f_setlk, &fl));
   }
@@ -1472,7 +1484,8 @@ public:
   i32
   try_lock_exclusive(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     posix::flock_t fl{ 1, static_cast<i16>(posix::seek_set), 0, 0, 0 };
     return (posix::fcntl(__handle.fd, posix::f_setlk, &fl));
   }
@@ -1480,7 +1493,8 @@ public:
   i32
   unlock(void)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     posix::flock_t fl{ 2, static_cast<i16>(posix::seek_set), 0, 0, 0 };
     return (posix::fcntl(__handle.fd, posix::f_setlk, &fl));
   }
@@ -1488,7 +1502,8 @@ public:
   i32
   lock_range(posix::off64_t start, posix::off64_t end_pos, bool exclusive = true, bool wait = true)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     posix::flock_t fl{ static_cast<i16>(exclusive ? 1 : 0), static_cast<i16>(posix::seek_set), start, end_pos, 0 };
     i32 cmd = wait ? posix::f_setlkw : posix::f_setlk;
     return (posix::fcntl(__handle.fd, cmd, &fl));
@@ -1497,7 +1512,8 @@ public:
   i32
   unlock_range(posix::off64_t start, posix::off64_t end_pos)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     posix::flock_t fl{ 2, static_cast<i16>(posix::seek_set), start, end_pos, 0 };
     return (posix::fcntl(__handle.fd, posix::f_setlk, &fl));
   }
@@ -1505,7 +1521,8 @@ public:
   i32
   allocate(posix::off64_t offset, posix::off64_t len, i32 mode_flags = 0)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     i32 r = (micron::fallocate(__handle.fd, mode_flags, offset, len));
     if ( r == 0 ) micron::zero(&sd);
     return r;
@@ -1532,12 +1549,13 @@ public:
   max_t
   copy_to(fd_t dst, usize count) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::copy_fd(dst, __handle, count);
   }
 
   max_t
-  copy_to(const file &dst, usize count) const
+  copy_to(const os_file &dst, usize count) const
   {
     return copy_to(dst.__handle, count);
   }
@@ -1545,7 +1563,8 @@ public:
   max_t
   copy_from(fd_t src, usize count)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     max_t r = posix::copy_fd(__handle, src, count);
     if ( r > 0 ) micron::zero(&sd);
     return r;
@@ -1554,30 +1573,35 @@ public:
   max_t
   splice_to(fd_t dst, usize count, i32 flags = 0) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return micron::splice(__handle.fd, nullptr, dst.fd, nullptr, count, flags);
   }
 
   max_t
   splice_from(fd_t src, usize count, i32 flags = 0)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return micron::splice(src.fd, nullptr, __handle.fd, nullptr, count, flags);
   }
 
+  // cross-fs copies need >=5.3
   max_t
-  copy_range_to(file &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
+  copy_range_to(os_file &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     posix::off64_t *sp = (src_off < 0) ? nullptr : &src_off;
     posix::off64_t *dp = (dst_off < 0) ? nullptr : &dst_off;
     return micron::copy_file_range(__handle.fd, sp, dst.__handle.fd, dp, count, 0u);
   }
 
   bool
-  is_same_as(const file &o) const
+  is_same_as(const os_file &o) const
   {
-    __alive();
+    if ( __check() != 0 ) [[unlikely]]
+      return false;
     return posix::is_same_file(__handle, o.__handle);
   }
 
@@ -1591,44 +1615,49 @@ public:
   bool
   is_same_as(const T &p) const
   {
-    __alive();
+    if ( __check() != 0 ) [[unlikely]]
+      return false;
     return is_same_as(p.c_str());
   }
 
   max_t
   getxattr(const char *attr_name, void *value, usize sz) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::fgetxattr(__handle.fd, attr_name, value, sz);
   }
 
   i32
   setxattr(const char *attr_name, const void *value, usize sz, i32 flags = 0)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return (posix::fsetxattr(__handle.fd, attr_name, value, sz, flags));
   }
 
   i32
   removexattr(const char *attr_name)
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return (posix::fremovexattr(__handle.fd, attr_name));
   }
 
   max_t
   listxattr(char *list, usize sz) const
   {
-    __alive();
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
     return posix::flistxattr(__handle.fd, list, sz);
   }
 };
 
-struct virtual_file: public file {
+struct virtual_file: public os_file {
 
   virtual_file() = default;
 
-  explicit virtual_file(const char *path) : file(path, modes::read) { }
+  explicit virtual_file(const char *path) : os_file(path, modes::read) { }
 
   template<is_string T> explicit virtual_file(const T &path) : virtual_file(path.c_str()) { }
 
@@ -1669,13 +1698,13 @@ struct virtual_file: public file {
   }
 };
 
-struct regular_file: public file {
+struct regular_file: public os_file {
 
   regular_file() = default;
 
-  explicit regular_file(const char *path, const modes mode = modes::read) : file(path, mode) { }
+  explicit regular_file(const char *path, const modes mode = modes::read) : os_file(path, mode) { }
 
-  template<is_string T> explicit regular_file(const T &path, const modes mode = modes::read) : file(path.c_str(), mode) { }
+  template<is_string T> explicit regular_file(const T &path, const modes mode = modes::read) : os_file(path.c_str(), mode) { }
 
   static regular_file
   for_reading(const char *path)
@@ -1958,11 +1987,11 @@ public:
   }
 };
 
-struct directory_file: public file {
+struct directory_file: public os_file {
 
   directory_file() = default;
 
-  explicit directory_file(const char *path) : file(path, modes::read, __nt_dir) { }
+  explicit directory_file(const char *path) : os_file(path, modes::read, __nt_dir) { }
 
   template<is_string T> explicit directory_file(const T &path) : directory_file(path.c_str()) { }
 
@@ -2137,13 +2166,13 @@ struct directory_file: public file {
   }
 };
 
-struct fifo_file: public file {
+struct fifo_file: public os_file {
 
   fifo_file() = default;
 
-  explicit fifo_file(const char *path, const modes mode = modes::read) : file(path, mode, __nt_fifo) { }
+  explicit fifo_file(const char *path, const modes mode = modes::read) : os_file(path, mode, __nt_fifo) { }
 
-  template<is_string T> explicit fifo_file(const T &path, const modes mode = modes::read) : file(path.c_str(), mode, __nt_fifo) { }
+  template<is_string T> explicit fifo_file(const T &path, const modes mode = modes::read) : os_file(path.c_str(), mode, __nt_fifo) { }
 
   static fifo_file
   create(const char *path, const linux_permissions &p = perm_file_default)
@@ -2186,14 +2215,14 @@ struct fifo_file: public file {
   }
 };
 
-struct device_file: public file {
+struct device_file: public os_file {
 
   device_file() = default;
 
-  explicit device_file(const char *path, const modes mode = modes::readwrite) : file(path, mode, __nt_blk | __nt_chr) { }
+  explicit device_file(const char *path, const modes mode = modes::readwrite) : os_file(path, mode, __nt_blk | __nt_chr) { }
 
   template<is_string T>
-  explicit device_file(const T &path, const modes mode = modes::readwrite) : file(path.c_str(), mode, __nt_blk | __nt_chr)
+  explicit device_file(const T &path, const modes mode = modes::readwrite) : os_file(path.c_str(), mode, __nt_blk | __nt_chr)
   {
   }
 
@@ -2338,32 +2367,6 @@ public:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // functions
-
-inline regular_file
-open_file(const char *path, const modes mode = modes::read)
-{
-  return regular_file{ path, mode };
-}
-
-template<is_string T>
-inline regular_file
-open_file(const T &path, const modes mode = modes::read)
-{
-  return regular_file{ path.c_str(), mode };
-}
-
-inline regular_file
-create_file(const char *path)
-{
-  return regular_file::create_new(path);
-}
-
-template<is_string T>
-inline regular_file
-create_file(const T &path)
-{
-  return regular_file::create_new(path.c_str());
-}
 
 inline directory_file
 open_dir_file(const char *path)

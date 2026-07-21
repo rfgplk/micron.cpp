@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../io/__std.hpp"      // std{in,out,err}_fileno
-#include "../io/posix/iosys.hpp"
+#include "../io/os/iosys.hpp"
 
 #include "../array/arrays.hpp"
 #include "../mutex/locks.hpp"

@@ -144,19 +144,19 @@ constexpr static const u64 B9600 = 0000015;
 constexpr static const u64 B19200 = 0000016;
 constexpr static const u64 B38400 = 0000017;
 
-template<int Fd = 1>      // stdin
+template<int Fd = 1>      // default fd 1 (stdout); pass 0 for stdin
 int
 terminal_setattr(const termios_t &buf)
 {
-  if ( micron::posix::ioctl(Fd, micron::posix::tcsets, &buf) < 0 ) return -1;
+  if ( i32 r = static_cast<i32>(micron::posix::ioctl(Fd, micron::posix::tcsets, &buf)); r < 0 ) return r;      // preserve -errno
   return 0;
 }
 
-template<int Fd = 1>      // stdin
+template<int Fd = 1>      // default fd 1 (stdout); pass 0 for stdin
 int
 terminal_getattr(termios_t &buf)
 {
-  if ( micron::posix::ioctl(Fd, micron::posix::tcgets, &buf) < 0 ) return -1;
+  if ( i32 r = static_cast<i32>(micron::posix::ioctl(Fd, micron::posix::tcgets, &buf)); r < 0 ) return r;      // preserve -errno
   return 0;
 }
 };      // namespace posix

@@ -46,6 +46,7 @@ class fvector: public __mutable_memory_resource<T, Alloc>
 
 public:
   using category_type = vector_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef usize size_type;
@@ -70,7 +71,7 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
       size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( const T &value : lst ) {
           new (addr(__mem::memory[i])) T(value);
@@ -126,7 +127,7 @@ public:
   fvector(size_type n, Args... args) : __mem(n)
   {
     size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < n; i++ ) new (addr(__mem::memory[i])) T(args...);
     } catch ( ... ) {

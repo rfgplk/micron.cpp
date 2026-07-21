@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../io/posix/iosys.hpp"
+#include "../../io/os/iosys.hpp"
 #include "../../linux/sys/event_codes.hpp"
 
 #include "../bits.hpp"
@@ -159,7 +159,6 @@ inline vector<device_t>
 get_devices()
 {
   micron::vector<device_t> vc;
-  fsys::system<micron::io::rd> sys;
   auto ps = micron::io::path("/sys/class/input/").all();
   for ( auto &n : ps ) {
     auto loc = format::find(n, "event");
@@ -168,7 +167,7 @@ get_devices()
     // /sys/class/input/[eventX]/device/uevent
     micron::ustr8 pt = "/sys/class/input/" + n + "/device/uevent";
     micron::hstring<char> raw;
-    sys[pt] >> raw;
+    io::open_file(io::path_t(pt.c_str())) >> raw;
     micron::ustr8 buf(raw);
 
     if ( !format::contains(buf, "EV") ) continue;

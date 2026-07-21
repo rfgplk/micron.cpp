@@ -9,5 +9,6 @@
 #elif defined(__micron_arch_x86) || defined(__micron_arch_amd64)
 #include "arch/load_amd64.hpp"
 #else
-#error "simd/load.hpp: no SIMD backend matched. Build for x86_64/i386+SSE2, aarch64+NEON, or armv7-a+NEON (-msse2 / -mfpu=neon / -march=native)."
+#error                                                                                                                                     \
+    "simd/load.hpp: no SIMD backend matched. Build for x86_64/i386+SSE2, aarch64+NEON, or armv7-a+NEON (-msse2 / -mfpu=neon / -march=native)."
 #endif

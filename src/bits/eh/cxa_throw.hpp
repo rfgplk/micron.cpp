@@ -53,7 +53,7 @@ inline bool __emergency_used[__emergency_slots] = {};
 inline bool
 __is_emergency(void *p) noexcept
 {
-  return p >= &__emergency_pool[0][0] && p < &__emergency_pool[__emergency_slots][0];
+  return p >= reinterpret_cast<byte *>(__emergency_pool) && p < reinterpret_cast<byte *>(__emergency_pool) + sizeof(__emergency_pool);
 }
 
 };      // namespace micron::eh

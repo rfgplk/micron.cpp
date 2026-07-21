@@ -11,9 +11,10 @@
 #include "../string/strings.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
+#include "fn.hpp"
 #include "io.hpp"
+#include "os/iosys.hpp"
 #include "paths.hpp"
-#include "posix/iosys.hpp"
 #include "stream.hpp"
 
 #include "../attributes.hpp"
@@ -24,15 +25,13 @@ namespace micron
 namespace io
 {
 
-// freestanding init via start
 extern "C" void
 __boot_io_sigpipe(void)
 {
   micron::ignore(micron::signal::pipe);
 }
 
-// hosted init via .init_array
-void gconstructor_
+inline void gconstructor_
 __micron_io_ignore_sigpipe(void)
 {
   __boot_io_sigpipe();
@@ -112,7 +111,7 @@ class upipe
   }
 
 public:
-  int fd[2];
+  int fd[2] = { -1, -1 };      // init so a missed open failure degrades safely (never close a garbage fd)
 
   enum class utype { upipe_reader = 0, upipe_writer = 1 };
 
@@ -132,18 +131,18 @@ public:
 
   upipe() : __r_open(true), __w_open(true), tp(utype::upipe_writer)
   {
-    if ( posix::pipe(fd) == -1 ) exc<except::io_error>("micron::upipe failed to open pipe");
+    if ( posix::pipe(fd) < 0 ) exc<except::io_error>("micron::upipe failed to open pipe");
   }
 
   explicit upipe(utype t) : __r_open(true), __w_open(true), tp(t)
   {
-    if ( posix::pipe(fd) == -1 ) exc<except::io_error>("micron::upipe failed to open pipe");
+    if ( posix::pipe(fd) < 0 ) exc<except::io_error>("micron::upipe failed to open pipe");
   }
 
   explicit upipe(bool cloexec) : __r_open(true), __w_open(true), tp(utype::upipe_writer)
   {
     i32 flags = cloexec ? posix::o_cloexec : 0;
-    if ( static_cast<i32>(micron::syscall(SYS_pipe2, fd, flags)) == -1 ) exc<except::io_error>("micron::upipe(pipe2) failed to open pipe");
+    if ( static_cast<i32>(micron::syscall(SYS_pipe2, fd, flags)) < 0 ) exc<except::io_error>("micron::upipe(pipe2) failed to open pipe");
   }
 
   upipe(const upipe &) = delete;
@@ -554,6 +553,51 @@ public:
   {
     return write_bytes(buf.begin(), buf.size());
   }
+
+  template<chunk_fn Fn>
+  max_t
+  each_chunk(Fn &&fn, usize chunk_sz = 4096u)
+  {
+    if ( !__r_open ) return -error::bad_fd;
+    micron::buffer win(chunk_sz ? chunk_sz : 4096u);
+    max_t total = 0;
+    for ( ;; ) {
+      max_t n = posix::read(fd[__r], win.begin(), win.size());
+      if ( n < 0 ) [[unlikely]] {
+        if ( -n == error::interrupted ) continue;
+        if ( -n == error::try_again ) break;      // nonblock: drained
+        return total ? total : n;
+      }
+      if ( n == 0 ) break;      // EOF: all writers closed
+      fn(static_cast<const byte *>(win.begin()), static_cast<usize>(n));
+      total += n;
+    }
+    return total;
+  }
+
+  // producer loop: fn fills dst (<= cap) and returns bytes produced; 0 ends. a
+  // blocking write end blocks while the pipe is full; a nonblocking one surfaces the
+  // partial total. producer overrun (n > cap) is -EINVAL
+  template<producer_fn Fn>
+  max_t
+  write_with(Fn &&fn, usize chunk_sz = 4096u)
+  {
+    if ( !__w_open ) return -error::bad_fd;
+    micron::buffer win(chunk_sz ? chunk_sz : 4096u);
+    max_t total = 0;
+    for ( ;; ) {
+      usize n = fn(win.begin(), win.size());
+      if ( n == 0 ) break;
+      if ( n > win.size() ) [[unlikely]]
+        return -error::invalid_arg;
+      max_t w = _write_all(fd[__w], win.begin(), n);
+      if ( w < 0 ) [[unlikely]]
+        return total ? total : w;
+      total += w;
+      if ( static_cast<usize>(w) < n ) break;      // short write: stop
+    }
+    return total;
+  }
 };
 
 class npipe
@@ -603,10 +647,10 @@ public:
 
   npipe(const micron::string &str, int perms = 0666) : pipe_name(str), _fd(-1), _open(false), _owns_file(true)
   {
-    if ( micron::mkfifo(pipe_name.c_str(), static_cast<posix::mode_t>(perms)) == -1 )
-      exc<except::io_error>("micron::npipe(mkfifo) failed to create pipe");
+    if ( micron::mkfifo(pipe_name.c_str(), static_cast<posix::mode_t>(perms)) < 0 )
+      exc<except::io_error>("micron::npipe(mkfifo) failed to create pipe (EEXIST = path already exists)");
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), posix::o_rdwr));
-    if ( _fd == -1 ) exc<except::io_error>("micron::npipe(open) failed to open pipe file");
+    if ( _fd < 0 ) exc<except::io_error>("micron::npipe(open) failed to open pipe file");
     _open = true;
   }
 
@@ -614,7 +658,7 @@ public:
       : pipe_name(str), _fd(-1), _open(false), _owns_file(false)
   {
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), flags));
-    if ( _fd == -1 ) exc<except::io_error>("micron::npipe(open existing) failed to open pipe file");
+    if ( _fd < 0 ) exc<except::io_error>("micron::npipe(open existing) failed to open pipe file");
     _open = true;
   }
 
@@ -687,7 +731,7 @@ public:
   {
     if ( _open ) close();
     _fd = static_cast<int>(posix::open(pipe_name.c_str(), flags));
-    if ( _fd == -1 ) exc<except::io_error>("micron::npipe::reopen failed");
+    if ( _fd < 0 ) exc<except::io_error>("micron::npipe::reopen failed");
     _open = true;
   }
 
@@ -843,6 +887,50 @@ public:
     max_t n = posix::read(_fd, out.begin(), hint);
     if ( n < 0 ) n = 0;
     return out;
+  }
+
+  // drain read loop
+  template<chunk_fn Fn>
+  max_t
+  each_chunk(Fn &&fn, usize chunk_sz = 4096u)
+  {
+    if ( !valid() ) return -error::bad_fd;
+    micron::buffer win(chunk_sz ? chunk_sz : 4096u);
+    max_t total = 0;
+    for ( ;; ) {
+      max_t n = posix::read(_fd, win.begin(), win.size());
+      if ( n < 0 ) [[unlikely]] {
+        if ( -n == error::interrupted ) continue;
+        if ( -n == error::try_again ) break;
+        return total ? total : n;
+      }
+      if ( n == 0 ) break;
+      fn(static_cast<const byte *>(win.begin()), static_cast<usize>(n));
+      total += n;
+    }
+    return total;
+  }
+
+  // producer loop: same policy as upipe::write_with
+  template<producer_fn Fn>
+  max_t
+  write_with(Fn &&fn, usize chunk_sz = 4096u)
+  {
+    if ( !valid() ) return -error::bad_fd;
+    micron::buffer win(chunk_sz ? chunk_sz : 4096u);
+    max_t total = 0;
+    for ( ;; ) {
+      usize n = fn(win.begin(), win.size());
+      if ( n == 0 ) break;
+      if ( n > win.size() ) [[unlikely]]
+        return -error::invalid_arg;
+      max_t w = _write_all(_fd, win.begin(), n);
+      if ( w < 0 ) [[unlikely]]
+        return total ? total : w;
+      total += w;
+      if ( static_cast<usize>(w) < n ) break;
+    }
+    return total;
   }
 
   template<is_string T>

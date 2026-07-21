@@ -21,6 +21,7 @@ template<class Alloc = micron::allocator_serial<>> class memory_block: public Al
 
 public:
   using category_type = buffer_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   using safety_type = safe_tag;
@@ -31,6 +32,7 @@ public:
   using const_pointer = const byte *;
   using iterator = byte *;
   using const_iterator = const byte *;
+  using size_type = size_t;
 
   ~memory_block()
   {
@@ -165,6 +167,18 @@ public:
     return memory.ptr;
   }
 
+  pointer
+  data()
+  {
+    return memory.ptr;
+  }
+
+  const_pointer
+  data() const
+  {
+    return memory.ptr;
+  }
+
   iterator
   begin()
   {
@@ -203,6 +217,12 @@ public:
 
   size_t
   size() const
+  {
+    return memory.len;
+  }
+
+  size_t
+  max_size() const
   {
     return memory.len;
   }

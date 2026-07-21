@@ -15,6 +15,9 @@
 #include "../maps/hopscotch.hpp"
 #include "../tuple.hpp"
 
+#include "../bits/__print.hpp"
+#include "../settle_fwd.hpp"
+
 #include "../array.hpp"
 #include "../slice.hpp"
 #include "../vector.hpp"
@@ -2306,7 +2309,7 @@ to_integer(const T &o)
     ++p;
   u32 acc = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
+  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
 }
 
 inline i32
@@ -2323,7 +2326,7 @@ to_integer(const char *buf)
     ++p;
   u32 acc = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
+  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
 }
 
 inline i32
@@ -2341,7 +2344,7 @@ to_integer(const char *buf, usize len)
     ++p;
   u32 acc = 0;
   while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i32>(acc) : static_cast<i32>(acc);
+  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
 }
 
 template<usize N>
@@ -2509,7 +2512,7 @@ to_long(const T &o)
     ++p;
   u64 acc = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
+  return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
 // to_long: null-terminated c-string
@@ -2527,7 +2530,7 @@ to_long(const char *buf)
     ++p;
   u64 acc = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
+  return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
 // to_long: bounded c-string
@@ -2546,7 +2549,7 @@ to_long(const char *buf, usize len)
     ++p;
   u64 acc = 0;
   while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? -static_cast<i64>(acc) : static_cast<i64>(acc);
+  return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
 template<usize N>
@@ -3133,6 +3136,94 @@ template<typename T> struct formatter<T *, micron::enable_if_t<!micron::is_same_
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// container / map / pair formatters
+
+namespace __impl
+{
+
+template<typename E>
+inline void
+fmt_element(hstring<schar> &out, const E &e, const fmt_spec &spec)
+{
+  using U = micron::remove_cvref_t<E>;
+  if constexpr ( requires(char *b, const U &v) { formatter<U>::write(b, usize{}, v, spec); } ) {
+    char buf[__fmt_buf_size];
+    usize n = formatter<U>::write(buf, __fmt_buf_size, e, spec);
+    apply_padding(out, buf, n, spec);
+  } else if constexpr ( requires(hstring<schar> &o, const U &v) { formatter<U>::write_str(o, v, spec); } ) {
+    formatter<U>::write_str(out, e, spec);
+  } else {
+    static_assert(sizeof(U) == 0, "micron::format: element type has no formatter");
+  }
+}
+
+struct __fmt_out {
+  hstring<schar> &__o;
+  const fmt_spec &__spec;
+
+  void
+  raw(const char *p, usize n)
+  {
+    __o.append(p, n);
+  }
+
+  void
+  num(u64 v)
+  {
+    char buf[__fmt_buf_size];
+    usize n = fmt_uint_to_buf(buf, __fmt_buf_size, v, 10, false);
+    __o.append(buf, n);
+  }
+
+  template<typename E>
+  void
+  elem(const E &e)
+  {
+    fmt_element(__o, e, __spec);
+  }
+};
+
+};      // namespace __impl
+
+template<> struct formatter<micron::settle_note> {
+  static inline usize
+  write(char *buf, usize buf_sz, const micron::settle_note &val, const __impl::fmt_spec &)
+  {
+    usize n = 0;
+    usize k = micron::strlen(val.pre);
+    if ( k > buf_sz - n ) k = buf_sz - n;
+    micron::bytecpy(buf + n, val.pre, k);
+    n += k;
+    if ( val.has_id && n < buf_sz ) n += __impl::fmt_int_to_buf(buf + n, buf_sz - n, val.id, 10, false);
+    k = micron::strlen(val.post);
+    if ( k > buf_sz - n ) k = buf_sz - n;
+    micron::bytecpy(buf + n, val.post, k);
+    return n + k;
+  }
+};
+
+template<typename T> struct formatter<T, micron::enable_if_t<micron::__print::printable<T> && !micron::is_string_v<T>>> {
+  static inline void
+  write_str(hstring<schar> &out, const T &val, const __impl::fmt_spec &spec)
+  {
+    __impl::__fmt_out o{ out, spec };
+    micron::__print::render(o, val);
+  }
+};
+
+template<typename A, typename B> struct formatter<micron::pair<A, B>> {
+  static inline void
+  write_str(hstring<schar> &out, const micron::pair<A, B> &val, const __impl::fmt_spec &spec)
+  {
+    out.append("[", 1);
+    __impl::fmt_element(out, val.a, spec);
+    out.append(", ", 2);
+    __impl::fmt_element(out, val.b, spec);
+    out.append("]", 1);
+  }
+};
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // format_value
 
 template<typename T>
@@ -3224,14 +3315,25 @@ format_one(hstring<schar> &out, const char *spec_start, const char *spec_end, us
     return;
   }
   fmt_spec spec = parse_spec(spec_start, spec_end);
-  char buf[__fmt_buf_size];
-  usize n = formatter<T>::write(buf, __fmt_buf_size, val, spec);
-  apply_padding(out, buf, n, spec);
+  using U = micron::remove_cvref_t<T>;
+  if constexpr ( requires(char *b, const U &v) { formatter<U>::write(b, usize{}, v, spec); } ) {
+    char buf[__fmt_buf_size];
+    usize n = formatter<U>::write(buf, __fmt_buf_size, val, spec);
+    apply_padding(out, buf, n, spec);
+  } else if constexpr ( requires(hstring<schar> &o, const U &v) { formatter<U>::write_str(o, v, spec); } ) {
+    // containers/maps/pairs stream into the output; the spec applies per element
+    hstring<schar> tmp;
+    formatter<U>::write_str(tmp, val, spec);
+    apply_padding(out, tmp.c_str(), tmp.size(), spec);
+  } else {
+    static_assert(sizeof(U) == 0, "micron::format: no formatter for this argument type");
+  }
 }
 
 }      // namespace __impl
 
 template<typename... Args>
+  requires(!micron::any_settling<Args...>)
 inline hstring<schar>
 format(const char *fmt, const Args &...args)
 {
@@ -3291,6 +3393,15 @@ format(const char *fmt, const Args &...args)
     }
   }
   return out;
+}
+
+// settling form
+template<typename... Args>
+  requires(micron::any_settling<Args...>)
+inline hstring<schar>
+format(const char *fmt, Args &&...args)
+{
+  return micron::__settle_impl::__then([&](const auto &...v) { return micron::format::format(fmt, v...); }, micron::forward<Args>(args)...);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

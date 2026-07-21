@@ -19,7 +19,7 @@
 #include "../../linux/sys/ioctl.hpp"
 #include "../bits.hpp"
 
-#include "file.hpp"
+#include "os_file.hpp"
 
 namespace micron
 {
@@ -63,7 +63,7 @@ struct block_info_t {
   bool discard_zeroes;          // BLKDISCARDZEROES (ssd)
 };
 
-struct block: public file {
+struct block: public os_file {
 
   static constexpr usize default_buf_size = 65536u;      // 64 KB
 
@@ -83,7 +83,7 @@ struct block: public file {
   block() = delete;
 
   explicit block(const char *path, usize buf_sz = default_buf_size, modes m = modes::read)
-      : file(), _buf(buf_sz), _buf_off(0), _buf_valid(0), _buf_dirty(false), _info{}, _info_valid(false)
+      : os_file(), _buf(buf_sz), _buf_off(0), _buf_valid(0), _buf_dirty(false), _info{}, _info_valid(false)
   {
     __open_block(path, m);
   }
@@ -94,12 +94,13 @@ struct block: public file {
   }
 
   block(const block &o)
-      : file(o), _buf(o._buf), _buf_off(o._buf_off), _buf_valid(o._buf_valid), _buf_dirty(false), _info(o._info), _info_valid(o._info_valid)
+      : os_file(o), _buf(o._buf), _buf_off(o._buf_off), _buf_valid(o._buf_valid), _buf_dirty(false), _info(o._info),
+        _info_valid(o._info_valid)
   {
   }
 
   block(block &&o) noexcept
-      : file(micron::move(o)), _buf(micron::move(o._buf)), _buf_off(o._buf_off), _buf_valid(o._buf_valid), _buf_dirty(o._buf_dirty),
+      : os_file(micron::move(o)), _buf(micron::move(o._buf)), _buf_off(o._buf_off), _buf_valid(o._buf_valid), _buf_dirty(o._buf_dirty),
         _info(o._info), _info_valid(o._info_valid)
   {
     o._buf_off = 0;
@@ -112,8 +113,9 @@ struct block: public file {
   operator=(block &&o) noexcept
   {
     if ( this == &o ) return *this;
-    if ( _buf_dirty ) flush_buf();
-    file::operator=(micron::move(o));
+    if ( _buf_dirty && __handle.fd >= 0 )
+      flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
+    os_file::operator=(micron::move(o));
     _buf = micron::move(o._buf);
     _buf_off = o._buf_off;
     _buf_valid = o._buf_valid;
@@ -131,8 +133,9 @@ struct block: public file {
   operator=(const block &o)
   {
     if ( this == &o ) return *this;
-    if ( _buf_dirty ) flush_buf();
-    file::operator=(o);
+    if ( _buf_dirty && __handle.fd >= 0 )
+      flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
+    os_file::operator=(o);
     _buf = o._buf;
     _buf_off = o._buf_off;
     _buf_valid = o._buf_valid;
@@ -203,7 +206,8 @@ struct block: public file {
   void
   resize_buf(usize new_sz)
   {
-    if ( _buf_dirty ) flush_buf();
+    if ( _buf_dirty && __handle.fd >= 0 )
+      flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
     _buf.recreate(new_sz);
     invalidate_buf();
   }
@@ -212,7 +216,8 @@ struct block: public file {
   fill(posix::off_t dev_offset = 0)
   {
     __alive();
-    if ( _buf_dirty ) flush_buf();
+    if ( _buf_dirty && __handle.fd >= 0 )
+      flush_buf();      // skip flush on an invalid fd: flush_buf()->__alive() throws, and this op is noexcept
     max_t n = posix::pread(__handle.fd, _buf.begin(), _buf.size(), dev_offset);
     if ( n > 0 ) {
       _buf_off = dev_offset;
@@ -237,7 +242,12 @@ struct block: public file {
   buf_covers(posix::off_t offset, usize size) const noexcept
   {
     if ( _buf_valid == 0 ) return false;
-    return offset >= _buf_off && (static_cast<u64>(offset) + size) <= (static_cast<u64>(_buf_off) + _buf_valid);
+    // overflow-safe: avoid the (offset + size) addition that can wrap and approve an
+    // out-of-bounds cached copy when `size` is near-SIZE_MAX.
+    if ( offset < _buf_off ) return false;
+    const u64 delta = static_cast<u64>(offset) - static_cast<u64>(_buf_off);
+    if ( delta > _buf_valid ) return false;
+    return static_cast<u64>(size) <= static_cast<u64>(_buf_valid) - delta;
   }
 
   max_t
@@ -382,7 +392,10 @@ struct block: public file {
     u16 rotflag = 0;
     u32 dzflag = 0;
 
-    posix::ioctl(__handle.fd, blkgetsize64, &sz64);
+    if ( posix::ioctl(__handle.fd, blkgetsize64, &sz64) < 0 ) {      // primary query: without the device size the cache is useless
+      _info_valid = false;
+      return;
+    }
     posix::ioctl(__handle.fd, blkgetsize, &szsec);
     posix::ioctl(__handle.fd, blksszget, &lbsz);
     posix::ioctl(__handle.fd, blkpbszget, &pbsz);
@@ -780,7 +793,7 @@ private:
   inline void
   alive_c(void) const
   {
-    if ( __handle.fd == -1 ) exc<except::io_error>("micron::block, fd isn't open.");
+    if ( __handle.fd < 0 ) exc<except::io_error>("micron::block, fd isn't open.");      // any negative fd is invalid, not just -1
   }
 
   u32

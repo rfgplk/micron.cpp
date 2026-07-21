@@ -5,6 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "__arch.hpp"
+#include "__attach_hook.hpp"
+
 #include "../syscall.hpp"
 #include "../types.hpp"
 
@@ -12,6 +15,73 @@
 namespace micron
 {
 inline void (*__thread_exit_hook)() noexcept = nullptr;
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// per-thread C++ dtor list (attach only)
+//
+// guest modules don't have _start, so its thread_local objects with non-trivial
+// dtors route their __cxa_thread_atexit registrations here
+#if defined(MICRON_ATTACH_MODULE)
+inline bool
+__push_thread_dtor(void (*dtor)(void *), void *obj) noexcept
+{
+  if ( __micron_attach_thread_atexit == nullptr ) return false;
+  return __micron_attach_thread_atexit(dtor, obj) == 0;
+}
+
+inline void
+__run_thread_dtors() noexcept
+{
+  if ( __micron_attach_run_thread_dtors ) __micron_attach_run_thread_dtors();
+}
+#elif defined(__micron_attach_capable)
+struct __tdtor_node {
+  void (*dtor)(void *);
+  void *obj;
+};
+
+inline constexpr u32 __tdtor_cap = 128;
+inline thread_local __tdtor_node __tdtors[__tdtor_cap];
+inline thread_local u32 __tdtor_n = 0;
+
+inline bool
+__push_thread_dtor(void (*dtor)(void *), void *obj) noexcept
+{
+  if ( __tdtor_n >= __tdtor_cap ) return false;
+  __tdtors[__tdtor_n].dtor = dtor;
+  __tdtors[__tdtor_n].obj = obj;
+  ++__tdtor_n;
+  return true;
+}
+
+inline void
+__run_thread_dtors() noexcept
+{
+  while ( __tdtor_n ) {
+    --__tdtor_n;
+    __tdtor_node e = __tdtors[__tdtor_n];
+    if ( e.dtor ) e.dtor(e.obj);
+  }
+}
+
+// the two entry points a host publishes in micron_attach_info for its guests
+inline int
+__attach_thread_atexit(void (*dtor)(void *), void *obj) noexcept
+{
+  return __push_thread_dtor(dtor, obj) ? 0 : -1;
+}
+
+inline void
+__attach_run_thread_dtors() noexcept
+{
+  __run_thread_dtors();
+}
+#else
+inline __attribute__((always_inline)) void
+__run_thread_dtors() noexcept
+{
+}
+#endif
 
 // set by the thread kernel to point at its __thread_payload::alive atomic_token<bool>
 // WARNING: these are the ONLY per-thread (thread_local) vars the threading core may add
@@ -39,4 +109,4 @@ __micron_park_checkpoint() noexcept
   }
   if ( v == __park_dying && __micron_thread_die ) __micron_thread_die();
 }
-}      // namespace micron
+};      // namespace micron

@@ -1,0 +1,42 @@
+=== MICRON io_v3 BINARY analysis (median-of-5) ===
+file=16MiB  window=64KiB  (/dev/shm)
+type                  op            elems       bytes   ns/op   GiB/s   x-bs
+--------------------------------------------------------------------------------
+memcpy                raw(1MiB)        0       1048576    71981.15       13.57      1.00
+memcpy                raw(16MiB)       0      16777216  1336285.25       11.69      1.00
+
+search                memchr(b0)       4         65536       89.86      679.26      1.00
+search                kmp(miss)        4         65536    66217.55        0.92    736.94
+search                kmp(hit@0)       4             4       36.22        0.10      0.40
+find_all              kmp(file)        4      16777216 15077254.50        1.04     11.28
+search                memchr(b0)      16         65536       65.74      928.50      1.00
+search                kmp(miss)       16         65536    49706.05        1.23    756.16
+search                kmp(hit@0)      16            16       51.95        0.29      0.79
+find_all              kmp(file)       16      16777216 14671218.17        1.07     10.98
+search                memchr(b0)     256         65536       65.79      927.80      1.00
+search                kmp(miss)      256         65536    49785.41        1.23    756.79
+search                kmp(hit@0)     256           256      353.17        0.68      5.37
+find_all              kmp(file)      256      16777216 14759345.17        1.06     11.05
+
+analyse               histogram        0       1048576  1387682.88        0.70     19.28
+analyse               histogram        0      16777216 22442472.75        0.70     16.79
+entropy               file(pread)      0      16777216 24218526.50        0.65     18.12
+
+read_win              u16le            2             0        1.87        0.00      1.00
+read_win              u16be            2             0        1.63        0.00      0.87
+read_win              u32le            4             0        1.87        0.00      1.00
+read_win              u32be            4             0        1.63        0.00      0.87
+read_win              u64le            8             0        1.88        0.00      1.00
+read_win              u64be            8             0        1.63        0.00      0.87
+read_at               u16le_at         2             0      580.31        0.00    309.61
+read_at               u32le_at         4             0      484.92        0.00    259.22
+read_at               u64le_at         8             0      453.71        0.00    241.68
+
+slice                 try_slice        0          4096      619.06        6.16      1.00
+slice                 slice(alloc)     0          4096      584.98        6.52      0.94
+
+# T2.4 NOTE: attempted stack-first KMP prefix table (avoid per-call heap alloc) — REVERTED.
+# Result: SLOWER (p=4 hit@0 36->47 ns, p=16 52->66 ns). A 2KB stack array pays
+# -fstack-protector-all + -fstack-clash-protection per call, and micron's allocator already
+# makes the small buffer alloc cheap; the 36->353ns scaling is the O(patlen) kmp_table BUILD,
+# not the alloc. Negative result: the "anomaly" is not worth fixing given the fast allocator.

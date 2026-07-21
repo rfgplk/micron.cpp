@@ -9,8 +9,8 @@
 #include "../string/format.hpp"
 #include "../string/strings.hpp"
 #include "io.hpp"
+#include "os/os_file.hpp"
 #include "paths.hpp"
-#include "posix/file.hpp"
 #include "realpath.hpp"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

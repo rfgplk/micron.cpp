@@ -1112,7 +1112,7 @@ private:
       for ( usize j = 0; j <= exp_n; ++j ) exp_children[j] = N0.children[j];
     }
 
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
       for ( u8 i = 0; i < cnt; ++i ) {
@@ -1136,7 +1136,7 @@ private:
           ++exp_n;
         }
       }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       // a throwing K/V move or an allocator failure mid-drain must not leak the
       // relocated ops still living in local[] (the normal destroy below is skipped)

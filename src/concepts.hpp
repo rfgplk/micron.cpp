@@ -325,7 +325,6 @@ concept has_cstr = requires(T t) {
   { t.c_str() } -> micron::same_as<const char *>;
 };
 
-// 1.8 doesn't have the new io, keep old defs for now
 // contiguity is opt-in via the contiguous_tag now
 template<typename T>
 concept is_contiguous_container = is_iterable_container<T> && requires { typename micron::remove_cvref_t<T>::contiguous_tag; };

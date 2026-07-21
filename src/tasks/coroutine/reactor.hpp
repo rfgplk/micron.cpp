@@ -8,6 +8,7 @@
 #if defined(MICRON_CORO_URING)
 
 #include "../../atomic/atomic.hpp"
+#include "../../kernel.hpp"
 #include "../../linux/sys/uring.hpp"
 #include "../../sync/yield.hpp"
 #include "../../types.hpp"
@@ -41,6 +42,7 @@ struct __reactor {
   micron::atomic_token<u32> pending{ 0 };         // in-flight ops incl. timers (stop-drain + park gate)
   micron::atomic_token<i32> sentinel{ -1 };       // worker id parked inside the ring; -1 = none
   micron::atomic_token<u32> park_fired{ 0 };      // the park sqe's cqe was observed (by ANY reaper)
+  micron::atomic_token<u32> futex_ok{ 0 };        // op_futex_wait usable (>=6.7 prior; demoted on live EINVAL)
   bool live = false;                              // init succeeded at engine start
 };
 

@@ -248,12 +248,14 @@ reboot(unsigned int cmd) -> i32
   return static_cast<i32>(micron::syscall(SYS_reboot, linux_reboot_magic1, linux_reboot_magic2, cmd, nullptr));
 }
 
+// >=5.3
 auto
 pidfd_open(posix::pid_t pid, unsigned int flags) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_pidfd_open, pid, flags));
 }
 
+// >=5.1
 auto
 pidfd_send_signal(int pidfd, int sig, void *info, unsigned int flags) -> i32
 {

@@ -70,6 +70,11 @@ template<typename T> class heapq
   }
 
 public:
+  typedef T value_type;
+  typedef usize size_type;
+  typedef T &reference;
+  typedef const T &const_reference;
+
   heapq() = default;
 
   heapq(const heapq &o)
@@ -168,6 +173,23 @@ public:
   {
     __hold __lock(__mtx);
     return heap;
+  }
+
+  // visits in heap array order, not sorted order
+  template<typename Fn>
+  void
+  for_each(Fn &&fn)
+  {
+    __hold __lock(__mtx);
+    for ( usize i = 0; i < heap.size(); ++i ) fn(heap[i]);
+  }
+
+  template<typename Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    __hold __lock(__mtx);
+    for ( usize i = 0; i < heap.size(); ++i ) fn(static_cast<const T &>(heap[i]));
   }
 };
 

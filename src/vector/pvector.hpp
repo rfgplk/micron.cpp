@@ -194,7 +194,7 @@ class pvector
       __leaf *fresh = __alloc_leaf();
       fresh->refs = 1;
       usize built = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         if ( p ) {
@@ -209,7 +209,7 @@ class pvector
           for ( ; built < B; ++built ) new (micron::addr(fresh->values[built])) T();
         }
         fresh->values[slot] = static_cast<Vf &&>(val);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         if constexpr ( !micron::is_trivially_copyable_v<T> )
           for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
@@ -223,7 +223,7 @@ class pvector
       const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = __alloc_internal();
       usize done = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         if ( p ) {
@@ -242,7 +242,7 @@ class pvector
               fresh->children[done] = nullptr;
           }
         }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(fresh->children[j]);
         abc::dealloc(reinterpret_cast<byte *>(fresh));
@@ -286,7 +286,7 @@ class pvector
       __leaf *l = __alloc_leaf();
       l->refs = 1;
       usize built = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         for ( ; built < B; ++built ) {
@@ -295,7 +295,7 @@ class pvector
           else
             new (micron::addr(l->values[built])) T();
         }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < built; ++j ) l->values[j].~T();
         abc::dealloc(reinterpret_cast<byte *>(l));
@@ -307,11 +307,11 @@ class pvector
       static constexpr usize child_span = __cpow(B, Lvl);
       __node *n = __alloc_internal();
       usize done = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         for ( ; done < B; ++done ) n->children[done] = __build_from<Lvl - 1>(data, count, base + done * child_span);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(n->children[j]);
         abc::dealloc(reinterpret_cast<byte *>(n));
@@ -333,7 +333,7 @@ class pvector
       __leaf *l = __alloc_leaf();
       l->refs = 1;
       usize built = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         for ( ; built < B; ++built ) {
@@ -342,7 +342,7 @@ class pvector
           else
             new (micron::addr(l->values[built])) T();
         }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < built; ++j ) l->values[j].~T();
         abc::dealloc(reinterpret_cast<byte *>(l));
@@ -354,11 +354,11 @@ class pvector
       static constexpr usize child_span = __cpow(B, Lvl);
       __node *n = __alloc_internal();
       usize done = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         for ( ; done < B; ++done ) n->children[done] = __build_filled<Lvl - 1>(val, count, base + done * child_span);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(n->children[j]);
         abc::dealloc(reinterpret_cast<byte *>(n));
@@ -378,7 +378,7 @@ class pvector
       __leaf *fresh = __alloc_leaf();
       fresh->refs = 1;
       usize built = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         if ( p ) {
@@ -393,7 +393,7 @@ class pvector
           for ( ; built < B; ++built ) new (micron::addr(fresh->values[built])) T();
         }
         fresh->values[slot] = fn(static_cast<const T &>(fresh->values[slot]));
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         if constexpr ( !micron::is_trivially_copyable_v<T> )
           for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
@@ -407,7 +407,7 @@ class pvector
       const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = __alloc_internal();
       usize done = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         if ( p ) {
@@ -426,7 +426,7 @@ class pvector
               fresh->children[done] = nullptr;
           }
         }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(fresh->children[j]);
         abc::dealloc(reinterpret_cast<byte *>(fresh));

@@ -20,7 +20,7 @@
 #include "../bits.hpp"
 
 #include "../../linux/io.hpp"
-#include "file.hpp"
+#include "os_file.hpp"
 
 namespace micron
 {
@@ -73,7 +73,24 @@ class volatile_t
       while ( remaining > 0 ) {
         usize want = remaining < chunk ? remaining : chunk;
         max_t n = micron::copy_file_range(src_fd, &src_off, __handle.fd, &dst_off, want, 0u);
-        if ( n <= 0 ) break;
+        if ( n < 0 ) {
+          // cross-fs copy_file_range needs >=5.3
+          if ( -n == 18 /*EXDEV*/ || -n == 38 /*ENOSYS*/ || -n == 22 /*EINVAL*/ ) {
+            byte __buf[16384];
+            while ( remaining > 0 ) {
+              usize __want = remaining < sizeof(__buf) ? remaining : sizeof(__buf);
+              max_t r = posix::pread(src_fd, __buf, __want, src_off);
+              if ( r <= 0 ) break;
+              max_t w = posix::pwrite(__handle.fd, __buf, static_cast<usize>(r), dst_off);
+              if ( w <= 0 ) break;
+              src_off += w;
+              dst_off += w;
+              remaining -= static_cast<usize>(w);
+            }
+          }
+          break;
+        }
+        if ( n == 0 ) break;
         remaining -= static_cast<usize>(n);
       }
     } else {
@@ -100,6 +117,8 @@ public:
   micron::sstr<max_name> fname;
   fd_t __handle;
   mutable stat_t sd;
+  mutable void *__map_addr = nullptr;
+  mutable usize __map_len = 0;
 
   ~volatile_t() { close(); }
 
@@ -121,21 +140,28 @@ public:
     if ( o.__handle.fd != posix::invalid_fd.fd ) __clone_fd(o.__handle.fd);
   }
 
-  volatile_t(volatile_t &&o) noexcept : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd)
+  volatile_t(volatile_t &&o) noexcept
+      : fname(micron::move(o.fname)), __handle(o.__handle), sd(o.sd), __map_addr(o.__map_addr), __map_len(o.__map_len)
   {
     o.__handle = posix::invalid_fd;
     micron::zero(&o.sd);
+    o.__map_addr = nullptr;      // transfer the mapping; the moved-from object must not munmap it
+    o.__map_len = 0;
   }
 
   volatile_t &
   operator=(volatile_t &&o) noexcept
   {
-    close();
+    close();      // munmaps this object's own live mapping (if any) before taking o's
     fname = micron::move(o.fname);
     __handle = o.__handle;
     sd = o.sd;
+    __map_addr = o.__map_addr;
+    __map_len = o.__map_len;
     o.__handle = posix::invalid_fd;
     micron::zero(&o.sd);
+    o.__map_addr = nullptr;
+    o.__map_len = 0;
     return *this;
   }
 
@@ -163,7 +189,7 @@ public:
   }
 
   volatile_t &
-  operator=(const file &src)
+  operator=(const os_file &src)
   {
     return (*this = src.fd());
   }
@@ -171,6 +197,11 @@ public:
   void
   close(void)
   {
+    if ( __map_addr ) {      // do not leak a live mapping when the file closes
+      micron::munmap(reinterpret_cast<addr_t *>(__map_addr), __map_len);
+      __map_addr = nullptr;
+      __map_len = 0;
+    }
     if ( __handle.closed() ) return;
     posix::close(__handle.fd);
     __handle.fd = posix::invalid_fd.fd;
@@ -566,26 +597,54 @@ public:
   map_ro(void) const
   {
     __alive();
-    usize sz = static_cast<usize>(size());
+    stat<STAT_OVERRIDE>();      // force a fresh size: a prior write may have grown the file past the cached sd
+    usize sz = static_cast<usize>(sd.st_size);
     if ( sz == 0 ) return nullptr;
     void *p = micron::mmap(nullptr, sz, prot_read, map_shared, __handle.fd, 0);
-    return micron::mmap_failed(p) ? nullptr : p;
+    if ( micron::mmap_failed(p) ) return nullptr;
+    if ( __map_addr ) micron::munmap(reinterpret_cast<addr_t *>(__map_addr), __map_len);      // drop a prior mapping (no leak)
+    __map_addr = p;
+    __map_len = sz;
+    return p;
   }
 
   void *
   map_rw(void)
   {
     __alive();
-    usize sz = static_cast<usize>(size());
+    stat<STAT_OVERRIDE>();      // force a fresh size (see map_ro)
+    usize sz = static_cast<usize>(sd.st_size);
     if ( sz == 0 ) return nullptr;
     void *p = micron::mmap(nullptr, sz, prot_read | prot_write, map_shared, __handle.fd, 0);
-    return micron::mmap_failed(p) ? nullptr : p;
+    if ( micron::mmap_failed(p) ) return nullptr;
+    if ( __map_addr ) micron::munmap(reinterpret_cast<addr_t *>(__map_addr), __map_len);
+    __map_addr = p;
+    __map_len = sz;
+    return p;
   }
 
   void
   unmap(void *addr, usize len)
   {
+    // if this is the mapping we tracked, use the EXACT length we mapped (a caller-recomputed
+    // size() can differ, and munmap of a too-large len tears down adjacent regions).
+    if ( addr && addr == __map_addr ) {
+      micron::munmap(reinterpret_cast<addr_t *>(__map_addr), __map_len);
+      __map_addr = nullptr;
+      __map_len = 0;
+      return;
+    }
     micron::munmap(reinterpret_cast<addr_t *>(addr), len);
+  }
+
+  void
+  unmap(void)      // unmap the tracked mapping using its exact length
+  {
+    if ( __map_addr ) {
+      micron::munmap(reinterpret_cast<addr_t *>(__map_addr), __map_len);
+      __map_addr = nullptr;
+      __map_len = 0;
+    }
   }
 
   max_t
@@ -603,7 +662,7 @@ public:
   }
 
   max_t
-  sendfile_to(const file &dst, usize count, posix::off64_t *offset = nullptr) const
+  sendfile_to(const os_file &dst, usize count, posix::off64_t *offset = nullptr) const
   {
     return sendfile_to(dst.raw_fd(), count, offset);
   }
@@ -623,7 +682,7 @@ public:
   }
 
   max_t
-  sendfile_all_to(const file &dst) const
+  sendfile_all_to(const os_file &dst) const
   {
     return sendfile_all_to(dst.raw_fd());
   }
@@ -642,7 +701,7 @@ public:
   }
 
   max_t
-  sendfile_from(const file &src, usize count, posix::off64_t *offset = nullptr)
+  sendfile_from(const os_file &src, usize count, posix::off64_t *offset = nullptr)
   {
     return sendfile_from(src.raw_fd(), count, offset);
   }
@@ -661,7 +720,7 @@ public:
   }
 
   max_t
-  splice_to(const file &dst, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0) const
+  splice_to(const os_file &dst, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0) const
   {
     return splice_to(dst.raw_fd(), count, src_off, dst_off, flags);
   }
@@ -680,13 +739,14 @@ public:
   }
 
   max_t
-  splice_from(const file &src, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0)
+  splice_from(const os_file &src, usize count, posix::off64_t *src_off = nullptr, posix::off64_t *dst_off = nullptr, u32 flags = 0)
   {
     return splice_from(src.raw_fd(), count, src_off, dst_off, flags);
   }
 
+  // memfd <-> real fs is always cross-fs: needs >=5.3
   max_t
-  copy_to(file &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
+  copy_to(os_file &dst, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1) const
   {
     posix::off64_t *sp = (src_off < 0) ? nullptr : &src_off;
     posix::off64_t *dp = (dst_off < 0) ? nullptr : &dst_off;
@@ -701,8 +761,9 @@ public:
     return micron::copy_file_range(__handle.fd, sp, dst.__handle.fd, dp, count, 0u);
   }
 
+  // cross-fs (real fs -> memfd): needs >=5.3
   max_t
-  copy_from(const file &src, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1)
+  copy_from(const os_file &src, usize count, posix::off64_t src_off = -1, posix::off64_t dst_off = -1)
   {
     posix::off64_t *sp = (src_off < 0) ? nullptr : &src_off;
     posix::off64_t *dp = (dst_off < 0) ? nullptr : &dst_off;
@@ -938,10 +999,10 @@ public:
   }
 
   static volatile_t
-  from_file(const file &src, const char *name = "micron_volatile")
+  from_file(const os_file &src, const char *name = "micron_volatile")
   {
     volatile_t v{ name, mfd_cloexec };
-    v.__clone_fd(src.raw_fd(), static_cast<usize>(const_cast<file &>(src).size()));
+    v.__clone_fd(src.raw_fd(), static_cast<usize>(const_cast<os_file &>(src).size()));
     return v;
   }
 
@@ -973,7 +1034,7 @@ make_volatile_sealable(const char *name = "micron_volatile")
 }
 
 inline volatile_t
-make_volatile_from_file(const file &src)
+make_volatile_from_file(const os_file &src)
 {
   return volatile_t::from_file(src);
 }

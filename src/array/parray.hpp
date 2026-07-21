@@ -134,7 +134,7 @@ class parray
         return fresh;
       } else {
         usize built = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
         try {
 #endif
           if ( p ) {
@@ -144,7 +144,7 @@ class parray
             for ( usize i = 0; i < B; ++i, ++built ) new (micron::addr(fresh->values[i])) T();
           }
           fresh->values[slot] = static_cast<Vf &&>(val);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
         } catch ( ... ) {
           for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
           abc::dealloc(reinterpret_cast<byte *>(fresh));
@@ -158,7 +158,7 @@ class parray
       // internal level
       const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = __alloc_internal();
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         if ( p ) {
@@ -172,7 +172,7 @@ class parray
         } else {
           fresh->children[slot] = __set_impl<Lvl - 1>(nullptr, idx, static_cast<Vf &&>(val));
         }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         __release<Lvl>(fresh);
         throw;
@@ -215,7 +215,7 @@ class parray
       __leaf *l = __alloc_leaf();
       l->refs = 1;
       usize built = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         for ( usize i = 0; i < B; ++i, ++built ) {
@@ -224,7 +224,7 @@ class parray
           else
             new (micron::addr(l->values[i])) T();
         }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < built; ++j ) l->values[j].~T();
         abc::dealloc(reinterpret_cast<byte *>(l));
@@ -235,11 +235,11 @@ class parray
     } else {
       static constexpr usize child_span = __cpow(B, Lvl);
       __node *n = __alloc_internal();
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         for ( usize i = 0; i < B; ++i ) n->children[i] = __build_from<Lvl - 1>(data, count, base + i * child_span);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         __release<Lvl>(n);
         throw;
@@ -257,11 +257,11 @@ class parray
       __leaf *l = __alloc_leaf();
       l->refs = 1;
       usize built = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         for ( usize i = 0; i < B; ++i, ++built ) new (micron::addr(l->values[i])) T(val);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < built; ++j ) l->values[j].~T();
         abc::dealloc(reinterpret_cast<byte *>(l));
@@ -272,11 +272,11 @@ class parray
     } else {
       __node *n = __alloc_internal();
       void *child;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         child = __build_filled<Lvl - 1>(val);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         __release<Lvl>(n);
         throw;
@@ -311,7 +311,7 @@ class parray
         return fresh;
       } else {
         usize built = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
         try {
 #endif
           if ( p ) {
@@ -322,7 +322,7 @@ class parray
           }
           T result = fn(static_cast<const T &>(fresh->values[slot]));
           fresh->values[slot] = micron::move(result);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
         } catch ( ... ) {
           for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
           abc::dealloc(reinterpret_cast<byte *>(fresh));
@@ -335,7 +335,7 @@ class parray
     } else {
       const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = __alloc_internal();
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         if ( p ) {
@@ -349,7 +349,7 @@ class parray
         } else {
           fresh->children[slot] = __update_impl<Lvl - 1>(nullptr, idx, static_cast<Fn &&>(fn));
         }
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         __release<Lvl>(fresh);
         throw;
@@ -595,7 +595,7 @@ public:
   set_many(Ps &&...pairs) const
   {
     void *root = __retain<__root_level>(__root);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
       auto apply_one = [&root](auto &&pair) {
@@ -606,7 +606,7 @@ public:
         root = next;
       };
       (apply_one(static_cast<Ps &&>(pairs)), ...);
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       __release<__root_level>(root);
       throw;

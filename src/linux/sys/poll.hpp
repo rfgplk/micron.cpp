@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../errno.hpp"
+#include "../../kernel.hpp"
 #include "../../syscall.hpp"
 #include "../../types.hpp"
 #include "signal.hpp"
@@ -163,10 +165,28 @@ epoll_pwait(int epfd, epoll_event *events, int maxevents, int timeout, const sig
   return epoll_pwait(epfd, events, maxevents, timeout, &sigmask);
 }
 
+// >=5.11
+inline kernel::probe_gate __epoll_pwait2_gate{};
+
 inline int
 epoll_pwait2(int epfd, epoll_event *events, int maxevents, const timespec_t *timeout, const sigset_t *sigmask)
 {
-  return static_cast<int>(micron::syscall(SYS_epoll_pwait2, epfd, events, maxevents, timeout, sigmask, __sig_syscall_size));
+  if ( __epoll_pwait2_gate.open(kernel::feature::epoll_pwait2) ) [[likely]] {
+    int r = static_cast<int>(micron::syscall(SYS_epoll_pwait2, epfd, events, maxevents, timeout, sigmask, __sig_syscall_size));
+    if ( r != -ENOSYS ) [[likely]]
+      return r;
+    __epoll_pwait2_gate.demote();
+  }
+  int ms = -1;      // nullptr -> block indefinitely
+  if ( timeout != nullptr ) {
+    if ( timeout->tv_sec < 0 || static_cast<u64>(timeout->tv_nsec) >= 1000000000ull ) return -error::invalid_arg;
+    constexpr i64 __ms_max = 0x7fffffff;
+    const i64 __sec = static_cast<i64>(timeout->tv_sec);
+    // nonzero wait must not spin as 0
+    const i64 v = __sec > __ms_max / 1000 ? __ms_max : __sec * 1000 + (static_cast<i64>(timeout->tv_nsec) + 999999) / 1000000;
+    ms = static_cast<int>(v > __ms_max ? __ms_max : v);
+  }
+  return epoll_pwait(epfd, events, maxevents, ms, sigmask);
 }
 
 inline int

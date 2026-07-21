@@ -48,7 +48,7 @@ main(void)
   disable_scope()
   {
     mc::string str;
-    mc::fsys::system<mc::io::rd> sys;
+    mc::io::filesystem<mc::io::rd> sys;
     sys["tools/src/main.cc"] >> str;
     mc::console(str);
   }

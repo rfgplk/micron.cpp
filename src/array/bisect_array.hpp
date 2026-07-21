@@ -90,7 +90,7 @@ public:
   bisect_array(const A &o)
   {
     __impl_container::construct<N, T>(micron::addr(stack[0]), T{});
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( const auto &v : o ) insert(v);
     } catch ( ... ) {
@@ -107,7 +107,7 @@ public:
   bisect_array(A &&o)
   {
     __impl_container::construct<N, T>(micron::addr(stack[0]), T{});
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( auto &&v : o ) insert(v);
     } catch ( ... ) {

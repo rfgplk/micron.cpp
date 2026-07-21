@@ -40,7 +40,7 @@ template<is_movable_object t> class istack
     node *m = micron::alloc<node>(sizeof(node));
     if ( !m ) [[unlikely]]
       exc<except::library_error>("micron::istack: node allocation failed");
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       new (micron::addr(m->value)) t(micron::forward<U>(v));
     } catch ( ... ) {
@@ -61,7 +61,7 @@ template<is_movable_object t> class istack
     node *m = micron::alloc<node>(sizeof(node));
     if ( !m ) [[unlikely]]
       exc<except::library_error>("micron::istack: node allocation failed");
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       new (micron::addr(m->value)) t();
     } catch ( ... ) {

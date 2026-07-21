@@ -24,8 +24,10 @@ constexpr static const i32 map_shared = 0x01;          /* share changes.  */
 constexpr static const i32 map_private = 0x02;         /* changes are private.  */
 constexpr static const i32 map_shared_validate = 0x03; /* share changes and validate
                                      extension flags.  */
-constexpr static const i32 map_droppable = 0x08;       /* zero memory under memory pressure.  */
 constexpr static const i32 map_type = 0x0f;            /* mask for type of mapping.  */
+
+// >=6.11
+constexpr static const i32 map_droppable = 0x08; /* zero memory under memory pressure.  */
 
 /* other flags.  */
 constexpr static const i32 map_fixed = 0x10; /* i32erpret addr exactly.  */
@@ -71,33 +73,34 @@ constexpr static const i32 ms_async = 1;      /* sync memory asynchronously.  */
 constexpr static const i32 ms_sync = 4;       /* synchronous memory sync.  */
 constexpr static const i32 ms_invalidate = 2; /* invalidate the caches.  */
 
-constexpr static const i32 madv_normal = 0;           /* no further special treatment.  */
-constexpr static const i32 madv_random = 1;           /* expect random page references.  */
-constexpr static const i32 madv_sequential = 2;       /* expect sequential page references.  */
-constexpr static const i32 madv_willneed = 3;         /* will need these pages.  */
-constexpr static const i32 madv_dontneed = 4;         /* don't need these pages.  */
-constexpr static const i32 madv_free = 8;             /* free pages only if memory pressure.  */
-constexpr static const i32 madv_remove = 9;           /* remove these pages and resources.  */
-constexpr static const i32 madv_dontfork = 10;        /* do not inherit across fork.  */
-constexpr static const i32 madv_dofork = 11;          /* do inherit across fork.  */
-constexpr static const i32 madv_mergeable = 12;       /* ksm may merge identical pages.  */
-constexpr static const i32 madv_unmergeable = 13;     /* ksm may not merge identical pages.  */
-constexpr static const i32 madv_hugepage = 14;        /* worth backing with hugepages.  */
-constexpr static const i32 madv_nohugepage = 15;      /* not worth backing with hugepages.  */
-constexpr static const i32 madv_dontdump = 16;        /* explicitly exclude from the core dump,
-                                   overrides the coredump filter bits.  */
-constexpr static const i32 madv_dodump = 17;          /* clear the madv_dontdump flag.  */
-constexpr static const i32 madv_wipeonfork = 18;      /* zero memory on fork, child only.  */
-constexpr static const i32 madv_keeponfork = 19;      /* undo madv_wipeonfork.  */
-constexpr static const i32 madv_cold = 20;            /* deactivate these pages.  */
-constexpr static const i32 madv_pageout = 21;         /* reclaim these pages.  */
-constexpr static const i32 madv_populate_read = 22;   /* populate (prefault) page tables
+constexpr static const i32 madv_normal = 0;       /* no further special treatment.  */
+constexpr static const i32 madv_random = 1;       /* expect random page references.  */
+constexpr static const i32 madv_sequential = 2;   /* expect sequential page references.  */
+constexpr static const i32 madv_willneed = 3;     /* will need these pages.  */
+constexpr static const i32 madv_dontneed = 4;     /* don't need these pages.  */
+constexpr static const i32 madv_free = 8;         /* free pages only if memory pressure.  */
+constexpr static const i32 madv_remove = 9;       /* remove these pages and resources.  */
+constexpr static const i32 madv_dontfork = 10;    /* do not inherit across fork.  */
+constexpr static const i32 madv_dofork = 11;      /* do inherit across fork.  */
+constexpr static const i32 madv_mergeable = 12;   /* ksm may merge identical pages.  */
+constexpr static const i32 madv_unmergeable = 13; /* ksm may not merge identical pages.  */
+constexpr static const i32 madv_hugepage = 14;    /* worth backing with hugepages.  */
+constexpr static const i32 madv_nohugepage = 15;  /* not worth backing with hugepages.  */
+constexpr static const i32 madv_dontdump = 16;    /* explicitly exclude from the core dump,
+                               overrides the coredump filter bits.  */
+constexpr static const i32 madv_dodump = 17;      /* clear the madv_dontdump flag.  */
+constexpr static const i32 madv_wipeonfork = 18;  /* zero memory on fork, child only.  */
+constexpr static const i32 madv_keeponfork = 19;  /* undo madv_wipeonfork.  */
+// the madvise advices below are version-gated with no lossless fallback
+constexpr static const i32 madv_cold = 20;            /* >=5.4  deactivate these pages.  */
+constexpr static const i32 madv_pageout = 21;         /* >=5.4  reclaim these pages.  */
+constexpr static const i32 madv_populate_read = 22;   /* >=5.14 populate (prefault) page tables
                                     readable.  */
-constexpr static const i32 madv_populate_write = 23;  /* populate (prefault) page tables
+constexpr static const i32 madv_populate_write = 23;  /* >=5.14 populate (prefault) page tables
                                     writable.  */
-constexpr static const i32 madv_dontneed_locked = 24; /* like madv_dontneed, but drop
+constexpr static const i32 madv_dontneed_locked = 24; /* >=5.18 like madv_dontneed, but drop
                                     locked pages too.  */
-constexpr static const i32 madv_collapse = 25;        /* synchronous hugepage collapse.  */
+constexpr static const i32 madv_collapse = 25;        /* >=6.1  synchronous hugepage collapse.  */
 constexpr static const i32 madv_hwpoison = 100;       /* poison a page for testing.  */
 
 constexpr static const i32 posix_madv_normal = 0;     /* no further special treatment.  */

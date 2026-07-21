@@ -6,6 +6,7 @@
 
 #include "../src/io/console.hpp"
 
+#include "../src/io/cached_file.hpp"
 #include "../src/io/filesystem.hpp"
 #include "../src/io/paths.hpp"
 #include "../src/io/serial.hpp"
@@ -29,7 +30,7 @@ main(void)
   for ( auto &c : b ) c += i++;
   byte *a = new byte[1024];
   mc::cmemset<1024>(a, 0x21);
-  mc::fsys::file<mc::ustr8> f("/tmp/serialtestvec", mc::io::rwc, 211);
+  mc::io::cached_file<mc::ustr8> f("/tmp/serialtestvec", mc::io::rwc, 211);
   mc::io::serialize::serialize(f, i);
   f.sync();
   return 0;

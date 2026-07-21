@@ -29,6 +29,10 @@
 #include "../../memory/cmemory.hpp"
 #include "../../tuple.hpp"
 
+#if defined(__micron_attach_capable)
+#include "../../attach/info.hpp"
+#endif
+
 // NOTE: this file should contain all the constructors and implementations for the underlying threads (separate from the
 // classes themselves), for readability
 
@@ -37,6 +41,24 @@ namespace micron
 enum thread_returns : i32 { return_success, return_force, return_fail };
 
 enum join_status { join_success, join_fail, join_allowed, join_busy };
+
+// give a thread's TLS frame back to whoever built it.
+// WARNING: when attached, the frame came from the host's info->make_child_frame() and must go back
+// through info->free_frame() -- that callback exists in the ABI precisely so the host can own frame
+// lifetime (a recycling pool, landlord accounting). A guest that munmaps it itself hands back memory
+// the host still believes it owns, and the next attached thread handed that frame faults on its
+// first thread_local access. Every teardown path routes here, not just the spawn-failure one.
+inline void
+__tls_release_frame(const micron::__tls_frame &f) noexcept
+{
+#if defined(__micron_attach_capable)
+  if ( micron::__micron_attach_info != nullptr ) {
+    micron::__micron_attach_info->free_frame(&f);
+    return;
+  }
+#endif
+  micron::__tls_free_frame(f);
+}
 
 // bounded budget for a hard-stopped (SIGTERM) thread to publish alive=false before it gets reaped
 inline constexpr f64 __thread_term_timeout_ms = 1000.0;
@@ -94,6 +116,8 @@ struct __thread_payload {
 inline void
 __micron_thread_die_impl() noexcept
 {
+  // run this thread's C++ thread_local dtors (guest modules) before the arena hook
+  micron::__run_thread_dtors();
   if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();
   if ( micron::__micron_thread_alive_word )
     static_cast<atomic_token<bool> *>(micron::__micron_thread_alive_word)->store(false, memory_order_seq_cst);
@@ -164,7 +188,8 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
 
   // epilogue
   // NOTE: run any registered per-thread cleanup (abcmalloc releasing this thread's arena slot) on the exiting thread while its TLS is still
-  // valid
+  // valid. thread_local C++ dtors (guest modules) run first, while the arena is still live
+  micron::__run_thread_dtors();
   if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();
   posix::getrusage(posix::rusage_thread, payload->usage);
   payload->alive.store(false, memory_order_seq_cst);
@@ -175,11 +200,9 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
 // main difference compared to a regular kernel is that this function NEVER returns, instead constantly loops checking
 // for new work
 
-i32
-__worker_kernel(__worker_payload *payload)
+inline i32
+__worker_loop(__worker_payload *payload)
 {
-  // prologue
-  __thread_handler();
   for ( ;; ) {
     while ( payload->queue.empty() ) {
       if ( payload->should_die.get(memory_order_acquire) ) return return_force;
@@ -204,6 +227,22 @@ __worker_kernel(__worker_payload *payload)
     payload->usage_seq.add_fetch(1, memory_order_acq_rel);
   }
   return return_success;
+}
+
+i32
+__worker_kernel(__worker_payload *payload)
+{
+  // prologue
+  __thread_handler();
+  const i32 rc = __worker_loop(payload);
+  // epilogue
+  // NOTE: a worker exits through here, not through __thread_kernel, so it needs the same teardown:
+  // thread_local C++ dtors (guest modules) then the arena hook, while this thread's TLS is still
+  // mapped. Without it a worker's thread_local RAII objects (a uring ring, a buffered file, a socket)
+  // are simply munmap'd with the frame and their fds leak for the life of the process
+  micron::__run_thread_dtors();
+  if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();
+  return rc;
 }
 
 // hosted backend
@@ -281,13 +320,23 @@ __link_launch([[maybe_unused]] pid_t &tid, [[maybe_unused]] int &ctid, [[maybe_u
 {
   if ( payload == nullptr || fstack == nullptr ) micron::exc<except::thread_error>("micron thread::__link_launch(): invalid arguments");
 #if defined(__micron_freestanding)
-  micron::__tls_frame frame = micron::__tls_make_child_frame();
-  if ( frame.base == nullptr ) micron::exc<except::thread_error>("micron thread::__link_launch(): failed to build thread TLS");
+  micron::__tls_frame frame{};
+#if defined(__micron_attach_capable)
+  // a guest (attached) thread's frame must be built by the host
+  if ( micron::__micron_attach_info != nullptr ) {
+    if ( micron::__micron_attach_info->make_child_frame(&frame) != 0 || frame.base == nullptr )
+      micron::exc<except::thread_error>("micron thread::__link_launch(): host failed to build attached TLS");
+  } else
+#endif
+  {
+    frame = micron::__tls_make_child_frame();
+    if ( frame.base == nullptr ) micron::exc<except::thread_error>("micron thread::__link_launch(): failed to build thread TLS");
+  }
   auto reg = micthread::guard_stack(fstack, static_cast<usize>(Stack_Size));
   pid_t t = micthread::spawn<KFn>(reg.low, reg.usable, reinterpret_cast<unsigned long>(frame.tp), &ctid, payload,
                                   micron::forward<KArgs>(kargs)...);
   if ( t == micthread::thread_failed ) {
-    micron::__tls_free_frame(frame);
+    micron::__tls_release_frame(frame);
     micron::exc<except::thread_error>("micron thread::__link_launch(): thread failed to spawn");
   }
   tls = frame;

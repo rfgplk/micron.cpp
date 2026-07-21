@@ -543,6 +543,24 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_freestanding 1
 #endif
 
+#if defined(MICRON_ENABLE_ATTACH) || defined(MICRON_ATTACH_MODULE)
+#define __micron_attach_capable 1
+#endif
+
+#if defined(MICRON_ATTACH_MODULE)
+// WARNING: these have to be declared here, before anything else in the include graph
+#if defined(__micron_arch_arm32)
+using __micron_guard_t = int;
+#else
+using __micron_guard_t = long long int;
+#endif
+extern "C" {
+__attribute__((visibility("hidden"))) int __cxa_guard_acquire(__micron_guard_t *);
+__attribute__((visibility("hidden"))) void __cxa_guard_release(__micron_guard_t *);
+__attribute__((visibility("hidden"))) void __cxa_guard_abort(__micron_guard_t *);
+}
+#endif
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // __micron_no_ssp
 //

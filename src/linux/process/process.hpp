@@ -31,7 +31,7 @@
 #include "capabilities.hpp"
 #include "resource.hpp"
 
-#include "../../io/filesystem.hpp"
+#include "../../io/fsys.hpp"
 
 #include "../../thread/callbacks.hpp"
 
@@ -76,9 +76,7 @@ inline runtime_t
 load_stack_heap(void)
 {
   micron::string dt;
-  fsys::system<micron::io::rd> sys;
-  io::path_t path = "/proc/self/maps";
-  sys["/proc/self/maps"] >> dt;
+  io::open_file("/proc/self/maps") >> dt;
   micron::string::iterator stck = micron::format::find(dt, "[stack]");
   micron::string::iterator heap = micron::format::find(dt, "[heap]");
   // NOTE: the reason this is here is because we might not always have a heap, in which case heap will be nullptr
@@ -109,9 +107,7 @@ inline runtime_t
 load_stack_heap_pid(pid_t pid)
 {
   micron::string dt;
-  fsys::system<micron::io::rd> sys;
-  auto path = __impl::proc_path(pid, "maps");
-  sys[path.c_str()] >> dt;
+  io::open_file(__impl::proc_path(pid, "maps").c_str()) >> dt;
 
   runtime_t rt{ nullptr, nullptr };
   if ( dt.empty() ) return rt;
@@ -160,8 +156,7 @@ struct uprocess_t {
   {
     // programatically get argv and environ
     micron::string str;
-    fsys::system<micron::io::rd> sys;
-    sys["/proc/self/cmdline"] >> str;
+    io::open_file("/proc/self/cmdline") >> str;
     umax_t k = 0;
     umax_t t = 0;
     // stored as null term strings, so we're iterating according to what we read
@@ -177,7 +172,7 @@ struct uprocess_t {
     str.clear();
     k = 0;
     t = 0;
-    sys["/proc/self/environ"] >> str;
+    io::open_file("/proc/self/environ") >> str;
     for ( umax_t i = 0; i < str.size(); ++i ) {
       if ( str[i] == 0x0 ) {
         t = i;

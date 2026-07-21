@@ -109,6 +109,7 @@ template<typename T, class Alloc = micron::allocator_serial<>, bool Sf = true> c
 
 public:
   using category_type = vector_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef usize size_type;
@@ -133,7 +134,7 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( const T &value : lst ) {
           new (micron::addr(__mem::memory[i])) T(value);
@@ -189,7 +190,7 @@ public:
   vector(size_type n, Args &&...args) : __mem(n)
   {
     size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
     } catch ( ... ) {
@@ -1060,6 +1061,7 @@ class vector<T, Alloc, Sf>: public __mutable_memory_resource_move_only<T, Alloc>
 
 public:
   using category_type = vector_tag;
+  using contiguous_tag = void;
   using mutability_type = mutable_tag;
   using memory_type = heap_tag;
   typedef usize size_type;
@@ -1083,7 +1085,7 @@ public:
   {
     if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
       size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( const T &value : lst ) {
           new (micron::addr(__mem::memory[i])) T(value);
@@ -1139,7 +1141,7 @@ public:
   vector(size_type n, Args &&...args) : __mem(n)
   {
     size_type i = 0;
-#ifndef __micron_freestanding
+#if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       for ( ; i < n; i++ ) new (micron::addr(__mem::memory[i])) T(forward<Args>(args)...);
     } catch ( ... ) {

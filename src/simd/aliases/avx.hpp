@@ -103,8 +103,8 @@ setr_f64(double a, double b, double c, double d) noexcept
 }
 
 __inline_avx __m256i
-setr_i16(short a0, short a1, short a2, short a3, short a4, short a5, short a6, short a7, short a8, short a9, short a10, short a11, short a12,
-         short a13, short a14, short a15) noexcept
+setr_i16(short a0, short a1, short a2, short a3, short a4, short a5, short a6, short a7, short a8, short a9, short a10, short a11,
+         short a12, short a13, short a14, short a15) noexcept
 {
   return _mm256_setr_epi16(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
 }
