@@ -1271,6 +1271,23 @@ __mc_vabal(u32, "u32", uint32x2_t, uint64x2_t);
 
 #undef __mc_vabal
 
+// widening multiply-accumulate; a8 forwards back-to-back vmlal accumulators
+#define __mc_vmlal(SUF, ASM, T_IN, T_OUT)                                                                                                  \
+  __inline_g T_OUT vmlal_##SUF(T_OUT acc, T_IN a, T_IN b) noexcept                                                                         \
+  {                                                                                                                                        \
+    __asm__("vmlal." ASM " %q0, %P1, %P2" : "+w"(acc) : "w"(a), "w"(b));                                                                   \
+    return acc;                                                                                                                            \
+  }
+
+__mc_vmlal(s8, "s8", int8x8_t, int16x8_t);
+__mc_vmlal(s16, "s16", int16x4_t, int32x4_t);
+__mc_vmlal(s32, "s32", int32x2_t, int64x2_t);
+__mc_vmlal(u8, "u8", uint8x8_t, uint16x8_t);
+__mc_vmlal(u16, "u16", uint16x4_t, uint32x4_t);
+__mc_vmlal(u32, "u32", uint32x2_t, uint64x2_t);
+
+#undef __mc_vmlal
+
 __inline_g float32x4_t
 vrsqrtsq_f32(float32x4_t a, float32x4_t b) noexcept
 {

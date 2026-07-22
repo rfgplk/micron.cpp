@@ -22,7 +22,7 @@ typedef void (*fcallback)(const char *, const char *);
 
 enum class Accepts : int { czero, cvoid, cpath, cparam, coperand, ckey, cbool, cint, clong, cfloat, cdouble, cstring };
 
-namespace
+namespace __impl
 {
 template<usize N> struct packet {
   micron::sstring<N> key;
@@ -43,7 +43,7 @@ struct get_arity<R (C::*)(Args...)>: micron::integral_constant<unsigned, sizeof.
 template<typename R, typename C, typename... Args>
 struct get_arity<R (C::*)(Args...) const>: micron::integral_constant<unsigned, sizeof...(Args)> {
 };
-};      // namespace
+};      // namespace __impl
 
 template<typename Fn> struct param_packet {
   constexpr param_packet() : param(nullptr), abbr(nullptr), description(nullptr), acc(Accepts::czero), ptr(nullptr) { }
@@ -81,13 +81,13 @@ template<typename Fn> struct param_packet {
 
   template<usize N>
   param_packet &
-  operator()(const packet<N> &p)
+  operator()(const __impl::packet<N> &p)
   {
     if constexpr ( micron::is_pointer_v<Fn> ) {
       if ( ptr ) {
-        if constexpr ( get_arity<Fn>() == 0 ) ptr();
-        if constexpr ( get_arity<Fn>() == 1 ) ptr(p.key.data());
-        if constexpr ( get_arity<Fn>() == 2 ) ptr(p.key.data(), p.data.data());
+        if constexpr ( __impl::get_arity<Fn>() == 0 ) ptr();
+        if constexpr ( __impl::get_arity<Fn>() == 1 ) ptr(p.key.data());
+        if constexpr ( __impl::get_arity<Fn>() == 2 ) ptr(p.key.data(), p.data.data());
       }
     }
     return *this;
@@ -114,9 +114,10 @@ make_packet(const char (&s)[N], const char (&s2)[M], const char (&s3)[L], const 
   return param_packet<Fn>(s, s2, s3, s4);
 }
 
+// NOTE: no default on ptr, it would make the Accepts overload ambiguous
 template<typename Fn = nullptr_t, usize N, usize M, usize L>
 inline constexpr param_packet<Fn>
-make_packet(const char (&s)[N], const char (&s2)[M], const char (&s3)[L], const Accepts s4, Fn ptr = nullptr)
+make_packet(const char (&s)[N], const char (&s2)[M], const char (&s3)[L], const Accepts s4, Fn ptr)
 {
   return param_packet<Fn>(s, s2, s3, s4, ptr);
 }
@@ -127,7 +128,7 @@ class parser
   static constexpr gfcallback global_callback = F;
 
   static constexpr usize __param_storage = (P_COUNT == 0) ? 1 : P_COUNT;
-  micron::array<packet<MAX_BUFFER>, MAX_LENGTH> args;
+  micron::array<__impl::packet<MAX_BUFFER>, MAX_LENGTH> args;
   micron::array<param_packet<C>, __param_storage> parameters;
 
   static constexpr i64
@@ -339,33 +340,36 @@ class parser
 #else
         continue;
 #endif
-      bool fl = flag(_args[i]);
-      bool pm = (fl == true) ? false : param(_args[i]);
-
-      auto *ch = trim(_args[i]);
-      for ( auto &n : parameters ) {
-        if ( n.param != nullptr && micron::strcmp(n.param, ch) == 0 && fl ) {
-          __append_cstr(args[i].key, ch);
-          args[i].type = Accepts::ckey;
-          goto data;
-        } else if ( n.abbr != nullptr && micron::strcmp(n.abbr, ch) == 0 && pm ) {
-          __append_cstr(args[i].key, ch);
-          args[i].type = Accepts::cparam;
-          goto data;
-        } else {
-          __append_cstr(args[i].data, _args[i]);
-          args[i].type = Accepts::coperand;
-          goto data;
-        }
+      // NOTE: classify by leading flag chars only, inner ones are data
+      const char *t = _args[i];
+      const bool fl = (t[0] == FLAG && t[1] == FLAG && t[2] != 0);
+      const bool pm = (t[0] == FLAG && t[1] != FLAG && t[1] != 0);
+      if ( !fl && !pm ) {
+        __append_cstr(args[i].data, _args[i]);
+        args[i].type = Accepts::coperand;
         continue;
-      data:
-        if ( n.accepts() != Accepts::czero ) {
-          if ( !(i + 1 < argc) ) break;
-          __append_cstr(args[i].data, _args[i + 1]);
-          args[i].type = n.accepts();
-        }
-        break;
       }
+      auto *ch = trim(_args[i]);
+      const param_packet<C> *hit = nullptr;
+      for ( auto &n : parameters ) {
+        if ( fl && n.param != nullptr && micron::strcmp(n.param, ch) == 0 ) {
+          hit = &n;
+          break;
+        }
+        if ( pm && n.abbr != nullptr && micron::strcmp(n.abbr, ch) == 0 ) {
+          hit = &n;
+          break;
+        }
+      }
+      __append_cstr(args[i].key, ch);
+      args[i].type = fl ? Accepts::ckey : Accepts::cparam;
+      if ( hit == nullptr ) continue;      // unregistered flag: key stays queryable, never an operand
+      const Accepts want = hit->accepts();
+      if ( want == Accepts::czero || want == Accepts::cvoid ) continue;
+      if ( i + 1 >= argc || micron::strlen(_args[i + 1]) > MAX_BUFFER ) continue;
+      __append_cstr(args[i].data, _args[i + 1]);
+      args[i].type = want;
+      ++i;      // value consumed, slot stays czero as in general_parse_np
     }
     callbacks_handler();
   }
@@ -502,33 +506,41 @@ public:
   inline micron::any<long, long long, double, bool>
   get(const char *const str)
   {
-    for ( auto &n : args )
+    for ( auto &n : args ) {
+      if ( n.type == Accepts::cpath ) continue;      // never match the program path slot
       if ( micron::strcmp(str, n.key.data()) == 0 ) return (to_number(n.data.data(), n.type));
+    }
     return micron::any<long, long long, double, bool>{ false };
   }
 
   inline auto
   operator()(const char *const str)
   {
-    for ( auto &n : args )
+    for ( auto &n : args ) {
+      if ( n.type == Accepts::cpath ) continue;      // never match the program path slot
       if ( micron::strcmp(str, n.key.data()) == 0 ) return n.data;
+    }
     return micron::sstring<MAX_BUFFER>();
   }
 
   inline bool
   operator[](const char *const str)
   {
-    for ( auto &n : args )
+    for ( auto &n : args ) {
+      if ( n.type == Accepts::cpath ) continue;      // never match the program path slot
       if ( micron::strcmp(str, n.key.data()) == 0 ) return true;
+    }
     return false;
   }
 
   bool
   operator[](std::initializer_list<const char *const> &&list)
   {
-    for ( auto &n : args )
+    for ( auto &n : args ) {
+      if ( n.type == Accepts::cpath ) continue;      // never match the program path slot
       for ( auto &c : list )
         if ( micron::strcmp(c, n.key.data()) == 0 ) return true;
+    }
     return false;
   }
 };

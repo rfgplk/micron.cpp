@@ -211,6 +211,20 @@ store_u8_h(unsigned char *p, uint8x8_t v) noexcept
   vst1_u8(p, v);
 }
 
+#if defined(__micron_arch_arm32)
+__inline_neon void
+store_u16_h(unsigned short *p, uint16x4_t v) noexcept
+{
+  vst1_u16(p, v);
+}
+
+__inline_neon void
+store_u32_h(unsigned int *p, uint32x2_t v) noexcept
+{
+  vst1_u32(p, v);
+}
+#endif
+
 __inline_neon void
 store_f32_h(float *p, float32x2_t v) noexcept
 {
@@ -1709,6 +1723,12 @@ absdiff_acc(uint32x4_t acc, uint32x4_t a, uint32x4_t b) noexcept
   return vabaq_u32(acc, a, b);
 }
 
+__inline_neon uint16x8_t
+absdiff_acc_long(uint16x8_t acc, uint8x8_t a, uint8x8_t b) noexcept
+{
+  return vabal_u8(acc, a, b);
+}
+
 template<int N>
 __inline_neon uint8x16_t
 shr_imm_u8(uint8x16_t a) noexcept
@@ -1738,6 +1758,12 @@ __inline_neon uint32x4_t
 pairwise_add_acc_u16(uint32x4_t acc, uint16x8_t v) noexcept
 {
   return vpadalq_u16(acc, v);
+}
+
+__inline_neon int64x2_t
+pairwise_add_long_i32(int32x4_t v) noexcept
+{
+  return vpaddlq_s32(v);
 }
 
 template<int IMM>
@@ -2165,6 +2191,17 @@ mul_long(uint32x2_t a, uint32x2_t b) noexcept
   return vmull_u32(a, b);
 }
 
+// fused widening multiply-accumulate
+__inline_neon int32x4_t
+mac_long(int32x4_t acc, int16x4_t a, int16x4_t b) noexcept
+{
+#if defined(__micron_arch_arm32)
+  return vmlal_s16(acc, a, b);
+#else
+  return vaddq_s32(acc, vmull_s16(a, b));
+#endif
+}
+
 __inline_neon int16x8_t
 widen(int8x8_t v) noexcept
 {
@@ -2583,6 +2620,38 @@ pairwise_max_u32(uint32x2_t a, uint32x2_t b) noexcept
 {
   return vpmax_u32(a, b);
 }
+
+__inline_neon int16x4_t
+pairwise_add_i16(int16x4_t a, int16x4_t b) noexcept
+{
+  return vpadd_s16(a, b);
+}
+
+__inline_neon uint16x4_t
+pairwise_add_u16(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return vpadd_u16(a, b);
+}
+
+__inline_neon int32x2_t
+pairwise_add_i32(int32x2_t a, int32x2_t b) noexcept
+{
+  return vpadd_s32(a, b);
+}
+
+__inline_neon uint32x2_t
+pairwise_add_u32(uint32x2_t a, uint32x2_t b) noexcept
+{
+  return vpadd_u32(a, b);
+}
+
+#if defined(__micron_arch_arm32)
+__inline_neon uint16x4_t
+pairwise_max_u16(uint16x4_t a, uint16x4_t b) noexcept
+{
+  return vpmax_u16(a, b);
+}
+#endif
 
 __inline_neon int16x8_t
 reinterpret_s16_from_s32(int32x4_t a) noexcept
