@@ -31,6 +31,59 @@ near_f(f32 a, f32 b, f32 eps = 1e-5f)
   return (d < 0 ? -d : d) < eps + 1e-7f * (b < 0 ? -b : b);
 }
 
+static bool
+sign_bit_f(f32 x)
+{
+  u32 b;
+  __builtin_memcpy(&b, &x, sizeof b);
+  return (b >> 31) != 0u;
+}
+
+static bool
+inf_nan_f(f32 x)
+{
+  u32 b;
+  __builtin_memcpy(&b, &x, sizeof b);
+  return (b & 0x7F800000u) == 0x7F800000u;
+}
+
+static bool
+sign_bit_d(f64 x)
+{
+  u64 b;
+  __builtin_memcpy(&b, &x, sizeof b);
+  return (b >> 63) != 0u;
+}
+
+static bool
+inf_nan_d(f64 x)
+{
+  u64 b;
+  __builtin_memcpy(&b, &x, sizeof b);
+  return (b & 0x7FF0000000000000ull) == 0x7FF0000000000000ull;
+}
+
+// abs-floor + relative closeness; non-finite a -> false so any spurious Inf is rejected outright.
+static bool
+mix_close_f(f32 a, f32 b, f32 atol, f32 rel)
+{
+  if ( inf_nan_f(a) ) return false;
+  f32 d = a - b;
+  d = d < 0 ? -d : d;
+  f32 ab = b < 0 ? -b : b;
+  return d <= atol + rel * ab;
+}
+
+static bool
+mix_close_d(f64 a, f64 b, f64 atol, f64 rel)
+{
+  if ( inf_nan_d(a) ) return false;
+  f64 d = a - b;
+  d = d < 0 ? -d : d;
+  f64 ab = b < 0 ? -b : b;
+  return d <= atol + rel * ab;
+}
+
 template<typename F>
 static void
 store_d256(simd::d256 v, F (&out)[4])
@@ -106,6 +159,80 @@ main()
     store_f256<f32>(mk::exp_ns::exp<simd::f256>(vf), outf);
     for ( int i = 0; i < 8; ++i ) {
       require_true(near_f(outf[i], mk::exp_ns::exp<f32>(inputs_f[i]), 1e-4f));
+    }
+  }
+  end_test_case();
+
+  test_case("exp — f32 deep-underflow tail (no negative garbage)");
+  {
+    f32 xs[8] = { -103.9f, -100.0f, -96.0f, -92.0f, -90.0f, -89.0f, -88.5f, -87.6f };
+    simd::f256 v = _mm256_loadu_ps(reinterpret_cast<const float *>(xs));
+    f32 out[8];
+    store_f256<f32>(mk::exp_ns::exp<simd::f256>(v), out);
+    for ( int i = 0; i < 8; ++i ) {
+      require_true(!inf_nan_f(out[i]));       // buggy: -Inf lanes
+      require_true(!sign_bit_f(out[i]));      // buggy: sign bit set
+      require_true(out[i] <= 1e-30f);         // underflowed, not garbage
+      require_true(mix_close_f(out[i], mk::exp_ns::exp<f32>(xs[i]), 1e-30f, 1e-3f));
+    }
+  }
+  end_test_case();
+
+  test_case("exp — f32 overflow edge (finite, no spurious Inf)");
+  {
+    f32 xs[8] = { 88.0f, 88.3f, 88.5f, 88.6f, 88.68f, 88.70f, 88.71f, 88.72f };
+    simd::f256 v = _mm256_loadu_ps(reinterpret_cast<const float *>(xs));
+    f32 out[8];
+    store_f256<f32>(mk::exp_ns::exp<simd::f256>(v), out);
+    for ( int i = 0; i < 8; ++i ) {
+      require_true(!inf_nan_f(out[i]));      // buggy: +Inf
+      require_true(!sign_bit_f(out[i]));
+      require_true(mix_close_f(out[i], mk::exp_ns::exp<f32>(xs[i]), 0.0f, 2e-6f));
+    }
+  }
+  end_test_case();
+
+  test_case("exp — f32 mid-range parity sweep");
+  {
+    for ( int base = -80; base <= 80; base += 8 ) {
+      f32 xs[8];
+      for ( int i = 0; i < 8; ++i ) xs[i] = f32(base) + f32(i);
+      simd::f256 v = _mm256_loadu_ps(reinterpret_cast<const float *>(xs));
+      f32 out[8];
+      store_f256<f32>(mk::exp_ns::exp<simd::f256>(v), out);
+      for ( int i = 0; i < 8; ++i ) {
+        require_true(!inf_nan_f(out[i]));
+        require_true(mix_close_f(out[i], mk::exp_ns::exp<f32>(xs[i]), 1e-37f, 2e-6f));
+      }
+    }
+  }
+  end_test_case();
+
+  test_case("exp — f64 deep-underflow tail (no negative garbage)");
+  {
+    f64 xs[4] = { -744.0, -738.0, -730.0, -720.0 };
+    simd::d256 v = _mm256_loadu_pd(reinterpret_cast<const double *>(xs));
+    f64 out[4];
+    store_d256<f64>(mk::exp_ns::exp<simd::d256>(v), out);
+    for ( int i = 0; i < 4; ++i ) {
+      require_true(!inf_nan_d(out[i]));
+      require_true(!sign_bit_d(out[i]));
+      require_true(out[i] <= 1e-300);
+      require_true(mix_close_d(out[i], mk::exp_ns::exp<f64>(xs[i]), 1e-300, 1e-6));
+    }
+  }
+  end_test_case();
+
+  test_case("exp — f64 overflow edge (finite, no spurious Inf)");
+  {
+    f64 xs[4] = { 709.0, 709.5, 709.7, 709.78 };
+    simd::d256 v = _mm256_loadu_pd(reinterpret_cast<const double *>(xs));
+    f64 out[4];
+    store_d256<f64>(mk::exp_ns::exp<simd::d256>(v), out);
+    for ( int i = 0; i < 4; ++i ) {
+      require_true(!inf_nan_d(out[i]));      // buggy: +Inf
+      require_true(!sign_bit_d(out[i]));
+      require_true(mix_close_d(out[i], mk::exp_ns::exp<f64>(xs[i]), 0.0, 1e-12));
     }
   }
   end_test_case();

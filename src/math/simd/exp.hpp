@@ -16,6 +16,12 @@
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 
+// NOTE: the two-step 2^k reconstruction below relies on the multiply order ((tw*exp_r)*sh)*sl
+// -ffast-math (-Ofast) may reassociate/collapse it to (tw*exp_r)*(sh*sl), which
+// overflows (sh*sl == 2^128 == +Inf) and reintroduces the bug
+#pragma GCC push_options
+#pragma GCC optimize("-fno-unsafe-math-optimizations", "-fno-associative-math", "-fno-reciprocal-math")
+
 namespace micron
 {
 namespace math
@@ -52,12 +58,15 @@ exp(simd::d256 x) noexcept
 
   const simd::d256 tw = simd::avx2::gather_f64<8>(reinterpret_cast<const double *>(twoN), j32);
 
+  // two-step 2^k
   const __m128i k32 = simd::sse::shr_arith_i32(N32, 5);
-  const simd::i256 k64 = simd::avx2::widen_i32_to_i64(k32);
-  const simd::i256 biased = simd::avx2::add_i64(k64, simd::avx::splat_i64(1023));
-  const simd::i256 expbits = simd::avx2::shl_i64(biased, 52);
-  const simd::d256 scale = simd::avx::cast_i256_to_f64(expbits);
-  return simd::avx::mul_f64(simd::avx::mul_f64(tw, exp_r), scale);
+  const __m128i kh32 = simd::sse::shr_arith_i32(k32, 1);
+  const __m128i kl32 = simd::sse::sub_i32(k32, kh32);
+  const simd::i256 bh = simd::avx2::add_i64(simd::avx2::widen_i32_to_i64(kh32), simd::avx::splat_i64(1023));
+  const simd::i256 bl = simd::avx2::add_i64(simd::avx2::widen_i32_to_i64(kl32), simd::avx::splat_i64(1023));
+  const simd::d256 sh = simd::avx::cast_i256_to_f64(simd::avx2::shl_i64(bh, 52));
+  const simd::d256 sl = simd::avx::cast_i256_to_f64(simd::avx2::shl_i64(bl, 52));
+  return simd::avx::mul_f64(simd::avx::mul_f64(simd::avx::mul_f64(tw, exp_r), sh), sl);
 }
 
 [[gnu::flatten]] inline simd::f256
@@ -77,11 +86,13 @@ exp(simd::f256 x) noexcept
   const simd::i256 N = simd::avx::convert_f32_to_i32(fN);
   const simd::i256 j = simd::avx2::and_i256(N, simd::avx::splat_i32(15));
   const simd::f256 tw = simd::avx2::gather_f32<4>(reinterpret_cast<const float *>(twoN), j);
+  // two-step 2^k
   const simd::i256 k = simd::avx2::shr_arith_i32(N, 4);
-  const simd::i256 biased = simd::avx2::add_i32(k, simd::avx::splat_i32(127));
-  const simd::i256 expbits = simd::avx2::shl_i32(biased, 23);
-  const simd::f256 scale = simd::avx::cast_i256_to_f32(expbits);
-  return simd::avx::mul_f32(simd::avx::mul_f32(tw, exp_r), scale);
+  const simd::i256 kh = simd::avx2::shr_arith_i32(k, 1);
+  const simd::i256 kl = simd::avx2::sub_i32(k, kh);
+  const simd::f256 sh = simd::avx::cast_i256_to_f32(simd::avx2::shl_i32(simd::avx2::add_i32(kh, simd::avx::splat_i32(127)), 23));
+  const simd::f256 sl = simd::avx::cast_i256_to_f32(simd::avx2::shl_i32(simd::avx2::add_i32(kl, simd::avx::splat_i32(127)), 23));
+  return simd::avx::mul_f32(simd::avx::mul_f32(simd::avx::mul_f32(tw, exp_r), sh), sl);
 }
 
 [[gnu::flatten]] inline simd::d128
@@ -182,11 +193,13 @@ exp(simd::f128 x) noexcept
   };
   const float32x4_t tw = simd::neon::load_f32(tw_arr);
 
+  // two-step 2^k
   const int32x4_t k = simd::neon::shr_arith_i32<4>(Ni);
-  const int32x4_t biased = simd::neon::add(k, simd::neon::splat_i32(127));
-  const int32x4_t expbits = simd::neon::shl_i32<23>(biased);
-  const float32x4_t scale = simd::neon::reinterpret_f32_from_s32(expbits);
-  return simd::neon::mul(simd::neon::mul(tw, exp_r), scale);
+  const int32x4_t kh = simd::neon::shr_arith_i32<1>(k);
+  const int32x4_t kl = simd::neon::sub(k, kh);
+  const float32x4_t sh = simd::neon::reinterpret_f32_from_s32(simd::neon::shl_i32<23>(simd::neon::add(kh, simd::neon::splat_i32(127))));
+  const float32x4_t sl = simd::neon::reinterpret_f32_from_s32(simd::neon::shl_i32<23>(simd::neon::add(kl, simd::neon::splat_i32(127))));
+  return simd::neon::mul(simd::neon::mul(simd::neon::mul(tw, exp_r), sh), sl);
 }
 
 #if defined(__micron_arch_arm64)
@@ -215,11 +228,13 @@ exp(simd::d128 x) noexcept
     twoN[simd::neon::get_lane_i64<1>(j)],
   };
   const float64x2_t tw = simd::neon::load_f64(tw_arr);
+  // two-step 2^k
   const int64x2_t k = simd::neon::shr_arith_i64<5>(Ni);
-  const int64x2_t biased = simd::neon::add(k, simd::neon::splat_i64(1023));
-  const int64x2_t expbits = simd::neon::shl_i64<52>(biased);
-  const float64x2_t scale = simd::neon::reinterpret_f64_from_s64(expbits);
-  return simd::neon::mul(simd::neon::mul(tw, exp_r), scale);
+  const int64x2_t kh = simd::neon::shr_arith_i64<1>(k);
+  const int64x2_t kl = simd::neon::sub(k, kh);
+  const float64x2_t sh = simd::neon::reinterpret_f64_from_s64(simd::neon::shl_i64<52>(simd::neon::add(kh, simd::neon::splat_i64(1023))));
+  const float64x2_t sl = simd::neon::reinterpret_f64_from_s64(simd::neon::shl_i64<52>(simd::neon::add(kl, simd::neon::splat_i64(1023))));
+  return simd::neon::mul(simd::neon::mul(simd::neon::mul(tw, exp_r), sh), sl);
 }
 
 [[gnu::flatten]] inline simd::d128
@@ -275,11 +290,13 @@ exp(simd::d512 x) noexcept
   const simd::i512 N = simd::avx512::convert_f64_to_i64(fN);
   const simd::i512 j = simd::avx512::and_i512(N, simd::avx512::splat_i64(31));
   const simd::d512 tw = simd::avx512::gather_f64<8>(j, reinterpret_cast<const double *>(twoN));
+  // two-step 2^k
   const simd::i512 k = simd::avx512::shr_arith_i64(N, 5);
-  const simd::i512 biased = simd::avx512::add_i64(k, simd::avx512::splat_i64(1023));
-  const simd::i512 expbits = simd::avx512::shl_i64(biased, 52);
-  const simd::d512 scale = simd::avx512::cast_i512_to_f64(expbits);
-  return simd::avx512::mul_f64(simd::avx512::mul_f64(tw, exp_r), scale);
+  const simd::i512 kh = simd::avx512::shr_arith_i64(k, 1);
+  const simd::i512 kl = simd::avx512::sub_i64(k, kh);
+  const simd::d512 sh = simd::avx512::cast_i512_to_f64(simd::avx512::shl_i64(simd::avx512::add_i64(kh, simd::avx512::splat_i64(1023)), 52));
+  const simd::d512 sl = simd::avx512::cast_i512_to_f64(simd::avx512::shl_i64(simd::avx512::add_i64(kl, simd::avx512::splat_i64(1023)), 52));
+  return simd::avx512::mul_f64(simd::avx512::mul_f64(simd::avx512::mul_f64(tw, exp_r), sh), sl);
 }
 
 [[gnu::flatten]] inline simd::f512
@@ -299,11 +316,13 @@ exp(simd::f512 x) noexcept
   const simd::i512 N = simd::avx512::convert_f32_to_i32(fN);
   const simd::i512 j = simd::avx512::and_i512(N, simd::avx512::splat_i32(15));
   const simd::f512 tw = simd::avx512::gather_f32<4>(j, reinterpret_cast<const float *>(twoN));
+  // two-step 2^k
   const simd::i512 k = simd::avx512::shr_arith_i32(N, 4);
-  const simd::i512 biased = simd::avx512::add_i32(k, simd::avx512::splat_i32(127));
-  const simd::i512 expbits = simd::avx512::shl_i32(biased, 23);
-  const simd::f512 scale = simd::avx512::cast_i512_to_f32(expbits);
-  return simd::avx512::mul_f32(simd::avx512::mul_f32(tw, exp_r), scale);
+  const simd::i512 kh = simd::avx512::shr_arith_i32(k, 1);
+  const simd::i512 kl = simd::avx512::sub_i32(k, kh);
+  const simd::f512 sh = simd::avx512::cast_i512_to_f32(simd::avx512::shl_i32(simd::avx512::add_i32(kh, simd::avx512::splat_i32(127)), 23));
+  const simd::f512 sl = simd::avx512::cast_i512_to_f32(simd::avx512::shl_i32(simd::avx512::add_i32(kl, simd::avx512::splat_i32(127)), 23));
+  return simd::avx512::mul_f32(simd::avx512::mul_f32(simd::avx512::mul_f32(tw, exp_r), sh), sl);
 }
 #endif
 
@@ -311,4 +330,5 @@ exp(simd::f512 x) noexcept
 };      // namespace math
 };      // namespace micron
 
+#pragma GCC pop_options
 #pragma GCC diagnostic pop
