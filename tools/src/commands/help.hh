@@ -2,7 +2,7 @@
 
 #include "io/console.hpp"
 
-template <typename T = void>
+template<typename T = void>
 void
 help(void)
   requires(recipes::__using_gnu)
@@ -24,6 +24,10 @@ help(void)
   mc::set_color(mc::color::reset);
   mc::console("    duck <command> [flags] <source|dir|object> ...");
   mc::console("    duck help | --help | -h");
+  mc::console("");
+  mc::console("    Flags and the source may appear in any order. The first non-flag token is");
+  mc::console("    the source; later non-flag tokens are the output name or extra objects.");
+  mc::console("    An unrecognized flag, or a second source file, is an error.");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,8 +77,10 @@ help(void)
   mc::console("                            .asm .ASM  NASM (always emits an object, .o suffix)");
   mc::console("    <dir>             every C/C++/asm source matched in the directory");
   mc::console("                      (each file produces its own config and build)");
+  mc::console("                      one level only; add --recursive to descend");
   mc::console("    <file>.o          additional object linked into the final binary");
   mc::console("    <file>.bin        explicit output target name");
+  mc::console("    <name>            explicit output target name (a bare token, no extension)");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +89,10 @@ help(void)
   mc::console("FLAGS:  output");
   mc::set_color(mc::color::reset);
   mc::console("    -o <dir>          output directory (default: bin/, created on demand)");
+  mc::console("    --recursive       in <dir> mode, descend into sub-directories (skips symlinks");
+  mc::console("                      and directory cycles). the output name comes from the source");
+  mc::console("                      basename, so two subdirs holding the same filename collide -");
+  mc::console("                      duck rejects that rather than overwriting; use separate -o dirs");
   mc::console("    --obj             emit a relocatable object   (-c, .o suffix; LTO bytecode)");
   mc::console("    --raw-obj         emit a real machine-code object (-c -fno-lto): a genuinely");
   mc::console("                      linkable .o for an external/third-party linker");

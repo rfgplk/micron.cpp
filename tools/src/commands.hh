@@ -76,7 +76,9 @@ splat_dispatch(__modes mode, int argc, char **argv)
   }
   case __modes::compile :
   case __modes::link : {
-    for ( auto &conf : parse_argv_build(argc - 2, argv + 2) ) emit(batch(conf));
+    const int fi = ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) ? 3 : 2;
+    if ( argc <= fi ) mc::cerror("splat requires at least one source");
+    for ( auto &conf : parse_argv_build(argc - fi, argv + fi) ) emit(batch(conf));
     break;
   }
   case __modes::debug : {
@@ -235,7 +237,9 @@ parse_main(int argc, char **argv)
     return rc;
   }
   case __modes::compile : {
-    auto confs = parse_argv_build(argc - 2, argv + 2);
+    const int fi = ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) ? 3 : 2;
+    if ( argc <= fi ) mc::cerror("compile requires at least one source");
+    auto confs = parse_argv_build(argc - fi, argv + fi);
     mc::vector<mc::status_t> stats;
     stats.reserve(confs.size());
     for ( auto &conf : confs ) stats.push_back(build<mc::exec_continue>(conf));
@@ -246,7 +250,9 @@ parse_main(int argc, char **argv)
     break;
   }
   case __modes::link : {
-    auto confs = parse_argv_build(argc - 2, argv + 2);
+    const int fi = ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) ? 3 : 2;
+    if ( argc <= fi ) mc::cerror("link requires at least one source");
+    auto confs = parse_argv_build(argc - fi, argv + fi);
     mc::vector<mc::status_t> stats;
     stats.reserve(confs.size());
     for ( auto &conf : confs ) stats.push_back(build<mc::exec_continue>(conf));

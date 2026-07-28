@@ -3,6 +3,7 @@
 #include "flags.hh"
 #include "io/console.hpp"
 #include "io/fsys.hpp"
+#include "io/ftw.hpp"
 #include "memory/addr.hpp"
 #include "vector/vector.hpp"
 
@@ -172,6 +173,45 @@ struct config_t {
 };
 
 inline bool
+__is_flag(const char *a)
+{
+  return a != nullptr and a[0] == '-' and a[1] != '\0';
+}
+
+inline bool
+__flag_takes_value(const char *a)
+{
+  return mc::strcmp(a, "-o") == 0 or mc::strcmp(a, "-i") == 0 or mc::strcmp(a, "-l") == 0 or mc::strcmp(a, "--lib") == 0
+         or mc::strcmp(a, "--def") == 0 or mc::strcmp(a, "--std") == 0 or mc::strcmp(a, "--isa") == 0 or mc::strcmp(a, "-j") == 0
+         or mc::strcmp(a, "--timeout") == 0;
+}
+
+inline int
+__find_source(int argc, char **argv)
+{
+  for ( int i = 0; i < argc; ++i ) {
+    if ( __is_flag(argv[i]) ) {
+      if ( __flag_takes_value(argv[i]) ) ++i;      // step over its argument too
+      continue;
+    }
+    return i;
+  }
+  return -1;
+}
+
+inline bool
+__has_flag(int argc, char **argv, const char *flag)
+{
+  for ( int i = 0; i < argc; ++i ) {
+    if ( __is_flag(argv[i]) ) {
+      if ( mc::strcmp(argv[i], flag) == 0 ) return true;
+      if ( __flag_takes_value(argv[i]) ) ++i;      // don't match a flag's own argument
+    }
+  }
+  return false;
+}
+
+inline bool
 __determine_source(config_t &conf, string_type &&str)
 {
   auto itr = mc::format::find_reverse(str, str.end() - 1, ".");
@@ -188,6 +228,8 @@ __determine_source(config_t &conf, string_type &&str)
       return false;
     }
   }
+  // used to be dropped without a word
+  mc::cerror("unexpected argument '", str, "': one source per invocation - pass a directory, or use a batchfile");
   return false;
 }
 
@@ -308,7 +350,7 @@ __mkdir_p(const string_type &dir)
 }
 
 inline void
-parse_config(config_t &conf, int argc, char **argv)
+parse_config(config_t &conf, int argc, char **argv, int source_index)
 {
   // initial name
   __make_name(conf);
@@ -319,7 +361,8 @@ parse_config(config_t &conf, int argc, char **argv)
   bool user_provided_include = false;
   bool user_provided_lib = false;
 
-  for ( int i = 1; i < argc; ++i ) {
+  for ( int i = 0; i < argc; ++i ) {
+    if ( i == source_index ) continue;
     if ( mc::strcmp(argv[i], "-d") == 0 or mc::strcmp(argv[i], "-g") == 0 ) {
       conf.mode = __opt_modes::debug;
     } else if ( mc::strcmp(argv[i], "-o") == 0 ) {
@@ -327,7 +370,7 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.bin_dir = argv[i];
       if ( conf.bin_dir.empty() ) mc::cerror("bin_dir is empty");
       if ( *(conf.bin_dir.end() - 1) != '/' ) conf.bin_dir.insert(conf.bin_dir.end(), '/');
-      __make_name(conf);
+      // NOTE: no __make_name here
     } else if ( mc::strcmp(argv[i], "-32") == 0 ) {
       conf.width = 32;
     } else if ( mc::strcmp(argv[i], "-64") == 0 ) {
@@ -386,6 +429,7 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.freestanding_eh = true;
     } else if ( mc::strcmp(argv[i], "-f") == 0 ) {
       conf.check_compileability = false;
+    } else if ( mc::strcmp(argv[i], "--recursive") == 0 ) {
     } else if ( mc::strcmp(argv[i], "-j") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the -j flag must be followed by a job count");
       u32 jobs = 0;
@@ -513,7 +557,7 @@ parse_config(config_t &conf, int argc, char **argv)
       user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-Ofast") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_fast;
-      //conf.no_ssp = true; // also disable the stack protector
+      // conf.no_ssp = true; // also disable the stack protector
       user_provided_opt = true;
     } else if ( mc::strcmp(argv[i], "-Oz") == 0 ) {
       conf.opt_mode = gcc::opt_flags::flags::optimize_z;
@@ -531,6 +575,8 @@ parse_config(config_t &conf, int argc, char **argv)
       conf.bonus_libs.push_back(string_type{ ":libwayland-client.so.0" });
       conf.bonus_libs.push_back(string_type{ ":libvulkan.so.1" });
     } else {
+      // NOTE: no longer allow unrecog. flags (gcc rejects them regardless)
+      if ( __is_flag(argv[i]) ) mc::cerror("unknown flag '", argv[i], "' - see 'duck help'");
       if ( __determine_source(conf, string_type{ argv[i] }) ) user_provided_out = true;
     }
   }
@@ -539,70 +585,73 @@ parse_config(config_t &conf, int argc, char **argv)
   finalize_and_infer(conf, user_provided_out, user_provided_type, user_provided_opt);
 }
 
-inline void
-__warn_if_flag_source(const char *src)
+inline bool
+__match_source_ext(const string_type &file)
 {
-  if ( src == nullptr or src[0] != '-' ) return;
-  if ( splat::active() ) return;
-  mc::set_color(mc::color::yellow);
-  mc::console("WARNING: '", src,
-              "' looks like a flag but was passed as the source argument; "
-              "flags should come last, after the source. See 'duck help'.");
-  mc::set_color(mc::color::reset);
+  auto itr = mc::format::find_reverse(file, file.end() - 1, ".");
+  if ( itr == nullptr ) return false;
+  auto sstr = file.substr(itr);
+  return sstr == ".cpp" or sstr == ".cc" or sstr == ".cxx" or sstr == ".c++" or sstr == ".c" or sstr == ".C" or sstr == ".i"
+         or sstr == ".ii" or sstr == ".cp" or sstr == ".s" or sstr == ".S" or sstr == ".asm" or sstr == ".ASM";
 }
 
-// directory mode: gather sources from argv[0] if it is a directory, else behave like single
+inline void
+__reject_output_collisions(const mc::vector<config_t> &confs)
+{
+  for ( usize i = 0; i < confs.size(); ++i )
+    for ( usize j = i + 1; j < confs.size(); ++j )
+      if ( confs[i].target_out == confs[j].target_out )
+        mc::cerror("output collision: '", confs[i].target, "' and '", confs[j].target, "' both build to '", confs[i].target_out,
+                   "' - build them into separate -o directories");
+}
+
 inline __attribute__((always_inline)) mc::vector<config_t>
 parse_argv_build(int argc, char **argv)
 {
-  bool __dir_mode = true;
-  mc::vector<mc::sstring<256>> sources{};
-  if ( (int)mc::posix::get_type_at(argv[0]) == mc::posix::dir ) {
-    mc::io::dir d(argv[0]);
-    auto &files = d.get_children();
-    auto match_ext = [](const mc::sstring<256> &file) -> bool {
-      auto itr = mc::format::find_reverse(file, file.end() - 1, ".");
-      if ( itr == nullptr )
-        itr = file.end();
-      else {
-        auto sstr = file.substr(itr);
-        if ( sstr == ".cpp" or sstr == ".cc" or sstr == ".cxx" or sstr == ".c++" or sstr == ".c" or sstr == ".C" or sstr == ".i"
-             or sstr == ".ii" or sstr == ".cp" or sstr == ".s" or sstr == ".S" or sstr == ".asm" or sstr == ".ASM" ) {
-          return true;
-        }
-      }
-      return false;
-    };
+  const int si = __find_source(argc, argv);
+  if ( si < 0 ) mc::cerror("no source file or directory given");
+  const bool recursive = __has_flag(argc, argv, "--recursive");
 
-    for ( auto &n : files )
-      if ( match_ext(n.d_name) ) sources.emplace_back(n.d_name);
+  mc::vector<string_type> sources{};
+  if ( (int)mc::posix::get_type_at(argv[si]) == mc::posix::dir ) {
+    if ( recursive ) {
+      for ( auto &n : mc::io::ftw_files(mc::io::path(argv[si])) ) {
+        string_type f{ n.c_str() };
+        if ( __match_source_ext(f) ) sources.move_back(mc::move(f));
+      }
+    } else {
+      string_type prefix = argv[si];
+      if ( *(prefix.end() - 1) != '/' ) prefix.push_back('/');
+      mc::io::dir d(argv[si]);
+      auto &files = d.get_children();
+      for ( auto &n : files ) {
+        string_type f = prefix;
+        f.append(string_type{ n.d_name.c_str() });
+        if ( __match_source_ext(f) ) sources.move_back(mc::move(f));
+      }
+    }
   } else {
-    __warn_if_flag_source(argv[0]);
-    sources.emplace_back(argv[0]);
-    __dir_mode = false;
+    if ( recursive ) mc::cerror("--recursive needs a directory, not a single source");
+    sources.emplace_back(argv[si]);
   }
 
   mc::vector<config_t> confs;
   for ( auto &target : sources ) {
     config_t conf{};
-    conf.target = target;
+    conf.target = target;      // already a full path in every branch
     conf.include_path.push_back("./src");
     conf.lib_path.push_back("./libs/");
-    if ( __dir_mode ) {
-      string_type sstr = argv[0];
-      if ( *(sstr.end() - 1) != '/' ) sstr.push_back('/');
-      conf.target.insert(conf.target.begin(), sstr);
-    }
     // placeholder, update correctly in parse_config
     conf.standard = gcc::__standard_cxx26;
     conf.compile_type = __comp_type::linked;
     conf.bin_dir = "bin/";
 
     // parse flags and finalize
-    parse_config(conf, argc, argv);
+    parse_config(conf, argc, argv, si);
     confs.move_back(mc::move(conf));
   }
 
+  __reject_output_collisions(confs);
   return confs;
 }
 
@@ -610,9 +659,12 @@ parse_argv_build(int argc, char **argv)
 inline __attribute__((always_inline)) config_t
 parse_argv_build_single(int argc, char **argv)
 {
+  const int si = __find_source(argc, argv);
+  if ( si < 0 ) mc::cerror("no source file given");
+  if ( __has_flag(argc, argv, "--recursive") ) mc::cerror("--recursive applies to a directory build; this command takes one source");
+
   config_t conf{};
-  __warn_if_flag_source(argv[0]);
-  conf.target = argv[0];
+  conf.target = argv[si];
   // placeholder, update correctly in parse_config
   conf.standard = gcc::__standard_cxx26;
   conf.compile_type = __comp_type::linked;
@@ -620,7 +672,7 @@ parse_argv_build_single(int argc, char **argv)
   conf.include_path.push_back("./src");
   conf.lib_path.push_back("./libs/");
 
-  parse_config(conf, argc, argv);
+  parse_config(conf, argc, argv, si);
   return conf;
 }
 };      // namespace gnu
