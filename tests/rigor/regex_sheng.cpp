@@ -25,7 +25,9 @@ main()
 {
   print("=== REGEX SHENG (SIMD has_match) vs glibc ===");
 
-  int fails = 0, shown = 0, sheng_cases = 0, table_cases = 0, pike_cases = 0;
+  // NOTE: count by has_match_path(), NOT uses_sheng()/uses_dfa(). those report only that a DFA was BUILT --
+  // build_dfa() runs unconditionally -- so they credited the DFA for cases that actually ran the Pike VM.
+  int fails = 0, shown = 0, accel_cases = 0, sheng_cases = 0, table_cases = 0, prefilter_cases = 0, pike_cases = 0;
 
   for ( int i = 0; i < REGEX_FUZZ_N; ++i ) {
     const long *E = REGEX_FUZZ_EXPECTED[i];
@@ -36,22 +38,33 @@ main()
     mc::regex re(pat);
     bool want = (E[0] == 1);
     bool got = re.has_match(in);
-    if ( re.uses_sheng() )
+    switch ( re.has_match_path() ) {
+    case 4:
+      ++accel_cases;
+      break;
+    case 3:
       ++sheng_cases;
-    else if ( re.uses_dfa() )
+      break;
+    case 2:
       ++table_cases;
-    else
+      break;
+    case 1:
+      ++prefilter_cases;
+      break;
+    default:
       ++pike_cases;
+      break;
+    }
     if ( got != want ) {
       ++fails;
       if ( shown++ < 40 )
-        io::print("  has_match FAIL [", i, "] pat=`", pat, "` in=`", in, "` sheng=", (int)re.uses_sheng(), " want=", (int)want,
+        io::print("  has_match FAIL [", i, "] pat=`", pat, "` in=`", in, "` path=", re.has_match_path(), " want=", (int)want,
                   " got=", (int)got, "\n");
     }
   }
 
-  io::print("cases=", REGEX_FUZZ_N, " sheng(SIMD)=", sheng_cases, " table_dfa=", table_cases, " pike=", pike_cases,
-            " has_match_failures=", fails, "\n");
+  io::print("cases=", REGEX_FUZZ_N, " accel_dfa=", accel_cases, " sheng(SIMD)=", sheng_cases, " table_dfa=", table_cases,
+            " prefilter+pike=", prefilter_cases, " pike=", pike_cases, " has_match_failures=", fails, "\n");
   require_true(fails == 0);
 
   print("=== REGEX DFA PASSED (Sheng + table has_match agree with glibc) ===");

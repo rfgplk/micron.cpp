@@ -168,28 +168,42 @@ __drop_ref(fiber *f) noexcept
   if ( f->refs.sub_fetch(1, micron::memory_order_acq_rel) == 0 ) __finalize_fiber(f);
 }
 
-inline constexpr usize __frame_hdr = 16;
+// a coroutine frame must satisfy the ABI's strictest alignment, not just 16
+// gcc freely places an over aligned local at a frame offset computed as if the frame base were
+// __BIGGEST_ALIGNMENT__-aligned
+inline constexpr usize __frame_align = __BIGGEST_ALIGNMENT__ < 16 ? usize{ 16 } : usize{ __BIGGEST_ALIGNMENT__ };
+inline constexpr usize __frame_hdr = __frame_align;
+
+[[gnu::always_inline]] inline usize
+__frame_round(usize n) noexcept
+{
+  return (n + (__frame_align - 1)) & ~(__frame_align - 1);
+}
+
+// over-allocate and hand back an aligned interior pointer
+[[gnu::always_inline]] inline void *
+__frame_alloc_heap(usize need) noexcept
+{
+  byte *raw = static_cast<byte *>(::operator new(need + __frame_align));
+  byte *h = reinterpret_cast<byte *>((reinterpret_cast<usize>(raw + __frame_hdr) + (__frame_align - 1)) & ~(__frame_align - 1));
+  *reinterpret_cast<fiber **>(h - __frame_hdr) = nullptr;
+  *reinterpret_cast<byte **>(h - __frame_hdr + sizeof(void *)) = raw;
+  return h;
+}
 
 [[gnu::always_inline]] inline void *
 __frame_alloc(usize n) noexcept
 {
   fiber *f = __current_fiber;
-  const usize need = __frame_hdr + ((n + 15) & ~static_cast<usize>(15));
-  if ( f == nullptr ) {      // off-fiber: heap-backed frame, owner == nullptr
-    byte *h = static_cast<byte *>(::operator new(need));
-    *reinterpret_cast<fiber **>(h) = nullptr;
-    return h + __frame_hdr;
-  }
-  byte *h = reinterpret_cast<byte *>((reinterpret_cast<usize>(f->frame_sp) + 15) & ~static_cast<usize>(15));
+  const usize need = __frame_hdr + __frame_round(n);
+  if ( f == nullptr ) return __frame_alloc_heap(need);
+  byte *h = reinterpret_cast<byte *>((reinterpret_cast<usize>(f->frame_sp) + (__frame_align - 1)) & ~(__frame_align - 1));
   byte *next = h + need;
-  if ( next > f->region.frame_limit ) [[unlikely]] {
-    byte *hh = static_cast<byte *>(::operator new(need));
-    *reinterpret_cast<fiber **>(hh) = nullptr;
-    return hh + __frame_hdr;
-  }
+  if ( next > f->region.frame_limit ) [[unlikely]]
+    return __frame_alloc_heap(need);
   f->frame_sp = next;
   *reinterpret_cast<fiber **>(h) = f;
-  f->refs.fetch_add(1, micron::memory_order_relaxed);      // a live frame holds a ref
+  f->refs.fetch_add(1, micron::memory_order_relaxed);
   return h + __frame_hdr;
 }
 
@@ -199,11 +213,11 @@ __frame_free(void *p, usize) noexcept
   if ( p == nullptr ) return;
   byte *h = reinterpret_cast<byte *>(p) - __frame_hdr;
   fiber *owner = *reinterpret_cast<fiber **>(h);
-  if ( owner == nullptr ) {      // off-fiber / heap frame
-    ::operator delete(static_cast<void *>(h));
+  if ( owner == nullptr ) {
+    ::operator delete(static_cast<void *>(*reinterpret_cast<byte **>(h + sizeof(void *))));
     return;
   }
-  owner->frame_sp = h;      // LIFO pop on the OWNING arena (serialized by fork/join happens-before)
+  owner->frame_sp = h;
   __drop_ref(owner);
 }
 

@@ -460,6 +460,8 @@ parse_config(config_t &conf, int argc, char **argv)
         conf.opt_mode = gcc::opt_flags::flags::optimize_three;
         user_provided_opt = true;
       }
+    } else if ( mc::strcmp(argv[i], "--uring") == 0 ) {
+      conf.defines.push_back(string_type{ "MICRON_CORO_URING" });
     } else if ( mc::strcmp(argv[i], "--def") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the --def flag must be followed by NAME or NAME=VALUE");
       conf.defines.push_back(string_type{ argv[i] });

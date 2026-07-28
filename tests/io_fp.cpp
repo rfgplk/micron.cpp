@@ -486,5 +486,5 @@ main()
   }
 
   micron::io::println("io_fp: all sections passed");
-  return 0;
+  return 1;
 }

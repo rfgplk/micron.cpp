@@ -46,7 +46,9 @@ mc_valid(void *h)
 }
 
 // Strategy has_match_n() actually runs on a non-anchored subject:
-//   3 = Sheng SIMD DFA, 2 = table DFA, 1 = SIMD prefilter + Pike, 0 = plain Pike VM
+//   4 = accelerated DFA (memchr/truffle-driven), 3 = Sheng SIMD DFA, 2 = table DFA,
+//   1 = SIMD prefilter + Pike, 0 = plain Pike VM
+// NOTE: 4 outranks 3 because dfa_has_match() tests has_accel before has_sheng.
 int
 mc_path(void *h)
 {

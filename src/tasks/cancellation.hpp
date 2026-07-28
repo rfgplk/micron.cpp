@@ -19,6 +19,8 @@ namespace micron
 namespace coro
 {
 
+inline void (*__io_cancel_hook)(const micron::atomic_token<u32> *) noexcept = nullptr;
+
 class cancellation_token
 {
   const micron::atomic_token<u32> *__f = nullptr;
@@ -61,6 +63,8 @@ public:
   cancel() noexcept
   {
     __flag.store(1u, micron::memory_order_release);
+    void (*__hook)(const micron::atomic_token<u32> *) noexcept = __io_cancel_hook;
+    if ( __hook != nullptr ) __hook(&__flag);
   }
 
   [[nodiscard]] bool

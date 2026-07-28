@@ -291,9 +291,12 @@ main(int, char **)
 
     require_true(eq(d2s(pz.f), "0.0"));
     require_true(eq(d2s(nz.f), "-0.0"));
-    require_true(eq(d2s(inf_p.f), "inf"));
-    require_true(eq(d2s(inf_n.f), "-inf"));
-    require_true(eq(d2s(nan_v.f), "nan"));
+    // NOTE: d2s_buffered writes "Inf"/"NaN" capitalised, exactly as f2s_buffered does above -- not the
+    // lowercase printf/to_chars spelling this once expected. The two engines agree; only these three
+    // expectations were out of step.
+    require_true(eq(d2s(inf_p.f), "Inf"));
+    require_true(eq(d2s(inf_n.f), "-Inf"));
+    require_true(eq(d2s(nan_v.f), "NaN"));
   }
   end_test_case();
 

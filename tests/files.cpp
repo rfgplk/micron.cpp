@@ -81,7 +81,7 @@ main(void)
   }
   // f.load();
   // mc::console(f.pull());
-  return 0;
+  return 1;
   /*mc::io::path p("/");
   mc::io::stdoutln("Created path.");
   mc::io::stdoutln("Current path is: ", p.get());

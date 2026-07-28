@@ -4065,6 +4065,7 @@ replace_n(const T &str, const char *old_s, const char *new_s, i64 count = -1)
   typename T::iterator itr = find(result, old_s);
   while ( itr != nullptr && (count < 0 || replaced < count) ) {
     auto sz = result.size();
+    if ( szr > szl && (sz - szl + szr) >= result.max_size() ) exc<except::library_error>("replace_n range error.");
     usize pos = static_cast<usize>(itr - result.begin());
     usize tail_len = sz - pos - szl;
     micron::bytemove(itr + szr, itr + szl, tail_len);

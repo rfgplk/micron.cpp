@@ -206,15 +206,25 @@ class regex
       __nullable = fi.nullable;
       __dfa = build_dfa(pv, seen);      // null if unsuitable -> Pike VM fallback
       micron::free(seen);
-      // NOTE: Pike is slow when a match can span a long run (`.*`, `[^x]*`)
-      for ( usize k = 0; k < __ncode; ++k ) {
-        if ( __code[k].code == op::Any || __code[k].code == op::Bol ) {      // .* / ^-anchored -> DFA
+      if ( __dfa ) {
+        usize fc = __first.count();
+        bool pf_usable = !__nullable && fc >= 1 && fc < 256;
+        if ( !pf_usable ) {
+          __prefer_dfa = true;      // no prefilter exists -> Pike walk
+        } else if ( __dfa->accel_type[__dfa->start] != 0 ) {
           __prefer_dfa = true;
-          break;
-        }
-        if ( __code[k].code == op::Class && __code[k].x < __ncls && __cls[__code[k].x].count() > 200 ) {
-          __prefer_dfa = true;
-          break;
+        } else {
+          // NOTE: Pike is slow when a match can span a long run (`.*`, `[^x]*`)
+          for ( usize k = 0; k < __ncode; ++k ) {
+            if ( __code[k].code == op::Any || __code[k].code == op::Bol ) {      // .* / ^-anchored -> DFA
+              __prefer_dfa = true;
+              break;
+            }
+            if ( __code[k].code == op::Class && __code[k].x < __ncls && __cls[__code[k].x].count() > 200 ) {
+              __prefer_dfa = true;
+              break;
+            }
+          }
         }
       }
     }
@@ -400,7 +410,7 @@ public:
   int
   has_match_path() const noexcept
   {
-    if ( __dfa && __prefer_dfa ) return __dfa->has_sheng ? 3 : 2;
+    if ( __dfa && __prefer_dfa ) return __dfa->has_accel ? 4 : (__dfa->has_sheng ? 3 : 2);
     if ( !__nullable ) {
       usize fc = __first.count();
       if ( fc >= 1 && fc < 256 ) return 1;

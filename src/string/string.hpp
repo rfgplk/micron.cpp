@@ -332,9 +332,10 @@ public:
   operator=(const hstring &o)
   {
     if ( this == micron::addressof(o) ) return *this;
-    if ( __mem::capacity < o.capacity ) reserve(o.capacity + 1);
-    micron::zero(__mem::memory, __mem::capacity);
+    if ( __mem::capacity < o.length + 1 ) reserve(o.length + 1);
+    if ( __mem::length > o.length ) micron::zero(&__mem::memory[o.length], __mem::length - o.length);
     micron::memcpy(__mem::memory, o.memory, o.length);
+    __mem::memory[o.length] = T{ 0 };
     __mem::length = o.length;
     return *this;
   }
@@ -356,11 +357,14 @@ public:
   }
 
   template<template<typename> class S, typename F>
+    requires(sizeof(F) == sizeof(T))
   hstring &
   operator=(const S<F> &o)
   {
-    if ( __mem::capacity < o.capacity ) reserve(o.capacity + 1);
-    micron::strcpy(__mem::memory, o.memory);
+    if ( __mem::capacity < o.length + 1 ) reserve(o.length + 1);
+    if ( __mem::length > o.length ) micron::zero(&__mem::memory[o.length], __mem::length - o.length);
+    micron::memcpy(__mem::memory, o.memory, o.length);
+    __mem::memory[o.length] = T{ 0 };
     __mem::length = o.length;
     return *this;
   }
@@ -386,9 +390,10 @@ public:
   hstring &
   operator=(const S<N, F> &o)
   {
-    if ( __mem::capacity < o.length ) reserve(o.length);
-    clear();
+    if ( __mem::capacity < o.length + 1 ) reserve(o.length + 1);
+    if ( __mem::length > o.length ) micron::zero(&__mem::memory[o.length], __mem::length - o.length);
     micron::memcpy(__mem::memory, &o.memory[0], o.length);
+    __mem::memory[o.length] = T{ 0 };
     __mem::length = o.length;
     return *this;
   }
@@ -397,10 +402,13 @@ public:
   hstring &
   operator=(const F (&str)[M])
   {
-    if ( __mem::capacity < M ) reserve(M);
-    clear();
-    micron::memcpy(&(__mem::memory)[0], &str[0], M);
-    __mem::length = M - 1;
+    usize end = 0;
+    while ( end < M - 1 && !(str[end] == F{ 0 }) ) ++end;
+    if ( __mem::capacity < end + 1 ) reserve(end + 1);
+    if ( __mem::length > end ) micron::zero(&__mem::memory[end], __mem::length - end);
+    micron::bytecpy(&(__mem::memory)[0], &str[0], end * sizeof(F));
+    __mem::memory[end] = T{ 0 };
+    __mem::length = end;
     return *this;
   }
 

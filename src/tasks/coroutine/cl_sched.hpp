@@ -20,6 +20,7 @@
 #include "../../types.hpp"
 
 #include "../../linux/sys/time.hpp"
+#include "../cancellation.hpp"
 #include "fiber.hpp"
 #include "reactor.hpp"
 
@@ -62,6 +63,12 @@ struct engine {
   micron::atomic_token<u32> pending_timers{ 0 };      // num of frames in the timer
   u32 n = 0;
   micron::__thread_pointer<micron::auto_thread<>> threads[__cl_max_workers];
+#if defined(MICRON_CORO_URING)
+  // unbounded spillover
+  __frame_base *__io_ovf = nullptr;
+  micron::atomic_token<u32> __io_ovf_lk{ 0 };
+  micron::atomic_token<u32> __io_ovf_n{ 0 };      // lock-free empty probe for the hot __find path
+#endif
 
   ~engine() { delete[] workers; }
 
@@ -175,9 +182,14 @@ struct engine {
     }
     if ( inbox.pop(cont) && cont != nullptr ) return cont;
 #if defined(MICRON_CORO_URING)
-    // opportunistic completion reap
-    if ( __io.live && __io.pending.get(micron::memory_order_relaxed) != 0 ) {
-      if ( __try_drain_io() && inbox.pop(cont) && cont != nullptr ) return cont;
+    cont = __io_ovf_pop();      // completions the inbox had no room for
+    if ( cont != nullptr ) return cont;
+    if ( __io.any_live.get(micron::memory_order_acquire) != 0 ) {
+      if ( __drain_io(w, seed) ) {
+        if ( inbox.pop(cont) && cont != nullptr ) return cont;
+        cont = __io_ovf_pop();
+        if ( cont != nullptr ) return cont;
+      }
     }
 #endif
     cont = __steal(w, seed);
@@ -193,6 +205,9 @@ struct engine {
     worker *w = &workers[id];
     __cur_worker = w;
     u32 seed = id * 2654435761u + 1u;
+#if defined(MICRON_CORO_URING)
+    __io_worker_ring_init(id, n);
+#endif
     for ( u32 __i = 0; __i < __cl_prewarm_segments; ++__i ) {
       micron::fiber::fiber *__pf = micron::fiber::create_fiber(&__cl_hot_entry, nullptr, static_cast<usize>(small_stack_size));
       if ( __pf == nullptr ) break;
@@ -233,12 +248,23 @@ struct engine {
       w->active.store(0, micron::memory_order_release);
       if ( !stopping.get(micron::memory_order_acquire) ) {
 #if defined(MICRON_CORO_URING)
-        // uring core (>=6.7; pre-6.7 rings take the plain futex path)
-        if ( __io.live && __io.futex_ok.get(micron::memory_order_acquire) != 0 && __io.pending.get(micron::memory_order_relaxed) != 0 ) {
-          i32 __exp = -1;
-          if ( __io.sentinel.compare_exchange_strong(__exp, static_cast<i32>(w->id), micron::memory_order_acq_rel,
-                                                     micron::memory_order_acquire) ) {
+        // (>=6.7)
+        if ( __io.futex_ok.get(micron::memory_order_acquire) != 0 ) {
+          __wring &__own = __io_rings[w->id];
+          if ( __own.__live.get(micron::memory_order_acquire) != 0 && __own.__pending.get(micron::memory_order_relaxed) != 0 ) {
             __ring_park(w, __ep);
+            __cl_sleeper_mask.fetch_and(~__bit, micron::memory_order_acq_rel);
+            continue;
+          }
+        }
+        if ( __io.any_live.get(micron::memory_order_acquire) != 0 && __io_pending_total() != 0 ) {
+          i32 __exp = -1;
+          if ( __io.watcher.compare_exchange_strong(__exp, static_cast<i32>(w->id), micron::memory_order_acq_rel,
+                                                    micron::memory_order_acquire) ) {
+            timespec_t __wts{ 0, 1000000 };
+            micron::__futex(__cl_park[w->id].epoch.ptr(), futex_wait | futex_private_flag, __ep, &__wts, nullptr, 0);
+            __io.watcher.store(-1, micron::memory_order_release);
+            __drain_all();
             __cl_sleeper_mask.fetch_and(~__bit, micron::memory_order_acq_rel);
             continue;
           }
@@ -260,6 +286,9 @@ struct engine {
     w->active.store(0, micron::memory_order_release);
     __retire_hot(w);      // before drain: the retired segment recycles into the freelist being drained
     micron::fiber::drain_freelist();
+#if defined(MICRON_CORO_URING)
+    __io_worker_ring_shutdown(id);      // own thread: last touch of the single-issuer ring
+#endif
   }
 
   void
@@ -275,62 +304,143 @@ struct engine {
   }
 
 #if defined(MICRON_CORO_URING)
+  // non blocking submit for completions
   void
-  __dispatch_cqe(const micron::uring::cqe &__c) noexcept
+  __submit_io(__frame_base *fb) noexcept
   {
-    if ( __c.user_data == __io_tag_park ) {
-      if ( __c.res == -22 || __c.res == -95 ) __io.futex_ok.store(0, micron::memory_order_release);
-      __io.park_fired.store(1, micron::memory_order_release);
-      return;
+    if ( !inbox.push(fb) ) [[unlikely]] {
+      __io_lock(__io_ovf_lk);
+      fb->__io_next = __io_ovf;
+      __io_ovf = fb;
+      __io_ovf_n.fetch_add(1, micron::memory_order_acq_rel);
+      __io_unlock(__io_ovf_lk);
     }
-    if ( __c.user_data == __io_tag_cancel ) return;
-    __io_op *__op = reinterpret_cast<__io_op *>(__c.user_data);
-    __op->__res = __c.res;
-    __io.pending.sub_fetch(1, micron::memory_order_acq_rel);
-    submit(__op->__f);
+    __cl_wake_one<true>();      // seq_cst
   }
 
-  // opportunistic reap by any active worker (and the sentinel's drain); one reaper at a time
-  bool
-  __try_drain_io() noexcept
+  __frame_base *
+  __io_ovf_pop() noexcept
   {
-    if ( !__io_trylock(__io.cq_lk) ) return false;
+    if ( __io_ovf_n.get(micron::memory_order_acquire) == 0 ) return nullptr;
+    __io_lock(__io_ovf_lk);
+    __frame_base *fb = __io_ovf;
+    if ( fb != nullptr ) {
+      __io_ovf = fb->__io_next;
+      fb->__io_next = nullptr;
+      __io_ovf_n.sub_fetch(1, micron::memory_order_acq_rel);
+    }
+    __io_unlock(__io_ovf_lk);
+    return fb;
+  }
+
+  [[nodiscard]] bool
+  __io_ovf_empty() const noexcept
+  {
+    return __io_ovf_n.get(micron::memory_order_acquire) == 0;
+  }
+
+  // cqe popping is serialized per ring
+  void
+  __dispatch_cqe(__wring &__wr, const micron::uring::cqe &__c) noexcept
+  {
+    const u8 __tag = __io_ud_tag(__c.user_data);
+    if ( __tag == __io_ud_park ) {
+      if ( __c.res == -22 || __c.res == -95 ) __io.futex_ok.store(0, micron::memory_order_release);
+      __wr.__park_fired.store(1, micron::memory_order_release);
+      return;
+    }
+    if ( __tag != __io_ud_op ) return;      // cancel / ltimer / reclaim
+    __io_op *__op = reinterpret_cast<__io_op *>(__c.user_data);
+    __op->__res = __c.res;
+    u32 __exp = __io_st_submitted;
+    if ( __op->__st.compare_exchange_strong(__exp, __io_st_done_early, micron::memory_order_acq_rel, micron::memory_order_acquire) ) return;
+    __wr.__pending.sub_fetch(1, micron::memory_order_acq_rel);
+    __submit_io(__op->__f);
+  }
+
+  bool
+  __drain_ring(__wring &__wr) noexcept
+  {
+    if ( !__io_cq_acquire(__wr) ) return false;
     micron::uring::cqe __c{};
     bool __any = false;
-    while ( __io.ring.peek_cqe(&__c) ) {
+    while ( __wr.__r.peek_cqe(&__c) ) {
       __any = true;
-      __dispatch_cqe(__c);
+      __dispatch_cqe(__wr, __c);
     }
-    __io_unlock(__io.cq_lk);
+    __io_unlock(__wr.__cq_lk);
+    return __any;
+  }
+
+  // own ring -> fallback ring -> one seed-rotated foreign ring
+  bool
+  __drain_io(worker *__w, u32 &__seed) noexcept
+  {
+    bool __any = false;
+    __wring &__own = __io_rings[__w->id];
+    if ( __own.__live.get(micron::memory_order_acquire) != 0 ) {
+      if ( __own.__r.cq_overflowed() || (__own.__defer != 0 && __own.__r.taskrun_pending()) )
+        (void)__own.__r.enter2(0, 0, micron::uring::enter_getevents, nullptr, 0);
+      if ( __own.__pending.get(micron::memory_order_relaxed) != 0 ) __any |= __drain_ring(__own);
+    }
+    if ( __io_fb.__pending.get(micron::memory_order_relaxed) != 0 ) {
+      if ( __io_fb.__r.cq_overflowed() ) (void)__io_fb.__r.enter2(0, 0, micron::uring::enter_getevents, nullptr, 0);
+      __any |= __drain_ring(__io_fb);
+    }
+    if ( n > 1 ) {
+      __seed ^= __seed << 13;
+      __seed ^= __seed >> 17;
+      __seed ^= __seed << 5;
+      u32 __v = static_cast<u32>((static_cast<u64>(__seed) * n) >> 32);
+      if ( __v == __w->id && ++__v == n ) __v = 0;
+      if ( __v != __w->id && __io_rings[__v].__pending.get(micron::memory_order_relaxed) != 0 ) __any |= __drain_ring(__io_rings[__v]);
+    }
+    return __any;
+  }
+
+  bool
+  __drain_all() noexcept
+  {
+    bool __any = false;
+    for ( u32 __i = 0; __i < n; ++__i ) __any |= __drain_ring(__io_rings[__i]);
+    __any |= __drain_ring(__io_fb);
     return __any;
   }
 
   void
-  __ring_park(worker *w, u32 __ep) noexcept
+  __ring_park(worker *__w, u32 __ep) noexcept
   {
-    __io.park_fired.store(0, micron::memory_order_relaxed);
-    bool __armed = __io_submit(__io_tag_park,
-                               [&](micron::uring::sqe *__s) { micron::uring::prep_futex_wait(__s, __cl_park[w->id].epoch.ptr(), __ep); });
-    if ( !__armed ) {      // SQ exhausted: degrade to a plain timed futex park
-      __io.sentinel.store(-1, micron::memory_order_release);
+    __wring &__wr = __io_rings[__w->id];
+    __wr.__park_fired.store(0, micron::memory_order_relaxed);
+    micron::uring::sqe __q;
+    micron::uring::prep_futex_wait(&__q, __cl_park[__w->id].epoch.ptr(), __ep);
+    if ( !__io_submit_own(__wr, __q, __io_ud_make(__io_ud_park, __w->id)) ) {
       timespec_t __ts{ 0, 100000000 };
-      micron::__futex(__cl_park[w->id].epoch.ptr(), futex_wait | futex_private_flag, __ep, &__ts, nullptr, 0);
+      micron::__futex(__cl_park[__w->id].epoch.ptr(), futex_wait | futex_private_flag, __ep, &__ts, nullptr, 0);
       return;
     }
-    (void)__io.ring.enter(1);      // block: ANY cqe ends the park
-    __try_drain_io();
-    if ( __io.park_fired.get(micron::memory_order_acquire) == 0 ) {
-      while ( !__io_submit(__io_tag_cancel, [](micron::uring::sqe *__s) { micron::uring::prep_cancel(__s, __io_tag_park); }) ) {
-        if ( __io.park_fired.get(micron::memory_order_acquire) != 0 ) break;
-        (void)__io.ring.enter(1);
-        __try_drain_io();
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.parks.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    const micron::uring::ktimespec __kt{ 0, 100000000 };
+    (void)__wr.__r.submit_and_wait_timeout(1, &__kt);
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.wakes.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    __drain_ring(__wr);
+    if ( __wr.__park_fired.get(micron::memory_order_acquire) == 0 ) {
+      micron::uring::sqe __cq;
+      micron::uring::prep_cancel(&__cq, __io_ud_make(__io_ud_park, __w->id));
+      while ( !__io_submit_own(__wr, __cq, __io_ud_make(__io_ud_cancel, 0)) ) {
+        if ( __wr.__park_fired.get(micron::memory_order_acquire) != 0 ) break;
+        (void)__wr.__r.submit_and_wait_timeout(1, &__kt);
+        __drain_ring(__wr);
       }
-      while ( __io.park_fired.get(micron::memory_order_acquire) == 0 ) {
-        (void)__io.ring.enter(1);
-        __try_drain_io();
+      while ( __wr.__park_fired.get(micron::memory_order_acquire) == 0 ) {
+        (void)__wr.__r.submit_and_wait_timeout(1, &__kt);
+        __drain_ring(__wr);
       }
     }
-    __io.sentinel.store(-1, micron::memory_order_release);
   }
 #endif
 };
@@ -375,6 +485,15 @@ __ts_le(const timespec_t &__a, const timespec_t &__b) noexcept
 {
   return __a.tv_sec < __b.tv_sec || (__a.tv_sec == __b.tv_sec && __a.tv_nsec <= __b.tv_nsec);
 }
+
+#if defined(MICRON_CORO_URING)
+#ifndef MICRON_CORO_IO_DRAIN_GRACE_NS
+#define MICRON_CORO_IO_DRAIN_GRACE_NS 2000000000ull
+#endif
+// length for stop_coroutine_runtime
+// cancels tasks in flight with no progress if it exceeds this val
+inline constexpr u64 __cl_io_drain_grace_ns = MICRON_CORO_IO_DRAIN_GRACE_NS;
+#endif
 
 inline void
 __timer_main() noexcept
@@ -459,10 +578,10 @@ start_coroutine_runtime(u32 nworkers = 0) noexcept
   e->workers = new worker[nworkers];
   for ( u32 i = 0; i < nworkers; ++i ) e->workers[i].id = i;
 #if defined(MICRON_CORO_URING)
-  __io.live = (__io.ring.init(256u, 0) == 0);
-  __io.futex_ok.store(__io.live && micron::kernel::has(micron::kernel::feature::uring_futex) ? 1u : 0u, micron::memory_order_relaxed);
-  __io.sentinel.store(-1, micron::memory_order_relaxed);
-  __io.pending.store(0, micron::memory_order_relaxed);
+  __io_fb_init();      // worker rings init on their own threads (single_issuer)
+  __io.futex_ok.store(micron::kernel::has(micron::kernel::feature::uring_futex) ? 1u : 0u, micron::memory_order_relaxed);
+  __io.watcher.store(-1, micron::memory_order_relaxed);
+  __io_cancel_hook = &__io_cancel_walker;      // cancellation_source::cancel() reaches in-flight ops
 #endif
   __global_engine = e;
   for ( u32 i = 0; i < nworkers; ++i )
@@ -479,13 +598,58 @@ stop_coroutine_runtime() noexcept
 
   {
     u32 __quiet = 0;
+#if defined(MICRON_CORO_URING)
+    timespec_t __io_dl{ 0, 0 };      // grace deadline; re-armed whenever io makes progress
+    u64 __seen = 0;                  // in-flight count the deadline was armed against
+    bool __armed = false;
+#endif
     while ( __quiet < 4 ) {
       bool __q = e->inbox.empty() && e->pending_timers.get(micron::memory_order_acquire) == 0;
 #if defined(MICRON_CORO_URING)
-      if ( __io.live && __io.pending.get(micron::memory_order_acquire) != 0 ) __q = false;      // in-flight I/O drains first
+      if ( __q && !e->__io_ovf_empty() ) __q = false;
 #endif
       for ( u32 __i = 0; __q && __i < e->n; ++__i )
         if ( e->workers[__i].active.get(micron::memory_order_acquire) != 0 || !e->workers[__i].deque.empty() ) __q = false;
+#if defined(MICRON_CORO_URING)
+      if ( __q ) {
+        const u64 __pend = __io_pending_total();
+        if ( __pend != 0 ) {
+          timespec_t __now{};
+          micron::clock_gettime(micron::clock_monotonic, __now);
+          if ( !__armed || __pend != __seen ) {
+            __seen = __pend;
+            __armed = true;
+            __io_dl = __now;
+            __io_dl.tv_sec += static_cast<decltype(__io_dl.tv_sec)>(__cl_io_drain_grace_ns / 1000000000ull);
+            __io_dl.tv_nsec += static_cast<decltype(__io_dl.tv_nsec)>(__cl_io_drain_grace_ns % 1000000000ull);
+            if ( __io_dl.tv_nsec >= 1000000000 ) {
+              __io_dl.tv_nsec -= 1000000000;
+              ++__io_dl.tv_sec;
+            }
+          } else if ( !__ts_le(__now, __io_dl) ) {      // grace burned with zero progress: stuck, cut it loose
+            micron::uring::sync_cancel_reg __sc{};
+            __sc.fd = -1;
+            __sc.flags = micron::uring::async_cancel_any;
+            for ( u32 __i = 0; __i < e->n; ++__i ) {
+              __wring &__wr = __io_rings[__i];
+              if ( __wr.__live.get(micron::memory_order_acquire) != 0 )
+                (void)micron::uring::__io_uring_register(__wr.__r.fd, micron::uring::reg_register_sync_cancel, &__sc, 1);
+            }
+            if ( __io_fb.__live.get(micron::memory_order_acquire) != 0 )
+              (void)micron::uring::__io_uring_register(__io_fb.__r.fd, micron::uring::reg_register_sync_cancel, &__sc, 1);
+            __armed = false;      // re-arm: a cancel that does not land must not spin the register syscall
+          }
+          __q = false;
+          // the grace window is seconds long: poll it, do not sched_yield a core
+          // flat out while the workers are the ones that need the cpu
+          timespec_t __nap{ 0, 200000 };
+          (void)micron::nanosleep(__nap);
+          __quiet = 0;
+          continue;
+        }
+        __armed = false;
+      }
+#endif
       if ( __q )
         ++__quiet;
       else
@@ -512,10 +676,11 @@ stop_coroutine_runtime() noexcept
 #endif
   for ( u32 i = 0; i < e->n; ++i ) e->threads[i].reset();
 #if defined(MICRON_CORO_URING)
-  if ( __io.live ) {
-    __io.ring.shutdown();
-    __io.live = false;
-  }
+  __io_cancel_hook = nullptr;
+  __io_fb_shutdown();
+  __io_fixed_shutdown();
+  __io.any_live.store(0, micron::memory_order_release);
+  __io.watcher.store(-1, micron::memory_order_relaxed);
 #endif
   __global_engine = nullptr;
   delete e;
@@ -1008,14 +1173,29 @@ struct [[nodiscard]] __sleep_awaiter {
   await_suspend(std::coroutine_handle<P> __h) noexcept
   {
 #if defined(MICRON_CORO_URING)
-    if ( __io.live ) {
+    if ( __io.any_live.get(micron::memory_order_acquire) != 0 ) {
       __op.__f = &__h.promise();
       __kts = { static_cast<i64>(__deadline.tv_sec), static_cast<i64>(__deadline.tv_nsec) };
-      __io.pending.fetch_add(1, micron::memory_order_acq_rel);
-      if ( __io_submit(reinterpret_cast<u64>(&__op),
-                       [&](micron::uring::sqe *__s) { micron::uring::prep_timeout(__s, &__kts, micron::uring::timeout_abs); }) )
-        return true;
-      __io.pending.sub_fetch(1, micron::memory_order_acq_rel);
+      micron::uring::sqe __q;
+      micron::uring::prep_timeout(&__q, &__kts, micron::uring::timeout_abs);
+      __wring *__r = __io_own_ring();
+      bool __ok = false;
+      if ( __r != nullptr ) {
+        __r->__pending.fetch_add(1, micron::memory_order_acq_rel);
+        __ok = __io_submit_own(*__r, __q, reinterpret_cast<u64>(&__op));
+      } else if ( __io_fb.__live.get(micron::memory_order_acquire) != 0 ) {
+        __r = &__io_fb;
+        __r->__pending.fetch_add(1, micron::memory_order_acq_rel);
+        __ok = __io_submit_fb(__q, reinterpret_cast<u64>(&__op));
+      }
+      if ( __ok ) {
+        u32 __exp = __io_st_submitted;
+        if ( __op.__st.compare_exchange_strong(__exp, __io_st_suspended, micron::memory_order_acq_rel, micron::memory_order_acquire) )
+          return true;
+        __r->__pending.sub_fetch(1, micron::memory_order_acq_rel);
+        return false;
+      }
+      if ( __r != nullptr ) __r->__pending.sub_fetch(1, micron::memory_order_acq_rel);
     }
 #endif
     __ensure_timer_thread();

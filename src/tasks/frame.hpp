@@ -21,6 +21,7 @@ struct __frame_base {
   __frame_base *__parent = nullptr;             // parent frame (set on fork children only; non-null => forked)
   __frame_base *__child_head = nullptr;         // intrusive list of THIS frame's forked children (reclaimed at join)
   __frame_base *__sibling = nullptr;            // next sibling in the parent's __child_head list
+  __frame_base *__io_next = nullptr;            // reactor overflow list
   const char *__first_err = nullptr;            // first error reported by a forked child (surfaced at co_await join)
   micron::atomic_token<u32> __steals{ 0 };      // # of this frame's continuations stolen since last join
   //   bits 0-15   credits

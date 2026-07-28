@@ -208,6 +208,8 @@ help(void)
   mc::console("                      the default, subsequent -l's accumulate");
   mc::console("    --lib <name>      link library by name       (-l<name>)");
   mc::console("    --def <N[=V]>     preprocessor define        (-DN[=V]); repeatable");
+  mc::console("    --uring           enable micron's coroutine io_uring reactor");
+  mc::console("                      (-DMICRON_CORO_URING).");
   mc::console("    -gl               link the libs micron::gfx::gl needs");
   mc::console("                      (libX11, libGL, libwayland-client, libwayland-egl, libEGL)");
   mc::console("    -vk               link the libs micron::gfx::vk needs");
@@ -288,6 +290,7 @@ help(void)
   mc::console("    duck build src/svc.cpp --harden       # full hosted hardening profile");
   mc::console("    duck build --arm64 src/k.cpp -k --gc --cfi  # freestanding, gc'd, PAC/BTI");
   mc::console("    duck build src/hot.cpp --perf         # -O3 + unroll (FP-safe)");
+  mc::console("    duck test tests/coro/ --uring         # coroutine suite with the reactor on");
   mc::console("    duck build.duck                       # implicit batch (== duck batch ...)");
   mc::console("    duck batch scripts/build_all.duck     # script of duck commands");
   mc::console("    duck splat build src/main.cpp -g -ke  # print the g++ line, compile nothing");

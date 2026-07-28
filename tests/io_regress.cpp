@@ -215,5 +215,5 @@ main()
   }
 
   micron::io::println("io_regress: all sections passed");
-  return 0;
+  return 1;
 }

@@ -50,7 +50,7 @@ void *mc_re_compile(const char *pat);
 int mc_has_match(void *h, const char *in, long n);
 long mc_search(void *h, const char *in, long n);
 int mc_valid(void *h);
-int mc_path(void *h);      // 3=Sheng DFA 2=table DFA 1=SIMD prefilter+Pike 0=plain Pike
+int mc_path(void *h);      // 4=accel DFA 3=Sheng DFA 2=table DFA 1=SIMD prefilter+Pike 0=plain Pike
 int mc_nstates(void *h);
 void mc_re_free(void *h);
 }

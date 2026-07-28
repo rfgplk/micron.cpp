@@ -379,7 +379,11 @@ run_accessors(void)
       ck(ic.size() >= n, "into_chars", it);
       S cl = s.clone();
       ck(mtest::seq_eq(cl, r), "clone", it);
-      ck(s.w_str() != nullptr && s.uni_str() != nullptr, "w/uni_str", it);
+      // NOTE: rope's w_str()/uni_str() are width-CONSTRAINED (requires sizeof(U) == sizeof(wide) /
+      // sizeof(unicode32)), unlike istring's unconstrained pair this line was copied from -- calling them
+      // unconditionally is a hard error for every 1- and 2-byte T. Mirror the library's own constraint.
+      if constexpr ( sizeof(T) == sizeof(wide) ) ck(s.w_str() != nullptr, "w_str", it);
+      if constexpr ( sizeof(T) == sizeof(unicode32) ) ck(s.uni_str() != nullptr, "uni_str", it);
       ck(s.len() == s.size() && s.max_size() >= s.size() && s.capacity() >= s.size(), "cap", it);
     }
   }
