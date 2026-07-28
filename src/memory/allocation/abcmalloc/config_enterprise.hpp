@@ -78,8 +78,9 @@ constexpr static const bool __default_launder
 constexpr static const bool __default_lazy_construct = true;
 constexpr static const bool __default_single_instance = true;       // enable an allocator per thread (DEPRECATED for now)
 constexpr static const bool __default_global_instance = false;      // enable a single global allocator (DEPRECATED for now)
-// freestanding builds have no threading runtime
-#if defined(__micron_freestanding)
+// freestanding builds have no threading runtime, unless one is asked for
+// NOTE: define MICRON_ABC_MT when a freestanding build spawns threads or uses coroutines
+#if defined(__micron_freestanding) && !defined(MICRON_ABC_MT)
 constexpr static const bool __default_multithread_safe = false;
 #else
 constexpr static const bool __default_multithread_safe = true;      // essentially, enables locks across API calls
