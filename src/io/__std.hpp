@@ -37,9 +37,19 @@ inline fd_t stderr = posix::invalid_fd;
 // non TTY (pipes/files) are fully buffered
 inline bool __stdout_line_buffered = true;
 
+// two std streams are now inline
+// their buffers live in bss rather than in abcmalloc
+// we want to keep stdio off our allocator, makes the whole stack more versatile and allows io without spinning up abcmalloc at all
+// + improves startup speeds greatly
+// NOTE: this change doesn't warrant an ABI bump
+using __std_stream = micron::io::stream<__global_buffer_size, __global_buffer_chunk, true>;
+
+inline __std_stream __global_buffer_stdout_store;
+inline __std_stream __global_buffer_stderr_store;
+
 // these must be constinit to prevent clobbering with the default ctor
-inline constinit micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stdout(nullptr);
-inline constinit micron::__global_pointer<micron::io::stream<__global_buffer_size, __global_buffer_chunk>> __global_buffer_stderr(nullptr);
+inline constinit __std_stream *__global_buffer_stdout = nullptr;
+inline constinit __std_stream *__global_buffer_stderr = nullptr;
 
 inline i32
 __verify_open(void)
@@ -92,12 +102,8 @@ extern "C" void
 __boot_io_buffers(void)
 {
   __load_stdfd();
-  if ( !__global_buffer_stdout ) {
-    __global_buffer_stdout = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
-  }
-  if ( !__global_buffer_stderr ) {
-    __global_buffer_stderr = micron::make_global<micron::io::stream<__global_buffer_size, __global_buffer_chunk>>();
-  }
+  if ( !__global_buffer_stdout ) __global_buffer_stdout = &__global_buffer_stdout_store;
+  if ( !__global_buffer_stderr ) __global_buffer_stderr = &__global_buffer_stderr_store;
 }
 
 extern "C" void

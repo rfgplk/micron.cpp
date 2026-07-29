@@ -98,7 +98,8 @@ public:
   void
   __complete() noexcept
   {
-    if ( __outstanding.sub_fetch(1, memory_order_acq_rel) == 0 ) __wake_all(__joiners.swap_all());
+    if ( __outstanding.sub_fetch(1, memory_order_acq_rel) == 0 )
+      __wake_all(__joiners.swap_all_under([this]() { return __outstanding.get(memory_order_acquire) <= 0; }));
   }
 
   [[nodiscard]] i64

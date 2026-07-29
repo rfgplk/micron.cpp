@@ -458,9 +458,9 @@ public:
     }
   }
 
-  template<int SZ, int CK>
+  template<int SZ, int CK, bool IS>
   upipe &
-  operator<<(io::stream<SZ, CK> &s)
+  operator<<(io::stream<SZ, CK, IS> &s)
   {
     if ( !__w_open || s.empty() ) return *this;
     _write_all(fd[__w], s.data(), static_cast<usize>(s.size()));
@@ -468,9 +468,9 @@ public:
     return *this;
   }
 
-  template<int SZ, int CK>
+  template<int SZ, int CK, bool IS>
   upipe &
-  operator>>(io::stream<SZ, CK> &s)
+  operator>>(io::stream<SZ, CK, IS> &s)
   {
     if ( !__r_open ) return *this;
     usize cap = s.max_size() - static_cast<usize>(s.size());
@@ -481,9 +481,9 @@ public:
     return *this;
   }
 
-  template<int SZ, int CK>
+  template<int SZ, int CK, bool IS>
   usize
-  drain_to_stream(io::stream<SZ, CK> &s)
+  drain_to_stream(io::stream<SZ, CK, IS> &s)
   {
     if ( !__r_open ) return 0;
     usize total = 0;
@@ -949,9 +949,9 @@ public:
     return *this;
   }
 
-  template<int SZ, int CK>
+  template<int SZ, int CK, bool IS>
   npipe &
-  operator<<(io::stream<SZ, CK> &s)
+  operator<<(io::stream<SZ, CK, IS> &s)
   {
     if ( !valid() || s.empty() ) return *this;
     _write_all(_fd, s.data(), static_cast<usize>(s.size()));
@@ -959,9 +959,9 @@ public:
     return *this;
   }
 
-  template<int SZ, int CK>
+  template<int SZ, int CK, bool IS>
   npipe &
-  operator>>(io::stream<SZ, CK> &s)
+  operator>>(io::stream<SZ, CK, IS> &s)
   {
     if ( !valid() ) return *this;
     usize avail = s.max_size() - static_cast<usize>(s.size());

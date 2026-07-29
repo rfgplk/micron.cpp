@@ -808,9 +808,9 @@ public:
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // stream bridging
-  template<int SZ, int CK>
+  template<int SZ, int CK, bool IS>
   max_t
-  to_stream(io::stream<SZ, CK> &s) const
+  to_stream(io::stream<SZ, CK, IS> &s) const
   {
     if ( i32 __e = __check() ) [[unlikely]]
       return __e;
@@ -818,9 +818,9 @@ public:
     return static_cast<max_t>(s.size());
   }
 
-  template<int SZ, int CK>
+  template<int SZ, int CK, bool IS>
   max_t
-  from_stream(io::stream<SZ, CK> &s)
+  from_stream(io::stream<SZ, CK, IS> &s)
   {
     if ( i32 __e = __check() ) [[unlikely]]
       return __e;

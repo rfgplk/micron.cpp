@@ -150,6 +150,27 @@ spawn(addr_t *stack_low, usize usable, unsigned long tls, int *ctid, KArgs &&...
   return static_cast<tid_t>(tid);
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// capabilites
+enum class tier : u8 {
+  none,        // no TLS template -> spawn() cannot build a child frame
+  legacy,      // template ok, clone3 unavailable or demoted -> legacy clone(2)
+  full         // template ok + clone3
+};
+
+[[nodiscard]] inline tier
+level(void) noexcept
+{
+  if ( !micron::__tls_ensure_template() ) return tier::none;
+  return posix::__clone3_gate.open(kernel::feature::clone3) ? tier::full : tier::legacy;
+}
+
+[[nodiscard]] inline bool
+available(void) noexcept
+{
+  return level() != tier::none;
+}
+
 inline int
 join(int *ctid) noexcept
 {

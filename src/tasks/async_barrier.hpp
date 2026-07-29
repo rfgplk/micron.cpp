@@ -45,8 +45,11 @@ public:
       const u32 __prev = __b->__count.fetch_sub(1, memory_order_acq_rel);
       if ( __prev == 1u ) {      // last arriver: complete the generation
         __b->__count.store(__b->__threshold, memory_order_relaxed);
-        __b->__gen.fetch_add(1, memory_order_acq_rel);
-        __wake_all(__b->__waiters.swap_all());
+        // the bump and the drain must be one step wrt push_unless
+        __wake_all(__b->__waiters.swap_all_under([__bp = __b]() {
+          __bp->__gen.fetch_add(1, memory_order_acq_rel);
+          return true;
+        }));
         return true;      // last arriver continues without suspending
       }
       return false;      // not last: suspend in await_suspend

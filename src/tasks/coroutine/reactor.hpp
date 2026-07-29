@@ -12,6 +12,7 @@
 #include "../../atomic/atomic.hpp"
 #include "../../kernel.hpp"
 #include "../../linux/sys/uring.hpp"
+#include "../../memory/mman.hpp"
 #include "../../sync/yield.hpp"
 #include "../../types.hpp"
 
@@ -46,7 +47,14 @@ inline constexpr u8 __io_ud_op = 0x00;           // payload = __io_op*
 inline constexpr u8 __io_ud_park = 0x01;         // payload = worker id (own-ring futex_wait park sqe)
 inline constexpr u8 __io_ud_cancel = 0x02;       // async_cancel companion cqe; dropped
 inline constexpr u8 __io_ud_ltimer = 0x03;       // link_timeout companion cqe; dropped
+inline constexpr u8 __io_ud_mop = 0x04;          // payload = __io_mop* (multishot recv; many cqes per op)
 inline constexpr u8 __io_ud_reclaim = 0xfe;      // always ignored
+
+[[gnu::always_inline]] inline constexpr u64
+__io_ud_payload(u64 __ud) noexcept
+{
+  return __ud & ((1ull << __io_ud_tag_shift) - 1ull);
+}
 
 [[gnu::always_inline]] inline constexpr u64
 __io_ud_make(u8 __tag, u64 __payload) noexcept
@@ -83,6 +91,82 @@ struct __io_ring_stats {
 };
 #endif
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// multishot recv
+//
+// per worker ring buffer pool;
+// user allocator, initialized lazily by the rings owner thread on first touch
+// recycle() called by consumer coros
+
+#ifndef MICRON_CORO_PBUF_ENTRIES
+#define MICRON_CORO_PBUF_ENTRIES 256u
+#endif
+#ifndef MICRON_CORO_PBUF_SZ
+#define MICRON_CORO_PBUF_SZ 8192u
+#endif
+inline constexpr u32 __io_pb_entries = MICRON_CORO_PBUF_ENTRIES;
+inline constexpr u32 __io_pb_sz = MICRON_CORO_PBUF_SZ;
+inline constexpr u16 __io_pb_bgid = 7;
+static_assert((__io_pb_entries & (__io_pb_entries - 1)) == 0, "MICRON_CORO_PBUF_ENTRIES must be a power of two");
+
+struct __io_pbuf {
+  micron::uring::buf_ring *__br = nullptr;
+  byte *__arena = nullptr;
+  u32 __tail_shadow = 0;
+  micron::atomic_token<u32> __lk{ 0 };
+  micron::atomic_token<u32> __state{ 0 };      // 0 untried / 1 live / 2 refused
+};
+
+inline constexpr u8 __io_mev_buf = 1u << 0;       // a provided buffer is attached (bid valid)
+inline constexpr u8 __io_mev_more = 1u << 1;      // the op is still armed after this event
+
+struct __io_mev {
+  i32 __res = 0;      // >0 bytes in the buffer; 0 peer EOF; <0 -errno
+  u16 __bid = 0;
+  u8 __ring = 0xff;      // worker ring the buffer belongs to
+  u8 __fl = 0;
+};
+
+inline constexpr u32 __io_mop_qcap = 2u * __io_pb_entries;
+
+inline constexpr u32 __io_mop_idle = 0;
+// consumer is inside await_suspend; owns the frame
+inline constexpr u32 __io_mop_parking = 1;
+inline constexpr u32 __io_mop_parked = 2;
+// completed while the consumer was parking
+inline constexpr u32 __io_mop_pending = 3;
+
+struct __io_mop {
+  __frame_base *__f = nullptr;
+  micron::atomic_token<u32> __st{ __io_mop_idle };
+  micron::atomic_token<u32> __live{ 0 };      // armed and the kernel still promises more
+  micron::atomic_token<u32> __qh{ 0 };
+  micron::atomic_token<u32> __qt{ 0 };
+  u8 __ring = 0xff;      // worker ring the op is armed on
+  __io_mev __q[__io_mop_qcap];
+
+  [[nodiscard]] bool
+  __pop(__io_mev &__out) noexcept      // single consumer
+  {
+    const u32 __h = __qh.get(micron::memory_order_relaxed);
+    if ( __qt.get(micron::memory_order_acquire) == __h ) return false;
+    __out = __q[__h & (__io_mop_qcap - 1u)];
+    __qh.store(__h + 1u, micron::memory_order_release);
+    return true;
+  }
+
+  void
+  __push(const __io_mev &__e) noexcept      // dispatcher only; serialized by the ring's __cq_lk
+  {
+    const u32 __t = __qt.get(micron::memory_order_relaxed);
+    if ( __t - __qh.get(micron::memory_order_acquire) >= __io_mop_qcap ) [[unlikely]]
+      __builtin_trap();      // see the capacity note above
+    __q[__t & (__io_mop_qcap - 1u)] = __e;
+    // WARNING: must be seq_cst, not release; will cause cross read deadlocks otherwise
+    __qt.store(__t + 1u, micron::memory_order_seq_cst);
+  }
+};
+
 struct alignas(64) __wring {
   micron::uring::ring __r;
   micron::atomic_token<u32> __sq_lk{ 0 };           // fallback ring only
@@ -92,6 +176,8 @@ struct alignas(64) __wring {
   micron::atomic_token<u32> __live{ 0 };            // init succeeded
   micron::atomic_token<u32> __bufs_reg{ 0 };        // fixed-buffer slab registered into this ring (0 no / 1 yes / 2 refused)
   u8 __defer = 0;                                   // ring came up with setup_defer_taskrun (n==1 mode)
+  u32 __staged = 0;
+  __io_pbuf __pb;
 #if defined(MICRON_CORO_STATS)
   __io_ring_stats __stat;
 #endif
@@ -152,6 +238,132 @@ __io_own_ring() noexcept
   return __wr.__live.get(micron::memory_order_acquire) != 0 ? &__wr : nullptr;
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// staged submissions (-DMICRON_CORO_STAGED_SUBMIT)
+
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+inline constexpr u32 __io_stage_max = 16;
+#endif
+
+[[gnu::always_inline]] inline void
+__io_flush_staged(__wring &__wr) noexcept
+{
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+  if ( __wr.__staged != 0 ) {
+    __wr.__staged = 0;
+    (void)__wr.__r.enter(0);
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);
+#endif
+  }
+#else
+  (void)__wr;
+#endif
+}
+
+[[gnu::always_inline]] inline void
+__io_flush_own_staged() noexcept
+{
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+  __wring *__r = __io_own_ring();
+  if ( __r != nullptr ) __io_flush_staged(*__r);
+#endif
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// provided-buffer pool
+
+inline i32
+__io_pb_init(__wring &__wr) noexcept
+{
+  const u32 __st = __wr.__pb.__state.get(micron::memory_order_acquire);
+  if ( __st == 1u ) return 0;
+  if ( __st == 2u ) return -95;      // EOPNOTSUPP: refused earlier
+  const usize __rb = static_cast<usize>(__io_pb_entries) * sizeof(micron::uring::buf);
+  auto *__br = reinterpret_cast<micron::uring::buf_ring *>(
+      micron::mmap(nullptr, __rb, micron::prot_read | micron::prot_write, micron::map_private | micron::map_anonymous, -1, 0));
+  if ( micron::mmap_failed(reinterpret_cast<addr_t *>(__br)) ) {
+    __wr.__pb.__state.store(2u, micron::memory_order_release);
+    return -95;
+  }
+  byte *__ar
+      = reinterpret_cast<byte *>(micron::mmap(nullptr, static_cast<usize>(__io_pb_entries) * __io_pb_sz,
+                                              micron::prot_read | micron::prot_write, micron::map_private | micron::map_anonymous, -1, 0));
+  if ( micron::mmap_failed(reinterpret_cast<addr_t *>(__ar)) ) {
+    micron::munmap(reinterpret_cast<addr_t *>(__br), __rb);
+    __wr.__pb.__state.store(2u, micron::memory_order_release);
+    return -95;
+  }
+  micron::uring::buf_reg __reg{};
+  __reg.ring_addr = reinterpret_cast<u64>(__br);
+  __reg.ring_entries = __io_pb_entries;
+  __reg.bgid = __io_pb_bgid;
+  if ( __wr.__r.register_pbuf_ring(__reg) < 0 ) {
+    micron::munmap(reinterpret_cast<addr_t *>(__br), __rb);
+    micron::munmap(reinterpret_cast<addr_t *>(__ar), static_cast<usize>(__io_pb_entries) * __io_pb_sz);
+    __wr.__pb.__state.store(2u, micron::memory_order_release);
+    return -95;
+  }
+  for ( u32 __i = 0; __i < __io_pb_entries; ++__i ) {
+    micron::uring::buf *__b = &__br->bufs()[__i];
+    __b->addr = reinterpret_cast<u64>(__ar + static_cast<usize>(__i) * __io_pb_sz);
+    __b->len = __io_pb_sz;
+    __b->bid = static_cast<u16>(__i);
+  }
+  __wr.__pb.__br = __br;
+  __wr.__pb.__arena = __ar;
+  __wr.__pb.__tail_shadow = __io_pb_entries;
+  micron::atom::store(&__br->tail, static_cast<u16>(__io_pb_entries), __ATOMIC_RELEASE);
+  __wr.__pb.__state.store(1u, micron::memory_order_release);      // publishes __br/__arena
+  return 0;
+}
+
+inline constexpr u8 __io_ring_cap = static_cast<u8>(sizeof(__io_rings) / sizeof(__io_rings[0]));
+
+// __ring is 0xff on every synthesized event
+[[gnu::always_inline]] inline byte *
+__io_pb_data(u8 __ring, u16 __bid) noexcept
+{
+  if ( __ring >= __io_ring_cap || __bid >= __io_pb_entries ) [[unlikely]] return nullptr;
+  byte *__a = __io_rings[__ring].__pb.__arena;
+  return __a == nullptr ? nullptr : __a + static_cast<usize>(__bid) * __io_pb_sz;
+}
+
+inline void
+__io_pb_recycle(u8 __ring, u16 __bid) noexcept
+{
+  if ( __ring >= __io_ring_cap || __bid >= __io_pb_entries ) [[unlikely]] return;
+  __wring &__wr = __io_rings[__ring];
+  if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) return;
+  __io_lock(__wr.__pb.__lk);
+  if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) [[unlikely]] {      // died between the test and the lock
+    __io_unlock(__wr.__pb.__lk);
+    return;
+  }
+  micron::uring::buf *__b = &__wr.__pb.__br->bufs()[__wr.__pb.__tail_shadow & (__io_pb_entries - 1u)];
+  __b->addr = reinterpret_cast<u64>(__wr.__pb.__arena + static_cast<usize>(__bid) * __io_pb_sz);
+  __b->len = __io_pb_sz;
+  __b->bid = __bid;
+  ++__wr.__pb.__tail_shadow;
+  micron::atom::store(&__wr.__pb.__br->tail, static_cast<u16>(__wr.__pb.__tail_shadow), __ATOMIC_RELEASE);
+  __io_unlock(__wr.__pb.__lk);
+}
+
+inline void
+__io_pb_shutdown(__wring &__wr) noexcept      // owner thread, before the ring fd closes
+{
+  if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) return;
+  __wr.__pb.__state.store(0u, micron::memory_order_release);
+  __io_lock(__wr.__pb.__lk);
+  __io_unlock(__wr.__pb.__lk);
+  (void)__wr.__r.unregister_pbuf_ring(__io_pb_bgid);
+  micron::munmap(reinterpret_cast<addr_t *>(__wr.__pb.__br), static_cast<usize>(__io_pb_entries) * sizeof(micron::uring::buf));
+  micron::munmap(reinterpret_cast<addr_t *>(__wr.__pb.__arena), static_cast<usize>(__io_pb_entries) * __io_pb_sz);
+  __wr.__pb.__br = nullptr;
+  __wr.__pb.__arena = nullptr;
+  __wr.__pb.__tail_shadow = 0;
+}
+
 inline u32
 __io_ring_flags(u32 __nworkers) noexcept
 {
@@ -181,6 +393,9 @@ __io_worker_ring_shutdown(u32 __id) noexcept
 {
   __wring &__wr = __io_rings[__id];
   if ( __wr.__live.get(micron::memory_order_acquire) == 0 ) return;
+  __io_flush_staged(__wr);
+  __io_pb_shutdown(__wr);      // unregister before the ring fd closes
+
   __wr.__live.store(0, micron::memory_order_release);
   __io_lock(__wr.__cq_lk);
   __wr.__r.shutdown();
@@ -220,6 +435,7 @@ __io_submit_own(__wring &__wr, const micron::uring::sqe &__q, u64 __ud) noexcept
 #if defined(MICRON_CORO_STATS)
     __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);
 #endif
+    __wr.__staged = 0;
     (void)__wr.__r.enter(0);
     __s = __wr.__r.get_sqe();
     if ( __s == nullptr ) return false;
@@ -227,6 +443,15 @@ __io_submit_own(__wring &__wr, const micron::uring::sqe &__q, u64 __ud) noexcept
   *__s = __q;
   __s->user_data = __ud;
   __wr.__r.advance_sq();
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+  if ( ++__wr.__staged < __io_stage_max ) {
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.submits.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    return true;
+  }
+  __wr.__staged = 0;
+#endif
   (void)__wr.__r.enter(0);
 #if defined(MICRON_CORO_STATS)
   __wr.__stat.submits.fetch_add(1, micron::memory_order_relaxed);
@@ -277,6 +502,7 @@ __io_submit_own2(__wring &__wr, const micron::uring::sqe &__a, u64 __ud_a, const
 #if defined(MICRON_CORO_STATS)
     __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);
 #endif
+    __wr.__staged = 0;
     (void)__wr.__r.enter(0);
     __s0 = __wr.__r.peek_sqe(0);
     __s1 = __wr.__r.peek_sqe(1);
@@ -287,6 +513,16 @@ __io_submit_own2(__wring &__wr, const micron::uring::sqe &__a, u64 __ud_a, const
   *__s1 = __b;
   __s1->user_data = __ud_b;
   __wr.__r.advance_sq(2);
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+  __wr.__staged += 2;
+  if ( __wr.__staged < __io_stage_max ) {
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.submits.fetch_add(2, micron::memory_order_relaxed);
+#endif
+    return true;
+  }
+  __wr.__staged = 0;
+#endif
   (void)__wr.__r.enter(0);
 #if defined(MICRON_CORO_STATS)
   __wr.__stat.submits.fetch_add(2, micron::memory_order_relaxed);

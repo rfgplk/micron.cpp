@@ -21,26 +21,7 @@
 #include "paths.hpp"
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-// io::flash -- filesystem io backed ENTIRELY by io_uring, tuned for throughput and low latency.
-//
-// three api styles, matching the rest of io_v3:
-//   plumbing  -- free fns over raw fds (flash::read/pread/write/fsync/..., i32 + fd_t overloads,
-//                return max_t, negative == -errno); a queue layer (queue_*/submit/reap/drain) and a
-//                linked-sqe chain builder for batching
-//   porcelain -- class flash::file (RAII, cursor) + fsys-mirror free fns (open_file/read_file/
-//                write_file/copy/rename/...); return option<T, io::error_t>; caller-target
-//                overloads (read_file(p, target[, eng]) / read_files(paths, target)) return max_t
-//   functional -- with_file/map_files/fold_files/modify + curried *_c combinators
-//
-// flash is SYNCHRONOUS-COMPLETING: every call submits and waits inline; batching (read_files et al)
-// is where io_uring beats the synchronous posix layer. it does NOT use the coroutine runtime and
-// coexists with it (separate ring instances).
-//
-// UNLIKE the posix fsys layer, flash::write_file/append_file/copy do NOT implicitly fsync (io_v3
-// dropped implicit O_SYNC) -- use write_file_sync / open_opts.sync for durability.
-//
-// availability is runtime-gated by kernel version + ring probe (see flash::tier); there is no posix
-// fallback -- below 5.6 the path-level surface returns -error::bad_syscall. one engine per thread.
+// io::flash
 
 namespace micron
 {
@@ -61,20 +42,10 @@ enum class tier : u8 {
 
 inline constexpr u32 auto_slots = 0xffffffffu;
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// user_data namespace.
-//
-// the hazard is not that the producers overlap -- it is that a stray cqe is INDISTINGUISHABLE from a
-// live one, so a completion left over from an abandoned op lands in someone else's result array.
-// tagging makes strays identifiable, and therefore droppable:
-//
 //   bits 63..56  tag   1=oneshot 2=wave 3=chain 0xfe=reclaim(always ignored)
 //   bits 55..40  gen   wave generation, bumped per wave -- wave N-1 leakage cannot count in wave N
 //   bits 39..16  slot  per-wave item index (addresses 16M items; waves are ring-depth capped)
 //   bits 15.. 8  step  0=statx 1=open 2=read 3=write 4=fsync 5=close
-//
-// every reap site matches on tag (+gen where it has one) and consumes-and-drops anything else, so a
-// stray degrades to a wasted 16-byte read instead of a corrupted result.
 
 namespace __ud
 {
@@ -140,7 +111,7 @@ inline constexpr u8 st_close = 5;
 // tunables; aggregate with defaults (open_opts style)
 struct engine_opts {
   u32 entries = 256;        // sq depth (kernel gives cq = 2x)
-  bool sqpoll = false;      // OPT-IN kernel poll thread (burns a core); rarely useful for sync-completing flash
+  bool sqpoll = false;      // opt-in kernel poll thread (burns a core); rarely useful for sync-completing flash
   u32 sqpoll_idle_ms = 100;
   bool iopoll = false;                    // OPT-IN: dedicated O_DIRECT engines only
   u32 fixed_bufs = 8;                     // fixed-buffer slab count (0 = no pool; max 64)
@@ -149,11 +120,7 @@ struct engine_opts {
   bool register_ring = true;              // register the ring fd when >=5.18
 };
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// engine: owns one uring::ring tuned for file io. NOT thread-safe -- one engine per thread
-// (defer_taskrun additionally requires completions be reaped on the submitting thread, which flash
-// always does). init failure -> dead engine (tier::none): every op returns the bad_syscall error.
-
+// not thread safe
 class engine
 {
   uring::ring __r;
@@ -164,7 +131,7 @@ class engine
   u32 __nbufs = 0, __nfiles = 0;
   usize __buf_sz = 0;
   u64 __seq = 0;            // internal user_data sequencer
-  u16 __gen = 0;            // wave generation (see __ud)
+  u16 __gen = 0;            // wave generation
   u32 __pool_want = 0;      // configured pool geometry; the slab is allocated on first use
   usize __pool_want_sz = 0;
   tier __tier = tier::none;
@@ -182,7 +149,7 @@ class engine
   {
     u32 f = 0;
     if ( o.sqpoll ) {
-      f |= uring::setup_sqpoll;      // sqpoll drives its own reaping; skip the taskrun ladder
+      f |= uring::setup_sqpoll;
     } else {
       if ( kernel::has(kernel::feature::uring_single_issuer) && kernel::has(kernel::feature::uring_defer_taskrun) )
         f |= uring::setup_single_issuer | uring::setup_defer_taskrun;
@@ -212,9 +179,6 @@ public:
     uring::params p{};
     p.flags = __setup_flags(o);
     if ( o.sqpoll ) p.sq_thread_idle = o.sqpoll_idle_ms;
-    // params-carrying overload: the flags-only form builds a fresh params{} internally, which
-    // silently dropped sq_thread_idle -- and sqpoll with idle==0 parks the poll thread immediately,
-    // making sqpoll=true strictly worse than sqpoll=false.
     int rc = __r.init_best(o.entries, p);
     if ( rc != 0 ) {
       __tier = tier::none;
@@ -224,15 +188,10 @@ public:
 
     if ( o.register_ring && kernel::has(kernel::feature::uring_reg_ring_fd) ) (void)__r.register_ring_fd();
 
-    // fixed-buffer pool geometry is recorded here but the slab is NOT allocated until the first
-    // acquire_buf(). register_buffers pins every page via pin_user_pages, so eagerly building the
-    // default 8 x 256 KiB pool cost every thread that ever touched default_engine() 2 MiB of
-    // resident pinned RSS plus two syscalls -- for a pool the porcelain and batch layers never use.
     __pool_want = o.fixed_bufs > 64 ? 64 : o.fixed_bufs;
     __pool_want_sz = o.fixed_buf_size;
     if ( __pool_want_sz == 0 ) __pool_want = 0;
 
-    // sparse fixed-file table -> tier::fixed (non-fatal: failure drops to tier::basic)
     if ( __tier == tier::basic && o.fixed_files != 0 && kernel::has(kernel::feature::uring_files_sparse) ) {
       u32 nf = o.fixed_files == auto_slots ? o.entries : o.fixed_files;
       if ( nf > 256 ) nf = 256;
@@ -277,10 +236,6 @@ public:
     return __r;
   }
 
-  // sqe acquisition that flushes the sq (enter(0)) when full. nullptr when the ring is dead, or
-  // when the sq is STILL full after the flush. the liveness test is load-bearing: get_sqe()
-  // dereferences sq_tail unconditionally, and on a dead ring that pointer is null -- the chain
-  // builders reach here without an outer __guard.
   [[nodiscard]] uring::sqe *
   sqe() noexcept
   {
@@ -293,10 +248,6 @@ public:
     }
     return s;
   }
-
-  // %%%% staged submission: fill stage(0..n-1), then publish(n) once. see ring::peek_sqe.
-  // NEVER call submit()/submit_wait() between stage() and publish() -- the staged entries are not
-  // yet visible to the kernel and an intervening enter() would split the batch.
 
   [[nodiscard]] uring::sqe *
   stage(u32 k) noexcept
@@ -318,7 +269,6 @@ public:
     return __r.live() ? __r.sq_space_left() : 0;
   }
 
-  // bump and return the wave generation
   [[nodiscard]] u16
   next_gen() noexcept
   {
@@ -343,15 +293,12 @@ public:
     return static_cast<i32>(__r.submit_and_wait(n));
   }
 
-  // tagged so a one-shot's completion can never be mistaken for a wave or chain entry
   [[nodiscard]] u64
   next_seq() noexcept
   {
     return __ud::oneshot(++__seq);
   }
 
-  // reap cqes until the one tagged `ud` lands; returns its res (or a negative enter error). stray
-  // cqes (from other in-flight work) are discarded -- safe for the single-op plumbing path.
   i32
   await(u64 ud) noexcept
   {
@@ -363,9 +310,6 @@ public:
     }
   }
 
-  // %%%% fixed-buffer pool
-
-  // reports the CONFIGURED pool, whether or not the slab has been materialised yet
   [[nodiscard]] bool
   has_pool() const noexcept
   {
@@ -384,8 +328,6 @@ public:
     return __nbufs != 0 ? __nbufs : __pool_want;
   }
 
-  // materialise the slab + register it. called on first acquire_buf; non-fatal on failure (the
-  // pool simply stays disabled and acquire_buf reports -EAGAIN).
   [[gnu::noinline]] bool
   __realise_pool() noexcept
   {
@@ -395,7 +337,7 @@ public:
     const usize total = static_cast<usize>(nb) * __pool_want_sz;
     void *p = micron::mmap(nullptr, total, prot_read | prot_write, map_private | map_anonymous, -1, 0);
     if ( uring::ring::__map_failed(p) ) {
-      __pool_want = 0;      // do not retry on every acquire
+      __pool_want = 0;
       return false;
     }
     __pool = reinterpret_cast<byte *>(p);
@@ -414,7 +356,6 @@ public:
     return true;
   }
 
-  // borrow a slab slot; -EAGAIN when exhausted (or when the pool cannot be materialised)
   i32
   acquire_buf(byte *&out, usize &cap, u16 &index) noexcept
   {
@@ -435,8 +376,6 @@ public:
   {
     if ( index < __nbufs ) __buf_free |= 1ull << index;
   }
-
-  // %%%% fixed-file table
 
   [[nodiscard]] bool
   has_file_slots() const noexcept
@@ -463,11 +402,6 @@ public:
   }
 };
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// per-thread default engine. noinline: micthread fibers that migrate across threads must re-resolve
-// the TLS address on every call (see micthread/tls.hpp) -- never cache the reference across a
-// suspension point. flash calls do not suspend, so only preemptive migration could bite.
-
 [[gnu::noinline]] inline engine &
 default_engine() noexcept
 {
@@ -475,7 +409,6 @@ default_engine() noexcept
   return __e;
 }
 
-// borrowed fixed-buffer slab; returns its slot on destruction (move-only)
 struct pool_buf {
   byte *data = nullptr;
   usize cap = 0;
@@ -535,22 +468,16 @@ acquire_buf(engine &eng = default_engine())
   return micron::option<pool_buf, io::error_t>{ micron::move(b) };
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// internal helpers
-
 namespace __impl
 {
-inline constexpr u32 __max_chunk = 1u << 30;      // per-sqe transfer cap (sqe.len is u32)
+inline constexpr u32 __max_chunk = 1u << 30;
 
-// dead-engine guard
 [[gnu::always_inline]] inline i32
 __guard(engine &eng) noexcept
 {
   return eng.live() ? 0 : -error::bad_syscall;
 }
 
-// one positional read/write op with short-io + EINTR continuation. op is op_read/op_write.
-// off == -1 uses the file position (advances); otherwise absolute, resumed by += done.
 template<bool Write>
 inline max_t
 __rw(engine &eng, i32 fd, void *buf, usize cnt, u64 off) noexcept
@@ -586,13 +513,8 @@ __rw(engine &eng, i32 fd, void *buf, usize cnt, u64 off) noexcept
   return static_cast<max_t>(done);
 }
 
-// initial whole-file read reservation. big enough that the overwhelming majority of files finish
-// in one read, small enough not to waste a page on tiny ones.
 inline constexpr usize __probe_size = 64 * 1024;
 
-// __fill / __finish_large live in a reopened __impl below, after flash::statx is declared
-
-// per-file state threaded through the batch waves
 struct __bslot {
   i32 fd = -1;
   i32 err = 0;
@@ -600,8 +522,6 @@ struct __bslot {
   u64 done = 0;
 };
 
-// how many files to keep in flight. every in-flight slot pins a destination buffer, and
-// parallelism saturates well before the sq limit.
 [[gnu::always_inline]] inline u32
 __batch_window(engine &eng, usize remaining) noexcept
 {
@@ -612,26 +532,6 @@ __batch_window(engine &eng, usize remaining) noexcept
   return remaining ? static_cast<u32>(remaining) : 1;
 }
 
-// %%%% wave runner
-//
-// the caller stages N sqes (eng.stage(0..N-1)), tags every one ud_wave(gen, slot, step), and calls
-// eng.publish(N). this then submits and reaps them. three invariants, each fixing a real defect:
-//
-//   1. the wait count is THIS wave's published count minus whatever the kernel would not take,
-//      never a raw loop counter and never submit()'s return value. enter() can short-submit and
-//      re-credit to_submit, so `submit_wait(batch); while (got < batch) wait_cqe()` blocks forever
-//      on completions that were never submitted. summing submit() instead is wrong in the other
-//      direction: an sqpoll ring always reports 0 (the poll thread drains the sq itself), which
-//      abandons the entire wave unreaped, and any sqes a queue_* left pending get counted as ours,
-//      so the loop waits for completions that can never match and hangs.
-//   2. completions are matched on tag+gen. anything else -- a stray from an abandoned op, a
-//      reclaim close, a previous wave's leakage -- is consumed and dropped instead of being
-//      written into this wave's result array.
-//   3. the cq is drained in passes, so cq_head takes one release-store per pass rather than one
-//      per completion.
-//
-// dispatch(slot, step, res) is invoked per matching completion, in arrival order.
-// `expect` is the number of sqes THIS wave published (eng.publish(expect)).
 template<typename Dispatch>
 inline i32
 __run_wave(engine &eng, u8 tag, u16 gen, u32 expect, Dispatch &&d) noexcept
@@ -639,19 +539,13 @@ __run_wave(engine &eng, u8 tag, u16 gen, u32 expect, Dispatch &&d) noexcept
   uring::ring &r = eng.ring();
   if ( expect == 0 ) return 0;
 
-  // hand everything pending to the kernel. enter() re-credits a short submit, so keep going while
-  // the queue is still draining and stop the moment it stalls rather than spinning.
   for ( ;; ) {
     const u32 before = r.to_submit;
     if ( before == 0 ) break;
-    if ( r.submit() < 0 ) break;             // fatal
-    if ( r.to_submit >= before ) break;      // the kernel took nothing this pass
+    if ( r.submit() < 0 ) break;
+    if ( r.to_submit >= before ) break;
   }
 
-  // how many of OUR entries reached the kernel. this wave was published last, so anything still
-  // pending is the tail of it; everything ahead belonged to whoever queued before us. on an sqpoll
-  // ring enter() has already zeroed to_submit (the poll thread owns the sq), so left == 0 and the
-  // whole wave is correctly treated as in flight.
   const u32 left = r.to_submit;
   const u32 in_flight = left >= expect ? 0u : expect - left;
   if ( in_flight == 0 ) return 0;
@@ -665,7 +559,6 @@ __run_wave(engine &eng, u8 tag, u16 gen, u32 expect, Dispatch &&d) noexcept
     u32 matched = 0;
     u32 seen = 0;
     if ( r.__cqe_mixed ) [[unlikely]] {
-      // mixed rings have a variable cqe stride; for_each_cqe cannot walk them
       uring::cqe c{};
       while ( r.peek_cqe(&c) ) {
         seen++;
@@ -684,7 +577,7 @@ __run_wave(engine &eng, u8 tag, u16 gen, u32 expect, Dispatch &&d) noexcept
     }
     got += matched;
     if ( seen == 0 ) {
-      if ( ++idle > 3 ) break;      // the kernel says ready but yields nothing: bail rather than spin
+      if ( ++idle > 3 ) break;
     } else {
       idle = 0;
     }
@@ -692,13 +585,6 @@ __run_wave(engine &eng, u8 tag, u16 gen, u32 expect, Dispatch &&d) noexcept
   return 0;
 }
 
-// stage up to `count` entries -- fill(sqe*, i) returns false to skip index i -- publish once, then
-// submit and reap. staging never calls enter(), so the whole wave reaches the kernel in one
-// advance_sq + one io_uring_enter regardless of count. returns the number staged.
-//
-// if the sq cannot hold the whole wave, staging simply stops early; the wave completes with what
-// fits and the caller's loop picks up the remainder next pass. that is safe precisely because
-// __run_wave derives its wait count from what enter() accepted rather than from `count`.
 template<typename Fill, typename Dispatch>
 inline u32
 __stage_and_run(engine &eng, u32 count, u8 step, Fill &&fill, Dispatch &&d) noexcept
@@ -709,7 +595,7 @@ __stage_and_run(engine &eng, u32 count, u8 step, Fill &&fill, Dispatch &&d) noex
   for ( u32 i = 0; i < count && staged < room; i++ ) {
     uring::sqe *s = eng.stage(staged);
     if ( s == nullptr ) break;
-    if ( !fill(s, i) ) continue;      // slot skipped: the staged slot is simply reused
+    if ( !fill(s, i) ) continue;
     s->user_data = __ud::wave(gen, i, step);
     staged++;
   }
@@ -719,9 +605,6 @@ __stage_and_run(engine &eng, u32 count, u8 step, Fill &&fill, Dispatch &&d) noex
   return staged;
 }
 };      // namespace __impl
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// plumbing: single-op free fns (i32 + fd_t overload pairs, mirroring io.hpp)
 
 template<typename T>
 max_t
@@ -779,7 +662,6 @@ pwrite(fd_t fd, const T *buf, usize cnt, u64 off, engine &eng = default_engine()
   return __impl::__rw<true>(eng, fd.fd, const_cast<T *>(buf), cnt * sizeof(T), off);
 }
 
-// single-op that preps via a caller lambda and waits for the one completion
 template<typename Fill>
 inline max_t
 __oneshot(engine &eng, Fill &&fill) noexcept
@@ -840,7 +722,6 @@ fadvise(i32 fd, u64 off, u64 len, i32 advice, engine &eng = default_engine())
   return __oneshot(eng, [=](uring::sqe *s) { uring::prep_fadvise(s, fd, off, static_cast<u32>(len), advice); });
 }
 
-// statx into a caller struct (AT_EMPTY_PATH on the fd)
 inline max_t
 statx(i32 fd, posix::statx_t &out, engine &eng = default_engine())
 {
@@ -848,7 +729,6 @@ statx(i32 fd, posix::statx_t &out, engine &eng = default_engine())
   return __oneshot(eng, [fd, &out](uring::sqe *s) { uring::prep_statx(s, fd, "", posix::at_empty_path, posix::statx_basic_stats, &out); });
 }
 
-// fixed-buffer io through the engine pool
 inline max_t
 read_fixed(i32 fd, pool_buf &b, usize cnt, u64 off, engine &eng = default_engine())
 {
@@ -864,10 +744,6 @@ write_fixed(i32 fd, const pool_buf &b, usize cnt, u64 off, engine &eng = default
   u16 idx = b.index;
   return __oneshot(eng, [=, &b](uring::sqe *s) { uring::prep_write_fixed(s, fd, b.data, static_cast<u32>(cnt), off, idx); });
 }
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// plumbing: queue layer (prep only, no syscall; user_data comes back in the cqe). buffers/paths
-// must stay alive until the matching cqe is reaped.
 
 inline i32
 queue_read(engine &eng, i32 fd, void *buf, u32 n, u64 off, u64 user_data, u8 sqe_flags = 0)
@@ -959,7 +835,6 @@ wait(engine &eng, uring::cqe &out) noexcept
   return eng.ring().wait_cqe(&out);
 }
 
-// wait for n cqes, invoke fn(user_data, res) per completion; returns 0 or the first enter error
 template<typename Fn>
   requires micron::invocable<Fn, u64, i32>
 i32
@@ -978,28 +853,19 @@ drain(engine &eng, u32 n, Fn &&fn)
   return 0;
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// linked-sqe chain: ops run strictly in order in ONE submission. a failure severs the rest
-// (-ECANCELED). open() targets a fixed-file slot on tier::fixed so later ops can name the fd before
-// the open completes.
-
 inline constexpr usize chain_max = 8;
 
 class chain
 {
   engine &__e;
   i32 __res[chain_max];
-  u8 __tag[chain_max];      // 0=other, 1=open(slot), 2=close(slot)
+  u8 __tag[chain_max];
   u32 __n = 0;
   i32 __slot = -1;
   i32 __build_err = 0;
   u16 __gen = 0;
   uring::sqe *__prev = nullptr;
 
-  // stage (not publish) the next entry. staging is what makes the link flag safe: __prev is still
-  // owned by userspace, so OR-ing sqe_io_link into it cannot race a kernel that has already been
-  // handed the entry. the old code published each sqe as it was built, so a nested enter(0) inside
-  // eng.sqe() could hand the kernel a half-linked chain.
   uring::sqe *
   __next(u8 tag) noexcept
   {
@@ -1010,12 +876,10 @@ class chain
     }
     uring::sqe *s = __e.stage(__n);
     if ( s == nullptr ) {
-      // the sq cannot hold the rest of this chain. a PARTIAL chain must never be submitted, so
-      // record the failure and let run() report it without publishing anything.
       __build_err = -error::try_again;
       return nullptr;
     }
-    if ( __prev != nullptr ) __prev->flags |= uring::sqe_io_link;      // link the PREVIOUS op to this one
+    if ( __prev != nullptr ) __prev->flags |= uring::sqe_io_link;
     __tag[__n] = tag;
     __prev = s;
     return s;
@@ -1040,15 +904,10 @@ public:
     if ( __slot >= 0 ) __e.release_slot(static_cast<u32>(__slot));
   }
 
-  // tier::fixed only: open into a fixed-file slot the chain owns
   chain &
   open(const char *path, i32 flags, u32 mode = posix::mode_file) noexcept
   {
     if ( __build_err != 0 ) return *this;
-    // below tier::fixed there are no direct descriptors, so a later op cannot name the fd this
-    // open will produce -- the chain is unbuildable, not merely degraded. previously this returned
-    // silently and every following op fell back to fd -1, so the whole chain ran against -1 and
-    // reported EBADF with no hint as to why.
     if ( __e.level() != tier::fixed ) {
       __build_err = -error::bad_syscall;
       return *this;
@@ -1063,14 +922,14 @@ public:
     if ( s == nullptr ) return *this;
     uring::prep_openat_direct(s, posix::at_fdcwd, path, static_cast<u32>(flags), mode, static_cast<u32>(slot));
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
   chain &
   read(void *buf, u32 n, u64 off) noexcept
   {
-    if ( __slot < 0 ) {      // no owning open() -- would have targeted fd -1
+    if ( __slot < 0 ) {
       if ( __build_err == 0 ) __build_err = -error::bad_syscall;
       return *this;
     }
@@ -1079,7 +938,7 @@ public:
     uring::prep_read(s, __slot, buf, n, off);
     uring::sqe_set_fixed_file(s);
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
@@ -1090,14 +949,14 @@ public:
     if ( s == nullptr ) return *this;
     uring::prep_read(s, fd, buf, n, off);
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
   chain &
   write(const void *buf, u32 n, u64 off) noexcept
   {
-    if ( __slot < 0 ) {      // no owning open() -- would have targeted fd -1
+    if ( __slot < 0 ) {
       if ( __build_err == 0 ) __build_err = -error::bad_syscall;
       return *this;
     }
@@ -1106,7 +965,7 @@ public:
     uring::prep_write(s, __slot, buf, n, off);
     uring::sqe_set_fixed_file(s);
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
@@ -1117,14 +976,14 @@ public:
     if ( s == nullptr ) return *this;
     uring::prep_write(s, fd, buf, n, off);
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
   chain &
   fsync() noexcept
   {
-    if ( __slot < 0 ) {      // no owning open() -- would have targeted fd -1
+    if ( __slot < 0 ) {
       if ( __build_err == 0 ) __build_err = -error::bad_syscall;
       return *this;
     }
@@ -1133,7 +992,7 @@ public:
     uring::prep_fsync(s, __slot);
     uring::sqe_set_fixed_file(s);
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
@@ -1144,14 +1003,14 @@ public:
     if ( s == nullptr ) return *this;
     uring::prep_fsync(s, fd);
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
   chain &
   close() noexcept
   {
-    if ( __slot < 0 ) {      // no owning open() -- would have targeted fd -1
+    if ( __slot < 0 ) {
       if ( __build_err == 0 ) __build_err = -error::bad_syscall;
       return *this;
     }
@@ -1159,7 +1018,7 @@ public:
     if ( s == nullptr ) return *this;
     uring::prep_close_direct(s, static_cast<u32>(__slot));
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
@@ -1170,26 +1029,23 @@ public:
     if ( s == nullptr ) return *this;
     uring::prep_close(s, fd);
     s->user_data = __ud::chain_at(__gen, __n);
-    __n++;      // staged only; run() publishes the whole chain with one advance_sq
+    __n++;
     return *this;
   }
 
-  // submit the whole chain and reap all cqes. maps -ECANCELED (severed link) to the first real
-  // -errno; on a mid-chain failure after the open succeeded, issues a compensating close of the
-  // slot so nothing leaks. returns 0 or the first real error.
   i32
   run() noexcept
   {
-    // a build failure means nothing was published; report it without submitting a partial chain
+
     if ( __build_err != 0 ) return __build_err;
     if ( i32 e = __impl::__guard(__e) ) [[unlikely]]
       return e;
     if ( __n == 0 ) return 0;
 
-    __prev = nullptr;      // last op carries no link flag (we only set link on append)
-    __e.publish(__n);      // ONE advance_sq for the whole chain
+    __prev = nullptr;
+    __e.publish(__n);
 
-    u32 done = 0;      // bitmask of indices that actually completed
+    u32 done = 0;
     bool open_ok = false;
     (void)__impl::__run_wave(__e, __ud::tag_chain, __gen, __n, [&](u32 idx, u8, i32 res) {
       if ( idx >= __n ) return;
@@ -1198,10 +1054,6 @@ public:
       if ( __tag[idx] == 1 && res >= 0 ) open_ok = true;
     });
 
-    // first REAL error in chain order (-ECANCELED is just link severance, not the cause). scan by
-    // index rather than arrival so the answer does not depend on completion ordering, and only
-    // consider slots that actually landed -- __res defaults to -1, which would otherwise read as
-    // EPERM for an op whose cqe never arrived.
     i32 first_err = 0;
     for ( u32 i = 0; i < __n; i++ )
       if ( ((done >> i) & 1u) != 0 && __res[i] < 0 && __res[i] != -error::operation_canceled ) {
@@ -1209,8 +1061,6 @@ public:
         break;
       }
 
-    // the open slot leaks if the linked close was severed -- compensate. tagged reclaim so its
-    // completion is dropped by every reap loop rather than mistaken for someone's result.
     if ( open_ok && __slot >= 0 ) {
       bool closed = false;
       for ( u32 i = 0; i < __n; i++ )
@@ -1243,28 +1093,14 @@ public:
   }
 };
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// availability
-
 [[nodiscard]] inline bool
 available(engine &eng = default_engine()) noexcept
 {
   return eng.live() && eng.level() >= tier::basic;
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// porcelain: class flash::file. standalone (not os_file-derived: needs a noexcept ctor and the fd_t
-// inline-errno convention). move-only; explicit cursor (uring is positional; *_at forms leave it).
-
-// the recorded name is a diagnostic label and nothing else -- file::name() has no caller in tree,
-// and every operation goes through the fd. it used to be sstr<path_max>, which made sizeof(file)
-// ~4128 bytes and cost a 4 KiB memset on construct plus another on destroy (micron::sstring zeroes
-// under Sf=true, and its MOVE ctor memcpys then zeroes the source, so moving is no cheaper than
-// copying). measured: 356 ns to build an sstr<4096> vs 49 ns for an sstr<128>, on every open.
 inline constexpr usize name_cap = 128;
 
-// copy the TRAILING name_cap-1 bytes -- for a long path the basename and its parent carry the
-// diagnostic value, the leading directories do not.
 inline micron::sstr<name_cap>
 __short_name(const char *p) noexcept
 {
@@ -1360,8 +1196,6 @@ public:
     return __handle.fd;
   }
 
-  // NOTE: truncated to the TRAILING name_cap-1 bytes for paths longer than that (see name_cap).
-  // this is a diagnostic label, not a handle -- reopen from the path you opened with.
   [[nodiscard]] const micron::sstr<name_cap> &
   name() const noexcept
   {
@@ -1387,7 +1221,6 @@ public:
     __cursor = 0;
   }
 
-  // raw byte io at the cursor / at an explicit offset
   max_t
   read(void *p, usize n)
   {
@@ -1424,7 +1257,6 @@ public:
     return flash::pwrite(__handle.fd, static_cast<const byte *>(p), n, off, *__eng);
   }
 
-  // universal write tiers (bulk contiguous / literal / cstr / trivially-copyable object)
   template<typename T>
     requires(is_string<T> || (is_contiguous_container<T> && micron::is_trivially_copyable_v<typename T::value_type>))
   max_t
@@ -1457,7 +1289,6 @@ public:
     return write(static_cast<const void *>(&obj), sizeof(T));
   }
 
-  // whole-remainder value read
   template<typename T>
     requires((is_string<T> || is_contiguous_container<T>) && micron::is_trivially_copyable_v<typename T::value_type>)
   T
@@ -1479,7 +1310,7 @@ public:
       out.set_size(static_cast<usize>(r) / sizeof(typename T::value_type));
       return out;
     }
-    // size-0 (procfs/sysfs): chunk to EOF
+
     if constexpr ( sizeof(typename T::value_type) == 1 && requires(T t, typename T::value_type v) { t.push_back(v); } ) {
       byte chunk[4096];
       for ( ;; ) {
@@ -1491,7 +1322,6 @@ public:
     return out;
   }
 
-  // caller-sized fill
   template<typename T>
     requires((is_string<T> || is_contiguous_container<T>) && micron::is_trivially_copyable_v<typename T::value_type>)
   max_t
@@ -1500,7 +1330,6 @@ public:
     return read(static_cast<void *>(out.data()), out.size() * sizeof(typename T::value_type));
   }
 
-  // stat / size
   i32
   stat(posix::statx_t &out)
   {
@@ -1565,14 +1394,11 @@ public:
     if ( __handle.fd >= 0 && __eng != nullptr && __eng->live() ) {
       (void)__oneshot(*__eng, [fd = __handle.fd](uring::sqe *s) { uring::prep_close(s, fd); });
     } else if ( __handle.fd >= 0 ) {
-      (void)micron::syscall(SYS_close, __handle.fd);      // ring died mid-life: fall back to a raw close
+      (void)micron::syscall(SYS_close, __handle.fd);
     }
     __handle = fd_t{ posix::invalid_fd };
   }
 
-  // %%%% functional members
-
-  // producer: f.write([]{ return build(); })
   template<typename Fn>
     requires(fn_like<Fn> && micron::is_invocable_v<Fn> && !micron::is_void_v<micron::invoke_result_t<Fn>>)
   max_t
@@ -1582,7 +1408,6 @@ public:
     return write(v);
   }
 
-  // consumer: f.read([](string s){ ... }) -> option<R, error_t>
   template<typename Fn>
     requires(micron::is_invocable_v<Fn, micron::string>)
   auto
@@ -1600,7 +1425,6 @@ public:
     }
   }
 
-  // in-place rewrite: T -> T
   template<typename Fn>
     requires(micron::is_invocable_v<Fn, micron::string> && is_string<micron::invoke_result_t<Fn, micron::string>>)
   max_t
@@ -1616,16 +1440,9 @@ public:
   }
 };
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// fsys-mirror free fns
-
 namespace __impl
 {
-// read into buf[got .. cap) until it is full or EOF. returns bytes added, or -errno.
-//
-// ONE read_at call, deliberately: flash::pread already continues internally until the request is
-// satisfied or EOF, so on return `got` is either cap (buffer full, maybe more file) or the true
-// file size. an outer loop here would only add a redundant zero-length read round trip.
+
 template<typename F, typename T>
 inline max_t
 __fill(F &f, T &buf, usize &got, usize cap) noexcept
@@ -1637,14 +1454,6 @@ __fill(F &f, T &buf, usize &got, usize cap) noexcept
   return r;
 }
 
-// the probe filled, so the file is bigger than __probe_size. ask for the exact size ONCE and size
-// the buffer ONCE.
-//
-// this is where a statx earns its keep, and it is an ALLOCATION trade rather than a syscall one: a
-// 1 MiB allocation costs ~1.5 ms in this allocator (measured -- read_file<T> at 1 MiB is 13x
-// read_file(p,target), which differs only in reusing the caller's buffer), against ~19 us for the
-// io-wq statx punt. geometric growth here measured 4.6x SLOWER than one exact reservation. small
-// files never reach this path and so never pay the statx at all.
 template<typename F, typename T>
 inline i32
 __finish_large(F &f, T &buf, usize &got, usize cap, engine &eng) noexcept
@@ -1653,13 +1462,13 @@ __finish_large(F &f, T &buf, usize &got, usize cap, engine &eng) noexcept
   const max_t st = flash::statx(f.raw_fd(), sx, eng);
   if ( st >= 0 && sx.stx_size > 0 ) {
     const usize want = static_cast<usize>(sx.stx_size);
-    if ( want <= got ) return 0;      // the probe already covers the whole file -- do NOT grow
+    if ( want <= got ) return 0;
     buf.reserve(want + 1);
     buf.set_size(want);
     const max_t r = __fill(f, buf, got, want);
     return r < 0 ? static_cast<i32>(r) : 0;
   }
-  // no usable size (procfs and friends report 0) -- fall back to geometric growth to EOF
+
   while ( got == cap ) {
     cap *= 4;
     buf.reserve(cap + 1);
@@ -1685,16 +1494,6 @@ create_file(const io::path_t &p, u32 mode = posix::mode_file, engine &eng = defa
   return flash::file(p, modes::write, o, eng);
 }
 
-// whole-file read: open, then read to EOF into a geometrically-grown reservation.
-//
-// there is deliberately NO statx size probe. IORING_OP_STATX has no inline completion path -- the
-// kernel always punts it to an io-wq worker, measured at ~19 us on 7.1.3 against ~1.3 us for a
-// cached read on the same ring. the probe alone was roughly 60% of this function's cost, and it
-// bought nothing a short read does not already tell us. it also made the size a TOCTOU guess: a
-// file that grew between the statx and the read was silently truncated to the stale size.
-//
-// (batched statx is a different story -- io-wq punts run concurrently, so stat_many amortises them
-// to ~1 us/file. read_files keeps its statx wave for exactly that reason.)
 template<typename T = micron::string>
   requires((is_string<T> || is_contiguous_container<T>) && sizeof(typename T::value_type) == 1)
 micron::option<T, io::error_t>
@@ -1713,7 +1512,7 @@ read_file(const io::path_t &p, engine &eng = default_engine())
   usize got = 0;
   const max_t pr = __impl::__fill(f, out, got, cap);
   if ( pr < 0 ) return Ret{ io::error_t(static_cast<i32>(pr)) };
-  if ( got < cap ) {      // EOF inside the probe: the common case, one allocation and no statx
+  if ( got < cap ) {
     out.set_size(got);
     return Ret{ micron::move(out) };
   }
@@ -1722,10 +1521,6 @@ read_file(const io::path_t &p, engine &eng = default_engine())
   return Ret{ micron::move(out) };
 }
 
-// whole-file read into a caller-provided target (replace semantics; reuses target's capacity).
-// growable targets mirror read_file<T>; fixed-capacity targets must hold the whole file or
-// -error::file_too_big. returns bytes read or -errno; on read failure the target is emptied, on
-// open/stat failure it is untouched
 template<typename T>
   requires((is_string<T> || is_contiguous_container<T>) && sizeof(typename T::value_type) == 1)
 max_t
@@ -1740,9 +1535,7 @@ read_file(const io::path_t &p, T &target, engine &eng = default_engine())
                    t.reserve(n);
                    t.set_size(n);
                  } ) {
-    // growable: probe-and-grow, starting from whatever the target already has reserved. reusing
-    // the caller's capacity is the whole point of this overload -- for a 1 MiB file it is the
-    // difference between one allocation per call and none.
+
     usize cap = __impl::__probe_size;
     if constexpr ( requires(T t) { t.capacity(); } ) {
       if ( target.capacity() > cap + 1 ) cap = target.capacity() - 1;
@@ -1764,9 +1557,7 @@ read_file(const io::path_t &p, T &target, engine &eng = default_engine())
     target.set_size(got);
     return static_cast<max_t>(got);
   } else if constexpr ( requires(T t) { t.max_size(); } ) {
-    // fixed-capacity fill: read up to capacity, then probe one more byte. without a size known up
-    // front that probe is what distinguishes "exactly fits" from "file is larger" -- a silent
-    // prefix would be indistinguishable from a smaller file.
+
     const usize cap = target.max_size();
     usize got = 0;
     while ( got < cap ) {
@@ -1783,12 +1574,10 @@ read_file(const io::path_t &p, T &target, engine &eng = default_engine())
     if constexpr ( requires(T t, usize n) { t.set_size(n); } ) target.set_size(got);
     return static_cast<max_t>(got);
   } else {
-    return f.read(target);      // no reserve, no max_size (micron::buffer): caller-sized fill
+    return f.read(target);
   }
 }
 
-// create/truncate + write via a linked open->write->close chain (1 submission on tier::fixed). NO
-// implicit fsync (see banner).
 template<typename C>
 max_t
 write_file(const io::path_t &p, const C &c, engine &eng = default_engine())
@@ -1800,8 +1589,6 @@ write_file(const io::path_t &p, const C &c, engine &eng = default_engine())
   return f.write(c);
 }
 
-// write_file + an fsync on the SAME handle before close. this used to call write_file (openat,
-// write, close) and then reopen the file purely to fsync it -- six round trips where four do.
 template<typename C>
 max_t
 write_file_sync(const io::path_t &p, const C &c, engine &eng = default_engine())
@@ -1824,7 +1611,7 @@ append_file(const io::path_t &p, const C &c, engine &eng = default_engine())
   open_opts o{};
   flash::file f(p, modes::append, o, eng);
   if ( !f.valid() ) return f.raw_fd();
-  // O_APPEND: write at the file position (off == -1)
+
   return f.write(c);
 }
 
@@ -1874,7 +1661,6 @@ exists(const io::path_t &p, engine &eng = default_engine())
   return stat(p, eng).is_first();
 }
 
-// preferred O_DIRECT alignment (stx_dio_mem_align, >=6.1) or 4096 as a safe default
 inline u32
 dio_align(const io::path_t &p, engine &eng = default_engine())
 {
@@ -1885,16 +1671,6 @@ dio_align(const io::path_t &p, engine &eng = default_engine())
   return a ? a : 4096;
 }
 
-// slab ping-pong copy (uring has no file-to-file copy_file_range op). NO implicit fsync.
-//
-// prefers a registered pool slab (256 KiB by default) over a stack buffer: 4x fewer round trips
-// than the old 64 KiB chunking, and no 64 KiB stack frame -- which mattered under -k freestanding,
-// where that frame was a real hazard. the pool is materialised lazily, so this is also its first
-// actual consumer.
-//
-// still strictly serialised read -> write -> read. overlapping them (fill slab B on the same wave
-// that drains slab A -- independent ops, one enter for both) is a further ~2x and is the obvious
-// next step; it is left out here because copy has exactly one regression test.
 inline max_t
 copy(const io::path_t &from, const io::path_t &to, engine &eng = default_engine())
 {
@@ -1907,9 +1683,7 @@ copy(const io::path_t &from, const io::path_t &to, engine &eng = default_engine(
 
   const i32 sfd = src.raw_fd();
   const i32 dfd = dst.raw_fd();
-  // the pool is optional (fixed_bufs == 0, or register_buffers lost to RLIMIT_MEMLOCK), so a failed
-  // acquire is an ordinary outcome, not an error: fall back to the stack. is_first() is what makes
-  // that a fallback rather than a reinterpret of the error alternative as a pool_buf.
+
   micron::option<pool_buf, io::error_t> got = acquire_buf(eng);
   pool_buf slab = got.is_first() ? micron::move(got.cast<pool_buf>()) : pool_buf{};
   byte fallback[16384];
@@ -1933,7 +1707,6 @@ copy(const io::path_t &from, const io::path_t &to, engine &eng = default_engine(
   return static_cast<max_t>(total);
 }
 
-// renameat; on EXDEV, copy + unlink (all through the ring)
 inline max_t
 move(const io::path_t &from, const io::path_t &to, engine &eng = default_engine())
 {
@@ -1943,20 +1716,6 @@ move(const io::path_t &from, const io::path_t &to, engine &eng = default_engine(
   return remove(from, eng);
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// batch: the headline. N whole-file loads in flight on one ring.
-
-// four batched waves per window -- statx / openat / read / close -- so a whole window of files
-// costs ~4 io_uring_enters instead of the 1 + 3N it used to. the previous "wave 2" was a serial
-// loop of open_file -> read -> dtor-close, three fully-blocking round trips per file, which made
-// this API measurably SLOWER than a naive posix loop.
-//
-// deliberately waves rather than N linked open->read->close chains: a chain closes the fd before
-// the caller learns the read was short, so a short read needs a reopen-and-continue repair path,
-// and links only work at tier::fixed where a later op can name the fd via a direct descriptor.
-// waves handle a short read by simply re-issuing at offset `done` with the fd still open, and run
-// identically on tier::basic and tier::fixed. the marginal syscall saving of chains is ~1 enter
-// per window.
 template<typename T = micron::string>
   requires((is_string<T> || is_contiguous_container<T>) && sizeof(typename T::value_type) == 1)
 micron::vector<micron::option<T, io::error_t>>
@@ -1972,16 +1731,13 @@ read_files(const micron::vector<io::path_t> &paths, engine &eng = default_engine
     return out;
   }
 
-  // reserve-then-size, never vector(n): the ctor value-constructs (zeroes) every element and the
-  // kernel is about to overwrite all of it anyway.
   micron::vector<posix::statx_t> sx;
   sx.reserve(n);
   sx.set_size(n);
   micron::vector<__impl::__bslot> st;
   st.reserve(n);
   for ( usize i = 0; i < n; i++ ) st.push_back(__impl::__bslot{});
-  // destination buffers, allocated up front so the vector never reallocates while the kernel holds
-  // pointers into the elements
+
   micron::vector<T> bufs;
   bufs.reserve(n);
   for ( usize i = 0; i < n; i++ ) bufs.push_back(T{});
@@ -1990,8 +1746,6 @@ read_files(const micron::vector<io::path_t> &paths, engine &eng = default_engine
   while ( base < n ) {
     const u32 W = __impl::__batch_window(eng, n - base);
 
-    // wave 1 -- statx. kept (unlike the single-file path, which drops it) precisely because io-wq
-    // punts run concurrently: serial statx is ~19 us/file, batched it is ~1 us/file.
     (void)__impl::__stage_and_run(
         eng, W, __ud::st_statx,
         [&](uring::sqe *s, u32 i) {
@@ -2006,7 +1760,6 @@ read_files(const micron::vector<io::path_t> &paths, engine &eng = default_engine
             st[base + i].want = sx[base + i].stx_size;
         });
 
-    // wave 2 -- openat
     (void)__impl::__stage_and_run(
         eng, W, __ud::st_open,
         [&](uring::sqe *s, u32 i) {
@@ -2022,16 +1775,11 @@ read_files(const micron::vector<io::path_t> &paths, engine &eng = default_engine
             st[base + i].fd = res;
         });
 
-    // a slot that was staged but whose completion never landed still has err == 0 and fd == -1,
-    // which every later wave reads as "nothing to do" -- it would fall out of the final assembly
-    // as an empty buffer wrapped in the SUCCESS alternative. an unobserved open is a failure, not
-    // an empty file. (slots skipped by the fill above already carry a real err.)
     for ( u32 i = 0; i < W; i++ ) {
       __impl::__bslot &s = st[base + i];
       if ( s.err == 0 && s.fd < 0 ) s.err = -error::io_error;
     }
 
-    // size the destinations before anything is handed to the kernel
     for ( u32 i = 0; i < W; i++ ) {
       __impl::__bslot &s = st[base + i];
       if ( s.err != 0 || s.fd < 0 || s.want == 0 ) continue;
@@ -2039,8 +1787,6 @@ read_files(const micron::vector<io::path_t> &paths, engine &eng = default_engine
       bufs[base + i].set_size(static_cast<usize>(s.want));
     }
 
-    // wave 3 -- read, re-issued for any slot that came back short (fds are still open, so this is
-    // just another wave at offset `done`; no reopen, no severed-link repair)
     for ( u32 round = 0; round < 16; round++ ) {
       bool progressed = false;
       bool interrupted = false;
@@ -2058,15 +1804,13 @@ read_files(const micron::vector<io::path_t> &paths, engine &eng = default_engine
             if ( i >= W ) return;
             __impl::__bslot &s = st[base + i];
             if ( res < 0 ) {
-              // EINTR is retryable, not an error and not progress. it has to keep the round loop
-              // alive on its own: falling out on !progressed would end the wave here and report
-              // the partially filled buffer as a complete, successful read.
+
               if ( res == -error::interrupted )
                 interrupted = true;
               else
                 s.err = res;
             } else if ( res == 0 ) {
-              s.want = s.done;      // EOF before the statx size: the file shrank under us
+              s.want = s.done;
             } else {
               s.done += static_cast<u64>(res);
               progressed = true;
@@ -2075,14 +1819,11 @@ read_files(const micron::vector<io::path_t> &paths, engine &eng = default_engine
       if ( staged == 0 || (!progressed && !interrupted) ) break;
     }
 
-    // out of rounds with bytes still owed, or a read whose completion never landed: either way the
-    // buffer is short. reporting it as a success is indistinguishable from a genuinely small file.
     for ( u32 i = 0; i < W; i++ ) {
       __impl::__bslot &s = st[base + i];
       if ( s.err == 0 && s.fd >= 0 && s.want != 0 && s.done < s.want ) s.err = -error::io_error;
     }
 
-    // wave 4 -- close. a close failure never fails the read.
     (void)__impl::__stage_and_run(
         eng, W, __ud::st_close,
         [&](uring::sqe *s_, u32 i) {
@@ -2102,7 +1843,7 @@ read_files(const micron::vector<io::path_t> &paths, engine &eng = default_engine
       continue;
     }
     if ( st[k].want == 0 ) {
-      // size-0 virtual file (procfs and friends): only the streaming reader can size it
+
       out.push_back(read_file<T>(paths[k], eng));
       continue;
     }
@@ -2122,8 +1863,6 @@ read_files(const P &...paths)
   return read_files<T>(v);
 }
 
-// batch-load into a caller-provided results vector (appends one option per path, input order).
-// returns the number of successful loads; per-file errors are reported inside target
 template<typename T>
   requires((is_string<T> || is_contiguous_container<T>) && sizeof(typename T::value_type) == 1)
 max_t
@@ -2145,8 +1884,6 @@ struct write_spec {
   usize len;
 };
 
-// three batched waves -- openat(create|trunc) / write / close -- mirroring read_files. NO implicit
-// fsync (see banner).
 inline micron::vector<micron::option<max_t, io::error_t>>
 write_files(const micron::vector<write_spec> &specs, engine &eng = default_engine())
 {
@@ -2187,9 +1924,6 @@ write_files(const micron::vector<write_spec> &specs, engine &eng = default_engin
             st[base + i].fd = res;
         });
 
-    // an open whose completion never landed leaves err == 0 / fd == -1, which the write wave skips
-    // and the final loop reports as "0 bytes written, success" -- while the O_TRUNC has already
-    // emptied the destination. see the matching guard in read_files.
     for ( u32 i = 0; i < W; i++ ) {
       __impl::__bslot &s = st[base + i];
       if ( s.err == 0 && s.fd < 0 ) s.err = -error::io_error;
@@ -2213,11 +1947,11 @@ write_files(const micron::vector<write_spec> &specs, engine &eng = default_engin
             __impl::__bslot &s = st[base + i];
             if ( res < 0 ) {
               if ( res == -error::interrupted )
-                interrupted = true;      // retryable; must not end the loop as a short write
+                interrupted = true;
               else
                 s.err = res;
             } else if ( res == 0 ) {
-              s.want = s.done;      // no progress possible
+              s.want = s.done;
             } else {
               s.done += static_cast<u64>(res);
               progressed = true;
@@ -2226,8 +1960,6 @@ write_files(const micron::vector<write_spec> &specs, engine &eng = default_engin
       if ( staged == 0 || (!progressed && !interrupted) ) break;
     }
 
-    // bytes still owed: a short write reported as success would tell the caller the file is
-    // complete when it is truncated.
     for ( u32 i = 0; i < W; i++ ) {
       __impl::__bslot &s = st[base + i];
       if ( s.err == 0 && s.fd >= 0 && s.done < s.want ) s.err = -error::io_error;
@@ -2269,10 +2001,7 @@ stat_many(const micron::vector<io::path_t> &paths, engine &eng = default_engine(
   micron::vector<posix::statx_t> sx;
   sx.reserve(n);
   sx.set_size(n);
-  // seed with a failure, not 0. sx is deliberately left unconstructed (the kernel is about to
-  // overwrite it), so 0 doubling as both "statx succeeded" and "no completion observed" would hand
-  // back uninitialized statx bytes inside the SUCCESS alternative -- a caller reading stx_size off
-  // that reserves a garbage 64-bit length. only a real completion may clear this.
+
   micron::vector<i32> res;
   res.reserve(n);
   for ( usize i = 0; i < n; i++ ) res.push_back(-error::io_error);
@@ -2299,9 +2028,6 @@ stat_many(const micron::vector<io::path_t> &paths, engine &eng = default_engine(
   }
   return out;
 }
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// functional combinators (fp.hpp shapes)
 
 template<typename Fn>
   requires(micron::invocable<Fn, flash::file &>
@@ -2330,7 +2056,6 @@ with_file(const io::path_t &p, Fn &&fn, engine &eng = default_engine())
   return with_file(p, modes::read, micron::forward<Fn>(fn), eng);
 }
 
-// batch-load, apply fn to each content; per-item option (fp counterpart of read_files)
 template<typename T = micron::string, typename Fn>
   requires(micron::is_invocable_v<Fn, T &&> && micron::distinct<__unit_if_void_t<micron::invoke_result_t<Fn, T &&>>, io::error_t>)
 auto
@@ -2357,7 +2082,6 @@ map_files(const micron::vector<io::path_t> &paths, Fn &&fn, engine &eng = defaul
   return out;
 }
 
-// all-or-nothing left fold over loaded contents; first load error aborts and is returned
 template<typename T = micron::string, typename R, typename Fn>
   requires(micron::distinct<R, io::error_t> && micron::is_invocable_v<Fn, R &&, const T &>)
 auto
@@ -2383,8 +2107,6 @@ modify(const io::path_t &p, Fn &&fn, engine &eng = default_engine())
     return f.raw_fd();
   return f.modify(micron::forward<Fn>(fn));
 }
-
-// %%%% curried (default_engine resolved at INVOCATION -> safe to pass across threads)
 
 inline auto
 write_file_c(io::path_t p)

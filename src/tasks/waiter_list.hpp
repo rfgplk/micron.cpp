@@ -140,6 +140,21 @@ public:
     return __h;
   }
 
+  // NOTE: __fn must not block (this is a spinlock) and must not resume anything
+  template<class Fn>
+  waiter_node *
+  swap_all_under(Fn __fn) noexcept
+  {
+    __lock();
+    waiter_node *__h = nullptr;
+    if ( __fn() ) {
+      __h = __head;
+      __head = nullptr;
+    }
+    __unlock();
+    return __h;
+  }
+
   bool
   empty() noexcept
   {

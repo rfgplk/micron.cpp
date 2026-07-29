@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../atomic/atomic.hpp"
-#include "../bits/__pause.hpp"
+#include "../bits/__backoff.hpp"
 #include "../concepts.hpp"
 #include "../memory/cache.hpp"
 #include "../new.hpp"
@@ -36,13 +36,6 @@ __next_pow2(usize n) noexcept
   return n + 1;
 }
 
-template<usize N> struct cache_pad {
-  char __[N];
-};
-
-template<> struct cache_pad<0> {
-};
-
 }      // namespace __chase_lev_detail
 
 enum class steal_status : u8 { empty = 0, lost = 1, got = 2 };
@@ -66,10 +59,10 @@ class chase_lev
   micron::atomic_token<T> *__slots = nullptr;
 
   alignas(__cache_line) micron::atomic_token<i64> __bottom;      // owner write index
-  [[no_unique_address]] __chase_lev_detail::cache_pad<__idx_pad> __pad1;
+  [[no_unique_address]] __cache_pad<__idx_pad> __pad1;
 
   alignas(__cache_line) micron::atomic_token<i64> __top;      // thief steal index
-  [[no_unique_address]] __chase_lev_detail::cache_pad<__idx_pad> __pad2;
+  [[no_unique_address]] __cache_pad<__idx_pad> __pad2;
 
 public:
   typedef T value_type;
@@ -233,9 +226,9 @@ class chase_lev_grow
 
   micron::atomic_token<__seg *> __seg_ptr;      // current backing array (owner stores release; thieves load acquire)
   alignas(__cache_line) micron::atomic_token<i64> __bottom;
-  [[no_unique_address]] __chase_lev_detail::cache_pad<__idx_pad> __pad1;
+  [[no_unique_address]] __cache_pad<__idx_pad> __pad1;
   alignas(__cache_line) micron::atomic_token<i64> __top;
-  [[no_unique_address]] __chase_lev_detail::cache_pad<__idx_pad> __pad2;
+  [[no_unique_address]] __cache_pad<__idx_pad> __pad2;
 
 public:
   typedef T value_type;

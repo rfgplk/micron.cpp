@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../../../bits/__profile.hpp"
 #include "../kmemory.hpp"
 
 namespace abc
@@ -56,12 +57,18 @@ constexpr static const usize __alloc_limit = (32 << 20);
 // these two switches determine the number of *pages* to allocate on initialization, by default, it's 512 pages for the
 // internal abcmalloc metabuffer, and a minimum of 16 per each new sheet allocation
 
-// 512 KB of TLSF cache roughly ~2000 max-size precise blocks
-constexpr static const usize __default_cache_size_factor = (1 << 10);
+// 256 KB of TLSF cache roughly ~1000 max-size precise blocks
+#ifndef MICRON_ABC_CACHE_SIZE_FACTOR
+#define MICRON_ABC_CACHE_SIZE_FACTOR (1 << 10)
+#endif
+constexpr static const usize __default_cache_size_factor = MICRON_ABC_CACHE_SIZE_FACTOR;
 
 // 64 pages = 256 KB of arena metadata
 // 256 KB supports cca 3200 sheet expansions before needing a reload
-constexpr static const usize __default_arena_page_buf = 64;
+#ifndef MICRON_ABC_ARENA_PAGE_BUF
+#define MICRON_ABC_ARENA_PAGE_BUF 64
+#endif
+constexpr static const usize __default_arena_page_buf = MICRON_ABC_ARENA_PAGE_BUF;
 
 constexpr static const usize __default_magic_size = micron::numeric_limits<usize>::max();
 
@@ -69,7 +76,10 @@ constexpr static const usize __default_magic_size = micron::numeric_limits<usize
 constexpr static const usize __default_minimum_page_mul = 16;
 
 // 2% of total system RAM. on 128 MB that's 2.6 MB, 256MB -- 5.2MB
-constexpr static const f32 __default_prealloc_factor = 0.02f;
+#ifndef MICRON_ABC_PREALLOC_FACTOR
+#define MICRON_ABC_PREALLOC_FACTOR 0.02f
+#endif
+constexpr static const f32 __default_prealloc_factor = MICRON_ABC_PREALLOC_FACTOR;
 
 // 384 precise blocks per expansion (384 * 256 = 96 KB)
 constexpr static const usize __default_cache_step = 384;
@@ -88,7 +98,10 @@ constexpr static const bool __default_multithread_safe = false;
 constexpr static const bool __default_multithread_safe = true;      // essentially, enables locks across API calls
 #endif
 
-constexpr static const bool __default_eager_hot_tiers = true;
+#ifndef MICRON_ABC_EAGER_HOT_TIERS
+#define MICRON_ABC_EAGER_HOT_TIERS true
+#endif
+constexpr static const bool __default_eager_hot_tiers = MICRON_ABC_EAGER_HOT_TIERS;
 
 // per-class free cache disabled on embedded targets
 constexpr static const bool __default_per_class_free_cache = false;
@@ -96,18 +109,45 @@ constexpr static const bool __default_per_class_free_cache = false;
 constexpr static const u32 __default_tombstone_sweep_interval = 32;
 
 // keep all tiers narrow, old behavior for amd64, default here
-constexpr static const u32 __max_sheets_precise = 64;
-constexpr static const u32 __max_sheets_small = 64;
-constexpr static const u32 __max_sheets_medium = 64;
-constexpr static const u32 __max_sheets_large = 64;
-constexpr static const u32 __max_sheets_huge = 64;
+#ifndef MICRON_ABC_MAX_SHEETS_PRECISE
+#define MICRON_ABC_MAX_SHEETS_PRECISE 64
+#endif
+#ifndef MICRON_ABC_MAX_SHEETS_SMALL
+#define MICRON_ABC_MAX_SHEETS_SMALL 64
+#endif
+#ifndef MICRON_ABC_MAX_SHEETS_MEDIUM
+#define MICRON_ABC_MAX_SHEETS_MEDIUM 64
+#endif
+#ifndef MICRON_ABC_MAX_SHEETS_LARGE
+#define MICRON_ABC_MAX_SHEETS_LARGE 64
+#endif
+#ifndef MICRON_ABC_MAX_SHEETS_HUGE
+#define MICRON_ABC_MAX_SHEETS_HUGE 64
+#endif
+constexpr static const u32 __max_sheets_precise = MICRON_ABC_MAX_SHEETS_PRECISE;
+constexpr static const u32 __max_sheets_small = MICRON_ABC_MAX_SHEETS_SMALL;
+constexpr static const u32 __max_sheets_medium = MICRON_ABC_MAX_SHEETS_MEDIUM;
+constexpr static const u32 __max_sheets_large = MICRON_ABC_MAX_SHEETS_LARGE;
+constexpr static const u32 __max_sheets_huge = MICRON_ABC_MAX_SHEETS_HUGE;
 constexpr static const u32 __max_sheets_arena_internal = 64;
 
 // zero on embedded so the struct collapses to its _count field
-constexpr static const u32 __cache_slots_precise = 0;
-constexpr static const u32 __cache_slots_small = 0;
-constexpr static const u32 __cache_slots_medium = 0;
-constexpr static const u32 __cache_slots_large = 0;
+#ifndef MICRON_ABC_CACHE_SLOTS_PRECISE
+#define MICRON_ABC_CACHE_SLOTS_PRECISE 0
+#endif
+#ifndef MICRON_ABC_CACHE_SLOTS_SMALL
+#define MICRON_ABC_CACHE_SLOTS_SMALL 0
+#endif
+#ifndef MICRON_ABC_CACHE_SLOTS_MEDIUM
+#define MICRON_ABC_CACHE_SLOTS_MEDIUM 0
+#endif
+#ifndef MICRON_ABC_CACHE_SLOTS_LARGE
+#define MICRON_ABC_CACHE_SLOTS_LARGE 0
+#endif
+constexpr static const u32 __cache_slots_precise = MICRON_ABC_CACHE_SLOTS_PRECISE;
+constexpr static const u32 __cache_slots_small = MICRON_ABC_CACHE_SLOTS_SMALL;
+constexpr static const u32 __cache_slots_medium = MICRON_ABC_CACHE_SLOTS_MEDIUM;
+constexpr static const u32 __cache_slots_large = MICRON_ABC_CACHE_SLOTS_LARGE;
 constexpr static const u32 __cache_slots_huge = 0;
 
 static_assert(__default_single_instance != __default_global_instance,
@@ -156,7 +196,10 @@ constexpr static const bool __tombstone_huge = false;
 constexpr static const bool __default_tombstone
     = __tombstone_precise || __tombstone_small || __tombstone_medium || __tombstone_large || __tombstone_huge;
 
-constexpr static const bool __default_insert_guard_pages = true;
+#ifndef MICRON_ABC_GUARD_PAGES
+#define MICRON_ABC_GUARD_PAGES true
+#endif
+constexpr static const bool __default_insert_guard_pages = MICRON_ABC_GUARD_PAGES;
 constexpr static const int __default_guard_page_perms = micron::prot_none;
 
 // NOTE: all of these cost a lot of performance
@@ -188,7 +231,10 @@ constexpr static const byte __default_double_free_action = 2;
 // 2 == abort
 
 // guard pages on arena metadata. protects the node+sheet header region
-constexpr static const bool __default_guard_arena_metadata = true;
+#ifndef MICRON_ABC_GUARD_ARENA_METADATA
+#define MICRON_ABC_GUARD_ARENA_METADATA true
+#endif
+constexpr static const bool __default_guard_arena_metadata = MICRON_ABC_GUARD_ARENA_METADATA;
 // insert guard pages at the trail of each arena metadata
 // same protection flags as __default_guard_page_perms
 

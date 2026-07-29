@@ -72,6 +72,9 @@ __tls_raw_mmap(usize bytes) noexcept
 inline bool
 __tls_capture_from_proc_auxv() noexcept
 {
+#if defined(MICRON_TLS_NO_PROC)
+  return false;
+#else
   // WARNING: auxv is usually small, but this _might_ overflow, be careful!
   alignas(16) unsigned long buf[512];
   i32 fd = micron::posix::open("/proc/self/auxv", micron::posix::o_rdonly);
@@ -105,6 +108,16 @@ __tls_capture_from_proc_auxv() noexcept
   __micron_tls_template
       = __tls_template_t{ img.image, img.filesz, img.memsz, img.align ? img.align : __micron_tls_min_align, pagesz ? pagesz : 4096, true };
   return true;
+#endif
+}
+
+inline bool
+__tls_capture_from_ehdr() noexcept
+{
+  if ( !__ehdr_usable() ) return false;
+  const tls_image img = find_tls_from_ehdr();
+  __micron_tls_template = __tls_template_t{ img.image, img.filesz, img.memsz, img.align ? img.align : __micron_tls_min_align, 4096, true };
+  return true;
 }
 
 // called by start/__tls in freestanding mode)
@@ -121,11 +134,14 @@ __tls_ensure_template() noexcept
   if ( atom::load(__micron_tls_template_state.ptr(), static_cast<int>(memory_order_acquire)) == __tls_tmpl_ready ) return true;
   u32 expected = __tls_tmpl_uninit;
   if ( __micron_tls_template_state.compare_exchange_strong(expected, __tls_tmpl_capturing, memory_order_acq_rel, memory_order_acquire) ) {
-    const bool ok = __micron_tls_template.valid ? true : __tls_capture_from_proc_auxv();
+#if defined(MICRON_ATTACH_MODULE)
+    const bool ok = __micron_tls_template.valid ? true : (__tls_capture_from_proc_auxv() or __tls_capture_from_ehdr());
+#else
+    const bool ok = __micron_tls_template.valid ? true : (__tls_capture_from_ehdr() or __tls_capture_from_proc_auxv());
+#endif
     atom::store(__micron_tls_template_state.ptr(), ok ? __tls_tmpl_ready : __tls_tmpl_uninit, static_cast<int>(memory_order_release));
     return ok;
   }
-  // capture is a tiny /proc read; a brief spin is fine (contention only on the very first spawns)
   while ( atom::load(__micron_tls_template_state.ptr(), static_cast<int>(memory_order_acquire)) == __tls_tmpl_capturing ) {
   }
   return atom::load(__micron_tls_template_state.ptr(), static_cast<int>(memory_order_acquire)) == __tls_tmpl_ready;
@@ -254,3 +270,12 @@ __attach_free_frame(const __tls_frame *f) noexcept
 #endif
 
 };      // namespace micron
+
+#if defined(__micron_freestanding)
+// extern "C" + inline -> vague (comdat) linkjage
+extern "C" __attribute__((used)) inline void
+__micron_tls_publish_template(const byte *image, u64 filesz, u64 memsz, u64 align, usize pagesz) noexcept
+{
+  micron::__tls_capture_template(image, filesz, memsz, align, pagesz);
+}
+#endif

@@ -43,6 +43,7 @@
 #include "../src/queue/iqueue.hpp"
 #include "../src/queue/queue.hpp"
 #include "../src/queue/spsc_queue.hpp"
+#include "../src/queue/static_mpmc.hpp"
 #include "../src/std.hpp"
 
 namespace
@@ -633,6 +634,32 @@ template<usize Cap> struct disruptor_trait_u64 {
   }
 };
 
+template<usize Cap> struct static_mpmc_trait_u64 {
+  using queue_t = micron::static_mpmc<u64, Cap>;
+  static constexpr bool has_batch = false;
+  static constexpr bool has_iter = false;
+
+  static void
+  push(queue_t &q, u64 v)
+  {
+    q.push(v);
+  }
+
+  static u64
+  pop(queue_t &q)
+  {
+    u64 v = 0;
+    q.pop(v);
+    return v;
+  }
+
+  static void
+  clear(queue_t &q)
+  {
+    q.clear();
+  }
+};
+
 template<usize Cap> struct crossbeam_trait_u64 {
   using queue_t = micron::crossbeam<u64, Cap>;
   static constexpr bool has_batch = false;
@@ -718,6 +745,10 @@ main(void)
   print_header("crossbeam<u64, 2048>");
   using xb_2k = crossbeam_trait_u64<2048>;
   for ( u64 N : SIZES ) sweep_mutable_queue<typename xb_2k::queue_t, xb_2k>("crossbeam", N);
+
+  print_header("static_mpmc<u64, 2048>");
+  using smp_2k = static_mpmc_trait_u64<2048>;
+  for ( u64 N : SIZES ) sweep_mutable_queue<typename smp_2k::queue_t, smp_2k>("static_mpmc", N);
 
   print_header("immutable_queue<u64>");
   for ( u64 N : SIZES ) sweep_immutable_queue<typename iqueue_trait_u64::queue_t, iqueue_trait_u64>("iqueue", N);

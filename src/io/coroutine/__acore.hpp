@@ -75,8 +75,9 @@ __read_full(i32 fd, void *p, usize n, u64 off)
     i32 r = co_await micron::coro::io::read(fd, dst + got, static_cast<u32>(want), at);
     if ( r < 0 ) [[unlikely]] {
       if ( r == -4 /*EINTR*/ ) continue;
-      if ( r == -11 /*EAGAIN*/ && __eagain_transient(fd, nb) ) {
-        co_await micron::coro::reschedule();      // let the ring drain instead of hammering a full SQ
+      if ( r == -105 /*ENOBUFS: ring full even after the submit path reaped*/
+           || (r == -11 /*EAGAIN*/ && __eagain_transient(fd, nb)) ) {
+        co_await micron::coro::reschedule_fair();      // pumps the ring, then yields behind the worker's other work
         continue;
       }
       co_return got ? static_cast<max_t>(got) : static_cast<max_t>(r);
@@ -100,8 +101,8 @@ __write_full(i32 fd, const void *p, usize n, u64 off)
     i32 w = co_await micron::coro::io::write(fd, src + done, static_cast<u32>(want), at);
     if ( w < 0 ) [[unlikely]] {
       if ( w == -4 /*EINTR*/ ) continue;
-      if ( w == -11 /*EAGAIN*/ && __eagain_transient(fd, nb) ) {
-        co_await micron::coro::reschedule();
+      if ( w == -105 /*ENOBUFS*/ || (w == -11 /*EAGAIN*/ && __eagain_transient(fd, nb)) ) {
+        co_await micron::coro::reschedule_fair();      // pumps the ring, then yields behind the worker's other work
         continue;
       }
       co_return done ? static_cast<max_t>(done) : static_cast<max_t>(w);
@@ -141,8 +142,8 @@ __read_remainder(i32 fd, u64 off, micron::buffer &out)
     i32 r = co_await micron::coro::io::read(fd, reinterpret_cast<byte *>(grow.data()) + got, static_cast<u32>(want), off + got);
     if ( r < 0 ) [[unlikely]] {
       if ( r == -4 ) continue;
-      if ( r == -11 && __eagain_transient(fd, nb) ) {
-        co_await micron::coro::reschedule();
+      if ( r == -105 /*ENOBUFS*/ || (r == -11 && __eagain_transient(fd, nb)) ) {
+        co_await micron::coro::reschedule_fair();      // pumps the ring, then yields behind the worker's other work
         continue;
       }
       co_return static_cast<max_t>(r);

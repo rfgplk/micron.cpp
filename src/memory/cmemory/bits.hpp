@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../bits/__arch.hpp"
+#include "../../bits/__profile.hpp"
 
 #include "../../attributes.hpp"
 #include "../../type_traits.hpp"

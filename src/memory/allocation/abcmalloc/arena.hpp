@@ -1511,10 +1511,15 @@ public:
     _large.init();
     _huge.init();
 
-    micron::sysinfo info;
-    u64 prealloc_size = micron::math::floor<u64>(static_cast<f32>(info.totalram) * __default_prealloc_factor);
-    __debug_print("__arena(): total system RAM: ", info.totalram);
-    __debug_print("__arena(): prealloc_factor target bytes: ", prealloc_size);
+    constexpr bool __wants_prealloc = __default_eager_hot_tiers or !__default_lazy_construct;
+    u64 prealloc_size = 0;
+    if constexpr ( __wants_prealloc ) {
+      micron::sysinfo info;
+      const u64 totalram = static_cast<u64>(info.totalram) * static_cast<u64>(info.mem_unit ? info.mem_unit : 1u);
+      prealloc_size = micron::math::floor<u64>(static_cast<f32>(totalram) * __default_prealloc_factor);
+      __debug_print("__arena(): total system RAM: ", totalram);
+      __debug_print("__arena(): prealloc_factor target bytes: ", prealloc_size);
+    }
     __debug_print("__arena(): arena metadata buf size: ", __default_arena_page_buf * __system_pagesize);
 
     __init_arena_tier(__default_arena_page_buf * __system_pagesize);

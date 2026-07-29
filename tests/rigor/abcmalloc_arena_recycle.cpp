@@ -134,5 +134,5 @@ main(void)
   end_test_case();
 
   sb::print("=== ABCMALLOC ARENA-RECYCLE PASSED ===");
-  return 0;
+  return 1;
 }

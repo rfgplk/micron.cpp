@@ -14,6 +14,19 @@
 
 #include "__auxv.hpp"
 
+// WARNING: micthread keeps its TLS template in the src/ TU, and this TU cannot include that header
+
+// WARNING: always call it last in each arch branch, after that branch has installed the TP (arch_prctl / SYS_arm_set_tls / msr tpidr_el0 /
+// set_thread_area)
+// NOTE: micthread's __micron_tls_template and __micron_tls_template_state are both constinited; should either ever need dynamic init,
+// .init_array runs after this in start.cpp and would silently wipe the publish back to empty
+//
+// WARNING: u64/usize/byte, never unsigned long,
+// u64 is unsigned long long on i386/arm32 while unsigned long is 4 bytes there, marshall types accordinglyh
+
+extern "C" __attribute__((weak)) void __micron_tls_publish_template(const byte *image, u64 filesz, u64 memsz, u64 align,
+                                                                    usize pagesz) noexcept;
+
 namespace micron
 {
 
@@ -129,6 +142,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   __micron_main_tls.size = alloc_size;
   __micron_main_tls.tp = tp;
   __micron_main_tls.image_size = image_block_size;
+  // hand micthread the template explicitly
+  if ( __micron_tls_publish_template )
+    __micron_tls_publish_template(img.image, img.filesz, img.memsz, p_align, static_cast<usize>(page_sz));
 #elif defined(__micron_freestanding) && defined(__micron_arch_arm32)
   const tls_image img = __auxv_find_tls(auxv);
 
@@ -173,6 +189,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   __micron_main_tls.size = alloc_size;
   __micron_main_tls.tp = tp;
   __micron_main_tls.image_size = image_block_size;
+  // hand micthread the template explicitly
+  if ( __micron_tls_publish_template )
+    __micron_tls_publish_template(img.image, img.filesz, img.memsz, p_align, static_cast<usize>(page_sz));
 #elif defined(__micron_freestanding) && defined(__micron_arch_arm64)
   // Variant I, tcbhead = 16; TPIDR_EL0 is EL0-writable on aarch64
   const tls_image img = __auxv_find_tls(auxv);
@@ -208,6 +227,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   __micron_main_tls.size = alloc_size;
   __micron_main_tls.tp = tp;
   __micron_main_tls.image_size = image_block_size;
+  // hand micthread the template explicitly
+  if ( __micron_tls_publish_template )
+    __micron_tls_publish_template(img.image, img.filesz, img.memsz, p_align, static_cast<usize>(page_sz));
 #elif defined(__micron_freestanding) && defined(__micron_arch_x86)
   // Variant II but %gs via set_thread_area(2)
   const tls_image img = __auxv_find_tls(auxv);
@@ -243,6 +265,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   __micron_main_tls.size = alloc_size;
   __micron_main_tls.tp = tp;
   __micron_main_tls.image_size = image_block_size;
+  // hand micthread the template explicitly
+  if ( __micron_tls_publish_template )
+    __micron_tls_publish_template(img.image, img.filesz, img.memsz, p_align, static_cast<usize>(page_sz));
 #elif defined(__micron_freestanding)
 #error                                                                                                                                     \
     "micron: no __tls_init() branch for this freestanding architecture. Implement the main-thread TLS setup (ala src/linux/sys/micthread/tls.hpp) or build hosted; a silent empty body would crash on the first thread_local access."

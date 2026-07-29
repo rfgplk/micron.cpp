@@ -44,5 +44,5 @@ main(void)
       sbf::reflect<span>().with<^^span::off>(sbf::range<u32>(0, 512)).with<^^span::len>(sbf::range<u32>(0, 512)));
 
   snowball::print("rigor_snowball_fuzz: all properties held");
-  return 0;
+  return 1;
 }

@@ -8,3 +8,4 @@
 #include "queue/conqueue.hpp"
 #include "queue/queue.hpp"
 #include "queue/spsc_queue.hpp"
+#include "queue/static_mpmc.hpp"

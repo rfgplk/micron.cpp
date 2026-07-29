@@ -23,6 +23,7 @@
 
 #include "../../../atomic/atomic.hpp"
 #include "../../../atomic/flag.hpp"
+#include "../../../bits/__profile.hpp"
 #include "../../../memory/mman.hpp"
 #include "../../../memory/mmap_bits.hpp"
 #include "../../../mutex/locks/guard_lock.hpp"
@@ -31,17 +32,30 @@
 namespace abc
 {
 
-constexpr static const usize __sheet_align_log2 = 21;
+// carve granule
+//
+// width-32 uses a 64 KiB granule, NOT 2 MiB
+#if defined(__micron_arch_width_64)
+constexpr static const usize __sheet_align_log2 = 21;      // 2 MiB
+#else
+constexpr static const usize __sheet_align_log2 = 16;      // 64 KiB == the minimum sheet size
+#endif
 constexpr static const usize __sheet_align = 1ULL << __sheet_align_log2;
 constexpr static const usize __sheet_align_mask = __sheet_align - 1;
 
+#ifndef MICRON_ABC_VA_RESERVE_SIZE
 #if defined(__micron_arch_width_64)
 // 256 GiB
-constexpr static const usize __va_reservation_size = 256ULL << 30;
+#define MICRON_ABC_VA_RESERVE_SIZE (256ULL << 30)
 #else
-// 256 MiB
-constexpr static const usize __va_reservation_size = 256U << 20;
+// 1 GiB. 256 MiB was not enough to hold the coroutine engine
+#define MICRON_ABC_VA_RESERVE_SIZE (1024U << 20)
 #endif
+#endif
+constexpr static const usize __va_reservation_size = MICRON_ABC_VA_RESERVE_SIZE;
+static_assert(__va_reservation_size >= __sheet_align, "abcmalloc: MICRON_ABC_VA_RESERVE_SIZE must be at least one sheet granule.");
+static_assert((__va_reservation_size & __sheet_align_mask) == 0,
+              "abcmalloc: MICRON_ABC_VA_RESERVE_SIZE must be a whole multiple of the sheet granule.");
 
 constexpr static const i32 __map_noreserve_flag = 0x4000;
 
@@ -49,16 +63,17 @@ inline micron::atomic_token<addr_t *> __va_base{ nullptr };      // PROT_NONE ba
 inline micron::atomic_token<u64> __va_offset{ 0 };               // bump cursor in bytes
 inline micron::atomic_flag __va_init_lock{};                     // one-shot init guard
 
-// released va granule free list
-// WARNING: without reclamation the monotonic bump cursor (__va_offset) leaks a granule run on every sheet
-// release; under sustained sheet churn the 256 GiB reservation is exhausted and __va_carve falls
-// back to unregistered system memory, which a cross-thread free then misroutes
 struct __va_free_run {
   u64 off;           // byte offset from __va_base
-  u32 granules;      // run length in 2 MiB granules
+  u32 granules;      // run length in __sheet_align granules
 };
 
-constexpr static const usize __va_free_cap = __va_reservation_size >> __sheet_align_log2;
+constexpr static const usize __va_free_granules = __va_reservation_size >> __sheet_align_log2;
+#if defined(__micron_arch_width_64)
+constexpr static const usize __va_free_cap = __va_free_granules;
+#else
+constexpr static const usize __va_free_cap = __va_free_granules > 1024 ? usize{ 1024 } : __va_free_granules;
+#endif
 inline __va_free_run __va_free_runs[__va_free_cap]{};
 inline usize __va_free_count{ 0 };
 inline micron::atomic_flag __va_free_lock{};
@@ -94,6 +109,43 @@ __va_commit(addr_t *slot, usize rounded) noexcept
   return slot;
 }
 
+constexpr static const u64 __va_bump_fail = ~static_cast<u64>(0);
+
+[[gnu::always_inline]] inline u64
+__va_bump(usize rounded) noexcept
+{
+  u64 off = __va_offset.get(micron::memory_order_acquire);
+  for ( ;; ) {
+    if ( off + rounded > __va_reservation_size ) [[unlikely]]
+      return __va_bump_fail;
+    if ( __va_offset.compare_exchange_weak(off, off + rounded, micron::memory_order_acq_rel, micron::memory_order_acquire) ) return off;
+  }
+}
+
+inline u64
+__va_reuse(u32 want) noexcept
+{
+  constexpr usize __none = ~static_cast<usize>(0);
+  micron::free_guard<> guard{ &__va_free_lock };
+  usize best = __none;
+  for ( usize i = __va_free_count; i-- > 0; ) {
+    const u32 g = __va_free_runs[i].granules;
+    if ( g < want ) continue;
+    if ( best == __none || g < __va_free_runs[best].granules ) best = i;
+    if ( g == want ) break;      // exact fit, stop looking
+  }
+  if ( best == __none ) return __va_bump_fail;
+  const u64 off = __va_free_runs[best].off;
+  const u32 g = __va_free_runs[best].granules;
+  if ( g > want ) {      // hand back the head, keep the shrunk tail in place
+    __va_free_runs[best].off = off + (static_cast<u64>(want) << __sheet_align_log2);
+    __va_free_runs[best].granules = g - want;
+  } else {
+    __va_free_runs[best] = __va_free_runs[--__va_free_count];      // swap-remove
+  }
+  return off;
+}
+
 inline addr_t *
 __va_carve(usize bytes) noexcept
 {
@@ -106,26 +158,16 @@ __va_carve(usize bytes) noexcept
   const usize rounded = (bytes + __sheet_align_mask) & ~__sheet_align_mask;
   const u32 want = static_cast<u32>(rounded >> __sheet_align_log2);
 
-  u64 reuse_off = ~0ull;
-  {
-    micron::free_guard<> guard{ &__va_free_lock };
-    for ( usize i = __va_free_count; i-- > 0; ) {
-      if ( __va_free_runs[i].granules == want ) {
-        reuse_off = __va_free_runs[i].off;
-        __va_free_runs[i] = __va_free_runs[--__va_free_count];      // swap-remove
-        break;
-      }
-    }
-  }
-  if ( reuse_off != ~0ull ) {
+  const u64 reuse_off = __va_reuse(want);
+  if ( reuse_off != __va_bump_fail ) {
     addr_t *slot = reinterpret_cast<addr_t *>(reinterpret_cast<uintptr_t>(base) + reuse_off);
     if ( addr_t *got = __va_commit(slot, rounded); got ) [[likely]]
       return got;
     // remap failed: the run is now dropped from the list (effectively leaked); fall through to a fresh carve
   }
 
-  const u64 off = __va_offset.fetch_add(rounded, micron::memory_order_acq_rel);
-  if ( off + rounded > __va_reservation_size ) [[unlikely]]
+  const u64 off = __va_bump(rounded);
+  if ( off == __va_bump_fail ) [[unlikely]]
     return nullptr;      // reservation exhausted
 
   return __va_commit(reinterpret_cast<addr_t *>(reinterpret_cast<uintptr_t>(base) + off), rounded);
@@ -143,21 +185,11 @@ __va_carve_reserved(usize bytes) noexcept
   const usize rounded = (bytes + __sheet_align_mask) & ~__sheet_align_mask;
   const u32 want = static_cast<u32>(rounded >> __sheet_align_log2);
 
-  u64 reuse_off = ~0ull;
-  {
-    micron::free_guard<> guard{ &__va_free_lock };
-    for ( usize i = __va_free_count; i-- > 0; ) {
-      if ( __va_free_runs[i].granules == want ) {
-        reuse_off = __va_free_runs[i].off;
-        __va_free_runs[i] = __va_free_runs[--__va_free_count];      // swap-remove
-        break;
-      }
-    }
-  }
-  if ( reuse_off != ~0ull ) return reinterpret_cast<addr_t *>(reinterpret_cast<uintptr_t>(base) + reuse_off);
+  const u64 reuse_off = __va_reuse(want);
+  if ( reuse_off != __va_bump_fail ) return reinterpret_cast<addr_t *>(reinterpret_cast<uintptr_t>(base) + reuse_off);
 
-  const u64 off = __va_offset.fetch_add(rounded, micron::memory_order_acq_rel);
-  if ( off + rounded > __va_reservation_size ) [[unlikely]]
+  const u64 off = __va_bump(rounded);
+  if ( off == __va_bump_fail ) [[unlikely]]
     return nullptr;      // reservation exhausted
   return reinterpret_cast<addr_t *>(reinterpret_cast<uintptr_t>(base) + off);
 }

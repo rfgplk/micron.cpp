@@ -25,6 +25,7 @@
 #include "../../../atomic/atomic.hpp"
 #include "../../../atomic/flag.hpp"
 #include "../../../bits/__pause.hpp"
+#include "../../../bits/__profile.hpp"
 #include "../../../bits/__thread_exit_hook.hpp"
 #include "../../../mutex/locks.hpp"
 
@@ -33,7 +34,11 @@
 namespace abc
 {
 
-constexpr static const u32 __max_arenas = 64;      //  ~3 MiB BSS upper bound
+#ifndef MICRON_ABC_MAX_ARENAS
+#define MICRON_ABC_MAX_ARENAS 64
+#endif
+constexpr static const u32 __max_arenas = MICRON_ABC_MAX_ARENAS;      //  ~3 MiB BSS upper bound at the default
+static_assert(__max_arenas >= 1, "abcmalloc: MICRON_ABC_MAX_ARENAS must be at least 1.");
 
 alignas(__arena) inline byte __arena_pool_storage[__max_arenas * sizeof(__arena)]{};
 

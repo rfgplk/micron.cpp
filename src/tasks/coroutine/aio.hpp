@@ -75,11 +75,20 @@ struct [[nodiscard]] __uring_awaitable {
       __io_cxl_push(&__cxl);
     }
     __r->__pending.fetch_add(1, micron::memory_order_acq_rel);
-    const bool __ok
-        = __own ? __io_submit_own(*__r, __sqe, reinterpret_cast<u64>(&__op)) : __io_submit_fb(__sqe, reinterpret_cast<u64>(&__op));
+    bool __ok = __own ? __io_submit_own(*__r, __sqe, reinterpret_cast<u64>(&__op)) : __io_submit_fb(__sqe, reinterpret_cast<u64>(&__op));
+    if ( !__ok ) [[unlikely]] {
+      // kernel refused our enter (CQ overflow backpressure)
+      if ( __io_cq_acquire(*__r) ) {
+        micron::uring::cqe __c{};
+        while ( __r->__r.peek_cqe(&__c) ) __global_engine->__dispatch_cqe(*__r, __c);
+        __io_unlock(__r->__cq_lk);
+      }
+      __ok = __own ? __io_submit_own(*__r, __sqe, reinterpret_cast<u64>(&__op)) : __io_submit_fb(__sqe, reinterpret_cast<u64>(&__op));
+    }
     if ( !__ok ) {
       __r->__pending.sub_fetch(1, micron::memory_order_acq_rel);
-      __op.__res = -11;      // EAGAIN: SQ stayed full even after a flush; resume inline
+      // ENOBUFS
+      __op.__res = -105;
       return false;
     }
     if ( __cxf != nullptr && __cxf->get(micron::memory_order_acquire) != 0 )
@@ -195,11 +204,21 @@ struct [[nodiscard]] __uring_timed_awaitable {
     micron::uring::sqe __lt;
     micron::uring::prep_link_timeout(&__lt, &__kts);      // kernel copies the timespec at prep
     __r->__pending.fetch_add(1, micron::memory_order_acq_rel);
-    const bool __ok = __own ? __io_submit_own2(*__r, __sqe, reinterpret_cast<u64>(&__op), __lt, __io_ud_make(__io_ud_ltimer, 0))
-                            : __io_submit_fb2(__sqe, reinterpret_cast<u64>(&__op), __lt, __io_ud_make(__io_ud_ltimer, 0));
+    bool __ok = __own ? __io_submit_own2(*__r, __sqe, reinterpret_cast<u64>(&__op), __lt, __io_ud_make(__io_ud_ltimer, 0))
+                      : __io_submit_fb2(__sqe, reinterpret_cast<u64>(&__op), __lt, __io_ud_make(__io_ud_ltimer, 0));
+    if ( !__ok ) [[unlikely]] {
+      // reap then retry
+      if ( __io_cq_acquire(*__r) ) {
+        micron::uring::cqe __c{};
+        while ( __r->__r.peek_cqe(&__c) ) __global_engine->__dispatch_cqe(*__r, __c);
+        __io_unlock(__r->__cq_lk);
+      }
+      __ok = __own ? __io_submit_own2(*__r, __sqe, reinterpret_cast<u64>(&__op), __lt, __io_ud_make(__io_ud_ltimer, 0))
+                   : __io_submit_fb2(__sqe, reinterpret_cast<u64>(&__op), __lt, __io_ud_make(__io_ud_ltimer, 0));
+    }
     if ( !__ok ) {
       __r->__pending.sub_fetch(1, micron::memory_order_acq_rel);
-      __op.__res = -11;      // <2 SQ slots even after a flush: never silently submit untimed
+      __op.__res = -105;      // ENOBUFS
       return false;
     }
     if ( __cxf != nullptr && __cxf->get(micron::memory_order_acquire) != 0 ) __io_sync_cancel_ud(__r->__r.fd, reinterpret_cast<u64>(&__op));
@@ -494,6 +513,173 @@ nop() noexcept
   micron::uring::sqe __q;
   micron::uring::prep_nop(&__q);
   return __uring_awaitable{ __q };
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%
+// multishot recv
+
+struct mrecv_t;
+inline void mrecv_cancel(mrecv_t &__mr) noexcept;
+
+struct mrecv_t {
+  __io_mop __op;
+
+  mrecv_t() noexcept = default;
+  // not allowed to be copied nor moved, controlled by the kernel uth
+  mrecv_t(const mrecv_t &) = delete;
+  mrecv_t &operator=(const mrecv_t &) = delete;
+  mrecv_t(mrecv_t &&) = delete;
+  mrecv_t &operator=(mrecv_t &&) = delete;
+
+  ~mrecv_t() noexcept
+  {
+    if ( __op.__live.get(micron::memory_order_acquire) != 0 ) [[unlikely]]
+      mrecv_cancel(*this);
+  }
+};
+
+[[nodiscard]] inline i32
+mrecv_arm(mrecv_t &__mr, i32 __fd, u32 __msg_flags = 0) noexcept
+{
+  worker *__w = current_worker();
+  __wring *__r = __io_own_ring();
+  if ( __w == nullptr || __r == nullptr ) return -95;      // EOPNOTSUPP
+  if ( __io_pb_init(*__r) != 0 ) return -95;
+  __io_mop &__m = __mr.__op;
+  if ( __m.__live.get(micron::memory_order_acquire) != 0 ) return -114;      // EALREADY armed
+  if ( reinterpret_cast<u64>(&__m) >> __io_ud_tag_shift != 0 ) [[unlikely]]
+    __builtin_trap();      // non-canonical address would alias the user_data tag
+  __m.__f = nullptr;
+  __m.__st.store(__io_mop_idle, micron::memory_order_relaxed);
+  __m.__ring = static_cast<u8>(__w->id);
+  __m.__live.store(1u, micron::memory_order_release);
+  micron::uring::sqe __q;
+  micron::uring::prep_recv_multishot(&__q, __fd, __io_pb_bgid, __msg_flags);
+  const u64 __ud = __io_ud_make(__io_ud_mop, reinterpret_cast<u64>(&__m));
+  __r->__pending.fetch_add(1, micron::memory_order_acq_rel);
+  bool __ok = __io_submit_own(*__r, __q, __ud);
+  if ( !__ok ) [[unlikely]] {
+    if ( __io_cq_acquire(*__r) ) {
+      micron::uring::cqe __c{};
+      while ( __r->__r.peek_cqe(&__c) ) __global_engine->__dispatch_cqe(*__r, __c);
+      __io_unlock(__r->__cq_lk);
+    }
+    __ok = __io_submit_own(*__r, __q, __ud);
+  }
+  if ( !__ok ) {
+    __r->__pending.sub_fetch(1, micron::memory_order_acq_rel);
+    __m.__live.store(0u, micron::memory_order_release);
+    return -105;      // ENOBUFS: ring full even after flush+reap
+  }
+  return 0;
+}
+
+struct [[nodiscard]] __mrecv_awaitable {
+  __io_mop *__m;
+  __io_mev __e{};
+  bool __have = false;
+
+  bool
+  await_ready() noexcept
+  {
+    if ( __m->__pop(__e) ) {
+      __have = true;
+      return true;
+    }
+    if ( __m->__live.get(micron::memory_order_acquire) == 0 ) {
+      __e = __io_mev{};
+      __e.__res = -61;      // ENODATA: not armed, or the terminal event was already consumed
+      __have = true;
+      return true;
+    }
+    return false;
+  }
+
+  template<class P>
+  bool
+  await_suspend(std::coroutine_handle<P> __h) noexcept
+  {
+    __m->__f = &__h.promise();
+    // __dispatch_cqe may only tag it as __pending from here, never resume it
+    __m->__st.store(__io_mop_parking, micron::memory_order_seq_cst);
+    if ( __m->__qt.get(micron::memory_order_seq_cst) != __m->__qh.get(micron::memory_order_relaxed)
+         || __m->__live.get(micron::memory_order_acquire) == 0 ) {
+      __m->__st.store(__io_mop_idle, micron::memory_order_release);
+      return false;
+    }
+    u32 __exp = __io_mop_parking;
+    if ( __m->__st.compare_exchange_strong(__exp, __io_mop_parked, micron::memory_order_seq_cst, micron::memory_order_seq_cst) )
+      return true;      // last access to this frame; may already be running elsewhere
+    __m->__st.store(__io_mop_idle, micron::memory_order_release);
+    return false;
+  }
+
+  __io_mev
+  await_resume() noexcept
+  {
+    if ( __have ) return __e;
+    if ( __m->__pop(__e) ) return __e;
+    __io_mev __t{};
+    __t.__res = -61;
+    return __t;
+  }
+};
+
+[[nodiscard]] inline __mrecv_awaitable
+mrecv_next(mrecv_t &__mr) noexcept
+{
+  return __mrecv_awaitable{ &__mr.__op };
+}
+
+[[nodiscard]] [[gnu::always_inline]] inline const byte *
+mrecv_data(const __io_mev &__e) noexcept
+{
+  if ( (__e.__fl & __io_mev_buf) == 0 ) return nullptr;
+  return __io_pb_data(__e.__ring, __e.__bid);
+}
+
+[[gnu::always_inline]] inline void
+mrecv_recycle(const __io_mev &__e) noexcept
+{
+  if ( (__e.__fl & __io_mev_buf) != 0 ) __io_pb_recycle(__e.__ring, __e.__bid);
+}
+
+[[nodiscard]] [[gnu::always_inline]] inline bool
+mrecv_live(const mrecv_t &__mr) noexcept
+{
+  return __mr.__op.__live.get(micron::memory_order_acquire) != 0;
+}
+
+// WARNING: DESTROYING AN ARMED MRECV_T IS A USE AFTER FREE
+inline void
+mrecv_cancel(mrecv_t &__mr) noexcept
+{
+  __io_mop &__m = __mr.__op;
+  if ( __m.__live.get(micron::memory_order_acquire) != 0 ) {
+    const u8 __rid = __m.__ring;
+    if ( __rid < __io_ring_cap && __global_engine != nullptr ) {
+      __wring &__wr = __io_rings[__rid];
+      const u64 __ud = __io_ud_make(__io_ud_mop, reinterpret_cast<u64>(&__m));
+      __io_sync_cancel_ud(__wr.__r.fd, __ud);
+      for ( u32 __spin = 0; __m.__live.get(micron::memory_order_acquire) != 0; ++__spin ) {
+        if ( __io_cq_acquire(__wr) ) {
+          micron::uring::cqe __c{};
+          while ( __wr.__r.peek_cqe(&__c) ) __global_engine->__dispatch_cqe(__wr, __c);
+          __io_unlock(__wr.__cq_lk);
+          continue;
+        }
+        if ( __wr.__live.get(micron::memory_order_acquire) == 0 ) break;      // ring torn down
+        micron::cpu_pause<1>();                                               // another reaper holds the cq; it dispatches ours
+        if ( (__spin & 0x3ffu) == 0x3ffu ) __io_sync_cancel_ud(__wr.__r.fd, __ud);
+      }
+    } else {
+      __m.__live.store(0u, micron::memory_order_release);      // never armed on a real ring
+    }
+  }
+  __io_mev __e{};
+  while ( __m.__pop(__e) ) mrecv_recycle(__e);
+  __m.__f = nullptr;
+  __m.__st.store(__io_mop_idle, micron::memory_order_relaxed);
 }
 
 };      // namespace io

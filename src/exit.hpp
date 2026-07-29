@@ -6,6 +6,7 @@
 #pragma once
 
 #include "atomic/intrin.hpp"
+#include "bits/__profile.hpp"
 #include "syscall.hpp"
 #include "types.hpp"
 
@@ -91,7 +92,11 @@ struct __atexit_entry {
   void *arg;
 };
 
-inline constexpr usize __atexit_cap = 4096;
+#ifndef MICRON_ATEXIT_CAP
+#define MICRON_ATEXIT_CAP 4096
+#endif
+inline constexpr usize __atexit_cap = MICRON_ATEXIT_CAP;
+static_assert(__atexit_cap >= 8, "micron: MICRON_ATEXIT_CAP must leave room for the runtime's own handlers.");
 
 inline __atexit_entry __atexit_table[__atexit_cap] = {};
 inline u32 __atexit_count = 0;

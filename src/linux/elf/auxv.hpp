@@ -14,6 +14,12 @@
 //
 // these are used to inspect the running image program headers (not of arbitrary elfs)
 
+// the ELF header of the running image, handed by the linker
+// WARNING: weak on purpose
+// NOTE: src/bits/eh/find_fde.hpp and src/bits/eh/unwind_ehabi.hpp declare the same symbol without the weak; they are reachable only from
+// start/eh_runtime.cpp, whose include closure does not contain this header
+extern "C" const byte __ehdr_start[] __attribute__((weak, visibility("hidden")));
+
 namespace micron
 {
 
@@ -129,6 +135,10 @@ struct tls_image {
 
 // computes the PIE / static-pie load bias from PT_PHDR (0 for ET_EXEC) so the returned image pointer is the runtime address of the .tdata
 // template under -pie/-static-pie the template would be read from the link-time vaddr
+//
+// WARNING: this cannot compute a bias when the image has no PT_PHDR, and the bias is not recoverable from these three arguments alone
+// ld emits PT_PHDR for a dynamic PIE and for anything with a PT_INTERP, but not for static ET_EXECs (bias is genuinely 0)
+// but _not_ for --static-pie (NOT HARMLESS: bias stays 0 yet out.image is the link-time vaddr)
 inline __attribute__((always_inline)) tls_image
 find_tls_in_phdrs(unsigned long phdr_addr, unsigned long phent, unsigned long phnum) noexcept
 {
@@ -163,6 +173,95 @@ inline __attribute__((always_inline)) tls_image
 __auxv_find_tls(const auxv_t *av) noexcept
 {
   return find_tls_in_phdrs(__auxv_lookup(av, at_phdr), __auxv_lookup(av, at_phent), __auxv_lookup(av, at_phnum));
+}
+
+#if defined(__micron_arch_amd64) || (__SIZEOF_POINTER__ == 8)
+struct ehdr_t {
+  byte e_ident[16];
+  u16 e_type;
+  u16 e_machine;
+  u32 e_version;
+  u64 e_entry;
+  u64 e_phoff;
+  u64 e_shoff;
+  u32 e_flags;
+  u16 e_ehsize;
+  u16 e_phentsize;
+  u16 e_phnum;
+  u16 e_shentsize;
+  u16 e_shnum;
+  u16 e_shstrndx;
+};
+#else
+struct ehdr_t {
+  byte e_ident[16];
+  u16 e_type;
+  u16 e_machine;
+  u32 e_version;
+  u32 e_entry;
+  u32 e_phoff;
+  u32 e_shoff;
+  u32 e_flags;
+  u16 e_ehsize;
+  u16 e_phentsize;
+  u16 e_phnum;
+  u16 e_shentsize;
+  u16 e_shnum;
+  u16 e_shstrndx;
+};
+#endif
+
+// true when the linker actually gave us a usable ELF header for the running image
+inline bool
+__ehdr_usable(void) noexcept
+{
+  if ( __ehdr_start == nullptr ) return false;
+  const ehdr_t *eh = reinterpret_cast<const ehdr_t *>(__ehdr_start);
+  if ( eh->e_ident[0] != 0x7f or eh->e_ident[1] != 'E' or eh->e_ident[2] != 'L' or eh->e_ident[3] != 'F' ) return false;
+  return eh->e_phoff != 0 and eh->e_phentsize != 0 and eh->e_phnum != 0;
+}
+
+// WARNING: the load bias is not derived from PT_PHDR alone
+inline tls_image
+find_tls_from_ehdr(void) noexcept
+{
+  tls_image out{ nullptr, 0, 0, 0 };
+  if ( !__ehdr_usable() ) return out;
+
+  const ehdr_t *eh = reinterpret_cast<const ehdr_t *>(__ehdr_start);
+  const byte *p = __ehdr_start + eh->e_phoff;
+
+  u64 bias = 0;
+  bool have_bias = false;
+  for ( u16 i = 0; i < eh->e_phnum; ++i ) {
+    const phdr_t *ph = reinterpret_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
+    if ( ph->p_type == elf::pt_phdr ) {
+      bias = reinterpret_cast<u64>(p) - static_cast<u64>(ph->p_vaddr);
+      have_bias = true;
+      break;
+    }
+  }
+  if ( !have_bias ) {
+    for ( u16 i = 0; i < eh->e_phnum; ++i ) {
+      const phdr_t *ph = reinterpret_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
+      if ( ph->p_type == elf::pt_load and ph->p_offset == 0 ) {
+        bias = reinterpret_cast<u64>(__ehdr_start) - static_cast<u64>(ph->p_vaddr);
+        break;
+      }
+    }
+  }
+
+  for ( u16 i = 0; i < eh->e_phnum; ++i ) {
+    const phdr_t *ph = reinterpret_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
+    if ( ph->p_type == elf::pt_tls ) {
+      out.image = reinterpret_cast<const byte *>(static_cast<u64>(ph->p_vaddr) + bias);
+      out.filesz = ph->p_filesz;
+      out.memsz = ph->p_memsz;
+      out.align = ph->p_align;
+      return out;
+    }
+  }
+  return out;
 }
 
 };      // namespace micron

@@ -8,6 +8,7 @@
 #include "../src/io/stdout.hpp"
 #include "../src/queue/crossbeam.hpp"
 #include "../src/queue/disruptor.hpp"
+#include "../src/queue/static_mpmc.hpp"
 #include "../src/std.hpp"
 
 #include <atomic>
@@ -139,6 +140,97 @@ main()
     usize total = P * PER;
     double ns = static_cast<double>(t1 - t0) / static_cast<double>(total);
     print_row("crossbeam", "mpmc-8thr", total, ns);
+  }
+
+  {
+    micron::static_mpmc<u64, 4096> q;
+    u64 t0 = now_ns();
+    for ( usize i = 0; i < K_N; ++i ) {
+      q.push(i);
+      u64 v = 0;
+      q.pop(v);
+      sink += v;
+    }
+    u64 t1 = now_ns();
+    double ns = static_cast<double>(t1 - t0) / static_cast<double>(K_N);
+    print_row("static_mpmc", "push+pop", K_N, ns);
+  }
+
+  {
+    constexpr int P = 4;
+    constexpr int C = 4;
+    constexpr usize PER = 100000;
+    micron::static_mpmc<u64, 4096> q;
+    std::atomic<usize> consumed{ 0 };
+    std::atomic<bool> ready{ false };
+    std::vector<std::thread> ts;
+    for ( int p = 0; p < P; ++p ) {
+      ts.emplace_back([&, p]() {
+        while ( !ready.load(std::memory_order_acquire) );
+        for ( usize i = 0; i < PER; ) {
+          if ( q.push(static_cast<u64>(p) * PER + i) ) ++i;
+        }
+      });
+    }
+    for ( int c = 0; c < C; ++c ) {
+      ts.emplace_back([&]() {
+        while ( !ready.load(std::memory_order_acquire) );
+        while ( consumed.load(std::memory_order_relaxed) < P * PER ) {
+          u64 v;
+          if ( q.pop(v) ) {
+            sink += v;
+            consumed.fetch_add(1, std::memory_order_relaxed);
+          }
+        }
+      });
+    }
+    u64 t0 = now_ns();
+    ready.store(true, std::memory_order_release);
+    for ( auto &t : ts ) t.join();
+    u64 t1 = now_ns();
+    usize total = P * PER;
+    double ns = static_cast<double>(t1 - t0) / static_cast<double>(total);
+    print_row("static_mpmc", "mpmc-8thr", total, ns);
+  }
+
+  // the fiber seg-pool profile: cap 64, pointer payload, 8-way contention -- full/empty and CAS
+  // retry are the common case here, which is where the backoff has to earn its keep
+  {
+    constexpr int P = 4;
+    constexpr int C = 4;
+    constexpr usize PER = 100000;
+    micron::static_mpmc<void *, 64> q;
+    std::atomic<usize> consumed{ 0 };
+    std::atomic<bool> ready{ false };
+    std::vector<std::thread> ts;
+    static u64 slab[64];
+    for ( int p = 0; p < P; ++p ) {
+      ts.emplace_back([&, p]() {
+        while ( !ready.load(std::memory_order_acquire) );
+        for ( usize i = 0; i < PER; ) {
+          if ( q.push(static_cast<void *>(&slab[(p * 16 + i) & 63])) ) ++i;
+        }
+      });
+    }
+    for ( int c = 0; c < C; ++c ) {
+      ts.emplace_back([&]() {
+        while ( !ready.load(std::memory_order_acquire) );
+        while ( consumed.load(std::memory_order_relaxed) < P * PER ) {
+          void *v = q.pop();
+          if ( v != nullptr ) {
+            sink += *static_cast<u64 *>(v);
+            consumed.fetch_add(1, std::memory_order_relaxed);
+          }
+        }
+      });
+    }
+    u64 t0 = now_ns();
+    ready.store(true, std::memory_order_release);
+    for ( auto &t : ts ) t.join();
+    u64 t1 = now_ns();
+    usize total = P * PER;
+    double ns = static_cast<double>(t1 - t0) / static_cast<double>(total);
+    print_row("static_mpmc", "segpool-64", total, ns);
   }
 
   micron::io::println("sink=", sink);

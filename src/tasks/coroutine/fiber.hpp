@@ -11,6 +11,7 @@
 #include "../../types.hpp"
 
 #include "../../bits/__ar.hpp"
+#include "../../queue/static_mpmc.hpp"
 #include "fiber_stack.hpp"
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,6 +64,15 @@ __self_tid() noexcept
 // per-worker recycle free-list, keyed by size class
 inline thread_local fiber *__seg_freelist[__seg_class_count] = {};
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// cross-worker segment pool
+
+inline constexpr usize __seg_pool_cap = 64;      // per class; must stay a power of two
+
+using __seg_pool_t = micron::static_mpmc<fiber *, __seg_pool_cap>;
+
+inline __seg_pool_t __seg_pool[__seg_class_count]{};
+
 inline void
 __micron_fiber_enter(void *p) noexcept
 {
@@ -92,6 +102,8 @@ create_fiber(void (*entry)(fiber *), void *arg, usize stack_size = static_cast<u
   if ( __seg_freelist[cls] != nullptr ) {      // recycle a same-class FCB+region
     f = __seg_freelist[cls];
     __seg_freelist[cls] = f->free_next;
+  } else if ( (f = __seg_pool[cls].pop()) != nullptr ) {
+    // recycled
   } else {
     __region reg;
     if ( !__carve_region(reg, cls) ) return nullptr;
@@ -156,7 +168,8 @@ __finalize_fiber(fiber *f) noexcept
     __seg_freelist[f->region.cls] = f;      // keep the FCB constructed for reuse
     return;
   }
-  __region reg = f->region;      // cross-worker final drop: release directly (forgoes recycle)
+  if ( __seg_pool[f->region.cls].push(f) ) return;
+  __region reg = f->region;
   f->~fiber();
   __release_region(reg);
 }
@@ -208,7 +221,7 @@ __frame_alloc(usize n) noexcept
 }
 
 [[gnu::always_inline]] inline void
-__frame_free(void *p, usize) noexcept
+__frame_free(void *p, usize n) noexcept
 {
   if ( p == nullptr ) return;
   byte *h = reinterpret_cast<byte *>(p) - __frame_hdr;
@@ -217,7 +230,7 @@ __frame_free(void *p, usize) noexcept
     ::operator delete(static_cast<void *>(*reinterpret_cast<byte **>(h + sizeof(void *))));
     return;
   }
-  owner->frame_sp = h;
+  if ( owner == __current_fiber && h + __frame_hdr + __frame_round(n) == owner->frame_sp ) owner->frame_sp = h;
   __drop_ref(owner);
 }
 
@@ -242,6 +255,17 @@ drain_freelist() noexcept
       f = nx;
     }
   }
+}
+
+inline void
+drain_seg_pool() noexcept
+{
+  for ( u32 c = 0; c < __seg_class_count; ++c )
+    __seg_pool[c].drain([](fiber *f) {
+      __region reg = f->region;
+      f->~fiber();
+      __release_region(reg);
+    });
 }
 
 };      // namespace fiber

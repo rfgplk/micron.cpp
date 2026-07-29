@@ -93,10 +93,106 @@ struct __intercept_holder {
   }
 };
 
-template<int __sz = __buffer_size, int __chnk = __buffer_packet> class stream
+// inline stream storage. presents the same surface to stream that micron::pointer<micron::buffer>
+// does, but the bytes live inside the object instead of on the heap.
+//
+// NOTE: this is what lets a stream be a static. the two std streams need exactly that: they are the
+// process's first buffered output and constructing them must not reach for the allocator, because
+// the allocator's cold path is an arena build (a va reservation and several mappings) that a
+// program which only ever prints has no other reason to pay for
+template<int __sz> class __inline_block
+{
+  alignas(64) byte __data[__sz]{};
+
+public:
+  constexpr __inline_block() noexcept = default;
+  // matches the pointer<buffer>(__sz) form so stream's ctor is spelled the same either way
+  constexpr explicit __inline_block(int) noexcept { }
+
+  byte *
+  begin() noexcept
+  {
+    return __data;
+  }
+
+  const byte *
+  begin() const noexcept
+  {
+    return __data;
+  }
+
+  byte *
+  end() noexcept
+  {
+    return __data + __sz;
+  }
+
+  const byte *
+  end() const noexcept
+  {
+    return __data + __sz;
+  }
+
+  usize
+  size() const noexcept
+  {
+    return static_cast<usize>(__sz);
+  }
+
+  usize
+  max_size() const noexcept
+  {
+    return static_cast<usize>(__sz);
+  }
+
+  byte *
+  at_pointer(usize n) noexcept
+  {
+    return __data + n;
+  }
+
+  byte &
+  operator[](usize n) noexcept
+  {
+    return __data[n];
+  }
+
+  const byte &
+  operator[](usize n) const noexcept
+  {
+    return __data[n];
+  }
+
+  // stream reaches its buffer through -> and *, so stand in for the pointer at both
+  __inline_block *
+  operator->() noexcept
+  {
+    return this;
+  }
+
+  const __inline_block *
+  operator->() const noexcept
+  {
+    return this;
+  }
+
+  __inline_block &
+  operator*() noexcept
+  {
+    return *this;
+  }
+
+  const __inline_block &
+  operator*() const noexcept
+  {
+    return *this;
+  }
+};
+
+template<int __sz = __buffer_size, int __chnk = __buffer_packet, bool __inline_store = false> class stream
 {
   max_t __size;
-  micron::pointer<micron::buffer> __buffer;
+  micron::conditional_t<__inline_store, __inline_block<__sz>, micron::pointer<micron::buffer>> __buffer;
   __intercept_holder __hook;
 
   void
@@ -956,9 +1052,9 @@ public:
     return !(*this < o);
   }
 
-  template<int S, int C>
+  template<int S, int C, bool IS>
   bool
-  operator==(const stream<S, C> &o) const noexcept
+  operator==(const stream<S, C, IS> &o) const noexcept
   {
     if ( __size != o.size() ) return false;
     const byte *a = __buffer->begin();
@@ -1026,16 +1122,16 @@ pipe_encode(stream<SZ_A, CK_A> &src, stream<SZ_B, CK_B> &dst, Fn &&fn)
   src.rewind();
 }
 
-template<int SZ, int CK>
+template<int SZ, int CK, bool IS>
 inline bool
-operator==(const byte *buf, const stream<SZ, CK> &s) noexcept
+operator==(const byte *buf, const stream<SZ, CK, IS> &s) noexcept
 {
   return s == buf;
 }
 
-template<int SZ, int CK>
+template<int SZ, int CK, bool IS>
 inline bool
-operator!=(const byte *buf, const stream<SZ, CK> &s) noexcept
+operator!=(const byte *buf, const stream<SZ, CK, IS> &s) noexcept
 {
   return !(s == buf);
 }

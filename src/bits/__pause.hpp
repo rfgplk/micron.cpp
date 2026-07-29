@@ -5,6 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// needed for __micron* pp macros
+#include "__arch.hpp"
+
 inline __attribute__((always_inline)) void
 __cpu_pause(void)
 {

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "bits/__arch.hpp"
+#include "bits/__profile.hpp"
 #include "config.hpp"
 
 #ifndef MICRON_ABCMALLOC_STD

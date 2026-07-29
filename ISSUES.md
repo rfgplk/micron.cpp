@@ -58,13 +58,16 @@ Things that are ISA-gated *by nature* and are simply absent below their tier:
 - io: dir-open does exists/is_dir checks before `open(O_DIRECTORY)`
 - io arm64: `io::path`/`io::dir` directory-open throws `io_error` under qemu-aarch64
 - LSan (and other sanitizers) may report a benign ~8 KB "leak" from the `make_global` stdout/stderr stream process-lifetime allocs
+- coro: **`coro::stop_coroutine_runtime()` is mandatory before `main` returns.**
+  There is no atexit hook. Skip it and the process exits with workers still in `worker_main` ->
+  `__find` -> `__drain_io` while the static destructor of the global `__io_rings[32]` runs
+  `uring::ring::~ring()` -> munmap; the worker then faults in `ring::cq_overflowed()`.
 
 ## Platform / Arch gaps
 - `src/simd/strings.hpp` is x86-only (AVX2/SSE2 + scalar fallback); no NEON yet
 - `src/simd/fma.hpp` is x86-only (`_mm_fmadd_*` / `_mm256_fmadd_*`)
 - `src/math/simd/trig.hpp` + `src/math/quaternions/batched.hpp`: NEON f32 on ARM, but f64 only on amd64/arm64; arm32 double-precision trig/quaternion falls back to scalar
 - arm32: reading CNTVCT (`mrrc p15,1,…c14`) faults SIGILL under qemu/PL0
-- arm32: `tests/coro/t_parallel_{compact,scan}` abort with `except::memory_error_abc_dealloc_size` (abcmalloc's 32-bit `__ABC_EMBED` profile); unrelated to the coroutine runtime, which passes
 - arm32: `tests/coro/t_parallel_{map,quick,radix,sort}` fail to compile against the Linaro sysroot — `conflicting declaration 'typedef __time_t time_t'` / `suseconds_t` between micron's typedefs and glibc's `bits/types/time_t.h`
 
 ## Compiler hazards

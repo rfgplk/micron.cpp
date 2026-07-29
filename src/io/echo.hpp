@@ -179,10 +179,10 @@ template<usize CAP = 1024> struct fd_sink {
 };
 
 // (d) io::stream<> target
-template<int SZ, int CK> struct stream_sink {
-  io::stream<SZ, CK> &__s;
+template<int SZ, int CK, bool IS> struct stream_sink {
+  io::stream<SZ, CK, IS> &__s;
 
-  explicit stream_sink(io::stream<SZ, CK> &s) : __s(s) { }
+  explicit stream_sink(io::stream<SZ, CK, IS> &s) : __s(s) { }
 
   max_t
   put(const char *p, usize n)
@@ -490,7 +490,7 @@ namespace __echo_impl
 template<typename T> struct is_stream_inst: micron::false_type {
 };
 
-template<int SZ, int CK> struct is_stream_inst<io::stream<SZ, CK>>: micron::true_type {
+template<int SZ, int CK, bool IS> struct is_stream_inst<io::stream<SZ, CK, IS>>: micron::true_type {
 };
 
 };      // namespace __echo_impl

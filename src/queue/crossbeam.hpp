@@ -11,8 +11,8 @@
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
 #include "../atomic/atomic.hpp"
+#include "../bits/__backoff.hpp"
 #include "../bits/__container.hpp"
-#include "../bits/__pause.hpp"
 #include "../concepts.hpp"
 #include "../memory/allocation/resources.hpp"
 #include "../new.hpp"
@@ -22,27 +22,6 @@
 
 namespace micron
 {
-
-namespace __crossbeam_detail
-{
-
-// portable cacheline padding
-template<usize N> struct cache_pad {
-  char __[N];
-};
-
-template<> struct cache_pad<0> {
-};
-
-// exponential backoff for CAS fail paths
-__attribute__((always_inline)) inline unsigned
-spin_backoff(unsigned b) noexcept
-{
-  for ( unsigned i = 0; i < b; ++i ) __cpu_pause();
-  return (b < 64u) ? (b << 1u) : 64u;
-}
-
-};      // namespace __crossbeam_detail
 
 // crossbeam
 //
@@ -87,10 +66,10 @@ class crossbeam: public __mutable_memory_resource_move_only<T, Alloc>
   padded_seq *__seqs = nullptr;
 
   alignas(__cache_line) micron::atomic_token<usize> __tail;
-  [[no_unique_address]] __crossbeam_detail::cache_pad<__seq_pad> __pad1;
+  [[no_unique_address]] __cache_pad<__seq_pad> __pad1;
 
   alignas(__cache_line) micron::atomic_token<usize> __head;
-  [[no_unique_address]] __crossbeam_detail::cache_pad<__seq_pad> __pad2;
+  [[no_unique_address]] __cache_pad<__seq_pad> __pad2;
 
 public:
   using category_type = buffer_tag;
@@ -173,12 +152,12 @@ public:
           cell_seq.store(tail + 1u, memory_order_release);
           return true;
         }
-        backoff = __crossbeam_detail::spin_backoff(backoff);
+        backoff = __spin_backoff(backoff);
         tail = __tail.get(memory_order_relaxed);
       } else if ( dif < 0 ) {
         return false;      // full
       } else {
-        backoff = __crossbeam_detail::spin_backoff(backoff);
+        backoff = __spin_backoff(backoff);
         tail = __tail.get(memory_order_relaxed);
       }
     }
@@ -200,12 +179,12 @@ public:
           cell_seq.store(tail + 1u, memory_order_release);
           return true;
         }
-        backoff = __crossbeam_detail::spin_backoff(backoff);
+        backoff = __spin_backoff(backoff);
         tail = __tail.get(memory_order_relaxed);
       } else if ( dif < 0 ) {
         return false;
       } else {
-        backoff = __crossbeam_detail::spin_backoff(backoff);
+        backoff = __spin_backoff(backoff);
         tail = __tail.get(memory_order_relaxed);
       }
     }
@@ -236,12 +215,12 @@ public:
           cell_seq.store(tail + 1u, memory_order_release);
           return true;
         }
-        backoff = __crossbeam_detail::spin_backoff(backoff);
+        backoff = __spin_backoff(backoff);
         tail = __tail.get(memory_order_relaxed);
       } else if ( dif < 0 ) {
         return false;
       } else {
-        backoff = __crossbeam_detail::spin_backoff(backoff);
+        backoff = __spin_backoff(backoff);
         tail = __tail.get(memory_order_relaxed);
       }
     }
@@ -264,12 +243,12 @@ public:
           cell_seq.store(head + __capacity, memory_order_release);
           return true;
         }
-        backoff = __crossbeam_detail::spin_backoff(backoff);
+        backoff = __spin_backoff(backoff);
         head = __head.get(memory_order_relaxed);
       } else if ( dif < 0 ) {
         return false;      // empty
       } else {
-        backoff = __crossbeam_detail::spin_backoff(backoff);
+        backoff = __spin_backoff(backoff);
         head = __head.get(memory_order_relaxed);
       }
     }

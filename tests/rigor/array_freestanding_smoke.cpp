@@ -131,5 +131,5 @@ main(int, char **, char **)
     if ( c.at(2) != 3 || c.back() != 4 ) return 42;
   }
 
-  return 0;
+  return 1;      // 1 is PASS; the numbered returns above are the failure codes
 }

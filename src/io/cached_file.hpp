@@ -625,9 +625,9 @@ public:
     return total;
   }
 
-  template<int SZ, int CK>
+  template<int SZ, int CK, bool IS>
   max_t
-  flush_to_stream(io::stream<SZ, CK> &s) const
+  flush_to_stream(io::stream<SZ, CK, IS> &s) const
   {
     if ( !data ) return 0;
     s << data;

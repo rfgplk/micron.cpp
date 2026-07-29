@@ -257,10 +257,9 @@ dealloc(byte *ptr, usize len)
   ABC_DOCTOR(len = doctor::check_free_size(ptr, len, __FILE__, __LINE__);)
   // dealloc(ptr len) is always explicit us, no fall throughs; treat it as a hard error, we went wrong somewhere
   if ( !__route_dealloc(ptr, len) ) [[unlikely]] {
-    ABC_DOCTOR(
-        if ( doctor::on_bad_free(ptr, len, "dealloc(ptr,len): pointer not recognised or size mismatch", __FILE__, __LINE__) ) return;)
+    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, len, "dealloc(ptr,len): no arena owns this pointer", __FILE__, __LINE__) ) return;)
     micron::exc<micron::except::memory_error_abc_dealloc_size>(
-        "dealloc(): free failed with explicit size, pointer not recognised or size mismatch");
+        "dealloc(ptr,len): no arena owns this pointer (foreign provenance, double free, or interior pointer)");
   }
 }
 

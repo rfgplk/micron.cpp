@@ -315,7 +315,7 @@ struct engine {
       __io_ovf_n.fetch_add(1, micron::memory_order_acq_rel);
       __io_unlock(__io_ovf_lk);
     }
-    __cl_wake_one<true>();      // seq_cst
+    if ( __cl_sleeper_mask.get(micron::memory_order_relaxed) != 0 ) __cl_wake_one<true>();
   }
 
   __frame_base *
@@ -349,6 +349,42 @@ struct engine {
       __wr.__park_fired.store(1, micron::memory_order_release);
       return;
     }
+    if ( __tag == __io_ud_mop ) {
+      __io_mop *__m = reinterpret_cast<__io_mop *>(__io_ud_payload(__c.user_data));
+      __io_mev __e;
+      __e.__res = __c.res;
+      __e.__ring = __m->__ring;
+      __e.__fl = 0;
+      if ( (__c.flags & micron::uring::cqe_f_buffer) != 0 ) {
+        __e.__bid = micron::uring::cqe_buffer_id(__c.flags);
+        __e.__fl |= __io_mev_buf;
+      }
+      if ( (__c.flags & micron::uring::cqe_f_more) != 0 )
+        __e.__fl |= __io_mev_more;
+      else {
+        __m->__live.store(0, micron::memory_order_release);
+        __wr.__pending.sub_fetch(1, micron::memory_order_acq_rel);
+      }
+      __m->__push(__e);
+      // three state park handoff
+      u32 __cur = __m->__st.get(micron::memory_order_seq_cst);
+      for ( ;; ) {
+        if ( __cur == __io_mop_parked ) {
+          if ( !__m->__st.compare_exchange_weak(__cur, __io_mop_idle, micron::memory_order_seq_cst, micron::memory_order_seq_cst) )
+            continue;
+          __frame_base *__fb = __m->__f;      // lst read of *__m
+          __submit_io(__fb);
+          break;
+        }
+        if ( __cur == __io_mop_parking ) {
+          if ( !__m->__st.compare_exchange_weak(__cur, __io_mop_pending, micron::memory_order_seq_cst, micron::memory_order_seq_cst) )
+            continue;
+          break;
+        }
+        break;
+      }
+      return;
+    }
     if ( __tag != __io_ud_op ) return;      // cancel / ltimer / reclaim
     __io_op *__op = reinterpret_cast<__io_op *>(__c.user_data);
     __op->__res = __c.res;
@@ -379,6 +415,7 @@ struct engine {
     bool __any = false;
     __wring &__own = __io_rings[__w->id];
     if ( __own.__live.get(micron::memory_order_acquire) != 0 ) {
+      __io_flush_staged(__own);
       if ( __own.__r.cq_overflowed() || (__own.__defer != 0 && __own.__r.taskrun_pending()) )
         (void)__own.__r.enter2(0, 0, micron::uring::enter_getevents, nullptr, 0);
       if ( __own.__pending.get(micron::memory_order_relaxed) != 0 ) __any |= __drain_ring(__own);
@@ -675,6 +712,7 @@ stop_coroutine_runtime() noexcept
   }
 #endif
   for ( u32 i = 0; i < e->n; ++i ) e->threads[i].reset();
+  micron::fiber::drain_seg_pool();      // segments parked by crossworker finalize
 #if defined(MICRON_CORO_URING)
   __io_cancel_hook = nullptr;
   __io_fb_shutdown();
@@ -1029,6 +1067,10 @@ template<class T> struct __futex_future_awaiter {
   }
 };
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// LIFO: the frame goes onto the bottom of its own deque and __find pops the bottom
+//
+// NOTE: that is deliberate (it keeps a hot frame hot) but it is not a fairness primitive nor an io primitive
 struct __reschedule_awaitable {
   bool
   await_ready() const noexcept
@@ -1058,6 +1100,55 @@ struct __reschedule_awaitable {
 
 [[nodiscard]] inline __reschedule_awaitable
 reschedule() noexcept
+{
+  return {};
+}
+
+struct __reschedule_fair_awaitable {
+  bool
+  await_ready() const noexcept
+  {
+    return false;
+  }
+
+  template<class P>
+  bool
+  await_suspend(std::coroutine_handle<P> __h) noexcept
+  {
+    worker *__w = current_worker();
+#if defined(MICRON_CORO_URING)
+    if ( __w != nullptr && __global_engine != nullptr && __io.any_live.get(micron::memory_order_acquire) != 0 ) {
+      u32 __seed = __w->id * 2654435761u + 1u;
+      (void)__global_engine->__drain_io(__w, __seed);
+    }
+#endif
+    __frame_base *__f = &__h.promise();      // safe to publish
+    __f->__pushed_kind = __frame_base::__kind_plain;
+    if ( __global_engine != nullptr && __global_engine->inbox.push(__f) ) {
+      // same wake pairing as engine::submit
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+      __cl_signal.fetch_add(1, micron::memory_order_seq_cst);
+      if ( __cl_sleepers.get(micron::memory_order_seq_cst) != 0 ) micron::wake_futex(__cl_signal.ptr(), 1);
+#else
+      __cl_wake_one<true>();
+#endif
+      return true;
+    }
+    if ( __w != nullptr && __w->deque.push_bottom(__f) ) {      // fall back to the LIFO route
+      __notify_work();
+      return true;
+    }
+    return false;
+  }
+
+  void
+  await_resume() const noexcept
+  {
+  }
+};
+
+[[nodiscard]] inline __reschedule_fair_awaitable
+reschedule_fair() noexcept
 {
   return {};
 }

@@ -37,14 +37,18 @@
 namespace micron
 {
 
+// WARNING: never returns 0, NEVER CHANGE IT BACK TO ZERO NEEDED TO DIFFERENTIATE FAILURE STATES
 inline unsigned
 cpu_count(void)
 {
 #if defined(__micron_arch_x86_any)
-  return posix::sysfs::cpu::online_count();
+  const unsigned n = posix::sysfs::cpu::online_count();
 #elif defined(__micron_arch_arm_any)
-  return posix::sysfs::cpu::present_count();
+  const unsigned n = posix::sysfs::cpu::present_count();
+#else
+#error "micron: no cpu_count() backend for this architecture. falling off a non-void function is UB; add the /sys node read for this arch."
 #endif
+  return n ? n : 1u;
 }
 
 inline unsigned

@@ -50,10 +50,12 @@ main()
   s.call("close", +[](int f) { demo::close_file(f); }).consumes(fd);
 
   auto rep = s.run({ .seed = 0xC0FFEE, .iterations = 4000, .max_calls = 12, .minimize = true, .abort_on_failure = false });
+  // WARNING: this file had the exit-code contract inverted -- it returned 1 on failure and 0 on success, so a genuinely passing run graded
+  // FAIL and a broken minimizer graded PASS. 1 is the success sentinel
   if ( !rep.found_failure ) {
     snowball::error("expected to find the use-after-close bug");
-    return 1;
+    return 0;
   }
   snowball::print("rigor_snowball_fuzz_stateful: found + minimized use-after-close");
-  return rep.minimized.calls.size() <= 3 ? 0 : 1;
+  return rep.minimized.calls.size() <= 3 ? 1 : 0;
 }
