@@ -58,6 +58,9 @@ Things that are ISA-gated *by nature* and are simply absent below their tier:
 - io: dir-open does exists/is_dir checks before `open(O_DIRECTORY)`
 - io arm64: `io::path`/`io::dir` directory-open throws `io_error` under qemu-aarch64
 - LSan (and other sanitizers) may report a benign ~8 KB "leak" from the `make_global` stdout/stderr stream process-lifetime allocs
+- `tests/coro/t_aio_inline` is **load-sensitive and flaky in batch runs**
+- 32-bit + threads: a rigor test that keeps **8 live `auto_thread`s** throws `critical_error` from
+  `operator new` on `--i386`. VA exhaustion, 64-bit is immune.
 - coro: **`coro::stop_coroutine_runtime()` is mandatory before `main` returns.**
   There is no atexit hook. Skip it and the process exits with workers still in `worker_main` ->
   `__find` -> `__drain_io` while the static destructor of the global `__io_rings[32]` runs

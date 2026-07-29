@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "queue/chase_lev.hpp"
 #include "queue/conqueue.hpp"
 #include "queue/queue.hpp"
 #include "queue/spsc_queue.hpp"

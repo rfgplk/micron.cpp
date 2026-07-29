@@ -30,7 +30,10 @@ struct fiber;      // fwd
 namespace coro
 {
 
-inline constexpr usize __cl_deque_cap = 1024;
+#if !defined(MICRON_CORO_DEQUE_CAP)
+#define MICRON_CORO_DEQUE_CAP 1024
+#endif
+inline constexpr usize __cl_deque_cap = MICRON_CORO_DEQUE_CAP;
 
 struct alignas(64) worker {      // alignas: keep one worker's fields off its neighbors' cachelines
 
@@ -39,9 +42,9 @@ struct alignas(64) worker {      // alignas: keep one worker's fields off its ne
 #else
   micron::chase_lev_grow<__frame_base *, __cl_deque_cap> deque;      // stealable continuations (growable)
 #endif
-  micron::atomic_token<u32> has_work{ 0 };
-  micron::atomic_token<u32> active{ 0 };      // this worker may be holding/running a continuation (quiescence scan)
-  micron::fiber::fiber *hot = nullptr;        // resident dispatch fiber (cl_sched __run/__cl_hot_entry)
+  __frame_base *ovf = nullptr;                // deque-overflow spill list
+  micron::atomic_token<u32> active{ 0 };      // worker may be holding/running a continuation
+  micron::fiber::fiber *hot = nullptr;        // resident dispatch fiber
   u32 id = 0;
   u32 tick = 0;      // __find cadence counter (periodic inbox poll for root fairness)
 };
@@ -131,8 +134,14 @@ __child_complete(__frame_base *child) noexcept
     __count_take(cont);
     if ( ready ) {
       cont->__pushed_kind = __frame_base::__kind_plain;
-      while ( !w->deque.push_bottom(cont) ) micron::yield();
-      __notify_work();
+      if ( w->deque.push_bottom(cont) ) [[likely]] {
+        __notify_work();
+      } else {
+        // deque full
+        // WARNING: __NEVER__ spin here; this thread is the only valid popper, so yielding cannot make room
+        cont->__ovf_next = w->ovf;
+        w->ovf = cont;
+      }
       return parent->__self;
     }
     return cont->__self;

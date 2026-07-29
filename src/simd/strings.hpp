@@ -78,6 +78,39 @@ find_first_elem(const T *p, usize len, T ch) noexcept
       if ( m ) return i + (static_cast<usize>(__builtin_ctz(m)) / sizeof(T));
     }
   }
+  // sse2 path
+#elif defined(__micron_x86_sse2)
+  if constexpr ( sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 ) {
+    constexpr usize EPV = 16 / sizeof(T);
+    __m128i needle;
+    if constexpr ( sizeof(T) == 1 )
+      needle = _mm_set1_epi8(static_cast<char>(ch));
+    else if constexpr ( sizeof(T) == 2 )
+      needle = _mm_set1_epi16(static_cast<short>(ch));
+    else
+      needle = _mm_set1_epi32(static_cast<int>(ch));
+    for ( ; i + EPV <= len; i += EPV ) {
+      __m128i v = _mm_loadu_si128(reinterpret_cast<const __m128i *>(p + i));
+      __m128i cmp;
+      if constexpr ( sizeof(T) == 1 )
+        cmp = _mm_cmpeq_epi8(v, needle);
+      else if constexpr ( sizeof(T) == 2 )
+        cmp = _mm_cmpeq_epi16(v, needle);
+      else
+        cmp = _mm_cmpeq_epi32(v, needle);
+      unsigned m = static_cast<unsigned>(_mm_movemask_epi8(cmp));
+      if ( m ) return i + (static_cast<usize>(__builtin_ctz(m)) / sizeof(T));
+    }
+  }
+#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+  if constexpr ( sizeof(T) == 1 ) {
+    const uint8x16_t needle = vdupq_n_u8(static_cast<u8>(ch));
+    for ( ; i + 16 <= len; i += 16 ) {
+      const uint8x16_t v = vld1q_u8(reinterpret_cast<const u8 *>(p + i));
+      const u64 m = vget_lane_u64(vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(vceqq_u8(v, needle)), 4)), 0);
+      if ( m ) return i + (static_cast<usize>(__builtin_ctzll(m)) >> 2);
+    }
+  }
 #endif
   for ( ; i < len; ++i )
     if ( p[i] == ch ) return i;
@@ -116,6 +149,49 @@ find_last_elem(const T *p, usize len, T ch) noexcept
       if ( p[j] == ch ) return j;
     return len;
   }
+  // sse2 path
+#elif defined(__micron_x86_sse2)
+  if constexpr ( sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 ) {
+    constexpr usize EPV = 16 / sizeof(T);
+    __m128i needle;
+    if constexpr ( sizeof(T) == 1 )
+      needle = _mm_set1_epi8(static_cast<char>(ch));
+    else if constexpr ( sizeof(T) == 2 )
+      needle = _mm_set1_epi16(static_cast<short>(ch));
+    else
+      needle = _mm_set1_epi32(static_cast<int>(ch));
+    usize i = len;
+    while ( i >= EPV ) {
+      i -= EPV;
+      __m128i v = _mm_loadu_si128(reinterpret_cast<const __m128i *>(p + i));
+      __m128i cmp;
+      if constexpr ( sizeof(T) == 1 )
+        cmp = _mm_cmpeq_epi8(v, needle);
+      else if constexpr ( sizeof(T) == 2 )
+        cmp = _mm_cmpeq_epi16(v, needle);
+      else
+        cmp = _mm_cmpeq_epi32(v, needle);
+      unsigned m = static_cast<unsigned>(_mm_movemask_epi8(cmp));
+      if ( m ) return i + (static_cast<usize>(31 - __builtin_clz(m)) / sizeof(T));
+    }
+    for ( usize j = i; j-- > 0; )
+      if ( p[j] == ch ) return j;
+    return len;
+  }
+#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+  if constexpr ( sizeof(T) == 1 ) {
+    const uint8x16_t needle = vdupq_n_u8(static_cast<u8>(ch));
+    usize i = len;
+    while ( i >= 16 ) {
+      i -= 16;
+      const uint8x16_t v = vld1q_u8(reinterpret_cast<const u8 *>(p + i));
+      const u64 m = vget_lane_u64(vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(vceqq_u8(v, needle)), 4)), 0);
+      if ( m ) return i + ((63u - static_cast<usize>(__builtin_clzll(m))) >> 2);
+    }
+    for ( usize j = i; j-- > 0; )
+      if ( p[j] == ch ) return j;
+    return len;
+  }
 #endif
   for ( usize j = len; j-- > 0; )
     if ( p[j] == ch ) return j;
@@ -149,6 +225,38 @@ count_elem(const T *p, usize len, T ch) noexcept
         cmp = _mm256_cmpeq_epi32(v, needle);
       unsigned m = static_cast<unsigned>(_mm256_movemask_epi8(cmp));
       cnt += static_cast<usize>(__builtin_popcount(m)) / sizeof(T);
+    }
+  }
+#elif defined(__micron_x86_sse2)
+  if constexpr ( sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 ) {
+    constexpr usize EPV = 16 / sizeof(T);
+    __m128i needle;
+    if constexpr ( sizeof(T) == 1 )
+      needle = _mm_set1_epi8(static_cast<char>(ch));
+    else if constexpr ( sizeof(T) == 2 )
+      needle = _mm_set1_epi16(static_cast<short>(ch));
+    else
+      needle = _mm_set1_epi32(static_cast<int>(ch));
+    for ( ; i + EPV <= len; i += EPV ) {
+      __m128i v = _mm_loadu_si128(reinterpret_cast<const __m128i *>(p + i));
+      __m128i cmp;
+      if constexpr ( sizeof(T) == 1 )
+        cmp = _mm_cmpeq_epi8(v, needle);
+      else if constexpr ( sizeof(T) == 2 )
+        cmp = _mm_cmpeq_epi16(v, needle);
+      else
+        cmp = _mm_cmpeq_epi32(v, needle);
+      unsigned m = static_cast<unsigned>(_mm_movemask_epi8(cmp));
+      cnt += static_cast<usize>(__builtin_popcount(m)) / sizeof(T);
+    }
+  }
+#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+  if constexpr ( sizeof(T) == 1 ) {
+    const uint8x16_t needle = vdupq_n_u8(static_cast<u8>(ch));
+    for ( ; i + 16 <= len; i += 16 ) {
+      const uint8x16_t v = vld1q_u8(reinterpret_cast<const u8 *>(p + i));
+      const u64 m = vget_lane_u64(vreinterpret_u64_u8(vshrn_n_u16(vreinterpretq_u16_u8(vceqq_u8(v, needle)), 4)), 0);
+      cnt += static_cast<usize>(__builtin_popcountll(m)) >> 2;
     }
   }
 #endif

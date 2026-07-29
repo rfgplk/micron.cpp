@@ -113,6 +113,8 @@ struct engine {
       f->frame_sp = f->region.frame_base;
   }
 
+  static constexpr u32 __cl_steal_retries = 2;
+
   __frame_base *
   __steal(worker *w, u32 &seed) noexcept
   {
@@ -132,10 +134,14 @@ struct engine {
             continue;
           }
 #endif
-          __frame_base *c = workers[v].deque.steal_top();
-          if ( c != nullptr ) {
-            if ( !workers[v].deque.empty() ) __notify_work();      // wake propagation: more work remains
-            return c;
+          for ( u32 r = 0; r < __cl_steal_retries; ++r ) {
+            const micron::steal_result<__frame_base *> s = workers[v].deque.try_steal();
+            if ( s.__st == micron::steal_status::got ) {
+              if ( s.__more ) __notify_work();      // wake propagation
+              return s.__v;
+            }
+            if ( s.__st == micron::steal_status::empty ) break;
+            __cpu_pause();      // lost
           }
         }
         if ( ++v == n ) v = 0;
@@ -178,6 +184,12 @@ struct engine {
     cont = w->deque.pop_bottom();
     if ( cont != nullptr ) {
       __count_take(cont);      // a locally-popped fork continuation was detached from its child (it suspended)
+      return cont;
+    }
+    if ( w->ovf != nullptr ) [[unlikely]] {      // deque-overflow spill
+      cont = w->ovf;
+      w->ovf = cont->__ovf_next;
+      cont->__ovf_next = nullptr;
       return cont;
     }
     if ( inbox.pop(cont) && cont != nullptr ) return cont;
@@ -646,7 +658,9 @@ stop_coroutine_runtime() noexcept
       if ( __q && !e->__io_ovf_empty() ) __q = false;
 #endif
       for ( u32 __i = 0; __q && __i < e->n; ++__i )
-        if ( e->workers[__i].active.get(micron::memory_order_acquire) != 0 || !e->workers[__i].deque.empty() ) __q = false;
+        if ( e->workers[__i].active.get(micron::memory_order_acquire) != 0 || !e->workers[__i].deque.empty()
+             || e->workers[__i].ovf != nullptr )
+          __q = false;
 #if defined(MICRON_CORO_URING)
       if ( __q ) {
         const u64 __pend = __io_pending_total();

@@ -493,8 +493,12 @@ public:
       return;
     }
     if ( n >= __mem::capacity ) reserve(n);
-    T *f_ptr = __mem::memory;
-    for ( size_type i = __mem::length; i < n; i++ ) new (micron::addr(f_ptr[i])) T{};
+    if constexpr ( micron::is_trivially_default_constructible<T>::value and micron::is_trivially_copyable<T>::value ) {
+      micron::byteset(__mem::memory + __mem::length, 0x0, (n - __mem::length) * sizeof(T));
+    } else {
+      T *f_ptr = __mem::memory;
+      for ( size_type i = __mem::length; i < n; i++ ) new (micron::addr(f_ptr[i])) T{};
+    }
     __mem::length = n;
   }
 
@@ -1400,7 +1404,11 @@ public:
       return;
     }
     if ( n >= __mem::capacity ) reserve(n);
-    for ( size_type i = __mem::length; i < n; i++ ) new (micron::addr(__mem::memory[i])) T{};
+    if constexpr ( micron::is_trivially_default_constructible<T>::value and micron::is_trivially_copyable<T>::value ) {
+      micron::byteset(__mem::memory + __mem::length, 0x0, (n - __mem::length) * sizeof(T));
+    } else {
+      for ( size_type i = __mem::length; i < n; i++ ) new (micron::addr(__mem::memory[i])) T{};
+    }
     __mem::length = n;
   }
 

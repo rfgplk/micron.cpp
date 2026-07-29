@@ -21,11 +21,51 @@
 namespace micron
 {
 
+[[gnu::always_inline]] static inline u64
+__cmp_word(const byte *p) noexcept
+{
+  u64 v;
+  __builtin_memcpy(&v, p, 8);
+  return v;
+}
+
+[[gnu::always_inline]] static inline i64
+__cmp_word_sign(u64 x, u64 y) noexcept
+{
+  const u64 d = x ^ y;
+  const unsigned sh = static_cast<unsigned>(__builtin_ctzll(d)) & ~7u;
+  return static_cast<i64>((x >> sh) & 0xffu) - static_cast<i64>((y >> sh) & 0xffu);
+}
+
 [[gnu::always_inline]] static inline i64
 __memcmp_bytes(const byte *__restrict a, const byte *__restrict b, const u64 bytes) noexcept
 {
   if ( bytes == 0 ) return 0;
   if ( bytes < __simd_dispatch_threshold ) {
+#if defined(__micron_endian_little)
+    // short spans in overlapping words instead of a byte loop
+    if ( bytes >= 8 ) {
+      u64 i = 0;
+      for ( ; i + 8 <= bytes; i += 8 ) {
+        const u64 x = __cmp_word(a + i);
+        const u64 y = __cmp_word(b + i);
+        if ( x != y ) return __cmp_word_sign(x, y);
+      }
+      if ( i == bytes ) return 0;
+      const u64 x = __cmp_word(a + bytes - 8);
+      const u64 y = __cmp_word(b + bytes - 8);
+      return x != y ? __cmp_word_sign(x, y) : 0;
+    }
+    if ( bytes >= 4 ) {
+      u32 x0, y0, x1, y1;
+      __builtin_memcpy(&x0, a, 4);
+      __builtin_memcpy(&y0, b, 4);
+      if ( x0 != y0 ) return __cmp_word_sign(x0, y0);
+      __builtin_memcpy(&x1, a + bytes - 4, 4);
+      __builtin_memcpy(&y1, b + bytes - 4, 4);
+      return x1 != y1 ? __cmp_word_sign(x1, y1) : 0;
+    }
+#endif
     for ( u64 i = 0; i < bytes; i++ )
       if ( a[i] != b[i] ) return static_cast<i64>(static_cast<unsigned>(a[i])) - static_cast<i64>(static_cast<unsigned>(b[i]));
     return 0;
