@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
+
 // standard header file to include for when you need coroutines
 //
 // the io_uring reactor is on by default; define MICRON_CORO_NO_URING to disable it

@@ -9,6 +9,8 @@
 // ctor. Test init functions take a dummy int so they can be invoked via
 // `do_once<f> _(0)`. Documented bug — zero-arg F can't be used today.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/atomic/flag.hpp"
 #include "../../src/mutex/once.hpp"

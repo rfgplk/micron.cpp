@@ -6,6 +6,8 @@
 
 // future.hpp uses fduration_t / system_clock (from chrono.hpp) and lock_guard
 // (from mutex/locks.hpp) without including them — pull both in first.
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/chrono.hpp"
 #include "../../src/mutex/locks.hpp"

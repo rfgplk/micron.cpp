@@ -12,6 +12,8 @@
 
 // flag.hpp declares atomic_token/memory_order without including atomic.hpp;
 // pull in atomic.hpp first so the file actually compiles.
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/atomic/flag.hpp"
 #include "../../src/std.hpp"

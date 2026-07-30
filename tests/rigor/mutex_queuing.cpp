@@ -9,6 +9,8 @@
 // reset member function. The supported RAII adapter is `scoped_lock` from
 // `mutex/locks/queue_lock.hpp`, which has its own test file.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/atomic/flag.hpp"
 #include "../../src/mutex/mutex.hpp"

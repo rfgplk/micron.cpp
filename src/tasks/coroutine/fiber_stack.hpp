@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
+
 #include "../../memory/allocation/abcmalloc/va_reserve.hpp"
 #include "../../memory/mman.hpp"
 #include "../../memory/stack_constants.hpp"

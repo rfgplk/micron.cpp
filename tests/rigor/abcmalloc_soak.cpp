@@ -27,6 +27,8 @@
 //         -D SOAK_SWEEP_EVERY=<n>  full-verify cadence (default 1e6)
 //         -D SOAK_FRAG_EVERY=<n>   fragmentation cycle cadence (default 250000)
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/io/console.hpp"
 
 #include "../support/abc_rigor.hpp"

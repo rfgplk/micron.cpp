@@ -9,6 +9,8 @@
 // Also exercises the fix already in unique_lock.hpp where rptr is templated
 // on M, by instantiating unique_lock<lock_starts::locked, spin_lock>.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/atomic/flag.hpp"
 #include "../../src/mutex/locks.hpp"

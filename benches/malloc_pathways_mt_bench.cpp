@@ -22,6 +22,8 @@
 // Each allocator via its own symbol (abc::alloc, __libc_malloc, mi_malloc,
 // mallocx); ABCMALLOC_DISABLE stops abc interposing the process malloc.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #define ABCMALLOC_DISABLE 1
 
 #include "../external/bbench/bench.hpp"

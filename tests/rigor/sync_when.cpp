@@ -15,6 +15,8 @@
 // is destroyed BEFORE the flag is raised. With value-capture the worker reads its own copy and
 // the result is correct; with the old [&] capture it dereferenced freed stack memory.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/sync/when.hpp"
 

@@ -1,5 +1,7 @@
 // heapq_exhaustive.cpp
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/heap/heapq.hpp"
 #include "../../src/std.hpp"
 

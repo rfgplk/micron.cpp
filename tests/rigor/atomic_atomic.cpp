@@ -15,6 +15,8 @@
 //     temporary atomic_token from *ptr and operate on the copy, so they're
 //     no-ops on the referenced storage. Not tested here; documented bug.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/std.hpp"
 

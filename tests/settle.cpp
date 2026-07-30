@@ -7,6 +7,8 @@
 // behavioural suite for the auto-await layer (src/settle_fwd.hpp): io::echo / echof / print
 // drive coroutines, futures and threads to completion before printing them
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../src/io/echo.hpp"
 #include "../src/io/pecho.hpp"
 

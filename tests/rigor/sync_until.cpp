@@ -10,6 +10,8 @@
 // until_any, until_flag_* exist in the header but require a wider type
 // surface and are skipped for brevity.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/chrono.hpp"
 #include "../../src/mutex/locks.hpp"

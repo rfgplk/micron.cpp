@@ -7,6 +7,8 @@
 // guard_lock.hpp uses adopt_lock_t (from mutex/locks.hpp) and atomic_flag
 // (from atomic/flag.hpp) without including them directly — pull them in
 // explicitly so the SUT compiles.
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/atomic/flag.hpp"
 #include "../../src/mutex/locks.hpp"

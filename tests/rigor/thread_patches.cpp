@@ -7,6 +7,8 @@
 // Smoke tests for the H1-H17 / M2 / M3 fixes in src/thread.
 // Not exhaustive — these target the specific defects, not the wider threading surface.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/io/console.hpp"
 
 #include "../../src/thread/cpu.hpp"

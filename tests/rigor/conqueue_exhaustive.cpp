@@ -3,6 +3,8 @@
 // Covers construction, push/pop/clear, accessors, move ctor/assign, copy, and
 // object-lifetime balance (the move-assign + clear() element handling fixed 2026-05-21).
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/queue/conqueue.hpp"
 #include "../../src/std.hpp"
 

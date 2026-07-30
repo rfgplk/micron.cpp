@@ -22,6 +22,8 @@
 //
 // Build: duck build tests/rigor/abcmalloc_realloc.cpp ; run bin/abcmalloc_realloc
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/io/console.hpp"
 
 #include "../support/abc_rigor.hpp"

@@ -10,6 +10,8 @@
 // a container without /proc could not spawn a single thread -- the spawn does not degrade, it aborts the process. find_tls_from_ehdr() is
 // the /proc-free twin; this pins it against the auxv answer, which is the oracle wherever both are valid
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/linux/elf/auxv.hpp"
 #include "../../src/linux/io/sys.hpp"
 #include "../../src/linux/sys/micthread/tls.hpp"

@@ -2,6 +2,8 @@
 // Exhaustive per-member-function tests for micron::conarray<T, N>.
 // Concurrent fixed-size array — all mutating ops take the internal mutex.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/array/conarray.hpp"
 #include "../../src/std.hpp"
 

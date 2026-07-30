@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
+
 // all parallel specific functions go here
 
 #include "compaction.hpp"

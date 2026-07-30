@@ -16,6 +16,8 @@
 //   2. the same after the VA reservation is exhausted, i.e. of a block on a sheet that
 //      __va_carve could not place inside the reservation (__owner_of must still find its arena)
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/io/console.hpp"
 
 #include "../../src/atomic/atomic.hpp"

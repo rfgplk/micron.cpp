@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
+
 #include "engine.hpp"
 
 // WARNING: element must be fully associative, fp type reordering will cause result to not be identical to the serial version

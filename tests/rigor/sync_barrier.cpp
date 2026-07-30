@@ -12,6 +12,8 @@
 // hang or miscount under the broken implementation; post-fix it completes
 // cleanly with counter == threads * generations.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/sync/latch.hpp"
 
 #include "../../src/atomic/atomic.hpp"

@@ -33,6 +33,8 @@
 // Tune : -D BULK_TARGET_BYTES=<n> -D BULK_OPS=<n> -D BULK_VERIFY_EVERY=<n>
 //        -D BULK_SWEEP_PERMILLE=<0..1000> -D BULK_SWEEP_FREE_PCT=<0..100>
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/io/console.hpp"
 
 #include "../support/abc_rigor.hpp"

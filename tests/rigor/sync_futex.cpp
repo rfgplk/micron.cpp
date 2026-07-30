@@ -18,6 +18,8 @@
 
 // futex.hpp uses memory_order_* (from atomic.hpp) and exc/except (from
 // except.hpp) without including them — pull both in first.
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/except.hpp"
 

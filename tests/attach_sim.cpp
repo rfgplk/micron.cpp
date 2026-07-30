@@ -1,5 +1,7 @@
 
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include <micron/attach/landlord.hpp>
 #include <micron/io/console.hpp>
 #include <micron/thread/spawn.hpp>

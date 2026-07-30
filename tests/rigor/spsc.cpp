@@ -1,6 +1,8 @@
 // spsc_queue_tests.cpp
 // Rigorous snowball test suite for micron::spsc_queue<T, N>
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/queue/spsc_queue.hpp"
 #include "../../src/std.hpp"
 

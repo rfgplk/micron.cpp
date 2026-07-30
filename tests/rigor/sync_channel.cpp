@@ -11,6 +11,8 @@
 // `to = obj()` call. Pre-fix MPMC stress lost / duplicated items;
 // post-fix every produced value is consumed exactly once.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/sync/channel.hpp"
 
 #include "../../src/atomic/atomic.hpp"

@@ -1,4 +1,6 @@
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/math.hpp"
 #include "../../src/parallel/algo.hpp"
 #include "../snowball/snowball.hpp"

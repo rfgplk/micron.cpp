@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "../../../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // mic-thread
 //

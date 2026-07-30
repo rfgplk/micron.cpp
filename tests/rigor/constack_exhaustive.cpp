@@ -14,6 +14,8 @@
 //
 // Threading uses micron::auto_thread (NO <thread>/<atomic>, per the pthread shim).
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/stack.hpp"      // umbrella: stack + constack in one TU (collision gone)
 #include "../../src/std.hpp"
 

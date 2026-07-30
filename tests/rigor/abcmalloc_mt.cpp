@@ -4,6 +4,11 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+// WARNING: must precede every include. A freestanding (-k) build defaults __default_multithread_safe
+// off, which elides owner routing on dealloc and reduces musage() to the calling thread's arena --
+// this whole file is then testing the single-thread allocator and silently fails the aggregate checks
+#define MICRON_ABC_MT 1
+
 #include "../../src/io/console.hpp"
 
 #include "../../src/atomic/atomic.hpp"

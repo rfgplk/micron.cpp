@@ -12,6 +12,8 @@
 //
 // Build: `duck build tests/rigor/rigor_convector.cpp`; run `bin/rigor_convector`.
 
+#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+
 #include "../../src/io/console.hpp"
 
 #include "../../src/vector/convector.hpp"
