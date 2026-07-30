@@ -386,9 +386,9 @@ constexpr static const u64 __pow5_split2[13][2] = { { 0ull, 1152921504606846976u
                                                     { 0ull, 1490116119384765625ull },
                                                     { 1032610780636961552ull, 1925929944387235853ull },
                                                     { 7910200175544436838ull, 1244603055572228341ull },
-                                                    { 16941905809032713930ull, 1608611746553235488ull },
+                                                    { 16941905809032713930ull, 1608611746708759036ull },
                                                     { 13024893955298202172ull, 2079081953128979843ull },
-                                                    { 6607496772837067824ull, 1343575832879272604ull },
+                                                    { 6607496772837067824ull, 1343575221513417750ull },
                                                     { 17332926989895652603ull, 1736530273035216783ull },
                                                     { 13037379183483547984ull, 2244412773384604712ull },
                                                     { 1605989338741628675ull, 1450417759929778918ull },
@@ -413,9 +413,10 @@ constexpr static const u64 __pow5_inv_split2[15][2] = { { 1ull, 2305843009213693
                                                         { 12701016819766672773ull, 2032799256770390445ull } };
 
 constexpr static const u32 __pow5_offsets[21]
-    = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x40000000, 0x59695995, 0x55455555, 0x41545555, 0x54040455, 0x15545455, 0x44455045,
-        0x44554554, 0x55555054, 0x45555555, 0x05511504, 0x45515555, 0x05054514, 0x45050004, 0x55555555, 0x55050A04, 0x00505515 };
+    = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x40000000, 0x59695995, 0x55545555, 0x56555515, 0x41150504, 0x40555410, 0x44555145,
+        0x44504540, 0x45555550, 0x40004000, 0x96440440, 0x55565565, 0x54454045, 0x40154151, 0x55559155, 0x51405555, 0x00000105 };
 
+// indexable for q <= 303 only; d2d requests at most q = 290 for finite doubles
 constexpr static const u32 __pow5_inv_offsets[19]
     = { 0x54544554, 0x04055545, 0x10041000, 0x00400414, 0x40010000, 0x41155555, 0x00000454, 0x00010044, 0x40000000, 0x44000041,
         0x50454450, 0x55550054, 0x51655554, 0x40004000, 0x01000001, 0x00010500, 0x51515411, 0x05555554, 0x00000000 };
@@ -505,7 +506,7 @@ pow5_compute_inv(u32 i, u64 result[2])
   const u64 *mul = __pow5_inv_split2[base];
 
   if ( i == base2 ) {
-    result[0] = mul[0] + 1;
+    result[0] = mul[0];
     result[1] = mul[1];
     return;
   }
@@ -513,7 +514,8 @@ pow5_compute_inv(u32 i, u64 result[2])
   u32 offset = base2 - i;
   u64 m = __pow5_table[offset];
 
-  __fmt_uint128_t b0 = umul128(m, mul[0]);
+  // anchors already store ceil()+1; derive from the floor form (mul[0]-1), the +1 is re-added below
+  __fmt_uint128_t b0 = umul128(m, mul[0] - 1);
   __fmt_uint128_t b2 = umul128(m, mul[1]);
 
   u64 mid = b0.hi + b2.lo;
@@ -607,7 +609,10 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
 
     if ( q <= 1 ) {
       trailingVr = true;
-      trailingVm = acceptBounds && (mmShift == 1);
+      if ( acceptBounds )
+        trailingVm = (mmShift == 1);
+      else
+        --vp;      // mp = mv + 2 always has a trailing zero bit
     } else if ( q < 63 ) {
       trailingVr = pow2_multiple(mv, static_cast<u32>(q));
     }

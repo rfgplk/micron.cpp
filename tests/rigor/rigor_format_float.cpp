@@ -141,8 +141,9 @@ main()
   test_case("float_to_string(-0.0)");
   {
     f32 neg_zero;
-    u32 bits = 0x80000000u;
-    __builtin_memcpy(&neg_zero, &bits, 4);
+    volatile u32 bits = 0x80000000u;      // -Ofast merges compile-time ±0 calls (ISSUES.md)
+    u32 t = bits;
+    __builtin_memcpy(&neg_zero, &t, 4);
     auto s = micron::float_to_string<schar>(neg_zero);
     require_true(hstr_starts_with(s, "-0"));
   }
@@ -439,8 +440,9 @@ main()
   {
     f64 pos_zero = 0.0;
     f64 neg_zero;
-    u64 nz_bits = 0x8000000000000000ULL;
-    __builtin_memcpy(&neg_zero, &nz_bits, 8);
+    volatile u64 nz_bits = 0x8000000000000000ULL;      // -Ofast merges compile-time ±0 calls (ISSUES.md)
+    u64 nzt = nz_bits;
+    __builtin_memcpy(&neg_zero, &nzt, 8);
     auto a = micron::double_to_string<schar>(pos_zero);
     auto b = micron::double_to_string<schar>(neg_zero);
     // a should not start with '-', b should

@@ -1,4 +1,4 @@
-# Known Issues (as of 2026-06-04)
+# Known Issues (as of 2026-07-29)
 
 ## x86 ISA levels
 
@@ -52,6 +52,11 @@ Things that are ISA-gated *by nature* and are simply absent below their tier:
 - `src/regex/regex.hpp`: `cmatch<>` local scratch is O(maxi*maxslots) (~27KB stack for nested-group patterns); _very_ heavy comptime for large patterns
 - base move-assign does NOT free the destination's old buffer: `src/memory/allocation/core_resource.hpp` (`operator=(&&)`) delegate without `free()`; `resource_types/mutable_resource.hpp` copy-assign likewise. Microns containers free themselves by design, but be careful
 - `micron::alloc<T>(bytes)` returns RAW memory; doesn't perform default init
+- format: `to_double` (`src/string/format.hpp`) is a naive accumulate-and-divide parser — not
+  correctly rounded, and the container overload ignores `e` exponents entirely. It cannot parse
+  shortest-form converter output back bit-exact
+- format: `d2f_buffered`/`d2e_buffered` (`to_fixed`/`to_scientific`) truncate the Ryu digit stream
+  at the precision cut instead of rounding the last kept digit.
 - io: cached `st_size` not invalidated after writes
 - io: termios struct layout is kernel-ABI dependent; not fully cross platform
 - io: global stdout/stderr buffers have no thread-safety locks whatsoever
@@ -92,3 +97,8 @@ Things that are ISA-gated *by nature* and are simply absent below their tier:
   `start/start.cpp` is exempt only because freestanding builds already pass `-fno-stack-protector`.
 - aarch64 gcc **ignores** `__attribute__((naked))` entirely and emits a prologue/epilogue anyway; both
   `__ar.hpp` and `clone.hpp` work around it by emitting the routines as file-scope `asm()` blocks
+- **`-Ofast` (`-fno-signed-zeros`) merges calls fed compile-time `+0.0` / `-0.0` constants** — the
+  linaro aarch64 build CSEd `double_to_string(0.0)` and `double_to_string(-0.0)` into one result, so a
+  test comparing both signs saw the wrong string. Runtime values are unaffected (the converters read
+  raw bits). In tests, launder constant ±0 bit patterns through a `volatile` u64/u32 first
+  (`tests/rigor/rigor_format_ryu.cpp` `f64_opaque`).

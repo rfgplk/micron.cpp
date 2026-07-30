@@ -163,6 +163,7 @@ f2d(u32 ieeeMant, u32 ieeeExp)
   u32 vr, vp, vm;
   i32 e10;
   bool vmTZ = false, vrTZ = false;
+  u32 lastDig = 0;
 
   if ( e2 >= 0 ) {
     u32 q = static_cast<u32>(log10p2(e2));
@@ -172,6 +173,11 @@ f2d(u32 ieeeMant, u32 ieeeExp)
     vr = mul_inv(mv, q, i);
     vp = mul_inv(mp, q, i);
     vm = mul_inv(mm, q, i);
+    // one removed digit must be known even when the loop below runs zero times
+    if ( q != 0 && (vp - 1) / 10 <= vm / 10 ) {
+      i32 l = __float_pow5_inv_bitcount + pow5bits(static_cast<i32>(q - 1)) - 1;
+      lastDig = mul_inv(mv, q - 1, -e2 + static_cast<i32>(q) - 1 + l) % 10;
+    }
     if ( q <= 9 ) {
       if ( mv % 5 == 0 ) {
         vrTZ = mul_of_5(mv, q);
@@ -190,6 +196,10 @@ f2d(u32 ieeeMant, u32 ieeeExp)
     vr = mul_fwd(mv, static_cast<u32>(i), j);
     vp = mul_fwd(mp, static_cast<u32>(i), j);
     vm = mul_fwd(mm, static_cast<u32>(i), j);
+    if ( q != 0 && (vp - 1) / 10 <= vm / 10 ) {
+      i32 j2 = static_cast<i32>(q) - 1 - (pow5bits(i + 1) - __float_pow5_bitcount);
+      lastDig = mul_fwd(mv, static_cast<u32>(i + 1), j2) % 10;
+    }
     if ( q <= 1 ) {
       vrTZ = true;
       if ( acceptBounds )
@@ -203,7 +213,6 @@ f2d(u32 ieeeMant, u32 ieeeExp)
 
   // digit removal: find shortest representation
   i32 removed = 0;
-  u32 lastDig = 0;
   u32 output;
 
   if ( vmTZ || vrTZ ) {
@@ -229,7 +238,7 @@ f2d(u32 ieeeMant, u32 ieeeExp)
     if ( vrTZ && lastDig == 5 && vr % 2 == 0 ) lastDig = 4;
     output = vr + ((vr == vm && !(acceptBounds && vmTZ)) || lastDig >= 5 ? 1 : 0);
   } else {
-    bool roundUp = false;
+    bool roundUp = (lastDig >= 5);      // precomputed digit decides when no removal happens below
     u32 vpD = vp / 100, vmD = vm / 100;
     if ( vpD > vmD ) {
       u32 vrD = vr / 100;

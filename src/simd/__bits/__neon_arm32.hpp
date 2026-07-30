@@ -682,6 +682,13 @@ vreinterpret_u32_u8(uint8x8_t v) noexcept
   return (uint32x2_t)v;
 }
 
+// was missing
+__inline_g uint64x1_t
+vreinterpret_u64_u8(uint8x8_t v) noexcept
+{
+  return (uint64x1_t)v;
+}
+
 __inline_g uint8x8_t
 vreinterpret_u8_u32(uint32x2_t v) noexcept
 {

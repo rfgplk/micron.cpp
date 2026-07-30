@@ -3574,6 +3574,13 @@ vshrn_n_u64(uint64x2_t v, const int n) noexcept
   return __builtin_convertvector(v >> (uint64x2_t)vdupq_n_u64((unsigned long long)n), uint32x2_t);
 }
 
+// was missing
+__inline_g uint64x1_t
+vreinterpret_u64_u8(uint8x8_t a) noexcept
+{
+  return (uint64x1_t)a;
+}
+
 __inline_g uint16x4_t
 vreinterpret_u16_u8(uint8x8_t a) noexcept
 {
