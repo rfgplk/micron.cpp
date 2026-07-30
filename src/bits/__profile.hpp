@@ -23,7 +23,11 @@
 #define MICRON_ABC_CACHE_SIZE_FACTOR 512      // 128 KiB requested, floors at the 2 MiB granule
 #endif
 #ifndef MICRON_ABC_VA_RESERVE_SIZE
+#if __SIZEOF_POINTER__ == 8
 #define MICRON_ABC_VA_RESERVE_SIZE (4ULL << 30)      // 4 GiB: owner table 1 MiB -> 16 KiB, free runs 2 MiB -> 32 KiB
+#else
+#define MICRON_ABC_VA_RESERVE_SIZE (1024U << 20)      // 1 GiB == the width-32 default; 4 GiB truncates to 0 in a 32-bit usize
+#endif
 #endif
 #ifndef MICRON_ABC_MAX_ARENAS
 #define MICRON_ABC_MAX_ARENAS 4      // ~210 KiB of pool storage, overflow list covers the rest
