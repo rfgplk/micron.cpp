@@ -106,14 +106,12 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   const u64 p_align = (img.align != 0) ? img.align : __micron_tls_min_align;
 
   if ( p_align > page_sz ) micron::sys_exit(127);
-  // the host image sits at base + surplus; a surplus that isn't a multiple of p_align misaligns every host thread_local
-  if ( !micron::__attach_surplus_fits_align(p_align) ) micron::sys_exit(127);
 
   const u64 image_block_size = __tls_round_up(img.memsz, p_align);
 
-  // reserve the surplus in front of the host image so tp is unchanged vs the stock layout
-  const u64 surplus = __micron_tls_surplus;
-  const u64 raw_size = surplus + image_block_size + __micron_tcb_sz;
+  // Variant II: [ image_block | TCB ], tp = base + block
+  // NOTE: no surplus region; the attach surplus is one of the host's thread_locals, so it is already inside image_block
+  const u64 raw_size = image_block_size + __micron_tcb_sz;
   const u64 alloc_size = __tls_round_up(raw_size, page_sz);
 
   byte *base = __tls_mmap(alloc_size);
@@ -121,8 +119,8 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
     micron::sys_exit(127);
   }
 
-  byte *tp = base + surplus + image_block_size;      // TP / %fs target
-  byte *image_dst = base + surplus;                  // host image sits just past the surplus
+  byte *tp = base + image_block_size;      // TP / %fs target
+  byte *image_dst = base;
 
   if ( img.filesz > 0 && img.image != nullptr ) {
     for ( u64 i = 0; i < img.filesz; ++i ) image_dst[i] = img.image[i];
@@ -132,10 +130,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
 
   micron::syscall(SYS_arch_prctl, __arch_set_fs, tp);
 
-#if defined(__micron_attach_capable)
-  micron::__micron_host_image_block = image_block_size;
-  micron::__micron_host_head_aligned = 0;
-  micron::__micron_tls_inited = true;
+#if defined(MICRON_ENABLE_ATTACH)
+  // WARNING: always after the TP is live, the surplus is a thread_local and taking its address needs %fs
+  (void)micron::__attach_host_tls_record(static_cast<i64>(&micron::__micron_attach_surplus[0] - tp), image_block_size);
   micron::__attach_frame_register(base);
 #endif
   __micron_main_tls.base = base;
@@ -156,15 +153,10 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
 
   const u64 image_block_size = __tls_round_up(img.memsz, p_align);
 
-  // Variant I; attach appends the surplus after the host image
+  // Variant I: [ TCB | pad | image_block ], tp = base
+  // NOTE: no surplus region; the attach surplus is one of the host's thread_locals, so it is already inside image_block
   const u64 head_aligned = __tls_round_up(__arm_tcbhead_sz, p_align);
-  u64 alloc_size;
-  if constexpr ( __micron_tls_surplus == 0 ) {
-    alloc_size = __tls_round_up(head_aligned + image_block_size, page_sz);
-  } else {
-    const u64 surplus_base_off = __tls_round_up(head_aligned + image_block_size, __micron_tls_surplus_align);
-    alloc_size = __tls_round_up(surplus_base_off + __micron_tls_surplus, page_sz);
-  }
+  const u64 alloc_size = __tls_round_up(head_aligned + image_block_size, page_sz);
 
   byte *base = __tls_mmap(alloc_size);
   if ( base == nullptr ) micron::sys_exit(127);
@@ -178,10 +170,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
 
   micron::syscall(SYS_arm_set_tls, tp);
 
-#if defined(__micron_attach_capable)
-  micron::__micron_host_image_block = image_block_size;
-  micron::__micron_host_head_aligned = head_aligned;
-  micron::__micron_tls_inited = true;
+#if defined(MICRON_ENABLE_ATTACH)
+  // WARNING: always after the TP is live, the surplus is a thread_local and taking its address needs the TP
+  (void)micron::__attach_host_tls_record(static_cast<i64>(&micron::__micron_attach_surplus[0] - tp), image_block_size);
   // the main thread's frame has to be in the registry too, or a module attached later never seeds it
   micron::__attach_frame_register(base);
 #endif
@@ -200,14 +191,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   const u64 p_align = (img.align != 0) ? img.align : __micron_tls_min_align;
   if ( p_align > page_sz ) micron::sys_exit(127);
   const u64 image_block_size = __tls_round_up(img.memsz, p_align);
+  // NOTE: no surplus region; the attach surplus is one of the host's thread_locals, so it is already inside image_block
   const u64 head_aligned = __tls_round_up(__arm64_tcbhead_sz, p_align);
-  u64 alloc_size;
-  if constexpr ( __micron_tls_surplus == 0 ) {
-    alloc_size = __tls_round_up(head_aligned + image_block_size, page_sz);
-  } else {
-    const u64 surplus_base_off = __tls_round_up(head_aligned + image_block_size, __micron_tls_surplus_align);
-    alloc_size = __tls_round_up(surplus_base_off + __micron_tls_surplus, page_sz);
-  }
+  const u64 alloc_size = __tls_round_up(head_aligned + image_block_size, page_sz);
   byte *base = __tls_mmap(alloc_size);
   if ( base == nullptr ) micron::sys_exit(127);
   byte *tp = base;
@@ -216,10 +202,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
     for ( u64 i = 0; i < img.filesz; ++i ) image_dst[i] = img.image[i];
   }
   asm volatile("msr tpidr_el0, %0" ::"r"(tp) : "memory");
-#if defined(__micron_attach_capable)
-  micron::__micron_host_image_block = image_block_size;
-  micron::__micron_host_head_aligned = head_aligned;
-  micron::__micron_tls_inited = true;
+#if defined(MICRON_ENABLE_ATTACH)
+  // WARNING: always after the TP is live, the surplus is a thread_local and taking its address needs the TP
+  (void)micron::__attach_host_tls_record(static_cast<i64>(&micron::__micron_attach_surplus[0] - tp), image_block_size);
   // the main thread's frame has to be in the registry too, or a module attached later never seeds it
   micron::__attach_frame_register(base);
 #endif
@@ -237,15 +222,13 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   if ( page_sz == 0 ) page_sz = __micron_tls_default_pagesz;
   const u64 p_align = (img.align != 0) ? img.align : __micron_tls_min_align;
   if ( p_align > page_sz ) micron::sys_exit(127);
-  // see the amd64 branch: the host image sits at base + surplus on variant II
-  if ( !micron::__attach_surplus_fits_align(p_align) ) micron::sys_exit(127);
   const u64 image_block_size = __tls_round_up(img.memsz, p_align);
-  const u64 surplus = __micron_tls_surplus;
-  const u64 alloc_size = __tls_round_up(surplus + image_block_size + __micron_tcb_sz, page_sz);
+  // see the amd64 branch: no surplus region, the attach surplus is a host thread_local inside image_block
+  const u64 alloc_size = __tls_round_up(image_block_size + __micron_tcb_sz, page_sz);
   byte *base = __tls_mmap(alloc_size);
   if ( base == nullptr ) micron::sys_exit(127);
-  byte *tp = base + surplus + image_block_size;
-  byte *image_dst = base + surplus;
+  byte *tp = base + image_block_size;
+  byte *image_dst = base;
   if ( img.filesz > 0 && img.image != nullptr ) {
     for ( u64 i = 0; i < img.filesz; ++i ) image_dst[i] = img.image[i];
   }
@@ -254,10 +237,9 @@ __tls_init([[maybe_unused]] const auxv_t *auxv) noexcept
   micron::syscall(SYS_set_thread_area, &desc);
   const unsigned int gs_sel = (desc.entry_number << 3) | 3u;      // kernel wrote the allocated entry_number back
   asm volatile("movw %w0, %%gs" ::"q"(gs_sel));
-#if defined(__micron_attach_capable)
-  micron::__micron_host_image_block = image_block_size;
-  micron::__micron_host_head_aligned = 0;
-  micron::__micron_tls_inited = true;
+#if defined(MICRON_ENABLE_ATTACH)
+  // WARNING: always after the TP is live, the surplus is a thread_local and taking its address needs %gs
+  (void)micron::__attach_host_tls_record(static_cast<i64>(&micron::__micron_attach_surplus[0] - tp), image_block_size);
   // the main thread's frame has to be in the registry too, or a module attached later never seeds it
   micron::__attach_frame_register(base);
 #endif
