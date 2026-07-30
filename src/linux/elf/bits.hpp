@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../bits.hpp"
 #include "../../bits/__arch.hpp"
 #include "../../types.hpp"
 
@@ -43,6 +44,14 @@ inline constexpr u8 ei_data = 5;
 inline constexpr u8 ei_version = 6;
 inline constexpr u8 ei_osabi = 7;
 inline constexpr u8 ei_abiversion = 8;
+
+template<typename T>
+  requires(micron::is_arithmetic_v<T>)
+inline T
+from_file_order(T x, fmt_data d) noexcept
+{
+  return d == fmt_data::msb ? micron::bswap(x) : x;
+}
 
 };      // namespace elf
 };      // namespace micron
