@@ -46,7 +46,9 @@ struct locked_stdout_sink {
   put(const char *p, usize n)
   {
     if ( __p_buffer_stdout->full(n) ) {
-      (*__p_buffer_stdout) >> io::stdout;
+      // WARNING: calling operator>> explicitly, if function.hpp is included before io, it's unconstrained operator>> overload wins over
+      // this
+      (*__p_buffer_stdout).operator>>(io::stdout);
       if ( n >= static_cast<usize>(__global_buffer_size) ) return posix::write_all(io::stdout, reinterpret_cast<const byte *>(p), n);
     }
     __p_buffer_stdout->append(reinterpret_cast<const byte *>(p), n);
@@ -56,7 +58,7 @@ struct locked_stdout_sink {
   static max_t
   put(char c)
   {
-    if ( __p_buffer_stdout->full(1) ) (*__p_buffer_stdout) >> io::stdout;
+    if ( __p_buffer_stdout->full(1) ) (*__p_buffer_stdout).operator>>(io::stdout);
     __p_buffer_stdout->append(reinterpret_cast<const byte *>(&c), 1);
     return 1;
   }
@@ -64,7 +66,7 @@ struct locked_stdout_sink {
   static max_t
   flush(void)
   {
-    (*__p_buffer_stdout) >> io::stdout;
+    (*__p_buffer_stdout).operator>>(io::stdout);
     return 0;
   }
 };
