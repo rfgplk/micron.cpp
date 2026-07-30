@@ -166,7 +166,8 @@ __attach_frame_unregister(byte *base) noexcept
   }
   __attach_frames_unlock();
 }
-#elif defined(__micron_attach_capable)
+#else
+// no attach registry
 inline __attribute__((always_inline)) void
 __attach_frame_register(byte *) noexcept
 {
