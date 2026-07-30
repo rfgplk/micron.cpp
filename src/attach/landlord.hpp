@@ -165,37 +165,35 @@ __attach_copy_registered_tdata(byte *frame_base) noexcept
   __attach_lock_release();
 }
 
+// this threads thread pointer;
+// only __attach_host_tls_init needs it
 inline byte *
-__attach_current_frame_base() noexcept
+__attach_read_tp() noexcept
 {
+  byte *tp = nullptr;
 #if defined(__micron_arch_amd64)
-  byte *tp = nullptr;
   asm volatile("mov %%fs:0, %0" : "=r"(tp));
-  return tp - static_cast<i64>(__micron_tls_surplus + __micron_host_image_block);
 #elif defined(__micron_arch_x86)
-  byte *tp = nullptr;
   asm volatile("mov %%gs:0, %0" : "=r"(tp));
-  return tp - static_cast<i64>(__micron_tls_surplus + __micron_host_image_block);
 #elif defined(__micron_arch_arm32)
-  byte *tp = nullptr;
   asm volatile("mrc p15, 0, %0, c13, c0, 3" : "=r"(tp));
-  return tp;
 #elif defined(__micron_arch_arm64)
-  byte *tp = nullptr;
   asm volatile("mrs %0, tpidr_el0" : "=r"(tp));
-  return tp;
-#else
-  return nullptr;
 #endif
+  return tp;
 }
 
+// this threads surplus;
+// surplus is one of the hosts thread_locals,
+// just its address on the running thread
 inline byte *
 __attach_current_surplus_base() noexcept
 {
-  if ( !__attach_host_tls_ready() ) return nullptr;
-  byte *base = __attach_current_frame_base();
-  if ( !__attach_frame_registered(base) ) return nullptr;
-  return base + __attach_surplus_base_off();
+#if defined(MICRON_ENABLE_ATTACH)
+  return &__micron_attach_surplus[0];
+#else
+  return nullptr;      // a guest is seated in its hosts surplus
+#endif
 }
 
 inline int

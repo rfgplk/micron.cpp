@@ -22,29 +22,37 @@ inline constexpr usize __micron_tls_surplus_align = 64;
 #define MICRON_TLS_SURPLUS_SIZE 4096
 #endif
 inline constexpr usize __micron_tls_surplus = MICRON_TLS_SURPLUS_SIZE;
-// WARNING: on variant II the host PT_TLS image is placed at base + surplus, so the surplus size is
-// part of the host's own thread_local alignment; values that aren't a multiple of the surplus align
-// silently misaligns every host thread_local
 static_assert(__micron_tls_surplus % __micron_tls_surplus_align == 0,
               "MICRON_TLS_SURPLUS_SIZE must be a multiple of micron::__micron_tls_surplus_align (64)");
 #else
 inline constexpr usize __micron_tls_surplus = 0;
 #endif
 
-// landlord needs this to turn a guest's surplus offset into a tp-relative bias
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// SURPLUS (WIP)
+//
+// declared as one of hosts thread_locals, lives in the PT_TLS image
+// guests must not declare one; modules are seated in the hosts surplus
+//
+// used+retain; prevent the compiler/linker from culling this
+#if defined(MICRON_ENABLE_ATTACH)
+alignas(__micron_tls_surplus_align) inline thread_local byte __micron_attach_surplus[__micron_tls_surplus] __attribute__((used, retain));
+#endif
+
+inline i64 __micron_surplus_tpoff = 0;
+
 inline u64 __micron_host_image_block = 0;
-inline u64 __micron_host_head_aligned = 0;
 inline bool __micron_tls_inited = false;
 
 inline bool
-__attach_host_tls_record(u64 image_block, u64 head_aligned) noexcept
+__attach_host_tls_record(i64 surplus_tpoff, u64 image_block) noexcept
 {
   if constexpr ( __micron_tls_surplus == 0 ) {
     return false;
   } else {
     if ( __micron_tls_inited ) return true;
+    __micron_surplus_tpoff = surplus_tpoff;
     __micron_host_image_block = image_block;
-    __micron_host_head_aligned = head_aligned;
     __micron_tls_inited = true;
     return true;
   }
@@ -57,45 +65,26 @@ __attach_host_tls_ready() noexcept
   return __micron_tls_inited && __micron_tls_surplus != 0;
 }
 
-inline __attribute__((always_inline)) bool
-__attach_surplus_fits_align([[maybe_unused]] u64 p_align) noexcept
-{
-#if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
-  if constexpr ( __micron_tls_surplus == 0 ) {
-    return true;
-  } else {
-    return p_align == 0 || (__micron_tls_surplus % p_align) == 0;
-  }
-#else
-  return true;
-#endif
-}
-
 inline __attribute__((always_inline)) constexpr u64
 __attach_round_up(u64 v, u64 a) noexcept
 {
   return a <= 1 ? v : ((v + a - 1) / a) * a;
 }
 
-// byte offset from a frame's mmap base to the start of its surplus region
 inline __attribute__((always_inline)) u64
 __attach_surplus_base_off() noexcept
 {
 #if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
-  return 0;
+  return static_cast<u64>(__micron_surplus_tpoff + static_cast<i64>(__micron_host_image_block));
 #else
-  return __attach_round_up(__micron_host_head_aligned + __micron_host_image_block, __micron_tls_surplus_align);
+  return static_cast<u64>(__micron_surplus_tpoff);
 #endif
 }
 
 inline __attribute__((always_inline)) i64
 __attach_tp_bias(u64 off) noexcept
 {
-#if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
-  return static_cast<i64>(off) - static_cast<i64>(__micron_tls_surplus + __micron_host_image_block);
-#else
-  return static_cast<i64>(__attach_surplus_base_off() + off);
-#endif
+  return __micron_surplus_tpoff + static_cast<i64>(off);
 }
 
 #if defined(MICRON_ENABLE_ATTACH)
@@ -137,22 +126,6 @@ __attach_frame_register(byte *base) noexcept
   __attach_frames_unlock();
 }
 
-[[nodiscard]] inline bool
-__attach_frame_registered(const byte *base) noexcept
-{
-  if ( base == nullptr ) return false;
-  __attach_frames_lock();
-  bool found = false;
-  for ( u32 i = 0; i < __attach_frame_hi; ++i ) {
-    if ( __attach_frames[i] == base ) {
-      found = true;
-      break;
-    }
-  }
-  __attach_frames_unlock();
-  return found;
-}
-
 inline void
 __attach_frame_unregister(byte *base) noexcept
 {
@@ -176,12 +149,6 @@ __attach_frame_register(byte *) noexcept
 inline __attribute__((always_inline)) void
 __attach_frame_unregister(byte *) noexcept
 {
-}
-
-[[nodiscard]] inline __attribute__((always_inline)) bool
-__attach_frame_registered(const byte *) noexcept
-{
-  return false;
 }
 #endif
 
