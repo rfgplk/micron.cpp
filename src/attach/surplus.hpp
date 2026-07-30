@@ -12,6 +12,9 @@
 namespace micron
 {
 
+// feature probe for hosts staging an upgrade
+#define MICRON_ATTACH_HOST_TLS_INIT 1
+
 inline constexpr usize __micron_tls_surplus_align = 64;
 
 #if defined(__micron_attach_capable)
@@ -28,9 +31,31 @@ static_assert(__micron_tls_surplus % __micron_tls_surplus_align == 0,
 inline constexpr usize __micron_tls_surplus = 0;
 #endif
 
+// landlord needs this to turn a guest's surplus offset into a tp-relative bias
 inline u64 __micron_host_image_block = 0;
 inline u64 __micron_host_head_aligned = 0;
 inline bool __micron_tls_inited = false;
+
+inline bool
+__attach_host_tls_record(u64 image_block, u64 head_aligned) noexcept
+{
+  if constexpr ( __micron_tls_surplus == 0 ) {
+    return false;
+  } else {
+    if ( __micron_tls_inited ) return true;
+    __micron_host_image_block = image_block;
+    __micron_host_head_aligned = head_aligned;
+    __micron_tls_inited = true;
+    return true;
+  }
+}
+
+inline __attribute__((always_inline)) bool
+__attach_host_tls_ready() noexcept
+{
+  // whether the landlord can seat guests yet
+  return __micron_tls_inited && __micron_tls_surplus != 0;
+}
 
 inline __attribute__((always_inline)) bool
 __attach_surplus_fits_align([[maybe_unused]] u64 p_align) noexcept
@@ -77,6 +102,7 @@ __attach_tp_bias(u64 off) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // live TLS frame registry
+
 inline constexpr u32 __micron_attach_max_frames = 4096;
 inline byte *__attach_frames[__micron_attach_max_frames] = {};
 inline u32 __attach_frame_hi = 0;
@@ -111,6 +137,22 @@ __attach_frame_register(byte *base) noexcept
   __attach_frames_unlock();
 }
 
+[[nodiscard]] inline bool
+__attach_frame_registered(const byte *base) noexcept
+{
+  if ( base == nullptr ) return false;
+  __attach_frames_lock();
+  bool found = false;
+  for ( u32 i = 0; i < __attach_frame_hi; ++i ) {
+    if ( __attach_frames[i] == base ) {
+      found = true;
+      break;
+    }
+  }
+  __attach_frames_unlock();
+  return found;
+}
+
 inline void
 __attach_frame_unregister(byte *base) noexcept
 {
@@ -133,6 +175,12 @@ __attach_frame_register(byte *) noexcept
 inline __attribute__((always_inline)) void
 __attach_frame_unregister(byte *) noexcept
 {
+}
+
+[[nodiscard]] inline __attribute__((always_inline)) bool
+__attach_frame_registered(const byte *) noexcept
+{
+  return false;
 }
 #endif
 

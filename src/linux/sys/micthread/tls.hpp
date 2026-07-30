@@ -147,6 +147,25 @@ __tls_ensure_template() noexcept
   return atom::load(__micron_tls_template_state.ptr(), static_cast<int>(memory_order_acquire)) == __tls_tmpl_ready;
 }
 
+#if defined(__micron_attach_capable)
+inline bool
+__attach_host_tls_init() noexcept
+{
+  if constexpr ( __micron_tls_surplus == 0 ) {
+    return false;
+  } else {
+    if ( __attach_host_tls_ready() ) return true;
+    if ( !__tls_ensure_template() ) return false;
+    const __tls_template_t &t = __micron_tls_template;
+    const u64 p_align = t.align ? t.align : __micron_tls_min_align;
+    if ( !__attach_surplus_fits_align(p_align) ) return false;
+    const u64 block = __tls_round_up(t.memsz, p_align);
+    const u64 head = (sizeof(void *) == 8) ? __arm64_tcbhead_sz : __arm_tcbhead_sz;
+    return __attach_host_tls_record(block, __tls_round_up(head, p_align));
+  }
+}
+#endif
+
 // this doesnt install the TP (CLONE_SETTLS in clone3 will)
 inline __tls_frame
 __tls_make_frame(const byte *image, u64 filesz, u64 memsz, u64 align, usize page_sz) noexcept
@@ -163,6 +182,9 @@ __tls_make_frame(const byte *image, u64 filesz, u64 memsz, u64 align, usize page
 #if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
   // Variant II: [ surplus S | image_block | TCB ]
   // tp = base + S + block; host tpoffs unchanged
+#if defined(__micron_attach_capable)
+  (void)__attach_host_tls_record(block, 0);
+#endif
   const u64 surplus = __micron_tls_surplus;
   const u64 alloc = __tls_round_up(surplus + block + __micron_tcb_sz, page_sz);
   byte *base = __tls_raw_mmap(static_cast<usize>(alloc));
@@ -179,6 +201,9 @@ __tls_make_frame(const byte *image, u64 filesz, u64 memsz, u64 align, usize page
   // the image __MUST__ start at p_align past the TCB, not at tcbhead
   const u64 head = (sizeof(void *) == 8) ? __arm64_tcbhead_sz : __arm_tcbhead_sz;
   const u64 head_aligned = __tls_round_up(head, p_align);
+#if defined(__micron_attach_capable)
+  (void)__attach_host_tls_record(block, head_aligned);
+#endif
   u64 alloc;
   if constexpr ( __micron_tls_surplus == 0 ) {
     alloc = __tls_round_up(head_aligned + block, page_sz);

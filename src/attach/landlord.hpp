@@ -17,8 +17,6 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // TLS landlord (HOST side)
 //
-//
-//
 // the host reserves a fixed surplus in every TLS frame it builds
 // guest micron images (canonically .bmg modules) declare thread_locals under -ftls-model=local-exec;
 //
@@ -93,7 +91,7 @@ __attach_tls_assign(const void *tdata, u64 filesz, u64 memsz, u64 align, u64 *ou
   if ( filesz > memsz ) return -1;
   if ( filesz != 0 && tdata == nullptr ) return -1;
   __attach_lock_acquire();
-  if ( !__micron_tls_inited || __micron_tls_surplus == 0 ) {
+  if ( !__attach_host_tls_ready() ) {
     __attach_lock_release();
     return -1;
   }
@@ -155,7 +153,7 @@ __attach_tls_release(u64 token) noexcept
 inline void
 __attach_copy_registered_tdata(byte *frame_base) noexcept
 {
-  if ( __micron_tls_surplus == 0 || frame_base == nullptr ) return;
+  if ( !__attach_host_tls_ready() || frame_base == nullptr ) return;
   byte *surplus_base = frame_base + __attach_surplus_base_off();
   __attach_lock_acquire();
   for ( u32 i = 0; i < __micron_attach_max_modules; ++i ) {
@@ -168,7 +166,7 @@ __attach_copy_registered_tdata(byte *frame_base) noexcept
 }
 
 inline byte *
-__attach_current_surplus_base() noexcept
+__attach_current_frame_base() noexcept
 {
 #if defined(__micron_arch_amd64)
   byte *tp = nullptr;
@@ -181,14 +179,23 @@ __attach_current_surplus_base() noexcept
 #elif defined(__micron_arch_arm32)
   byte *tp = nullptr;
   asm volatile("mrc p15, 0, %0, c13, c0, 3" : "=r"(tp));
-  return tp + __attach_surplus_base_off();
+  return tp;
 #elif defined(__micron_arch_arm64)
   byte *tp = nullptr;
   asm volatile("mrs %0, tpidr_el0" : "=r"(tp));
-  return tp + __attach_surplus_base_off();
+  return tp;
 #else
   return nullptr;
 #endif
+}
+
+inline byte *
+__attach_current_surplus_base() noexcept
+{
+  if ( !__attach_host_tls_ready() ) return nullptr;
+  byte *base = __attach_current_frame_base();
+  if ( !__attach_frame_registered(base) ) return nullptr;
+  return base + __attach_surplus_base_off();
 }
 
 inline int
@@ -198,7 +205,7 @@ __attach_tls_seed_current(u64 token) noexcept
   __attach_slot &s = __attach_slots[token - 1];
   if ( s.in_use.get(memory_order::acquire) == 0 ) return -1;
   byte *surplus_base = __attach_current_surplus_base();
-  if ( surplus_base == nullptr ) return -1;
+  if ( surplus_base == nullptr ) return -1;      // this thread has no surplus: refuse, never scribble
   byte *dst = surplus_base + s.surplus_off;
   for ( u64 k = 0; k < s.filesz; ++k ) dst[k] = s.tdata[k];
   return 0;
