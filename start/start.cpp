@@ -135,6 +135,31 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
   micron::group_exit(rc);
 }
 
+// this start variant function does _not_ do any default runtime initialization (at all)
+// you handle that at your leisure
+
+extern "C" __attribute__((used, visibility("default"), noreturn)) int
+__micron_directc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noexcept
+{
+  // still keeping this
+  environ = envp;
+
+  // keeping those because it's impossible to startup properly without auxv
+
+  // TLS first: thread_local storage depends on it
+  micron::__tls_init(auxv);
+
+  // primary stack region
+  micron::__stack_init(auxv);
+
+  // same
+  if constexpr ( micron::config::fast_math_x86 ) enable_fast_fp();
+
+  const int rc = __micron_user_main(argc, argv, envp);
+
+  micron::group_exit(rc);
+}
+
 extern "C" {
 
 int
