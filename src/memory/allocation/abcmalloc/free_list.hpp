@@ -448,10 +448,13 @@ struct __buddy_list {
 
     tag_count = total >> __log2_min;
 
+    // blk <<= 1 wraps to 0 on width-32 once it passes 2^31
     int m = 0;
     usize blk = Min;
     while ( blk <= total && m < Mx ) {
       ++m;
+      // TODO: measure this, branch predictor should take care of it
+      if ( blk > (micron::numeric_limits<usize>::max() >> 1) ) break;
       blk <<= 1;
     }
     max_order = m;

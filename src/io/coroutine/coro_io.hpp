@@ -5,8 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-// micron::io::coro - coroutine-native io porcelain (umbrella)
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// micron::io::coro
+// coroutine-native io porcelain
 //
 // opt-in: compile with -DMICRON_CORO_URING
 
@@ -20,3 +21,4 @@
 #include "fsys.hpp"
 #include "pipe.hpp"
 #include "stdio.hpp"
+#include "wave.hpp"

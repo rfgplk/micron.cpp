@@ -27,6 +27,7 @@ class file
   fd_t __handle{ posix::invalid_fd };
   u64 __cursor = 0;
   micron::sstr<128> fname;
+  i32 __nb = __impl::__nb_unknown;      // O_NONBLOCK probe
   bool __append = false;
 
   [[gnu::always_inline]] i32
@@ -160,6 +161,7 @@ public:
     if ( __handle.fd >= 0 ) posix::close(__handle.fd);
     __handle = fd_t{ posix::invalid_fd };
     __cursor = 0;
+    __nb = __impl::__nb_unknown;
   }
 
   [[nodiscard]] fd_t
@@ -168,6 +170,7 @@ public:
     fd_t out = __handle;
     __handle = fd_t{ posix::invalid_fd };
     __cursor = 0;
+    __nb = __impl::__nb_unknown;
     return out;
   }
 
@@ -218,9 +221,9 @@ public:
     if ( i32 e = __check() ) [[unlikely]]
       co_return e;
     if ( n > __impl::__chunk_cap ) n = __impl::__chunk_cap;
-    i32 r = co_await micron::coro::io::read(__handle.fd, p, static_cast<u32>(n), __cursor);
+    max_t r = co_await __impl::__read_once(__handle.fd, p, n, __cursor, __nb);
     if ( r > 0 ) __cursor += static_cast<u64>(r);
-    co_return static_cast<max_t>(r);
+    co_return r;
   }
 
   [[nodiscard]] micron::task<max_t>
@@ -229,9 +232,9 @@ public:
     if ( i32 e = __check() ) [[unlikely]]
       co_return e;
     if ( n > __impl::__chunk_cap ) n = __impl::__chunk_cap;
-    i32 w = co_await micron::coro::io::write(__handle.fd, p, static_cast<u32>(n), __woff());
+    max_t w = co_await __impl::__write_once(__handle.fd, p, n, __woff(), __nb);
     if ( w > 0 && !__append ) __cursor += static_cast<u64>(w);
-    co_return static_cast<max_t>(w);
+    co_return w;
   }
 
   // %%%%%%%%%%%%%%%%%%%%%

@@ -10,11 +10,11 @@
 #include "../defs.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
-#include "../mutex/locks.hpp"      // future.hpp uses lock_guard but relies on its includer to provide it
+#include "../mutex/locks.hpp"
 #include "../types.hpp"
 
 #include "futex.hpp"
-#include "future.hpp"      // reuse future_status / future_errc / broken_promise
+#include "future.hpp"
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // futex_shared_state<T> + futex_future<T> / futex_promise<T>
@@ -120,7 +120,7 @@ public:
   void
   set_value(Args &&...args)
   {
-    ::new (static_cast<void *>(&storage.value)) T(micron::forward<Args>(args)...);
+    ::new (static_cast<void *>(__builtin_addressof(storage.value))) T(micron::forward<Args>(args)...);
     has_exception = false;
     micron::release_futex(__rdy.ptr(), 1u, 0x7fffffffu);      // release-store ready + wake all thread waiters
     __wake_waiter();                                          // resume a coroutine waiter, if any

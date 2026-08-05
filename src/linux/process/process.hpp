@@ -35,7 +35,8 @@
 
 #include "../../thread/callbacks.hpp"
 
-extern char **environ;
+// WARNING: environ is declared solely in environ.hpp
+#include "environ.hpp"
 
 namespace micron
 {

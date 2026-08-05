@@ -92,6 +92,21 @@ __print_error(const T &...args)
 
 // end out functions
 
+// WARNING: at -Ofast the frame-pointer register is omitted and reallocated as a general-purpose register
+inline bool
+__addr_readable(const void *p) noexcept
+{
+  if ( p == nullptr ) return false;
+  if ( (reinterpret_cast<umax_t>(p) & (sizeof(void *) - 1)) != 0 ) return false;      // a real fp is word-aligned
+  unsigned char v = 0;
+  const umax_t mask = ~static_cast<umax_t>(4095);
+  const umax_t lo = reinterpret_cast<umax_t>(p) & mask;
+  const umax_t hi = (reinterpret_cast<umax_t>(p) + 2 * sizeof(void *) - 1) & mask;      // fp[0] and fp[1] may straddle
+  if ( micron::syscall(SYS_mincore, reinterpret_cast<void *>(lo), 1, &v) != 0 ) return false;
+  if ( hi != lo && micron::syscall(SYS_mincore, reinterpret_cast<void *>(hi), 1, &v) != 0 ) return false;
+  return true;
+}
+
 inline void
 __print_stack()
 {
@@ -109,11 +124,15 @@ __print_stack()
   int n = 0;
 
   void **fp = static_cast<void **>(__builtin_frame_address(0));
+  const umax_t base = reinterpret_cast<umax_t>(fp);
+  constexpr umax_t stack_window = 64ull << 20;
   for ( int i = 0; i < max_frames && fp; ++i ) {
+    if ( !__addr_readable(fp) ) break;
     void *next_fp = fp[0];
     void *next_ret = fp[1];
     if ( !next_ret ) break;
     if ( reinterpret_cast<umax_t>(next_fp) <= reinterpret_cast<umax_t>(fp) ) break;
+    if ( reinterpret_cast<umax_t>(next_fp) - base > stack_window ) break;
     buffer[n++] = next_ret;
     fp = static_cast<void **>(next_fp);
   }

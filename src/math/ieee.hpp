@@ -114,34 +114,69 @@ pack(int sign, int unbiased_exp, typename traits<F>::uint_type mantissa) noexcep
   return from_bits<F>(s | e | m);
 }
 
-// NOTE: these __builtins are spliced in place by the compiler, they don't invoke libm (or at least *sholdn't*)
+// WARNING: classification is done on raw bits; under -Ofast (-ffinite-math-only|-fno-signed-zeros)
+// gcc folds __builtin_isnan/isinf_sign/isfinite/isnormal to constants
+
+template<typename F> inline constexpr bool __has_bits = (sizeof(F) == 4 || sizeof(F) == 8);
 
 template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 is_nan(F x) noexcept
 {
-  return __builtin_isnan(x);
+  if constexpr ( __has_bits<F> ) {
+    using T = traits<F>;
+    const auto u = to_bits(x);
+    return (u & T::exp_mask) == T::exp_mask && (u & T::mant_mask) != 0;
+  } else
+    return __builtin_isnan(x);
 }
 
 template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 is_inf(F x) noexcept
 {
-  return __builtin_isinf_sign(x) != 0;
+  if constexpr ( __has_bits<F> ) {
+    using T = traits<F>;
+    return (to_bits(x) & ~T::sign_mask) == T::exp_mask;
+  } else
+    return __builtin_isinf_sign(x) != 0;
+}
+
+// +1 / -1 / 0, the __builtin_isinf_sign contract
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr int
+inf_sign(F x) noexcept
+{
+  if constexpr ( __has_bits<F> ) {
+    using T = traits<F>;
+    const auto u = to_bits(x);
+    if ( (u & ~T::sign_mask) != T::exp_mask ) return 0;
+    return (u & T::sign_mask) != 0 ? -1 : 1;
+  } else
+    return __builtin_isinf_sign(x);
 }
 
 template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 is_finite(F x) noexcept
 {
-  return __builtin_isfinite(x);
+  if constexpr ( __has_bits<F> ) {
+    using T = traits<F>;
+    return (to_bits(x) & T::exp_mask) != T::exp_mask;
+  } else
+    return __builtin_isfinite(x);
 }
 
 template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr bool
 is_normal(F x) noexcept
 {
-  return __builtin_isnormal(x);
+  if constexpr ( __has_bits<F> ) {
+    using T = traits<F>;
+    const auto e = to_bits(x) & T::exp_mask;
+    return e != 0 && e != T::exp_mask;
+  } else
+    return __builtin_isnormal(x);
 }
 
 template<ieee754_floating F>
@@ -195,8 +230,10 @@ ulp_distance(F a, F b) noexcept
 {
   using T = traits<F>;
   using U = typename T::uint_type;
+  // WARNING: NaN test must come first; under -ffinite-math-only gcc is told NaN cannot occur, so
+  // it is free to compile a == b into an ordered compare that answers true for NaN
+  if ( is_nan(a) || is_nan(b) ) return -1;
   if ( a == b ) return 0;
-  if ( __builtin_isnan(a) || __builtin_isnan(b) ) return -1;
   // monotone total order mapped onto a *biased* unsigned axis
   // full distance must fits in an u64
   auto ord = [](F v) -> U {
@@ -218,7 +255,7 @@ next_up(F x) noexcept
 {
   using T = traits<F>;
   using U = typename T::uint_type;
-  if ( __builtin_isnan(x) || (__builtin_isinf_sign(x) > 0) ) return x;
+  if ( is_nan(x) || inf_sign(x) > 0 ) return x;
   U u = to_bits(x);
   if ( (u & ~T::sign_mask) == 0 ) return from_bits<F>(U(1));
   if ( u & T::sign_mask ) return from_bits<F>(u - 1);
@@ -231,7 +268,7 @@ next_down(F x) noexcept
 {
   using T = traits<F>;
   using U = typename T::uint_type;
-  if ( __builtin_isnan(x) || (__builtin_isinf_sign(x) < 0) ) return x;
+  if ( is_nan(x) || inf_sign(x) < 0 ) return x;
   U u = to_bits(x);
   if ( u == 0 ) return from_bits<F>(T::sign_mask | U(1));
   if ( u & T::sign_mask ) return from_bits<F>(u + 1);

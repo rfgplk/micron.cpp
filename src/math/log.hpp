@@ -187,8 +187,8 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log_sum_exp(F a, F b) noexcept
 {
-  if ( __builtin_isinf_sign(a) < 0 ) return b;
-  if ( __builtin_isinf_sign(b) < 0 ) return a;
+  if ( ieee::inf_sign(a) < 0 ) return b;
+  if ( ieee::inf_sign(b) < 0 ) return a;
   F m = a > b ? a : b;
   return m + log_impl::log1p<F>(log_impl::exp<F>((a < b ? a : b) - m));
 }
@@ -204,7 +204,7 @@ log_sum_exp_n(const F *__restrict__ v, usize N) noexcept
     F vi = *p;
     if ( vi > mx ) mx = vi;
   }
-  if ( __builtin_isinf_sign(mx) < 0 ) return mx;      // all -inf
+  if ( ieee::inf_sign(mx) < 0 ) return mx;      // all -inf
 
   F acc0 = F(0), acc1 = F(0);
   const F *p0 = v, *p1 = v + N / 2;

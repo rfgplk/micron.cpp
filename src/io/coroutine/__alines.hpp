@@ -31,6 +31,8 @@ class __aline_cursor
   usize __pos = 0;
   usize __valid = 0;
   i32 __err = 0;
+  i32 __nb = __impl::__nb_unknown;
+  u32 __spun = 0;
   bool __eof = false;
   bool __stream;      // off == -1: unseekable fd (pipe/tty/stdin) -> kernel position
 
@@ -67,7 +69,9 @@ public:
       i32 r = co_await micron::coro::io::read(__fd, __chunk.data(), static_cast<u32>(__chunk_sz), at);
       if ( r < 0 ) [[unlikely]] {
         if ( r == -4 /*EINTR*/ ) continue;
-        __err = r;
+        const i32 a = co_await __impl::__retry_after(r, __fd, micron::uring::poll_in, __nb, __spun);
+        if ( a == 0 ) continue;
+        __err = a;
         out.set_size(0);
         co_return false;
       }
@@ -78,6 +82,7 @@ public:
       __off += static_cast<u64>(r);
       __pos = 0;
       __valid = static_cast<usize>(r);
+      __spun = 0;
     }
   }
 

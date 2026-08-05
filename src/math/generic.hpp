@@ -561,16 +561,22 @@ ftrunc(T x) noexcept
 
 // the compiler won't use libm for these
 
+// raw bit classification, -ffast-math|-Ofast messes with this
+constexpr u32 __f32_exp_mask = 0x7f800000u;
+constexpr u32 __f32_man_mask = 0x007fffffu;
+constexpr u64 __f64_exp_mask = 0x7ff0000000000000ull;
+constexpr u64 __f64_man_mask = 0x000fffffffffffffull;
+
 constexpr int
 isfinite(f32 x)
 {
-  return __builtin_isfinite(x);
+  return (__builtin_bit_cast(u32, x) & __f32_exp_mask) != __f32_exp_mask;
 }
 
 constexpr int
 isfinite(f64 x)
 {
-  return __builtin_isfinite(x);
+  return (__builtin_bit_cast(u64, x) & __f64_exp_mask) != __f64_exp_mask;
 }
 
 template<typename T>
@@ -583,121 +589,128 @@ isign(T x) noexcept
 constexpr int
 isinf(f32 x)
 {
-  return __builtin_isinf(x);
+  const u32 b = __builtin_bit_cast(u32, x);
+  return (b & __f32_exp_mask) == __f32_exp_mask && (b & __f32_man_mask) == 0;
 }
 
 constexpr int
 isinf(f64 x)
 {
-  return __builtin_isinf(x);
+  const u64 b = __builtin_bit_cast(u64, x);
+  return (b & __f64_exp_mask) == __f64_exp_mask && (b & __f64_man_mask) == 0;
 }
 
 constexpr int
 isnan(f32 x)
 {
-  return __builtin_isnan(x);
+  const u32 b = __builtin_bit_cast(u32, x);
+  return (b & __f32_exp_mask) == __f32_exp_mask && (b & __f32_man_mask) != 0;
 }
 
 constexpr int
 isnan(f64 x)
 {
-  return __builtin_isnan(x);
+  const u64 b = __builtin_bit_cast(u64, x);
+  return (b & __f64_exp_mask) == __f64_exp_mask && (b & __f64_man_mask) != 0;
 }
 
 constexpr int
 isnormal(f32 x)
 {
-  return __builtin_isnormal(x);
+  const u32 e = __builtin_bit_cast(u32, x) & __f32_exp_mask;
+  return e != 0 && e != __f32_exp_mask;
 }
 
 constexpr int
 isnormal(f64 x)
 {
-  return __builtin_isnormal(x);
+  const u64 e = __builtin_bit_cast(u64, x) & __f64_exp_mask;
+  return e != 0 && e != __f64_exp_mask;
 }
 
+// -Ofast implies -fno-signed-zeros, under which the compiler is free to treat -0.0 as +0.0
 constexpr int
 signbit(f32 x)
 {
-  return __builtin_signbit(x);
+  return (__builtin_bit_cast(u32, x) >> 31) != 0;
 }
 
 constexpr int
 signbit(f64 x)
 {
-  return __builtin_signbit(x);
-}
-
-constexpr int
-isgreater(f32 a, f32 b)
-{
-  return __builtin_isgreater(a, b);
-}
-
-constexpr int
-isgreater(f64 a, f64 b)
-{
-  return __builtin_isgreater(a, b);
-}
-
-constexpr int
-isgreaterequal(f32 a, f32 b)
-{
-  return __builtin_isgreaterequal(a, b);
-}
-
-constexpr int
-isgreaterequal(f64 a, f64 b)
-{
-  return __builtin_isgreaterequal(a, b);
-}
-
-constexpr int
-isless(f32 a, f32 b)
-{
-  return __builtin_isless(a, b);
-}
-
-constexpr int
-isless(f64 a, f64 b)
-{
-  return __builtin_isless(a, b);
-}
-
-constexpr int
-islessequal(f32 a, f32 b)
-{
-  return __builtin_islessequal(a, b);
-}
-
-constexpr int
-islessequal(f64 a, f64 b)
-{
-  return __builtin_islessequal(a, b);
-}
-
-constexpr int
-islessgreater(f32 a, f32 b)
-{
-  return __builtin_islessgreater(a, b);
-}
-
-constexpr int
-islessgreater(f64 a, f64 b)
-{
-  return __builtin_islessgreater(a, b);
+  return (__builtin_bit_cast(u64, x) >> 63) != 0;
 }
 
 constexpr int
 isunordered(f32 a, f32 b)
 {
-  return __builtin_isunordered(a, b);
+  return isnan(a) || isnan(b);
 }
 
 constexpr int
 isunordered(f64 a, f64 b)
 {
-  return __builtin_isunordered(a, b);
+  return isnan(a) || isnan(b);
+}
+
+constexpr int
+isgreater(f32 a, f32 b)
+{
+  return !isunordered(a, b) && a > b;
+}
+
+constexpr int
+isgreater(f64 a, f64 b)
+{
+  return !isunordered(a, b) && a > b;
+}
+
+constexpr int
+isgreaterequal(f32 a, f32 b)
+{
+  return !isunordered(a, b) && a >= b;
+}
+
+constexpr int
+isgreaterequal(f64 a, f64 b)
+{
+  return !isunordered(a, b) && a >= b;
+}
+
+constexpr int
+isless(f32 a, f32 b)
+{
+  return !isunordered(a, b) && a < b;
+}
+
+constexpr int
+isless(f64 a, f64 b)
+{
+  return !isunordered(a, b) && a < b;
+}
+
+constexpr int
+islessequal(f32 a, f32 b)
+{
+  return !isunordered(a, b) && a <= b;
+}
+
+constexpr int
+islessequal(f64 a, f64 b)
+{
+  return !isunordered(a, b) && a <= b;
+}
+
+constexpr int
+islessgreater(f32 a, f32 b)
+{
+  return !isunordered(a, b) && (a < b || a > b);
+}
+
+constexpr int
+islessgreater(f64 a, f64 b)
+{
+  return !isunordered(a, b) && (a < b || a > b);
 }
 
 constexpr f32

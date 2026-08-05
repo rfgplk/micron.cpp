@@ -769,7 +769,7 @@ template<ieee754_floating F>
 is_integer_value(F p) noexcept
 {
   // guard the float->long long cast for float cast overflow UB
-  if ( !__builtin_isfinite(p) || math::fabs(p) >= F(9.2e18) ) return false;
+  if ( !math::ieee::is_finite(p) || math::fabs(p) >= F(9.2e18) ) return false;
   const F r = F(static_cast<long long>(p));
   return r == p;
 }

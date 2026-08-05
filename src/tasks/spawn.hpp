@@ -45,7 +45,7 @@ spawn_many(usize __n, Fn __fn)
   using T = __spawn_result_t<Fn>;
   if ( __n == 0 ) co_return micron::vector<T>{};
   micron::vector<T> __out(__n);      // n default-constructed slots; addresses stable (no realloc in the loop)
-  for ( usize __i = 0; __i < __n; ++__i ) co_await fork(&__out[__i], __fn)(__i);
+  for ( usize __i = 0; __i < __n; ++__i ) co_await fork(__builtin_addressof(__out[__i]), __fn)(__i);
   co_await join;
   co_return __out;
 }
@@ -55,7 +55,7 @@ micron::task<micron::tuple<__task_value_t<Tk>...>>
 __spawn_tuple_impl(micron::index_sequence<Is...>, Tk... __tasks)
 {
   micron::tuple<__task_value_t<Tk>...> __out{};
-  ((co_await fork_task(&micron::get<Is>(__out), micron::move(__tasks))), ...);
+  ((co_await fork_task(__builtin_addressof(micron::get<Is>(__out)), micron::move(__tasks))), ...);
   co_await join;
   co_return __out;
 }

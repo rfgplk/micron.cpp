@@ -42,6 +42,19 @@ if [[ -d start && -d "$MC_START" ]]; then
   fi
 fi
 
+MC_INC=/usr/include/micron
+if [[ -d src && -d "$MC_INC" ]]; then
+  drift=$(diff -rq "$MC_INC" src 2>/dev/null | head -3)
+  if [[ -n "$drift" ]]; then
+    echo "WARNING: src/ differs from $MC_INC:"
+    echo "$drift" | sed 's/^/         /'
+    echo "         start.cpp is compiled against the INSTALLED copy; -k adds -flto -Wno-odr,"
+    echo "         so a mismatch is merged away silently rather than diagnosed."
+    echo "         Run:  sudo python3 scripts/install_local.py"
+    echo ""
+  fi
+fi
+
 ALL_MODES=(hosted k ke)
 MODES=()
 TESTS=()
@@ -63,6 +76,17 @@ DEFAULT_TESTS=(
   tests/rigor/thread_stress.cpp
   tests/rigor/thread_patches.cpp
   tests/core/threads.cpp
+  tests/rigor/tls_dtor_thread.cpp
+  tests/rigor/static_guard_race.cpp
+  tests/rigor/tls_dtor_flash.cpp
+  tests/stress/thr_lifecycle_recycle.cpp
+  tests/stress/thr_tls_adversarial.cpp
+  tests/stress/coro_frame_lifetime.cpp
+  tests/stress/coro_container_payload.cpp
+  tests/stress/coro_lifecycle_recycle.cpp
+  tests/stress/coro_sched_adversarial.cpp
+  tests/stress/coro_async_prims.cpp
+  tests/stress/coro_io_nonblock.cpp
 )
 [[ ${#TESTS[@]} -eq 0 ]] && TESTS=("${DEFAULT_TESTS[@]}")
 

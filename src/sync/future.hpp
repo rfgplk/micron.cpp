@@ -7,6 +7,7 @@
 
 #include "../atomic/atomic.hpp"
 #include "../memory/actions.hpp"
+#include "../mutex/locks.hpp"  
 #include "../mutex/mutex.hpp"
 
 namespace micron
@@ -117,7 +118,7 @@ public:
     if ( ready ) {
       exc<except::future_error>("");
     }
-    new (&storage.value) T(micron::forward<Args>(args)...);
+    new (__builtin_addressof(storage.value)) T(micron::forward<Args>(args)...);
     ready = true;
     has_exception = false;
   }

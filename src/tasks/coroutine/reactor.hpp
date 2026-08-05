@@ -43,6 +43,14 @@ namespace coro
 inline constexpr u32 __io_sq_entries = MICRON_CORO_URING_ENTRIES;
 inline constexpr u32 __io_fb_entries = 64u;
 
+#ifndef MICRON_CORO_FILE_SLOTS
+#define MICRON_CORO_FILE_SLOTS 256u
+#endif
+inline constexpr u32 __io_file_slots = MICRON_CORO_FILE_SLOTS;
+static_assert(__io_file_slots != 0 && (__io_file_slots % 64) == 0, "file slot count must be a nonzero multiple of 64");
+
+inline constexpr u32 __io_sq_reserve = 8u;
+
 // [63..56] tag, [55..0] payload (pointer or worker id)
 inline constexpr u64 __io_ud_tag_shift = 56;
 inline constexpr u8 __io_ud_op = 0x00;           // payload = __io_op*
@@ -50,6 +58,7 @@ inline constexpr u8 __io_ud_park = 0x01;         // payload = worker id (own-rin
 inline constexpr u8 __io_ud_cancel = 0x02;       // async_cancel companion cqe; dropped
 inline constexpr u8 __io_ud_ltimer = 0x03;       // link_timeout companion cqe; dropped
 inline constexpr u8 __io_ud_mop = 0x04;          // payload = __io_mop* (multishot recv; many cqes per op)
+inline constexpr u8 __io_ud_wop = 0x05;          // payload = __io_wop* (one staged sqe of a wave)
 inline constexpr u8 __io_ud_reclaim = 0xfe;      // always ignored
 
 [[gnu::always_inline]] inline constexpr u64
@@ -74,6 +83,8 @@ __io_ud_tag(u64 __ud) noexcept
 inline constexpr u32 __io_st_submitted = 0;
 inline constexpr u32 __io_st_suspended = 1;
 inline constexpr u32 __io_st_done_early = 2;
+inline constexpr u32 __io_st_resumed = 3;        // the completer took the handoff; the frame is running
+inline constexpr u32 __io_st_abandoned = 4;      // ~wave() took it; nobody resumes, the owner frees
 
 struct __io_op {
   __frame_base *__f = nullptr;
@@ -169,6 +180,30 @@ struct __io_mop {
   }
 };
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// waves
+// many logical ops staged into the sq
+//
+// WARNING: a wave may not be destroyed while __left != 0
+struct __io_wave;
+
+struct __io_wop {
+  __io_wave *__w = nullptr;
+  i32 __res = 0;
+  u16 __idx = 0;      // which logical item of the wave
+  u8 __step = 0;      // which sqe of that item's chain
+};
+
+struct __io_wave {
+  __frame_base *__f = nullptr;
+  micron::atomic_token<u32> __left{ 0 };      // staged sqes not yet completed
+  micron::atomic_token<u32> __st{ __io_st_submitted };
+  micron::atomic_token<u32> __fin{ 0 };      // the resumed frame is done reading __nodes / writing the results
+};
+
+// waves the owner had to walk away from
+inline micron::atomic_token<u64> __io_wave_stranded{ 0 };
+
 struct alignas(64) __wring {
   micron::uring::ring __r;
   micron::atomic_token<u32> __sq_lk{ 0 };           // fallback ring only
@@ -177,6 +212,9 @@ struct alignas(64) __wring {
   micron::atomic_token<u32> __park_fired{ 0 };      // this ring's park sqe cqe observed
   micron::atomic_token<u32> __live{ 0 };            // init succeeded
   micron::atomic_token<u32> __bufs_reg{ 0 };        // fixed-buffer slab registered into this ring (0 no / 1 yes / 2 refused)
+  micron::atomic_token<u32> __files_reg{ 0 };       // sparse fixed-file table registered (0 no / 1 yes / 2 refused)
+  micron::atomic_token<u32> __file_lk{ 0 };         // guards __file_free
+  u64 __file_free[__io_file_slots / 64]{};          // bit i set = slot i busy
   u8 __defer = 0;                                   // ring came up with setup_defer_taskrun (n==1 mode)
   u32 __staged = 0;
   __io_pbuf __pb;
@@ -326,7 +364,8 @@ inline constexpr u8 __io_ring_cap = static_cast<u8>(sizeof(__io_rings) / sizeof(
 [[gnu::always_inline]] inline byte *
 __io_pb_data(u8 __ring, u16 __bid) noexcept
 {
-  if ( __ring >= __io_ring_cap || __bid >= __io_pb_entries ) [[unlikely]] return nullptr;
+  if ( __ring >= __io_ring_cap || __bid >= __io_pb_entries ) [[unlikely]]
+    return nullptr;
   byte *__a = __io_rings[__ring].__pb.__arena;
   return __a == nullptr ? nullptr : __a + static_cast<usize>(__bid) * __io_pb_sz;
 }
@@ -334,7 +373,8 @@ __io_pb_data(u8 __ring, u16 __bid) noexcept
 inline void
 __io_pb_recycle(u8 __ring, u16 __bid) noexcept
 {
-  if ( __ring >= __io_ring_cap || __bid >= __io_pb_entries ) [[unlikely]] return;
+  if ( __ring >= __io_ring_cap || __bid >= __io_pb_entries ) [[unlikely]]
+    return;
   __wring &__wr = __io_rings[__ring];
   if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) return;
   __io_lock(__wr.__pb.__lk);
@@ -402,7 +442,9 @@ __io_worker_ring_shutdown(u32 __id) noexcept
   __io_lock(__wr.__cq_lk);
   __wr.__r.shutdown();
   __wr.__defer = 0;
-  __wr.__bufs_reg.store(0, micron::memory_order_relaxed);      // the slab is reregistered into the next ring on first tocuh
+  __wr.__bufs_reg.store(0, micron::memory_order_relaxed);
+  __wr.__files_reg.store(0, micron::memory_order_relaxed);
+  for ( u32 __i = 0; __i < __io_file_slots / 64; ++__i ) __wr.__file_free[__i] = 0;
   __io_unlock(__wr.__cq_lk);
 }
 
@@ -531,6 +573,40 @@ __io_submit_own2(__wring &__wr, const micron::uring::sqe &__a, u64 __ud_a, const
   __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);
 #endif
   return true;
+}
+
+inline bool
+__io_submit_own_n(__wring &__wr, const micron::uring::sqe *__q, u32 __k) noexcept
+{
+  if ( __k == 0 ) return true;
+  for ( u32 __i = 0; __i < __k; ++__i ) {
+    if ( __wr.__r.peek_sqe(__i) == nullptr ) [[unlikely]] {
+#if defined(MICRON_CORO_STATS)
+      __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);
+#endif
+      __wr.__staged = 0;
+      (void)__wr.__r.enter(0);
+      for ( u32 __j = 0; __j < __k; ++__j )
+        if ( __wr.__r.peek_sqe(__j) == nullptr ) return false;
+      break;
+    }
+  }
+  for ( u32 __i = 0; __i < __k; ++__i ) *__wr.__r.peek_sqe(__i) = __q[__i];
+  __wr.__r.advance_sq(__k);
+  (void)__wr.__r.enter(0);
+#if defined(MICRON_CORO_STATS)
+  __wr.__stat.submits.fetch_add(__k, micron::memory_order_relaxed);
+  __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);
+#endif
+  return true;
+}
+
+// sqes a batch may take without eating the runtime's reserve
+[[nodiscard]] inline u32
+__io_sq_room(__wring &__wr) noexcept
+{
+  const u32 __free = __wr.__r.sq_space_left();
+  return __free > __io_sq_reserve ? __free - __io_sq_reserve : 0u;
 }
 
 inline bool
@@ -690,6 +766,56 @@ __io_fixed_reg(__wring &__wr) noexcept
   __wr.__bufs_reg.store(__v, micron::memory_order_release);
   __io_unlock(__wr.__sq_lk);
   return __v == 1;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// sparse fixed-file table (>=5.19)
+
+inline bool
+__io_files_reg(__wring &__wr) noexcept
+{
+  const u32 __r0 = __wr.__files_reg.get(micron::memory_order_acquire);
+  if ( __r0 == 1 ) return true;
+  if ( __r0 == 2 ) return false;
+  if ( !micron::kernel::has(micron::kernel::feature::uring_files_sparse) ) {
+    __wr.__files_reg.store(2, micron::memory_order_release);
+    return false;
+  }
+  __io_lock(__wr.__file_lk);
+  const u32 __r1 = __wr.__files_reg.get(micron::memory_order_acquire);
+  if ( __r1 != 0 ) [[unlikely]] {
+    __io_unlock(__wr.__file_lk);
+    return __r1 == 1;
+  }
+  const u32 __v = __wr.__r.register_files_sparse(__io_file_slots) != 0 ? 2u : 1u;
+  __wr.__files_reg.store(__v, micron::memory_order_release);
+  __io_unlock(__wr.__file_lk);
+  return __v == 1;
+}
+
+[[nodiscard]] inline i32
+__io_slot_acquire(__wring &__wr) noexcept
+{
+  if ( !__io_files_reg(__wr) ) return -1;
+  __io_lock(__wr.__file_lk);
+  for ( u32 __w = 0; __w < __io_file_slots / 64; ++__w ) {
+    if ( __wr.__file_free[__w] == ~0ull ) continue;
+    const u32 __b = static_cast<u32>(__builtin_ctzll(~__wr.__file_free[__w]));
+    __wr.__file_free[__w] |= (1ull << __b);
+    __io_unlock(__wr.__file_lk);
+    return static_cast<i32>(__w * 64u + __b);
+  }
+  __io_unlock(__wr.__file_lk);
+  return -1;      // exhausted; the caller stops staging and reports the rest unstaged
+}
+
+inline void
+__io_slot_release(__wring &__wr, i32 __slot) noexcept
+{
+  if ( __slot < 0 || static_cast<u32>(__slot) >= __io_file_slots ) return;
+  __io_lock(__wr.__file_lk);
+  __wr.__file_free[static_cast<u32>(__slot) / 64u] &= ~(1ull << (static_cast<u32>(__slot) % 64u));
+  __io_unlock(__wr.__file_lk);
 }
 
 [[nodiscard]] inline i32

@@ -32,7 +32,7 @@ namespace abc
 {
 // NOTE: u64 and usize are the same on amd64 but NOT on 32-bit targets (armv7 has u64 defined but usize is __UINTPTR__ (32b))
 #if defined(__micron_arch_width_32)
-// largest single sheet a width-32 target will request
+// ceiling on speculative growth
 constexpr static const u64 __width32_sheet_cap = 64ULL << 20;
 #endif
 

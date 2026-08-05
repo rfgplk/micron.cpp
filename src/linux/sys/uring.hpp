@@ -266,6 +266,15 @@ inline constexpr u32 poll_update_events = 1u << 1;         // >=5.13
 inline constexpr u32 poll_update_user_data = 1u << 2;      // >=5.13
 inline constexpr u32 poll_add_level = 1u << 3;             // >=6.0; level-triggered
 
+// op_poll_add
+inline constexpr u32 poll_in = 0x001;
+inline constexpr u32 poll_pri = 0x002;
+inline constexpr u32 poll_out = 0x004;
+inline constexpr u32 poll_err = 0x008;
+inline constexpr u32 poll_hup = 0x010;
+inline constexpr u32 poll_nval = 0x020;
+inline constexpr u32 poll_rdhup = 0x2000;
+
 // op_async_cancel: sqe.cancel_flags
 inline constexpr u32 async_cancel_all = 1u << 0;           // >=5.19
 inline constexpr u32 async_cancel_fd = 1u << 1;            // >=5.19; key off fd instead of user_data

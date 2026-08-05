@@ -51,8 +51,8 @@ constexpr static const usize __class_huge = (1 << __class_huge_shift);
 constexpr static const usize __class_1mb = (1 << __class_1mb_shift);
 constexpr static const usize __class_gb = (1 << __class_gb_shift);
 
-// 32 MB hard ceiling
-constexpr static const usize __alloc_limit = (32 << 20);
+// 64 MB hard ceiling
+constexpr static const usize __alloc_limit = (64 << 20);
 
 // these two switches determine the number of *pages* to allocate on initialization, by default, it's 512 pages for the
 // internal abcmalloc metabuffer, and a minimum of 16 per each new sheet allocation

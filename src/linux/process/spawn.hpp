@@ -9,6 +9,8 @@
 #include "resource.hpp"
 #include "wait.hpp"
 
+#include "spawn_basic.hpp"
+
 #include "../sys/signal.hpp"
 
 namespace micron
@@ -44,32 +46,7 @@ inplace_spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *
   __inplace_spawn(pid, path, argv, envp);
 }
 
-int
-__spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
-{
-  int pipefd[2];
-  int pr = micron::pipe2(pipefd, posix::o_cloexec);
-  if ( pr < 0 ) return micron::syscall_errno(pr);      // positive errno (matches child-reported errno)
-  micron::posix::spawn_ctx ctx = { path, argv, envp, nullptr, nullptr, pipefd[1] };
-  pid = micron::fork();
-  if ( pid == 0 ) {
-    micron::close(pipefd[0]);
-    micron::posix::spawn_process(ctx);
-  }
-
-  micron::close(pipefd[1]);
-
-  int err;
-  max_t n = micron::read(pipefd[0], &err, sizeof(err));
-  micron::close(pipefd[0]);
-
-  if ( n == sizeof(err) ) {
-    micron::wait4(pid, nullptr, 0, nullptr);
-    return err;
-  }
-
-  return 0;
-}
+// NOTE: __spawn and the plain 4-arg spawn moved to spawn_basic.hpp
 
 template<bool Lim = false, bool Cap = false, typename Lims = posix::limits_t, typename Caps = ucap_set_t>
 inline int
@@ -81,7 +58,12 @@ __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp,
   int pr = micron::pipe2(pipefd, posix::o_cloexec);
   if ( pr < 0 ) return micron::syscall_errno(pr);
 
-  pid = micron::fork();
+  pid = micron::try_fork();
+  if ( pid < 0 ) {
+    micron::close(pipefd[0]);
+    micron::close(pipefd[1]);
+    return micron::syscall_errno(pid);
+  }
   if ( pid == 0 ) {
     micron::close(pipefd[0]);
 
@@ -122,12 +104,7 @@ __spawn_caps(pid_t &pid, const char *path, char *const *argv, char *const *envp,
 }
 
 // rudimentary spawns are here, additional overloads in process
-
-int
-spawn(pid_t &pid, const char *__restrict path, char *const *argv, char *const *envp)
-{
-  return __spawn(pid, path, argv, envp);
-}
+// NOTE: the plain 4-arg spawn is in spawn_basic.hpp; the overloads below add caps and rlimits
 
 template<is_limits_set Lims>
 inline int

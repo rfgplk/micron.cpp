@@ -399,6 +399,21 @@ struct engine {
       }
       return;
     }
+    if ( __tag == __io_ud_wop ) {
+      __io_wop *__wp = reinterpret_cast<__io_wop *>(__io_ud_payload(__c.user_data));
+      __wp->__res = __c.res;
+      __io_wave *__wv = __wp->__w;
+      if ( __wv->__left.sub_fetch(1, micron::memory_order_acq_rel) != 0 ) return;
+      u32 __exp = __io_st_submitted;
+      if ( __wv->__st.compare_exchange_strong(__exp, __io_st_done_early, micron::memory_order_acq_rel, micron::memory_order_acquire) )
+        return;
+      __wr.__pending.sub_fetch(1, micron::memory_order_acq_rel);
+      u32 __sus = __io_st_suspended;
+      if ( !__wv->__st.compare_exchange_strong(__sus, __io_st_resumed, micron::memory_order_acq_rel, micron::memory_order_acquire) )
+        return;      // the owner is tearing the wave down and frees it itself
+      __submit_io(__wv->__f);
+      return;
+    }
     if ( __tag != __io_ud_op ) return;      // cancel / ltimer / reclaim
     __io_op *__op = reinterpret_cast<__io_op *>(__c.user_data);
     __op->__res = __c.res;
@@ -537,14 +552,30 @@ __ts_le(const timespec_t &__a, const timespec_t &__b) noexcept
   return __a.tv_sec < __b.tv_sec || (__a.tv_sec == __b.tv_sec && __a.tv_nsec <= __b.tv_nsec);
 }
 
-#if defined(MICRON_CORO_URING)
 #ifndef MICRON_CORO_IO_DRAIN_GRACE_NS
 #define MICRON_CORO_IO_DRAIN_GRACE_NS 2000000000ull
 #endif
+#if defined(MICRON_CORO_URING)
 // length for stop_coroutine_runtime
 // cancels tasks in flight with no progress if it exceeds this val
 inline constexpr u64 __cl_io_drain_grace_ns = MICRON_CORO_IO_DRAIN_GRACE_NS;
 #endif
+
+#ifndef MICRON_CORO_TIMER_DRAIN_GRACE_NS
+#define MICRON_CORO_TIMER_DRAIN_GRACE_NS MICRON_CORO_IO_DRAIN_GRACE_NS
+#endif
+inline constexpr u64 __cl_timer_drain_grace_ns = MICRON_CORO_TIMER_DRAIN_GRACE_NS;
+
+[[gnu::always_inline]] inline void
+__ts_add_ns(timespec_t &__t, u64 __ns) noexcept
+{
+  __t.tv_sec += static_cast<decltype(__t.tv_sec)>(__ns / 1000000000ull);
+  __t.tv_nsec += static_cast<decltype(__t.tv_nsec)>(__ns % 1000000000ull);
+  if ( __t.tv_nsec >= 1000000000 ) {
+    __t.tv_nsec -= 1000000000;
+    ++__t.tv_sec;
+  }
+}
 
 inline void
 __timer_main() noexcept
@@ -609,6 +640,20 @@ __ensure_timer_thread() noexcept
   while ( __timer_state.get(micron::memory_order_acquire) != 2u ) micron::yield();      // wait for publish
 }
 
+inline void stop_coroutine_runtime() noexcept;
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// automatic runtime teardown
+inline void
+__arm_runtime_reaper(void) noexcept
+{
+  static struct __rt_reaper {
+    ~__rt_reaper() noexcept { stop_coroutine_runtime(); }
+  } __r{};
+
+  (void)&__r;
+}
+
 inline void
 start_coroutine_runtime(u32 nworkers = 0) noexcept
 {
@@ -619,6 +664,8 @@ start_coroutine_runtime(u32 nworkers = 0) noexcept
     while ( __engine_state.get(micron::memory_order_acquire) != 2u ) micron::yield();      // wait for ready
     return;
   }
+
+  __arm_runtime_reaper();
 
   if ( nworkers == 0 ) nworkers = micron::cpu_count();
   if ( nworkers > __cl_max_workers ) nworkers = __cl_max_workers;
@@ -649,13 +696,39 @@ stop_coroutine_runtime() noexcept
 
   {
     u32 __quiet = 0;
+    timespec_t __tm_dl{ 0, 0 };      // re-armed whenever a timer fires
+    u32 __tm_seen = 0;
+    bool __tm_armed = false;
+    bool __tm_cut = false;
 #if defined(MICRON_CORO_URING)
     timespec_t __io_dl{ 0, 0 };      // grace deadline; re-armed whenever io makes progress
     u64 __seen = 0;                  // in-flight count the deadline was armed against
     bool __armed = false;
 #endif
     while ( __quiet < 4 ) {
-      bool __q = e->inbox.empty() && e->pending_timers.get(micron::memory_order_acquire) == 0;
+      // WARNING: a still-armed timer may _NEVER_ stall indefinitely
+      const u32 __tm = e->pending_timers.get(micron::memory_order_acquire);
+      if ( __tm == 0 ) {
+        __tm_armed = false;
+      } else if ( !__tm_cut ) {
+        timespec_t __now{};
+        micron::clock_gettime(micron::clock_monotonic, __now);
+        if ( !__tm_armed || __tm != __tm_seen ) {
+          __tm_seen = __tm;
+          __tm_armed = true;
+          __tm_dl = __now;
+          __ts_add_ns(__tm_dl, __cl_timer_drain_grace_ns);
+        } else if ( !__ts_le(__now, __tm_dl) ) {
+          __tm_cut = true;
+        }
+        if ( !__tm_cut ) {
+          timespec_t __nap{ 0, 200000 };
+          (void)micron::nanosleep(__nap);
+          __quiet = 0;
+          continue;
+        }
+      }
+      bool __q = e->inbox.empty() && (__tm == 0 || __tm_cut);
 #if defined(MICRON_CORO_URING)
       if ( __q && !e->__io_ovf_empty() ) __q = false;
 #endif
@@ -673,13 +746,8 @@ stop_coroutine_runtime() noexcept
             __seen = __pend;
             __armed = true;
             __io_dl = __now;
-            __io_dl.tv_sec += static_cast<decltype(__io_dl.tv_sec)>(__cl_io_drain_grace_ns / 1000000000ull);
-            __io_dl.tv_nsec += static_cast<decltype(__io_dl.tv_nsec)>(__cl_io_drain_grace_ns % 1000000000ull);
-            if ( __io_dl.tv_nsec >= 1000000000 ) {
-              __io_dl.tv_nsec -= 1000000000;
-              ++__io_dl.tv_sec;
-            }
-          } else if ( !__ts_le(__now, __io_dl) ) {      // grace burned with zero progress: stuck, cut it loose
+            __ts_add_ns(__io_dl, __cl_io_drain_grace_ns);
+          } else if ( !__ts_le(__now, __io_dl) ) {      // grace burned with zero progress
             micron::uring::sync_cancel_reg __sc{};
             __sc.fd = -1;
             __sc.flags = micron::uring::async_cancel_any;
@@ -718,6 +786,10 @@ stop_coroutine_runtime() noexcept
     __timer_thread.reset();
     __timer_state.store(0u, micron::memory_order_release);
   }
+  __timer_lock();
+  __timer_head = nullptr;
+  __timer_unlock();
+  e->pending_timers.store(0, micron::memory_order_release);
 #if defined(MICRON_CORO_GLOBAL_SIGNAL)
   __cl_signal.fetch_add(1, micron::memory_order_release);
   micron::wake_futex(__cl_signal.ptr(), static_cast<int>(e->n));

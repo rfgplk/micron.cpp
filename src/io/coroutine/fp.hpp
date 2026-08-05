@@ -125,14 +125,19 @@ interact(Fn fn)
 {
   micron::string in{};
   micron::buffer chunk(__lines::chunk);
+  i32 nb = __impl::__nb_unknown;
+  u32 spun = 0;
   for ( ;; ) {
     i32 r = co_await micron::coro::io::read(0, chunk.data(), static_cast<u32>(chunk.size()));
     if ( r < 0 ) [[unlikely]] {
       if ( r == -4 /*EINTR*/ ) continue;
-      co_return static_cast<max_t>(r);
+      const i32 a = co_await __impl::__retry_after(r, 0, micron::uring::poll_in, nb, spun);
+      if ( a == 0 ) continue;
+      co_return static_cast<max_t>(a);
     }
     if ( r == 0 ) break;
     in.append(reinterpret_cast<const char *>(chunk.data()), static_cast<usize>(r));
+    spun = 0;
   }
   auto out = fn(micron::move(in));
   max_t w = co_await __impl::__write_full(1, out.c_str(), out.size() * sizeof(typename decltype(out)::value_type), static_cast<u64>(-1));

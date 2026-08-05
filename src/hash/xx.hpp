@@ -113,14 +113,14 @@ xxhash_final(u64 xxhash, const byte *ptr, usize len)
 {
   len &= 31;
   while ( len >= 8 ) {
-    const u64 k1 = xxround(0, *reinterpret_cast<const u64 *>(ptr));
+    const u64 k1 = xxround(0, __load64(ptr));
     ptr += 8;
     xxhash ^= k1;
     xxhash = rotl64(xxhash, 27) * xxprime64a + xxprime64d;
     len -= 8;
   }
   if ( len >= 4 ) {
-    xxhash ^= (*reinterpret_cast<const u32 *>(ptr)) * xxprime64a;      // ??
+    xxhash ^= u64(__load32(ptr)) * xxprime64a;
     ptr += 4;
     xxhash = rotl64(xxhash, 23) * xxprime64b + xxprime64c;
     len -= 4;
@@ -176,8 +176,6 @@ template<u64 seed>
 inline u64
 xxhash64(const byte *src, usize len)
 {
-  if ( (((usize)src) & 7) != 0 ) [[unlikely]]
-    exc<except::library_error>("micron::hash::xxhash src isn't aligned");
   // xstate state = init_seed<seed>();
   u64 xxhash = 0;
   if ( len >= 32 ) [[likely]] {
@@ -190,10 +188,10 @@ xxhash64(const byte *src, usize len)
     v[3] = seed - xxprime64a;
 
     do {
-      v[0] = xxround(v[0], *reinterpret_cast<const u64 *>(src));
-      v[1] = xxround(v[1], *reinterpret_cast<const u64 *>(src + 8));
-      v[2] = xxround(v[2], *reinterpret_cast<const u64 *>(src + 16));
-      v[3] = xxround(v[3], *reinterpret_cast<const u64 *>(src + 24));
+      v[0] = xxround(v[0], __load64(src));
+      v[1] = xxround(v[1], __load64(src + 8));
+      v[2] = xxround(v[2], __load64(src + 16));
+      v[3] = xxround(v[3], __load64(src + 24));
       src += 32;
     } while ( src < limit );
 
@@ -208,8 +206,6 @@ xxhash64(const byte *src, usize len)
 inline u64
 xxhash64_rtseed(const byte *src, u64 seed, usize len)
 {
-  if ( (((usize)src) & 7) != 0 ) [[unlikely]]
-    exc<except::library_error>("micron::hash::xxhash src isn't aligned");
   // xstate state = init_seed<seed>();
   u64 xxhash = 0;
   if ( len >= 32 ) [[likely]] {
@@ -222,10 +218,10 @@ xxhash64_rtseed(const byte *src, u64 seed, usize len)
     v[3] = seed - xxprime64a;
 
     do {
-      v[0] = xxround(v[0], *reinterpret_cast<const u64 *>(src));
-      v[1] = xxround(v[1], *reinterpret_cast<const u64 *>(src + 8));
-      v[2] = xxround(v[2], *reinterpret_cast<const u64 *>(src + 16));
-      v[3] = xxround(v[3], *reinterpret_cast<const u64 *>(src + 24));
+      v[0] = xxround(v[0], __load64(src));
+      v[1] = xxround(v[1], __load64(src + 8));
+      v[2] = xxround(v[2], __load64(src + 16));
+      v[3] = xxround(v[3], __load64(src + 24));
       src += 32;
     } while ( src < limit );
 

@@ -1597,69 +1597,58 @@ public:
       __debug_print("push(): alloc failed, retry: ", i);
       __debug_print("push(): expanding for alloc_sz: ", alloc_sz);
 
+      // one ladder for every profile
       bool expanded = false;
 
       if ( alloc_sz <= __class_small ) {
         usize __next_sz = __calculate_space_cache(__default_cache_step);
         __debug_print("push(): precise/small path, expanding by: ", __next_sz);
         expanded = __buf_expand_exact(alloc_sz, __next_sz);
-      } else if constexpr ( __is_constrained ) {
-        if ( alloc_sz >= __class_medium ) {
-          usize __next_sz = __calculate_space_medium(alloc_sz) * __default_overcommit;
-          __predict += __next_sz;
-          usize predicted = __predict.predict_size(__next_sz);
-          __debug_print("push() constrained: medium+ path, next_sz: ", __next_sz);
-          __debug_print("push() constrained: predictor suggested: ", predicted);
-          expanded = __buf_expand_exact(alloc_sz, predicted);
-        }
-      } else if constexpr ( !__is_constrained ) {
-        if ( alloc_sz < __class_medium ) {
-          // small tier
-          usize __next_sz = __calculate_space_small(alloc_sz) * __default_overcommit;
-          __predict += __next_sz;
-          usize predicted = __predict.predict_size(__next_sz);
-          __debug_print("push(): small path, next_sz: ", __next_sz);
-          __debug_print("push(): predictor suggested: ", predicted);
-          expanded = __buf_expand_exact(alloc_sz, predicted);
-        } else if ( alloc_sz <= __class_large ) {
-          // medium tier
-          usize __next_sz = __calculate_space_medium(alloc_sz) * __default_overcommit;
-          __predict += __next_sz;
-          usize predicted = __predict.predict_size(__next_sz);
-          __debug_print("push(): medium path, next_sz: ", __next_sz);
-          __debug_print("push(): predictor suggested: ", predicted);
-          expanded = __buf_expand_exact(alloc_sz, predicted);
-        } else if ( alloc_sz <= __class_huge ) {
-          // large tier; gets 2x medium now
-          usize __next_sz = __calculate_space_large(alloc_sz) * __default_overcommit;
-          __predict += __next_sz;
-          usize predicted = __predict.predict_size(__next_sz);
-          __debug_print("push(): large path, next_sz: ", __next_sz);
-          __debug_print("push(): predictor suggested: ", predicted);
-          expanded = __buf_expand_exact(alloc_sz, predicted);
-        } else if ( alloc_sz < __class_gb ) {
-          // huge tier; new growth fn, more aggressive low allocs with tapered high allocs
-          // now multivariate, grows more rapidly the more sheets are in use
-          usize __base = __calculate_space_huge(alloc_sz) * __default_overcommit;
-          usize __mult = (alloc_sz >= __class_1mb) ? 1ULL : (1ULL + static_cast<usize>(_huge.__count));
-          usize __next_sz = __base * __mult;
-          // WARNING: off-by-one safeguard; our buddy requires that the chunk to strictly exceed 2 * alloc_sz
-          // due to __hdr_offsets
-          usize __min_huge = (alloc_sz << 1) + __class_huge;
-          if ( __next_sz < __min_huge ) __next_sz = __min_huge;
-          __predict += __next_sz;
-          usize predicted = __predict.predict_size(__next_sz);
-          __debug_print("push(): huge path, next_sz: ", __next_sz);
-          __debug_print("push(): predictor suggested: ", predicted);
-          expanded = __buf_expand_exact(alloc_sz, predicted);
-        } else {
-          // bulk; same off-by-one safeguard
-          usize bulk = __calculate_space_bulk(alloc_sz);
-          usize __min_bulk = (alloc_sz << 1) + __class_huge;
-          if ( bulk < __min_bulk ) bulk = __min_bulk;
-          __debug_print("push(): bulk (>=gb) path, bulk_sz: ", bulk);
-          expanded = __buf_expand_exact(alloc_sz, bulk);
-        }
+      } else if ( alloc_sz < __class_medium ) {
+        // small tier
+        usize __next_sz = __calculate_space_small(alloc_sz) * __default_overcommit;
+        __predict += __next_sz;
+        usize predicted = __predict.predict_size(__next_sz);
+        __debug_print("push(): small path, next_sz: ", __next_sz);
+        __debug_print("push(): predictor suggested: ", predicted);
+        expanded = __buf_expand_exact(alloc_sz, predicted);
+      } else if ( alloc_sz <= __class_large ) {
+        // medium tier
+        usize __next_sz = __calculate_space_medium(alloc_sz) * __default_overcommit;
+        __predict += __next_sz;
+        usize predicted = __predict.predict_size(__next_sz);
+        __debug_print("push(): medium path, next_sz: ", __next_sz);
+        __debug_print("push(): predictor suggested: ", predicted);
+        expanded = __buf_expand_exact(alloc_sz, predicted);
+      } else if ( alloc_sz <= __class_huge ) {
+        // large tier; gets 2x medium now
+        usize __next_sz = __calculate_space_large(alloc_sz) * __default_overcommit;
+        __predict += __next_sz;
+        usize predicted = __predict.predict_size(__next_sz);
+        __debug_print("push(): large path, next_sz: ", __next_sz);
+        __debug_print("push(): predictor suggested: ", predicted);
+        expanded = __buf_expand_exact(alloc_sz, predicted);
+      } else if ( alloc_sz < __class_gb ) {
+        // huge tier; new growth fn, more aggressive low allocs with tapered high allocs
+        // now multivariate, grows more rapidly the more sheets are in use
+        usize __base = __calculate_space_huge(alloc_sz) * __default_overcommit;
+        usize __mult = (alloc_sz >= __class_1mb) ? 1ULL : (1ULL + static_cast<usize>(_huge.__count));
+        usize __next_sz = __base * __mult;
+        // WARNING: off-by-one safeguard; our buddy requires that the chunk to strictly exceed 2 * alloc_sz due to __hdr_offsets
+        usize __min_huge = (alloc_sz << 1) + __class_huge;
+        if ( __next_sz < __min_huge ) __next_sz = __min_huge;
+        __predict += __next_sz;
+        usize predicted = __predict.predict_size(__next_sz);
+        __debug_print("push(): huge path, next_sz: ", __next_sz);
+        __debug_print("push(): predictor suggested: ", predicted);
+        expanded = __buf_expand_exact(alloc_sz, predicted);
+      } else {
+        // bulk; same off-by-one safeguard
+        usize bulk = __calculate_space_bulk(alloc_sz);
+        usize __min_bulk = (alloc_sz << 1) + __class_huge;
+        if ( bulk < __min_bulk ) bulk = __min_bulk;
+        __debug_print("push(): bulk (>=gb) path, bulk_sz: ", bulk);
+        expanded = __buf_expand_exact(alloc_sz, bulk);
       }
 
       if ( !expanded ) [[unlikely]] {

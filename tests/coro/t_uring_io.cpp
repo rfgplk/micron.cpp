@@ -56,8 +56,8 @@ poll_then_read(i32 rfd, i32 wfd)
     u32 v = 77;
     co_await coro::io::write(w, &v, sizeof(v));
   }(wfd));
-  i32 ev = co_await coro::io::poll(rfd, 0x001 /*POLLIN*/);
-  if ( ev < 0 || !(ev & 0x001) ) co_return -3000;
+  i32 ev = co_await coro::io::poll(rfd, micron::uring::poll_in);
+  if ( ev < 0 || !(ev & static_cast<i32>(micron::uring::poll_in)) ) co_return -3000;
   u32 back = 0;
   i32 rd = co_await coro::io::read(rfd, &back, sizeof(back));
   if ( rd != static_cast<i32>(sizeof(back)) || back != 77 ) co_return -3001;

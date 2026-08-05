@@ -51,6 +51,25 @@ COMMON_FLAGS=(
 # to COMMON_FLAGS if your install has libubsan; otherwise this profile runs
 # ASan-only (which still catches heap UAF/double-free/out-of-bounds — the
 # class of bugs B1/B2 produce).
+#
+# ############################ KNOWN LIMITATION ############################
+# Measured 2026-08-04: a TU that pulls src/std.hpp (which every snowball test
+# does) produces an ASan-instrumented binary that DOES NOT REPORT. The same
+# overflow in a TU including only src/types.hpp reports normally, and so does
+# a plain non-micron TU, so it is not the flags. The difference is that
+# std.hpp brings in abcmalloc's `operator new` interposition (MICRON_ABCMALLOC_STD,
+# default 1 via src/defs.hpp), whose strong definitions win the link over
+# ASan's — the sanitizer's allocator is bypassed, and the reports go with it.
+#
+#   $ g++ -O1 -flto -fsanitize=address -I./src probe.cpp   # types.hpp only  -> reports, exit 77
+#   $ g++ -O1 -flto -fsanitize=address -I./src probe.cpp   # + snowball      -> silent, exit 1
+#
+# -DMICRON_ABCMALLOC_DISABLE_STD does not build (it disables more than the
+# interposer), so restoring reporting needs a real decision about how ASan and
+# abcmalloc are meant to coexist. Until then treat a green run here as "did not
+# crash", NOT as "sanitizer-clean". The grading below is now correct — it is the
+# instrumentation upstream of it that is not yet trustworthy.
+# ##########################################################################
 
 OUT_DIR=bin/sanitize
 mkdir -p "$OUT_DIR"
@@ -108,16 +127,45 @@ for src in "${TESTS[@]}"; do
   fi
 
   printf "[run]   %s ... " "$bin"
-  if ASAN_OPTIONS="detect_leaks=1:abort_on_error=0:halt_on_error=1" \
-     UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1" \
-     "$bin" >"$bin.run.log" 2>&1; then
+  # RIGOR EXIT CONTRACT (tests/snowball, tools/src/recipes/gnu/qemu.hh): a test PASSES by
+  # returning 1, the success sentinel. Shell convention is inverted from that -- `if "$bin"`
+  # scores exit 0 as success, which is precisely the "ran off the end of main without reaching
+  # the sentinel" FAILURE. Grade on rc == 1, the way tests/build/freestanding_threads.sh does.
+  #
+  # WARNING: rc == 1 collides head-on with the sanitizers' OWN default exit code (common_flags
+  # exitcode=1). With abort_on_error=0 a clean ASan report exits 1 and would grade as a PASS in
+  # the one script whose entire job is catching those reports. Move them off 1 explicitly.
+  # LeakSanitizer already defaults to 23, but pin it too rather than rely on that.
+  SAN_RC=77
+  ASAN_OPTIONS="detect_leaks=1:abort_on_error=0:halt_on_error=1:exitcode=$SAN_RC" \
+    UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1:exitcode=$SAN_RC" \
+    LSAN_OPTIONS="exitcode=$SAN_RC" \
+    "$bin" >"$bin.run.log" 2>&1
+  rc=$?
+  # second line of defence: a recovering sanitizer, or one whose exitcode the runtime ignored,
+  # still writes its report. A test that "passed" with a report in its log did not pass.
+  san_report=""
+  if grep -qE '(ERROR|WARNING): (Address|Leak|Memory|Thread|Undefined)Sanitizer|runtime error:|SUMMARY: .*Sanitizer' \
+       "$bin.run.log" 2>/dev/null; then
+    san_report="sanitizer report in log"
+  fi
+  if [[ $rc -eq 1 && -z $san_report ]]; then
     echo "ok"
     PASS=$((PASS + 1))
   else
-    rc=$?
-    echo "FAIL ($rc)"
+    case $rc in
+      1)             why="$san_report" ;;
+      6)             why="require()-fail" ;;
+      0)             why="no success sentinel" ;;
+      "$SAN_RC")     why="sanitizer report (exit $rc)" ;;
+      23)            why="LeakSanitizer (exit 23)" ;;
+      139)           why="SIGSEGV" ;;
+      134)           why="SIGABRT (sanitizer?)" ;;
+      *)             why="exit $rc${san_report:+ + $san_report}" ;;
+    esac
+    echo "FAIL ($why)"
     FAIL=$((FAIL + 1))
-    FAILURES+=("$src (run rc=$rc)")
+    FAILURES+=("$src (run $why)")
     tail -40 "$bin.run.log"
   fi
 done

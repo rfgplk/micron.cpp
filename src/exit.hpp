@@ -6,11 +6,13 @@
 #pragma once
 
 #include "atomic/intrin.hpp"
+#include "bits/__pause.hpp"
 #include "bits/__profile.hpp"
 #include "syscall.hpp"
 #include "types.hpp"
 
 #include "bits/__attach_hook.hpp"
+#include "bits/__thread_exit_hook.hpp"
 
 extern "C" {
 // strong definition in io/__std.hpp, weakly stubbed in start.cpp
@@ -99,9 +101,23 @@ inline constexpr usize __atexit_cap = MICRON_ATEXIT_CAP;
 static_assert(__atexit_cap >= 8, "micron: MICRON_ATEXIT_CAP must leave room for the runtime's own handlers.");
 
 inline __atexit_entry __atexit_table[__atexit_cap] = {};
+
+// WARNING: this is a monotonic allocation cursor, must never be lowered
 inline u32 __atexit_count = 0;
+
+inline u64 __atexit_pub[(__atexit_cap + 63) / 64] = {};
+inline u32 __atexit_dropped = 0;      // reserved but never published entries the drain gave up on; should stay 0
 inline bool __exit_in_progress = false;
-inline bool __fini_fired = false;      // .fini_array is one-shot, even across concurrent drainers
+inline bool __fini_fired = false;      // .fini_array is one shot, even across concurrent drainers
+
+// how many no progress passes the drain will make waiting on a publication before giving up
+inline constexpr u32 __atexit_publish_rounds = 1u << 16;
+
+[[gnu::always_inline]] inline bool
+__published(u32 idx) noexcept
+{
+  return (__atomic_load_n(&__atexit_pub[idx / 64], __ATOMIC_ACQUIRE) & (1ull << (idx % 64))) != 0;
+}
 
 inline void
 __atexit_thunk(void *p) noexcept
@@ -113,15 +129,23 @@ __atexit_thunk(void *p) noexcept
 inline int
 __push(__atexit_fn_t func, void *arg) noexcept
 {
-  u32 idx = micron::atom::fetch_add(&__atexit_count, 1u, micron::atomic_acq_rel);
-  if ( idx >= __atexit_cap ) {
-    micron::atom::fetch_sub(&__atexit_count, 1u, __ATOMIC_RELAXED);
-    return -1;
+  u32 idx = micron::atom::load(&__atexit_count, micron::atomic_acquire);
+  for ( ;; ) {
+    if ( idx >= __atexit_cap ) return -1;
+    if ( micron::atom::compare_exchange(&__atexit_count, &idx, idx + 1u, false, micron::atomic_acq_rel, __ATOMIC_ACQUIRE) ) break;
   }
-  __atexit_table[idx].func = func;
-  micron::atom::thread_fence(micron::atomic_release);
   __atexit_table[idx].arg = arg;
+  __atomic_store_n(&__atexit_table[idx].func, func, __ATOMIC_RELAXED);
+  __atomic_fetch_or(&__atexit_pub[idx / 64], 1ull << (idx % 64), __ATOMIC_ACQ_REL);      // releases both fields
   return 0;
+}
+
+// WARNING: arg may only be read after this returns nonnull
+[[gnu::always_inline]] inline __atexit_fn_t
+__claim(u32 idx) noexcept
+{
+  if ( !__published(idx) ) return nullptr;
+  return __atomic_exchange_n(&__atexit_table[idx].func, static_cast<__atexit_fn_t>(nullptr), __ATOMIC_ACQ_REL);
 }
 
 };      // namespace __exit_internal
@@ -138,31 +162,48 @@ extern void (*__fini_array_start[])(void) __attribute__((weak, visibility("hidde
 extern void (*__fini_array_end[])(void) __attribute__((weak, visibility("hidden")));
 }
 
-// drain the atexit table (LIFO) then fire the fini array (reverse). Shared by
-// exit()/group_exit(); the attach detach path calls it WITHOUT exiting so a guest
-// module runs its dtors while its runtime is still up.
-//
-// WARNING: exit()/group_exit() reach this only after winning __exit_in_progress, but _detach() calls
-// it ungated and concurrently with them. Each entry is therefore CLAIMED with a CAS rather than a
-// load/store pair: two drainers racing on a plain decrement would both read N, both store N-1 and
-// both run entry N-1 -- a double destruction of some function-local static, i.e. a double free in
-// the host. The fini sweep is one-shot for the same reason.
 inline void
 __drain_atexit_table() noexcept
 {
   using namespace __exit_internal;
-  for ( ;; ) {
-    u32 cur = micron::atom::load(&__atexit_count, micron::atomic_acquire);
-    if ( cur == 0 ) break;
-    u32 idx = cur - 1;
-    if ( !micron::atom::compare_exchange(&__atexit_count, &cur, idx, false, micron::atomic_acq_rel, __ATOMIC_ACQUIRE) ) continue;
-    __atexit_entry e = __atexit_table[idx];
-    if ( e.func ) e.func(e.arg);
+  u32 lo = 0;
+  u32 hi = micron::atom::load(&__atexit_count, micron::atomic_acquire);
+  u32 stall = 0;
+  while ( lo != hi ) {
+    u32 pending = hi;      // lowest index seen reserved but unpublished this pass
+    bool progress = false;
+    for ( u32 i = hi; i-- != lo; ) {
+      if ( !__published(i) ) {
+        pending = i;
+        continue;
+      }
+      __atexit_fn_t f = __claim(i);
+      if ( f == nullptr ) continue;      // another drainer got there first
+      progress = true;
+      f(__atexit_table[i].arg);          // arg is safe to read
+    }
+    const u32 next = micron::atom::load(&__atexit_count, micron::atomic_acquire);
+    if ( pending == hi ) {      // everything below hi is accounted for
+      if ( next == hi ) break;
+      lo = hi;
+      hi = next;
+      stall = 0;
+      continue;
+    }
+    if ( !progress && next == hi ) {      // only unpublished entries left and nobody moved
+      if ( ++stall > __atexit_publish_rounds ) {
+        for ( u32 i = pending; i < hi; ++i )
+          if ( !__published(i) ) __atomic_fetch_add(&__atexit_dropped, 1u, __ATOMIC_RELAXED);
+        break;
+      }
+      __cpu_pause();
+    } else {
+      stall = 0;
+    }
+    lo = pending;
+    hi = next;
   }
 #if !defined(MICRON_ATTACH_MODULE)
-  // a guest .bmg carries no .fini_array (ctors/dtors at namespace scope are banned),
-  // and its __fini_array_start/end would be weak-UNDEF -- which the bmg linker forbids.
-  // The host/stock path keeps the fini sweep unchanged.
   bool __fini_expected = false;
   if ( !micron::atom::compare_exchange(&__fini_fired, &__fini_expected, true, false, micron::atomic_seq_cst, __ATOMIC_RELAXED) ) return;
   if ( __fini_array_start && __fini_array_end ) {
@@ -171,6 +212,22 @@ __drain_atexit_table() noexcept
       if ( *p ) (*p)();
     }
   }
+#endif
+}
+
+// WARNING: a guest module must not do this; its __run_thread_dtors() forwards to the hosts list, so a guest calling exit() would destroy
+// the host thread's thread_locals
+//
+// WARNING: these run arbitrary user dtors
+__attribute__((always_inline)) inline void
+__run_exit_sequence(void) noexcept
+{
+#if !defined(MICRON_ATTACH_MODULE)
+  micron::__run_thread_dtors();
+#endif
+  __drain_atexit_table();
+#if !defined(MICRON_ATTACH_MODULE)
+  micron::__run_thread_dtors();
 #endif
 }
 
@@ -185,7 +242,7 @@ exit(int s = exit_ok)
     sys_exit(s);
   }
 
-  __drain_atexit_table();
+  __run_exit_sequence();
 
   sys_exit(s);
   __builtin_unreachable();
@@ -201,7 +258,7 @@ group_exit(int s = exit_ok)
     sys_group_exit(s);
   }
 
-  __drain_atexit_table();
+  __run_exit_sequence();
 
   proc_exit(s);
   __builtin_unreachable();

@@ -56,6 +56,9 @@ namespace posix
 {
 using sig_t = void (*)(int);
 
+// the only type an object may portably have if it is written by a handler and read outside one
+using sig_atomic_t = int;
+
 // children exit codes
 constexpr static const int cld_exited = 1;
 constexpr static const int cld_killed = 2;

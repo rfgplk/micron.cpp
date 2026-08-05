@@ -16,6 +16,13 @@ namespace micron
 constexpr static const int __fork_flags_std = 0;
 constexpr static const int __fork_flags_parent = posix::clone_parent;
 
+// non throwing fork
+[[nodiscard]] inline int
+try_fork() noexcept
+{
+  return micron::posix::__fork_clone(posix::sig_chld);
+}
+
 // standard fork function, emulating ::fork() behavior, calls specializied fork_clone
 int
 __base_fork()

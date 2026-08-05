@@ -34,26 +34,41 @@ __run_thread_dtors() noexcept
 {
   if ( __micron_attach_run_thread_dtors ) __micron_attach_run_thread_dtors();
 }
-#elif defined(__micron_attach_capable)
+#elif defined(__micron_attach_capable) || defined(__micron_freestanding)
+#define __micron_tdtor_real 1
+
 struct __tdtor_node {
   void (*dtor)(void *);
   void *obj;
 };
 
-inline constexpr u32 __tdtor_cap = 128;
+#ifndef MICRON_TDTOR_CAP
+#define MICRON_TDTOR_CAP 128
+#endif
+inline constexpr u32 __tdtor_cap = MICRON_TDTOR_CAP;
+static_assert(__tdtor_cap >= 8, "micron: MICRON_TDTOR_CAP must leave room for the runtime's own thread_locals.");
+
+// WARNING: thread_local, so this costs __tdtor_cap * 2 * sizeof(void*) of PT_TLS p_memsz on every thread (2 KiB)
 inline thread_local __tdtor_node __tdtors[__tdtor_cap];
 inline thread_local u32 __tdtor_n = 0;
+
+// registrations lost to a full list; Itanium ABI doesn't provide for a way to see/recover dropped dtors
+inline u32 __tdtor_dropped = 0;
 
 inline bool
 __push_thread_dtor(void (*dtor)(void *), void *obj) noexcept
 {
-  if ( __tdtor_n >= __tdtor_cap ) return false;
+  if ( __tdtor_n >= __tdtor_cap ) {
+    __atomic_fetch_add(&__tdtor_dropped, 1u, __ATOMIC_RELAXED);
+    return false;
+  }
   __tdtors[__tdtor_n].dtor = dtor;
   __tdtors[__tdtor_n].obj = obj;
   ++__tdtor_n;
   return true;
 }
 
+// WARNING: do not rewrite this as a counted for-loop; that reintroduces the push during drain reg
 inline void
 __run_thread_dtors() noexcept
 {
@@ -64,6 +79,7 @@ __run_thread_dtors() noexcept
   }
 }
 
+#if defined(__micron_attach_capable)
 // the two entry points a host publishes in micron_attach_info for its guests
 inline int
 __attach_thread_atexit(void (*dtor)(void *), void *obj) noexcept
@@ -76,6 +92,7 @@ __attach_run_thread_dtors() noexcept
 {
   __run_thread_dtors();
 }
+#endif
 #else
 inline __attribute__((always_inline)) void
 __run_thread_dtors() noexcept

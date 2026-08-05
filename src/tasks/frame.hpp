@@ -74,7 +74,7 @@ public:
   void
   __set(U &&__v)
   {
-    ::new (static_cast<void *>(&__val)) T(micron::forward<U>(__v));
+    ::new (static_cast<void *>(__builtin_addressof(__val))) T(micron::forward<U>(__v));
     __has = true;
   }
 

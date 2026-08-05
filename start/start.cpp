@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include <micron/bits/__arch.hpp>
+#include <micron/bits/__pause.hpp>
 #include <micron/config.hpp>
 
 #include "__auxv.hpp"
@@ -169,31 +170,59 @@ __cxa_atexit(void (*dtor)(void *), void *arg, void * /*dso_handle*/) noexcept
   return micron::__exit_internal::__push(dtor, arg);
 }
 
-// WARNING: thread_local objects with a non-trivial dtor emit a call to __cxa_thread_atexit (Itanium C++ ABI)
-// micron currently doesn't support multithreading in freestanding mode
-// so a thread_local's lifetime IS the process lifetime
+#if defined(__micron_freestanding) && !defined(__micron_tdtor_real)
+#error "micron: <micron/bits/__thread_exit_hook.hpp> has no per-thread dtor list."
+#endif
+
+// thread_local objects with a non-trivial dtor emit a call to __cxa_thread_atexit (Itanium C++ ABI)
+// WARNING: never fall back to the process-wide atexit table on failure
+//
+// NOTE: nothing joins __global_threadpool at process exit, so a pool worker's thread_locals are never destroyed
 int
 __cxa_thread_atexit(void (*dtor)(void *), void *arg, void * /*dso_handle*/) noexcept
 {
   if ( dtor == nullptr ) return -1;
-  return micron::__exit_internal::__push(dtor, arg);
+  return micron::__push_thread_dtor(dtor, arg) ? 0 : -1;
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// function-local static guards (Itanium C++ ABI 3.3.2)
+//
+// b[0] = initialised, b[1] = construction in progress
+//
+// WARNING: no owner thread check; a static whose constructor re-enters its own accessor spins forever instead of deadlocking
 int
-__cxa_guard_acquire(long long int *g)
+__cxa_guard_acquire(__micron_guard_t *g)
 {
-  return *reinterpret_cast<unsigned char *>(g) == 0;
+  unsigned char *b = reinterpret_cast<unsigned char *>(g);
+  if ( __atomic_load_n(&b[0], __ATOMIC_ACQUIRE) ) return 0;
+  for ( ;; ) {
+    unsigned char expect = 0;
+    if ( __atomic_compare_exchange_n(&b[1], &expect, 1, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) ) {
+      if ( __atomic_load_n(&b[0], __ATOMIC_ACQUIRE) ) {
+        __atomic_store_n(&b[1], 0, __ATOMIC_RELEASE);
+        return 0;
+      }
+      return 1;
+    }
+    while ( __atomic_load_n(&b[1], __ATOMIC_ACQUIRE) ) __cpu_pause();
+    if ( __atomic_load_n(&b[0], __ATOMIC_ACQUIRE) ) return 0;
+  }
 }
 
 void
-__cxa_guard_release(long long int *g)
+__cxa_guard_release(__micron_guard_t *g)
 {
-  *reinterpret_cast<unsigned char *>(g) = 1;
+  unsigned char *b = reinterpret_cast<unsigned char *>(g);
+  __atomic_store_n(&b[0], 1, __ATOMIC_RELEASE);
+  __atomic_store_n(&b[1], 0, __ATOMIC_RELEASE);
 }
 
 void
-__cxa_guard_abort(long long int *)
+__cxa_guard_abort(__micron_guard_t *g)
 {
+  unsigned char *b = reinterpret_cast<unsigned char *>(g);
+  __atomic_store_n(&b[1], 0, __ATOMIC_RELEASE);
 }
 
 // __dso_handle is referenced by every TU that schedules a global destructor via __cxa_atexit

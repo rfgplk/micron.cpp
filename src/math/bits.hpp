@@ -123,12 +123,18 @@ abs32(i32 x) noexcept
   return (x ^ mask) - mask;
 }
 
+// WARNING: raw bits; -Ofast implies -fno-signed-zeros
 template<typename F>
   requires(micron::is_floating_point_v<F>)
 [[nodiscard, gnu::always_inline]] inline constexpr int
 sign_bit(F x) noexcept
 {
-  return __builtin_signbit(x);
+  if constexpr ( sizeof(F) == 4 )
+    return (__builtin_bit_cast(u32, x) >> 31) != 0;
+  else if constexpr ( sizeof(F) == 8 )
+    return (__builtin_bit_cast(u64, x) >> 63) != 0;
+  else
+    return __builtin_signbit(x);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -31,15 +31,20 @@ read_in(micron::string &out)
 {
   micron::buffer chunk(__lines::chunk);
   max_t total = 0;
+  i32 nb = __impl::__nb_unknown;
+  u32 spun = 0;
   for ( ;; ) {
     i32 r = co_await micron::coro::io::read(0, chunk.data(), static_cast<u32>(chunk.size()));
     if ( r < 0 ) [[unlikely]] {
       if ( r == -4 /*EINTR*/ ) continue;
-      co_return static_cast<max_t>(r);
+      const i32 a = co_await __impl::__retry_after(r, 0, micron::uring::poll_in, nb, spun);
+      if ( a == 0 ) continue;
+      co_return static_cast<max_t>(a);
     }
     if ( r == 0 ) break;
     out.append(reinterpret_cast<const char *>(chunk.data()), static_cast<usize>(r));
     total += r;
+    spun = 0;
   }
   co_return total;
 }

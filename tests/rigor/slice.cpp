@@ -331,7 +331,7 @@ main()
     micron::slice<int> s(5, 0);
     for ( int i = 0; i < 5; ++i ) s[i] = i;
     int sum = 0;
-    for ( auto *it = s.begin(); it != s.end() + 1; ++it ) sum += *it;
+    for ( auto *it = s.begin(); it != s.end(); ++it ) sum += *it;
     require(sum, 0 + 1 + 2 + 3 + 4);
   }
   end_test_case();

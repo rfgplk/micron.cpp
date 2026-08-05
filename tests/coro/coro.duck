@@ -12,3 +12,4 @@ test tests/coro/ --arm -o bin/coro/arm
 
 # aarch64 via the Linaro cross compiler, run under qemu-aarch64-static
 test tests/coro/ --arm64 -o bin/coro/arm64
+test tests/coro/t_aio_wave.cpp --uring --def MICRON_CORO_URING_ENTRIES=16u -o bin/coro/x64_sqfull

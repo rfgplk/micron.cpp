@@ -1,31 +1,4 @@
-# Known Issues (as of 2026-07-29)
-
-## x86 ISA levels
-
-micron's x86 floor is **SSE2**. `-mavx2 -mbmi` are no longer required: every 256-bit path is gated on `__micron_x86_avx2`, which gcc defines from `-march`, and
-degrades to two 16-byte SSE2 halves below it. Tier picking is natively supported via `duck --isa`:
-
-| `--isa` | `-march=` | gives you | oldest core |
-|---|---|---|---|
-| `base` | `x86-64` | SSE2 | any x86-64 (2003+) |
-| `v2` | `x86-64-v2` | +SSE3..SSE4.2, POPCNT | Nehalem (2008+) |
-| `v3` | `x86-64-v3` | +AVX, AVX2, BMI1/2, FMA | Haswell (2013+) |
-| `v4` | `x86-64-v4` | +AVX-512 | Skylake-X (2017+) |
-| `native` (default) | `native` | this box | — |
-
-The invariant: **no function emits an instruction its build flags did not authorize.** An `--isa base`
-object contains zero AVX/AVX2/AVX-512/BMI/SSE4 instructions, so it really does run on a pre-AVX2 core.
-
-Things that are ISA-gated *by nature* and are simply absent below their tier:
-- `simd::w*` / `simd::z*` (the v256/v512 **class** types): a 256-bit vector has no narrower form.
-  Need AVX2 / AVX-512F.
-- `simd::sse::*` carries a per-tier `gnu::target`: the ~230 SSE2 wrappers stay callable at `base`,
-  while the SSE3/SSSE3/SSE4.1/SSE4.2 ones demand their ISA.
-- `micron::math::mk`'s **packed** overloads (`sin(V)`, `exp(V)`, ...) need AVX2+FMA (or NEON). The scalar
-  `mk::` surface is unaffected and works at every ISA. Gated on: `__micron_math_packed`.
-  Note `mk::packed_real` still admits `f128`/`d128` at SSE2 while no kernels cover them, most of those
-  kernels are *already* 128-bit code merely trapped behind the AVX2 gate.
-- `hashes::zzz*` is AVX2-specific on x86 (NEON on arm), it is written directly on 256-bit intrinsics, no fallback.
+# Known Issues (as of 2026-08-04)
 
 ## Hashing
 
@@ -33,13 +6,22 @@ Things that are ISA-gated *by nature* and are simply absent below their tier:
   `zzz128`/`zzz` where zzz exists and fall back to `murmur128`/`rapidhash` below AVX2. Fine for
   in-memory containers; **not** for anything persisted or sent over a wire. `-DMICRON_NO_ZZZ_HASH`
   forces the ISA-free defaults everywhere so the values agree across tiers.
-- **`hashes::xxhash64` requires an aligned `src` and throws `library_error` otherwise** (`xx.hpp:175`).
+- `hashes::xxhash64` accepts unaligned `src` (fixed 2026-08-04). It used to throw `library_error`;
+  it now goes through the `__load32`/`__load64` memcpy punning helpers in `hash/__load.hpp` like the
+  other kernels. Byte-identical output — the `tests/hash/hash_vectors` known-answer vectors are the gate.
+
+## Known-failing tests
+
+`tests/rigor/FAILING.md` is the current baseline of rigor tests that fail on a stock amd64 hosted
+run
 
 ## Building / optimizations
 - currently, you _cannot_ use micron alongside the STL (or any glibc) code; technically you can (if you poison the right headers and work around defines) but if you try you will _almost certainly_ run into conflicting type declarations. If you truly want to include micron code alongside glibc (say in a legacy codebase) my recommendation is to splice the micron code/headers you want verbatim rather than pulling in the whole thing. Most micron external fns map cleanly to glibc aliases, so you shouldn't have much trouble.
 - under `-Ofast`/`-ffast-math` + LTO, `micron::numeric_limits<F>::max()` / `-max()` / `infinity()` can constant-fold to 0/-0 when used as a sentinel
 - `[[gnu::flatten]]` transitively inlines all fns and blows up LTO compile time
 - the `-flto` flag is still mandatory under ASan testing
+- **AddressSanitizer does not report in a TU that pulls `src/std.hpp`**: abcmallocs `operator new` 
+  wins over ASans
 - certain heavy abc tests need `vm.overcommit_memory=0|1` otherwise they'll fail at RUNTIME with `critical_error` (mmap refused)
 
 ## Bugs / Limitations you should know
@@ -65,11 +47,19 @@ Things that are ISA-gated *by nature* and are simply absent below their tier:
 - LSan (and other sanitizers) may report a benign ~8 KB "leak" from the `make_global` stdout/stderr stream process-lifetime allocs
 - `tests/coro/t_aio_inline` is **load-sensitive and flaky in batch runs**
 - 32-bit + threads: a rigor test that keeps **8 live `auto_thread`s** throws `critical_error` from
-  `operator new` on `--i386`. VA exhaustion, 64-bit is immune.
-- coro: **`coro::stop_coroutine_runtime()` is mandatory before `main` returns.**
-  There is no atexit hook. Skip it and the process exits with workers still in `worker_main` ->
-  `__find` -> `__drain_io` while the static destructor of the global `__io_rings[32]` runs
-  `uring::ring::~ring()` -> munmap; the worker then faults in `ring::cq_overflowed()`.
+  `operator new` on `--i386`. VA exhaustion, 64-bit is immune. **Likely mitigated 2026-08-04**
+- width-32 abcmalloc: the buddy needs a sheet strictly exceeding `2 * n` to serve `n`, so a request
+  at `__alloc_limit` (64 MB) carves 128 MB + 256 KB from a 1 GB VA reservation, roughly 7 such
+  sheets before `__va_carve` falls through to a plain `sys_allocator` mmap. Over `__alloc_limit` is
+  a hard `abort_state()` (`sys_exit(11)`), not a `nullptr`, and it bypasses the io flush, so a
+  buffered `println` trail vanishes with it.
+- freestanding: a `thread_local`'s destructor drops silently once a thread holds more than
+  `MICRON_TDTOR_CAP` (default 128) of them. The Itanium ABI gives the construction site no way to
+  react to a failed `__cxa_thread_atexit`, so the registration is counted in
+  `micron::__tdtor_dropped` and otherwise lost. Raise the cap if you need more; it costs
+  `cap * 2 * sizeof(void*)` of `.tbss` per thread.
+- freestanding: nothing joins `__global_threadpool` at process exit, so a pool worker's
+  `thread_local`s are never destroyed
 
 ## Platform / Arch gaps
 - `src/simd/strings.hpp` is x86-only (AVX2/SSE2 + scalar fallback); no NEON yet
@@ -88,13 +78,6 @@ Things that are ISA-gated *by nature* and are simply absent below their tier:
   str r3, [sp, #4]    ; <-- ABOVE sp; a naked fn reserved no frame
   <the naked body>
   ```
-
-  On x86 gcc emits no canary for naked functions (and the store would land in the 128-byte red zone
-  anyway), which is why amd64 never noticed while every fiber switch and every `clone3` spawn silently
-  corrupted memory on arm32. **Every naked function must carry `__micron_no_ssp`** (`src/bits/__arch.hpp`).
-  Current users: `src/bits/__ar.hpp`, `src/linux/sys/clone.hpp`, `src/linux/sys/signal.hpp` (via
-  `naked_fn` in `src/attributes.hpp`), `src/memory/allocation/abcmalloc/doctor.hpp`.
-  `start/start.cpp` is exempt only because freestanding builds already pass `-fno-stack-protector`.
 - aarch64 gcc **ignores** `__attribute__((naked))` entirely and emits a prologue/epilogue anyway; both
   `__ar.hpp` and `clone.hpp` work around it by emitting the routines as file-scope `asm()` blocks
 - **`-Ofast` (`-fno-signed-zeros`) merges calls fed compile-time `+0.0` / `-0.0` constants** — the

@@ -35,17 +35,16 @@ template<typename U> struct __merge_buf {
   __merge_buf &operator=(const __merge_buf &) = delete;
 };
 
+// into scratch
 template<typename T, typename Cmp>
 static void
-__merge(T *arr, max_t left, max_t mid, max_t right, Cmp comp)
+__merge_into(T *arr, max_t left, max_t mid, max_t right, Cmp comp, T *scratch)
 {
   max_t n1 = mid - left + 1;
   max_t n2 = right - mid;
 
-  __merge_buf<T> Lbuf(n1);
-  __merge_buf<T> Rbuf(n2);
-  T *L = Lbuf.p;
-  T *R = Rbuf.p;
+  T *L = scratch;
+  T *R = scratch + n1;
 
   for ( max_t i = 0; i < n1; ++i ) L[i] = arr[left + i];
   for ( max_t j = 0; j < n2; ++j ) R[j] = arr[mid + 1 + j];
@@ -65,6 +64,14 @@ __merge(T *arr, max_t left, max_t mid, max_t right, Cmp comp)
   while ( j < n2 ) arr[k++] = R[j++];
 }
 
+template<typename T, typename Cmp>
+static void
+__merge(T *arr, max_t left, max_t mid, max_t right, Cmp comp)
+{
+  __merge_buf<T> sc(right - left + 1);
+  __merge_into(arr, left, mid, right, comp, sc.p);
+}
+
 template<typename T>
 static void
 __merge(T *arr, max_t left, max_t mid, max_t right)
@@ -74,15 +81,24 @@ __merge(T *arr, max_t left, max_t mid, max_t right)
 
 template<typename T, typename Cmp>
 static void
-__merge_sort(T *arr, max_t left, max_t right, Cmp comp)
+__merge_sort_with(T *arr, max_t left, max_t right, Cmp comp, T *scratch)
 {
   if ( left >= right ) return;
 
   max_t mid = left + ((right - left) >> 1);
 
-  __merge_sort(arr, left, mid, comp);
-  __merge_sort(arr, mid + 1, right, comp);
-  __merge(arr, left, mid, right, comp);
+  __merge_sort_with(arr, left, mid, comp, scratch);
+  __merge_sort_with(arr, mid + 1, right, comp, scratch);
+  __merge_into(arr, left, mid, right, comp, scratch);
+}
+
+template<typename T, typename Cmp>
+static void
+__merge_sort(T *arr, max_t left, max_t right, Cmp comp)
+{
+  if ( left >= right ) return;
+  __merge_buf<T> sc(right - left + 1);
+  __merge_sort_with(arr, left, right, comp, sc.p);
 }
 
 template<typename T>
@@ -148,6 +164,8 @@ template<typename T, typename Cmp>
 static void
 __merge_sort_bottom_up(T *arr, max_t n, Cmp comp)
 {
+  if ( n < 2 ) return;
+  __merge_buf<T> sc(n);
   for ( max_t width = 1; width < n; width <<= 1 ) {
     for ( max_t i = 0; i < n; i += (width << 1) ) {
 
@@ -159,7 +177,7 @@ __merge_sort_bottom_up(T *arr, max_t n, Cmp comp)
       if ( right >= n ) right = n - 1;
       if ( mid >= right ) continue;      // right run empty after clamp -> nothing to merge
 
-      __merge(arr, left, mid, right, comp);
+      __merge_into(arr, left, mid, right, comp, sc.p);
     }
   }
 }

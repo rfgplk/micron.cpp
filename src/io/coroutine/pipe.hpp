@@ -22,6 +22,7 @@ namespace coro
 
 struct fd_io {
   i32 fd = -1;
+  i32 __nb = __impl::__nb_unknown;      // O_NONBLOCK probe
 
   [[nodiscard]] micron::task<max_t>
   read_some(void *p, usize n)
@@ -29,8 +30,8 @@ struct fd_io {
     if ( i32 e = __impl::__check(fd) ) [[unlikely]]
       co_return e;
     if ( n > __impl::__chunk_cap ) n = __impl::__chunk_cap;
-    i32 r = co_await micron::coro::io::read(fd, p, static_cast<u32>(n));
-    co_return static_cast<max_t>(r);
+    max_t r = co_await __impl::__read_once(fd, p, n, static_cast<u64>(-1), __nb);
+    co_return r;
   }
 
   [[nodiscard]] micron::task<max_t>
@@ -39,8 +40,8 @@ struct fd_io {
     if ( i32 e = __impl::__check(fd) ) [[unlikely]]
       co_return e;
     if ( n > __impl::__chunk_cap ) n = __impl::__chunk_cap;
-    i32 w = co_await micron::coro::io::write(fd, p, static_cast<u32>(n));
-    co_return static_cast<max_t>(w);
+    max_t w = co_await __impl::__write_once(fd, p, n, static_cast<u64>(-1), __nb);
+    co_return w;
   }
 
   [[nodiscard]] micron::task<max_t>
@@ -112,15 +113,20 @@ __each_chunk_fd(i32 fd, Fn fn, usize chunk_sz)
 {
   micron::buffer win(chunk_sz);
   max_t total = 0;
+  i32 nb = __nb_unknown;
+  u32 spun = 0;
   for ( ;; ) {
     i32 r = co_await micron::coro::io::read(fd, win.data(), static_cast<u32>(chunk_sz));
     if ( r < 0 ) [[unlikely]] {
       if ( r == -4 /*EINTR*/ ) continue;
-      co_return static_cast<max_t>(r);
+      const i32 a = co_await __retry_after(r, fd, micron::uring::poll_in, nb, spun);
+      if ( a == 0 ) continue;
+      co_return static_cast<max_t>(a);
     }
     if ( r == 0 ) break;
     fn(reinterpret_cast<const byte *>(win.data()), static_cast<usize>(r));
     total += r;
+    spun = 0;
   }
   co_return total;
 }
@@ -168,16 +174,22 @@ write_with(upipe &p, Fn fn, usize chunk_sz = 4096)
 splice(i32 in_fd, i32 out_fd, usize n)
 {
   usize moved = 0;
+  u32 spun = 0;
+  u32 turn = 0;
   while ( moved < n ) {
     usize want = n - moved;
     if ( want > __impl::__chunk_cap ) want = __impl::__chunk_cap;
     i32 r = co_await micron::coro::io::splice(in_fd, static_cast<u64>(-1), out_fd, static_cast<u64>(-1), static_cast<u32>(want));
     if ( r < 0 ) [[unlikely]] {
       if ( r == -4 ) continue;
-      co_return moved ? static_cast<max_t>(moved) : static_cast<max_t>(r);
+      const i32 a = co_await __impl::__retry_after2(r, in_fd, out_fd, spun, turn);
+      if ( a == 0 ) continue;
+      co_return moved ? static_cast<max_t>(moved) : static_cast<max_t>(a);
     }
     if ( r == 0 ) break;
     moved += static_cast<usize>(r);
+    spun = 0;
+    turn = 0;
   }
   co_return static_cast<max_t>(moved);
 }

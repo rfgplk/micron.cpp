@@ -820,6 +820,15 @@ format_to_sink(S &s, const char *fmt, const Args &...args)
 
 };      // namespace __echo_impl
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// format_to
+template<output_sink S, typename... Args>
+inline max_t
+format_to(S &s, const char *fmt, const Args &...args)
+{
+  return __echo_impl::format_to_sink(s, fmt, args...);
+}
+
 template<typename... Args>
   requires(!micron::any_settling<Args...>)
 inline max_t

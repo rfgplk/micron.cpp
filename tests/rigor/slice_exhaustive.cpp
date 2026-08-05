@@ -402,16 +402,15 @@ main()
   }
   end_test_case();
 
-  test_case("begin / end - inclusive-end walk covers every element exactly once");
+  test_case("begin / end - half-open walk covers every element exactly once");
   {
     micron::slice<int> s(size_t(6), 0);
     for ( size_t i = 0; i < s.size(); ++i ) s[i] = (int)i + 1;
     int sum = 0;
     int count = 0;
-    for ( auto p = s.begin();; ++p ) {
+    for ( auto p = s.begin(); p != s.end(); ++p ) {
       sum += *p;
       ++count;
-      if ( p == s.end() ) break;
     }
     require(sum, 21);
     require(count, 6);
@@ -424,10 +423,7 @@ main()
     for ( size_t i = 0; i < s.size(); ++i ) s[i] = (int)i;
     const auto &cs = s;
     int sum = 0;
-    for ( auto p = cs.cbegin();; ++p ) {
-      sum += *p;
-      if ( p == cs.cend() ) break;
-    }
+    for ( auto p = cs.cbegin(); p != cs.cend(); ++p ) sum += *p;
     require(sum, 0 + 1 + 2 + 3 + 4);
   }
   end_test_case();

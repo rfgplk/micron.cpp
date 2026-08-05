@@ -1,0 +1,19 @@
+# deep coroutine + threading stress
+#   duck tests/stress/stress.duck              (== duck batch tests/stress/stress.duck)
+#   duck batch parallel tests/stress/stress.duck
+#
+# every file scales on --def STRESS_SCALE=N (tests/support/lifetime.hpp). the defaults are sized to
+# finish inside --timeout 300; the soak cells below raise it.
+
+test tests/stress/ -o bin/stress/x64 --timeout 300
+test tests/stress/ --arm   -o bin/stress/arm   --timeout 900
+test tests/stress/ --arm64 -o bin/stress/arm64 --timeout 900
+test tests/stress/coro_sched_adversarial.cpp --def STRESS_SCALE=10 -o bin/stress/soak --timeout 1800
+test tests/stress/coro_io_nonblock.cpp       --def STRESS_SCALE=10 -o bin/stress/soak --timeout 1800
+test tests/stress/thr_lifecycle_recycle.cpp  --def STRESS_SCALE=10 -o bin/stress/soak --timeout 1800
+test tests/stress/coro_frame_lifetime.cpp    --def STRESS_SCALE=10 -o bin/stress/soak --timeout 1800
+test tests/stress/coro_io_nonblock.cpp --def MICRON_CORO_URING_ENTRIES=16u -o bin/stress/sqfull --timeout 600
+test tests/stress/coro_sched_adversarial.cpp --def MICRON_CORO_FIXED_DEQUE --def MICRON_CORO_DEQUE_CAP=8 -o bin/stress/dequefull --timeout 600
+test tests/stress/coro_lifecycle_recycle.cpp --def MICRON_CORO_STATS -o bin/stress/stats --timeout 600
+build tests/stress/thr_tls_adversarial.cpp -k  --def MICRON_TDTOR_CAP=8 -o bin/stress/tdtor_k
+build tests/stress/thr_tls_adversarial.cpp -ke --def MICRON_TDTOR_CAP=8 -o bin/stress/tdtor_ke
