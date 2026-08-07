@@ -142,6 +142,7 @@ compose(const config_t &conf, bool linking)
   if ( conf.pgo_use ) __compose_add(c.extensions, "-fprofile-use -fprofile-correction -Wno-missing-profile");
   if ( conf.no_eh and cpp ) __compose_add(c.extensions, "-fno-exceptions");      // explicit only; hosted micron uses EH
   if ( conf.no_rtti and cpp ) __compose_add(c.extensions, "-fno-rtti");
+  if ( conf.reflection and cpp ) __compose_add(c.extensions, "-freflection");      // validated in finalize_and_infer
 
   // links
   if ( linking ) {

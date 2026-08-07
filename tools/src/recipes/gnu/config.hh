@@ -22,6 +22,12 @@ __is_cpp_standard(const string_type &__std)
   return false;
 }
 
+inline bool
+__is_cxx26_standard(const string_type &__std)
+{
+  return __std == gcc::__standard_cxx26 or __std == gcc::__standard_gnuxx26;
+}
+
 enum __arch : u32 { x86 = 0, arm, arm64 };
 
 // x86 ISA level
@@ -156,6 +162,7 @@ struct config_t {
   bool pgo_use = false;                  // -fprofile-use
   bool no_eh = false;                    // -fno-exceptions
   bool no_rtti = false;                  // -fno-rtti
+  bool reflection = false;               // -freflection: c++26 p2996 reflection (gcc 16+, c++26 only)
   bool strip = false;                    // -Wl,--strip-all
   bool check_compileability = true;      // check include paths for updates - default true
   bool raw_object = false;               // --raw-obj: a real machine-code object (no LTO) for an external linker
@@ -333,6 +340,15 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
       conf.compiler_path = __compiler_clangpp;
     break;
   }
+
+  if ( conf.reflection ) {
+    if ( conf.language != __languages::cpp )
+      mc::cerror("-freflection is a C++ flag, but the target is not C++");
+    if ( !__is_cxx26_standard(conf.standard) )
+      mc::cerror("-freflection requires --std c++26 or gnu++26");
+    if ( conf.compiler == __compilers::clang )
+      mc::cerror("-freflection is the gcc spelling; clang gates reflection behind a different flag");
+  }
 }
 
 // create every missing component of a (trailing-slash) directory path
@@ -506,6 +522,9 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
       }
     } else if ( mc::strcmp(argv[i], "--uring") == 0 ) {
       conf.defines.push_back(string_type{ "MICRON_CORO_URING" });
+    } else if ( mc::strcmp(argv[i], "-freflection") == 0 ) {
+      conf.reflection = true;
+      conf.defines.push_back(string_type{ "MICRON_REFLECTION" });
     } else if ( mc::strcmp(argv[i], "--def") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the --def flag must be followed by NAME or NAME=VALUE");
       conf.defines.push_back(string_type{ argv[i] });

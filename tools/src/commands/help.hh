@@ -138,6 +138,7 @@ help(void)
   mc::console("                      C++:  c++98 c++03 c++11 c++14 c++17 c++20 c++23 c++26");
   mc::console("                            (+ gnu++NN)");
   mc::console("                      Defaults: -std=c++26 (C++), -std=c11 (C).");
+  mc::console("                      -freflection is rejected on anything below c++26.");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,6 +200,8 @@ help(void)
   mc::console("    --strip           strip symbols at link            (-Wl,--strip-all)");
   mc::console("    --harden          profile:  --cfi --fortify --pie --relro (collapses");
   mc::console("                      to --cfi --relro under -k; drops --pie under -s)");
+  mc::console("    -freflection      c++26 reflection (p2996). Needs gcc 16+ and --std c++26");
+  mc::console("                      also defines MICRON_REFLECTION");
   mc::console("    -f                force build:  skip include-mtime change detection");
   mc::console("    -j <N>            cap for the parallel commands (default: online cpus)");
   mc::console("    --timeout <sec>   `test` only: SIGKILL a target that outruns <sec> and grade it");

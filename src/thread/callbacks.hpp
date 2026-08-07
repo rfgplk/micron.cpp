@@ -5,6 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__abc_mt.hpp"
+
 #include "../io/__std.hpp"      // std{in,out,err}_fileno
 #include "../io/os/iosys.hpp"
 

@@ -497,7 +497,7 @@ class __arena: private cache
   void
   __expand_arena_tier(usize sz)
   {
-    auto __g = __struct_guard();
+    // WARNING: no __struct_guard(), will deadlock otherwise under arena metadata exhaustion
     __debug_print("__expand_arena_tier(): requested expansion size: ", sz);
     using Nd = node<sheet<__class_arena_internal>>;
     using Sh = sheet<__class_arena_internal>;
@@ -1449,7 +1449,10 @@ public:
     [[gnu::always_inline]] explicit __struct_guard_t(micron::atomic_flag *f) noexcept : _flag(f)
     {
       if constexpr ( __default_multithread_safe ) {
-        while ( _flag->test_and_set(micron::memory_order::acquire) ) __cpu_pause();
+        // while ( _flag->test_and_set(micron::memory_order::acquire) ) __cpu_pause();
+        // TTAS instead
+        // NOTE: this change alone made a __monstrous__ difference in contended performance (literally ~2x)
+        _flag->ttas(micron::memory_order::acquire, micron::memory_order::relaxed);
       } else {
         (void)f;
       }

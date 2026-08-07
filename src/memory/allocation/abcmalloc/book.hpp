@@ -48,7 +48,7 @@ private:
   // when a new malloc happens insert it into the book
 
   inline __attribute__((always_inline)) void
-  __impl_release(void)
+  __impl_release(void) noexcept
   {
     if ( !__kernel_memory.zero() ) {
       __sheet_unregister(__kernel_memory.ptr, __kernel_memory.len);
@@ -59,7 +59,7 @@ private:
   }
 
 public:
-  ~sheet() { __impl_release(); };
+  ~sheet() noexcept { __impl_release(); };
 
   sheet(void) = delete;
 

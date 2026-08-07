@@ -1,0 +1,32 @@
+# c++26 reflection suite.
+#
+#   duck tests/reflect/reflect.duck          (== duck batch tests/reflect/reflect.duck)
+#   duck batch parallel tests/reflect/reflect.duck
+
+test tests/rigor/meta.cpp -freflection -O0 -o bin/reflect/O0 --timeout 300
+test tests/rigor/meta.cpp -freflection -O2 -o bin/reflect/O2 --timeout 300
+test tests/rigor/meta.cpp -freflection -Ofast -o bin/reflect/Ofast --timeout 300
+test tests/rigor/reflect.cpp -freflection -O0 -o bin/reflect/O0 --timeout 300
+test tests/rigor/reflect.cpp -freflection -O2 -o bin/reflect/O2 --timeout 300
+test tests/rigor/reflect.cpp -freflection -Ofast -o bin/reflect/Ofast --timeout 300
+
+test tests/rigor/reflect.cpp -freflection --isa base -O2 -o bin/reflect/base --timeout 300
+test tests/rigor/meta.cpp -freflection --isa base -O2 -o bin/reflect/base --timeout 300
+
+test tests/comparison/reflect_stl.cpp -freflection -O2 -o bin/reflect/stl --timeout 300
+test tests/comparison/reflect_stl.cpp -freflection -Ofast -o bin/reflect/stl_Ofast --timeout 300
+
+test tests/rigor/rigor_snowball_fuzz.cpp -freflection -O2 -o bin/reflect/fuzz --timeout 300
+
+compile tests/compiletests/reflect.cpp -freflection --isa base -O2 --raw-obj -o bin/reflect/fs_base_k -k
+compile tests/compiletests/reflect.cpp -freflection --isa base -O2 --raw-obj -o bin/reflect/fs_base_ke -ke
+compile tests/compiletests/reflect.cpp -freflection -Ofast --raw-obj -o bin/reflect/fs_Ofast_k -k
+compile tests/compiletests/reflect.cpp -freflection -Ofast --raw-obj -o bin/reflect/fs_Ofast_ke -ke
+compile tests/compiletests/reflect.cpp -freflection -O0 --raw-obj -o bin/reflect/fs_O0_k -k
+compile tests/compiletests/reflect.cpp -freflection -g --raw-obj -o bin/reflect/fs_debug_ke -ke
+
+compile tests/compiletests/reflect.cpp -freflection --isa base -O2 -o bin/reflect/link_base
+compile tests/compiletests/reflect.cpp -freflection --isa v2 -O2 -o bin/reflect/link_v2
+compile tests/compiletests/reflect.cpp -freflection --isa v3 -Ofast -o bin/reflect/link_v3
+compile tests/compiletests/reflect.cpp -freflection --isa v4 -Ofast -o bin/reflect/link_v4
+compile tests/compiletests/reflect.cpp -freflection --i386 -O2 --raw-obj -o bin/reflect/i386_O2

@@ -49,9 +49,15 @@ template<memory_order Aq = memory_order::acquire, memory_order Rl = memory_order
   }
 
   void
+  ttas_acquire(void) noexcept
+  {
+    flag->ttas(Aq, Rl);
+  }
+
+  void
   acquire() noexcept
   {
-    while ( !try_acquire() );
+    while ( !try_acquire() ) __cpu_pause();
   }
 
 public:

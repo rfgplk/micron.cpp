@@ -427,6 +427,10 @@ inline constexpr unsigned __micron_width = __wordsize;
 
 #if defined(__cplusplus)
 #define __micron_lang_cpp 1
+// NOTE: gcc still reports the c++26 placeholder 202400L, so this cannot test for a 2026xx value
+#if __cplusplus > 202302L
+#define __micron_lang_cpp26 1
+#endif
 #if __cplusplus >= 202302L
 #define __micron_lang_cpp23 1
 #endif
@@ -442,6 +446,11 @@ inline constexpr unsigned __micron_width = __wordsize;
 #if __cplusplus >= 201103L
 #define __micron_lang_cpp11 1
 #endif
+#endif
+
+// reflection (p2996)
+#if defined(__micron_lang_cpp26) && defined(__cpp_impl_reflection)
+#define __micron_reflection 1
 #endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -40,6 +40,16 @@ struct atomic_flag {
   }
 
   void
+  ttas(memory_order success, memory_order failure) noexcept
+  {
+    for ( ;; ) {
+      while ( tk.get(memory_order::acquire) ) __cpu_pause();
+      bool exp = ATOMIC_OPEN;
+      if ( tk.compare_exchange_weak(exp, ATOMIC_LOCKED, success, failure) ) break;
+    }
+  }
+
+  void
   clear(memory_order order = memory_order::seq_cst) noexcept
   {
     tk.store(false, order);

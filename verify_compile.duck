@@ -226,3 +226,25 @@ compile tests/compiletests/ --i386 -Ofast -o bin/compiletests/i386_Ofast_k -ke
 compile tests/compiletests/ --i386 -Ofast -o bin/compiletests/i386_Ofast_knoeh -k
 compile tests/compiletests/ --i386 -g -o bin/compiletests/i386_debug_k -ke
 compile tests/compiletests/ --i386 -g -o bin/compiletests/i386_debug_knoeh -k
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# c++26 reflection (-freflection)
+#
+# every cell above builds tests/compiletests/reflect.cpp with the gate OFF -- that is the load
+# bearing half, since the whole directory is swept and reflect.hpp must collapse to nothing on
+# arm, arm64, i386 and under both exception gates. these rows are the other half: the same file
+# with the gate ON.
+#
+# x86 only, and no --arm/--arm64 rows are possible: the cross toolchains are gcc 15, which has no
+# -freflection. duck rejects that combination outright rather than emitting a command gcc will
+# refuse. the deeper reflection matrix lives in tests/reflect/reflect.duck.
+
+compile tests/compiletests/reflect.cpp --x86 --isa base -O0 -freflection --raw-obj -o bin/compiletests/refl_base_O0
+compile tests/compiletests/reflect.cpp --x86 --isa base -Ofast -freflection --raw-obj -o bin/compiletests/refl_base_Ofast
+compile tests/compiletests/reflect.cpp --x86 --isa v3 -O2 -freflection --raw-obj -o bin/compiletests/refl_v3_O2
+compile tests/compiletests/reflect.cpp --x86 --isa v4 -Ofast -freflection --raw-obj -o bin/compiletests/refl_v4_Ofast
+compile tests/compiletests/reflect.cpp --x86 -g -freflection --raw-obj -o bin/compiletests/refl_debug
+compile tests/compiletests/reflect.cpp --x86 --isa base -O2 -freflection -o bin/compiletests/refl_base_O2_k -k
+compile tests/compiletests/reflect.cpp --x86 --isa base -O2 -freflection -o bin/compiletests/refl_base_O2_ke -ke
+compile tests/compiletests/reflect.cpp --x86 -Ofast -freflection -o bin/compiletests/refl_Ofast_k -k
+compile tests/compiletests/reflect.cpp --x86 -Ofast -freflection -o bin/compiletests/refl_Ofast_ke -ke

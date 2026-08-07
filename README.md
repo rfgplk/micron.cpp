@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-1.9.6.0-green)
+![Version](https://img.shields.io/badge/version-1.9.7.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -127,6 +127,31 @@ micron's threading is **dual-backend**, selected at compile time via the `__micr
 - **Hosted (default)** Threads are backed by the system POSIX `pthread`.
 - **Freestanding** A from-scratch backend built directly on the `clone3` syscall with micron's own per-thread thread-local storage.
 
+##### Reflection (C++26)
+
+micron implements the C++26 static reflection facility ([P2996]) natively -- **including `std::meta` itself**.
+
+- **`meta.hpp`** -- `micron::meta`, implementation of `[meta.reflection]`.
+- **`reflect.hpp`**
+
+```cpp
+struct packet { u32 id; f64 weight; };
+
+static_assert(mc::reflect::field_count<packet> == 2);
+
+packet p{ 7, 2.5 };
+mc::reflect::for_each_field(p, [](auto name, auto &value) {
+  mc::io::println(name.data(), " = ", value);       // id = 7
+});                                                 // weight = 2.5
+```
+
+Reflection is reimplemented fully in-tree and carries **no libstdc++ dependency and works freestanding**.
+
+To build it you need to pass `-freflection` + `-std=c++26`, have at least gcc 16+ and define `MICRON_REFLECTION`.
+
+> [!IMPORTANT]
+> If a translation unit wants libstdc++'s real containers *and* reflection, include the libstdc++ headers **first**: micron then detects libstdc++ and defers to its `<meta>`.
+
 ###### Known limitations (experimental)
 
 - Known TLS flakiness for very small (512KB) `group_thread` stacks under `-O2`; **use ≥4MB stacks** for now.
@@ -169,13 +194,14 @@ All headers live under `src/` and may be included directly. Each top-level modul
 
 ###### Memory
 - **`memory/`** -- allocation, addressing, lifetime, and pointer machinery; the home of micron's memory stack
-- **`memory/cmemory/`** -- vectorized `memcpy`/`memmove`/`memset`/`memcmp`/`memchr` routines (use these whenever possible)
+- **`memory/cmemory/`** -- vectorized `memcpy`/`memmove`/`memset`/`memcmp`/`memchr` routines
 - **`memory/allocation/`** -- allocators, memory resources, kernel-side allocation, and the `abcmalloc` general-purpose allocator
 - **`memory/pointers/`** -- smart-pointer family (`unique`, `shared`, `weak`, `atomic`, `hazard`, `sentinel`, `global`, `thread`, `void`)
 
 ###### Numerics and compute
 - **`math/`** -- arithmetic, trigonometry, logarithms, square roots, activations, special functions, branchless helpers and dispatch
 - **`math/blas/`** -- BLAS levels 1–3 with extensions and tag-based dispatch
+- **`math/arbint/`** -- arbitrary precision integer support and associated utilities
 - **`math/linalg/`** -- linear algebra (decompositions, polynomials, Householder, pseudoinverse, Schur)
 - **`math/matrix/`** -- fixed- and dynamic-shape matrices with packed and viewed forms
 - **`math/quants/`** -- vectors, tensors, quaternions and dynamic vector quantities
@@ -207,7 +233,8 @@ These modules build under both the hosted (`pthread`) and the freestanding backe
 ###### Internal
 - **`bits/`** -- compile-time architecture, container, exception and syscall-code dispatch headers
 - **`asm/`** -- `_start` entry stub and C-side bootstrap
-- **`__special/`** -- compiler-required STL replacements (`initializer_list`, `index_sequence`, and a transitional `pthread` shim -- not a runtime dependency; freestanding threading uses `clone3` directly)
+- **`__special/`** -- compiler-required STL replacements (`initializer_list`, `index_sequence`, `meta`, and a transitional `pthread` shim
+- **`meta.hpp` / `reflect.hpp`** -- C++26 static reflection
 - **`std.hpp`** -- single mega-header that pulls in the whole library
 
 

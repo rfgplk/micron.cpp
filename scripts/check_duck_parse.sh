@@ -110,6 +110,22 @@ must_fail "--recursive on a file" build t.cpp --recursive
 must_fail "--recursive on run"    run t.cpp --recursive
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo "[-freflection]"
+want "emits the flag + its define" "$(compile_line build t.cpp -freflection -o out)" \
+     "-freflection" "-std=c++26" "-DMICRON_REFLECTION"
+case "$(compile_line build t.cpp -o out)" in
+  *-freflection*) no "-freflection leaked into a build that did not ask for it" ;;
+  *) ok ;;
+esac
+# the standard check is deferred to finalize_and_infer, so it must not depend on flag order
+must_fail "reflection under c++23"        build t.cpp -freflection --std c++23
+must_fail "reflection under c++23 (rev)"  build t.cpp --std c++23 -freflection
+must_fail "reflection on arm"             build t.cpp -freflection --arm
+must_fail "reflection on arm64"           build t.cpp -freflection --arm64
+must_fail "reflection under clang"        build t.cpp -freflection --clang
+must_fail "reflection on a C target"      build t.cpp -freflection -c
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo "[directory mode]"
 flat=$("$duck" splat build deep 2>/dev/null | grep -c 'top\.cpp')
 rec=$("$duck"  splat build deep --recursive 2>/dev/null | grep -c 'inner\.cpp')
