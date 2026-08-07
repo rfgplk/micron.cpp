@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../bits/__abc_mt.hpp"
+#include "../bits/__abc_mt.hpp"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
