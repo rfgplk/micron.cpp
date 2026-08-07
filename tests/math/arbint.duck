@@ -1,0 +1,122 @@
+# arbint validation: the rigor suite on every arch that has a toolchain here.
+#
+#   duck tests/math/arbint.duck          (== duck batch tests/math/arbint.duck)
+#   duck batch parallel tests/math/arbint.duck
+#
+# the cross rows are static (-s) because qemu-*-static runs static binaries directly, and carry
+# --def ARBINT_RIGOR_LITE: the oracle is quadratic with a per-bit division loop, and under qemu the
+# native sweep would need a much longer timeout to say the same thing.
+#
+# arm32 exercises the 32-bit limb path, which is a different limb width, a different dlimb_t, a
+# different set of top-limb masks and a different threshold column -- it is the row that catches a
+# 64-bit limb assumption, not the x64 one.
+
+test tests/rigor/math_arbint.cpp -o bin/arbint/x64 --timeout 300
+test tests/rigor/math_arbint_mul.cpp -o bin/arbint/x64 --timeout 300
+test tests/rigor/math_arbint_bounded.cpp -o bin/arbint/x64 --timeout 300
+test tests/rigor/math_arbint_convert.cpp -o bin/arbint/x64 --timeout 300
+test tests/rigor/math_arbint_div.cpp -o bin/arbint/x64 --timeout 300
+test tests/rigor/math_arbint_kernels.cpp -o bin/arbint/x64 --timeout 300
+test tests/rigor/math_arbint_modular.cpp -o bin/arbint/x64 --timeout 300
+test tests/rigor/math_arbint_gcd.cpp -o bin/arbint/x64 --timeout 300
+
+test tests/rigor/math_arbint.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+test tests/rigor/math_arbint_mul.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+test tests/rigor/math_arbint_bounded.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+test tests/rigor/math_arbint_convert.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+test tests/rigor/math_arbint_div.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+# umaal kernels
+test tests/rigor/math_arbint_kernels.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+test tests/rigor/math_arbint_modular.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+test tests/rigor/math_arbint_gcd.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+
+test tests/rigor/math_arbint.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+test tests/rigor/math_arbint_mul.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+test tests/rigor/math_arbint_bounded.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+test tests/rigor/math_arbint_convert.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+test tests/rigor/math_arbint_div.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+test tests/rigor/math_arbint_kernels.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+test tests/rigor/math_arbint_modular.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+test tests/rigor/math_arbint_gcd.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+
+test tests/rigor/math_arbint_kernels.cpp --isa base -o bin/arbint/isa_base --timeout 300
+test tests/rigor/math_arbint_kernels.cpp --isa v2 -o bin/arbint/isa_v2 --timeout 300
+test tests/rigor/math_arbint_kernels.cpp --isa v3 -o bin/arbint/isa_v3 --timeout 300
+test tests/rigor/math_arbint_mul.cpp --isa v3 -o bin/arbint/isa_v3 --timeout 300
+test tests/rigor/math_arbint_kernels.cpp --def MICRON_ARBINT_X86_ADX_KERNEL=1 -o bin/arbint/adx --timeout 300
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_X86_ADX_KERNEL=1 -o bin/arbint/adx --timeout 300
+test tests/rigor/math_arbint_kernels.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 300
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 300
+test tests/rigor/math_arbint_div.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 300
+
+# comba_always      comba runs for every size below the karatsuba entry
+# basecase_always   nothing but the schoolbook, at every size these tests generate
+# karatsuba_always  the recursion splits from 2 limbs up, deepest possible nesting
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_MUL_COMBA_THRESHOLD=1 -o bin/arbint/comba_always --timeout 300
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_MUL_COMBA_THRESHOLD=1 -o bin/arbint/comba_always --timeout 300
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=200 -o bin/arbint/basecase_always --timeout 300
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=200 -o bin/arbint/basecase_always --timeout 300
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 -o bin/arbint/karatsuba_always --timeout 300
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 -o bin/arbint/karatsuba_always --timeout 300
+test tests/rigor/math_arbint_bounded.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 -o bin/arbint/karatsuba_always --timeout 300
+
+# Toom-3 is capped out of the automatic path, so only a forced build exercises it in the
+# ladder rather than through mul_with<> alone
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_MUL_TOOM3_THRESHOLD=24 --def MICRON_ARBINT_MUL_TIER_CAP=3 -o bin/arbint/toom_always --timeout 300
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_MUL_TOOM3_THRESHOLD=24 --def MICRON_ARBINT_MUL_TIER_CAP=3 -o bin/arbint/toom_always --timeout 300
+
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_MUL_TOOM4_THRESHOLD=24 -o bin/arbint/toom4_always --timeout 300
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_MUL_TOOM4_THRESHOLD=24 -o bin/arbint/toom4_always --timeout 300
+test tests/rigor/math_arbint_bounded.cpp --def MICRON_ARBINT_MUL_TOOM4_THRESHOLD=24 -o bin/arbint/toom4_always --timeout 300
+
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=32 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=40 --def MICRON_ARBINT_SQR_TIER_CAP=4 -o bin/arbint/sqr_toom_always --timeout 300
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=32 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=40 --def MICRON_ARBINT_SQR_TIER_CAP=4 -o bin/arbint/sqr_toom_always --timeout 300
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=4000 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=4000 -o bin/arbint/sqr_toom_never --timeout 300
+
+test tests/rigor/math_arbint_div.cpp --def MICRON_ARBINT_DIV_DC_THRESHOLD=6 -o bin/arbint/dc_always --timeout 300
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_DIV_DC_THRESHOLD=6 -o bin/arbint/dc_always --timeout 300
+test tests/rigor/math_arbint_convert.cpp --def MICRON_ARBINT_DIV_DC_THRESHOLD=6 -o bin/arbint/dc_always --timeout 300
+test tests/rigor/math_arbint_div.cpp --def MICRON_ARBINT_DIV_DC_THRESHOLD=1000 -o bin/arbint/dc_never --timeout 300
+
+test tests/rigor/math_arbint_convert.cpp --def MICRON_ARBINT_GET_STR_DC_THRESHOLD=4 --def MICRON_ARBINT_SET_STR_DC_THRESHOLD=32 -o bin/arbint/conv_dc --timeout 600
+test tests/rigor/math_arbint_convert.cpp --def MICRON_ARBINT_GET_STR_DC_THRESHOLD=100000 --def MICRON_ARBINT_SET_STR_DC_THRESHOLD=100000000 -o bin/arbint/conv_base --timeout 600
+
+test tests/rigor/math_arbint_div.cpp --def MICRON_ARBINT_DIV_MU_THRESHOLD=8 --def MICRON_ARBINT_DIV_DC_THRESHOLD=8 --def MICRON_ARBINT_INV_NEWTON_THRESHOLD=4 --def MICRON_ARBINT_DIV_TIER_CAP=2 -o bin/arbint/mu_always --timeout 300
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_DIV_MU_THRESHOLD=8 --def MICRON_ARBINT_DIV_DC_THRESHOLD=8 --def MICRON_ARBINT_INV_NEWTON_THRESHOLD=4 --def MICRON_ARBINT_DIV_TIER_CAP=2 -o bin/arbint/mu_always --timeout 300
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_DIV_MU_THRESHOLD=8 --def MICRON_ARBINT_DIV_DC_THRESHOLD=8 --def MICRON_ARBINT_INV_NEWTON_THRESHOLD=4 --def MICRON_ARBINT_DIV_TIER_CAP=2 -o bin/arbint/mu_always --timeout 600
+test tests/rigor/math_arbint_div.cpp --def MICRON_ARBINT_DIV_MU_THRESHOLD=4000 -o bin/arbint/mu_never --timeout 300
+test tests/rigor/math_arbint_div.cpp --def MICRON_ARBINT_MU_AUDIT=1 --def MICRON_ARBINT_DIV_MU_THRESHOLD=8 --def MICRON_ARBINT_DIV_DC_THRESHOLD=8 --def MICRON_ARBINT_INV_NEWTON_THRESHOLD=4 --def MICRON_ARBINT_DIV_TIER_CAP=2 -o bin/arbint/mu_audit --timeout 300
+
+# powmod picks Montgomery for an odd modulus and Barrett for an even one
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_POWM_ENGINE=2 -o bin/arbint/powm_barrett --timeout 600
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_POWM_ENGINE=1 -o bin/arbint/powm_mont --timeout 600
+
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_POWM_WINDOW_CAP=1 -o bin/arbint/powm_win1 --timeout 600
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_POWM_WIN3_THRESHOLD=0 --def MICRON_ARBINT_POWM_WIN4_THRESHOLD=0 --def MICRON_ARBINT_POWM_WIN5_THRESHOLD=0 --def MICRON_ARBINT_POWM_WIN6_THRESHOLD=0 -o bin/arbint/powm_win6 --timeout 600
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_POWM_TABLE_LIMBS=8 -o bin/arbint/powm_budget --timeout 600
+
+# gcd_lehmer(3) <= gcd_hgcd(96) <= gcd_dc(512)
+test tests/rigor/math_arbint_gcd.cpp --def MICRON_ARBINT_GCD_LEHMER_THRESHOLD=1 -o bin/arbint/gcd_lehmer_always --timeout 300
+test tests/rigor/math_arbint_gcd.cpp --def MICRON_ARBINT_GCD_LEHMER_THRESHOLD=4000 --def MICRON_ARBINT_GCD_HGCD_THRESHOLD=4000 --def MICRON_ARBINT_GCD_DC_THRESHOLD=4000 -o bin/arbint/gcd_binary_always --timeout 300
+
+# gcd_dc_always   every pair above 8 limbs takes the dc rung, with hgcd recursing from 16
+# gcd_hgcd_deep   the deepest recursion the sizes allow -- every hgcd above 16 limbs splits
+# gcd_hgcd_flat   hgcd never recurses, so the tier runs entirely on its iterating base case, which
+#                 is the half that a deep-recursion cell never exercises alone
+test tests/rigor/math_arbint_gcd.cpp --def MICRON_ARBINT_GCD_LEHMER_THRESHOLD=1 --def MICRON_ARBINT_GCD_HGCD_THRESHOLD=16 --def MICRON_ARBINT_GCD_DC_THRESHOLD=8 --def MICRON_ARBINT_GCD_TIER_CAP=2 -o bin/arbint/gcd_dc_always --timeout 600
+test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_GCD_LEHMER_THRESHOLD=1 --def MICRON_ARBINT_GCD_HGCD_THRESHOLD=16 --def MICRON_ARBINT_GCD_DC_THRESHOLD=8 --def MICRON_ARBINT_GCD_TIER_CAP=2 -o bin/arbint/gcd_dc_always --timeout 600
+test tests/rigor/math_arbint_gcd.cpp --def MICRON_ARBINT_GCD_HGCD_THRESHOLD=16 --def MICRON_ARBINT_GCD_DC_THRESHOLD=16 --def MICRON_ARBINT_GCD_TIER_CAP=2 -o bin/arbint/gcd_hgcd_deep --timeout 600
+test tests/rigor/math_arbint_gcd.cpp --def MICRON_ARBINT_GCD_HGCD_THRESHOLD=4000 --def MICRON_ARBINT_GCD_DC_THRESHOLD=8 --def MICRON_ARBINT_GCD_TIER_CAP=2 -o bin/arbint/gcd_hgcd_flat --timeout 600
+
+test tests/rigor/math_arbint_gcd.cpp --def MICRON_ARBINT_HGCD2_WINDOW=2 -o bin/arbint/gcd_w2 --timeout 300
+test tests/rigor/math_arbint_gcd.cpp --def MICRON_ARBINT_HGCD2_WINDOW=2 --def MICRON_ARBINT_GCD_LEHMER_THRESHOLD=1 --def MICRON_ARBINT_GCD_HGCD_THRESHOLD=16 --def MICRON_ARBINT_GCD_DC_THRESHOLD=8 --def MICRON_ARBINT_GCD_TIER_CAP=2 -o bin/arbint/gcd_w2_dc --timeout 600
+
+test tests/rigor/math_arbint_modular.cpp --isa v3 -o bin/arbint/isa_v3 --timeout 600
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_X86_ADX_KERNEL=1 -o bin/arbint/adx --timeout 600
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 600
+test tests/rigor/math_arbint_gcd.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 300
+test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 -o bin/arbint/karatsuba_always --timeout 600
+
+build tests/compiletests/arbint.cpp -k -o bin/arbint/free_k
+build tests/compiletests/arbint.cpp -ke -o bin/arbint/free_ke
+build tests/compiletests/arbint.cpp --i386 -k -o bin/arbint/free_i386
