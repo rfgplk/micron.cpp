@@ -1167,4 +1167,13 @@ print_buffer(char **buf [[maybe_unused]])
 }
 
 };      // namespace io
+
+using io::echo;
+using io::echof;
+using io::echofn;
+using io::echon;
+using io::print;
+using io::println;
+using io::printn;
+
 };      // namespace micron

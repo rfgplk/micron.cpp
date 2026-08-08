@@ -260,4 +260,13 @@ pprintn(T &&...str)
 }
 
 };      // namespace io
+
+using io::pecho;
+using io::pechof;
+using io::pechofn;
+using io::pechon;
+using io::pprint;
+using io::pprintln;
+using io::pprintn;
+
 };      // namespace micron
