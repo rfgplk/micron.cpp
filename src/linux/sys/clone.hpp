@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "../../memory/allocation/abcmalloc/tapi.hpp"
-
 #include "../../bits/__abc_mt.hpp"
+
+#include "../../memory/allocation/abcmalloc/tapi.hpp"
 
 #include "../../bits/__arch.hpp"      // __micron_arch_*, __micron_no_ssp
 #include "../../errno.hpp"
