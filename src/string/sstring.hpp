@@ -538,7 +538,7 @@ public:
   template<is_string S> constexpr sstring(const S &o)
   {
     micron::constexpr_zero(&memory[0], N);
-    const size_type srclen = static_cast<size_type>(o.size());
+    const size_type srclen = static_cast<size_type>(micron::string_len(o));
     const size_type n = (srclen < N) ? srclen : N - 1;
     if ( n ) micron::memcpy(&memory[0], o.data(), n);
     length = n;

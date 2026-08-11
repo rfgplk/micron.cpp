@@ -1,0 +1,392 @@
+#include "../types.hpp"
+
+#ifndef _MICRON_COMPARE
+#define _MICRON_COMPARE
+
+#pragma GCC system_header
+
+// NOTE: just like initializer_list, coroutine and meta this must be in the std namespace and clone the standard api exactly
+// operator<=> is a language feature whose result type the compiler looks up by name in std::
+
+#if !defined(__cpp_impl_three_way_comparison)
+#error "micron <compare> requires three-way comparison language support (compile with -std=c++20 or later)"
+#endif
+
+#if !defined(__micron_freestanding) && defined(__has_include) && __has_include(<compare>)
+
+// hosted, and a real <compare> exists; use it
+// compare is effectively a hard requirement in most stl builds because a LOT of the library depends HARD on it
+#include <compare>
+#define _MICRON_COMPARE_LIBSTDCXX 1
+
+#else
+
+namespace std
+{
+
+namespace __cmp_cat
+{
+
+using type = signed char;
+
+enum class _Ord : type { equivalent = 0, less = -1, greater = 1 };
+
+enum class _Ncmp : type { _Unordered = 2 };
+
+struct __unspec {
+  consteval __unspec(__unspec *) noexcept { }
+};
+
+};      // namespace __cmp_cat
+
+class partial_ordering
+{
+  __cmp_cat::type _M_value;
+
+  constexpr explicit partial_ordering(__cmp_cat::_Ord __v) noexcept : _M_value(__cmp_cat::type(__v)) { }
+
+  constexpr explicit partial_ordering(__cmp_cat::_Ncmp __v) noexcept : _M_value(__cmp_cat::type(__v)) { }
+
+public:
+  static const partial_ordering less;
+  static const partial_ordering equivalent;
+  static const partial_ordering greater;
+  static const partial_ordering unordered;
+
+  friend constexpr bool operator==(partial_ordering, partial_ordering) noexcept = default;
+
+  friend constexpr bool
+  operator==(partial_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value == 0;
+  }
+
+  friend constexpr bool
+  operator<(partial_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value == -1;
+  }
+
+  friend constexpr bool
+  operator>(partial_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value == 1;
+  }
+
+  friend constexpr bool
+  operator<=(partial_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value <= 0;
+  }
+
+  friend constexpr bool
+  operator>=(partial_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value == 0 || __v._M_value == 1;
+  }
+
+  friend constexpr bool
+  operator<(__cmp_cat::__unspec, partial_ordering __v) noexcept
+  {
+    return __v._M_value == 1;
+  }
+
+  friend constexpr bool
+  operator>(__cmp_cat::__unspec, partial_ordering __v) noexcept
+  {
+    return __v._M_value == -1;
+  }
+
+  friend constexpr bool
+  operator<=(__cmp_cat::__unspec, partial_ordering __v) noexcept
+  {
+    return __v._M_value == 0 || __v._M_value == 1;
+  }
+
+  friend constexpr bool
+  operator>=(__cmp_cat::__unspec, partial_ordering __v) noexcept
+  {
+    return __v._M_value <= 0;
+  }
+
+  friend constexpr partial_ordering
+  operator<=>(partial_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v;
+  }
+
+  friend constexpr partial_ordering
+  operator<=>(__cmp_cat::__unspec, partial_ordering __v) noexcept
+  {
+    if ( __v._M_value == 2 ) return __v;
+    return partial_ordering(__cmp_cat::_Ord(-__v._M_value));
+  }
+};
+
+inline constexpr partial_ordering partial_ordering::less(__cmp_cat::_Ord::less);
+inline constexpr partial_ordering partial_ordering::equivalent(__cmp_cat::_Ord::equivalent);
+inline constexpr partial_ordering partial_ordering::greater(__cmp_cat::_Ord::greater);
+inline constexpr partial_ordering partial_ordering::unordered(__cmp_cat::_Ncmp::_Unordered);
+
+class weak_ordering
+{
+  __cmp_cat::type _M_value;
+
+  constexpr explicit weak_ordering(__cmp_cat::_Ord __v) noexcept : _M_value(__cmp_cat::type(__v)) { }
+
+public:
+  static const weak_ordering less;
+  static const weak_ordering equivalent;
+  static const weak_ordering greater;
+
+  constexpr
+  operator partial_ordering() const noexcept
+  {
+    return _M_value == 0 ? partial_ordering::equivalent : (_M_value < 0 ? partial_ordering::less : partial_ordering::greater);
+  }
+
+  friend constexpr bool operator==(weak_ordering, weak_ordering) noexcept = default;
+
+  friend constexpr bool
+  operator==(weak_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value == 0;
+  }
+
+  friend constexpr bool
+  operator<(weak_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value < 0;
+  }
+
+  friend constexpr bool
+  operator>(weak_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value > 0;
+  }
+
+  friend constexpr bool
+  operator<=(weak_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value <= 0;
+  }
+
+  friend constexpr bool
+  operator>=(weak_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value >= 0;
+  }
+
+  friend constexpr bool
+  operator<(__cmp_cat::__unspec, weak_ordering __v) noexcept
+  {
+    return 0 < __v._M_value;
+  }
+
+  friend constexpr bool
+  operator>(__cmp_cat::__unspec, weak_ordering __v) noexcept
+  {
+    return 0 > __v._M_value;
+  }
+
+  friend constexpr bool
+  operator<=(__cmp_cat::__unspec, weak_ordering __v) noexcept
+  {
+    return 0 <= __v._M_value;
+  }
+
+  friend constexpr bool
+  operator>=(__cmp_cat::__unspec, weak_ordering __v) noexcept
+  {
+    return 0 >= __v._M_value;
+  }
+
+  friend constexpr weak_ordering
+  operator<=>(weak_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v;
+  }
+
+  friend constexpr weak_ordering
+  operator<=>(__cmp_cat::__unspec, weak_ordering __v) noexcept
+  {
+    return weak_ordering(__cmp_cat::_Ord(-__v._M_value));
+  }
+};
+
+inline constexpr weak_ordering weak_ordering::less(__cmp_cat::_Ord::less);
+inline constexpr weak_ordering weak_ordering::equivalent(__cmp_cat::_Ord::equivalent);
+inline constexpr weak_ordering weak_ordering::greater(__cmp_cat::_Ord::greater);
+
+class strong_ordering
+{
+  __cmp_cat::type _M_value;
+
+  constexpr explicit strong_ordering(__cmp_cat::_Ord __v) noexcept : _M_value(__cmp_cat::type(__v)) { }
+
+public:
+  static const strong_ordering less;
+  static const strong_ordering equal;
+  static const strong_ordering equivalent;
+  static const strong_ordering greater;
+
+  constexpr
+  operator partial_ordering() const noexcept
+  {
+    return _M_value == 0 ? partial_ordering::equivalent : (_M_value < 0 ? partial_ordering::less : partial_ordering::greater);
+  }
+
+  constexpr
+  operator weak_ordering() const noexcept
+  {
+    return _M_value == 0 ? weak_ordering::equivalent : (_M_value < 0 ? weak_ordering::less : weak_ordering::greater);
+  }
+
+  friend constexpr bool operator==(strong_ordering, strong_ordering) noexcept = default;
+
+  friend constexpr bool
+  operator==(strong_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value == 0;
+  }
+
+  friend constexpr bool
+  operator<(strong_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value < 0;
+  }
+
+  friend constexpr bool
+  operator>(strong_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value > 0;
+  }
+
+  friend constexpr bool
+  operator<=(strong_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value <= 0;
+  }
+
+  friend constexpr bool
+  operator>=(strong_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v._M_value >= 0;
+  }
+
+  friend constexpr bool
+  operator<(__cmp_cat::__unspec, strong_ordering __v) noexcept
+  {
+    return 0 < __v._M_value;
+  }
+
+  friend constexpr bool
+  operator>(__cmp_cat::__unspec, strong_ordering __v) noexcept
+  {
+    return 0 > __v._M_value;
+  }
+
+  friend constexpr bool
+  operator<=(__cmp_cat::__unspec, strong_ordering __v) noexcept
+  {
+    return 0 <= __v._M_value;
+  }
+
+  friend constexpr bool
+  operator>=(__cmp_cat::__unspec, strong_ordering __v) noexcept
+  {
+    return 0 >= __v._M_value;
+  }
+
+  friend constexpr strong_ordering
+  operator<=>(strong_ordering __v, __cmp_cat::__unspec) noexcept
+  {
+    return __v;
+  }
+
+  friend constexpr strong_ordering
+  operator<=>(__cmp_cat::__unspec, strong_ordering __v) noexcept
+  {
+    return strong_ordering(__cmp_cat::_Ord(-__v._M_value));
+  }
+};
+
+inline constexpr strong_ordering strong_ordering::less(__cmp_cat::_Ord::less);
+inline constexpr strong_ordering strong_ordering::equal(__cmp_cat::_Ord::equivalent);
+inline constexpr strong_ordering strong_ordering::equivalent(__cmp_cat::_Ord::equivalent);
+inline constexpr strong_ordering strong_ordering::greater(__cmp_cat::_Ord::greater);
+
+template<typename _Tp> inline constexpr unsigned __cmp_cat_id = 1;
+template<> inline constexpr unsigned __cmp_cat_id<partial_ordering> = 2;
+template<> inline constexpr unsigned __cmp_cat_id<weak_ordering> = 4;
+template<> inline constexpr unsigned __cmp_cat_id<strong_ordering> = 8;
+
+template<typename... _Ts>
+constexpr unsigned
+__cmp_cat_ids(void) noexcept
+{
+  return (__cmp_cat_id<_Ts> | ... | 0u);
+}
+
+template<unsigned _Bits> struct __cmp_cat_common {
+  using type = strong_ordering;
+};
+
+template<> struct __cmp_cat_common<1> {
+  using type = void;
+};
+
+template<> struct __cmp_cat_common<2> {
+  using type = partial_ordering;
+};
+
+template<> struct __cmp_cat_common<4> {
+  using type = weak_ordering;
+};
+
+template<> struct __cmp_cat_common<6> {
+  using type = partial_ordering;
+};
+
+template<> struct __cmp_cat_common<10> {
+  using type = partial_ordering;
+};
+
+template<> struct __cmp_cat_common<12> {
+  using type = weak_ordering;
+};
+
+template<> struct __cmp_cat_common<14> {
+  using type = partial_ordering;
+};
+
+template<typename... _Ts> struct common_comparison_category {
+  using type = typename __cmp_cat_common<(__cmp_cat_ids<_Ts...>() & 1u) ? 1u : __cmp_cat_ids<_Ts...>()>::type;
+};
+
+template<typename... _Ts> using common_comparison_category_t = typename common_comparison_category<_Ts...>::type;
+
+};      // namespace std
+
+#endif      // _GLIBCXX_RELEASE
+
+namespace micron
+{
+namespace compare
+{
+
+// true when micron declared the comparison categories itself, false when it deferred to libstdc++
+#if defined(_MICRON_COMPARE_LIBSTDCXX)
+inline constexpr bool self_hosted = false;
+#else
+inline constexpr bool self_hosted = true;
+#endif
+
+using partial_ordering = std::partial_ordering;
+using weak_ordering = std::weak_ordering;
+using strong_ordering = std::strong_ordering;
+
+};      // namespace compare
+};      // namespace micron
+
+#endif      // _MICRON_COMPARE

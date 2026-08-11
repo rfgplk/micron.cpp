@@ -32,6 +32,8 @@ enum class align_val_t : size_t {};
 };
 #endif
 */
+#if !defined(__micron_sanitizer_owns_heap)
+
 // §17.6.3 — scalar new/delete
 
 [[nodiscard]] void *
@@ -160,6 +162,8 @@ operator delete[](void *ptr, usize size, std::align_val_t al) noexcept
   ALLOC_MESSAGE("delete[](", ptr, ") size=", size, ", align=", static_cast<usize>(al));
   micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
 }
+
+#endif      // !__micron_sanitizer_owns_heap
 
 namespace micron
 {

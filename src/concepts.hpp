@@ -400,6 +400,18 @@ struct is_string_tt<
 template<typename T> inline constexpr bool is_string_v = is_string_tt<T>::value;
 
 template<typename T>
+constexpr inline usize
+string_len(const T &t) noexcept
+{
+  if constexpr ( requires {
+                   { t.len() } -> micron::convertible_to<size_t>;
+                 } )
+    return static_cast<usize>(t.len());
+  else
+    return static_cast<usize>(t.size());
+}
+
+template<typename T>
 concept is_string_on_stack = requires(T t) {
   typename T::stack_tag;
   { t.c_str() } -> micron::same_as<const typename T::value_type *>;

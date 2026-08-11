@@ -290,20 +290,22 @@ public:
 
   template<is_iterable_container F>
     requires(sizeof(typename F::value_type) == sizeof(T))
-  constexpr hstring(const F &o) : __mem(__alloc_size(o.size() + 1))
+  constexpr hstring(const F &o) : __mem(__alloc_size(micron::string_len(o) + 1))
   {
-    micron::memcpy(&(__mem::memory)[0], o.data(), o.size());
-    __mem::memory[o.size()] = T{ 0 };
-    __mem::length = o.size();
+    const usize __n = micron::string_len(o);
+    micron::memcpy(&(__mem::memory)[0], o.data(), __n);
+    __mem::memory[__n] = T{ 0 };
+    __mem::length = __n;
   };
 
   template<is_iterable_container F>
     requires(sizeof(typename F::value_type) == sizeof(T))
-  constexpr hstring(F &&o) : __mem(__alloc_size(o.size() + 1))
+  constexpr hstring(F &&o) : __mem(__alloc_size(micron::string_len(o) + 1))
   {
-    micron::memcpy(&(__mem::memory)[0], o.data(), o.size());
-    __mem::memory[o.size()] = T{ 0 };
-    __mem::length = o.size();
+    const usize __n = micron::string_len(o);
+    micron::memcpy(&(__mem::memory)[0], o.data(), __n);
+    __mem::memory[__n] = T{ 0 };
+    __mem::length = __n;
   };
 
   // allow construction from - to iterator (be careful!)

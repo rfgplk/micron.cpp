@@ -9,7 +9,7 @@
 #include "bits/__profile.hpp"
 #include "config.hpp"
 
-#ifndef MICRON_ABCMALLOC_STD
+#if !defined(MICRON_ABCMALLOC_STD) && !defined(MICRON_ABCMALLOC_DISABLE_STD)
 #define MICRON_ABCMALLOC_STD 1
 #endif
 

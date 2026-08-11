@@ -83,19 +83,41 @@ __memcmp_bytes(const byte *__restrict a, const byte *__restrict b, const u64 byt
 // %%%%%%%%%%%%%%%%%%%%%%
 // memcmps
 
-template<typename T, typename F>
-  requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) i64
-memcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
+template<typename T>
+constexpr i64
+__memcmp_scalar(const T *src, const T *dest, const u64 cnt) noexcept
 {
-  const T *src = reinterpret_cast<const T *>(_src);
-  const T *dest = reinterpret_cast<const T *>(_dest);
   if constexpr ( sizeof(T) == 1 ) {
-    return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), cnt);
+    for ( u64 i = 0; i < cnt; i++ ) {
+      const unsigned x = static_cast<unsigned char>(src[i]);
+      const unsigned y = static_cast<unsigned char>(dest[i]);
+      if ( x != y ) return static_cast<i64>(x) - static_cast<i64>(y);
+    }
   } else {
     for ( u64 i = 0; i < cnt; i++ )
-      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-    return 0;
+      if ( src[i] != dest[i] ) return src[i] < dest[i] ? -1 : 1;
+  }
+  return 0;
+};
+
+template<typename T, typename F>
+  requires(!micron::is_null_pointer_v<F>)
+__attribute__((nonnull)) constexpr i64
+memcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
+{
+  if constexpr ( micron::is_same_v<T, F> ) {
+    if !consteval {
+      if constexpr ( sizeof(T) == 1 )
+        return __memcmp_bytes(reinterpret_cast<const byte *>(_src), reinterpret_cast<const byte *>(_dest), cnt);
+    }
+    return __memcmp_scalar<T>(_src, _dest, cnt);
+  } else {
+    const T *src = reinterpret_cast<const T *>(_src);
+    const T *dest = reinterpret_cast<const T *>(_dest);
+    if constexpr ( sizeof(T) == 1 )
+      return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), cnt);
+    else
+      return __memcmp_scalar<T>(src, dest, cnt);
   }
 };
 
@@ -109,9 +131,7 @@ rmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
   if constexpr ( sizeof(T) == 1 ) {
     return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), cnt);
   } else {
-    for ( u64 i = 0; i < cnt; i++ )
-      if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-    return 0;
+    return __memcmp_scalar<T>(src, dest, cnt);
   }
 };
 
@@ -119,55 +139,73 @@ template<typename F>
 constexpr i64
 constexpr_memcmp(const F *src, const F *dest, const u64 cnt) noexcept
 {
-  for ( u64 i = 0; i < cnt; i++ )
-    if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-  return 0;
+  return micron::memcmp<F, F>(src, dest, cnt);
 };
+
+template<u64 M, typename T>
+constexpr i64
+__cmemcmp_scalar(const T *src, const T *dest) noexcept
+{
+  const auto at = [](const T *p, u64 i) constexpr noexcept {
+    if constexpr ( sizeof(T) == 1 )
+      return static_cast<unsigned>(static_cast<unsigned char>(p[i]));
+    else
+      return p[i];
+  };
+  if constexpr ( M % 4 == 0 )
+    for ( u64 i = 0; i < M; i += 4 ) {
+      if ( at(src, i) != at(dest, i) ) return at(src, i) < at(dest, i) ? -1 : 1;
+      if ( at(src, i + 1) != at(dest, i + 1) ) return at(src, i + 1) < at(dest, i + 1) ? -1 : 1;
+      if ( at(src, i + 2) != at(dest, i + 2) ) return at(src, i + 2) < at(dest, i + 2) ? -1 : 1;
+      if ( at(src, i + 3) != at(dest, i + 3) ) return at(src, i + 3) < at(dest, i + 3) ? -1 : 1;
+    }
+  else
+    for ( u64 i = 0; i < M; i++ )
+      if ( at(src, i) != at(dest, i) ) return at(src, i) < at(dest, i) ? -1 : 1;
+  return 0;
+}
 
 template<u64 M, typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) constexpr i64
 cmemcmp(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
-  const T *src = reinterpret_cast<const T *>(_src);
-  const T *dest = reinterpret_cast<const T *>(_dest);
-  if constexpr ( sizeof(T) == 1 ) {
-    return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M);
+  if constexpr ( micron::is_same_v<T, F> ) {
+    if !consteval {
+      if constexpr ( sizeof(T) == 1 ) return __memcmp_bytes(reinterpret_cast<const byte *>(_src), reinterpret_cast<const byte *>(_dest), M);
+    }
+    return __cmemcmp_scalar<M, T>(_src, _dest);
   } else {
-    if constexpr ( M % 4 == 0 )
-      for ( u64 i = 0; i < M; i += 4 ) {
-        if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-        if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-        if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-        if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
-      }
-    else
-      for ( u64 i = 0; i < M; i++ )
-        if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-    return 0;
+    const T *src = reinterpret_cast<const T *>(_src);
+    const T *dest = reinterpret_cast<const T *>(_dest);
+    if constexpr ( sizeof(T) == 1 ) return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M);
+    return __cmemcmp_scalar<M, T>(src, dest);
   }
 };
 
 template<u64 M, typename T, typename F>
-i64
+constexpr i64
 rcmemcmp(const F &_src, const F &_dest) noexcept
 {
-  const T *src = reinterpret_cast<const T *>(&_src);
-  const T *dest = reinterpret_cast<const T *>(&_dest);
-  if constexpr ( sizeof(T) == 1 ) {
-    return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M);
+  if constexpr ( micron::is_same_v<T, F> ) {
+    const T *src = __builtin_addressof(_src);
+    const T *dest = __builtin_addressof(_dest);
+    if !consteval {
+      if constexpr ( sizeof(T) == 1 ) return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M);
+    }
+    return __cmemcmp_scalar<M, T>(src, dest);
+  } else if constexpr ( micron::is_same_v<micron::remove_cv_t<micron::remove_extent_t<F>>, T> ) {
+    const T *src = __builtin_addressof(_src[0]);
+    const T *dest = __builtin_addressof(_dest[0]);
+    if !consteval {
+      if constexpr ( sizeof(T) == 1 ) return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M);
+    }
+    return __cmemcmp_scalar<M, T>(src, dest);
   } else {
-    if constexpr ( M % 4 == 0 )
-      for ( u64 i = 0; i < M; i += 4 ) {
-        if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-        if ( src[i + 1] != dest[i + 1] ) return reinterpret_cast<const byte *>(&src[i + 1]) - reinterpret_cast<const byte *>(&dest[i + 1]);
-        if ( src[i + 2] != dest[i + 2] ) return reinterpret_cast<const byte *>(&src[i + 2]) - reinterpret_cast<const byte *>(&dest[i + 2]);
-        if ( src[i + 3] != dest[i + 3] ) return reinterpret_cast<const byte *>(&src[i + 3]) - reinterpret_cast<const byte *>(&dest[i + 3]);
-      }
-    else
-      for ( u64 i = 0; i < M; i++ )
-        if ( src[i] != dest[i] ) return reinterpret_cast<const byte *>(&src[i]) - reinterpret_cast<const byte *>(&dest[i]);
-    return 0;
+    const T *src = reinterpret_cast<const T *>(__builtin_addressof(_src));
+    const T *dest = reinterpret_cast<const T *>(__builtin_addressof(_dest));
+    if constexpr ( sizeof(T) == 1 ) return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M);
+    return __cmemcmp_scalar<M, T>(src, dest);
   }
 };
 

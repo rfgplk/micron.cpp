@@ -76,6 +76,34 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_ptr_bits 32
 #endif
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// extended scalars
+#if defined(__SIZEOF_INT128__)
+#define __micron_has_int128 1
+#endif
+
+#if defined(__LDBL_MANT_DIG__)
+#if __LDBL_MANT_DIG__ == 53
+#define __micron_ldbl_binary64 1
+#elif __LDBL_MANT_DIG__ == 64
+#define __micron_ldbl_x87_80 1
+#elif __LDBL_MANT_DIG__ == 113
+#define __micron_ldbl_binary128 1
+#endif
+#endif
+
+#if defined(__SIZEOF_LONG_DOUBLE__)
+#define __micron_ldbl_bytes __SIZEOF_LONG_DOUBLE__
+#endif
+
+#if defined(__FLT128_MANT_DIG__) && defined(__micron_has_int128) && !defined(__micron_ldbl_binary128)
+#define __micron_f128_distinct 1
+#endif
+
+#if defined(__micron_f128_distinct) || defined(__micron_ldbl_x87_80) || defined(__micron_ldbl_binary128)
+#define __micron_has_wide_float 1
+#endif
+
 // default kernel base page size; arm64 kernels run 4KB, 16KB, or 64KB base pages
 #if defined(__micron_arch_arm64)
 #define __micron_page_size_default 65536

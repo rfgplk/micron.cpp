@@ -52,23 +52,27 @@ COMMON_FLAGS=(
 # ASan-only (which still catches heap UAF/double-free/out-of-bounds — the
 # class of bugs B1/B2 produce).
 #
-# ############################ KNOWN LIMITATION ############################
-# Measured 2026-08-04: a TU that pulls src/std.hpp (which every snowball test
-# does) produces an ASan-instrumented binary that DOES NOT REPORT. The same
-# overflow in a TU including only src/types.hpp reports normally, and so does
-# a plain non-micron TU, so it is not the flags. The difference is that
-# std.hpp brings in abcmalloc's `operator new` interposition (MICRON_ABCMALLOC_STD,
-# default 1 via src/defs.hpp), whose strong definitions win the link over
-# ASan's — the sanitizer's allocator is bypassed, and the reports go with it.
+# ######################## RESOLVED 2026-08-11 #############################
+# The limitation recorded here on 2026-08-04 — a TU pulling src/std.hpp produced
+# an ASan binary that DID NOT REPORT — is fixed. src/memory/new.hpp defined all
+# twelve global replacement operators with no gate at all, and an executable's
+# own definitions interpose over libasan's, so the sanitizer's allocator was
+# bypassed and the reports went with it. They are now behind
+# `#if !defined(__micron_sanitizer_owns_heap)`, matching what the C malloc family
+# (malloc-c.hpp:29) and __abc_allocator (__abc.hpp:33) already did.
+# micron::__alloc/__free (allocation/__internal.hpp) needed the same term — they
+# are reached from alloc.hpp without going through operator new, and leaving them
+# on the arena while ASan hands out libc blocks is a real allocator mismatch that
+# malloc.hpp:227 would swallow silently.
 #
-#   $ g++ -O1 -flto -fsanitize=address -I./src probe.cpp   # types.hpp only  -> reports, exit 77
-#   $ g++ -O1 -flto -fsanitize=address -I./src probe.cpp   # + snowball      -> silent, exit 1
+#   $ nm -C <asan build>  | grep 'operator new(unsigned long)'   ->  U   (libasan's)
+#   $ nm -C <plain build> | grep 'operator new(unsigned long)'   ->  T   (micron's)
 #
-# -DMICRON_ABCMALLOC_DISABLE_STD does not build (it disables more than the
-# interposer), so restoring reporting needs a real decision about how ASan and
-# abcmalloc are meant to coexist. Until then treat a green run here as "did not
-# crash", NOT as "sanitizer-clean". The grading below is now correct — it is the
-# instrumentation upstream of it that is not yet trustworthy.
+# A green run here now means sanitizer-clean for heap double-free and
+# use-after-free. It does NOT yet cover container out-of-bounds:
+# serial_allocator.hpp:32 rounds every request to a 4096-byte granularity, so an
+# overflow past a container's logical end stays inside its own malloc block and
+# never touches a redzone. See ISSUES.md.
 # ##########################################################################
 
 OUT_DIR=bin/sanitize
@@ -77,6 +81,20 @@ mkdir -p "$OUT_DIR"
 # Tests proven safe under ASan+UBSan (the new ones added in this push).
 # Add to this list as more tests are vetted for sanitizer-cleanness.
 DEFAULT_TESTS=(
+  # number <-> text conversion layer. the write side allocates through hstring in the porcelain
+  # (to_fixed / format / format_value) and the parse side is heap-free, so these are cheap to run
+  # here and they cover the fixed.hpp / decimal.hpp rewrite.
+  tests/rigor/rigor_format_write.cpp
+  tests/rigor/rigor_conversions_chars.cpp
+  tests/rigor/rigor_conversions_wide.cpp
+  tests/rigor/rigor_format_float.cpp
+  tests/rigor/rigor_format_int.cpp
+  tests/rigor/rigor_format_buf.cpp
+  tests/rigor/rigor_format_engine.cpp
+  tests/rigor/rigor_format_parse.cpp
+  tests/rigor/format_values.cpp
+  tests/rigor/string_format_extensive.cpp
+  tests/rigor/conversions_constexpr.cpp
   tests/rigor/vector_self_assignment.cpp
   tests/rigor/vector_try_reserve.cpp
   tests/rigor/deep_move_safety.cpp

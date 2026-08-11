@@ -17,7 +17,8 @@
 #error "micron <meta> requires reflection language support (compile with -freflection)"
 #endif
 
-#if defined(_GLIBCXX_RELEASE)
+// which libstdc++ headers force this port to stand down
+#if defined(_GLIBCXX_RANGES_BASE_H) || defined(_GLIBCXX_VECTOR) || defined(_ALLOCATOR_H)
 
 // libstdc++ is already declared in this TU
 #include <meta>
@@ -635,6 +636,6 @@ consteval vector<info> annotations_of_with_type(info, info);
 
 };      // namespace std
 
-#endif      // _GLIBCXX_RELEASE
+#endif      // libstdc++ already declares vector/allocator/ranges
 
 #endif      // _MICRON_META

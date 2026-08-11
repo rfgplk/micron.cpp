@@ -7,6 +7,7 @@
 
 #include "../../concepts.hpp"
 #include "../../type_traits.hpp"
+#include "../../tags.hpp"
 #include "../../types.hpp"
 #include "storage.hpp"
 #include "tags.hpp"
@@ -26,6 +27,7 @@ template<usize Bits = 0, arb_solver Solver = solver::automatic, class Alloc = mi
 public:
   using mag_type = arbuint<Bits, Solver, Alloc>;
   using value_type = mpn::limb_t;
+  using category_type = micron::numeric_tag;
   using solver_type = Solver;
   using allocator_type = Alloc;
 

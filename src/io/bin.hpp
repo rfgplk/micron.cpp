@@ -733,7 +733,7 @@ public:
   bin_match_t
   search(const Tp &pat) const
   {
-    return search(reinterpret_cast<const byte *>(pat.c_str()), pat.size());
+    return search(reinterpret_cast<const byte *>(pat.c_str()), micron::string_len(pat));
   }
 
   bin_match_t
@@ -833,7 +833,7 @@ public:
   bin_match_t
   search_file(const Tp &pat)
   {
-    return search_file(reinterpret_cast<const byte *>(pat.c_str()), pat.size());
+    return search_file(reinterpret_cast<const byte *>(pat.c_str()), micron::string_len(pat));
   }
 
   bin_match_t
@@ -898,7 +898,7 @@ public:
   micron::vector<bin_match_t>
   find_all(const Tp &pat)
   {
-    return find_all(reinterpret_cast<const byte *>(pat.c_str()), pat.size());
+    return find_all(reinterpret_cast<const byte *>(pat.c_str()), micron::string_len(pat));
   }
 
   i32

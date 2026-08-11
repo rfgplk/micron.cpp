@@ -258,6 +258,54 @@ main(void)
   }
   sb::end_test_case();
 
+  // the SIGN, not just != 0. until 2026-08-11 every one of these returned the difference of two
+  // unrelated ADDRESSES (&src[i] - &dest[i]), which no assertion above could see
+  sb::test_case("constexpr_memcmp: sign follows the differing element");
+  {
+    byte a[16], b[16];
+    fill(a, static_cast<byte>(0x40));
+    fill(b, static_cast<byte>(0x40));
+    a[4] = 0x41;
+    sb::require(mc::constexpr_memcmp(a, b, 16) > 0);
+    sb::require(mc::constexpr_memcmp(b, a, 16) < 0);
+  }
+  sb::end_test_case();
+
+  sb::test_case("constexpr_memcmp: high bytes compare as UNSIGNED");
+  {
+    // 0x80 must sort above 0x01. a signed-char comparison would answer the other way, and that is
+    // the divergence the consteval path could introduce against the SIMD one
+    byte a[4], b[4];
+    fill(a, static_cast<byte>(0x80));
+    fill(b, static_cast<byte>(0x01));
+    sb::require(mc::constexpr_memcmp(a, b, 4) > 0);
+    sb::require(mc::memcmp<byte>(a, b, 4) > 0);
+  }
+  sb::end_test_case();
+
+  sb::test_case("memcmp<T> agrees with itself at compile time and at run time");
+  {
+    // same inputs through the same entry point, once folded and once executed
+    constexpr char lo[] = "abc", hi[] = "abd";
+    static_assert(mc::memcmp<char, char>(lo, hi, 3) < 0);
+    static_assert(mc::memcmp<char, char>(hi, lo, 3) > 0);
+    static_assert(mc::memcmp<char, char>(lo, lo, 3) == 0);
+    const char *p = lo, *q = hi;
+    sb::require(mc::memcmp<char, char>(p, q, 3) < 0);
+    sb::require(mc::memcmp<char, char>(q, p, 3) > 0);
+    sb::require(mc::memcmp<char, char>(p, p, 3) == 0);
+  }
+  sb::end_test_case();
+
+  sb::test_case("memcmp<T>: wide elements order by element, not by address");
+  {
+    constexpr char32_t w1[] = U"abc", w2[] = U"abd";
+    static_assert(mc::memcmp<char32_t, char32_t>(w1, w2, 3) < 0);
+    static_assert(mc::memcmp<char32_t, char32_t>(w2, w1, 3) > 0);
+    sb::require(mc::memcmp<char32_t, char32_t>(w1, w2, 3) < 0);
+  }
+  sb::end_test_case();
+
   // ============================================================
   //  Section 4: mc::cmemcmp<M,T,F> — compile-time count
   // ============================================================

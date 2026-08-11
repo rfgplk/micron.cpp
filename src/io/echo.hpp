@@ -240,10 +240,38 @@ arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, f64 val)
   return micron::__impl::__ryu::d2s_buffered(val, buf);
 }
 
+// wide floats
 inline usize
-arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, long double val)
+arith_to_buf(char *buf, usize buf_sz, long double val)
 {
+#if defined(__micron_ldbl_binary64)
   return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
+#else
+  if ( static_cast<long double>(static_cast<f64>(val)) == val ) return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
+  return micron::__impl::__ryu::x2a_buffered(val, buf, buf_sz);
+#endif
+}
+
+#if defined(__micron_f128_distinct)
+// on amd64 f128 is _Float128
+inline usize
+arith_to_buf(char *buf, usize buf_sz, f128 val)
+{
+  if ( static_cast<f128>(static_cast<f64>(val)) == val ) return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
+  return micron::__impl::__ryu::x2a_buffered(val, buf, buf_sz);
+}
+#endif
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, const u128 &val)
+{
+  return micron::to_chars(buf, buf_sz, val, 10u, false);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, const i128 &val)
+{
+  return micron::to_chars(buf, buf_sz, val, 10u, false);
 }
 
 inline usize
@@ -263,8 +291,11 @@ ptr_to_buf(char *buf, usize buf_sz, const void *ptr)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // printk(sink, x)
 
+template<typename T>
+concept __printk_arith = micron::is_arithmetic_v<T> || micron::is_same_v<T, u128> || micron::is_same_v<T, i128>;
+
 template<output_sink S, typename T>
-  requires micron::is_arithmetic_v<T>
+  requires __printk_arith<T>
 max_t printk(S &s, const T &x);
 
 template<output_sink S, has_cstr T>
@@ -365,7 +396,7 @@ printk(S &s, const micron::settle_note &n)
 
 // arithmetic
 template<output_sink S, typename T>
-  requires micron::is_arithmetic_v<T>
+  requires __printk_arith<T>
 max_t
 printk(S &s, const T &x)
 {
@@ -374,12 +405,24 @@ printk(S &s, const T &x)
 
   if constexpr ( micron::is_same_v<T, bool> ) {
     n = __impl::arith_to_buf(buf, 128, x);
-  } else if constexpr ( micron::is_same_v<T, f32> || micron::is_same_v<T, float> ) {
-    n = __impl::arith_to_buf(buf, 128, static_cast<f32>(x));
-  } else if constexpr ( micron::is_same_v<T, f64> || micron::is_same_v<T, double> ) {
-    n = __impl::arith_to_buf(buf, 128, static_cast<f64>(x));
-  } else if constexpr ( micron::is_same_v<T, long double> || micron::is_same_v<T, flong> ) {
-    n = __impl::arith_to_buf(buf, 128, static_cast<long double>(x));
+  } else if constexpr ( micron::is_floating_point_v<T> ) {
+    if constexpr ( sizeof(T) <= sizeof(f32) ) {
+      n = __impl::arith_to_buf(buf, 128, static_cast<f32>(x));      // f16 widens exactly
+    } else if constexpr ( sizeof(T) <= sizeof(f64) ) {
+      n = __impl::arith_to_buf(buf, 128, static_cast<f64>(x));
+    } else if constexpr ( micron::is_same_v<T, long double> || micron::is_same_v<T, flong> ) {
+      n = __impl::arith_to_buf(buf, 128, static_cast<long double>(x));
+#if defined(__micron_f128_distinct)
+    } else if constexpr ( micron::is_same_v<T, f128> ) {
+      n = __impl::arith_to_buf(buf, 128, static_cast<f128>(x));
+#endif
+    } else {
+      n = __impl::arith_to_buf(buf, 128, static_cast<f64>(x));
+    }
+  } else if constexpr ( micron::is_same_v<T, u128> ) {
+    n = __impl::arith_to_buf(buf, 128, x);
+  } else if constexpr ( micron::is_same_v<T, i128> ) {
+    n = __impl::arith_to_buf(buf, 128, x);
   } else if constexpr ( micron::is_signed_v<T> ) {
     n = __impl::arith_to_buf(buf, 128, static_cast<i64>(x));
   } else {
@@ -391,7 +434,7 @@ printk(S &s, const T &x)
 
 // volatile arithmetic / pointer: read once, delegate
 template<output_sink S, typename T>
-  requires micron::is_arithmetic_v<T>
+  requires __printk_arith<T>
 max_t
 printk(S &s, const volatile T &x)
 {
@@ -738,8 +781,10 @@ format_one_sink(S &s, max_t &total, const char *spec_start, const char *spec_end
   micron::format::__impl::fmt_spec spec = micron::format::__impl::parse_spec(spec_start, spec_end);
   using U = micron::remove_cvref_t<T>;
   if constexpr ( requires(char *b, const U &v) { micron::format::formatter<U>::write(b, usize{}, v, spec); } ) {
-    char buf[micron::format::__impl::__fmt_buf_size];
-    usize n = micron::format::formatter<U>::write(buf, micron::format::__impl::__fmt_buf_size, val, spec);
+    // per formatter
+    constexpr usize __bs = micron::format::__impl::__fmt_buf_for<micron::format::formatter<U>>();
+    char buf[__bs];
+    usize n = micron::format::formatter<U>::write(buf, __bs, val, spec);
     apply_padding_sink(s, total, buf, n, spec);
   } else if constexpr ( requires(hstring<schar> &o, const U &v) { micron::format::formatter<U>::write_str(o, v, spec); } ) {
     hstring<schar> out;
@@ -1145,7 +1190,7 @@ bin(const T &data)
   stdout_sink s;
   char buf[4096];
   usize cnt = 0;
-  usize remaining = data.size();
+  usize remaining = micron::string_len(data);
   while ( remaining > 0 ) {
     usize chunk = remaining > 2047 ? 2047 : remaining;
     const auto *src = reinterpret_cast<const u8 *>(&data[cnt]);

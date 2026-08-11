@@ -5,18 +5,17 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../compare.hpp"
 #include "../except.hpp"
 #include "../type_traits.hpp"
 
-#include "../algorithm/memory.hpp"
-#include "../allocator.hpp"
-#include "../memory/memory.hpp"
-#include "../memory_block.hpp"
-#include "../pointer.hpp"
-#include "../slice.hpp"
-
+#include "fixed_string.hpp"
 #include "unitypes.hpp"
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%
+// string_view<S>
+//
+// a non-owning (begin, end) pair over an existing S
 namespace micron
 {
 
@@ -26,53 +25,62 @@ template<is_string S> class string_view
   T __start;
   T __end;
 
+  template<typename U>
+  static constexpr T
+  __as(U p) noexcept
+  {
+    if constexpr ( micron::is_same_v<U, T> )
+      return p;
+    else
+      return reinterpret_cast<T>(p);
+  }
+
 public:
-  ~string_view() { }
+  using value_type = micron::remove_cvref_t<decltype(*micron::declval<T>())>;
+  using const_pointer = T;
+  using const_iterator = T;
+  using size_type = usize;
+
+  constexpr ~string_view() = default;
 
   constexpr string_view() = delete;
 
-  string_view(T s) : __start(s), __end(s + micron::strlen(s)) { }
+  constexpr string_view(T s) noexcept : __start(s), __end(s + micron::strlen(s)) { }
 
-  string_view(T s, T e) : __start(s), __end(e) { }
+  constexpr string_view(T s, T e) noexcept : __start(s), __end(e) { }
 
   template<is_string F>
     requires(!micron::is_same_v<F, S>)
-  string_view(typename F::iterator a, typename F::iterator b)
-      : __start(reinterpret_cast<typename S::iterator>(a)), __end(reinterpret_cast<typename S::iterator>(b))
+  constexpr string_view(typename F::iterator a, typename F::iterator b) noexcept : __start(__as(a)), __end(__as(b))
   {
     static_assert(sizeof(micron::remove_pointer_t<typename F::iterator>) == sizeof(micron::remove_pointer_t<typename S::iterator>),
                   "micron::string_view cross-type ctor requires equal element width");
   }
 
-  string_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) { }
+  constexpr string_view(const char *ptr, usize count) noexcept : __start(ptr), __end(ptr + count) { }
 
-  template<is_string F>
-  string_view(const F &f)
-      : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())), __end(reinterpret_cast<typename S::const_iterator>(f.cend()))
-  {
-  }
+  template<is_string F> constexpr string_view(const F &f) noexcept : __start(__as(f.cbegin())), __end(__as(f.cend())) { }
 
-  template<is_string F>
-  string_view(const F &f, const usize n) : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())), __end(__start)
+  template<is_string F> constexpr string_view(const F &f, const usize n) : __start(__as(f.cbegin())), __end(__start)
   {
     if ( n > f.size() ) exc<except::library_error>("micron::string_view set() out of memory range");
-    __end = reinterpret_cast<typename S::const_iterator>(f.cbegin() + n);
+    __end = __as(f.cbegin() + n);
   }
 
-  string_view(const string_view &o) : __start(o.__start), __end(o.__end) { }
+  constexpr string_view(const string_view &o) noexcept : __start(o.__start), __end(o.__end) { }
 
-  string_view(string_view &&) = delete;
+  constexpr string_view(string_view &&) = delete;
 
-  string_view &
-  operator=(const string_view &o)
+  constexpr string_view &
+  operator=(const string_view &o) noexcept
   {
     __start = o.__start;
     __end = o.__end;
     return *this;
   }
 
-  string_view &
-  operator=(const S &o)
+  constexpr string_view &
+  operator=(const S &o) noexcept
   {
     if ( o.empty() ) return *this;
     __start = o.cbegin();
@@ -80,7 +88,7 @@ public:
     return *this;
   }
 
-  string_view &
+  constexpr string_view &
   set(const S &o, const usize n = 0)
   {
     if ( o.empty() ) return *this;
@@ -90,266 +98,189 @@ public:
     return *this;
   }
 
-  string_view &
+  constexpr string_view &
   advance(const usize n)
   {
-    if ( n >= (__end - __start) ) exc<except::library_error>("micron::string_view advance() out of memory range");
+    if ( n >= static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::string_view advance() out of memory range");
     __start += n;
     return *this;
   }
 
-  // unsafe
-  string_view &
-  __advance(const usize n)
+  constexpr string_view &
+  __advance(const usize n) noexcept
   {
     __start += n;
     return *this;
   }
 
-  string_view &
-  __move(const usize n)
+  constexpr string_view &
+  __move(const usize n) noexcept
   {
     __start += n;
     __end += n;
     return *this;
   }
 
-  string_view &
-  __push(const usize n)
+  constexpr string_view &
+  __push(const usize n) noexcept
   {
     __end += n;
     return *this;
   }
 
-  const auto &
-  operator[](const usize n) const
+  constexpr const auto &
+  operator[](const usize n) const noexcept
   {
     return __start[n];
   }
 
-  const auto &
+  constexpr const auto &
   at(const usize n) const
   {
-    if ( n >= (__end - __start) ) exc<except::library_error>("micron::string_view operator[] out of memory range");
+    if ( n >= static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::string_view at() out of memory range");
     return __start[n];
   }
 
-  T
-  ptr(const usize n) const
+  constexpr T
+  ptr(const usize n) const noexcept
   {
     return __start + n;
   }
 
-  const T
-  begin() const
+  constexpr const T
+  begin() const noexcept
   {
     return __start;
   }
 
-  const T
-  end() const
+  constexpr const T
+  end() const noexcept
   {
     return __end;
   }
 
-  const auto &
-  front() const
+  constexpr const T
+  cbegin() const noexcept
+  {
+    return __start;
+  }
+
+  constexpr const T
+  cend() const noexcept
+  {
+    return __end;
+  }
+
+  constexpr const auto &
+  front() const noexcept
   {
     return *__start;
   }
 
-  const auto &
+  constexpr const auto &
   last() const
   {
     if ( __end == __start ) exc<except::library_error>("micron::string_view last() on empty view");
     return *(__end - 1);
   }
 
-  usize
-  size() const
+  constexpr usize
+  size() const noexcept
   {
-    return __end - __start;
+    return static_cast<usize>(__end - __start);
   }
 
-  string_view
-  substr(const usize a, const usize b)
+  constexpr bool
+  empty() const noexcept
+  {
+    return __end == __start;
+  }
+
+  constexpr const T
+  data() const noexcept
+  {
+    return __start;
+  }
+
+  constexpr string_view
+  substr(const usize a, const usize b) const
   {
     if ( a > b || b > static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::string_view substr() out of memory range");
     return string_view(__start + a, __start + b);
   }
 
-  string_view
-  substr(const usize a)
+  constexpr string_view
+  substr(const usize a) const
   {
-    if ( a >= (__end - __start) ) exc<except::library_error>("micron::string_view substr() out of memory range");
+    if ( a >= static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::string_view substr() out of memory range");
     return string_view(__start + a, __end);
   }
+
+  constexpr int
+  compare(const value_type *p, usize n) const noexcept
+  {
+    return __fs_lexcmp(__start, size(), p, n);
+  }
+
+  constexpr std::strong_ordering
+  operator<=>(const string_view &o) const noexcept
+  {
+    return __fs_ord(__fs_lexcmp(__start, size(), o.__start, o.size()));
+  }
+
+  constexpr bool
+  operator==(const string_view &o) const noexcept
+  {
+    return size() == o.size() && __fs_lexcmp(__start, size(), o.__start, o.size()) == 0;
+  }
+
+  constexpr std::strong_ordering
+  operator<=>(const value_type *s) const noexcept
+    requires(micron::is_same_v<value_type, char>)
+  {
+    return __fs_ord(compare(s, micron::strlen(s)));
+  }
+
+  constexpr bool
+  operator==(const value_type *s) const noexcept
+    requires(micron::is_same_v<value_type, char>)
+  {
+    return compare(s, micron::strlen(s)) == 0;
+  }
+
+  template<usize N>
+  constexpr std::strong_ordering
+  operator<=>(const fixed_string<N> &o) const noexcept
+    requires(micron::is_same_v<value_type, char>)
+  {
+    return __fs_ord(compare(o.buf, o.len()));
+  }
+
+  template<usize N>
+  constexpr bool
+  operator==(const fixed_string<N> &o) const noexcept
+    requires(micron::is_same_v<value_type, char>)
+  {
+    return compare(o.buf, o.len()) == 0;
+  }
+
+  template<is_string F>
+  constexpr std::strong_ordering
+  operator<=>(const F &f) const
+    requires(micron::is_same_v<value_type, char>)
+  {
+    return __fs_ord(compare(f.c_str(), f.size()));
+  }
+
+  template<is_string F>
+  constexpr bool
+  operator==(const F &f) const
+    requires(micron::is_same_v<value_type, char>)
+  {
+    return compare(f.c_str(), f.size()) == 0;
+  }
 };
 
-template<is_string S> class cstring_view
-{
-  using T = typename S::const_pointer;
-  T __start;
-  T __end;
-
-public:
-  ~cstring_view() { }
-
-  constexpr cstring_view() = delete;
-
-  constexpr cstring_view(T s) : __start(s), __end(s + micron::strlen(s)) { }
-
-  constexpr cstring_view(T s, T e) : __start(s), __end(e) { }
-
-  template<is_string F>
-    requires(!micron::is_same_v<F, S>)
-  constexpr cstring_view(typename F::iterator a, typename F::iterator b)
-      : __start(reinterpret_cast<typename S::iterator>(a)), __end(reinterpret_cast<typename S::iterator>(b))
-  {
-    static_assert(sizeof(micron::remove_pointer_t<typename F::iterator>) == sizeof(micron::remove_pointer_t<typename S::iterator>),
-                  "micron::cstring_view cross-type ctor requires equal element width");
-  }
-
-  constexpr cstring_view(const char *ptr, usize count) : __start(ptr), __end(ptr + count) { }
-
-  template<is_string F>
-  constexpr cstring_view(const F &f)
-      : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())), __end(reinterpret_cast<typename S::const_iterator>(f.cend()))
-  {
-  }
-
-  template<is_string F>
-  constexpr cstring_view(const F &f, const usize n) : __start(reinterpret_cast<typename S::const_iterator>(f.cbegin())), __end(__start)
-  {
-    if ( n > f.size() ) exc<except::library_error>("micron::constexpr cstring_view set() out of memory range");
-    __end = reinterpret_cast<typename S::const_iterator>(f.cbegin() + n);
-  }
-
-  constexpr cstring_view(const cstring_view &o) : __start(o.__start), __end(o.__end) { }
-
-  constexpr cstring_view(cstring_view &&) = delete;
-
-  constexpr cstring_view &
-  operator=(const cstring_view &o)
-  {
-    __start = o.__start;
-    __end = o.__end;
-    return *this;
-  }
-
-  constexpr cstring_view &
-  operator=(const S &o)
-  {
-    if ( o.empty() ) return *this;
-    __start = o.cbegin();
-    __end = o.cend();
-    return *this;
-  }
-
-  constexpr cstring_view &
-  set(const S &o, const usize n = 0)
-  {
-    if ( o.empty() ) return *this;
-    if ( n >= o.size() ) exc<except::library_error>("micron::cstring_view set() out of memory range");
-    __start = o.cbegin() + n;
-    __end = o.cend();
-    return *this;
-  }
-
-  constexpr cstring_view &
-  advance(const usize n)
-  {
-    if ( n >= static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::cstring_view advance() out of memory range");
-    __start += n;
-    return *this;
-  }
-
-  // unsafe
-  constexpr cstring_view &
-  __advance(const usize n)
-  {
-    __start += n;
-    return *this;
-  }
-
-  constexpr cstring_view &
-  __move(const usize n)
-  {
-    __start += n;
-    __end += n;
-    return *this;
-  }
-
-  constexpr cstring_view &
-  __push(const usize n)
-  {
-    __end += n;
-    return *this;
-  }
-
-  const auto &
-  operator[](const usize n) const
-  {
-    return __start[n];
-  }
-
-  const auto &
-  at(const usize n) const
-  {
-    if ( n >= static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::cstring_view at() out of memory range");
-    return __start[n];
-  }
-
-  T
-  ptr(const usize n) const
-  {
-    return __start + n;
-  }
-
-  const T
-  begin() const
-  {
-    return __start;
-  }
-
-  const T
-  end() const
-  {
-    return __end;
-  }
-
-  const auto &
-  front() const
-  {
-    return *__start;
-  }
-
-  const auto &
-  last() const
-  {
-    if ( __end == __start ) exc<except::library_error>("micron::cstring_view last() on empty view");
-    return *(__end - 1);
-  }
-
-  usize
-  size() const
-  {
-    return __end - __start;
-  }
-
-  constexpr cstring_view
-  substr(const usize a, const usize b)
-  {
-    if ( a > b || b > static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::cstring_view substr() out of memory range");
-    return cstring_view(__start + a, __start + b);
-  }
-
-  constexpr cstring_view
-  substr(const usize a)
-  {
-    if ( a >= static_cast<usize>(__end - __start) ) exc<except::library_error>("micron::cstring_view substr() out of memory range");
-    return cstring_view(__start + a, __end);
-  }
-};
+template<is_string S> using cstring_view = string_view<S>;
 
 };      // namespace micron

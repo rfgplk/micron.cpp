@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../../concepts.hpp"
+#include "../../math/ieee.hpp"
 #include "../../type_traits.hpp"
 
 #include "../string.hpp"
@@ -24,7 +25,7 @@ struct __fmt_uint128_t {
   u64 hi;
 };
 #if defined(__SIZEOF_INT128__)
-inline __fmt_uint128_t
+inline constexpr __fmt_uint128_t
 umul128(u64 a, u64 b)
 {
   unsigned __int128 r = static_cast<unsigned __int128>(a) * b;
@@ -32,7 +33,7 @@ umul128(u64 a, u64 b)
 }
 #else
 // no 128-bit
-inline __fmt_uint128_t
+inline constexpr __fmt_uint128_t
 umul128(u64 a, u64 b)
 {
   u64 aHi = a >> 32, aLo = a & 0xFFFFFFFF;
@@ -49,7 +50,7 @@ umul128(u64 a, u64 b)
 }
 #endif
 
-inline u64
+inline constexpr u64
 shiftright128(u64 lo, u64 hi, u32 dist)
 {
   if ( dist == 0 ) return lo;
@@ -57,7 +58,7 @@ shiftright128(u64 lo, u64 hi, u32 dist)
   return (lo >> dist) | (hi << (64 - dist));
 }
 
-inline u64
+inline constexpr u64
 shiftleft128(u64 lo, u64 hi, u32 dist)
 {
   if ( dist == 0 ) return hi;
@@ -94,14 +95,14 @@ constexpr static const char __hex_lower[16] = { '0', '1', '2', '3', '4', '5', '6
 constexpr static const char __hex_upper[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 // floor(x/10) = mulhi(x, 0xCCCCCCCCCCCCCCCD) >> 3
-inline u64
+inline constexpr u64
 fast_div10(u64 x)
 {
   return umul128(x, 0xCCCCCCCCCCCCCCCDULL).hi >> 3;
 }
 
 // floor(x/100) granlund-montgomery
-inline u64
+inline constexpr u64
 fast_div100(u64 x)
 {
   u64 hi = umul128(x, 5165088340638674453ull).hi;
@@ -109,33 +110,33 @@ fast_div100(u64 x)
 }
 
 // floor(x/1e4) via reciprocal
-inline u64
+inline constexpr u64
 fast_div10000(u64 x)
 {
   return umul128(x, 0xD1B71758E219652CULL).hi >> 13;
 }
 
 // NOTE: single word constant division does not work over the full u64 range for divisor 10^8
-inline u64
+inline constexpr u64
 fast_div1e8(u64 x)
 {
   // TODO: figure out an alternative to this
   return x / 100000000ull;
 }
 
-inline u32
+inline constexpr u32
 fast_mod100(u64 x, u64 q)
 {
   return static_cast<u32>(x - q * 100);
 }
 
-inline u32
+inline constexpr u32
 fast_mod10000(u64 x, u64 q)
 {
   return static_cast<u32>(x - q * 10000);
 }
 
-inline u32
+inline constexpr u32
 fast_mod1e8(u64 x, u64 q)
 {
   return static_cast<u32>(x - q * 100000000ull);
@@ -190,15 +191,40 @@ template<> struct max_digits<unsigned long long> {
 };
 #endif
 
+template<> struct max_digits<u128> {
+  static constexpr usize value = 41;
+};
+
+template<> struct max_digits<i128> {
+  static constexpr usize value = 42;
+};
+
+template<> struct max_digits<wchar_t> {
+  static constexpr usize value = 12;
+};
+
+template<> struct max_digits<c8> {
+  static constexpr usize value = 4;
+};
+
+template<> struct max_digits<c16> {
+  static constexpr usize value = 6;
+};
+
+template<> struct max_digits<c32> {
+  static constexpr usize value = 11;
+};
+
+
 template<typename I> constexpr static const usize max_digits_v = max_digits<I>::value;
 
-inline __attribute__((always_inline)) u32
+inline constexpr __attribute__((always_inline)) u32
 clz64(u64 v)
 {
   return v ? static_cast<u32>(__builtin_clzll(v)) : 64;
 }
 
-inline __attribute__((always_inline)) void
+inline constexpr __attribute__((always_inline)) void
 emit8_backward(char *buf, u32 v)
 {
   // v < 100000000
@@ -220,7 +246,7 @@ emit8_backward(char *buf, u32 v)
   buf[0] = __digit_tbl[d2].d[0];
 }
 
-inline __attribute__((always_inline)) char *
+inline constexpr __attribute__((always_inline)) char *
 emit_block_backward(char *end, u32 v)
 {
   // not leading block emit exactly 8 digits
@@ -247,7 +273,7 @@ emit_block_backward(char *end, u32 v)
 
 // chunked 10^8 method
 
-inline char *
+inline constexpr char *
 uint_to_buf_backward(char *end, u64 val)
 {
   if ( val == 0 ) {
@@ -284,7 +310,7 @@ uint_to_buf_backward(char *end, u64 val)
   return emit_block_backward(end, static_cast<u32>(q2));
 }
 
-inline char *
+inline constexpr char *
 uint_to_buf_base_backward(char *end, u64 val, u32 base, bool upper)
 {
   if ( base < 2 || base > 36 ) base = 10;
@@ -342,6 +368,134 @@ uint_to_buf_base_backward(char *end, u64 val, u32 base, bool upper)
   }
   return end;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// 128-bit digit emission
+
+inline constexpr u64
+__u128_lo(const u128 &v) noexcept
+{
+#if defined(__micron_arch_width_64)
+  return static_cast<u64>(v);
+#else
+  return v.lo;
+#endif
+}
+
+inline constexpr u64
+__u128_hi(const u128 &v) noexcept
+{
+#if defined(__micron_arch_width_64)
+  return static_cast<u64>(v >> 64);
+#else
+  return v.hi;
+#endif
+}
+
+inline constexpr u128
+__u128_make(u64 hi, u64 lo) noexcept
+{
+#if defined(__micron_arch_width_64)
+  return (static_cast<u128>(hi) << 64) | static_cast<u128>(lo);
+#else
+  return u128(hi, lo);
+#endif
+}
+
+inline constexpr u32
+__div128_small(u32 (&l)[4], u32 d) noexcept
+{
+  u64 rem = 0;
+  for ( i32 i = 3; i >= 0; --i ) {
+    const u64 cur = (rem << 32) | static_cast<u64>(l[i]);
+    l[i] = static_cast<u32>(cur / d);
+    rem = cur % d;
+  }
+  return static_cast<u32>(rem);
+}
+
+inline constexpr bool
+__nz128(const u32 (&l)[4]) noexcept
+{
+  return (l[0] | l[1] | l[2] | l[3]) != 0;
+}
+
+inline constexpr char *
+uint128_to_buf_backward(char *end, u64 hi, u64 lo)
+{
+  if ( hi == 0 ) return uint_to_buf_backward(end, lo);
+
+  u32 l[4] = { static_cast<u32>(lo), static_cast<u32>(lo >> 32), static_cast<u32>(hi), static_cast<u32>(hi >> 32) };
+  char *p = end;
+  while ( __nz128(l) ) {
+    u32 r = __div128_small(l, 1000000000u);
+    const bool more = __nz128(l);
+    if ( more ) {
+      for ( u32 k = 0; k < 9; ++k ) {      // interior chunks keep their leading zeros
+        *--p = static_cast<char>('0' + r % 10u);
+        r /= 10u;
+      }
+    } else {
+      do {
+        *--p = static_cast<char>('0' + r % 10u);
+        r /= 10u;
+      } while ( r != 0 );
+    }
+  }
+  return p;
+}
+
+inline constexpr char *
+uint128_to_buf_base_backward(char *end, u64 hi, u64 lo, u32 base, bool upper)
+{
+  if ( base == 10 ) return uint128_to_buf_backward(end, hi, lo);
+  if ( hi == 0 ) return uint_to_buf_base_backward(end, lo, base, upper);
+  if ( base < 2 || base > 36 ) base = 10;
+
+  const char *digits = upper ? "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "0123456789abcdefghijklmnopqrstuvwxyz";
+  char *p = end;
+
+  // a power-of-two base is pure shift and mask over the pair, no division at all
+  u32 sh = 0;
+  switch ( base ) {
+  case 2:
+    sh = 1;
+    break;
+  case 4:
+    sh = 2;
+    break;
+  case 8:
+    sh = 3;
+    break;
+  case 16:
+    sh = 4;
+    break;
+  case 32:
+    sh = 5;
+    break;
+  default:
+    sh = 0;
+    break;
+  }
+  if ( sh != 0 ) {
+    const u64 mask = (1ull << sh) - 1;
+    u64 h = hi, o = lo;
+    while ( h != 0 || o != 0 ) {
+      *--p = digits[o & mask];
+      o = (o >> sh) | (h << (64 - sh));
+      h >>= sh;
+    }
+    return p;
+  }
+
+  u32 l[4] = { static_cast<u32>(lo), static_cast<u32>(lo >> 32), static_cast<u32>(hi), static_cast<u32>(hi >> 32) };
+  while ( __nz128(l) ) {
+    const u32 r = __div128_small(l, base);
+    *--p = digits[r];
+  }
+  return p;
+}
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ryu algorithm: https://github.com/ulfjack/ryu Ulf Adams
@@ -440,7 +594,7 @@ log10_pow5(i32 e)
 }
 
 // divisibility by 5 == v * 0xCCCCCCCCCCCCCCCD <= floor(2^64 / 5)
-inline u32
+inline constexpr u32
 pow5_factor(u64 v)
 {
   // lots of magic here
@@ -457,19 +611,19 @@ pow5_factor(u64 v)
   return count;
 }
 
-inline bool
+inline constexpr bool
 pow5_multiple(u64 v, u32 p)
 {
   return pow5_factor(v) >= p;
 }
 
-inline bool
+inline constexpr bool
 pow2_multiple(u64 v, u32 p)
 {
   return (v & ((1ull << p) - 1)) == 0;
 }
 
-inline void
+inline constexpr void
 pow5_compute(u32 i, u64 result[2])
 {
   const u32 base = i / 26;
@@ -498,7 +652,7 @@ pow5_compute(u32 i, u64 result[2])
   result[1] = shiftleft128(mid, high, 64 - delta);
 }
 
-inline void
+inline constexpr void
 pow5_compute_inv(u32 i, u64 result[2])
 {
   const u32 base = (i + 25) / 26;
@@ -528,7 +682,7 @@ pow5_compute_inv(u32 i, u64 result[2])
   result[1] = shiftleft128(mid, high, 64 - delta);
 }
 
-inline u64
+inline constexpr u64
 shift_mul64(u64 m, const u64 mul[2], i32 j)
 {
   __fmt_uint128_t b0 = umul128(m, mul[0]);
@@ -545,7 +699,7 @@ struct decimal64 {
   i32 exponent;
 };
 
-inline decimal64
+inline constexpr decimal64
 d2d(u64 ieeeMantissa, u32 ieeeExponent)
 {
   i32 e2;
@@ -672,7 +826,7 @@ d2d(u64 ieeeMantissa, u32 ieeeExponent)
   }
 }
 
-inline u32
+inline constexpr u32
 decimalLength(u64 v)
 {
   // floor(log10(2^(63-clz))) + correction
@@ -704,16 +858,12 @@ decimalLength(u64 v)
   return approx + (v >= __pow10[approx] ? 1 : 0);
 }
 
-inline usize
+inline constexpr usize
 d2s_buffered(f64 value, char *buf)
 {
-  union {
-    f64 f;
-    u64 u;
-  } conv;
-
-  conv.f = value;
-  u64 bits = conv.u;
+  // NOT a union: reading the inactive member is a hard error in a constant expression, and
+  // ieee::to_bits is __builtin_bit_cast, which is both constexpr and exactly as free at run time
+  const u64 bits = micron::math::ieee::to_bits<f64>(value);
 
   bool sign = (bits >> 63) != 0;
   u64 ieeeMantissa = bits & ((1ull << 52) - 1);
@@ -804,235 +954,10 @@ d2s_buffered(f64 value, char *buf)
   return pos;
 }
 
-inline usize
-d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
-{
-  if ( buf_sz < 4 ) return 0;
-  usize pos = 0;
-
-  // bool negative = false;
-  if ( val < 0.0 ) {
-    buf[pos++] = '-';
-    val = -val;
-    // negative = true;
-  }
-
-  u64 bits;
-  {
-    union {
-      f64 f;
-      u64 u;
-    } conv;
-
-    conv.f = val;
-    bits = conv.u;
-  }
-
-  u64 ieeeMantissa = bits & ((1ull << 52) - 1);
-  u32 ieeeExponent = static_cast<u32>((bits >> 52) & 0x7FF);
-
-  // zero case
-  if ( ieeeExponent == 0 && ieeeMantissa == 0 ) {
-    buf[pos++] = '0';
-    if ( precision > 0 ) {
-      buf[pos++] = '.';
-      for ( u32 d = 0; d < precision && pos < buf_sz; ++d ) buf[pos++] = '0';
-    }
-    return pos;
-  }
-
-  if ( ieeeExponent == 0x7FF ) {
-    if ( ieeeMantissa ) {
-      buf[0] = 'N';
-      buf[1] = 'a';
-      buf[2] = 'N';
-      return 3;
-    }
-    buf[pos] = 'I';
-    buf[pos + 1] = 'n';
-    buf[pos + 2] = 'f';
-    return pos + 3;
-  }
-
-  decimal64 dec = d2d(ieeeMantissa, ieeeExponent);
-  u64 mantissa = dec.mantissa;
-  i32 ryuExp = dec.exponent;
-  u32 ryuLen = decimalLength(mantissa);
-
-  // mantissa * 10^ryuExp == d.ddd × 10^sciExp
-  // sciExp = ryuExp + ryuLen - 1
-  i32 sciExp = ryuExp + static_cast<i32>(ryuLen) - 1;
-
-  i32 intDigits = sciExp + 1;
-
-  char ryuBuf[20];
-  char *rend = ryuBuf + 20;
-  char *rstart = uint_to_buf_backward(rend, mantissa);
-  // rstart[0..ryuLen-1] are the significant digits
-
-  if ( intDigits <= 0 ) {
-    buf[pos++] = '0';
-    if ( precision > 0 && pos < buf_sz ) {
-      buf[pos++] = '.';
-      u32 leadZeros = static_cast<u32>(-intDigits);
-      for ( u32 d = 0; d < leadZeros && d < precision && pos < buf_sz; ++d ) buf[pos++] = '0';
-      u32 emitted = leadZeros;
-      for ( u32 d = 0; emitted < precision && d < ryuLen && pos < buf_sz; ++d, ++emitted ) buf[pos++] = rstart[d];
-      while ( emitted < precision && pos < buf_sz ) {
-        buf[pos++] = '0';
-        ++emitted;
-      }
-    }
-  } else {
-    u32 idig = static_cast<u32>(intDigits);
-
-    for ( u32 d = 0; d < idig && pos < buf_sz; ++d ) {
-      if ( d < ryuLen )
-        buf[pos++] = rstart[d];
-      else
-        buf[pos++] = '0';      // trailing zeros in integer part
-    }
-
-    if ( precision > 0 && pos < buf_sz ) {
-      buf[pos++] = '.';
-      u32 emitted = 0;
-      for ( u32 d = idig; emitted < precision && pos < buf_sz; ++d, ++emitted ) {
-        if ( d < ryuLen )
-          buf[pos++] = rstart[d];
-        else
-          buf[pos++] = '0';
-      }
-    }
-  }
-
-  return pos;
-}
-
-inline usize
-d2f_trim_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
-{
-  usize n = d2f_buffered(val, buf, buf_sz, precision);
-  usize dot = n;
-  for ( usize i = 0; i < n; ++i ) {
-    if ( buf[i] == '.' ) {
-      dot = i;
-      break;
-    }
-  }
-  usize end = n;
-  if ( dot != n ) {                                            // has a fractional part -> trim it
-    while ( end > dot + 1 && buf[end - 1] == '0' ) --end;      // strip trailing zeros
-    if ( end == dot + 1 ) end = dot;                           // drop a bare trailing '.'
-  }
-  if ( end >= 1 && buf[0] == '-' ) {
-    bool __all_zero = true;
-    for ( usize i = 1; i < end; ++i )
-      if ( buf[i] != '0' && buf[i] != '.' ) {
-        __all_zero = false;
-        break;
-      }
-    if ( __all_zero ) {
-      for ( usize i = 1; i < end; ++i ) buf[i - 1] = buf[i];      // shift left over the leading '-'
-      --end;
-    }
-  }
-  return end;
-}
-
-inline usize
-d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
-{
-  if ( buf_sz < 8 ) return 0;
-  usize pos = 0;
-
-  if ( val < 0.0 ) {
-    buf[pos++] = '-';
-    val = -val;
-  }
-
-  u64 bits;
-  {
-    union {
-      f64 f;
-      u64 u;
-    } conv;
-
-    conv.f = val;
-    bits = conv.u;
-  }
-
-  u64 ieeeMantissa = bits & ((1ull << 52) - 1);
-  u32 ieeeExponent = static_cast<u32>((bits >> 52) & 0x7FF);
-
-  if ( ieeeExponent == 0 && ieeeMantissa == 0 ) {
-    buf[pos++] = '0';
-    if ( precision > 0 ) {
-      buf[pos++] = '.';
-      for ( u32 d = 0; d < precision && pos < buf_sz - 5; ++d ) buf[pos++] = '0';
-    }
-    buf[pos++] = 'e';
-    buf[pos++] = '+';
-    buf[pos++] = '0';
-    buf[pos++] = '0';
-    return pos;
-  }
-
-  if ( ieeeExponent == 0x7FF ) {
-    if ( ieeeMantissa ) {
-      buf[0] = 'N';
-      buf[1] = 'a';
-      buf[2] = 'N';
-      return 3;
-    }
-    buf[pos] = 'I';
-    buf[pos + 1] = 'n';
-    buf[pos + 2] = 'f';
-    return pos + 3;
-  }
-
-  decimal64 dec = d2d(ieeeMantissa, ieeeExponent);
-  u64 mantissa = dec.mantissa;
-  i32 ryuExp = dec.exponent;
-  u32 ryuLen = decimalLength(mantissa);
-  i32 sciExp = ryuExp + static_cast<i32>(ryuLen) - 1;
-
-  char ryuBuf[20];
-  char *rend = ryuBuf + 20;
-  char *rstart = uint_to_buf_backward(rend, mantissa);
-
-  buf[pos++] = rstart[0];
-
-  if ( precision > 0 && pos < buf_sz - 5 ) {
-    buf[pos++] = '.';
-    u32 emitted = 0;
-    for ( u32 d = 1; emitted < precision && pos < buf_sz - 5; ++d, ++emitted ) {
-      if ( d < ryuLen )
-        buf[pos++] = rstart[d];
-      else
-        buf[pos++] = '0';
-    }
-  }
-
-  buf[pos++] = 'e';
-  if ( sciExp >= 0 )
-    buf[pos++] = '+';
-  else {
-    buf[pos++] = '-';
-    sciExp = -sciExp;
-  }
-  if ( sciExp >= 100 ) {
-    buf[pos++] = static_cast<char>('0' + sciExp / 100);
-    sciExp %= 100;
-  }
-  if ( sciExp >= 10 ) {
-    buf[pos++] = __digit_tbl[sciExp].d[0];
-    buf[pos++] = __digit_tbl[sciExp].d[1];
-  } else {
-    buf[pos++] = '0';
-    buf[pos++] = static_cast<char>('0' + sciExp);
-  }
-  return pos;
-}
+// d2f_buffered / d2f_trim_buffered / d2e_buffered used to live here. they now live in
+// conversions/fixed.hpp, in this same namespace, because a correct %f/%e needs the exact decimal
+// expansion (conversions/decimal.hpp) rather than the shortest form d2d produces -- see that
+// header for why the shortest digits cannot be re-rounded. every call site is unchanged.
 
 };      // namespace __ryu
 

@@ -22,8 +22,13 @@
 #include "../slice.hpp"
 #include "../vector.hpp"
 
+#include "conversions/chars.hpp"
+#include "conversions/error.hpp"
 #include "conversions/floating_point.hpp"
 #include "conversions/integral.hpp"
+#include "conversions/parse_float.hpp"
+
+#include "../sum.hpp"
 
 namespace micron
 {
@@ -54,35 +59,24 @@ namespace format
 namespace __impl
 {
 
-constexpr usize __max_frac_digits_f32 = 9;       // f32 has ~7 sig digits
-constexpr usize __max_frac_digits_f64 = 18;      // f64 has ~15-17 sig digits
-
-inline constexpr f64 __pow10_tbl[19] = { 1.0,
-                                         10.0,
-                                         100.0,
-                                         1000.0,
-                                         10000.0,
-                                         100000.0,
-                                         1000000.0,
-                                         10000000.0,
-                                         100000000.0,
-                                         1000000000.0,
-                                         10000000000.0,
-                                         100000000000.0,
-                                         1000000000000.0,
-                                         10000000000000.0,
-                                         100000000000000.0,
-                                         1000000000000000.0,
-                                         10000000000000000.0,
-                                         100000000000000000.0,
-                                         1000000000000000000.0 };
-
 constexpr usize __fmt_buf_size = 72;
+
+constexpr usize __fmt_float_buf_size = 1400;
+
+template<typename F>
+consteval usize
+__fmt_buf_for()
+{
+  if constexpr ( requires { F::buf_size; } )
+    return F::buf_size;
+  else
+    return __fmt_buf_size;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // format-only buffer helpers (bool, pointer)
 
-inline usize
+inline constexpr usize
 bool_to_buf(char *buf, usize buf_sz, bool val)
 {
   if ( val ) {
@@ -126,7 +120,7 @@ ptr_to_buf(char *buf, usize buf_sz, const void *ptr)
   return 2 + dlen;
 }
 
-inline usize
+inline constexpr usize
 fmt_uint_to_buf(char *buf, usize buf_sz, u64 val, u32 base, bool upper)
 {
 
@@ -139,11 +133,11 @@ fmt_uint_to_buf(char *buf, usize buf_sz, u64 val, u32 base, bool upper)
     start = micron::__impl::uint_to_buf_base_backward(tend, val, base, upper);
   usize len = static_cast<usize>(tend - start);
   if ( len > buf_sz ) len = buf_sz;
-  micron::bytecpy(buf, start, len);
+  micron::memcpy(buf, start, len);
   return len;
 }
 
-inline usize
+inline constexpr usize
 fmt_int_to_buf(char *buf, usize buf_sz, i64 val, u32 base, bool upper)
 {
   usize off = 0;
@@ -166,44 +160,23 @@ fmt_float_to_buf(char *buf, usize buf_sz, f64 val, u32 precision)
 }
 
 inline usize
-fmt_float_to_buf_typed(char *buf, usize buf_sz, f64 val, u32 precision, char type, bool has_prec)
+fmt_float_to_buf_typed(char *buf, usize buf_sz, f64 val, u32 precision, char type, bool has_prec, bool alt = false)
 {
   switch ( type ) {
+  case 'a':
+  case 'A':
+    return micron::__impl::__ryu::d2a_buffered(val, buf, buf_sz, precision, has_prec, type == 'A');
   case 'e':
-  case 'E':
-    return micron::__impl::__ryu::d2e_buffered(val, buf, buf_sz, precision);
-  case 'g':
-  case 'G': {
-    char tmp[26];
-    usize n = micron::__impl::__ryu::d2s_buffered(val, tmp);
-    i32 exp10 = 0;
-    bool found_e = false;
-    for ( usize i = 0; i < n; ++i ) {
-      if ( tmp[i] == 'e' || tmp[i] == 'E' ) {
-        found_e = true;
-        bool eneg = false;
-        usize j = i + 1;
-        if ( j < n && tmp[j] == '-' ) {
-          eneg = true;
-          ++j;
-        } else if ( j < n && tmp[j] == '+' ) {
-          ++j;
-        }
-        while ( j < n && tmp[j] >= '0' && tmp[j] <= '9' ) {
-          exp10 = exp10 * 10 + (tmp[j] - '0');
-          ++j;
-        }
-        if ( eneg ) exp10 = -exp10;
-        break;
-      }
-    }
-    if ( !found_e ) {
-      return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, precision);
-    }
-    u32 g_prec = has_prec ? (precision == 0 ? 1u : precision) : 6u;
-    if ( exp10 < -4 || exp10 >= static_cast<i32>(g_prec) ) return micron::__impl::__ryu::d2e_buffered(val, buf, buf_sz, g_prec - 1);
-    return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, g_prec - 1 - exp10);
+  case 'E': {
+    const usize n = micron::__impl::__ryu::d2e_buffered(val, buf, buf_sz, precision);
+    if ( type == 'E' )
+      for ( usize i = 0; i < n; ++i )
+        if ( buf[i] == 'e' ) buf[i] = 'E';
+    return n;
   }
+  case 'g':
+  case 'G':
+    return micron::__impl::__ryu::d2g_buffered(val, buf, buf_sz, has_prec ? precision : 6u, alt, type == 'G');
   case 'f':
   case 'F':
   default:
@@ -224,7 +197,16 @@ struct fmt_spec {
   bool alt = false;      // '#' flag
 };
 
-inline fmt_spec
+constexpr u32 __fmt_spec_max = 1u << 24;
+
+constexpr inline u32
+__spec_accum(u32 acc, char digit) noexcept
+{
+  if ( acc > __fmt_spec_max ) return acc;
+  return acc * 10u + static_cast<u32>(digit - '0');
+}
+
+inline constexpr fmt_spec
 parse_spec(const char *start, const char *end)
 {
   fmt_spec s{};
@@ -248,7 +230,7 @@ parse_spec(const char *start, const char *end)
 
   // width
   while ( p < end && *p >= '0' && *p <= '9' ) {
-    s.width = s.width * 10 + (*p - '0');
+    s.width = __spec_accum(s.width, *p);
     ++p;
   }
 
@@ -258,7 +240,7 @@ parse_spec(const char *start, const char *end)
     s.prec = 0;
     s.has_prec = true;
     while ( p < end && *p >= '0' && *p <= '9' ) {
-      s.prec = s.prec * 10 + (*p - '0');
+      s.prec = __spec_accum(s.prec, *p);
       ++p;
     }
   }
@@ -303,6 +285,44 @@ apply_padding(hstring<schar> &out, const char *content, usize content_len, const
     out.append(content, content_len);
     for ( usize i = 0; i < right; ++i ) out += fill;
   }
+}
+
+inline usize
+fmt_u128_to_buf(char *buf, usize buf_sz, const u128 &val, const fmt_spec &spec)
+{
+  u32 base = 10;
+  bool upper = false;
+  if ( spec.type == 'x' )
+    base = 16;
+  else if ( spec.type == 'X' ) {
+    base = 16;
+    upper = true;
+  } else if ( spec.type == 'o' )
+    base = 8;
+  else if ( spec.type == 'b' )
+    base = 2;
+
+  usize off = 0;
+  if ( spec.alt ) {
+    if ( base == 16 && buf_sz >= 2 ) {
+      buf[0] = '0';
+      buf[1] = upper ? 'X' : 'x';
+      off = 2;
+    } else if ( base == 8 && buf_sz >= 1 ) {
+      buf[0] = '0';
+      off = 1;
+    } else if ( base == 2 && buf_sz >= 2 ) {
+      buf[0] = '0';
+      buf[1] = 'b';
+      off = 2;
+    }
+  }
+  const usize n = micron::to_chars(buf + off, buf_sz - off, val, base, upper);
+  // to_chars answers 0 for "did not fit", so `off + n` would report the base prefix alone as a
+  // complete rendering -- echof("{:#b}", ~u128(0)) printed "0b" and dropped all 128 digits.
+  // propagate the 0 instead, which is what every other writer in this layer means by failure
+  if ( n == 0 ) return 0;
+  return off + n;
 }
 
 };      // namespace __impl
@@ -2090,101 +2110,29 @@ replace_all(const char (&str)[N], const char (&lhs)[M], const char (&rhs)[R])
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // string-to-numeric (to_float, to_double, to_integer, to_long)
 
+namespace __pf = micron::__impl::__pf;
+
 template<typename T>
 f32
 to_float(const T &o)
 {
   const char *p = reinterpret_cast<const char *>(o.cdata());
-  // skip leading whitespace
-  while ( *p == ' ' || *p == '\t' ) ++p;
-  bool neg = false;
-  if ( *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( *p == '+' )
-    ++p;
-  // integer part
-  u64 ipart = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
-  // fractional part
-  u64 frac = 0;
-  usize fdigits = 0;
-  if ( *p == '.' ) {
-    ++p;
-    while ( static_cast<u32>(*p - '0') <= 9 ) {
-      if ( fdigits < __impl::__max_frac_digits_f32 ) {
-        frac = frac * 10 + (*p - '0');
-        ++fdigits;
-      }
-      ++p;
-    }
-  }
-  f32 result = static_cast<f32>(ipart);
-  if ( fdigits > 0 ) result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
-  return neg ? -result : result;
+  if ( p == nullptr ) return 0.0f;
+  return __pf::__parse_prefix<f32, true>(p, p + o.size());
 }
 
 inline f32
 to_float(const char *buf)
 {
   if ( buf == nullptr ) return 0.0f;
-  const char *p = buf;
-  while ( *p == ' ' || *p == '\t' ) ++p;
-  bool neg = false;
-  if ( *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( *p == '+' )
-    ++p;
-  u64 ipart = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
-  u64 frac = 0;
-  usize fdigits = 0;
-  if ( *p == '.' ) {
-    ++p;
-    while ( static_cast<u32>(*p - '0') <= 9 ) {
-      if ( fdigits < __impl::__max_frac_digits_f32 ) {
-        frac = frac * 10 + (*p - '0');
-        ++fdigits;
-      }
-      ++p;
-    }
-  }
-  f32 result = static_cast<f32>(ipart);
-  if ( fdigits > 0 ) result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
-  return neg ? -result : result;
+  return __pf::__parse_prefix<f32, false>(buf, static_cast<const char *>(nullptr));
 }
 
 inline f32
 to_float(const char *buf, usize len)
 {
   if ( buf == nullptr || len == 0 ) return 0.0f;
-  const char *p = buf;
-  const char *end = buf + len;
-  while ( p < end && (*p == ' ' || *p == '\t') ) ++p;
-  bool neg = false;
-  if ( p < end && *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( p < end && *p == '+' )
-    ++p;
-  u64 ipart = 0;
-  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
-  u64 frac = 0;
-  usize fdigits = 0;
-  if ( p < end && *p == '.' ) {
-    ++p;
-    while ( p < end && static_cast<u32>(*p - '0') <= 9 ) {
-      if ( fdigits < __impl::__max_frac_digits_f32 ) {
-        frac = frac * 10 + (*p - '0');
-        ++fdigits;
-      }
-      ++p;
-    }
-  }
-  f32 result = static_cast<f32>(ipart);
-  if ( fdigits > 0 ) result += static_cast<f32>(static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits]);
-  return neg ? -result : result;
+  return __pf::__parse_prefix<f32, true>(buf, buf + len);
 }
 
 template<usize N>
@@ -2199,93 +2147,22 @@ f64
 to_double(const T &o)
 {
   const char *p = reinterpret_cast<const char *>(o.cdata());
-  while ( *p == ' ' || *p == '\t' ) ++p;
-  bool neg = false;
-  if ( *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( *p == '+' )
-    ++p;
-  u64 ipart = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
-  u64 frac = 0;
-  usize fdigits = 0;
-  if ( *p == '.' ) {
-    ++p;
-    while ( static_cast<u32>(*p - '0') <= 9 ) {
-      if ( fdigits < __impl::__max_frac_digits_f64 ) {
-        frac = frac * 10 + (*p - '0');
-        ++fdigits;
-      }
-      ++p;
-    }
-  }
-  f64 result = static_cast<f64>(ipart);
-  if ( fdigits > 0 ) result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
-  return neg ? -result : result;
+  if ( p == nullptr ) return 0.0;
+  return __pf::__parse_prefix<f64, true>(p, p + o.size());
 }
 
 inline f64
 to_double(const char *buf)
 {
   if ( buf == nullptr ) return 0.0;
-  const char *p = buf;
-  while ( *p == ' ' || *p == '\t' ) ++p;
-  bool neg = false;
-  if ( *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( *p == '+' )
-    ++p;
-  u64 ipart = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
-  u64 frac = 0;
-  usize fdigits = 0;
-  if ( *p == '.' ) {
-    ++p;
-    while ( static_cast<u32>(*p - '0') <= 9 ) {
-      if ( fdigits < __impl::__max_frac_digits_f64 ) {
-        frac = frac * 10 + (*p - '0');
-        ++fdigits;
-      }
-      ++p;
-    }
-  }
-  f64 result = static_cast<f64>(ipart);
-  if ( fdigits > 0 ) result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
-  return neg ? -result : result;
+  return __pf::__parse_prefix<f64, false>(buf, static_cast<const char *>(nullptr));
 }
 
 inline f64
 to_double(const char *buf, usize len)
 {
   if ( buf == nullptr || len == 0 ) return 0.0;
-  const char *p = buf;
-  const char *end = buf + len;
-  while ( p < end && (*p == ' ' || *p == '\t') ) ++p;
-  bool neg = false;
-  if ( p < end && *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( p < end && *p == '+' )
-    ++p;
-  u64 ipart = 0;
-  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) ipart = ipart * 10 + (*p++ - '0');
-  u64 frac = 0;
-  usize fdigits = 0;
-  if ( p < end && *p == '.' ) {
-    ++p;
-    while ( p < end && static_cast<u32>(*p - '0') <= 9 ) {
-      if ( fdigits < __impl::__max_frac_digits_f64 ) {
-        frac = frac * 10 + (*p - '0');
-        ++fdigits;
-      }
-      ++p;
-    }
-  }
-  f64 result = static_cast<f64>(ipart);
-  if ( fdigits > 0 ) result += static_cast<f64>(frac) / __impl::__pow10_tbl[fdigits];
-  return neg ? -result : result;
+  return __pf::__parse_prefix<f64, true>(buf, buf + len);
 }
 
 template<usize N>
@@ -2295,56 +2172,125 @@ to_double(const char (&buf)[N])
   return to_double(static_cast<const char *>(buf), N - 1);
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%
+// strict parse
+namespace __impl
+{
+
+template<typename F, typename T>
+inline micron::option<F, parse_error>
+__parse_opt(const T *buf, usize len)
+{
+  using Ret = micron::option<F, parse_error>;
+  if ( buf == nullptr || len == 0 ) return Ret{ parse_malformed };
+
+  const T *stop = nullptr;
+  F v = static_cast<F>(0);
+  const __pf::__status st = __pf::__parse<F, true>(buf, buf + len, v, stop);
+  if ( st == __pf::__status::invalid || stop != buf + len ) return Ret{ parse_malformed };
+  if ( st == __pf::__status::out_of_range ) return Ret{ parse_out_of_range };
+  return Ret{ v };
+}
+
+};      // namespace __impl
+
+inline micron::option<f64, parse_error>
+parse_double(const char *buf, usize len)
+{
+  return __impl::__parse_opt<f64>(buf, len);
+}
+
+inline micron::option<f32, parse_error>
+parse_float(const char *buf, usize len)
+{
+  return __impl::__parse_opt<f32>(buf, len);
+}
+
+inline micron::option<f64, parse_error>
+parse_double(const char *buf)
+{
+  return __impl::__parse_opt<f64>(buf, buf == nullptr ? 0 : micron::strlen(buf));
+}
+
+inline micron::option<f32, parse_error>
+parse_float(const char *buf)
+{
+  return __impl::__parse_opt<f32>(buf, buf == nullptr ? 0 : micron::strlen(buf));
+}
+
+template<usize N>
+inline micron::option<f64, parse_error>
+parse_double(const char (&buf)[N])
+{
+  return __impl::__parse_opt<f64>(static_cast<const char *>(buf), N - 1);
+}
+
+template<usize N>
+inline micron::option<f32, parse_error>
+parse_float(const char (&buf)[N])
+{
+  return __impl::__parse_opt<f32>(static_cast<const char *>(buf), N - 1);
+}
+
+template<typename T>
+  requires(requires(const T &t) {
+    { t.cdata() };
+    { t.size() };
+  })
+inline micron::option<f64, parse_error>
+parse_double(const T &o)
+{
+  return __impl::__parse_opt<f64>(reinterpret_cast<const char *>(o.cdata()), o.size());
+}
+
+template<typename T>
+  requires(requires(const T &t) {
+    { t.cdata() };
+    { t.size() };
+  })
+inline micron::option<f32, parse_error>
+parse_float(const T &o)
+{
+  return __impl::__parse_opt<f32>(reinterpret_cast<const char *>(o.cdata()), o.size());
+}
+
+inline i32
+__to_integer_core(const char *p, const char *end)
+{
+  while ( p != end && (*p == ' ' || *p == '\t') ) ++p;
+  bool neg = false;
+  if ( p != end && *p == '-' ) {
+    neg = true;
+    ++p;
+  } else if ( p != end && *p == '+' )
+    ++p;
+  u32 acc = 0;
+  while ( p != end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + static_cast<u32>(*p++ - '0');
+  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
+}
+
 template<typename T>
 i32
 to_integer(const T &o)
 {
   const char *p = reinterpret_cast<const char *>(o.cdata());
-  while ( *p == ' ' || *p == '\t' ) ++p;
-  bool neg = false;
-  if ( *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( *p == '+' )
-    ++p;
-  u32 acc = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
+  return __to_integer_core(p, p + o.size());
 }
 
 inline i32
 to_integer(const char *buf)
 {
   if ( buf == nullptr ) return 0;
-  const char *p = buf;
-  while ( *p == ' ' || *p == '\t' ) ++p;
-  bool neg = false;
-  if ( *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( *p == '+' )
-    ++p;
-  u32 acc = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
+  const char *e = buf;
+  while ( *e ) ++e;
+  return __to_integer_core(buf, e);
 }
 
 inline i32
 to_integer(const char *buf, usize len)
 {
   if ( buf == nullptr || len == 0 ) return 0;
-  const char *p = buf;
-  const char *end = buf + len;
-  while ( p < end && (*p == ' ' || *p == '\t') ) ++p;
-  bool neg = false;
-  if ( p < end && *p == '-' ) {
-    neg = true;
-    ++p;
-  } else if ( p < end && *p == '+' )
-    ++p;
-  u32 acc = 0;
-  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
-  return neg ? static_cast<i32>(0u - acc) : static_cast<i32>(acc);
+  return __to_integer_core(buf, buf + len);
 }
 
 template<usize N>
@@ -2649,8 +2595,8 @@ limit(const char *str, usize width)
 inline hstring<schar>
 precision(f64 value, u32 digits)
 {
-  char buf[__impl::__fmt_buf_size];
-  usize n = micron::__impl::__ryu::d2f_buffered(value, buf, __impl::__fmt_buf_size, digits);
+  char buf[__impl::__fmt_float_buf_size];
+  usize n = micron::__impl::__ryu::d2f_buffered(value, buf, __impl::__fmt_float_buf_size, digits);
   return hstring<schar>(buf, buf + n);
 }
 
@@ -3009,25 +2955,31 @@ template<> struct formatter<u8> {
 };
 
 template<> struct formatter<f32> {
+  static constexpr usize buf_size = __impl::__fmt_float_buf_size;
+
   static inline usize
   write(char *buf, usize buf_sz, f32 val, const __impl::fmt_spec &spec)
   {
     u32 prec = spec.has_prec ? spec.prec : 6;
-    return __impl::fmt_float_to_buf_typed(buf, buf_sz, static_cast<f64>(val), prec, spec.type, spec.has_prec);
+    return __impl::fmt_float_to_buf_typed(buf, buf_sz, static_cast<f64>(val), prec, spec.type, spec.has_prec, spec.alt);
   }
 };
 
 template<> struct formatter<f64> {
+  static constexpr usize buf_size = __impl::__fmt_float_buf_size;
+
   static inline usize
   write(char *buf, usize buf_sz, f64 val, const __impl::fmt_spec &spec)
   {
     u32 prec = spec.has_prec ? spec.prec : 6;
-    return __impl::fmt_float_to_buf_typed(buf, buf_sz, val, prec, spec.type, spec.has_prec);
+    return __impl::fmt_float_to_buf_typed(buf, buf_sz, val, prec, spec.type, spec.has_prec, spec.alt);
   }
 };
 
 #if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L && defined(__micron_arch_amd64)
 template<> struct formatter<double> {
+  static constexpr usize buf_size = __impl::__fmt_float_buf_size;
+
   static inline usize
   write(char *buf, usize buf_sz, double val, const __impl::fmt_spec &spec)
   {
@@ -3036,6 +2988,8 @@ template<> struct formatter<double> {
 };
 
 template<> struct formatter<float> {
+  static constexpr usize buf_size = __impl::__fmt_float_buf_size;
+
   static inline usize
   write(char *buf, usize buf_sz, float val, const __impl::fmt_spec &spec)
   {
@@ -3044,22 +2998,138 @@ template<> struct formatter<float> {
 };
 #endif
 
+template<> struct formatter<u128> {
+  static constexpr usize buf_size = 160;
+
+  static inline usize
+  write(char *buf, usize buf_sz, const u128 &val, const __impl::fmt_spec &spec)
+  {
+    return __impl::fmt_u128_to_buf(buf, buf_sz, val, spec);
+  }
+};
+
+template<> struct formatter<i128> {
+  static constexpr usize buf_size = 160;
+
+  static inline usize
+  write(char *buf, usize buf_sz, const i128 &val, const __impl::fmt_spec &spec)
+  {
+    if ( spec.type == 'x' || spec.type == 'X' || spec.type == 'o' || spec.type == 'b' )
+      return __impl::fmt_u128_to_buf(buf, buf_sz, micron::__i128_bits(val), spec);
+
+    usize off = 0;
+    u128 mag = micron::__i128_mag(val);
+    if ( micron::__i128_neg(val) ) {
+      if ( buf_sz == 0 ) return 0;
+      buf[0] = '-';
+      off = 1;
+    }
+    const usize n = __impl::fmt_u128_to_buf(buf + off, buf_sz - off, mag, spec);
+    if ( n == 0 ) return 0;
+    return off + n;
+  }
+};
+
 template<> struct formatter<bool> {
   static inline usize
-  write(char *buf, usize buf_sz, bool val, const __impl::fmt_spec &)
+  write(char *buf, usize buf_sz, bool val, const __impl::fmt_spec &spec)
   {
-    return __impl::bool_to_buf(buf, buf_sz, val);
+    switch ( spec.type ) {
+    case 'd':
+    case 'x':
+    case 'X':
+    case 'o':
+    case 'b':
+      return formatter<u32>::write(buf, buf_sz, static_cast<u32>(val ? 1u : 0u), spec);
+    default:
+      return __impl::bool_to_buf(buf, buf_sz, val);
+    }
   }
 };
 
 template<> struct formatter<char> {
   static inline usize
-  write(char *buf, usize buf_sz, char val, const __impl::fmt_spec &)
+  write(char *buf, usize buf_sz, char val, const __impl::fmt_spec &spec)
   {
-    if ( buf_sz == 0 ) return 0;
-    buf[0] = val;
+    switch ( spec.type ) {
+    case 'd':
+    case 'x':
+    case 'X':
+    case 'o':
+    case 'b':
+      return formatter<u32>::write(buf, buf_sz, static_cast<u32>(static_cast<unsigned char>(val)), spec);
+    default:
+      if ( buf_sz == 0 ) return 0;
+      buf[0] = val;
+      return 1;
+    }
+  }
+};
+
+inline usize
+__cp_to_utf8(char *buf, usize buf_sz, u32 cp)
+{
+  if ( cp > 0x10FFFFu || (cp >= 0xD800u && cp <= 0xDFFFu) ) return 0;      // out of range / surrogate
+  if ( cp < 0x80u ) {
+    if ( buf_sz < 1 ) return 0;
+    buf[0] = static_cast<char>(cp);
     return 1;
   }
+  if ( cp < 0x800u ) {
+    if ( buf_sz < 2 ) return 0;
+    buf[0] = static_cast<char>(0xC0u | (cp >> 6));
+    buf[1] = static_cast<char>(0x80u | (cp & 0x3Fu));
+    return 2;
+  }
+  if ( cp < 0x10000u ) {
+    if ( buf_sz < 3 ) return 0;
+    buf[0] = static_cast<char>(0xE0u | (cp >> 12));
+    buf[1] = static_cast<char>(0x80u | ((cp >> 6) & 0x3Fu));
+    buf[2] = static_cast<char>(0x80u | (cp & 0x3Fu));
+    return 3;
+  }
+  if ( buf_sz < 4 ) return 0;
+  buf[0] = static_cast<char>(0xF0u | (cp >> 18));
+  buf[1] = static_cast<char>(0x80u | ((cp >> 12) & 0x3Fu));
+  buf[2] = static_cast<char>(0x80u | ((cp >> 6) & 0x3Fu));
+  buf[3] = static_cast<char>(0x80u | (cp & 0x3Fu));
+  return 4;
+}
+
+template<typename C> struct __wide_char_formatter {
+  static inline usize
+  write(char *buf, usize buf_sz, C val, const __impl::fmt_spec &spec)
+  {
+    const u32 cp = static_cast<u32>(val);
+    switch ( spec.type ) {
+    case 'c':
+      return __cp_to_utf8(buf, buf_sz, cp);
+    case 'd':
+    case 'x':
+    case 'X':
+    case 'o':
+    case 'b':
+    default:
+      return formatter<u32>::write(buf, buf_sz, cp, spec);
+    }
+  }
+};
+
+template<> struct formatter<c8> {
+  static inline usize
+  write(char *buf, usize buf_sz, c8 val, const __impl::fmt_spec &spec)
+  {
+    return formatter<char>::write(buf, buf_sz, static_cast<char>(val), spec);
+  }
+};
+
+template<> struct formatter<c16>: __wide_char_formatter<c16> {
+};
+
+template<> struct formatter<c32>: __wide_char_formatter<c32> {
+};
+
+template<> struct formatter<wchar_t>: __wide_char_formatter<wchar_t> {
 };
 
 template<> struct formatter<const char *> {
@@ -3119,7 +3189,8 @@ template<typename T> struct formatter<T, micron::enable_if_t<micron::is_string_v
   static inline usize
   write(char *buf, usize buf_sz, const T &val, const __impl::fmt_spec &spec)
   {
-    usize len = val.size();
+    // string_len, not size(): fixed_string models is_string but its size() is the CAPACITY
+    usize len = micron::string_len(val);
     if ( spec.has_prec && spec.prec < len ) len = spec.prec;
     if ( len > buf_sz ) len = buf_sz;
     micron::bytecpy(buf, val.begin(), len);
@@ -3147,8 +3218,9 @@ fmt_element(hstring<schar> &out, const E &e, const fmt_spec &spec)
 {
   using U = micron::remove_cvref_t<E>;
   if constexpr ( requires(char *b, const U &v) { formatter<U>::write(b, usize{}, v, spec); } ) {
-    char buf[__fmt_buf_size];
-    usize n = formatter<U>::write(buf, __fmt_buf_size, e, spec);
+    constexpr usize __bs = __fmt_buf_for<formatter<U>>();
+    char buf[__bs];
+    usize n = formatter<U>::write(buf, __bs, e, spec);
     apply_padding(out, buf, n, spec);
   } else if constexpr ( requires(hstring<schar> &o, const U &v) { formatter<U>::write_str(o, v, spec); } ) {
     formatter<U>::write_str(out, e, spec);
@@ -3230,9 +3302,10 @@ template<typename T>
 inline hstring<schar>
 format_value(const T &val)
 {
-  char buf[__impl::__fmt_buf_size];
+  constexpr usize bsz = __impl::__fmt_buf_for<formatter<T>>();
+  char buf[bsz];
   __impl::fmt_spec spec{};
-  usize n = formatter<T>::write(buf, __impl::__fmt_buf_size, val, spec);
+  usize n = formatter<T>::write(buf, bsz, val, spec);
   return hstring<schar>(buf, buf + n);
 }
 
@@ -3317,8 +3390,9 @@ format_one(hstring<schar> &out, const char *spec_start, const char *spec_end, us
   fmt_spec spec = parse_spec(spec_start, spec_end);
   using U = micron::remove_cvref_t<T>;
   if constexpr ( requires(char *b, const U &v) { formatter<U>::write(b, usize{}, v, spec); } ) {
-    char buf[__fmt_buf_size];
-    usize n = formatter<U>::write(buf, __fmt_buf_size, val, spec);
+    constexpr usize bsz = __fmt_buf_for<formatter<U>>();
+    char buf[bsz];
+    usize n = formatter<U>::write(buf, bsz, val, spec);
     apply_padding(out, buf, n, spec);
   } else if constexpr ( requires(hstring<schar> &o, const U &v) { formatter<U>::write_str(o, v, spec); } ) {
     // containers/maps/pairs stream into the output; the spec applies per element

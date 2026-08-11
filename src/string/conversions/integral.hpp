@@ -19,7 +19,7 @@ namespace micron
 // range parsers; hstring mid alloc free
 
 template<typename T = char>
-bool
+constexpr bool
 try_parse_uint64(const T *p, usize n, u64 &out)
 {
   out = 0;
@@ -51,7 +51,7 @@ try_parse_uint64(const T *p, usize n, u64 &out)
 }
 
 template<typename T = char>
-bool
+constexpr bool
 try_parse_int64(const T *p, usize n, i64 &out)
 {
   out = 0;
@@ -94,7 +94,7 @@ try_parse_int64(const T *p, usize n, i64 &out)
 
 // optional "0x"/"0X" prefix
 template<typename T = char>
-bool
+constexpr bool
 try_parse_hex64(const T *p, usize n, u64 &out)
 {
   out = 0;
@@ -122,7 +122,7 @@ try_parse_hex64(const T *p, usize n, u64 &out)
 }
 
 template<typename T = char>
-bool
+constexpr bool
 try_parse_hex_bytes(const T *p, usize n, u8 *out, usize nbytes)
 {
   if ( p == nullptr || out == nullptr ) return false;
@@ -135,6 +135,33 @@ try_parse_hex_bytes(const T *p, usize n, u8 *out, usize nbytes)
   for ( usize i = 0; i < nbytes; ++i )
     out[i] = static_cast<u8>((__impl::hex_digit_val(p[2 * i]) << 4) | __impl::hex_digit_val(p[2 * i + 1]));
   return true;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// bool
+
+template<typename T = char>
+constexpr bool
+try_parse_bool(const T *p, usize n, bool &out)
+{
+  out = false;
+  if ( p == nullptr ) return false;
+  if ( n == 1 ) {
+    if ( p[0] == static_cast<T>('1') ) {
+      out = true;
+      return true;
+    }
+    return p[0] == static_cast<T>('0');
+  }
+  if ( n == 4 && p[0] == static_cast<T>('t') && p[1] == static_cast<T>('r') && p[2] == static_cast<T>('u')
+       && p[3] == static_cast<T>('e') ) {
+    out = true;
+    return true;
+  }
+  if ( n == 5 && p[0] == static_cast<T>('f') && p[1] == static_cast<T>('a') && p[2] == static_cast<T>('l')
+       && p[3] == static_cast<T>('s') && p[4] == static_cast<T>('e') )
+    return true;
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -405,7 +432,7 @@ string_to_uint16(const micron::hstring<T> &buf)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // offsets
 
-inline i64
+inline constexpr i64
 parse_int(const char *&ptr, const char *end)
 {
   bool neg = false;
@@ -436,7 +463,7 @@ parse_int(const char *&ptr, const char *end)
   return -acc;
 }
 
-inline u64
+inline constexpr u64
 parse_uint(const char *&ptr, const char *end)
 {
   u64 result = 0;
@@ -457,7 +484,7 @@ parse_uint(const char *&ptr, const char *end)
   return result;
 }
 
-inline i64
+inline constexpr i64
 parse_hex(const char *&ptr, const char *end)
 {
   i64 result = 0;
@@ -478,15 +505,143 @@ parse_hex(const char *&ptr, const char *end)
   return neg ? -result : result;
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// cursor parsers, whitespace-tolerant and full-width
+//
+// The three above (parse_int/parse_uint/parse_hex) skip only ' ', and parse_hex accumulates into
+// an i64 and BREAKS once the value would pass 2^63 -- so it cannot read a full 64-bit address,
+// which is the main thing a /proc/self/maps-style caller wants. Rather than change either (their
+// current behaviour is what their existing callers see), these are the forms the kernel-facing
+// parsers actually need: tab/newline tolerant, and unsigned across the whole range.
+
+inline constexpr bool
+__is_parse_ws(char c) noexcept
+{
+  return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v' || c == '\f';
+}
+
+inline constexpr u64
+parse_uint_ws(const char *&ptr, const char *end) noexcept
+{
+  while ( ptr != end && __is_parse_ws(*ptr) ) ++ptr;
+  if ( ptr != end && *ptr == '+' ) ++ptr;
+  u64 v = 0;
+  while ( ptr != end && *ptr >= '0' && *ptr <= '9' ) v = v * 10u + static_cast<u64>(*ptr++ - '0');
+  return v;
+}
+
+inline constexpr i64
+parse_int_ws(const char *&ptr, const char *end) noexcept
+{
+  while ( ptr != end && __is_parse_ws(*ptr) ) ++ptr;
+  bool neg = false;
+  if ( ptr != end && *ptr == '-' ) {
+    neg = true;
+    ++ptr;
+  } else if ( ptr != end && *ptr == '+' )
+    ++ptr;
+  u64 v = 0;
+  while ( ptr != end && *ptr >= '0' && *ptr <= '9' ) v = v * 10u + static_cast<u64>(*ptr++ - '0');
+  return neg ? static_cast<i64>(0ull - v) : static_cast<i64>(v);
+}
+
+// the full 64-bit hex cursor parse. optional 0x/0X prefix; no early break, so an address with
+// the top bit set reads back intact.
+inline constexpr u64
+parse_hex_u64(const char *&ptr, const char *end) noexcept
+{
+  while ( ptr != end && __is_parse_ws(*ptr) ) ++ptr;
+  if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') ) ptr += 2;
+  u64 v = 0;
+  while ( ptr != end ) {
+    const int d = __impl::hex_digit_val(*ptr);
+    if ( d < 0 ) break;
+    v = (v << 4) | static_cast<u64>(d);
+    ++ptr;
+  }
+  return v;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// width-dispatching digit emission
+//
+// the plain `static_cast<u64>(uval)` these call sites used to do silently dropped the top 64 bits
+// of a u128. dispatch on sizeof instead so one body serves both widths.
+
+template<typename U>
+inline constexpr char *
+__emit_dec(char *tend, U uval)
+{
+  if constexpr ( sizeof(U) > sizeof(u64) )
+    return __impl::uint128_to_buf_backward(tend, __impl::__u128_hi(uval), __impl::__u128_lo(uval));
+  else
+    return __impl::uint_to_buf_backward(tend, static_cast<u64>(uval));
+}
+
+template<typename U>
+inline constexpr char *
+__emit_base(char *tend, U uval, u32 base, bool upper)
+{
+  if constexpr ( sizeof(U) > sizeof(u64) )
+    return __impl::uint128_to_buf_base_backward(tend, __impl::__u128_hi(uval), __impl::__u128_lo(uval), base, upper);
+  else
+    return __impl::uint_to_buf_base_backward(tend, static_cast<u64>(uval), base, upper);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ints to string
 // (uses 10^8 method)
 
 template<typename I, typename T = char>
-  requires micron::is_integral_v<I>
+  requires micron::is_same_v<micron::remove_cv_t<I>, u128>
+inline micron::hstring<T>
+int_to_string(const u128 &n)
+{
+  constexpr usize cap = 48;      // u128 max is 39 decimal digits
+  char tmp[cap];
+  char *tend = tmp + cap;
+  char *start = __impl::uint128_to_buf_base_backward(tend, __impl::__u128_hi(n), __impl::__u128_lo(n), 10u, false);
+  const usize len = static_cast<usize>(tend - start);
+  micron::hstring<T> result(len);
+  micron::memcpy(&result[0], start, len);
+  if ( result.max_size() > len ) result[len] = T{ 0 };
+  result._buf_set_length(len);
+  return result;
+}
+
+template<typename I, typename T = char>
+  requires micron::is_same_v<micron::remove_cv_t<I>, i128>
+inline micron::hstring<T>
+int_to_string(const i128 &n)
+{
+  constexpr usize cap = 48;
+#if defined(__micron_arch_width_64)
+  const bool neg = n < 0;
+  const u128 mag = neg ? (static_cast<u128>(0) - static_cast<u128>(n)) : static_cast<u128>(n);
+#else
+  const bool neg = n.__is_negative();
+  const u128 mag = n.__abs();
+#endif
+  char tmp[cap];
+  char *tend = tmp + cap;
+  char *start = __impl::uint128_to_buf_base_backward(tend, __impl::__u128_hi(mag), __impl::__u128_lo(mag), 10u, false);
+  if ( neg ) *--start = '-';
+  const usize len = static_cast<usize>(tend - start);
+  micron::hstring<T> result(len);
+  micron::memcpy(&result[0], start, len);
+  if ( result.max_size() > len ) result[len] = T{ 0 };
+  result._buf_set_length(len);
+  return result;
+}
+
+template<typename I, typename T = char>
+  requires(micron::is_integral_v<I> && !micron::is_same_v<micron::remove_cv_t<I>, u128> && !micron::is_same_v<micron::remove_cv_t<I>, i128>)
 inline micron::hstring<T>
 int_to_string(I n)
 {
+  static_assert(!micron::is_same_v<micron::remove_cv_t<I>, bool>,
+                "micron::int_to_string: bool has no digit representation -- use micron::to_chars(buf, cap, b) "
+                "or format(\"{}\", b)");
   constexpr usize cap = __impl::max_digits_v<I>;
   char tmp[cap];
   char *tend = tmp + cap;
@@ -503,7 +658,7 @@ int_to_string(I n)
   } else {
     uval = static_cast<U>(n);
   }
-  char *start = __impl::uint_to_buf_backward(tend, static_cast<u64>(uval));
+  char *start = __emit_dec(tend, uval);
   if ( neg ) *--start = '-';
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
@@ -522,7 +677,7 @@ uint_to_string(I n)
   constexpr usize cap = __impl::max_digits_v<U>;
   char tmp[cap];
   char *tend = tmp + cap;
-  char *start = __impl::uint_to_buf_backward(tend, static_cast<u64>(static_cast<U>(n)));
+  char *start = __emit_dec(tend, static_cast<U>(n));
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
   micron::memcpy(&result[0], start, len);
@@ -552,7 +707,7 @@ int_to_string_stack(I n)
   } else {
     uval = static_cast<U>(n);
   }
-  char *start = __impl::uint_to_buf_backward(tend, static_cast<u64>(uval));
+  char *start = __emit_dec(tend, uval);
   if ( neg ) *--start = '-';
   usize len = static_cast<usize>(tend - start);
   micron::sstring<N, T> result;
@@ -572,7 +727,7 @@ uint_to_string_stack(I n)
   constexpr usize cap = __impl::max_digits_v<U>;
   char tmp[cap];
   char *tend = tmp + cap;
-  char *start = __impl::uint_to_buf_backward(tend, static_cast<u64>(static_cast<U>(n)));
+  char *start = __emit_dec(tend, static_cast<U>(n));
   usize len = static_cast<usize>(tend - start);
   micron::sstring<N, T> result;
   T *out = &result[0];
@@ -580,6 +735,17 @@ uint_to_string_stack(I n)
   out[len] = '\0';
   result._buf_set_length(len);
   return result;
+}
+
+template<typename T = char>
+inline micron::hstring<T>
+bool_to_string(bool v)
+{
+  const char *s = v ? "true" : "false";
+  const usize n = v ? 4u : 5u;
+  micron::hstring<T> r;
+  for ( usize i = 0; i < n; ++i ) r.push_back(static_cast<T>(s[i]));
+  return r;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -590,8 +756,8 @@ template<typename I, typename T = char>
 inline micron::hstring<T>
 int_to_string_base(I n, u32 base, bool upper = false)
 {
-  char tmp[72];
-  char *tend = tmp + 72;
+  char tmp[136];
+  char *tend = tmp + 136;
   using U = micron::make_unsigned_t<I>;
   U uval;
   bool neg = false;
@@ -605,7 +771,7 @@ int_to_string_base(I n, u32 base, bool upper = false)
   } else {
     uval = static_cast<U>(n);
   }
-  char *start = __impl::uint_to_buf_base_backward(tend, static_cast<u64>(uval), base, upper);
+  char *start = __emit_base(tend, uval, base, upper);
   if ( neg ) *--start = '-';
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
@@ -621,9 +787,9 @@ inline micron::hstring<T>
 uint_to_string_base(I n, u32 base, bool upper = false)
 {
   using U = micron::make_unsigned_t<I>;
-  char tmp[72];
-  char *tend = tmp + 72;
-  char *start = __impl::uint_to_buf_base_backward(tend, static_cast<u64>(static_cast<U>(n)), base, upper);
+  char tmp[136];
+  char *tend = tmp + 136;
+  char *start = __emit_base(tend, static_cast<U>(n), base, upper);
   usize len = static_cast<usize>(tend - start);
   micron::hstring<T> result(len);
   micron::memcpy(&result[0], start, len);

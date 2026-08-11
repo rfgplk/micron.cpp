@@ -1262,7 +1262,7 @@ public:
   max_t
   write(const T &c)
   {
-    return write(static_cast<const void *>(c.data()), c.size() * sizeof(typename T::value_type));
+    return write(static_cast<const void *>(c.data()), micron::string_len(c) * sizeof(typename T::value_type));
   }
 
   template<usize N>

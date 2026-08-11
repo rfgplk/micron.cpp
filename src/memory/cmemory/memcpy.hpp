@@ -340,19 +340,23 @@ template<typename F, typename D>
 constexpr F *
 constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
 {
-  byte *dest = reinterpret_cast<byte *>(_dest);
-  const byte *src = reinterpret_cast<const byte *>(_src);
+  if !consteval {
+    byte *dest = reinterpret_cast<byte *>(_dest);
+    const byte *src = reinterpret_cast<const byte *>(_src);
 
-  if ( cnt % 4 == 0 )
-    for ( u64 n = 0; n < cnt; n += 4 ) {
-      dest[n] = src[n];
-      dest[n + 1] = src[n + 1];
-      dest[n + 2] = src[n + 2];
-      dest[n + 3] = src[n + 3];
-    }
-  else
-    for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
+    if ( cnt % 4 == 0 )
+      for ( u64 n = 0; n < cnt; n += 4 ) {
+        dest[n] = src[n];
+        dest[n + 1] = src[n + 1];
+        dest[n + 2] = src[n + 2];
+        dest[n + 3] = src[n + 3];
+      }
+    else
+      for ( u64 n = 0; n < cnt; n++ ) dest[n] = src[n];
 
+    return _dest;
+  }
+  for ( u64 n = 0; n < cnt / sizeof(F); ++n ) _dest[n] = static_cast<F>(_src[n]);
   return _dest;
 };
 

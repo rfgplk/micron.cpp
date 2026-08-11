@@ -386,10 +386,21 @@ rbset(F &s, const byte in, const u64 cnt) noexcept
 
 // COMPILE-TIME CONSTANT BYTESET - TEMPLATE COUNT ONLY
 template<u64 N, typename F>
-__attribute__((nonnull)) F *
+__attribute__((nonnull)) constexpr F *
 cbyteset(F *s, const byte in) noexcept
 {
-  __memset_bytes(reinterpret_cast<byte *>(s), in, N);
+  if !consteval {
+    __memset_bytes(reinterpret_cast<byte *>(s), in, N);
+    return s;
+  }
+  if constexpr ( micron::is_integral_v<F> ) {
+    u64 pat = 0;
+    if ( in != static_cast<byte>(0) )
+      for ( u64 b = 0; b < sizeof(F) && b < 8; ++b ) pat = (pat << 8) | static_cast<u64>(in);
+    for ( u64 i = 0; i < N / sizeof(F); ++i ) s[i] = static_cast<F>(pat);
+  } else {
+    for ( u64 i = 0; i < N / sizeof(F); ++i ) s[i] = F{};
+  }
   return s;
 };
 
@@ -1162,7 +1173,7 @@ constexpr F *
 czero(F *src) noexcept
 {
   cbyteset<M * sizeof(F)>(src, 0x0);
-  return reinterpret_cast<F *>(src);
+  return src;
 };
 
 // SECURE ZERO - COMPILE-TIME CONSTANT COUNT WITH REFERENCE RETURN

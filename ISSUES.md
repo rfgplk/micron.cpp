@@ -15,13 +15,19 @@
 `tests/rigor/FAILING.md` is the current baseline of rigor tests that fail on a stock amd64 hosted
 run
 
+- `tests/rigor/memcmp.cpp` and `tests/rigor/memory.cpp` do not link
+
 ## Building / optimizations
 - currently, you _cannot_ use micron alongside the STL (or any glibc) code; technically you can (if you poison the right headers and work around defines) but if you try you will _almost certainly_ run into conflicting type declarations. If you truly want to include micron code alongside glibc (say in a legacy codebase) my recommendation is to splice the micron code/headers you want verbatim rather than pulling in the whole thing. Most micron external fns map cleanly to glibc aliases, so you shouldn't have much trouble.
+  - `src/__special/compare` hosted build uses libstdc++'s real `<compare>` rather than declaring the comparison categories itself. `<compare>` is not a leaf; libstdc++'s `<bits/stl_iterator.h>` uses it for `three_way_comparable_with`; freestanding self-hosts
 - under `-Ofast`/`-ffast-math` + LTO, `micron::numeric_limits<F>::max()` / `-max()` / `infinity()` can constant-fold to 0/-0 when used as a sentinel
 - `[[gnu::flatten]]` transitively inlines all fns and blows up LTO compile time
 - the `-flto` flag is still mandatory under ASan testing
-- **AddressSanitizer does not report in a TU that pulls `src/std.hpp`**: abcmallocs `operator new` 
-  wins over ASans
+- `-DMICRON_ABCMALLOC_DISABLE_STD` **does not build**
+- **ASan still cannot see container out-of-bounds**, only double-free/UAF
+  `allocator_types/serial_allocator.hpp:32` rounds every request through
+  `to_granularity<page_size>` (`policies.hpp:27`), containers issue `malloc(4096)` and an overflow past the logical end never reaches a redzone. Needs either a
+  sanitizer-time granularity of 1 or `__asan_poison_memory_region`
 - certain heavy abc tests need `vm.overcommit_memory=0|1` otherwise they'll fail at RUNTIME with `critical_error` (mmap refused)
 
 ## Bugs / Limitations you should know
@@ -34,11 +40,8 @@ run
 - `src/regex/regex.hpp`: `cmatch<>` local scratch is O(maxi*maxslots) (~27KB stack for nested-group patterns); _very_ heavy comptime for large patterns
 - base move-assign does NOT free the destination's old buffer: `src/memory/allocation/core_resource.hpp` (`operator=(&&)`) delegate without `free()`; `resource_types/mutable_resource.hpp` copy-assign likewise. Microns containers free themselves by design, but be careful
 - `micron::alloc<T>(bytes)` returns RAW memory; doesn't perform default init
-- format: `to_double` (`src/string/format.hpp`) is a naive accumulate-and-divide parser — not
-  correctly rounded, and the container overload ignores `e` exponents entirely. It cannot parse
-  shortest-form converter output back bit-exact
-- format: `d2f_buffered`/`d2e_buffered` (`to_fixed`/`to_scientific`) truncate the Ryu digit stream
-  at the precision cut instead of rounding the last kept digit.
+  **`from_chars` is strict and consumes the whole range, no leading or trailing whitespace**
+- **there are now two `%g` semantics in the (d2g_buffered) and (to_general), they don't yield the same results** 
 - io: cached `st_size` not invalidated after writes
 - io: termios struct layout is kernel-ABI dependent; not fully cross platform
 - io: global stdout/stderr buffers have no thread-safety locks whatsoever
@@ -46,8 +49,6 @@ run
 - io arm64: `io::path`/`io::dir` directory-open throws `io_error` under qemu-aarch64
 - LSan (and other sanitizers) may report a benign ~8 KB "leak" from the `make_global` stdout/stderr stream process-lifetime allocs
 - `tests/coro/t_aio_inline` is **load-sensitive and flaky in batch runs**
-- 32-bit + threads: a rigor test that keeps **8 live `auto_thread`s** throws `critical_error` from
-  `operator new` on `--i386`. VA exhaustion, 64-bit is immune. **Likely mitigated 2026-08-04**
 - width-32 abcmalloc: the buddy needs a sheet strictly exceeding `2 * n` to serve `n`, so a request
   at `__alloc_limit` (64 MB) carves 128 MB + 256 KB from a 1 GB VA reservation, roughly 7 such
   sheets before `__va_carve` falls through to a plain `sys_allocator` mmap. Over `__alloc_limit` is

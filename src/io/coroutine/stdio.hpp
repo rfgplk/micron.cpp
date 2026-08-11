@@ -60,7 +60,7 @@ template<is_string S>
 [[nodiscard]] micron::task<max_t>
 write_out(const S &s)
 {
-  max_t w = co_await __impl::__write_full(1, s.c_str(), s.size() * sizeof(typename S::value_type), static_cast<u64>(-1));
+  max_t w = co_await __impl::__write_full(1, s.c_str(), micron::string_len(s) * sizeof(typename S::value_type), static_cast<u64>(-1));
   co_return w;
 }
 
@@ -75,7 +75,7 @@ template<is_string S>
 [[nodiscard]] micron::task<max_t>
 write_err(const S &s)
 {
-  max_t w = co_await __impl::__write_full(2, s.c_str(), s.size() * sizeof(typename S::value_type), static_cast<u64>(-1));
+  max_t w = co_await __impl::__write_full(2, s.c_str(), micron::string_len(s) * sizeof(typename S::value_type), static_cast<u64>(-1));
   co_return w;
 }
 

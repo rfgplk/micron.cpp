@@ -18,6 +18,13 @@ test tests/comparison/reflect_stl.cpp -freflection -Ofast -o bin/reflect/stl_Ofa
 
 test tests/rigor/rigor_snowball_fuzz.cpp -freflection -O2 -o bin/reflect/fuzz --timeout 300
 
+# the include ORDER gate: strings.hpp before reflect.hpp must leave micron's <meta> self-hosted.
+# fixed_string.hpp pulls compare.hpp, which in a hosted build pulls the real <compare>, which
+# defines _GLIBCXX_RELEASE -- what __special/meta used to read as "libstdc++ is here, stand down"
+test tests/rigor/rigor_meta_include_order.cpp -freflection -O0 -o bin/reflect/O0 --timeout 300
+test tests/rigor/rigor_meta_include_order.cpp -freflection -O2 -o bin/reflect/O2 --timeout 300
+test tests/rigor/rigor_meta_include_order.cpp -freflection -Ofast -o bin/reflect/Ofast --timeout 300
+
 compile tests/compiletests/reflect.cpp -freflection --isa base -O2 --raw-obj -o bin/reflect/fs_base_k -k
 compile tests/compiletests/reflect.cpp -freflection --isa base -O2 --raw-obj -o bin/reflect/fs_base_ke -ke
 compile tests/compiletests/reflect.cpp -freflection -Ofast --raw-obj -o bin/reflect/fs_Ofast_k -k

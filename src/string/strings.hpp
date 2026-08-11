@@ -9,10 +9,12 @@
 #include "format.hpp"
 
 // include all string types
+#include "fixed_string.hpp"
 #include "istring.hpp"
 #include "rope.hpp"
 #include "sstring.hpp"
 #include "string.hpp"
+#include "unistring.hpp"
 
 namespace micron
 {

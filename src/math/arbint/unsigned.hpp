@@ -8,6 +8,7 @@
 #include "../../bits/__exceptions.hpp"
 #include "../../concepts.hpp"
 #include "../../except.hpp"
+#include "../../tags.hpp"
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
 #include "div_mu.hpp"
@@ -30,6 +31,7 @@ template<usize Bits = 0, arb_solver Solver = solver::automatic, class Alloc = mi
 public:
   using store_type = __arb::store<Bits, Alloc>;
   using value_type = mpn::limb_t;
+  using category_type = micron::numeric_tag;
   using solver_type = Solver;
   using allocator_type = Alloc;
 

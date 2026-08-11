@@ -223,6 +223,11 @@ enum class kind : u8 {
   consuming
 };
 
+// must be a concept, not an if constexpr
+template<typename U>
+concept __numeric_tagged = requires { typename U::category_type; }
+                           && micron::is_same_v<typename U::category_type, micron::numeric_tag>;
+
 template<typename T>
 constexpr kind
 classify(void)
@@ -231,6 +236,10 @@ classify(void)
 
   // scalars, strings, raw pointers, and enums
   if constexpr ( micron::has_cstr<U> || micron::is_arithmetic_v<U> || micron::is_pointer_v<U> || micron::is_enum_v<U> ) return kind::none;
+
+  // types that are a number but expose an indexable interface over their storage
+  else if constexpr ( __numeric_tagged<U> )
+    return kind::none;
 
   // node chains
   else if constexpr ( __node_chain<U> )

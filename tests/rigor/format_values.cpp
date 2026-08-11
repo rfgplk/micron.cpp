@@ -391,7 +391,7 @@ main(int, char **)
     require_true(eq(micron::to_scientific(0.5), "5.000000e-01"));
     require_true(eq(micron::to_scientific(0.5, 6u), "5.000000e-01"));
     require_true(eq(micron::to_scientific(1e-10, 3u), "1.000e-10"));
-    require_true(eq(micron::to_scientific(1.7976931348623157e+308, 15u), "1.797693134862315e+308"));
+    require_true(eq(micron::to_scientific(1.7976931348623157e+308, 15u), "1.797693134862316e+308"));
   }
   end_test_case();
 
@@ -406,10 +406,9 @@ main(int, char **)
   {
     // exp10 in [-4, prec): fixed with `precision` digits after the dot;
     // otherwise scientific with prec-1 digits after the dot.
-    // (note: scientific path truncates rather than round-half-even.)
     require_true(eq(micron::to_general(0.0001, 6u), "0.000100"));             // exp10=-4 → fixed
     require_true(eq(micron::to_general(123456.0, 6u), "123456.000000"));      // exp10=5 → fixed
-    require_true(eq(micron::to_general(1234567.0, 6u), "1.23456e+06"));       // exp10=6 → scientific
+    require_true(eq(micron::to_general(1234567.0, 6u), "1.23457e+06"));       // exp10=6 → scientific
     require_true(eq(micron::to_general(1e-5, 6u), "1.00000e-05"));            // exp10=-5 → scientific
   }
   end_test_case();
@@ -469,21 +468,21 @@ main(int, char **)
   }
   end_test_case();
 
-  test_case("format – {:.Nf} fixed precision (truncates, no rounding)");
+  test_case("format – {:.Nf} fixed precision (round-half-even, matches glibc)");
   {
     f64 pi = 3.14159265358979;
     require_true(eq(fmt::format("{:.0f}", pi), "3"));
     require_true(eq(fmt::format("{:.2f}", pi), "3.14"));
-    require_true(eq(fmt::format("{:.6f}", pi), "3.141592"));
-    require_true(eq(fmt::format("{:.10f}", pi), "3.1415926535"));
+    require_true(eq(fmt::format("{:.6f}", pi), "3.141593"));
+    require_true(eq(fmt::format("{:.10f}", pi), "3.1415926536"));
   }
   end_test_case();
 
-  test_case("format – {:e} / {:E} scientific (truncates rather than rounds)");
+  test_case("format – {:e} / {:E} scientific (round-half-even, matches glibc)");
   {
     f64 v = 1.7976931348623157e+308;
     require_true(eq(fmt::format("{:e}", v), "1.797693e+308"));
-    require_true(eq(fmt::format("{:.3e}", v), "1.797e+308"));
+    require_true(eq(fmt::format("{:.3e}", v), "1.798e+308"));
 
     f64 small = 1e-10;
     require_true(eq(fmt::format("{:.3e}", small), "1.000e-10"));
@@ -610,11 +609,12 @@ main(int, char **)
   }
   end_test_case();
 
-  test_case("d2s round-trip – f64 (fixed-format range only; to_double doesn't parse 'e')");
+  test_case("d2s round-trip – f64 bit-equal across the whole exponent range");
   {
-    // d2s emits fixed format for sciExp ∈ [-3, 7]; to_double currently doesn't
-    // accept the 'e' marker, so we only assert round-trip in that band.
-    f64 vals[] = { 0.0, 1.0, -1.0, 0.5, 3.14, 3.14159265358979, 0.1, 0.2, 0.1 + 0.2, 12345.6789, -273.15, 100.0, 1000000.0 };
+    // d2s emits fixed format for sciExp ∈ [-3, 7] and scientific outside it; both round-trip.
+    f64 vals[] = { 0.0,     1.0,   -1.0,     0.5,        3.14,       3.14159265358979,        0.1,
+                   0.2,     0.1 + 0.2,       12345.6789, -273.15,    100.0,                   1000000.0,
+                   1e-10,   1e10,  1e100,    -1e-100,    5e-324,     2.2250738585072014e-308, 1.7976931348623157e308 };
     char buf[32];
     for ( f64 v : vals ) {
       usize n = micron::__impl::__ryu::d2s_buffered(v, buf);
@@ -634,11 +634,9 @@ main(int, char **)
   }
   end_test_case();
 
-  test_case("d2s -> bit-equal even for values that emit scientific");
+  test_case("d2s – the scientific-branch strings are exact");
   {
-    // for values that emit scientific, parse via std-compatible path: just verify
-    // the *string* matches bit-pattern semantics by checking d2s output prefix.
-    // round-tripping through to_double is tested above; here we lock the string.
+    // round-tripping is asserted above; this locks the emitted text itself.
     f64 v;
     char buf[32];
     v = 1e-10;
@@ -650,11 +648,30 @@ main(int, char **)
   }
   end_test_case();
 
-  test_case("f2s round-trip – f32 (fixed-format range only)");
+  test_case("f2s round-trip – f32 bit-equal (the uppercase-E scientific form)");
   {
-    // f2s_buffered always emits scientific (e.g. "5E-1") so to_float can't
-    // round-trip its output directly; instead test a typed parse via to_float
-    // on plain decimal text and verify bit-equal.
+    // f2s_buffered *always* emits scientific -- "5E-1", "0E0" -- so this is the case the old
+    // parser could not do at all: it stopped at the 'E' and answered 5.0f for 0.5f.
+    f32 vals[] = { 0.0f, 1.0f, -1.0f, 0.5f, 0.25f, 3.14f, -273.15f, 1e-30f, 1e30f, 1.4e-45f, 3.4028235e38f };
+    char buf[32];
+    for ( f32 v : vals ) {
+      usize n = micron::__impl::__ryu::__f32::f2s_buffered(v, buf);
+      f32 back = fmt::to_float(static_cast<const char *>(buf), n);
+
+      union {
+        f32 f;
+        u32 u;
+      } a, b;
+
+      a.f = v;
+      b.f = back;
+      require(a.u, b.u);
+    }
+  }
+  end_test_case();
+
+  test_case("f32 – plain decimal text parses bit-exact");
+  {
     struct {
       const char *s;
       f32 expected;

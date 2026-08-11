@@ -6,6 +6,7 @@
 #pragma once
 
 #include "bits.hpp"
+#include "fixed.hpp"
 
 namespace micron
 {
@@ -49,7 +50,7 @@ inline constexpr u64 __pow5[47]
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%
 // 32×64 to 96 bit multiply, portable split version
-inline u32
+inline constexpr u32
 mul_shift_32(u32 m, u64 factor, i32 shift)
 {
   u32 fLo = static_cast<u32>(factor);
@@ -60,13 +61,13 @@ mul_shift_32(u32 m, u64 factor, i32 shift)
   return static_cast<u32>(sum >> (shift - 32));
 }
 
-inline u32
+inline constexpr u32
 mul_inv(u32 m, u32 q, i32 j)
 {
   return mul_shift_32(m, __pow5_inv[q], j);
 }
 
-inline u32
+inline constexpr u32
 mul_fwd(u32 m, u32 i, i32 j)
 {
   return mul_shift_32(m, __pow5[i], j);
@@ -75,25 +76,25 @@ mul_fwd(u32 m, u32 i, i32 j)
 //%%%%%%%%%%%%%%%%%%%%%%%%%
 // returns ceil(log2(5^e)) for e >= 0
 
-inline i32
+inline constexpr i32
 pow5bits(i32 e)
 {
   return static_cast<i32>(((static_cast<u32>(e) * 1217359u) >> 19) + 1);
 }
 
-inline i32
+inline constexpr i32
 log10p2(i32 e)
 {
   return static_cast<i32>((static_cast<u64>(e) * 78913) >> 18);
 }
 
-inline i32
+inline constexpr i32
 log10p5(i32 e)
 {
   return static_cast<i32>((static_cast<u64>(e) * 732923) >> 20);
 }
 
-inline u32
+inline constexpr u32
 pow5fac(u32 v)
 {
   u32 c = 0;
@@ -106,19 +107,19 @@ pow5fac(u32 v)
   return c;
 }
 
-inline bool
+inline constexpr bool
 mul_of_5(u32 v, u32 p)
 {
   return pow5fac(v) >= p;
 }
 
-inline bool
+inline constexpr bool
 mul_of_2(u32 v, u32 p)
 {
   return (v & ((1u << p) - 1)) == 0;
 }
 
-inline u32
+inline constexpr u32
 dlen9(u32 v)
 {
   if ( v >= 100000000 ) return 9;
@@ -140,7 +141,7 @@ struct f2d_t {
   i32 e;
 };
 
-inline f2d_t
+inline constexpr f2d_t
 f2d(u32 ieeeMant, u32 ieeeExp)
 {
   i32 e2;
@@ -265,16 +266,10 @@ f2d(u32 ieeeMant, u32 ieeeExp)
 // f2s_buffered
 // buf must have at least 16 bytes returns length (not null-terminated)
 
-inline usize
+inline constexpr usize
 f2s_buffered(f32 val, char *buf)
 {
-  union {
-    f32 f;
-    u32 u;
-  } fu;
-
-  fu.f = val;
-  u32 bits = fu.u;
+  const u32 bits = micron::math::ieee::to_bits<f32>(val);
 
   bool sign = (bits >> 31) != 0;
   u32 ieeeExp = (bits >> __float_mantissa_bits) & ((1u << __float_exponent_bits) - 1);
@@ -346,6 +341,22 @@ f2s_buffered(f32 val, char *buf)
 
 // NOTE: consider moving to base format.hpp
 
+template<typename C, typename Fn>
+inline micron::hstring<C>
+__fp_to_hstring(usize need, Fn &&emit)
+{
+  if ( need <= __impl::__ryu::__fmt_fixed_max ) {
+    char buf[__impl::__ryu::__fmt_fixed_max];
+    const usize n = emit(buf, sizeof(buf));
+    if ( n == 0 ) return micron::hstring<C>();
+    return micron::hstring<C>(buf, buf + n);
+  }
+  micron::hstring<C> s(need + 1);
+  const usize n = emit(reinterpret_cast<char *>(s.data()), need + 1);
+  s.set_size(n);
+  return s;
+}
+
 template<typename C = char>
 inline micron::hstring<C>
 float_to_string(f32 val)
@@ -368,18 +379,17 @@ template<typename C = char>
 inline micron::hstring<C>
 float_to_string(f32 val, u32 prec)
 {
-  char buf[350];
-  usize n = __impl::__ryu::d2f_buffered(static_cast<f64>(val), buf, 350, prec);
-  return micron::hstring<C>(buf, buf + n);
+  const f64 v = static_cast<f64>(val);
+  return __fp_to_hstring<C>(__impl::__ryu::d2f_size(v, prec),
+                            [&](char *b, usize c) { return __impl::__ryu::d2f_buffered(v, b, c, prec); });
 }
 
 template<typename C = char>
 inline micron::hstring<C>
 double_to_string(f64 val, u32 prec)
 {
-  char buf[350];
-  usize n = __impl::__ryu::d2f_buffered(val, buf, 350, prec);
-  return micron::hstring<C>(buf, buf + n);
+  return __fp_to_hstring<C>(__impl::__ryu::d2f_size(val, prec),
+                            [&](char *b, usize c) { return __impl::__ryu::d2f_buffered(val, b, c, prec); });
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -389,9 +399,8 @@ template<typename C = char>
 inline micron::hstring<C>
 to_fixed(f64 val, u32 precision = 6)
 {
-  char buf[350];
-  usize n = __impl::__ryu::d2f_buffered(val, buf, 350, precision);
-  return micron::hstring<C>(buf, buf + n);
+  return __fp_to_hstring<C>(__impl::__ryu::d2f_size(val, precision),
+                            [&](char *b, usize c) { return __impl::__ryu::d2f_buffered(val, b, c, precision); });
 }
 
 // fixed precision with trailing fractional zeros trimmed
@@ -399,18 +408,16 @@ template<typename C = char>
 inline micron::hstring<C>
 to_fixed_trim(f64 val, u32 precision = 6)
 {
-  char buf[350];
-  usize n = __impl::__ryu::d2f_trim_buffered(val, buf, 350, precision);
-  return micron::hstring<C>(buf, buf + n);
+  return __fp_to_hstring<C>(__impl::__ryu::d2f_size(val, precision),
+                            [&](char *b, usize c) { return __impl::__ryu::d2f_trim_buffered(val, b, c, precision); });
 }
 
 template<typename C = char>
 inline micron::hstring<C>
 to_scientific(f64 val, u32 precision = 6)
 {
-  char buf[350];
-  usize n = __impl::__ryu::d2e_buffered(val, buf, 350, precision);
-  return micron::hstring<C>(buf, buf + n);
+  return __fp_to_hstring<C>(__impl::__ryu::d2e_size(val, precision),
+                            [&](char *b, usize c) { return __impl::__ryu::d2e_buffered(val, b, c, precision); });
 }
 
 template<typename C = char>
@@ -418,14 +425,9 @@ inline micron::hstring<C>
 to_general(f64 val, u32 precision = 6)
 {
   // derive sciExp directly from the Ryu decomposition
-  union {
-    f64 f;
-    u64 u;
-  } conv;
-
-  conv.f = val;
-  u64 ieeeMantissa = conv.u & ((1ull << 52) - 1);
-  u32 ieeeExponent = static_cast<u32>((conv.u >> 52) & 0x7FF);
+  const u64 __b = micron::math::ieee::to_bits<f64>(val);
+  u64 ieeeMantissa = __b & ((1ull << 52) - 1);
+  u32 ieeeExponent = static_cast<u32>((__b >> 52) & 0x7FF);
 
   // specials & zero pass through to_fixed
   if ( ieeeExponent == 0x7FF || (ieeeExponent == 0 && ieeeMantissa == 0) ) return to_fixed<C>(val, precision);

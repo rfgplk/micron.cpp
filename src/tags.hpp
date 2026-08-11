@@ -9,6 +9,9 @@ namespace micron
 {
 // mutability_type
 
+struct numeric_tag {
+};
+
 struct mutable_tag {
 };
 

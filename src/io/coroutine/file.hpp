@@ -246,7 +246,7 @@ public:
   {
     if ( i32 e = __check() ) [[unlikely]]
       co_return e;
-    max_t w = co_await __impl::__write_full(__handle.fd, str.c_str(), str.size() * sizeof(typename T::value_type), __woff());
+    max_t w = co_await __impl::__write_full(__handle.fd, str.c_str(), micron::string_len(str) * sizeof(typename T::value_type), __woff());
     if ( w > 0 && !__append ) __cursor += static_cast<u64>(w);
     co_return w;
   }

@@ -45,6 +45,8 @@
 #include "arbint/traits.hpp"
 #include "arbint/unsigned.hpp"
 
+#include "arbint/format.hpp"
+
 namespace micron
 {
 

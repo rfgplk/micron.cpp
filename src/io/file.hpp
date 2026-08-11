@@ -203,7 +203,7 @@ public:
   {
     if ( i32 __e = __check() ) [[unlikely]]
       return __e;
-    return __write_loop(str.c_str(), str.size() * sizeof(typename T::value_type));
+    return __write_loop(str.c_str(), micron::string_len(str) * sizeof(typename T::value_type));
   }
 
   // (b) contiguous containers of trivially-copyable elements -> one raw blit of data()
@@ -764,7 +764,7 @@ public:
   i32
   atomic_replace(const T &str)
   {
-    return atomic_replace(static_cast<const void *>(str.c_str()), str.size() * sizeof(typename T::value_type));
+    return atomic_replace(static_cast<const void *>(str.c_str()), micron::string_len(str) * sizeof(typename T::value_type));
   }
 
   template<typename T>
@@ -792,7 +792,8 @@ public:
   max_t
   write_encoded(Fn &&fn, const Tp &src)
   {
-    return write_encoded(static_cast<Fn &&>(fn), reinterpret_cast<const byte *>(src.c_str()), src.size() * sizeof(typename Tp::value_type));
+    return write_encoded(static_cast<Fn &&>(fn), reinterpret_cast<const byte *>(src.c_str()),
+                         micron::string_len(src) * sizeof(typename Tp::value_type));
   }
 
   template<encode_fn Fn, is_string Tp>
@@ -803,7 +804,8 @@ public:
       return __e;
     if ( posix::off64_t e = seek_end(); e < 0 ) [[unlikely]]
       return e;
-    return write_encoded(static_cast<Fn &&>(fn), reinterpret_cast<const byte *>(src.c_str()), src.size() * sizeof(typename Tp::value_type));
+    return write_encoded(static_cast<Fn &&>(fn), reinterpret_cast<const byte *>(src.c_str()),
+                         micron::string_len(src) * sizeof(typename Tp::value_type));
   }
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

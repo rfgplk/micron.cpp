@@ -293,10 +293,10 @@ main(int, char **)
     require_true(eq(fmt::format("{:.0f}", pi), "3"));
     require_true(eq(fmt::format("{:.1f}", pi), "3.1"));
     require_true(eq(fmt::format("{:.2f}", pi), "3.14"));
-    require_true(eq(fmt::format("{:.3f}", pi), "3.141"));
-    require_true(eq(fmt::format("{:.4f}", pi), "3.1415"));
+    require_true(eq(fmt::format("{:.3f}", pi), "3.142"));
+    require_true(eq(fmt::format("{:.4f}", pi), "3.1416"));
     require_true(eq(fmt::format("{:.5f}", pi), "3.14159"));
-    require_true(eq(fmt::format("{:.10f}", pi), "3.1415926535"));
+    require_true(eq(fmt::format("{:.10f}", pi), "3.1415926536"));
   }
   end_test_case();
 
@@ -304,8 +304,8 @@ main(int, char **)
   {
     f64 v = 1.7976931348623157e+308;
     require_true(eq(fmt::format("{:e}", v), "1.797693e+308"));
-    require_true(eq(fmt::format("{:.0e}", v), "1e+308"));
-    require_true(eq(fmt::format("{:.3e}", v), "1.797e+308"));
+    require_true(eq(fmt::format("{:.0e}", v), "2e+308"));
+    require_true(eq(fmt::format("{:.3e}", v), "1.798e+308"));
     f64 small = 1e-10;
     require_true(eq(fmt::format("{:.3e}", small), "1.000e-10"));
     f64 zero = 0.0;
@@ -554,9 +554,9 @@ main(int, char **)
   test_case("format – width + .Ne for floats");
   {
     f64 v = 1.7976931348623157e+308;
-    require_true(eq(fmt::format("{:>16.3e}", v), "      1.797e+308"));
-    require_true(eq(fmt::format("{:<16.3e}", v), "1.797e+308      "));
-    require_true(eq(fmt::format("{:0>14.3e}", v), "00001.797e+308"));
+    require_true(eq(fmt::format("{:>16.3e}", v), "      1.798e+308"));
+    require_true(eq(fmt::format("{:<16.3e}", v), "1.798e+308      "));
+    require_true(eq(fmt::format("{:0>14.3e}", v), "00001.798e+308"));
   }
   end_test_case();
 
