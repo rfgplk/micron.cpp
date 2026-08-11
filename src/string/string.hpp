@@ -738,7 +738,7 @@ public:
   {
 
     if ( __mem::length + 1 >= __mem::capacity ) reserve(__mem::length + 2);
-    (__mem::memory)[__mem::length++] = ch;
+    (__mem::memory)[__mem::length++] = static_cast<T>(ch);
     __mem::memory[__mem::length] = T{ 0 };
     return *this;
   }

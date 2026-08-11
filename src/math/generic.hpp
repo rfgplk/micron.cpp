@@ -617,15 +617,15 @@ isnan(f64 x)
 constexpr int
 isnormal(f32 x)
 {
-  const u32 e = __builtin_bit_cast(u32, x) & __f32_exp_mask;
-  return e != 0 && e != __f32_exp_mask;
+  const u32 ex = __builtin_bit_cast(u32, x) & __f32_exp_mask;
+  return ex != 0 && ex != __f32_exp_mask;
 }
 
 constexpr int
 isnormal(f64 x)
 {
-  const u64 e = __builtin_bit_cast(u64, x) & __f64_exp_mask;
-  return e != 0 && e != __f64_exp_mask;
+  const u64 ex = __builtin_bit_cast(u64, x) & __f64_exp_mask;
+  return ex != 0 && ex != __f64_exp_mask;
 }
 
 // -Ofast implies -fno-signed-zeros, under which the compiler is free to treat -0.0 as +0.0

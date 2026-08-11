@@ -271,7 +271,7 @@ memcmp_64b(const F *src, const F *dest) noexcept
 
 template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) i64
+i64
 smemcmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
 {
   if ( _src == nullptr or _dest == nullptr ) return micron::numeric_limits<i64>::min();
@@ -308,7 +308,7 @@ rsmemcmp(const F &_src, const F &_dest, const u64 cnt) noexcept
 
 template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) i64
+i64
 scmemcmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
   if ( _src == nullptr or _dest == nullptr ) return numeric_limits<i64>::min();
@@ -483,7 +483,7 @@ bcmp_64b(const byte *src, const byte *dest) noexcept
 };
 
 template<u64 alignment = 1>
-__attribute__((nonnull)) i64
+i64
 sbytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
   if ( src == nullptr or dest == nullptr ) return numeric_limits<i64>::min();
@@ -493,7 +493,7 @@ sbytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt)
 };
 
 template<u64 alignment = 1>
-__attribute__((nonnull)) i64
+i64
 sbcmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
   return sbytecmp<alignment>(src, dest, cnt);
@@ -516,7 +516,7 @@ rsbcmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 };
 
 template<u64 N, u64 alignment = 1>
-__attribute__((nonnull)) i64
+i64
 scbytecmp_safe(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
   if ( src == nullptr or dest == nullptr ) return numeric_limits<i64>::min();
@@ -526,7 +526,7 @@ scbytecmp_safe(const byte *__restrict src, const byte *__restrict dest) noexcept
 };
 
 template<u64 N, u64 alignment = 1>
-__attribute__((nonnull)) i64
+i64
 scbcmp_safe(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
   return scbytecmp_safe<N, alignment>(src, dest);
@@ -595,7 +595,7 @@ rctypecmp(const F &_src, const F &_dest) noexcept
 
 template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) i64
+i64
 stypecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
 {
   if ( _src == nullptr or _dest == nullptr ) return numeric_limits<i64>::min();
@@ -615,7 +615,7 @@ rstypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
 };
 
 template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
-__attribute__((nonnull)) i64
+i64
 sctypecmp_safe(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
   if ( _src == nullptr or _dest == nullptr ) return numeric_limits<i64>::min();
@@ -697,7 +697,7 @@ wordcmp_32w(const word *src, const word *dest) noexcept
 };
 
 template<u64 alignment = alignof(word)>
-__attribute__((nonnull)) i64
+i64
 swordcmp(const word *__restrict src, const word *__restrict dest, const u64 cnt) noexcept
 {
   if ( src == nullptr or dest == nullptr ) return numeric_limits<i64>::min();
@@ -717,7 +717,7 @@ rswordcmp(const word &src, const word &dest, const u64 cnt) noexcept
 
 // SAFE COMPILE-TIME CONSTANT WORDCMP - TEMPLATE COUNT ONLY
 template<u64 M, u64 alignment = alignof(word)>
-__attribute__((nonnull)) i64
+i64
 scwordcmp_safe(const word *__restrict src, const word *__restrict dest) noexcept
 {
   if ( src == nullptr or dest == nullptr ) return numeric_limits<i64>::min();

@@ -3159,16 +3159,6 @@ template<usize N> struct formatter<char[N]> {
   static inline usize
   write(char *buf, usize buf_sz, const char (&val)[N], const __impl::fmt_spec &spec)
   {
-    if ( val == nullptr ) {
-      if ( buf_sz < 6 ) return 0;
-      buf[0] = '(';
-      buf[1] = 'n';
-      buf[2] = 'u';
-      buf[3] = 'l';
-      buf[4] = 'l';
-      buf[5] = ')';
-      return 6;
-    }
     usize len = N - 1;
     if ( spec.has_prec && spec.prec < len ) len = spec.prec;
     if ( len > buf_sz ) len = buf_sz;

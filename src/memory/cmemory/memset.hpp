@@ -289,7 +289,7 @@ memset_64b(F *src, int in) noexcept
 // SAFE MEMSET WITH NULLPTR AND ALIGNMENT CHECKING - RUNTIME COUNT
 template<typename F, u64 alignment = alignof(F)>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) F *
+F *
 smemset(F *s, const byte in, const u64 cnt) noexcept
 {
   if ( s == nullptr ) return nullptr;
@@ -313,7 +313,7 @@ rsmemset(F &s, const byte in, const u64 cnt) noexcept
 
 // SAFE COMPILE-TIME CONSTANT MEMSET - TEMPLATE COUNT ONLY
 template<u64 M, typename F, u64 alignment = alignof(F)>
-__attribute__((nonnull)) F *
+F *
 scmemset_safe(F *s, const byte in) noexcept
 {
   if ( s == nullptr ) return nullptr;
@@ -601,7 +601,7 @@ bset_64b(F *src, byte in) noexcept
 // SAFE BYTESET - RUNTIME COUNT
 template<typename F, u64 alignment = 1>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) F *
+F *
 sbyteset(F *s, const byte in, const u64 cnt) noexcept
 {
   if ( s == nullptr ) return nullptr;
@@ -624,7 +624,7 @@ sbyteset(F *s, const byte in, const u64 cnt) noexcept
 // SAFE BYTESET ALIAS (SBSET)
 template<typename F, u64 alignment = 1>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) F *
+F *
 sbset(F *s, const byte in, const u64 cnt) noexcept
 {
   return sbyteset<F, alignment>(s, in, cnt);
@@ -663,7 +663,7 @@ rsbset(F &s, const byte in, const u64 cnt) noexcept
 
 // SAFE COMPILE-TIME CONSTANT BYTESET - TEMPLATE COUNT ONLY
 template<u64 N, typename F, u64 alignment = 1>
-__attribute__((nonnull)) F *
+F *
 scbyteset_safe(F *s, const byte in) noexcept
 {
   if ( s == nullptr ) return nullptr;
@@ -685,7 +685,7 @@ scbyteset_safe(F *s, const byte in) noexcept
 
 // SAFE COMPILE-TIME CONSTANT BYTESET ALIAS (SCBSET_SAFE)
 template<u64 N, typename F, u64 alignment = 1>
-__attribute__((nonnull)) F *
+F *
 scbset_safe(F *s, const byte in) noexcept
 {
   return scbyteset_safe<N, F, alignment>(s, in);
@@ -864,7 +864,7 @@ rsctypeset(F &s, const T in) noexcept
 // SAFE TYPESET - RUNTIME COUNT
 template<typename T, typename F, u64 alignment = alignof(T)>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull(1))) F *
+F *
 stypeset(F *s, const T in, const u64 cnt) noexcept
 {
   if ( s == nullptr ) return nullptr;
@@ -888,7 +888,7 @@ rstypeset(F &s, const T in, const u64 cnt) noexcept
 
 // SAFE COMPILE-TIME CONSTANT TYPESET - TEMPLATE COUNT ONLY
 template<u64 M, typename T, typename F, u64 alignment = alignof(T)>
-__attribute__((nonnull)) F *
+F *
 sctypeset_safe(F *s, const T in) noexcept
 {
   if ( s == nullptr ) return nullptr;
@@ -1458,7 +1458,7 @@ full_32(F *src) noexcept
 
 // SAFE ZERO - RUNTIME COUNT
 template<typename F, typename M = u64, u64 alignment = alignof(F)>
-__attribute__((nonnull)) F *
+F *
 szero(F *src, const M cnt) noexcept
 {
   if ( src == nullptr ) return nullptr;
@@ -1484,7 +1484,7 @@ rszero(F &s, const M cnt) noexcept
 
 // SAFE COMPILE-TIME CONSTANT ZERO
 template<u64 M, typename F, u64 alignment = alignof(F)>
-__attribute__((nonnull)) F *
+F *
 sczero(F *src) noexcept
 {
   if ( src == nullptr ) return nullptr;
@@ -1510,7 +1510,7 @@ rsczero(F &s) noexcept
 
 // SAFE FULL - RUNTIME COUNT
 template<typename F, typename M = u64, u64 alignment = alignof(F)>
-__attribute__((nonnull)) F *
+F *
 sfull(F *src, const M cnt) noexcept
 {
   if ( src == nullptr ) return nullptr;
@@ -1536,7 +1536,7 @@ rsfull(F &s, const M cnt) noexcept
 
 // SAFE COMPILE-TIME CONSTANT FULL
 template<u64 M, typename F, u64 alignment = alignof(F)>
-__attribute__((nonnull)) F *
+F *
 scfull_safe(F *src) noexcept
 {
   if ( src == nullptr ) return nullptr;
