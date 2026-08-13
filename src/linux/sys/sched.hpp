@@ -23,43 +23,43 @@ struct sched_param {
   int sched_priority;
 };
 
-int
+inline int
 sched_yield()
 {
   return static_cast<int>(micron::syscall(SYS_sched_yield));
 }
 
-int
+inline int
 sched_getparam(pid_t pid, sched_param &params)
 {
   return static_cast<int>(micron::syscall(SYS_sched_getparam, pid, &params));
 }
 
-int
+inline int
 sched_setparam(pid_t pid, const sched_param &params)
 {
   return static_cast<int>(micron::syscall(SYS_sched_setparam, pid, &params));
 }
 
-int
+inline int
 sched_setscheduler(pid_t pid, int policy, sched_param &params)
 {
   return static_cast<int>(micron::syscall(SYS_sched_setscheduler, pid, policy, &params));
 }
 
-int
+inline int
 sched_getscheduler(pid_t pid)
 {
   return static_cast<int>(micron::syscall(SYS_sched_getscheduler, pid));
 }
 
-int
+inline int
 sched_setaffinity(pid_t pid, usize cpusetsize, const cpu_set_t &mask)
 {
   return static_cast<int>(micron::syscall(SYS_sched_setaffinity, pid, cpusetsize, &mask));
 }
 
-int
+inline int
 sched_getaffinity(pid_t pid, usize cpusetsize, cpu_set_t &mask)
 {
   return static_cast<int>(micron::syscall(SYS_sched_getaffinity, pid, cpusetsize, &mask));

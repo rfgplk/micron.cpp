@@ -1504,14 +1504,14 @@ testnzc_i128(__m128i a, __m128i b) noexcept
 }
 
 template<int IMM>
-__inline_sse __m128
+__inline_sse41 __m128
 round_f32(__m128 a) noexcept
 {
   return _mm_round_ps(a, IMM);
 }
 
 template<int IMM>
-__inline_sse __m128d
+__inline_sse41 __m128d
 round_f64(__m128d a) noexcept
 {
   return _mm_round_pd(a, IMM);
@@ -1592,14 +1592,14 @@ cmp_f64(__m128d a, __m128d b) noexcept
 }
 
 template<int IMM>
-__inline_sse __m128
+__inline_sse41 __m128
 dp_f32(__m128 a, __m128 b) noexcept
 {
   return _mm_dp_ps(a, b, IMM);
 }
 
 template<int IMM>
-__inline_sse __m128d
+__inline_sse41 __m128d
 dp_f64(__m128d a, __m128d b) noexcept
 {
   return _mm_dp_pd(a, b, IMM);

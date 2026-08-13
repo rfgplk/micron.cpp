@@ -11,13 +11,68 @@
 #include "../tuple.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
+
+#include "../sets/heap_swiss_set.hpp"
+
+#include "../vector/fvector.hpp"
+
 #include "filter.hpp"
+
 #include "fperrors.hpp"
 
 namespace micron
 {
 namespace fp
 {
+namespace __impl
+{
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// seen-set behind nub
+
+// ensure hash enforces equality due to the wide range of hashes provided
+template<typename T>
+concept __claims_hash_equality = requires { requires micron::remove_cvref_t<T>::hash_equality_consistent::value; };
+
+template<typename T>
+concept hash_matches_equality
+    = micron::is_integral_v<T> || micron::is_enum_v<T>
+      || (micron::is_pointer_v<T> && !micron::is_char_ptr<micron::remove_cvref_t<T>>) || micron::is_string_ascii<T>
+      || __claims_hash_equality<T>;
+
+template<typename T>
+concept hash_dedupable = hash_matches_equality<T> && requires(const T &v) {
+  { micron::hash<hash64_t>(v) } -> micron::convertible_to<hash64_t>;
+};
+
+template<typename T> class seen_set
+{
+  static constexpr bool __hashed = hash_dedupable<T>;
+  micron::conditional_t<__hashed, micron::heap_swiss_set<T>, micron::fvector<T>> __s;
+
+public:
+  void
+  reserve(usize n)
+  {
+    __s.reserve(n);
+  }
+
+  // true the first time v is offered
+  bool
+  add(const T &v)
+  {
+    if constexpr ( __hashed ) {
+      return __s.insert(v);
+    } else {
+      for ( const auto &e : __s )
+        if ( e == v ) return false;
+      __s.push_back(v);
+      return true;
+    }
+  }
+};
+
+};      // namespace __impl
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // filter_c
@@ -528,16 +583,12 @@ nub(const C &c)
   auto *dst = out.begin();
   const auto *first = c.begin();
   const auto *last = c.end();
-  for ( const auto *it = first; it != last; ++it ) {
-    bool found = false;
-    for ( const auto *seen = first; seen != it; ++seen ) {
-      if ( *seen == *it ) {
-        found = true;
-        break;
-      }
-    }
-    if ( !found ) *dst++ = *it;
-  }
+
+  __impl::seen_set<typename C::value_type> seen;
+  seen.reserve(c.size());
+  for ( const auto *it = first; it != last; ++it )
+    if ( seen.add(*it) ) *dst++ = *it;
+
   out.resize(static_cast<usize>(dst - out.begin()));
   return out;
 }

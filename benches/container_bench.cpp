@@ -25,7 +25,11 @@
 #include "../src/io/console.hpp"
 #include "../src/linux/sys/sched.hpp"
 #include "../src/std.hpp"
+#include "../src/vector/circle_vector.hpp"
+#include "../src/vector/convector.hpp"
 #include "../src/vector/fvector.hpp"
+#include "../src/vector/ivector.hpp"
+#include "../src/vector/pvector.hpp"
 #include "../src/vector/svector.hpp"
 #include "../src/vector/vector.hpp"
 
@@ -41,7 +45,61 @@ struct point3 {
   f64 x;
   f64 y;
   f64 z;
+
+  bool
+  operator==(const point3 &o) const noexcept
+  {
+    return x == o.x && y == o.y && z == o.z;
+  }
 };
+
+// user-provided copy/move/dtor: fails is_trivially_copyable AND is_trivially_destructible, so every
+// element path takes deep_copy / deep_move / the destroy loop instead of the memcpy branch. this is
+// the only cell that measures those.
+struct boxed {
+  f64 v;
+
+  boxed() noexcept : v(0.0) { }
+
+  explicit boxed(f64 x) noexcept : v(x) { }
+
+  boxed(const boxed &o) noexcept : v(o.v) { }
+
+  boxed(boxed &&o) noexcept : v(o.v) { o.v = 0.0; }
+
+  boxed &
+  operator=(const boxed &o) noexcept
+  {
+    v = o.v;
+    return *this;
+  }
+
+  boxed &
+  operator=(boxed &&o) noexcept
+  {
+    v = o.v;
+    o.v = 0.0;
+    return *this;
+  }
+
+  ~boxed() noexcept { }
+
+  bool
+  operator==(const boxed &o) const noexcept
+  {
+    return v == o.v;
+  }
+};
+
+template<typename T>
+concept has_xyz = requires(const T &t) {
+  t.x;
+  t.y;
+  t.z;
+};
+
+template<typename T>
+concept equality_comparable = requires(const T &a, const T &b) { a == b; };
 
 template<typename T>
 [[gnu::always_inline]] inline u64
@@ -49,8 +107,10 @@ reduce_one(const T &v) noexcept
 {
   if constexpr ( micron::is_arithmetic_v<T> )
     return (u64)v;
-  else
+  else if constexpr ( has_xyz<T> )
     return (u64)v.x;
+  else
+    return (u64)v.v;
 }
 
 template<typename T>
@@ -59,8 +119,10 @@ make_from(u64 i) noexcept
 {
   if constexpr ( micron::is_arithmetic_v<T> )
     return (T)i;
-  else
+  else if constexpr ( has_xyz<T> )
     return T{ static_cast<f64>(i), static_cast<f64>(i + 1), static_cast<f64>(i + 2) };
+  else
+    return T{ static_cast<f64>(i) };
 }
 
 constexpr u64 SIZES[] = {
@@ -303,6 +365,7 @@ sweep_vector_t(const char *tag)
   print_header(tag);
   for ( u64 N : SIZES ) {
 
+    // NOTE: set_size(0) rather than clear() is the per-rep reset
     {
       mc::vector<T> v;
       auto setup = [&] {
@@ -310,6 +373,7 @@ sweep_vector_t(const char *tag)
         v.reserve(N);
       };
       auto kernel = [&] {
+        v.set_size(0);
         for ( u64 i = 0; i < N; ++i ) v.push_back(T{});
         clobber(v.data());
       };
@@ -323,16 +387,19 @@ sweep_vector_t(const char *tag)
         v.reserve(N);
       };
       auto kernel = [&] {
+        v.set_size(0);
         for ( u64 i = 0; i < N; ++i ) v.emplace_back();
         clobber(v.data());
       };
       print_cell(measure("emplace_back       ", N, sizeof(T), N, reps_for(N), setup, kernel));
     }
 
+    // a genuinely-from-empty build: fresh vector per rep, so this one really does pay ctor +
+    // the whole grow ladder + dtor.
     if ( N <= (1ULL << 16) ) {
-      mc::vector<T> v;
-      auto setup = [&] { v.clear(); };
+      auto setup = [] { };
       auto kernel = [&] {
+        mc::vector<T> v;
         for ( u64 i = 0; i < N; ++i ) v.push_back(T{});
         clobber(v.data());
       };
@@ -384,6 +451,22 @@ sweep_vector_t(const char *tag)
         sink = s;
       };
       print_cell(measure("iterate-sum (iter) ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    {
+      mc::vector<T> v;
+      static volatile u64 sink = 0;
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+        for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+      };
+      auto kernel = [&] {
+        u64 s = 0;
+        for ( u64 i = 0; i < v.size(); ++i ) s += reduce_one(v[i]);
+        sink = s;
+      };
+      print_cell(measure("iterate-sum [i<size]", N, sizeof(T), N, reps_for(N), setup, kernel));
     }
 
     {
@@ -457,6 +540,147 @@ sweep_vector_t(const char *tag)
         clobber(v.data());
       };
       print_cell(measure("ctor+reserve       ", N, sizeof(T), 1, reps_for(N * 32), setup, kernel));
+    }
+
+    // mid-vector insert/erase
+    if ( N <= (1ULL << 12) ) {
+      mc::vector<T> v;
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N + 16);
+        for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+      };
+      auto kernel = [&] {
+        v.insert(static_cast<typename mc::vector<T>::size_type>(N / 2), T{});
+        v.pop_back();
+        clobber(v.data());
+      };
+      print_cell(measure("insert[mid]+popb   ", N, sizeof(T), N / 2 ? N / 2 : 1, reps_for(N * N), setup, kernel));
+    }
+
+    // erase a quarter-width range: measures close_gap's memmove volume plus its tail byteset.
+    if ( N >= 64 ) {
+      mc::vector<T> v;
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+        for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+      };
+      auto kernel = [&] {
+        v.erase(static_cast<typename mc::vector<T>::size_type>(N / 4), static_cast<typename mc::vector<T>::size_type>(N / 2));
+        v.set_size(N);
+        clobber(v.data());
+      };
+      print_cell(measure("erase(range 1/4)   ", N, sizeof(T), N / 2, reps_for(N), setup, kernel));
+    }
+
+    {
+      mc::vector<T> v;
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+      };
+      auto kernel = [&] {
+        v.set_size(0);
+        v.resize(N);
+        clobber(v.data());
+      };
+      print_cell(measure("resize-grow        ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    {
+      mc::vector<T> v;
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+      };
+      auto kernel = [&] {
+        v.set_size(N);
+        v.resize(0);
+        clobber(v.data());
+      };
+      print_cell(measure("resize-shrink      ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    // clear() isolated: set_size(N) is a single store, so the cell is the destroy pass.
+    {
+      mc::vector<T> v;
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+        for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+      };
+      auto kernel = [&] {
+        v.set_size(N);
+        v.clear();
+        clobber(v.data());
+      };
+      print_cell(measure("clear              ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    {
+      mc::vector<T> v;
+      const T val = make_from<T>(7);
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+        for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+      };
+      auto kernel = [&] {
+        v.fill(val);
+        clobber(v.data());
+      };
+      print_cell(measure("fill               ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    {
+      mc::vector<T> v;
+      const T val = make_from<T>(7);
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+      };
+      auto kernel = [&] {
+        v.assign(N, val);
+        clobber(v.data());
+      };
+      print_cell(measure("assign(n,v)        ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    // find: the miss case is the full-length scan and is the one SIMD would change. the hit case
+    // stops halfway, so it also shows whether the loop is doing per-element branch work.
+    if constexpr ( equality_comparable<T> ) {
+      {
+        mc::vector<T> v;
+        static volatile u64 sink = 0;
+        const T needle = make_from<T>(N / 2);
+        auto setup = [&] {
+          v.clear();
+          v.reserve(N);
+          for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+        };
+        auto kernel = [&] {
+          auto *p = v.find(needle);
+          sink = (u64)(p != nullptr);
+        };
+        print_cell(measure("find (hit@mid)     ", N, sizeof(T), N / 2 ? N / 2 : 1, reps_for(N), setup, kernel));
+      }
+
+      {
+        mc::vector<T> v;
+        static volatile u64 sink = 0;
+        const T needle = make_from<T>(N + 1000);
+        auto setup = [&] {
+          v.clear();
+          v.reserve(N);
+          for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+        };
+        auto kernel = [&] {
+          auto *p = v.find(needle);
+          sink = (u64)(p != nullptr);
+        };
+        print_cell(measure("find (miss)        ", N, sizeof(T), N, reps_for(N), setup, kernel));
+      }
     }
   }
 }
@@ -656,6 +880,214 @@ sweep_farray_at(const char *tag)
   }
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// convector
+template<typename T>
+void
+sweep_convector_t(const char *tag)
+{
+  print_header(tag);
+  for ( u64 N : SIZES ) {
+    {
+      mc::convector<T> v;
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+      };
+      auto kernel = [&] {
+        v.set_size(0);
+        for ( u64 i = 0; i < N; ++i ) v.push_back(T{});
+        clobber(v.data());
+      };
+      print_cell(measure("push_back (preres) ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    // v[i] locks and unlocks per element; v.size() locks too, so the loop condition is a second
+    // acquire per iteration.
+    {
+      mc::convector<T> v;
+      static volatile u64 sink = 0;
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+        for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+      };
+      auto kernel = [&] {
+        u64 s = 0;
+        for ( u64 i = 0; i < N; ++i ) s += reduce_one(v[i]);
+        sink = s;
+      };
+      print_cell(measure("iterate-sum [i]    ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    if constexpr ( equality_comparable<T> ) {
+      mc::convector<T> v;
+      static volatile u64 sink = 0;
+      const T needle = make_from<T>(N + 1000);
+      auto setup = [&] {
+        v.clear();
+        v.reserve(N);
+        for ( u64 i = 0; i < N; ++i ) v.push_back(make_from<T>(i));
+      };
+      auto kernel = [&] {
+        // convector answers an index, not a pointer -- see its header
+        const auto i = v.find_index(needle);
+        sink = (u64)(i != mc::convector<T>::npos);
+      };
+      print_cell(measure("find_index (miss)  ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+  }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// circle_vector
+template<typename T, usize Cap>
+void
+sweep_circle_vector_at(const char *tag)
+{
+  print_header(tag);
+  {
+    mc::circle_vector<T, Cap> r;
+    auto setup = [&] { };
+    auto kernel = [&] {
+      for ( u64 i = 0; i < Cap; ++i ) r.push(make_from<T>(i));
+      clobber(&r);
+    };
+    print_cell(measure("push (wrapping)    ", Cap, sizeof(T), Cap, reps_for(Cap), setup, kernel));
+  }
+
+  {
+    mc::circle_vector<T, Cap> r;
+    static volatile u64 sink = 0;
+    auto setup = [&] {
+      for ( u64 i = 0; i < Cap; ++i ) r.push(make_from<T>(i));
+    };
+    auto kernel = [&] {
+      u64 s = 0;
+      for ( u64 i = 0; i < r.size(); ++i ) s += reduce_one(r[i]);
+      sink = s;
+    };
+    print_cell(measure("iterate-sum [i]    ", Cap, sizeof(T), Cap, reps_for(Cap), setup, kernel));
+  }
+
+  // the iterator recomputes (tail + index) & mask on every dereference
+  {
+    mc::circle_vector<T, Cap> r;
+    static volatile u64 sink = 0;
+    auto setup = [&] {
+      for ( u64 i = 0; i < Cap; ++i ) r.push(make_from<T>(i));
+    };
+    auto kernel = [&] {
+      u64 s = 0;
+      for ( auto it = r.begin(); it != r.end(); ++it ) s += reduce_one(*it);
+      sink = s;
+    };
+    print_cell(measure("iterate-sum (iter) ", Cap, sizeof(T), Cap, reps_for(Cap), setup, kernel));
+  }
+
+  // copy-ctor runs __assign_from
+  {
+    mc::circle_vector<T, Cap> r;
+    auto setup = [&] {
+      for ( u64 i = 0; i < Cap; ++i ) r.push(make_from<T>(i));
+    };
+    auto kernel = [&] {
+      mc::circle_vector<T, Cap> t(r);
+      clobber(&t);
+    };
+    print_cell(measure("copy-ctor          ", Cap, sizeof(T), Cap, reps_for(Cap), setup, kernel));
+  }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%
+// ivector
+template<typename T>
+void
+sweep_ivector_t(const char *tag)
+{
+  print_header(tag);
+  for ( u64 N : SIZES ) {
+    if ( N > (1ULL << 12) ) continue;
+
+    {
+      mc::ivector<T> v(N);
+      auto setup = [&] { };
+      auto kernel = [&] {
+        auto w = v.push_back(T{});
+        clobber(w.data());
+      };
+      print_cell(measure("push_back (O(n))   ", N, sizeof(T), N ? N : 1, reps_for(N * 4), setup, kernel));
+    }
+
+    {
+      mc::ivector<T> v(N);
+      static volatile u64 sink = 0;
+      auto setup = [&] { };
+      auto kernel = [&] {
+        u64 s = 0;
+        for ( u64 i = 0; i < N; ++i ) s += reduce_one(v[i]);
+        sink = s;
+      };
+      print_cell(measure("iterate-sum [i]    ", N, sizeof(T), N ? N : 1, reps_for(N), setup, kernel));
+    }
+
+    if constexpr ( equality_comparable<T> ) {
+      mc::ivector<T> v(N);
+      static volatile u64 sink = 0;
+      const T needle = make_from<T>(N + 1000);
+      auto setup = [&] { };
+      auto kernel = [&] {
+        const auto *p = v.find(needle);
+        sink = (u64)(p != nullptr);
+      };
+      print_cell(measure("find (miss)        ", N, sizeof(T), N ? N : 1, reps_for(N), setup, kernel));
+    }
+  }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%
+// pvector
+template<typename T>
+void
+sweep_pvector_t(const char *tag)
+{
+  print_header(tag);
+  constexpr u64 CAPS[] = { 64, 1ULL << 10, 1ULL << 14 };
+  for ( u64 N : CAPS ) {
+    mc::pvector<T> base;
+    for ( u64 i = 0; i < N; ++i ) base = base.push_back(make_from<T>(i));
+
+    {
+      auto setup = [&] { };
+      auto kernel = [&] {
+        auto w = base.push_back(T{});
+        clobber(&w);
+      };
+      print_cell(measure("push_back (path)   ", N, sizeof(T), 1, reps_for(64), setup, kernel));
+    }
+
+    {
+      static volatile u64 sink = 0;
+      auto setup = [&] { };
+      auto kernel = [&] {
+        u64 s = 0;
+        for ( u64 i = 0; i < N; ++i ) s += reduce_one(base.at(i));
+        sink = s;
+      };
+      print_cell(measure("iterate-sum at(i)  ", N, sizeof(T), N, reps_for(N), setup, kernel));
+    }
+
+    {
+      auto setup = [&] { };
+      auto kernel = [&] {
+        mc::pvector<T> t(base);
+        clobber(&t);
+      };
+      print_cell(measure("copy (retain root) ", N, sizeof(T), 1, reps_for(64), setup, kernel));
+    }
+  }
+}
+
 };      // namespace
 
 int
@@ -669,14 +1101,25 @@ main(void)
   micron::io::println("=== micron container benchmark ===");
   micron::io::println("vector / fvector sizes: 64, 1K, 64K, 1M elements");
   micron::io::println("svector / array sizes:  64, 1024 (stack-bound)");
-  micron::io::println("element types:  i32 (4B), point3 (24B)");
+  micron::io::println("element types:  i32 (4B), point3 (24B), boxed (8B, non-trivially-copyable)");
   micron::io::println("perf events: cycles + instructions + branches + branch-misses");
   micron::io::println("warmup: ", WARMUP_REPS, " reps; ", K_MEASUREMENTS, " measurements/cell");
 
   sweep_vector_t<i32>("vector<i32>");
   sweep_vector_t<point3>("vector<point3>");
+  sweep_vector_t<boxed>("vector<boxed>");
 
   sweep_fvector_t<i32>("fvector<i32>");
+
+  sweep_convector_t<i32>("convector<i32>");
+
+  sweep_ivector_t<i32>("ivector<i32>");
+
+  sweep_pvector_t<i32>("pvector<i32>");
+
+  sweep_circle_vector_at<i32, 64>("circle_vector<i32,64>");
+  sweep_circle_vector_at<i32, 4096>("circle_vector<i32,4096>");
+  sweep_circle_vector_at<point3, 4096>("circle_vector<point3,4096>");
 
   sweep_svector_at<i32, 64>("svector<i32>");
   sweep_svector_at<i32, 1024>("svector<i32>");

@@ -8,12 +8,177 @@
 
 #include "../type_traits.hpp"
 
+#include "../except.hpp"
 #include "../memory/actions.hpp"
 #include "../memory/cmemory.hpp"
 #include "../memory/placement_new.hpp"
+#include "../simd/strings.hpp"
 
 namespace micron
 {
+
+namespace __impl
+{
+inline constexpr usize
+grow(usize cap) noexcept
+{
+  return cap == 0 ? 8 : cap * 2;
+}
+};      // namespace __impl
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// shared container bounds/state predicates
+// NOTE: this must remain an empty base
+template<typename Derived, typename T, bool Sf> class __container_checks
+{
+protected:
+  [[gnu::always_inline]] inline const Derived *
+  __self(void) const noexcept
+  {
+    return static_cast<const Derived *>(this);
+  }
+
+  // enforce this as noinline, saves I-cache and binary size
+  template<typename E>
+  [[gnu::noinline, gnu::cold, noreturn]] static void
+  __fail(const char *msg)
+  {
+    exc<E>(msg);
+  }
+
+  [[gnu::always_inline]] inline bool
+  __empty_check(void) const
+  {
+    return __self()->__c_len() == 0 || __self()->__c_data() == nullptr;
+  }
+
+  [[gnu::always_inline]] inline bool
+  __index_check(usize n) const
+  {
+    return n >= __self()->__c_len();
+  }
+
+  [[gnu::always_inline]] inline bool
+  __capacity_check(usize n) const
+  {
+    return n >= __self()->__c_cap();
+  }
+
+  // alias of __index_check
+  [[gnu::always_inline]] inline bool
+  __get_check(usize n) const
+  {
+    return n >= __self()->__c_len();
+  }
+
+  [[gnu::always_inline]] inline bool
+  __iterator_check(const T *it) const
+  {
+    return it < __self()->__c_data() || it > __self()->__c_data() + __self()->__c_len();
+  }
+
+  [[gnu::always_inline]] inline bool
+  __range_check(usize from, usize to) const
+  {
+    return from >= to || to > __self()->__c_len();
+  }
+
+  // deliberately over capacity, not length
+  [[gnu::always_inline]] inline bool
+  __cap_range_check(usize from, usize to) const
+  {
+    return from >= to || to > __self()->__c_cap();
+  }
+};
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// shared heap vector core
+//
+// NOTE: this must remain an empty base
+template<typename Derived, typename T> class __vector_core
+{
+protected:
+  [[gnu::always_inline]] inline Derived *
+  __vself(void) noexcept
+  {
+    return static_cast<Derived *>(this);
+  }
+
+  [[gnu::always_inline]] inline const Derived *
+  __vself(void) const noexcept
+  {
+    return static_cast<const Derived *>(this);
+  }
+
+  [[gnu::always_inline]] static inline constexpr usize
+  __grow_cap(usize cap) noexcept
+  {
+    return __impl::grow(cap);
+  }
+
+  // must be noinline
+  [[gnu::noinline, gnu::cold]] void
+  __grow_one(void)
+  {
+    __vself()->__core_reserve(__grow_cap(__vself()->capacity));
+  }
+
+  [[gnu::noinline, gnu::cold]] void
+  __grow_for(usize extra)
+  {
+    __vself()->__core_reserve(__grow_cap(__vself()->capacity + extra));
+  }
+
+  template<typename U>
+  [[gnu::always_inline]] inline void
+  __emplace_at(usize i, U &&v)
+  {
+    Derived *s = __vself();
+    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> )
+      new (addr(s->memory[i])) T(micron::forward<U>(v));
+    else
+      s->memory[i] = micron::forward<U>(v);
+  }
+
+public:
+  [[gnu::always_inline]] inline void
+  push_back(const T &v)
+  {
+    Derived *s = __vself();
+    if ( s->length < s->capacity ) [[likely]] {
+      __emplace_at(s->length++, v);
+      return;
+    }
+    __grow_one();
+    __emplace_at(s->length++, v);
+  }
+
+  [[gnu::always_inline]] inline void
+  push_back(T &&v)
+  {
+    Derived *s = __vself();
+    if ( s->length < s->capacity ) [[likely]] {
+      __emplace_at(s->length++, micron::move(v));
+      return;
+    }
+    __grow_one();
+    __emplace_at(s->length++, micron::move(v));
+  }
+
+  template<typename... Args>
+  [[gnu::always_inline]] inline void
+  emplace_back(Args &&...v)
+  {
+    Derived *s = __vself();
+    if ( s->length < s->capacity ) [[likely]] {
+      new (addr(s->memory[s->length++])) T(micron::forward<Args>(v)...);
+      return;
+    }
+    __grow_one();
+    new (addr(s->memory[s->length++])) T(micron::forward<Args>(v)...);
+  }
+};
+
 namespace __impl_container
 {
 
@@ -428,6 +593,23 @@ move_init(T *__restrict dest, T *__restrict src)
   }
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// linear scan
+template<typename T>
+[[gnu::always_inline]] inline usize
+find_index(const T *p, usize len, const T &v) noexcept
+{
+  using U = micron::remove_cv_t<T>;
+  if constexpr ( (micron::is_integral_v<U> or micron::is_enum_v<U> or micron::is_pointer_v<U>)
+                 and (sizeof(U) == 1 or sizeof(U) == 2 or sizeof(U) == 4 or sizeof(U) == 8) ) {
+    return micron::simd::find_first_elem(p, len, v);
+  } else {
+    for ( usize i = 0; i < len; ++i )
+      if ( p[i] == v ) return i;
+    return len;
+  }
+}
+
 template<typename T>
 inline void
 open_gap(T *base, usize len, usize p, usize cnt)
@@ -479,7 +661,13 @@ template<typename T>
 inline void
 fill_gap_copy(T *base, usize length, usize p, usize cnt, const T &val)
 {
-  fill_gap(base, length, p, cnt, [&](usize i) { new (addr(base[i])) T(val); });
+  if constexpr ( micron::is_trivially_copyable_v<micron::remove_cv_t<T>> and micron::is_trivially_constructible_v<T, const T &> ) {
+    if ( cnt == 0 ) return;
+    micron::typeset(base + p, val, cnt);
+    return;
+  } else {
+    fill_gap(base, length, p, cnt, [&](usize i) { new (addr(base[i])) T(val); });
+  }
 }
 
 template<typename T>
@@ -493,8 +681,8 @@ close_gap(T *base, usize len, usize p, usize cnt)
     const usize tail = len - p - cnt;
     for ( usize i = 0; i < tail; ++i ) base[p + i] = micron::move(base[p + cnt + i]);
     for ( usize i = len - cnt; i < len; ++i ) base[i].~T();
+    micron::byteset(reinterpret_cast<byte *>(base + (len - cnt)), 0x0, cnt * sizeof(T));
   }
-  micron::byteset(reinterpret_cast<byte *>(base + (len - cnt)), 0x0, cnt * sizeof(T));
 }
 
 template<usize N, typename T>
@@ -525,7 +713,7 @@ destroy(T *src)
 
 template<typename T>
 inline void
-destroy(T *src, usize cnt)
+destroy(T *__restrict src, usize cnt)
 {
   if constexpr ( !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
     for ( usize i = 0; i < cnt; ++i ) src[i].~T();
@@ -534,6 +722,8 @@ destroy(T *src, usize cnt)
   } else {
     micron::byteset(src, 0x0, cnt * sizeof(T));
   }
+  // NOTE: the zeroing here is part of destroy()'s semantics, ie micron::array::clear() calls destroy and then skips reconstructing a
+  // trivially-constructible T; if you want the fast and cheap variant call destroy_fast()
 }
 
 template<usize N, typename T>
@@ -576,7 +766,7 @@ template<usize N, typename T>
 void
 set(T *__restrict src, const T &val)
 {
-  if constexpr ( !micron::is_trivially_assignable_v<T, T> ) {
+  if constexpr ( !micron::is_trivially_assignable_v<T &, const T &> ) {
     if constexpr ( N % 4 == 0 ) {
       for ( usize i = 0; i < N; i += 4 ) {
         src[i] = val;
@@ -596,7 +786,9 @@ template<typename T>
 void
 set(T *__restrict src, const T &val, usize cnt)
 {
-  if constexpr ( !micron::is_trivially_assignable_v<T, T> ) {
+  // WARNING: micron::typeset is __attribute__((nonnull(1))); passing nullptr, 0 to it is UB
+  if ( cnt == 0 ) return;
+  if constexpr ( !micron::is_trivially_assignable_v<T &, const T &> ) {
 
     for ( usize i = 0; i < cnt; ++i ) src[i] = val;
   } else {

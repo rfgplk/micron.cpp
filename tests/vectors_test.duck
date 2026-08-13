@@ -16,3 +16,5 @@ test rigor/vector_exhaustive.cpp
 test rigor/vector_integrity.cpp
 test rigor/vector_self_assignment.cpp
 test rigor/vector_try_reserve.cpp
+test rigor/vector_defects.cpp
+test rigor/simd_find_lanes.cpp

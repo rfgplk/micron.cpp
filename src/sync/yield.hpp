@@ -9,7 +9,7 @@
 
 namespace micron
 {
-void
+inline void
 yield()
 {
   posix::sched_yield();

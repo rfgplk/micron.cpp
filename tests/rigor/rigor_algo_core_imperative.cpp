@@ -29,8 +29,10 @@
 
 #include "../../src/algorithm/algorithm.hpp"
 #include "../../src/algorithm/find.hpp"
+#include "../../src/array/bisect_array.hpp"
 #include "../../src/maps/heap_swiss.hpp"
 #include "../../src/maps/rb_map.hpp"
+#include "../../src/vector/circle_vector.hpp"
 
 #include "../support/algo_rigor.hpp"
 
@@ -155,11 +157,15 @@ main()
 
   // (fill(container, lambda) skipped — same overload ambiguity)
 
+  // NOTE: the mask here used to be `& 0xff`, which is precisely the range in which a fill value
+  // truncated to a byte is indistinguishable from a correct one. fill() did truncate -- it handed
+  // the value to constexpr_memset, whose parameter is a `byte` -- and this test could not see it.
+  // The full 32-bit range is the point.
   property_test(
-      "fill[ptr,value] then all_of==value (10k random)",
+      "fill[ptr,value] then all_of==value (10k random, FULL int range)",
       [](u32 raw_n, u32 raw_v) {
         usize n = (raw_n & 0x3f) + 1;
-        int v = static_cast<int>(raw_v & 0xff);
+        int v = static_cast<int>(raw_v);
         int buf[64];
         prng rng(raw_n + 1);
         pat_random(buf, n, rng);
@@ -167,6 +173,96 @@ main()
         require_true(ref::naive_all_of_eq(buf, n, v));
       },
       10000);
+
+  test_case("fill/clear do not truncate the value to a byte");
+  {
+    // every one of these lands outside 0..255, where the old byte-wide path answered v & 0xff
+    micron::vector<int> vi(8, 0);
+    micron::fill(vi, 300);
+    for ( int i = 0; i < 8; ++i ) require(vi[i], 300);
+
+    micron::fill(vi, -1);
+    for ( int i = 0; i < 8; ++i ) require(vi[i], -1);
+
+    micron::fill(vi, 0x7FFFFFFF);
+    for ( int i = 0; i < 8; ++i ) require(vi[i], 0x7FFFFFFF);
+
+    micron::clear(vi, 300);
+    for ( int i = 0; i < 8; ++i ) require(vi[i], 300);
+
+    micron::vector<u16> vu(8, 0);
+    micron::fill(vu, static_cast<u16>(65535));
+    for ( int i = 0; i < 8; ++i ) require(vu[i], static_cast<u16>(65535));
+
+    // a fractional value is the float version of the same bug: it used to write 3.0
+    micron::vector<f64> vf(8, 0.0);
+    micron::fill(vf, 3.75);
+    for ( int i = 0; i < 8; ++i ) require_true(vf[i] == 3.75);
+
+    micron::vector<i64> vl(8, 0);
+    micron::fill(vl, static_cast<i64>(-1234567890123LL));
+    for ( int i = 0; i < 8; ++i ) require_true(vl[i] == -1234567890123LL);
+  }
+  end_test_case();
+
+  test_case("reverse on an empty container does not underflow");
+  {
+    // reverse(C&) forwards to reverse(begin, end - 1); an empty container made that end() - 1
+    micron::vector<int> e;
+    micron::reverse(e);
+    require(e.size(), usize(0));
+    micron::vector<int> one(1, 7);
+    micron::reverse(one);
+    require(one[0], 7);
+    micron::vector<int> two(2, 0);
+    two[0] = 1;
+    two[1] = 2;
+    micron::reverse(two);
+    require(two[0], 2);
+    require(two[1], 1);
+  }
+  end_test_case();
+
+  test_case("min_at/max_at over a pointer range");
+  {
+    // these declared their return as typename T::const_iterator with T the ELEMENT type, so the
+    // pointer overloads were ill-formed for every scalar and could never instantiate
+    const int a[7] = { 5, 3, 9, 1, 9, 2, 4 };
+    require_true(micron::max_at(a, a + 7) == a + 2);      // first maximum
+    require_true(micron::min_at(a, a + 7) == a + 3);
+    require_true(micron::max_at(a, a) == a);      // empty range
+    require_true(micron::min_at(a, a) == a);
+    const int one[1] = { 42 };
+    require_true(micron::max_at(one, one + 1) == one);
+    require_true(micron::min_at(one, one + 1) == one);
+  }
+  end_test_case();
+
+  test_case("sum is compensated, not a naive running total");
+  {
+    // the classic cancellation case: a naive f64 accumulator answers 0, the true sum is 2
+    micron::vector<f64> v(4, 0.0);
+    v[0] = 1e16;
+    v[1] = 1.0;
+    v[2] = -1e16;
+    v[3] = 1.0;
+    require_true(static_cast<f64>(micron::sum(v)) == 2.0);
+
+    // and it must still be exact on the ordinary case, at a size that exercises the 4-lane body
+    // plus a tail
+    micron::vector<f64> w(1001, 0.0);
+    for ( usize i = 0; i < 1001; ++i ) w[i] = 1.0;
+    require_true(static_cast<f64>(micron::sum(w)) == 1001.0);
+
+    micron::vector<i32> iv(1001, 0);
+    umax_t want = 0;
+    for ( usize i = 0; i < 1001; ++i ) {
+      iv[i] = static_cast<i32>(i);
+      want += i;
+    }
+    require(micron::sum(iv), want);
+  }
+  end_test_case();
 
   // ════════════════════════════════════════════════════════════════════
   // generate
@@ -1007,6 +1103,122 @@ main()
     for ( int i = 0; i < 8; ++i ) a[i] = i + 1;
     micron::transform<square_int>(a);
     for ( int i = 0; i < 8; ++i ) require(a[i], (i + 1) * (i + 1));
+  }
+  end_test_case();
+
+  // ════════════════════════════════════════════════════════════════════
+  // Regressions: extent vs length, non-flat containers, the wide accumulator
+  // ════════════════════════════════════════════════════════════════════
+
+  // micron::unrollable gates every fold-over-static_size in algorithm.hpp, fparith.hpp and
+  // fpalgorithm.hpp. static_size is the container's EXTENT; svector and bisect_array also carry a
+  // runtime length, and folding over the extent walks storage past size() -- destroyed or
+  // never-constructed objects for a non-trivial T.
+  static_assert(micron::unrollable<micron::array<int, 8>>, "a fixed array must keep the unrolled path");
+  static_assert(!micron::unrollable<micron::array<int, 1024>>, "a wide array must not be unrolled");
+  static_assert(!micron::unrollable<micron::svector<int, 8>>, "extent != length: svector must not be unrolled");
+  static_assert(!micron::unrollable<micron::bisect_array<int, 8>>, "extent != length: bisect_array must not be unrolled");
+
+  test_case("transform(svector) touches exactly size() elements");
+  {
+    micron::svector<int, 8> v;
+    for ( int i = 0; i < 8; ++i ) v.push_back(i + 1);
+    while ( v.size() > 3 ) v.pop_back();
+
+    micron::transform(v, runtime_double_fn);
+
+    require(v.size(), usize(3));
+    for ( usize i = 0; i < v.size(); ++i ) require(v[i], (static_cast<int>(i) + 1) * 2);
+    // the slots beyond size() are not ours to write; they still hold what push_back left there
+    const int *raw = v.begin();
+    for ( int i = 3; i < 8; ++i ) require(raw[i], i + 1);
+  }
+  end_test_case();
+
+  property_test(
+      "transform(svector) == elementwise over the live prefix only (10k random lengths)",
+      [](u32 raw_n, u32 raw_v) {
+        const usize live = (raw_n % 32) + 1;
+        micron::svector<int, 32> v;
+        prng rng(raw_v + 0x5f3aC71u);
+        int want[32];
+        for ( usize i = 0; i < 32; ++i ) {
+          const int e = static_cast<int>(rng.next());
+          v.push_back(e);
+          want[i] = e;
+        }
+        while ( v.size() > live ) v.pop_back();
+
+        micron::transform(v, runtime_neg_fn);
+
+        require_true(v.size() == live);
+        for ( usize i = 0; i < live; ++i ) require_true(v[i] == -want[i]);
+        const int *raw = v.begin();
+        for ( usize i = live; i < 32; ++i ) require_true(raw[i] == want[i]);
+      },
+      10000);
+
+  // circle_vector is iterable and subscriptable but its begin() is an iterator CLASS and its
+  // storage order is not its subscript order -- a `const auto *p = src.begin()` fast path neither
+  // compiles nor means the right thing there.
+  test_case("sum/clear over a container without a pointer begin()");
+  {
+    micron::circle_vector<double, 8> cv;
+    for ( int i = 0; i < 5; ++i ) cv.push_back(static_cast<double>(i + 1));
+    require_true(static_cast<double>(micron::sum(cv)) == 15.0);
+
+    micron::circle_vector<int, 8> ci;
+    for ( int i = 0; i < 5; ++i ) ci.push_back(i + 1);
+    require(micron::sum(ci), umax_t(15));
+
+    micron::clear(ci, 4);
+    for ( usize i = 0; i < ci.size(); ++i ) require(ci[i], 4);
+    micron::clear(ci);
+    for ( usize i = 0; i < ci.size(); ++i ) require(ci[i], 0);
+  }
+  end_test_case();
+
+  // The f64 Neumaier lanes saturate at 1.79e308; the declared return type does not. Every check
+  // here compares BITS: duck's default -Ofast carries -ffinite-math-only, under which `x == 100.0`
+  // is true for a NaN x -- which is exactly the value the unfixed code produced, so a plain
+  // equality would have called the defect a pass (verified).
+  test_case("sum(floating) does not overflow the f64 lanes");
+  {
+    // 100 * 1e307 = 1e309: outside f64 entirely, and each lane reaches 2.5e308 on the way
+    micron::vector<f64> v(100, 1e307);
+    const f64 got = static_cast<f64>(micron::sum(v) / static_cast<f128>(1e307));
+    require(__builtin_bit_cast(u64, got), __builtin_bit_cast(u64, 100.0));
+
+    // two elements, one lane, one add -- the shortest overflow there is
+    micron::vector<f64> w;
+    w.push_back(1e308);
+    w.push_back(1e308);
+    const f64 two = static_cast<f64>(micron::sum(w) / static_cast<f128>(1e308));
+    require(__builtin_bit_cast(u64, two), __builtin_bit_cast(u64, 2.0));
+
+    // and the compensation the lanes exist for is still live
+    micron::vector<f64> u;
+    u.push_back(1e16);
+    u.push_back(1.0);
+    u.push_back(-1e16);
+    u.push_back(1.0);
+    const f64 comp = static_cast<f64>(micron::sum(u));
+    require(__builtin_bit_cast(u64, comp), __builtin_bit_cast(u64, 2.0));
+  }
+  end_test_case();
+
+  // an empty container's storage pointer is null, and micron::typeset is nonnull(1)
+  test_case("fill/clear on a container that owns no storage");
+  {
+    micron::vector<i64> v;
+    micron::vector<i64> moved(micron::move(v));
+    require_true(v.begin() == nullptr);
+    micron::fill(v, static_cast<i64>(7));
+    micron::clear(v);
+    require(v.size(), usize(0));
+
+    i64 *null_range = nullptr;
+    micron::fill(null_range, null_range, static_cast<i64>(7));
   }
   end_test_case();
 

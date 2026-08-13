@@ -27,7 +27,7 @@ auto
 add_c(const Y y) noexcept
 {
   return [y](auto cont) noexcept {
-    if constexpr ( has_static_size<decltype(cont)> ) {
+    if constexpr ( micron::unrollable<decltype(cont)> ) {
       __impl::__unroll_add(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
     } else {
       micron::add(cont, y);
@@ -42,7 +42,7 @@ auto
 subtract_c(const Y y) noexcept
 {
   return [y](auto cont) noexcept {
-    if constexpr ( has_static_size<decltype(cont)> ) {
+    if constexpr ( micron::unrollable<decltype(cont)> ) {
       __impl::__unroll_subtract(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
     } else {
       micron::subtract(cont, y);
@@ -57,7 +57,7 @@ auto
 multiply_c(const Y y) noexcept
 {
   return [y](auto cont) noexcept {
-    if constexpr ( has_static_size<decltype(cont)> ) {
+    if constexpr ( micron::unrollable<decltype(cont)> ) {
       __impl::__unroll_multiply(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
     } else {
       micron::multiply(cont, y);
@@ -72,7 +72,7 @@ auto
 divide_c(const Y y) noexcept
 {
   return [y](auto cont) noexcept {
-    if constexpr ( has_static_size<decltype(cont)> ) {
+    if constexpr ( micron::unrollable<decltype(cont)> ) {
       __impl::__unroll_divide(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
     } else {
       micron::divide(cont, y);
@@ -99,7 +99,7 @@ micron::option<C, division_by_zero_error>
 safe_divide(C cont, const Y y) noexcept
 {
   if ( y == Y{} ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_divide(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::divide(cont, y);
@@ -124,7 +124,7 @@ add(micron::option<C, E> opt, const Y y) noexcept
 {
   if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_add(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::add(cont, y);
@@ -139,7 +139,7 @@ subtract(micron::option<C, E> opt, const Y y) noexcept
 {
   if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_subtract(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::subtract(cont, y);
@@ -154,7 +154,7 @@ multiply(micron::option<C, E> opt, const Y y) noexcept
 {
   if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_multiply(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::multiply(cont, y);
@@ -170,7 +170,7 @@ divide(micron::option<C, E> opt, const Y y) noexcept
   if ( !opt.is_first() ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
   if ( y == Y{} ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
   auto cont = opt.template cast<C>();
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_divide(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::divide(cont, y);
@@ -194,7 +194,7 @@ template<is_iterable_container C>
 C
 add_zip(C a, const C &b) noexcept
 {
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_zip_add(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
   } else {
     auto *fa = a.begin();
@@ -209,7 +209,7 @@ template<is_iterable_container C>
 C
 subtract_zip(C a, const C &b) noexcept
 {
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_zip_subtract(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
   } else {
     auto *fa = a.begin();
@@ -224,7 +224,7 @@ template<is_iterable_container C>
 C
 multiply_zip(C a, const C &b) noexcept
 {
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_zip_multiply(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
   } else {
     auto *fa = a.begin();
@@ -255,7 +255,7 @@ template<is_iterable_container C, typename R = typename C::value_type>
 R
 inner_product(const C &a, const C &b, R init = R{}) noexcept
 {
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     return __impl::__unroll_inner_product(a.begin(), b.begin(), init, make_index_sequence<C::static_size>{});
   } else {
     const auto *fa = a.begin();
@@ -309,7 +309,7 @@ template<is_iterable_container C>
 C
 negate(C cont) noexcept
 {
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_negate(cont.begin(), make_index_sequence<C::static_size>{});
   } else {
     auto *first = cont.begin();

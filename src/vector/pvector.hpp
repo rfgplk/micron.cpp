@@ -18,6 +18,7 @@
 namespace micron
 {
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //  pvector
 //  persistent(immutable) resizeable vector class
 //  difference between pvector and ivector, is that ivector is copies itself for persistence (good for small-ish array, horrible for large
@@ -41,13 +42,13 @@ class pvector
   static_assert(__cpow(B, H) > 0, "pvector: capacity overflow");
 
   struct __node {
-    mutable u32 refs;
     void *children[B];
+    mutable u32 refs;
   };
 
   struct __leaf {
-    mutable u32 refs;
     alignas(alignof(T)) T values[B];
+    mutable u32 refs;
   };
 
   static inline __leaf *
@@ -137,7 +138,10 @@ class pvector
   static inline __leaf *
   __alloc_leaf(void)
   {
-    return reinterpret_cast<__leaf *>(abc::alloc(sizeof(__leaf)));
+    __leaf *l = reinterpret_cast<__leaf *>(abc::alloc(sizeof(__leaf)));
+    if ( l != nullptr ) [[likely]]
+      l->refs = 1u;
+    return l;
   }
 
   static inline void
@@ -222,29 +226,25 @@ class pvector
     } else {
       const usize slot = (idx >> (Lvl * K)) & __mask;
       __node *fresh = __alloc_internal();
-      usize done = 0;
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
 #endif
         if ( p ) {
           const __node *old = __as_node(p);
-          for ( ; done < B; ++done ) {
-            if ( done == slot )
-              fresh->children[done] = __set_impl<Lvl - 1>(old->children[done], idx, static_cast<Vf &&>(val));
-            else
-              fresh->children[done] = __retain<Lvl - 1>(old->children[done]);
+
+          micron::memcpy(reinterpret_cast<byte *>(fresh->children), reinterpret_cast<const byte *>(old->children), B * sizeof(void *));
+
+          fresh->children[slot] = __set_impl<Lvl - 1>(old->children[slot], idx, static_cast<Vf &&>(val));
+
+          for ( usize i = 0; i < B; ++i ) {
+            if ( i != slot ) (void)__retain<Lvl - 1>(fresh->children[i]);
           }
         } else {
-          for ( ; done < B; ++done ) {
-            if ( done == slot )
-              fresh->children[done] = __set_impl<Lvl - 1>(nullptr, idx, static_cast<Vf &&>(val));
-            else
-              fresh->children[done] = nullptr;
-          }
+
+          fresh->children[slot] = __set_impl<Lvl - 1>(nullptr, idx, static_cast<Vf &&>(val));
         }
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
-        for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(fresh->children[j]);
         abc::dealloc(reinterpret_cast<byte *>(fresh));
         throw;
       }
@@ -253,11 +253,12 @@ class pvector
     }
   }
 
+  static inline const T __default_value{};
+
   static inline const T &
   __default_val(void)
   {
-    static const T __d{};
-    return __d;
+    return __default_value;
   }
 
   template<usize Lvl>

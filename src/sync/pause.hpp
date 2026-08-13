@@ -139,7 +139,7 @@ await(Args... args)
 
 // SLEEPING SECTION
 
-void
+inline void
 spin_for(fduration_t timeout)
 {
   auto start = micron::system_clock<>::now();
@@ -149,7 +149,7 @@ spin_for(fduration_t timeout)
   }
 }
 
-void
+inline void
 wait_for(fduration_t timeout)
 {
   auto start = micron::system_clock<>::now();
@@ -160,7 +160,7 @@ wait_for(fduration_t timeout)
   }
 }
 
-void
+inline void
 sleep_duration(const fduration_t s)
 {
   timespec_t r, rmn;
@@ -182,7 +182,7 @@ sleep_duration(const fduration_t s)
 }
 
 // in seconds
-void
+inline void
 ssleep(const umax_t s)
 {
   timespec_t r, rmn;
@@ -197,7 +197,7 @@ ssleep(const umax_t s)
 }
 
 // in milliseconds
-void
+inline void
 sleep_for(umax_t ms)
 {
   timespec_t r;
@@ -212,7 +212,7 @@ sleep_for(umax_t ms)
 }
 
 // in milliseconds
-void
+inline void
 sleep(ulong_t ms)
 {
   timespec_t r;
@@ -227,7 +227,7 @@ sleep(ulong_t ms)
 }
 
 // in nanoseconds
-void
+inline void
 sleep_nano(umax_t ns)
 {
   timespec_t r;

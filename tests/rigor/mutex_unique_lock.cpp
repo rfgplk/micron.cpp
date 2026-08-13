@@ -202,6 +202,54 @@ main(void)
   }
   end_test_case();
 
+  // lock_starts::attempt had no constructor at all until now: the enumerator was declared at
+  // locks.hpp:18 and unique_lock only ever handled locked/adopt/unlocked/defer, so the only way to
+  // get one was the move ctor. owns_lock() is the other half -- a try that may fail is useless if
+  // you cannot ask whether it did.
+  test_case("lock_starts::attempt takes a free lock and reports ownership");
+  {
+    mutex m;
+    {
+      unique_lock<lock_starts::attempt, mutex> u(m);
+      require_true(u.owns_lock());
+      require_true(static_cast<bool>(u));
+      require_true(m.is_locked());
+    }
+    require_false(m.is_locked());      // released on scope exit like any other owning form
+  }
+  end_test_case();
+
+  test_case("lock_starts::attempt on a held lock reports failure and does not release it");
+  {
+    mutex m;
+    m.lock();
+    {
+      unique_lock<lock_starts::attempt, mutex> u(m);
+      require_false(u.owns_lock());
+      require_false(static_cast<bool>(u));
+      require_true(m.is_locked());      // still the original holder's
+    }
+    require_true(m.is_locked());      // a failed attempt must NOT unlock on the way out
+    m.unlock();
+    require_false(m.is_locked());
+  }
+  end_test_case();
+
+  test_case("a failed attempt can still be retried through lock()/try_lock()");
+  {
+    mutex m;
+    m.lock();
+    unique_lock<lock_starts::attempt, mutex> u(&m);      // pointer ctor
+    require_false(u.owns_lock());
+    require_false(u.try_lock());      // still held elsewhere
+    m.unlock();
+    require_true(u.try_lock());
+    require_true(u.owns_lock());
+    u.unlock();
+    require_false(m.is_locked());
+  }
+  end_test_case();
+
   sb::print("=== ALL UNIQUE_LOCK TESTS PASSED ===");
   return 1;
 }

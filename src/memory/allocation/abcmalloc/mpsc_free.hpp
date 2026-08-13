@@ -25,6 +25,7 @@
 #pragma once
 
 #include "../../../atomic/atomic.hpp"
+#include "../../../bits/__backoff.hpp"
 #include "../../../bits/__pause.hpp"
 #include "../../../memory/cache.hpp"
 #include "../../../types.hpp"
@@ -54,13 +55,6 @@ class __mpsc_free_queue
   alignas(__cache_line) __cell __cells[__capacity];
   alignas(__cache_line) micron::atomic_token<usize> __tail;
   alignas(__cache_line) usize __head;
-
-  [[gnu::always_inline]] static inline unsigned
-  __spin_backoff(unsigned b) noexcept
-  {
-    for ( unsigned i = 0; i < b; ++i ) __cpu_pause();
-    return (b < 64u) ? (b << 1u) : 64u;
-  }
 
 public:
   __mpsc_free_queue() noexcept : __tail(0), __head(0)
@@ -103,12 +97,12 @@ public:
           c.seq.store(tail + 1u, micron::memory_order_release);
           return true;
         }
-        backoff = __spin_backoff(backoff);
+        backoff = micron::__spin_backoff(backoff);
         tail = __tail.get(micron::memory_order_relaxed);
       } else if ( diff < 0 ) {
         return false;
       } else {
-        backoff = __spin_backoff(backoff);
+        backoff = micron::__spin_backoff(backoff);
         tail = __tail.get(micron::memory_order_relaxed);
       }
     }

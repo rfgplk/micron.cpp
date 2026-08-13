@@ -217,36 +217,9 @@ public:
   }
 };
 
-struct queuing_mutex_adapter {
-  queuing_mutex mtx;
-  queuing_mutex::node_type node;
+using queuing_mutex_adapter = micron::mcs_lock;
 
-  void
-  lock()
-  {
-    mtx(node);
-  }
-
-  bool
-  try_lock()
-  {
-    return mtx.try_lock(node);
-  }
-
-  void
-  unlock()
-  {
-    mtx.unlock(node);
-  }
-
-  bool
-  is_locked() const noexcept
-  {
-    return mtx.is_locked();
-  }
-};
-
-template<typename T> using queuing_inlet = inlet<T, queuing_mutex_adapter>;
+template<typename T> using queuing_inlet = inlet<T, micron::mcs_lock>;
 template<typename T> using recursive_inlet = inlet<T, micron::recursive_lock>;
 
 template<typename T> using mutex_inlet = inlet<T, micron::mutex>;

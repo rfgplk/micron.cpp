@@ -7,11 +7,13 @@
 
 #include "../../../__special/initializer_list"
 
+#include "../../__vec_simd.hpp"
 #include "../../bits/impl.hpp"
 #include "../../constants.hpp"
 #include "../../generic.hpp"
 #include "../../log.hpp"
 #include "../../mk.hpp"
+#include "../../policy.hpp"
 #include "../../sqrt.hpp"
 #include "../../trig.hpp"
 
@@ -226,18 +228,98 @@ struct alignas(micron::math::vec_align_v<T, 4>) vector_4 {
   constexpr vector_4<T>
   normalized() const
   {
+    if !consteval {
+#if defined(__micron_gfx_simd)
+      if constexpr ( micron::is_same_v<T, f32> ) {
+        vector_4<T> out{};
+        const simd::f128 vv = math::__vsimd::__load(reinterpret_cast<const float *>(&x));
+        const simd::f128 n2 = math::__vsimd::__dot4_splat(vv, vv);
+        const simd::f128 gmask = math::__vsimd::__cmp_le(n2, math::__vsimd::__splat(float(math::default_eps<T>())));
+        const simd::f128 r = math::__vsimd::__mul(vv, math::__vsimd::__inv_sqrt_exact(n2));
+        math::__vsimd::__store(reinterpret_cast<float *>(&out.x), math::__vsimd::__andnot(gmask, r));
+        return out;
+      }
+#endif
+    }
     T n2 = squared_norm();
     if ( n2 <= math::default_eps<T>() ) return { T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 } };
-    T inv = math::frsqrt(n2);
+    T inv = math::__vsimd::__inv_sqrt_exact_s(n2);
+    return { x * inv, y * inv, z * inv, w * inv };
+  }
+
+  constexpr vector_4<T>
+  normalized(math::policy::fast_tag) const
+  {
+    if !consteval {
+#if defined(__micron_gfx_simd)
+      if constexpr ( micron::is_same_v<T, f32> ) {
+        vector_4<T> out{};
+        const simd::f128 vv = math::__vsimd::__load(reinterpret_cast<const float *>(&x));
+        const simd::f128 n2 = math::__vsimd::__dot4_splat(vv, vv);
+        const simd::f128 gmask = math::__vsimd::__cmp_le(n2, math::__vsimd::__splat(float(math::default_eps<T>())));
+        const simd::f128 r = math::__vsimd::__mul(vv, math::__vsimd::__inv_sqrt_fast(n2));
+        math::__vsimd::__store(reinterpret_cast<float *>(&out.x), math::__vsimd::__andnot(gmask, r));
+        return out;
+      }
+#endif
+    }
+    T n2 = squared_norm();
+    if ( n2 <= math::default_eps<T>() ) return { T{ 0 }, T{ 0 }, T{ 0 }, T{ 0 } };
+    T inv;
+    if constexpr ( micron::is_same_v<T, f32> )
+      inv = math::__vsimd::__inv_sqrt_fast_s(n2);
+    else
+      inv = math::__vsimd::__inv_sqrt_exact_s(n2);
     return { x * inv, y * inv, z * inv, w * inv };
   }
 
   constexpr vector_4<T> &
   normalize()
   {
+    if !consteval {
+#if defined(__micron_gfx_simd)
+      if constexpr ( micron::is_same_v<T, f32> ) {
+        const simd::f128 vv = math::__vsimd::__load(reinterpret_cast<const float *>(&x));
+        const simd::f128 n2 = math::__vsimd::__dot4_splat(vv, vv);
+        const simd::f128 gmask = math::__vsimd::__cmp_le(n2, math::__vsimd::__splat(float(math::default_eps<T>())));
+        const simd::f128 r = math::__vsimd::__mul(vv, math::__vsimd::__inv_sqrt_exact(n2));
+        math::__vsimd::__store(reinterpret_cast<float *>(&x), math::__vsimd::__select(gmask, vv, r));
+        return *this;
+      }
+#endif
+    }
     T n2 = squared_norm();
     if ( n2 <= math::default_eps<T>() ) return *this;
-    T inv = math::frsqrt(n2);
+    T inv = math::__vsimd::__inv_sqrt_exact_s(n2);
+    x *= inv;
+    y *= inv;
+    z *= inv;
+    w *= inv;
+    return *this;
+  }
+
+  constexpr vector_4<T> &
+  normalize(math::policy::fast_tag)
+  {
+    if !consteval {
+#if defined(__micron_gfx_simd)
+      if constexpr ( micron::is_same_v<T, f32> ) {
+        const simd::f128 vv = math::__vsimd::__load(reinterpret_cast<const float *>(&x));
+        const simd::f128 n2 = math::__vsimd::__dot4_splat(vv, vv);
+        const simd::f128 gmask = math::__vsimd::__cmp_le(n2, math::__vsimd::__splat(float(math::default_eps<T>())));
+        const simd::f128 r = math::__vsimd::__mul(vv, math::__vsimd::__inv_sqrt_fast(n2));
+        math::__vsimd::__store(reinterpret_cast<float *>(&x), math::__vsimd::__select(gmask, vv, r));
+        return *this;
+      }
+#endif
+    }
+    T n2 = squared_norm();
+    if ( n2 <= math::default_eps<T>() ) return *this;
+    T inv;
+    if constexpr ( micron::is_same_v<T, f32> )
+      inv = math::__vsimd::__inv_sqrt_fast_s(n2);
+    else
+      inv = math::__vsimd::__inv_sqrt_exact_s(n2);
     x *= inv;
     y *= inv;
     z *= inv;

@@ -57,7 +57,7 @@ template<memory_order Aq = memory_order::acquire, memory_order Rl = memory_order
   void
   acquire() noexcept
   {
-    while ( !try_acquire() ) __cpu_pause();
+    ttas_acquire();
   }
 
 public:

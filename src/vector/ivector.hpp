@@ -315,8 +315,8 @@ public:
   inline __attribute__((always_inline)) const T &
   operator[](R n) const
   {
-    __safety_check<&ivector::__capacity_check, except::library_error>("micron::ivector operator[] out of allocated memory range.",
-                                                                      static_cast<size_type>(n));
+
+    __safety_check<&ivector::__index_check, except::library_error>("micron::ivector operator[] out of range.", static_cast<size_type>(n));
     return (__mem::memory)[n];
   }
 
@@ -367,10 +367,8 @@ public:
   inline const_iterator
   find(const T &o) const
   {
-    const T *f_ptr = __mem::memory;
-    for ( size_type i = 0; i < __mem::length; i++ )
-      if ( f_ptr[i] == o ) return micron::addr(f_ptr[i]);
-    return nullptr;
+    const size_type i = __impl_container::find_index(__mem::memory, __mem::length, o);
+    return i == __mem::length ? nullptr : micron::addr(__mem::memory[i]);
   }
 
   size_type
@@ -486,10 +484,11 @@ public:
     return append(o);
   }
 
-  template<typename C = T, bool Sf2 = Sf>
+  template<bool Sf2 = Sf>
   void
-  swap(ivector<C, Alloc, Sf2> &&o)
+  swap(ivector<T, Alloc, Sf2> &o)
   {
+
     micron::swap(__mem::memory, o.__mem::memory);
     micron::swap(__mem::length, o.__mem::length);
     micron::swap(__mem::capacity, o.__mem::capacity);

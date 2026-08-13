@@ -35,7 +35,7 @@ constexpr static const u32 futex_futex_lock_pi2 = 13;      // >=5.14
 constexpr static const u32 futex_private_flag = 128;
 constexpr static const u32 futex_clock_realtime = 256;
 
-auto
+inline auto
 __futex(u32 *addr, int futex, u32 val, timespec_t *timeout, u32 *addr2, u32 val2)
 {
   return micron::syscall(SYS_futex, addr, futex, val, timeout, addr2, val2);

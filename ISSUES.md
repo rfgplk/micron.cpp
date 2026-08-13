@@ -10,12 +10,22 @@
   it now goes through the `__load32`/`__load64` memcpy punning helpers in `hash/__load.hpp` like the
   other kernels. Byte-identical output — the `tests/hash/hash_vectors` known-answer vectors are the gate.
 
+## Containers
+
+  **convector -- locks, then leaks the handle out** in `T &operator[]`, `at`, `front`, `back`, both
+  `slice<T> operator[]` forms and `into_bytes()`. `at_n(iterator)`
+
+- **`convector`'s `fast_mutex` shares a cache line with the metadata it guards**
+- **`ivector::insert()` cannot insert at the end.**
+- **`clear()` is O(n) even for a trivially destructible element type, by design.**
+
 ## Known-failing tests
 
 `tests/rigor/FAILING.md` is the current baseline of rigor tests that fail on a stock amd64 hosted
 run
 
 - `tests/rigor/memcmp.cpp` and `tests/rigor/memory.cpp` do not link
+- **`tests/rigor/rigor_algo_core_imperative.cpp` returns 6 FAIL (require) on `--arm`**, in the
 
 ## Building / optimizations
 - currently, you _cannot_ use micron alongside the STL (or any glibc) code; technically you can (if you poison the right headers and work around defines) but if you try you will _almost certainly_ run into conflicting type declarations. If you truly want to include micron code alongside glibc (say in a legacy codebase) my recommendation is to splice the micron code/headers you want verbatim rather than pulling in the whole thing. Most micron external fns map cleanly to glibc aliases, so you shouldn't have much trouble.
@@ -28,6 +38,8 @@ run
   `allocator_types/serial_allocator.hpp:32` rounds every request through
   `to_granularity<page_size>` (`policies.hpp:27`), containers issue `malloc(4096)` and an overflow past the logical end never reaches a redzone. Needs either a
   sanitizer-time granularity of 1 or `__asan_poison_memory_region`
+- **`--tsan` / `--asan` cannot compile ANY TU that reaches `src/thread/thread.hpp`** — 26
+- **`duck` rejects a multi-token flag string passed as one argv entry**
 - certain heavy abc tests need `vm.overcommit_memory=0|1` otherwise they'll fail at RUNTIME with `critical_error` (mmap refused)
 
 ## Bugs / Limitations you should know
@@ -62,14 +74,46 @@ run
 - freestanding: nothing joins `__global_threadpool` at process exit, so a pool worker's
   `thread_local`s are never destroyed
 
+## Concurrency / locking
+
+  - **try_lock() can answer false for the few instructions between the
+  lock going free and the release letting go of the node** (measured 41 and 112 refusals in 10000
+  rounds, 0 in three other runs)
+- **Exceeding `MICRON_MCS_DEPTH` is loud through `lock()` and a silent unbounded livelock through
+  every `try_lock`-based path.**
+- **`mcs_lock` detects re-entrancy and raises; `clh_lock` cannot and self-deadlocks.** `try_lock()`
+- **`shared_mutex` has no shared→exclusive upgrade, and attempting one blocks the whole lock**
+- **`recursive_lock::unlock()` from a non-owner is a silent no-op.**
+- **`~mcs_lock()` clears only the destroying thread's slot entry**
+- `mutex/rcu.hpp` is entirely `#if 0` (`WARNING: DO NOT USE, NON FUNCTIONAL + BROKEN`);
+- **The FIFO locks convoy under preemption, and `mcs_lock` worst of the three.**
+- gcc emits a `-Warray-bounds` false positive for `lock_guard<M>::~lock_guard`'s member-function-pointer call when `M` is a one-byte lock with an empty `[[no_unique_address]]` member
+
 ## Platform / Arch gaps
-- `src/simd/strings.hpp` is x86-only (AVX2/SSE2 + scalar fallback); no NEON yet
+- **On 32-bit targets, `src/function.hpp`'s unconstrained `operator>>` hijacks `uint128_t` shifts and
+  breaks `hash/rapidhash.hpp`.**
 - `src/simd/fma.hpp` is x86-only (`_mm_fmadd_*` / `_mm256_fmadd_*`)
 - `src/math/simd/trig.hpp` + `src/math/quaternions/batched.hpp`: NEON f32 on ARM, but f64 only on amd64/arm64; arm32 double-precision trig/quaternion falls back to scalar
 - arm32: reading CNTVCT (`mrrc p15,1,…c14`) faults SIGILL under qemu/PL0
 - arm32: `tests/coro/t_parallel_{map,quick,radix,sort}` fail to compile against the Linaro sysroot — `conflicting declaration 'typedef __time_t time_t'` / `suseconds_t` between micron's typedefs and glibc's `bits/types/time_t.h`
 
+## Algorithms
+
+- **Map and tree `any_of` / `find` / `find_if` / `contains_if` never early-exit.**
+- **`fp::nub_by` and `fp::unique(c, eq)` are O(n^2)**
+- **`search` / `find_end` fall back to an O(nm) skip scan for a pattern wider than
+  `__impl::kmp_stack_max` (256)**
+- **The `_n` family in `algorithm/memory.hpp` does not have one count convention, and three of them
+  change convention based on the value of the count.** `simd::memcpy256` / `memcmp256` / `memset256`
+  all compute `bytes = count * sizeof(T)`, so their count is in **elements**; `micron::memset` and
+  `bytecmp` take **bytes**. The dispatch in `memory.hpp` picks between them on `cnt % 32` / `cnt % 16`:
+ - **`micron::memcmp` is a value comparison, not a byte comparison, for any element wider than a
+  byte.**
+- **The container overload of `merge()` does not merge; it concatenates instead.**
+- **A NaN differential test is meaningless under `-Ofast`.**
+
 ## Compiler hazards
+- **`#pragma GCC optimize("no-fast-math", …)` does not protect an `always_inline` body, and on x86 the flag that actually rewrites your divide is not an optimize option at all.** (actual wtf?)
 - **`__attribute__((naked))` does NOT suppress the stack-protector prologue.** Under `-fstack-protector-all`
   gcc prepends the canary spill *inside* a naked function:
 

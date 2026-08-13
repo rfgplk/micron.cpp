@@ -5,15 +5,20 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-// NOTE: these are COMPILER reorder barriers only
-// (no hardware fence is emitted on a weak memory model such as ARM)
+#include "../atomic/intrin.hpp"
 
-#define full_barrier() __asm("" ::: "memory")
+// NOTE: these emit a real fence
 
-#define read_barrier() __asm("" ::: "memory")
+#define full_barrier() ::micron::atom::thread_fence(::micron::atomic_seq_cst)
 
-#define write_barrier() __asm("" ::: "memory")
+#define read_barrier() ::micron::atom::thread_fence(::micron::atomic_acquire)
 
+#define write_barrier() ::micron::atom::thread_fence(::micron::atomic_release)
+
+// compiler-only reorder barrier: emits no instruction
+#define compiler_barrier() __asm("" ::: "memory")
+
+// launders a value through a register so the compiler cannot re-fold it
 #define forced_read_barrier(x)                                                                                                             \
   ({                                                                                                                                       \
     __typeof__(x) __x = (x);                                                                                                               \

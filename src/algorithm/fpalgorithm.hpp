@@ -16,6 +16,8 @@
 #include "fperrors.hpp"
 #include "unroll.hpp"
 
+#include "../sort/sort.hpp"
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // fp variants of algorithm
 // _c denotes curried
@@ -31,7 +33,7 @@ template<is_iterable_container C, typename Fn>
 C
 fmap(Fn &&fn, C c)
 {
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_transform_val(c.begin(), fn, make_index_sequence<C::static_size>{});
   } else {
     micron::transform(c, micron::forward<Fn>(fn));
@@ -44,7 +46,7 @@ template<is_iterable_container C, typename Fn>
 C
 fmap(Fn &&fn, C c)
 {
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_transform_ptr(c.begin(), fn, make_index_sequence<C::static_size>{});
   } else {
     auto *first = c.begin();
@@ -284,7 +286,7 @@ zip_with(const C &a, const C &b, Fn fn)
   const auto *fb = b.begin();
   auto *dst = out.begin();
   const auto *end = a.end();
-  if constexpr ( has_static_size<C> ) {
+  if constexpr ( micron::unrollable<C> ) {
     __impl::__unroll_transform_bin(fa, fb, dst, fn, make_index_sequence<C::static_size>{});
   } else {
     for ( ; fa != end; ++fa, ++fb, ++dst ) *dst = fn(*fa, *fb);
@@ -669,12 +671,12 @@ reverse_c()
   };
 }
 
+// make_heap + sort_heap is a heapsort
 inline auto
 sort_c()
 {
   return [](auto c) noexcept {
-    micron::make_heap(c);
-    micron::sort_heap(c);
+    micron::sort::sort(c);
     return c;
   };
 }
@@ -684,8 +686,7 @@ auto
 sort_by_c(Cmp &&cmp)
 {
   return [cmp = micron::forward<Cmp>(cmp)](auto c) mutable noexcept {
-    micron::make_heap(c, cmp);
-    micron::sort_heap(c, cmp);
+    micron::sort::sort(c, cmp);
     return c;
   };
 }
@@ -695,7 +696,7 @@ auto
 clamp_each_c(const T lo, const T hi) noexcept
 {
   return [lo, hi](auto c) noexcept {
-    if constexpr ( has_static_size<decltype(c)> ) {
+    if constexpr ( micron::unrollable<decltype(c)> ) {
       __impl::__unroll_clamp(c.begin(), lo, hi, make_index_sequence<decltype(c)::static_size>{});
     } else {
       auto *first = c.begin();

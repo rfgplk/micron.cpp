@@ -8,6 +8,10 @@
 test tests/stress/ -o bin/stress/x64 --timeout 300
 test tests/stress/ --arm   -o bin/stress/arm   --timeout 900
 test tests/stress/ --arm64 -o bin/stress/arm64 --timeout 900
+test tests/stress/lock_adversarial.cpp   --def STRESS_SCALE=4  -o bin/stress/soak --timeout 1800
+test tests/stress/lock_deadlock_fuzz.cpp --def STRESS_SCALE=10 -o bin/stress/soak --timeout 1800
+test tests/stress/lock_adversarial.cpp   --def MICRON_LOCK_SPIN_ROUNDS=0u -o bin/stress/nospin --timeout 900
+test tests/stress/lock_deadlock_fuzz.cpp --def MICRON_MCS_DEPTH=1 -o bin/stress/depth1 --timeout 900
 test tests/stress/coro_sched_adversarial.cpp --def STRESS_SCALE=10 -o bin/stress/soak --timeout 1800
 test tests/stress/coro_io_nonblock.cpp       --def STRESS_SCALE=10 -o bin/stress/soak --timeout 1800
 test tests/stress/thr_lifecycle_recycle.cpp  --def STRESS_SCALE=10 -o bin/stress/soak --timeout 1800

@@ -1,10 +1,25 @@
 #pragma once
 
+#include "../concepts.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
 namespace micron
 {
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// when to unroll
+//
+// never check has_static_size alone; a) it's inefficient due an instruction storm b) large containers can routinely be _thousands_ of Ns
+// large, EXPLODING COMPILE TIMES EXPONENTIALLY (even outright ooming gcc sometimes); instead hard cap it
+inline constexpr usize __unroll_max = 32;
+
+template<typename C>
+concept static_extent = has_static_size<C> && requires { requires C::length == C::static_size; };
+
+template<typename C>
+concept unrollable = static_extent<C> && (C::static_size <= __unroll_max);
+
 namespace __impl
 {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

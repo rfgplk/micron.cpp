@@ -7,6 +7,7 @@
 
 #include "../../../__special/initializer_list"
 
+#include "../../__vec_simd.hpp"
 #include "../../bits/impl.hpp"
 #include "../../constants.hpp"
 #include "../../generic.hpp"
@@ -221,9 +222,23 @@ struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
   constexpr vector_2<T>
   normalized() const
   {
+    // 2-lane SIMD loses to the guard-free scalar 1/sqrt; no packed path
     T n2 = squared_norm();
     if ( n2 <= math::default_eps<T>() ) return { T{ 0 }, T{ 0 } };
-    T inv = math::frsqrt(n2);
+    T inv = math::__vsimd::__inv_sqrt_exact_s(n2);
+    return { x * inv, y * inv };
+  }
+
+  constexpr vector_2<T>
+  normalized(math::policy::fast_tag) const
+  {
+    T n2 = squared_norm();
+    if ( n2 <= math::default_eps<T>() ) return { T{ 0 }, T{ 0 } };
+    T inv;
+    if constexpr ( micron::is_same_v<T, f32> )
+      inv = math::__vsimd::__inv_sqrt_fast_s(n2);
+    else
+      inv = math::__vsimd::__inv_sqrt_exact_s(n2);
     return { x * inv, y * inv };
   }
 
@@ -232,7 +247,22 @@ struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
   {
     T n2 = squared_norm();
     if ( n2 <= math::default_eps<T>() ) return *this;
-    T inv = math::frsqrt(n2);
+    T inv = math::__vsimd::__inv_sqrt_exact_s(n2);
+    x *= inv;
+    y *= inv;
+    return *this;
+  }
+
+  constexpr vector_2<T> &
+  normalize(math::policy::fast_tag)
+  {
+    T n2 = squared_norm();
+    if ( n2 <= math::default_eps<T>() ) return *this;
+    T inv;
+    if constexpr ( micron::is_same_v<T, f32> )
+      inv = math::__vsimd::__inv_sqrt_fast_s(n2);
+    else
+      inv = math::__vsimd::__inv_sqrt_exact_s(n2);
     x *= inv;
     y *= inv;
     return *this;

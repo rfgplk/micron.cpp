@@ -13,7 +13,6 @@ __cpu_pause(void)
 {
 #if defined(__micron_arch_x86_any)
   asm volatile("pause" ::: "memory");
-  __builtin_ia32_pause();
 #elif defined(__micron_arch_arm_any)
   __asm__ __volatile__("yield" ::: "memory");
   //__builtin_arm_yield();

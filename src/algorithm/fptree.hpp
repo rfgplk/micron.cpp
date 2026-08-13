@@ -17,6 +17,7 @@
 #include "../vector/fvector.hpp"
 
 #include "fperrors.hpp"
+#include "fpfilter.hpp"
 #include "tree.hpp"
 
 namespace micron
@@ -116,11 +117,12 @@ template<is_set_tree Tree>
 micron::fvector<typename micron::remove_cvref_t<Tree>::value_type>
 nub(const Tree &t)
 {
-  micron::fvector<typename micron::remove_cvref_t<Tree>::value_type> out;
+  using E = typename micron::remove_cvref_t<Tree>::value_type;
+  micron::fvector<E> out;
+  micron::fp::__impl::seen_set<E> seen;
+  seen.reserve(t.size());
   t.for_each([&](const auto &e) {
-    for ( const auto &x : out )
-      if ( x == e ) return;
-    out.push_back(e);
+    if ( seen.add(e) ) out.push_back(e);
   });
   return out;
 }
@@ -129,11 +131,12 @@ template<is_tree_map Tree>
 micron::fvector<typename micron::remove_cvref_t<Tree>::mapped_type>
 nub(const Tree &t)
 {
-  micron::fvector<typename micron::remove_cvref_t<Tree>::mapped_type> out;
+  using V = typename micron::remove_cvref_t<Tree>::mapped_type;
+  micron::fvector<V> out;
+  micron::fp::__impl::seen_set<V> seen;
+  seen.reserve(t.size());
   t.for_each([&](const auto &, const auto &v) {
-    for ( const auto &x : out )
-      if ( x == v ) return;
-    out.push_back(v);
+    if ( seen.add(v) ) out.push_back(v);
   });
   return out;
 }

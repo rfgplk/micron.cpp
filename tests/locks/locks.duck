@@ -1,0 +1,189 @@
+# the locking + atomics validation battery
+#
+#   duck tests/locks/locks.duck                (== duck batch tests/locks/locks.duck)
+#   duck batch parallel tests/locks/locks.duck
+#
+# amd64, hosted, default optimization
+
+test tests/rigor/mutex_basic.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_fast_mutex.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_null_lock.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_spin_lock.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_recursive.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_ttas.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/mutex_ticket.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/mutex_mcs_lock.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/mutex_clh_lock.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/mutex_futex.cpp -o bin/locks/x64 --timeout 240
+test tests/rigor/mutex_shared.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/mutex_seqlock.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/mutex_weak_mutex.cpp -o bin/locks/x64 --timeout 300
+test tests/rigor/mutex_barrier.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_multilock.cpp -o bin/locks/x64 --timeout 240
+test tests/rigor/mutex_exclusion.cpp -o bin/locks/x64 --timeout 300
+test tests/rigor/mutex_queuing.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_scoped_lock.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_lock_guard.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_unique_lock.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_auto_guard.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_once.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_token.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/mutex_token_mt.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/atomic_atomic.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/atomic_flag.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/atomic_intrin.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/atomic_ptr_rmw.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/atomic_locked_view.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/atomic_litmus.cpp -o bin/locks/x64 --timeout 240
+test tests/rigor/sync_futex.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/sync_event_count.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/sync_semaphore.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/sync_semaphore_permits.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/sync_inlet.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/sync_inlet_queuing.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/sync_latch.cpp -o bin/locks/x64 --timeout 120
+test tests/rigor/sync_barrier.cpp -o bin/locks/x64 --timeout 120
+
+# deadlock battery
+
+test tests/rigor/mutex_deadlock_family.cpp -o bin/locks/x64 --timeout 300
+test tests/rigor/mutex_mcs_regression.cpp -o bin/locks/x64 --timeout 180
+test tests/rigor/mutex_clh_regression.cpp -o bin/locks/x64 --timeout 240
+
+test tests/rigor/mutex_ttas.cpp --def MICRON_LOCK_STATS -o bin/locks/stats --timeout 240
+test tests/rigor/mutex_futex.cpp --def MICRON_LOCK_STATS -o bin/locks/stats --timeout 300
+test tests/rigor/mutex_ticket.cpp --def MICRON_LOCK_STATS -o bin/locks/stats --timeout 240
+test tests/rigor/mutex_exclusion.cpp --def MICRON_LOCK_STATS -o bin/locks/stats --timeout 400
+
+test tests/rigor/mutex_deadlock_family.cpp --def MICRON_LOCK_STATS -o bin/locks/stats --timeout 300
+
+# lock-misuse
+
+test tests/rigor/mutex_recursive.cpp --def MICRON_LOCK_DEBUG -o bin/locks/debug --timeout 120
+test tests/rigor/mutex_mcs_lock.cpp --def MICRON_LOCK_DEBUG -o bin/locks/debug --timeout 180
+test tests/rigor/mutex_clh_lock.cpp --def MICRON_LOCK_DEBUG -o bin/locks/debug --timeout 180
+test tests/rigor/mutex_ticket.cpp --def MICRON_LOCK_DEBUG -o bin/locks/debug --timeout 180
+test tests/rigor/mutex_queuing.cpp --def MICRON_LOCK_DEBUG -o bin/locks/debug --timeout 120
+test tests/rigor/mutex_exclusion.cpp --def MICRON_LOCK_DEBUG -o bin/locks/debug --timeout 400
+
+# forced degradation
+#   MICRON_LOCK_SPIN_ROUNDS=0   park (or yield) on the FIRST failed acquire
+#   MICRON_LOCK_YIELD_ROUNDS=0  no yield tier at all: pause straight to park
+#   MICRON_LOCK_SPIN_LIMIT=1    no exponential growth, one pause per round
+#   MICRON_MCS_DEPTH=1          one queue-lock slot per thread: the eviction path in
+#                               __node_pool.hpp, which is otherwise never reached
+
+test tests/rigor/mutex_futex.cpp --def MICRON_LOCK_SPIN_ROUNDS=0u -o bin/locks/nospin --timeout 300
+test tests/rigor/mutex_ttas.cpp --def MICRON_LOCK_YIELD_ROUNDS=0u -o bin/locks/noyield --timeout 240
+test tests/rigor/mutex_ticket.cpp --def MICRON_LOCK_SPIN_LIMIT=1u -o bin/locks/nogrow --timeout 240
+test tests/rigor/mutex_exclusion.cpp --def MICRON_LOCK_SPIN_LIMIT=1u -o bin/locks/nogrow --timeout 400
+test tests/rigor/mutex_basic.cpp --def MICRON_LOCK_SPIN_ROUNDS=0u -o bin/locks/nospin --timeout 180
+test tests/rigor/mutex_fast_mutex.cpp --def MICRON_LOCK_SPIN_ROUNDS=0u -o bin/locks/nospin --timeout 180
+test tests/rigor/mutex_weak_mutex.cpp --def MICRON_LOCK_SPIN_ROUNDS=0u -o bin/locks/nospin --timeout 400
+test tests/rigor/mutex_recursive.cpp --def MICRON_LOCK_YIELD_ROUNDS=0u -o bin/locks/noyield --timeout 180
+test tests/rigor/mutex_queuing.cpp --def MICRON_LOCK_SPIN_LIMIT=1u -o bin/locks/nogrow --timeout 180
+test tests/rigor/mutex_spin_lock.cpp --def MICRON_LOCK_SPIN_LIMIT=1u -o bin/locks/nogrow --timeout 180
+test tests/rigor/mutex_mcs_lock.cpp --def MICRON_MCS_DEPTH=1 -o bin/locks/depth1 --timeout 180
+test tests/rigor/mutex_clh_lock.cpp --def MICRON_MCS_DEPTH=1 -o bin/locks/depth1 --timeout 180
+
+test tests/rigor/mutex_deadlock_family.cpp --def MICRON_MCS_DEPTH=1 -o bin/locks/depth1 --timeout 300
+test tests/rigor/mutex_mcs_regression.cpp --def MICRON_MCS_DEPTH=1 -o bin/locks/depth1 --timeout 180
+test tests/rigor/mutex_clh_regression.cpp --def MICRON_MCS_DEPTH=1 -o bin/locks/depth1 --timeout 240
+test tests/rigor/mutex_deadlock_family.cpp --def MICRON_LOCK_SPIN_ROUNDS=0u -o bin/locks/nospin --timeout 300
+test tests/rigor/mutex_deadlock_family.cpp --def MICRON_LOCK_SPIN_LIMIT=1u -o bin/locks/nogrow --timeout 300
+
+# optimization sweep
+
+test tests/rigor/atomic_litmus.cpp -O0 -o bin/locks/O0 --timeout 300
+test tests/rigor/mutex_exclusion.cpp -O0 -o bin/locks/O0 --timeout 400
+test tests/rigor/mutex_seqlock.cpp -O0 -o bin/locks/O0 --timeout 240
+test tests/rigor/mutex_multilock.cpp -O0 -o bin/locks/O0 --timeout 300
+test tests/rigor/mutex_deadlock_family.cpp -O0 -o bin/locks/O0 --timeout 400
+test tests/rigor/mutex_mcs_regression.cpp -O0 -o bin/locks/O0 --timeout 240
+test tests/rigor/mutex_clh_regression.cpp -O0 -o bin/locks/O0 --timeout 300
+
+# SSE2 floor
+
+test tests/rigor/atomic_litmus.cpp --isa base -o bin/locks/base --timeout 300
+test tests/rigor/mutex_exclusion.cpp --isa base -o bin/locks/base --timeout 400
+test tests/rigor/atomic_ptr_rmw.cpp --isa base -o bin/locks/base --timeout 240
+test tests/rigor/mutex_deadlock_family.cpp --isa base -o bin/locks/base --timeout 300
+test tests/rigor/mutex_mcs_regression.cpp --isa base -o bin/locks/base --timeout 180
+test tests/rigor/mutex_clh_regression.cpp --isa base -o bin/locks/base --timeout 240
+
+# aarch64 under qemu-aarch64-static -- WEAK MEMORY
+
+test tests/rigor/atomic_litmus.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/atomic_atomic.cpp --arm64 -s -o bin/locks/arm64 --timeout 300
+test tests/rigor/atomic_intrin.cpp --arm64 -s -o bin/locks/arm64 --timeout 300
+test tests/rigor/atomic_ptr_rmw.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/atomic_locked_view.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_ttas.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_ticket.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_mcs_lock.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_clh_lock.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_futex.cpp --arm64 -s -o bin/locks/arm64 --timeout 900
+test tests/rigor/mutex_shared.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_seqlock.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_weak_mutex.cpp --arm64 -s -o bin/locks/arm64 --timeout 900
+test tests/rigor/mutex_barrier.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_multilock.cpp --arm64 -s -o bin/locks/arm64 --timeout 900
+test tests/rigor/mutex_exclusion.cpp --arm64 -s -o bin/locks/arm64 --timeout 900
+test tests/rigor/mutex_fast_mutex.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/sync_event_count.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/sync_semaphore_permits.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/sync_inlet_queuing.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+
+test tests/rigor/mutex_deadlock_family.cpp --arm64 -s -o bin/locks/arm64 --timeout 900
+test tests/rigor/mutex_mcs_regression.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+test tests/rigor/mutex_clh_regression.cpp --arm64 -s -o bin/locks/arm64 --timeout 600
+
+# armv7-a under qemu-arm-static
+
+test tests/rigor/atomic_litmus.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/atomic_atomic.cpp --arm -s -o bin/locks/arm32 --timeout 300
+test tests/rigor/atomic_ptr_rmw.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_ttas.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_ticket.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_mcs_lock.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_clh_lock.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_futex.cpp --arm -s -o bin/locks/arm32 --timeout 900
+test tests/rigor/mutex_shared.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_seqlock.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_weak_mutex.cpp --arm -s -o bin/locks/arm32 --timeout 900
+test tests/rigor/mutex_barrier.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_exclusion.cpp --arm -s -o bin/locks/arm32 --timeout 900
+test tests/rigor/mutex_deadlock_family.cpp --arm -s -o bin/locks/arm32 --timeout 900
+test tests/rigor/mutex_mcs_regression.cpp --arm -s -o bin/locks/arm32 --timeout 600
+test tests/rigor/mutex_clh_regression.cpp --arm -s -o bin/locks/arm32 --timeout 600
+
+# ThreadSanitizer
+
+test tests/rigor/mutex_ttas.cpp --tsan -o bin/locks/tsan --timeout 600
+test tests/rigor/mutex_weak_mutex.cpp --tsan -o bin/locks/tsan --timeout 900
+test tests/rigor/mutex_ticket.cpp --tsan -o bin/locks/tsan --timeout 600
+test tests/rigor/mutex_mcs_lock.cpp --tsan -o bin/locks/tsan --timeout 600
+test tests/rigor/mutex_futex.cpp --tsan -o bin/locks/tsan --timeout 900
+test tests/rigor/mutex_shared.cpp --tsan -o bin/locks/tsan --timeout 600
+test tests/rigor/mutex_multilock.cpp --tsan -o bin/locks/tsan --timeout 900
+test tests/rigor/sync_inlet_queuing.cpp --tsan -o bin/locks/tsan --timeout 600
+test tests/rigor/mutex_deadlock_family.cpp --tsan -o bin/locks/tsan --timeout 900
+test tests/rigor/mutex_mcs_regression.cpp --tsan -o bin/locks/tsan --timeout 600
+test tests/rigor/mutex_clh_regression.cpp --tsan -o bin/locks/tsan --timeout 600
+
+# deep soaks
+
+test tests/stress/lock_adversarial.cpp -o bin/locks/soak --timeout 600
+test tests/stress/lock_deadlock_fuzz.cpp -o bin/locks/soak --timeout 600
+test tests/stress/lock_deadlock_fuzz.cpp --def STRESS_SCALE=10 -o bin/locks/soak10 --timeout 1800
+test tests/stress/lock_adversarial.cpp --def STRESS_SCALE=4 -o bin/locks/soak4 --timeout 1800
+
+test tests/rigor/mutex_deadlock_family.cpp --def LOCK_DF_SCALE=4 -o bin/locks/soak4 --timeout 900
+test tests/rigor/mutex_clh_regression.cpp --def CLH_REG_SCALE=4 -o bin/locks/soak4 --timeout 600
+test tests/rigor/mutex_mcs_regression.cpp --def MCS_REG_ITERS=20000 -o bin/locks/soak4 --timeout 600
+
+# freestanding: build+link only. -k has no exceptions, so the throwing paths in __node_pool.hpp
+# and clh_lock.hpp must still compile there.
+
+build tests/compiletests/locks.cpp -k -o bin/locks/free
+build tests/compiletests/locks.cpp -ke -o bin/locks/free

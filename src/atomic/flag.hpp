@@ -42,10 +42,12 @@ struct atomic_flag {
   void
   ttas(memory_order success, memory_order failure) noexcept
   {
+    __pause_backoff bo;
     for ( ;; ) {
-      while ( tk.get(memory_order::acquire) ) __cpu_pause();
+      while ( tk.get(memory_order::acquire) ) bo.relax();
       bool exp = ATOMIC_OPEN;
       if ( tk.compare_exchange_weak(exp, ATOMIC_LOCKED, success, failure) ) break;
+      bo.relax();
     }
   }
 

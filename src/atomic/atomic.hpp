@@ -7,6 +7,7 @@
 
 #include "intrin.hpp"
 
+#include "../bits/__backoff.hpp"
 #include "../memory/actions.hpp"
 #include "../types.hpp"
 
@@ -60,7 +61,8 @@ template<is_atomic_type T> struct atomic_token {
   static_assert(size_of<T, 1> or size_of<T, 2> or size_of<T, 4> or size_of<T, 8>, "Size must be 1, 2, 4, or 8 bytes");
   static_assert(__atomic_always_lock_free(sizeof(T), (T *)0), "atomic_token<T>: T is not always-lock-free on this target");
 
-  constexpr atomic_token(const T t = ATOMIC_OPEN) noexcept : v(t) { };
+  constexpr atomic_token() noexcept : v{} { };
+  constexpr atomic_token(const T t) noexcept : v(t) { };
   constexpr atomic_token(const atomic_token &o) noexcept : v(o.v) { };
 
   constexpr atomic_token(atomic_token &&t) noexcept : v(micron::move(t.v)) { t.v = {}; };
@@ -305,14 +307,17 @@ template<class T> class atomic
   void
   lock_check()
   {
-    while ( !tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) );
+    // TTAS; backoff escalates to sched_yield rather than pausing forever
+    if ( tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) ) return;
+    default_backoff bo;
+    for ( ;; ) {
+      while ( tk.get(memory_order::relaxed) == ATOMIC_LOCKED ) bo.relax();
+      if ( tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) ) return;
+      bo.relax();
+    }
   }
 
-  void
-  lock()
-  {
-    tk.store(ATOMIC_LOCKED);
-  }
+  // WARNING: this lock() has been removed
 
   void
   unlock()
@@ -817,57 +822,52 @@ public:
     return load() - other;
   }
 
+  // NOTE: these RMW loops ___MUST___ use compare_exchange_weak
   atomic_ptr &
   operator+=(I n) noexcept
   {
-    P old = load();
-    P desired = old + n;
-    while ( !tk.compare_and_swap(old, desired) ) desired = old + n;
+    P old = tk.get(memory_order::relaxed);
+    while ( !tk.compare_exchange_weak(old, old + n, memory_order::acq_rel, memory_order::relaxed) );
     return *this;
   }
 
   atomic_ptr &
   operator-=(I n) noexcept
   {
-    P old = load();
-    P desired = old - n;
-    while ( !tk.compare_and_swap(old, desired) ) desired = old - n;
+    P old = tk.get(memory_order::relaxed);
+    while ( !tk.compare_exchange_weak(old, old - n, memory_order::acq_rel, memory_order::relaxed) );
     return *this;
   }
 
   P
   operator++() noexcept
   {
-    P old = load();
-    P desired = old + 1;
-    while ( !tk.compare_and_swap(old, desired) ) desired = old + 1;
-    return desired;
+    P old = tk.get(memory_order::relaxed);
+    while ( !tk.compare_exchange_weak(old, old + 1, memory_order::acq_rel, memory_order::relaxed) );
+    return old + 1;
   }
 
   P
   operator++(int) noexcept
   {
-    P old = load();
-    P desired = old + 1;
-    while ( !tk.compare_and_swap(old, desired) ) desired = old + 1;
+    P old = tk.get(memory_order::relaxed);
+    while ( !tk.compare_exchange_weak(old, old + 1, memory_order::acq_rel, memory_order::relaxed) );
     return old;
   }
 
   P
   operator--() noexcept
   {
-    P old = load();
-    P desired = old - 1;
-    while ( !tk.compare_and_swap(old, desired) ) desired = old - 1;
-    return desired;
+    P old = tk.get(memory_order::relaxed);
+    while ( !tk.compare_exchange_weak(old, old - 1, memory_order::acq_rel, memory_order::relaxed) );
+    return old - 1;
   }
 
   P
   operator--(int) noexcept
   {
-    P old = load();
-    P desired = old - 1;
-    while ( !tk.compare_and_swap(old, desired) ) desired = old - 1;
+    P old = tk.get(memory_order::relaxed);
+    while ( !tk.compare_exchange_weak(old, old - 1, memory_order::acq_rel, memory_order::relaxed) );
     return old;
   }
 };

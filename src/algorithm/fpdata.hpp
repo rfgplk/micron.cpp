@@ -113,12 +113,13 @@ chunk(const C &c, usize n)
   return micron::option<C, empty_container_error>{ c };
 }
 
-template<is_iterable_container Inner, is_iterable_container C>
-  requires micron::is_same_v<typename Inner::value_type, typename C::value_type>
-C
+template<is_iterable_container Out, is_iterable_container C>
+  requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
+Out
 chunk_into(const C &c, usize n)
 {
-  C out;
+  using Inner = typename Out::value_type;
+  Out out;
   if ( n == 0 || c.size() == 0 ) return out;
   const usize total = c.size();
   const auto *first = c.begin();
@@ -136,12 +137,13 @@ chunk_into(const C &c, usize n)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // sliding  (sliding window of size n, step 1)
-template<is_iterable_container Inner, is_iterable_container C>
-  requires micron::is_same_v<typename Inner::value_type, typename C::value_type>
-C
+template<is_iterable_container Out, is_iterable_container C>
+  requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
+Out
 sliding(const C &c, usize n)
 {
-  C out;
+  using Inner = typename Out::value_type;
+  Out out;
   const usize total = c.size();
   if ( n == 0 || total < n ) return out;
   const auto *first = c.begin();
@@ -194,6 +196,11 @@ intercalate(const typename O::value_type &sep, const O &outer)
   Inner out;
   const auto *ofirst = outer.begin();
   const auto *olast = outer.end();
+  if constexpr ( requires { out.reserve(usize{ 1 }); } ) {
+    usize total = sep.size() * (outer.size() - 1);
+    for ( const auto *oit = ofirst; oit != olast; ++oit ) total += oit->size();
+    out.reserve(total);
+  }
   bool first_chunk = true;
   for ( const auto *oit = ofirst; oit != olast; ++oit ) {
     if ( !first_chunk ) {
@@ -211,12 +218,14 @@ intercalate(const typename O::value_type &sep, const O &outer)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // group_by  (split into maximal runs where adjacent elements match)
-template<is_iterable_container Inner, is_iterable_container C, typename EqFn>
-  requires fn_binary_predicate<EqFn, typename C::value_type> && micron::is_same_v<typename Inner::value_type, typename C::value_type>
-C
+template<is_iterable_container Out, is_iterable_container C, typename EqFn>
+  requires fn_binary_predicate<EqFn, typename C::value_type>
+           && micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
+Out
 group_by(const C &c, EqFn eq)
 {
-  C out;
+  using Inner = typename Out::value_type;
+  Out out;
   if ( c.size() == 0 ) return out;
   const auto *first = c.begin();
   const auto *last = c.end();
@@ -237,14 +246,16 @@ group_by(const C &c, EqFn eq)
   return out;
 }
 
-template<is_iterable_container Inner, is_iterable_container C, typename EqFn>
+template<is_iterable_container Out, is_iterable_container C, typename EqFn>
   requires micron::invocable<EqFn, const typename C::value_type *, const typename C::value_type *>
            && micron::is_convertible_v<micron::invoke_result_t<EqFn, const typename C::value_type *, const typename C::value_type *>, bool>
-           && (!fn_binary_predicate<EqFn, typename C::value_type>) && micron::is_same_v<typename Inner::value_type, typename C::value_type>
-C
+           && (!fn_binary_predicate<EqFn, typename C::value_type>)
+           && micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
+Out
 group_by(const C &c, EqFn eq)
 {
-  C out;
+  using Inner = typename Out::value_type;
+  Out out;
   if ( c.size() == 0 ) return out;
   const auto *first = c.begin();
   const auto *last = c.end();
@@ -265,12 +276,13 @@ group_by(const C &c, EqFn eq)
   return out;
 }
 
-template<is_iterable_container Inner, is_iterable_container C>
-  requires micron::is_same_v<typename Inner::value_type, typename C::value_type>
-C
+template<is_iterable_container Out, is_iterable_container C>
+  requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
+Out
 group_by(const C &c, micron::function<bool(typename C::value_type, typename C::value_type)> eq)
 {
-  C out;
+  using Inner = typename Out::value_type;
+  Out out;
   if ( c.size() == 0 ) return out;
   const auto *first = c.begin();
   const auto *last = c.end();
@@ -291,12 +303,12 @@ group_by(const C &c, micron::function<bool(typename C::value_type, typename C::v
   return out;
 }
 
-template<is_iterable_container Inner, is_iterable_container C>
-  requires micron::is_same_v<typename Inner::value_type, typename C::value_type>
-C
+template<is_iterable_container Out, is_iterable_container C>
+  requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
+Out
 group(const C &c)
 {
-  return group_by<Inner>(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a == b; });
+  return group_by<Out>(c, [](const typename C::value_type &a, const typename C::value_type &b) { return a == b; });
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -574,6 +586,7 @@ Out
 enumerate(const C &c)
 {
   Out out;
+  if constexpr ( requires { out.reserve(c.size()); } ) out.reserve(c.size());
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( usize i = 0; first != last; ++first, ++i ) out.push_back(micron::make_tuple(i, *first));

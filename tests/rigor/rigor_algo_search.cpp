@@ -1377,6 +1377,321 @@ main()
       },
       10000);
 
+  // ════════════════════════════════════════════════════════════════════
+  // search / find_end dispatch tiers
+  //
+  // search and find_end pick a strategy by pattern width: below kmp_min_width (8) the vector skip
+  // scan, from there to kmp_stack_max (256) KMP off a stack failure table, and above that the skip
+  // scan again because the table would not fit. Every one of those has to answer identically, and
+  // the interesting inputs are the ones with long self-overlapping prefixes -- that is exactly what
+  // KMP's failure links exist for and exactly what a naive scan gets right by brute force.
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("search/find_end agree with oracle across all three width tiers");
+  {
+    constexpr usize HN = 2200;
+    static int hay[HN];
+    static int pat[600];
+
+    auto oracle_first = [](const int *h, usize n, const int *p, usize m) -> const int * {
+      if ( m == 0 ) return n == 0 ? nullptr : h;
+      if ( m > n ) return nullptr;
+      for ( usize i = 0; i + m <= n; ++i ) {
+        usize j = 0;
+        for ( ; j < m; ++j )
+          if ( h[i + j] != p[j] ) break;
+        if ( j == m ) return h + i;
+      }
+      return nullptr;
+    };
+    auto oracle_last = [](const int *h, usize n, const int *p, usize m) -> const int * {
+      if ( m == 0 ) return h + n;
+      if ( m > n ) return nullptr;
+      for ( usize i = n - m + 1; i-- > 0; ) {
+        usize j = 0;
+        for ( ; j < m; ++j )
+          if ( h[i + j] != p[j] ) break;
+        if ( j == m ) return h + i;
+      }
+      return nullptr;
+    };
+
+    u64 st = 0xC0FFEE1234567ull;
+    auto nx = [&st]() {
+      st ^= st << 13;
+      st ^= st >> 7;
+      st ^= st << 17;
+      return st;
+    };
+
+    // widths straddling both boundaries: 1..9 (skip/KMP edge), 255..257 (KMP/skip edge)
+    const usize widths[] = { 1, 2, 3, 7, 8, 9, 16, 64, 255, 256, 257, 400 };
+    for ( usize wi = 0; wi < sizeof(widths) / sizeof(widths[0]); ++wi ) {
+      const usize m = widths[wi];
+      for ( int trial = 0; trial < 24; ++trial ) {
+        // alphabet of 2 makes partial matches dense, which is where a bad failure table shows
+        const u64 alpha = (trial % 3 == 0) ? 2 : ((trial % 3 == 1) ? 3 : 64);
+        const usize n = 300 + (nx() % (HN - 300));
+        for ( usize i = 0; i < n; ++i ) hay[i] = static_cast<int>(nx() % alpha);
+        for ( usize i = 0; i < m; ++i ) pat[i] = static_cast<int>(nx() % alpha);
+        // plant it sometimes so hits are guaranteed, at both ends and in the middle
+        if ( (trial & 1) && m <= n ) {
+          usize at = (trial % 6 == 1) ? 0 : ((trial % 6 == 3) ? n - m : nx() % (n - m + 1));
+          for ( usize i = 0; i < m; ++i ) hay[at + i] = pat[i];
+        }
+        require_true(micron::search(hay, hay + n, pat, pat + m) == oracle_first(hay, n, pat, m));
+        require_true(micron::find_end(hay, hay + n, pat, pat + m) == oracle_last(hay, n, pat, m));
+      }
+    }
+  }
+  end_test_case();
+
+  test_case("search/find_end on a fully periodic haystack (KMP worst case)");
+  {
+    // "aaaa...a" with "aaa...ab": every window is a partial match, which is the O(n*m) shape the
+    // naive scan degenerates on
+    constexpr usize N = 4000;
+    static int hay[N];
+    static int pat[64];
+    for ( usize i = 0; i < N; ++i ) hay[i] = 0;
+    for ( usize i = 0; i < 64; ++i ) pat[i] = 0;
+    pat[63] = 1;
+    require_true(micron::search(hay, hay + N, pat, pat + 64) == nullptr);
+    require_true(micron::find_end(hay, hay + N, pat, pat + 64) == nullptr);
+    // now make exactly one occurrence at the very end
+    hay[N - 1] = 1;
+    require_true(micron::search(hay, hay + N, pat, pat + 64) == hay + (N - 64));
+    require_true(micron::find_end(hay, hay + N, pat, pat + 64) == hay + (N - 64));
+  }
+  end_test_case();
+
+  test_case("search_n single-pass run tracking vs oracle");
+  {
+    constexpr usize N = 900;
+    static int buf[N];
+    u64 st = 0x5EED0F5EEDull;
+    auto nx = [&st]() {
+      st ^= st << 13;
+      st ^= st >> 7;
+      st ^= st << 17;
+      return st;
+    };
+    auto oracle = [](const int *p, usize n, usize k, int v) -> const int * {
+      if ( k == 0 ) return n == 0 ? nullptr : p;
+      if ( k > n ) return nullptr;
+      for ( usize i = 0; i + k <= n; ++i ) {
+        usize j = 0;
+        for ( ; j < k; ++j )
+          if ( p[i + j] != v ) break;
+        if ( j == k ) return p + i;
+      }
+      return nullptr;
+    };
+    for ( int trial = 0; trial < 400; ++trial ) {
+      const usize n = 1 + (nx() % N);
+      // runs of the target just short of k are what made the old restart-at-first+1 quadratic
+      for ( usize i = 0; i < n; ++i ) buf[i] = static_cast<int>(nx() % 2);
+      const usize k = 1 + (nx() % 12);
+      require_true(micron::search_n(buf, buf + n, k, 1) == oracle(buf, n, k, 1));
+      require_true(micron::search_n(buf, buf + n, k, 0) == oracle(buf, n, k, 0));
+    }
+    // n == 0 keeps its old answers: `first` for a non-empty range, nullptr for an empty one
+    require_true(micron::search_n(buf, buf + 4, 0, 1) == buf);
+    require_true(micron::search_n(buf, buf, 0, 1) == nullptr);
+  }
+  end_test_case();
+
+  test_case("find_first_of agrees across bitmap / vector / scalar tiers");
+  {
+    // a 1-byte element takes the 256-bit occupancy bitmap, wider ones the vector or scalar route.
+    // All three have to answer the same index.
+    constexpr usize N = 700;
+    static u8 b8[N];
+    static i32 b32[N];
+    u8 s8[16];
+    i32 s32[16];
+    u64 st = 0xBEEF77ull;
+    auto nx = [&st]() {
+      st ^= st << 13;
+      st ^= st >> 7;
+      st ^= st << 17;
+      return st;
+    };
+    for ( int trial = 0; trial < 300; ++trial ) {
+      const usize n = nx() % N;
+      const usize k = nx() % 17;
+      for ( usize i = 0; i < n; ++i ) {
+        const u8 v = static_cast<u8>(nx() % 50);
+        b8[i] = v;
+        b32[i] = static_cast<i32>(v);
+      }
+      for ( usize c = 0; c < k; ++c ) {
+        const u8 v = static_cast<u8>(nx() % 50);
+        s8[c] = v;
+        s32[c] = static_cast<i32>(v);
+      }
+      usize want = n;
+      for ( usize i = 0; i < n && want == n; ++i )
+        for ( usize c = 0; c < k; ++c )
+          if ( b8[i] == s8[c] ) {
+            want = i;
+            break;
+          }
+      const u8 *g8 = micron::find_first_of(b8, b8 + n, s8, s8 + k);
+      const i32 *g32 = micron::find_first_of(b32, b32 + n, s32, s32 + k);
+      require_true((want == n) ? (g8 == nullptr) : (g8 == b8 + want));
+      require_true((want == n) ? (g32 == nullptr) : (g32 == b32 + want));
+    }
+  }
+  end_test_case();
+
+  test_case("find_if_not accepts a VALUE predicate, not just a pointer one");
+  {
+    // the value-taking overloads were constrained on Fn(const T) but called fn(first), handing the
+    // predicate a pointer -- so this call could not compile at all
+    int a[16];
+    for ( int i = 0; i < 8; ++i ) a[i] = 0;
+    for ( int i = 8; i < 16; ++i ) a[i] = 1;
+    require_true(micron::find_if_not(a, a + 16, is_even) == a + 8);
+    require_true(micron::find_if_not(static_cast<const int *>(a), static_cast<const int *>(a + 16), is_even) == a + 8);
+    require_true(micron::find_if_not(a, a + 8, is_even) == nullptr);
+    require_true(micron::find_if_not(a, a + 16, always_true) == nullptr);
+    require_true(micron::find_if_not(a, a + 16, always_false) == a);
+    // the pointer-predicate overloads must still resolve and still mean the same thing
+    require_true(micron::find_if_not(a, a + 16, pt_is_even) == a + 8);
+  }
+  end_test_case();
+
+  // ════════════════════════════════════════════════════════════════════
+  // search / find_end with a NARROWING pattern type
+  //
+  // search(const T*, const T*, const P*, const P*) matches with `hay[i] == static_cast<T>(pat[k])`,
+  // so the sequence actually being looked for is the T PROJECTION of the pattern. The KMP failure
+  // table has to describe that same projection. Built in P instead, it records a shorter border
+  // than the projection has whenever P -> T collapses two values (65 and 321 are both 'A'), and on
+  // a mismatch the automaton shifts past a genuine occurrence -- a silent miss, only for pattern
+  // widths in [kmp_min_width, kmp_stack_max] where the KMP path is taken at all.
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("search/find_end in T-space when P narrows to T");
+  {
+    // hand-built witness: "AAAAAAAB" over a haystack of A's, with every A a different int
+    {
+      const char hay[] = "AAAAAAAAB";
+      const int pat[] = { 65, 321, 577, 833, 1089, 1345, 1601, 66 };
+      require_true(micron::search(hay, hay + 9, pat, pat + 8) == hay + 1);
+      const char rhay[] = "BAAAAAAAA";
+      const int rpat[] = { 66, 65, 321, 577, 833, 1089, 1345, 1601 };
+      require_true(micron::find_end(rhay, rhay + 9, rpat, rpat + 8) == rhay);
+    }
+
+    // and a fuzz against the naive O(n*m) loop the fast path replaced
+    constexpr usize HN = 1400;
+    static char hay[HN];
+    static int pat[300];
+
+    auto oracle_first = [](const char *h, usize n, const int *p, usize m) -> const char * {
+      if ( m == 0 ) return n == 0 ? nullptr : h;
+      if ( m > n ) return nullptr;
+      for ( usize i = 0; i + m <= n; ++i ) {
+        usize j = 0;
+        for ( ; j < m; ++j )
+          if ( !(h[i + j] == static_cast<char>(p[j])) ) break;
+        if ( j == m ) return h + i;
+      }
+      return nullptr;
+    };
+    auto oracle_last = [](const char *h, usize n, const int *p, usize m) -> const char * {
+      if ( m == 0 ) return h + n;
+      if ( m > n ) return nullptr;
+      for ( usize i = n - m + 1; i-- > 0; ) {
+        usize j = 0;
+        for ( ; j < m; ++j )
+          if ( !(h[i + j] == static_cast<char>(p[j])) ) break;
+        if ( j == m ) return h + i;
+      }
+      return nullptr;
+    };
+
+    u64 st = 0x5EEDBEEF0F7A1ull;
+    auto nx = [&st]() {
+      st ^= st << 13;
+      st ^= st >> 7;
+      st ^= st << 17;
+      return st;
+    };
+
+    const usize widths[] = { 4, 8, 9, 12, 31, 64, 255, 256, 257 };
+    for ( usize wi = 0; wi < sizeof(widths) / sizeof(widths[0]); ++wi ) {
+      const usize m = widths[wi];
+      for ( int trial = 0; trial < 40; ++trial ) {
+        // a 2- or 3-letter alphabet in T, lifted into P by adding a random multiple of 256 -- the
+        // values are all distinct as ints and all collide as chars, which is the whole point
+        const u64 alpha = (trial % 2) ? 2 : 3;
+        const usize n = 200 + (nx() % (HN - 200));
+        for ( usize i = 0; i < n; ++i ) hay[i] = static_cast<char>('A' + (nx() % alpha));
+        for ( usize i = 0; i < m; ++i ) pat[i] = static_cast<int>('A' + (nx() % alpha)) + static_cast<int>(256 * (nx() % 7));
+        if ( (trial & 1) && m <= n ) {
+          const usize at = (trial % 6 == 1) ? 0 : ((trial % 6 == 3) ? n - m : nx() % (n - m + 1));
+          for ( usize i = 0; i < m; ++i ) hay[at + i] = static_cast<char>(pat[i]);
+        }
+        require_true(micron::search(hay, hay + n, pat, pat + m) == oracle_first(hay, n, pat, m));
+        require_true(micron::find_end(hay, hay + n, pat, pat + m) == oracle_last(hay, n, pat, m));
+      }
+    }
+  }
+  end_test_case();
+
+  // ════════════════════════════════════════════════════════════════════
+  // element scans over a POINTER element type
+  //
+  // simd::find_*_elem compare raw lanes, which is exactly right for pointers, and __scan.hpp's
+  // lane_scannable admits them -- but three of the kernels used to build their needle with
+  // static_cast<int>(ch). That is ill-formed for a pointer, and it only showed up where
+  // sizeof(T*) == 4 (i386, armv7-a); a 64-bit pointer missed the 4-byte lane branch entirely and
+  // the amd64 build stayed green. Instantiating them here keeps the 32-bit cells honest.
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("find/find_last/count/find_first_of over an array of pointers");
+  {
+    constexpr usize N = 137;
+    static int slots[8];
+    static int *buf[N];
+    u64 st = 0x1DEA5CA9B01ull;
+    auto nx = [&st]() {
+      st ^= st << 13;
+      st ^= st >> 7;
+      st ^= st << 17;
+      return st;
+    };
+    for ( int trial = 0; trial < 64; ++trial ) {
+      const usize n = 1 + (nx() % N);
+      for ( usize i = 0; i < n; ++i ) buf[i] = &slots[nx() % 8];
+      int *needle = &slots[nx() % 8];
+      int *set[3] = { &slots[nx() % 8], &slots[nx() % 8], &slots[nx() % 8] };
+
+      usize first = n, last = n, first_of = n, cnt = 0;
+      for ( usize i = 0; i < n; ++i ) {
+        if ( buf[i] == needle ) {
+          if ( first == n ) first = i;
+          last = i;
+          ++cnt;
+        }
+        if ( first_of == n )
+          for ( usize c = 0; c < 3; ++c )
+            if ( buf[i] == set[c] ) {
+              first_of = i;
+              break;
+            }
+      }
+      require_true(micron::find(buf, buf + n, needle) == (first == n ? nullptr : buf + first));
+      require_true(micron::find_last(buf, buf + n, needle) == (last == n ? nullptr : buf + last));
+      require(static_cast<usize>(micron::count(buf, buf + n, needle)), cnt);
+      require_true(micron::find_first_of(buf, buf + n, set, set + 3) == (first_of == n ? nullptr : buf + first_of));
+    }
+  }
+  end_test_case();
+
   sb::print("=== ALGO/SEARCH RIGOR SUITE PASSED ===");
   return 1;
 }

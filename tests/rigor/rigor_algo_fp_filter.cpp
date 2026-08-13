@@ -21,8 +21,34 @@
 #include "../../src/algorithm/filter.hpp"
 #include "../../src/algorithm/find.hpp"
 #include "../../src/algorithm/fpfilter.hpp"
+#include "../../src/algorithm/fpmap.hpp"
+#include "../../src/strings.hpp"
 
 #include "../support/algo_rigor.hpp"
+
+namespace
+{
+
+// what nub is DEFINED as, in the least clever way available: keep an element the first time
+// operator== has not seen it. Neither of nub's two paths is allowed to differ from this.
+template<typename C>
+usize
+oracle_nub_size(const C &c)
+{
+  micron::fvector<typename C::value_type> keep;
+  for ( const auto &e : c ) {
+    bool seen = false;
+    for ( usize j = 0; j < keep.size(); ++j )
+      if ( keep[j] == e ) {
+        seen = true;
+        break;
+      }
+    if ( !seen ) keep.push_back(e);
+  }
+  return keep.size();
+}
+
+};      // namespace
 
 using namespace mtest::rigor;
 using mtest::prng;
@@ -379,6 +405,329 @@ main()
         for ( usize i = 0; i < b.size(); ++i ) require(b[i], v[k + i]);
       },
       10000);
+
+  // ════════════════════════════════════════════════════════════════════
+  // nub takes a hash set when the element type is hashable and the old quadratic rescan when it is
+  // not. Both must keep the FIRST occurrence and the original order, so the two paths are each
+  // other's oracle -- and a plain naive scan is the oracle for both.
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("nub: hashed and quadratic paths agree with each other and a naive oracle");
+  {
+    // Opaque has operator== and nothing else, so micron::hash rejects it and it takes the fallback
+    struct Opaque {
+      int v;
+      bool
+      operator==(const Opaque &o) const
+      {
+        return v == o.v;
+      }
+    };
+    static_assert(micron::fp::__impl::hash_dedupable<int>, "int must take the hash path");
+    static_assert(!micron::fp::__impl::hash_dedupable<Opaque>, "Opaque must take the quadratic path");
+
+    u64 st = 0xD15EA5Eull;
+    auto nx = [&st]() {
+      st ^= st << 13;
+      st ^= st >> 7;
+      st ^= st << 17;
+      return st;
+    };
+    for ( int trial = 0; trial < 300; ++trial ) {
+      const usize n = nx() % 250;
+      // a narrow alphabet forces heavy duplication, which is what nub is for
+      const int alpha = static_cast<int>(1 + nx() % 40);
+      micron::fvector<int> a;
+      micron::fvector<Opaque> b;
+      for ( usize i = 0; i < n; ++i ) {
+        const int v = static_cast<int>(nx() % static_cast<u64>(alpha));
+        a.push_back(v);
+        b.push_back(Opaque{ v });
+      }
+
+      micron::fvector<int> oracle;
+      for ( usize i = 0; i < n; ++i ) {
+        bool seen = false;
+        for ( usize j = 0; j < oracle.size(); ++j )
+          if ( oracle[j] == a[i] ) {
+            seen = true;
+            break;
+          }
+        if ( !seen ) oracle.push_back(a[i]);
+      }
+
+      auto ra = micron::fp::nub(a);
+      auto rb = micron::fp::nub(b);
+      require(ra.size(), oracle.size());
+      require(rb.size(), oracle.size());
+      for ( usize i = 0; i < oracle.size(); ++i ) {
+        require(ra[i], oracle[i]);
+        require(rb[i].v, oracle[i]);
+      }
+    }
+
+    // degenerate shapes
+    micron::fvector<int> empty;
+    require(micron::fp::nub(empty).size(), usize(0));
+    micron::fvector<int> same;
+    for ( int i = 0; i < 64; ++i ) same.push_back(9);
+    require(micron::fp::nub(same).size(), usize(1));
+    require(micron::fp::nub(same)[0], 9);
+  }
+  end_test_case();
+
+  // ════════════════════════════════════════════════════════════════════
+  // nub is defined by operator==, so the hash set may only stand in for the == rescan where hash and
+  // == agree. Floating point is where they do not: +0.0 and -0.0 compare equal and hash differently,
+  // so a hashed float nub kept both -- and only on some builds, since the AVX2 zzz hash happens to
+  // seat the two zeros in one slot where the SSE2 rapidhash does not. An answer that moves with
+  // -march is the half of that defect most worth pinning, so these cases are worth a run under
+  // --isa base as well as the default --isa native.
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("nub[float]: +/-0.0 collapse and floating point stays off the hash path");
+  {
+    static_assert(!micron::fp::__impl::hash_dedupable<float>, "float must not take nub's hash path");
+    static_assert(!micron::fp::__impl::hash_dedupable<double>, "double must not take nub's hash path");
+    static_assert(micron::fp::__impl::hash_dedupable<int>, "int keeps the hash path");
+    static_assert(micron::fp::__impl::hash_dedupable<micron::string>, "strings keep the hash path");
+
+    // -Ofast folds a -0.0f literal to +0.0f (-fno-signed-zeros), so carry the sign in through a
+    // volatile and check it actually arrived before asserting anything about it
+    volatile u32 nz_bits = 0x80000000u;
+    const u32 nb = nz_bits;
+    const float nz = __builtin_bit_cast(float, nb);
+    require_true(__builtin_bit_cast(u32, nz) == 0x80000000u);
+    require_true(nz == 0.0f);
+
+    // walk the pad so the seen-set is sized across several capacities -- the defect only surfaced
+    // once the two zeros' h1 landed in different buckets
+    for ( usize pad = 0; pad < 96; ++pad ) {
+      micron::fvector<float> v;
+      for ( usize i = 0; i < pad; ++i ) v.push_back(static_cast<float>(i + 10));
+      v.push_back(0.0f);
+      v.push_back(nz);
+      v.push_back(1.0f);
+      v.push_back(0.0f);
+      auto r = micron::fp::nub(v);
+      require(r.size(), pad + 2);
+      // first occurrence wins, so the surviving zero is the +0.0 that came first
+      require_true(__builtin_bit_cast(u32, r[pad]) == 0u);
+      require_true(r[pad + 1] == 1.0f);
+    }
+
+    // the same through a map's mapped_type: fpmap/fptree nub share this seen-set
+    micron::heap_swiss_map<int, float> m;
+    m.insert(1, 0.0f);
+    m.insert(2, nz);
+    m.insert(3, 1.0f);
+    require(micron::fp::nub(m).size(), usize(2));
+  }
+  end_test_case();
+
+  // ════════════════════════════════════════════════════════════════════
+  // The other half of the same contract, and the one the float fix left open. is_string_ascii is a
+  // pure SHAPE test -- c_str(), data(), size(), the iterator pair -- and says nothing about size()
+  // being the content length. fixed_string<N>'s is the CAPACITY (N-1) while its operator== compares
+  // len() bytes, so hashing size() bytes made two fixed_strings with identical content and
+  // different bytes past the terminator compare equal and hash differently. The hash now digests
+  // micron::string_len(), which is len() where a type has one, so the whitelist entry is true
+  // rather than merely convenient -- and every hashed container keyed on a fixed_string is fixed
+  // with it, not just nub.
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("nub[fixed_string]: hashing the CAPACITY is what == never compares");
+  {
+    using fs8 = micron::fixed_string<8>;
+    static_assert(micron::fp::__impl::hash_dedupable<fs8>, "fixed_string keeps the hash path");
+    static_assert(micron::fp::__impl::hash_dedupable<micron::sstring<16>>, "sstring keeps the hash path");
+
+    // size() is the capacity and len() is the content; they agree only on a full buffer
+    require(fs8{ "abc\0def" }.size(), usize(7));
+    require(fs8{ "abc\0def" }.len(), usize(3));
+
+    // the two reachable constructions of a stale tail. the array ctor copies all N bytes verbatim;
+    // buf is public by design (fixed_string has to stay structural to be an NTTP), so truncating
+    // through it leaves whatever was past the cut in place.
+    fs8 a{ "abc\0def" };
+    fs8 b("abc", 3);      // the (ptr, n) ctor leaves the NSDMI zeroes behind it
+    fs8 c{ "abcdefg" };
+    c.buf[3] = 0;
+
+    const auto ha = micron::hash<micron::hash64_t>(a);
+    require_true(a == b);
+    require_true(micron::hash<micron::hash64_t>(b) == ha);
+    require_true(a == c);
+    require_true(micron::hash<micron::hash64_t>(c) == ha);
+
+    // cross-N equality is by CONTENT (rigor_fixed_string pins it), so the hash has to agree there
+    // too or a heterogeneous lookup misses on a key it compares equal to
+    micron::fixed_string<4> s4{ "abc" };      // the array ctor wants exactly N chars, NUL included
+    micron::fixed_string<32> s32("abc", 3);
+    require_true(s4 == a and s32 == a);
+    require_true(micron::hash<micron::hash64_t>(s4) == ha);
+    require_true(micron::hash<micron::hash64_t>(s32) == ha);
+
+    // and the whole point: nub is defined by operator==, so it must answer what == says
+    fs8 z1("zz", 2);
+    fs8 z2{ "zzXXXXX" };
+    z2.buf[2] = 0;      // content "zz", tail left dirty -- the same shape as c, different content
+
+    micron::fvector<fs8> v;
+    v.push_back(a);
+    v.push_back(b);
+    v.push_back(z1);
+    v.push_back(c);
+    v.push_back(z2);
+    auto r = micron::fp::nub(v);
+    require(r.size(), oracle_nub_size(v));
+    require(r.size(), usize(2));
+    require_true(r[0] == a and r[1] == z1);      // first occurrence wins, as everywhere else
+  }
+  end_test_case();
+
+  test_case("nub[const char*]: a char pointer is compared by address, so it is not hash-dedupable");
+  {
+    // micron::hash on a char pointer digests the POINTEE (it runs strlen over it) while operator==
+    // on the element compares the ADDRESS. That costs no false negatives, but it dereferences a
+    // pointer nub was never given -- a null, non-terminated or dangling element reads arbitrary
+    // memory where the quadratic rescan only ever compared two words. So char pointers keep the
+    // rescan; every other pointer type has no viable hash overload and never took the fast path.
+    static_assert(!micron::fp::__impl::hash_dedupable<const char *>, "char pointers dedup by address");
+    static_assert(!micron::fp::__impl::hash_dedupable<char *>, "char pointers dedup by address");
+    static_assert(!micron::fp::__impl::hash_dedupable<int *>, "no hash overload, so never on the fast path");
+
+    // two distinct pointers to equal content are two distinct elements to operator==, and a null
+    // element must be survivable
+    const char lhs[] = "xy";
+    const char rhs[] = "xy";
+    micron::fvector<const char *> v;
+    v.push_back(nullptr);
+    v.push_back(lhs);
+    v.push_back(nullptr);
+    v.push_back(rhs);
+    v.push_back(lhs);
+    auto r = micron::fp::nub(v);
+    require(r.size(), oracle_nub_size(v));
+    require(r.size(), usize(3));
+    require_true(r[0] == nullptr and r[1] == lhs and r[2] == rhs);
+  }
+  end_test_case();
+
+  test_case("nub[float]: NaN is exactly what operator== makes of it");
+  {
+    // IEEE says NaN == NaN is false, so a NaN is distinct from every value including its own bit
+    // pattern and nub keeps every copy. duck's default -Ofast carries -ffinite-math-only, which
+    // tells gcc a NaN cannot occur and lets it compare with a predicate that reads "unordered" as
+    // equal -- measured, that makes one NaN swallow the rest of the vector. nub does not get an
+    // opinion either way: it must answer whatever == answers in the build it was compiled in, and
+    // the naive scan below -- same TU, same flags -- is what says so.
+    const double qnan = __builtin_nan("");
+    micron::fvector<double> v;
+    v.push_back(1.0);
+    v.push_back(qnan);
+    v.push_back(2.0);
+    v.push_back(qnan);
+    v.push_back(1.0);
+
+    micron::fvector<double> oracle;
+    for ( usize i = 0; i < v.size(); ++i ) {
+      bool seen = false;
+      for ( usize j = 0; j < oracle.size(); ++j )
+        if ( oracle[j] == v[i] ) {
+          seen = true;
+          break;
+        }
+      if ( !seen ) oracle.push_back(v[i]);
+    }
+
+    auto r = micron::fp::nub(v);
+    require(r.size(), oracle.size());
+    for ( usize i = 0; i < oracle.size(); ++i ) require_true(__builtin_bit_cast(u64, r[i]) == __builtin_bit_cast(u64, oracle[i]));
+  }
+  end_test_case();
+
+  test_case("nub[user]: a hash that disagrees with == does not get to decide");
+  {
+    // Duo is a container as far as micron::hash is concerned -- hash64 takes cbegin() and size() --
+    // but its operator== deliberately ignores the second byte. hash therefore separates values that
+    // == equates, which is the exact shape of the float defect, so Duo must take the == rescan.
+    struct Duo {
+      using value_type = char;
+      using pointer = char *;
+      using iterator = char *;
+      using const_iterator = const char *;
+      char b[2];
+      pointer
+      data()
+      {
+        return b;
+      }
+      iterator
+      begin()
+      {
+        return b;
+      }
+      iterator
+      end()
+      {
+        return b + 2;
+      }
+      const_iterator
+      cbegin() const
+      {
+        return b;
+      }
+      const_iterator
+      cend() const
+      {
+        return b + 2;
+      }
+      usize
+      size() const
+      {
+        return 2;
+      }
+      bool
+      operator==(const Duo &o) const
+      {
+        return b[0] == o.b[0];
+      }
+    };
+    static_assert(requires(const Duo &d) { micron::hash<micron::hash64_t>(d); }, "Duo is hashable -- the exclusion is the rule, not a gap");
+    static_assert(!micron::fp::__impl::hash_dedupable<Duo>, "a hash that disagrees with == must not take the hash path");
+
+    micron::fvector<Duo> v;
+    v.push_back(Duo{ { 'a', 'x' } });
+    v.push_back(Duo{ { 'a', 'y' } });      // == 'a','x', hashes differently
+    v.push_back(Duo{ { 'b', 'x' } });
+    v.push_back(Duo{ { 'a', 'z' } });
+    auto r = micron::fp::nub(v);
+    require(r.size(), usize(2));
+    require_true(r[0].b[0] == 'a' && r[0].b[1] == 'x');      // first occurrence is the representative
+    require_true(r[1].b[0] == 'b');
+
+    // and the opt-in hands the O(n) path back to a type that promises the two agree
+    struct Twin: Duo {
+      using hash_equality_consistent = micron::true_type;
+      bool
+      operator==(const Twin &o) const
+      {
+        return b[0] == o.b[0] && b[1] == o.b[1];
+      }
+    };
+    static_assert(micron::fp::__impl::hash_dedupable<Twin>, "the opt-in must reach the hash path");
+
+    micron::fvector<Twin> t;
+    t.push_back(Twin{ { { 'a', 'x' } } });
+    t.push_back(Twin{ { { 'a', 'y' } } });
+    t.push_back(Twin{ { { 'a', 'x' } } });
+    auto rt = micron::fp::nub(t);
+    require(rt.size(), usize(2));
+    require_true(rt[0].b[1] == 'x');
+    require_true(rt[1].b[1] == 'y');
+  }
+  end_test_case();
 
   sb::print("=== ALGO/FP-FILTER RIGOR SUITE PASSED ===");
   return 1;

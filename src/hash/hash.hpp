@@ -59,21 +59,20 @@ typedef u32 hash32_t;
 typedef u64 hash64_t;
 typedef micron::pair<u64, u64> hash128_t;
 
+// always use micron::string_len(), never size()
 template<u32 seed = default_seed_32, is_container_or_string T>
 hash128_t
 hash128(const T &data)
 {
-  if constexpr ( default_hash_128 == hash_types::murmur128 )
-    return hashes::murmur<seed>(reinterpret_cast<const char *>(data.cbegin()), data.size());
+  const usize n = micron::string_len(data);
+  if constexpr ( default_hash_128 == hash_types::murmur128 ) return hashes::murmur<seed>(reinterpret_cast<const char *>(data.cbegin()), n);
 #if defined(__micron_hash_zzz)
-  if constexpr ( default_hash_128 == hash_types::zzz128 )
-    return hashes::zzz128<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
-  if constexpr ( default_hash_128 == hash_types::zzzf128 )
-    return hashes::zzzf128<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+  if constexpr ( default_hash_128 == hash_types::zzz128 ) return hashes::zzz128<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
+  if constexpr ( default_hash_128 == hash_types::zzzf128 ) return hashes::zzzf128<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
 #endif
 #if defined(__micron_arch_x86_any)
   if constexpr ( default_hash_128 == hash_types::meowhash128 )
-    return hashes::meowhash128<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+    return hashes::meowhash128<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
 #endif
   return hash128_t{};
 }
@@ -115,21 +114,19 @@ template<u64 seed = default_seed, is_container_or_string T>
 hash64_t
 hash64(const T &data)
 {
-  if constexpr ( default_hash_64 == hash_types::xxhash64 )
-    return hashes::xxhash64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+  const usize n = micron::string_len(data);
+  if constexpr ( default_hash_64 == hash_types::xxhash64 ) return hashes::xxhash64<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
 #if defined(__micron_hash_zzz)
-  if constexpr ( default_hash_64 == hash_types::zzz )
-    return hashes::zzz64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
-  if constexpr ( default_hash_64 == hash_types::zzzf )
-    return hashes::zzzf64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
-  if constexpr ( default_hash_64 == hash_types::zz ) return hashes::zz64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
-  if constexpr ( default_hash_64 == hash_types::z ) return hashes::z64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+  if constexpr ( default_hash_64 == hash_types::zzz ) return hashes::zzz64<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
+  if constexpr ( default_hash_64 == hash_types::zzzf ) return hashes::zzzf64<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
+  if constexpr ( default_hash_64 == hash_types::zz ) return hashes::zz64<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
+  if constexpr ( default_hash_64 == hash_types::z ) return hashes::z64<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
 #endif
   if constexpr ( default_hash_64 == hash_types::rapidhash )
-    return hashes::rapidhash<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+    return hashes::rapidhash<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
 #if defined(__micron_arch_x86_any)
   if constexpr ( default_hash_64 == hash_types::meowhash )
-    return hashes::meowhash64<seed>(reinterpret_cast<const byte *>(data.cbegin()), data.size());
+    return hashes::meowhash64<seed>(reinterpret_cast<const byte *>(data.cbegin()), n);
 #endif
   return hash64_t{};
 }

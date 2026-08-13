@@ -21,6 +21,12 @@ inline constexpr usize int_matrix_align_v = (C * R * sizeof(B) <= 16)   ? 16
                                             : (C * R * sizeof(B) <= 32) ? 32
                                                                         : 64;
 
+// internal
+struct __mat_uninit_t {
+};
+
+inline constexpr __mat_uninit_t __mat_uninit{};
+
 // NOTE: row major
 template<typename B, usize C, usize R>
   requires(micron::is_arithmetic_v<B> && C >= 1 && R >= 1 && (C * R * sizeof(B) <= 4096))
@@ -66,6 +72,9 @@ public:
   constexpr int_matrix_base_avx(Args... args) : data{ args... }
   {
   }
+
+  // deliberately not constexpr: consteval code cannot leave data[] unset
+  int_matrix_base_avx(__mat_uninit_t) noexcept { }
 
   int_matrix_base_avx(const std::initializer_list<B> &lst)
   {

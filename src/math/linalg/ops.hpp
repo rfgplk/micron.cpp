@@ -14,12 +14,8 @@
 #include "../sqrt.hpp"
 #include "types.hpp"
 
-#if defined(__AVX2__) && defined(__FMA__)
-#include "../../simd/aliases.hpp"
-#include "../../simd/arch/types_amd64.hpp"
-#elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon)
-#include "../../simd/aliases.hpp"
-#endif
+// gfx register cores
+#include "../__vec_simd.hpp"
 
 namespace micron
 {
@@ -69,6 +65,17 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr vec<F, 3>
 cross(const vec<F, 3> &a, const vec<F, 3> &b) noexcept
 {
+  if !consteval {
+#if defined(__micron_gfx_simd)
+    if constexpr ( micron::same_as<F, f32> ) {
+      vec<F, 3> out{};
+      const simd::f128 va = __vsimd::__load(reinterpret_cast<const float *>(a.data));
+      const simd::f128 vb = __vsimd::__load(reinterpret_cast<const float *>(b.data));
+      __vsimd::__store(reinterpret_cast<float *>(out.data), __vsimd::__cross3(va, vb));
+      return out;
+    }
+#endif
+  }
   const F *__restrict__ pa = a.data;
   const F *__restrict__ pb = b.data;
   return { math::fma<F>(pa[1], pb[2], -pa[2] * pb[1]), math::fma<F>(pa[2], pb[0], -pa[0] * pb[2]),
@@ -126,8 +133,62 @@ template<ieee754_floating F, usize N>
 [[nodiscard, gnu::always_inline]] inline vec<F, N>
 normalize(const vec<F, N> &v) noexcept
 {
-  F n = norm(v);
-  return (n == F(0)) ? v : v / n;
+#if defined(__micron_gfx_simd)
+  if constexpr ( micron::same_as<F, f32> && (N == 3 || N == 4) ) {
+    static_assert(sizeof(vec<f32, 3>) == 16 && sizeof(vec<f32, 4>) == 16);
+    vec<F, N> out{};
+    const simd::f128 vv = __vsimd::__load(reinterpret_cast<const float *>(v.data));
+    simd::f128 n2;
+    if constexpr ( N == 3 )
+      n2 = __vsimd::__dot3_splat(vv, vv);
+    else
+      n2 = __vsimd::__dot4_splat(vv, vv);
+    const simd::f128 r = __vsimd::__mul(vv, __vsimd::__inv_sqrt_exact(n2));
+    // n == 0 <=> n2 == 0 (sqrt of any nonzero, incl. denormal, is nonzero)
+    const simd::f128 zmask = __vsimd::__cmp_eq(n2, __vsimd::__splat(0.0f));
+    __vsimd::__store(reinterpret_cast<float *>(out.data), __vsimd::__select(zmask, vv, r));
+    return out;
+  }
+#endif
+  const F n2 = dot(v, v);
+  if ( n2 == F(0) ) return v;
+  const F inv = __vsimd::__inv_sqrt_exact_s(n2);
+  vec<F, N> r{};
+  for ( usize i = 0; i < N; ++i ) r.data[i] = v.data[i] * inv;
+  return r;
+}
+
+// policy::fast -- rsqrt estimate + Newton refinement (~2^-22 rel, f32 only);
+// every other type/policy answers the exact tier above
+template<ieee754_floating F, usize N, math::policy::policy_tag P>
+[[nodiscard, gnu::always_inline]] inline vec<F, N>
+normalize(const vec<F, N> &v, P) noexcept
+{
+  if constexpr ( micron::is_same_v<P, math::policy::fast_tag> && micron::same_as<F, f32> ) {
+#if defined(__micron_gfx_simd)
+    if constexpr ( N == 3 || N == 4 ) {
+      vec<F, N> out{};
+      const simd::f128 vv = __vsimd::__load(reinterpret_cast<const float *>(v.data));
+      simd::f128 n2;
+      if constexpr ( N == 3 )
+        n2 = __vsimd::__dot3_splat(vv, vv);
+      else
+        n2 = __vsimd::__dot4_splat(vv, vv);
+      const simd::f128 r = __vsimd::__mul(vv, __vsimd::__inv_sqrt_fast(n2));
+      const simd::f128 zmask = __vsimd::__cmp_eq(n2, __vsimd::__splat(0.0f));
+      __vsimd::__store(reinterpret_cast<float *>(out.data), __vsimd::__select(zmask, vv, r));
+      return out;
+    }
+#endif
+    const F n2 = dot(v, v);
+    if ( n2 == F(0) ) return v;
+    const F inv = __vsimd::__inv_sqrt_fast_s(n2);
+    vec<F, N> r{};
+    for ( usize i = 0; i < N; ++i ) r.data[i] = v.data[i] * inv;
+    return r;
+  } else {
+    return normalize<F, N>(v);
+  }
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -281,7 +342,7 @@ template<arith_scalar T, usize R, usize C>
 gemv(const mat<T, R, C> &m, const vec<T, C> &v) noexcept
 {
   if !consteval {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
     // row-major mat4*vec4 (f32)
     if constexpr ( micron::same_as<T, f32> && R == 4 && C == 4 ) {
       vec<T, 4> out{};
@@ -297,7 +358,7 @@ gemv(const mat<T, R, C> &m, const vec<T, C> &v) noexcept
       simd::sse::storeu_f32(reinterpret_cast<float *>(out.data), rr);
       return out;
     }
-#elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon)
+#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
     if constexpr ( micron::same_as<T, f32> && R == 4 && C == 4 ) {
       vec<T, 4> out{};
       const float *mp = reinterpret_cast<const float *>(m.data);
@@ -345,7 +406,7 @@ template<arith_scalar T, usize M, usize K, usize N>
 gemm(const mat<T, M, K> &A, const mat<T, K, N> &B) noexcept
 {
   if !consteval {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
     if constexpr ( micron::same_as<T, f32> && M == 4 && K == 4 && N == 4 ) {
       mat<T, 4, 4> Cm = mat<T, 4, 4>::zero();
       const float *ap = reinterpret_cast<const float *>(A.data);
@@ -365,7 +426,7 @@ gemm(const mat<T, M, K> &A, const mat<T, K, N> &B) noexcept
       }
       return Cm;
     }
-#elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon)
+#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
     if constexpr ( micron::same_as<T, f32> && M == 4 && K == 4 && N == 4 ) {
       mat<T, 4, 4> Cm = mat<T, 4, 4>::zero();
       const float *ap = reinterpret_cast<const float *>(A.data);
@@ -499,6 +560,17 @@ inv3(const mat<F, 3, 3> &m) noexcept
   return r;
 }
 
+// mat<F,4,4> to be fully overwritten
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<F, 4, 4>
+__mat4_scratch(void) noexcept
+{
+  if !consteval {
+    return mat<F, 4, 4>(micron::__mat_uninit);
+  }
+  return mat<F, 4, 4>{};
+}
+
 template<ieee754_floating F>
 [[nodiscard]] inline constexpr mat<F, 4, 4>
 inv4_adj(const mat<F, 4, 4> &m) noexcept
@@ -520,7 +592,8 @@ inv4_adj(const mat<F, 4, 4> &m) noexcept
   F d = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
   F inv = F(1) / d;
 
-  mat<F, 4, 4> r{};
+  // in-place stores keep register pressure low
+  mat<F, 4, 4> r = __mat4_scratch<F>();
   r.data[0] = (a[5] * b11 - a[6] * b10 + a[7] * b09) * inv;
   r.data[1] = (-a[1] * b11 + a[2] * b10 - a[3] * b09) * inv;
   r.data[2] = (a[13] * b05 - a[14] * b04 + a[15] * b03) * inv;
@@ -540,100 +613,93 @@ inv4_adj(const mat<F, 4, 4> &m) noexcept
   return r;
 }
 
-// Schur-complement inverse
-namespace inv4_impl
+#if defined(__micron_gfx_simd)
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// 2x2-block Cramer inverse
+
+// u * v
+[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2mul(simd::f128 u, simd::f128 v) noexcept
 {
-template<ieee754_floating F>
-[[nodiscard, gnu::always_inline]] inline constexpr mat<F, 2, 2>
-mul2(const mat<F, 2, 2> &a, const mat<F, 2, 2> &b) noexcept
-{
-  return mat<F, 2, 2>{
-    { math::fma<F>(a.data[0], b.data[0], a.data[1] * b.data[2]), math::fma<F>(a.data[0], b.data[1], a.data[1] * b.data[3]),
-      math::fma<F>(a.data[2], b.data[0], a.data[3] * b.data[2]), math::fma<F>(a.data[2], b.data[1], a.data[3] * b.data[3]) }
-  };
+  return __vsimd::__fma(u, __vsimd::__swz<0, 3, 0, 3>(v), __vsimd::__mul(__vsimd::__swz<1, 0, 3, 2>(u), __vsimd::__swz<2, 1, 2, 1>(v)));
 }
 
-template<ieee754_floating F>
-[[nodiscard, gnu::always_inline]] inline constexpr mat<F, 2, 2>
-add2(const mat<F, 2, 2> &a, const mat<F, 2, 2> &b) noexcept
+// (u#) * v
+[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2adjmul(simd::f128 u, simd::f128 v) noexcept
 {
-  return mat<F, 2, 2>{ { a.data[0] + b.data[0], a.data[1] + b.data[1], a.data[2] + b.data[2], a.data[3] + b.data[3] } };
+  return __vsimd::__fms(__vsimd::__swz<3, 3, 0, 0>(u), v, __vsimd::__mul(__vsimd::__swz<1, 1, 2, 2>(u), __vsimd::__swz<2, 3, 0, 1>(v)));
 }
 
-template<ieee754_floating F>
-[[nodiscard, gnu::always_inline]] inline constexpr mat<F, 2, 2>
-sub2(const mat<F, 2, 2> &a, const mat<F, 2, 2> &b) noexcept
+// u * (v#)
+[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2muladj(simd::f128 u, simd::f128 v) noexcept
 {
-  return mat<F, 2, 2>{ { a.data[0] - b.data[0], a.data[1] - b.data[1], a.data[2] - b.data[2], a.data[3] - b.data[3] } };
+  return __vsimd::__fms(u, __vsimd::__swz<3, 0, 3, 0>(v), __vsimd::__mul(__vsimd::__swz<1, 0, 3, 2>(u), __vsimd::__swz<2, 1, 2, 1>(v)));
 }
 
-template<ieee754_floating F>
-[[nodiscard, gnu::always_inline]] inline constexpr mat<F, 2, 2>
-neg2(const mat<F, 2, 2> &a) noexcept
+// M = | A B |    iM = 1/|M| * |  X#  Y# |
+//     | C D |                 |  Z#  W# |
+[[nodiscard, gnu::always_inline]] inline mat<f32, 4, 4>
+__inv4_f32(const mat<f32, 4, 4> &m) noexcept
 {
-  return mat<F, 2, 2>{ { -a.data[0], -a.data[1], -a.data[2], -a.data[3] } };
-}
+  const float *mp = reinterpret_cast<const float *>(m.data);
+  const simd::f128 r0 = __vsimd::__load(mp + 0);
+  const simd::f128 r1 = __vsimd::__load(mp + 4);
+  const simd::f128 r2 = __vsimd::__load(mp + 8);
+  const simd::f128 r3 = __vsimd::__load(mp + 12);
 
-};      // namespace inv4_impl
+  const simd::f128 A = __vsimd::__shuf2<0, 1, 0, 1>(r0, r1);
+  const simd::f128 B = __vsimd::__shuf2<2, 3, 2, 3>(r0, r1);
+  const simd::f128 C = __vsimd::__shuf2<0, 1, 0, 1>(r2, r3);
+  const simd::f128 D = __vsimd::__shuf2<2, 3, 2, 3>(r2, r3);
 
-template<ieee754_floating F>
-[[nodiscard]] inline constexpr mat<F, 4, 4>
-inv4_blocked(const mat<F, 4, 4> &m) noexcept
-{
-  const F *__restrict__ a = m.data;
-  mat<F, 2, 2> A{ { a[0], a[1], a[4], a[5] } };
-  mat<F, 2, 2> B{ { a[2], a[3], a[6], a[7] } };
-  mat<F, 2, 2> C{ { a[8], a[9], a[12], a[13] } };
-  mat<F, 2, 2> D{ { a[10], a[11], a[14], a[15] } };
+  // (|A|, |B|, |C|, |D|)
+  const simd::f128 detSub = __vsimd::__sub(__vsimd::__mul(__vsimd::__shuf2<0, 2, 0, 2>(r0, r2), __vsimd::__shuf2<1, 3, 1, 3>(r1, r3)),
+                                           __vsimd::__mul(__vsimd::__shuf2<1, 3, 1, 3>(r0, r2), __vsimd::__shuf2<0, 2, 0, 2>(r1, r3)));
+  const simd::f128 detA = __vsimd::__swz<0, 0, 0, 0>(detSub);
+  const simd::f128 detB = __vsimd::__swz<1, 1, 1, 1>(detSub);
+  const simd::f128 detC = __vsimd::__swz<2, 2, 2, 2>(detSub);
+  const simd::f128 detD = __vsimd::__swz<3, 3, 3, 3>(detSub);
 
-  const F detA = math::fma<F>(A.data[0], A.data[3], -A.data[1] * A.data[2]);
-  const F a_norm2 = A.data[0] * A.data[0] + A.data[1] * A.data[1] + A.data[2] * A.data[2] + A.data[3] * A.data[3];
-  const F eps2 = math::default_eps<F>() * math::default_eps<F>();
-  if ( detA * detA < eps2 * a_norm2 * a_norm2 ) return inv4_adj<F>(m);
+  const simd::f128 D_C = __m2adjmul(D, C);
+  const simd::f128 A_B = __m2adjmul(A, B);
+  const simd::f128 X_ = __vsimd::__fms(detD, A, __m2mul(B, D_C));
+  const simd::f128 W_ = __vsimd::__fms(detA, D, __m2mul(C, A_B));
+  const simd::f128 Y_ = __vsimd::__fms(detB, C, __m2muladj(D, A_B));
+  const simd::f128 Z_ = __vsimd::__fms(detC, B, __m2muladj(A, D_C));
 
-  const F invDetA = F(1) / detA;
-  const mat<F, 2, 2> Y{ { A.data[3] * invDetA, -A.data[1] * invDetA, -A.data[2] * invDetA, A.data[0] * invDetA } };
-  const mat<F, 2, 2> CY = inv4_impl::mul2<F>(C, Y);
-  const mat<F, 2, 2> CYB = inv4_impl::mul2<F>(CY, B);
-  const mat<F, 2, 2> X = inv4_impl::sub2<F>(D, CYB);
+  // |M| = |A||D| + |B||C| - tr((A#B)(D#C))
+  const simd::f128 tr = __vsimd::__sum_splat(__vsimd::__mul(A_B, __vsimd::__swz<0, 2, 1, 3>(D_C)));
+  const simd::f128 detM = __vsimd::__sub(__vsimd::__fma(detB, detC, __vsimd::__mul(detA, detD)), tr);
 
-  const F detX = math::fma<F>(X.data[0], X.data[3], -X.data[1] * X.data[2]);
-  if ( detX == F(0) ) return inv4_adj<F>(m);
-  const F invDetX = F(1) / detX;
-  const mat<F, 2, 2> X_inv{ { X.data[3] * invDetX, -X.data[1] * invDetX, -X.data[2] * invDetX, X.data[0] * invDetX } };
+  // adjugate signs folded into the one exact division
+  const simd::f128 rDetM = __vsimd::__recip_signed(__vsimd::__setr(1.0f, -1.0f, -1.0f, 1.0f), detM);
+  const simd::f128 X = __vsimd::__mul(X_, rDetM);
+  const simd::f128 Y = __vsimd::__mul(Y_, rDetM);
+  const simd::f128 Z = __vsimd::__mul(Z_, rDetM);
+  const simd::f128 W = __vsimd::__mul(W_, rDetM);
 
-  const mat<F, 2, 2> YB = inv4_impl::mul2<F>(Y, B);
-  const mat<F, 2, 2> YB_Xinv = inv4_impl::mul2<F>(YB, X_inv);
-  const mat<F, 2, 2> UR = inv4_impl::neg2<F>(YB_Xinv);
-  const mat<F, 2, 2> Xinv_CY = inv4_impl::mul2<F>(X_inv, CY);
-  const mat<F, 2, 2> LL = inv4_impl::neg2<F>(Xinv_CY);
-  const mat<F, 2, 2> YB_Xinv_CY = inv4_impl::mul2<F>(YB_Xinv, CY);
-  const mat<F, 2, 2> UL = inv4_impl::add2<F>(Y, YB_Xinv_CY);
-
-  mat<F, 4, 4> r{};
-  r.data[0] = UL.data[0];
-  r.data[1] = UL.data[1];
-  r.data[4] = UL.data[2];
-  r.data[5] = UL.data[3];
-  r.data[2] = UR.data[0];
-  r.data[3] = UR.data[1];
-  r.data[6] = UR.data[2];
-  r.data[7] = UR.data[3];
-  r.data[8] = LL.data[0];
-  r.data[9] = LL.data[1];
-  r.data[12] = LL.data[2];
-  r.data[13] = LL.data[3];
-  r.data[10] = X_inv.data[0];
-  r.data[11] = X_inv.data[1];
-  r.data[14] = X_inv.data[2];
-  r.data[15] = X_inv.data[3];
+  mat<f32, 4, 4> r(micron::__mat_uninit);
+  float *rp = reinterpret_cast<float *>(r.data);
+  __vsimd::__store(rp + 0, __vsimd::__shuf2<3, 1, 3, 1>(X, Y));
+  __vsimd::__store(rp + 4, __vsimd::__shuf2<2, 0, 2, 0>(X, Y));
+  __vsimd::__store(rp + 8, __vsimd::__shuf2<3, 1, 3, 1>(Z, W));
+  __vsimd::__store(rp + 12, __vsimd::__shuf2<2, 0, 2, 0>(Z, W));
   return r;
 }
+#endif
 
 template<ieee754_floating F>
 [[nodiscard]] inline constexpr mat<F, 4, 4>
 inv4(const mat<F, 4, 4> &m) noexcept
 {
+  if !consteval {
+#if defined(__micron_gfx_simd)
+    if constexpr ( micron::same_as<F, f32> ) return __inv4_f32(m);
+#endif
+  }
   return inv4_adj<F>(m);
 }
 

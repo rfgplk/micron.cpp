@@ -19,32 +19,40 @@ namespace micron
 class basic_semaphore
 {
   micron::atomic_token<i32> counter;
+  micron::atomic_token<u32> wakeups;
 
 public:
   ~basic_semaphore() = default;
 
-  basic_semaphore(void) : counter(0) { }
+  basic_semaphore(void) : counter(0), wakeups(0) { }
 
-  basic_semaphore(i32 __init) : counter(__init) { }
+  basic_semaphore(i32 __init) : counter(__init), wakeups(0) { }
 
   basic_semaphore(const basic_semaphore &) = delete;
   basic_semaphore &operator=(const basic_semaphore &) = delete;
 
-  basic_semaphore(basic_semaphore &&o) : counter(micron::move(o.counter)) { }
+  basic_semaphore(basic_semaphore &&o) : counter(micron::move(o.counter)), wakeups(micron::move(o.wakeups)) { }
 
   basic_semaphore &
   operator=(basic_semaphore &&o)
   {
     counter = micron::move(o.counter);
+    wakeups = micron::move(o.wakeups);
     return *this;
   }
 
   void
   wait(void) noexcept
   {
-    i32 v = counter.sub_fetch(1, memory_order::acquire);
-    if ( v < 0 ) {
-      wait_futex(counter.ptr(), v);
+    if ( counter.sub_fetch(1, memory_order::acquire) >= 0 ) return;      // a permit was there for us
+
+    for ( ;; ) {
+      u32 w = wakeups.get(memory_order::acquire);
+      while ( w > 0 ) {
+        if ( wakeups.compare_exchange_weak(w, w - 1, memory_order::acquire, memory_order::relaxed) ) return;
+      }
+      auto r = micron::__futex(wakeups.ptr(), futex_wait | futex_private_flag, 0u, nullptr, nullptr, 0);
+      if ( r < 0 and r != -11 and r != -4 ) return;      // not EAGAIN/EINTR
     }
   }
 
@@ -62,8 +70,9 @@ public:
   flag() noexcept
   {
     i32 o = counter.add_fetch(1, memory_order::release);
-    if ( o <= 0 ) {
-      wake_futex(counter.ptr(), 1);
+    if ( o <= 0 ) {      // this permit landed on a parked waiter: hand it a token, then wake one
+      wakeups.add_fetch(1, memory_order::release);
+      wake_futex(wakeups.ptr(), 1);
     }
   }
 
@@ -77,6 +86,7 @@ public:
   reset(i32 init = 0) noexcept
   {
     counter.store(init, memory_order::relaxed);
+    wakeups.store(0, memory_order::relaxed);
   }
 
   // for coroutines (WIP)
@@ -84,7 +94,8 @@ public:
   abort() noexcept
   {
     counter.store(0x40000000, memory_order::release);
-    wake_futex(counter.ptr(), 0x7fffffff);
+    wakeups.store(0x7fffffffu, memory_order::release);      // every parked waiter finds a token
+    wake_futex(wakeups.ptr(), 0x7fffffff);
   }
 };
 

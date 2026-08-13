@@ -102,30 +102,5 @@ horner_split2(const F *__restrict__ even, usize ne, const F *__restrict__ odd, u
   return fma<F>(po, s, pe);
 }
 
-[[nodiscard, gnu::always_inline]] inline f32
-rsqrt_nr2(f32 x) noexcept
-{
-  f32 h = x * 0.5f;
-  u32 i = bits::bit_cast<u32>(x);
-  i = 0x5f3759dfu - (i >> 1);
-  f32 r = bits::bit_cast<f32>(i);
-  r = r * (1.5f - h * r * r);
-  r = r * (1.5f - h * r * r);
-  return r;
-}
-
-[[nodiscard, gnu::always_inline]] inline f64
-rsqrt_nr2(f64 x) noexcept
-{
-  f64 h = x * 0.5;
-  u64 i = bits::bit_cast<u64>(x);
-  i = 0x5fe6eb50c7b537a9ULL - (i >> 1);
-  f64 r = bits::bit_cast<f64>(i);
-  r = r * (1.5 - h * r * r);
-  r = r * (1.5 - h * r * r);
-  r = r * (1.5 - h * r * r);
-  return r;
-}
-
 };      // namespace math
 };      // namespace micron

@@ -194,6 +194,131 @@ run_copy_caps(void)
   end_test_case();
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// move accounting
+//
+// A ring move must MOVE its elements. __copy_runs() used to be handed a `const
+// circle_vector &` even on the moving path, so micron::move() yielded `const T &&`
+// and every element went through COPY-assignment -- the whole point of the move
+// silently lost. `mvacct` counts assignments per kind; the invariant under test is
+// copy-assign == 0 across a move-construct and a move-assign, at every tail
+// offset (so both the [tail, N) and the wrapped [0, head) run are exercised).
+
+struct mvacct {
+  u64 v = 0;
+  static inline usize copy_ctor = 0;
+  static inline usize copy_asgn = 0;
+  static inline usize move_ctor = 0;
+  static inline usize move_asgn = 0;
+
+  mvacct() = default;
+
+  explicit mvacct(u64 x) noexcept : v(x) { }
+
+  mvacct(const mvacct &o) noexcept : v(o.v) { ++copy_ctor; }
+
+  mvacct(mvacct &&o) noexcept : v(o.v)
+  {
+    o.v = ~0ull;
+    ++move_ctor;
+  }
+
+  mvacct &
+  operator=(const mvacct &o) noexcept
+  {
+    v = o.v;
+    ++copy_asgn;
+    return *this;
+  }
+
+  mvacct &
+  operator=(mvacct &&o) noexcept
+  {
+    v = o.v;
+    o.v = ~0ull;
+    ++move_asgn;
+    return *this;
+  }
+
+  ~mvacct() = default;
+
+  static void
+  reset(void) noexcept
+  {
+    copy_ctor = copy_asgn = move_ctor = move_asgn = 0;
+  }
+};
+
+template<usize N>
+static void
+run_move_accounting(void)
+{
+  using CV = micron::circle_vector<mvacct, N>;
+
+  test_case("cir move performs zero copy-assignments (all tail offsets)");
+  {
+    prng rng(0x9C1Bu + N);
+    // every offset for the small rings; a stride for the big ones, kept a divisor of N so
+    // len == N (the full ring, i.e. the single-run case) is still hit
+    const usize step = N > 16 ? (N / 8) : 1;
+    for ( usize off = 0; off < 2 * N; off += step ) {
+      for ( usize len = 0; len <= N; len += step ) {
+        CV src;
+        // burn `off` slots so the live run starts at an arbitrary tail
+        for ( usize i = 0; i < off; ++i ) {
+          src.push_back(mvacct(0));
+          src.pop_front();
+        }
+        micron::vector<u64> want;
+        for ( usize i = 0; i < len; ++i ) {
+          u64 k = rng.next();
+          src.move_back(mvacct(k));
+          want.push_back(k);
+        }
+        ck(src.size() == len, "mvacct-setup-size", off);
+
+        mvacct::reset();
+        CV dst(micron::move(src));
+        ck(mvacct::copy_asgn == 0u, "move-ctor-copy-assign", off);
+        ck(mvacct::move_asgn == len, "move-ctor-move-assign", off);
+        ck(dst.size() == len, "move-ctor-size", off);
+        bool ok = true;
+        for ( usize i = 0; i < len; ++i )
+          if ( dst[i].v != want[i] ) ok = false;
+        ck(ok, "move-ctor-content", off);
+        ck(src.size() == 0u, "move-ctor-source-cleared", off);
+
+        // move-assign into an already-constructed ring: nothing is constructed at
+        // all on this path, so every counter but move_asgn must stay put.
+        CV dst2;
+        mvacct::reset();
+        dst2 = micron::move(dst);
+        ck(mvacct::copy_asgn == 0u, "move-asgn-copy-assign", off);
+        ck(mvacct::copy_ctor == 0u, "move-asgn-copy-ctor", off);
+        ck(mvacct::move_ctor == 0u, "move-asgn-move-ctor", off);
+        ck(mvacct::move_asgn == len, "move-asgn-move-assign", off);
+        ck(dst2.size() == len, "move-asgn-size", off);
+        ok = true;
+        for ( usize i = 0; i < len; ++i )
+          if ( dst2[i].v != want[i] ) ok = false;
+        ck(ok, "move-asgn-content", off);
+
+        // the copying path must not move, and must leave the source intact
+        CV cp;
+        mvacct::reset();
+        cp = dst2;
+        ck(mvacct::move_asgn == 0u, "copy-asgn-move-assign", off);
+        ck(mvacct::copy_asgn == len, "copy-asgn-copy-assign", off);
+        ok = true;
+        for ( usize i = 0; i < len; ++i )
+          if ( cp[i].v != want[i] || dst2[i].v != want[i] ) ok = false;
+        ck(ok, "copy-asgn-content", off);
+      }
+    }
+  }
+  end_test_case();
+}
+
 static void
 run_memory(void)
 {
@@ -300,6 +425,7 @@ run_caps(const char *nm)
   run_copy_caps<N, u32>();
   run_copy_caps<N, mtest::big>();
   run_copy_caps<N, mtest::Tracked<1>>();
+  run_move_accounting<N>();
 }
 
 int

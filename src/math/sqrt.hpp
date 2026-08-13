@@ -143,15 +143,14 @@ ss_sqrt(const float x)
 #endif
 }
 
+// exact 1/sqrt(x) on every arch
 inline float
 ss_rsqrt(const float x)
 {
 #if defined(__micron_arch_x86_any)
-  return 1.0f / simd::sse::extract_low_f32(simd::sse::rsqrt_scalar_f32(simd::sse::set_scalar_f32(x)));
+  return 1.0f / simd::sse::extract_low_f32(simd::sse::sqrt_scalar_f32(simd::sse::set_scalar_f32(x)));
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   return 1.0f / simd::neon::get_lane_f32<0>(simd::neon::sqrt(simd::neon::splat_f32(x)));
-#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
-  return simd::neon::get_lane_f32<0>(simd::neon::rsqrt_est(simd::neon::splat_f32(x)));
 #else
   return 1.0f / float(hw::sqrt_ss(f32(x)));
 #endif

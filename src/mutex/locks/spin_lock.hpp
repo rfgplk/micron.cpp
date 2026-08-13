@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../../atomic/atomic.hpp"
+#include "../../bits/__backoff.hpp"
 #include "../../sync/yield.hpp"
 
 namespace micron
@@ -18,7 +19,7 @@ class spin_lock
   void
   reset()
   {
-    tk.store(ATOMIC_OPEN);
+    unlock();
   }
 
 public:
@@ -32,13 +33,16 @@ public:
   spin_lock(spin_lock &&) = delete;
   spin_lock &operator=(const spin_lock &) = delete;
 
-  // TTAS
+  // TTAS with exponential growth
   auto
   operator()()
   {
+    // spin only
+    __lock_backoff<spin_only> bo;
     for ( ;; ) {
-      while ( tk.get(memory_order::acquire) ) __cpu_pause();
-      if ( tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED) ) break;
+      while ( tk.get(memory_order::acquire) ) bo.relax();
+      if ( tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order::acquire, memory_order::relaxed) ) break;
+      bo.relax();
     }
     return &spin_lock::reset;
   }
@@ -53,7 +57,7 @@ public:
   try_lock() noexcept
   {
     if ( tk.get(memory_order::relaxed) ) return false;
-    return tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED);
+    return tk.compare_and_swap(ATOMIC_OPEN, ATOMIC_LOCKED, memory_order::acquire, memory_order::relaxed);
   }
 
   void

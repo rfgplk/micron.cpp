@@ -466,6 +466,19 @@ sweep_algorithm()
   }
 
   {
+    using AF = mc::array<f64, 1024>;
+    static AF g_farr;
+    auto setup = [&] {
+      for ( usize i = 0; i < 1024; ++i ) g_farr[i] = static_cast<f64>(i) * 0.5;
+    };
+    auto kernel = [&] {
+      auto s = micron::sum(g_farr);
+      sink_f(static_cast<f64>(s));
+    };
+    print_cell(measure("sum (container,f64)", 1024, sizeof(f64), 1024, reps_for(1024), setup, kernel));
+  }
+
+  {
     auto setup = [&] {
       for ( usize i = 0; i < 1024; ++i ) g_arr[i] = static_cast<i32>(i);
     };
@@ -723,6 +736,21 @@ sweep_find()
         sink_t(reinterpret_cast<uintptr_t>(p));
       };
       print_cell(measure("search (tail needle)", N, sizeof(i32), N, reps_for(N), setup, kernel));
+    }
+
+    {
+      // periodic haystack + a needle that agrees on every character but the last
+      auto setup = [&] {
+        for ( u64 i = 0; i < N; ++i ) g_i32a[i] = 0;
+      };
+      auto kernel = [&] {
+        i32 needle[32];
+        for ( int j = 0; j < 31; ++j ) needle[j] = 0;
+        needle[31] = 1;
+        const i32 *p = micron::search(g_i32a, g_i32a + N, needle, needle + 32);
+        sink_t(reinterpret_cast<uintptr_t>(p));
+      };
+      print_cell(measure("search (periodic, miss)", N, sizeof(i32), N, reps_for(N), setup, kernel));
     }
 
     {

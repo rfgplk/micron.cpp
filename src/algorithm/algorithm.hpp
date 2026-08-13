@@ -16,6 +16,7 @@
 #include "../types.hpp"
 
 #include "find.hpp"
+#include "unroll.hpp"
 
 namespace micron
 {
@@ -36,6 +37,16 @@ clamp(const T &v, const T &lo, const T &hi, C comp) noexcept
 {
   return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
 }
+
+namespace __impl
+{
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// when a container may be read as a flat array
+template<typename C>
+concept __flat_readable = micron::is_contiguous_container<C> && requires(const C &c) {
+  { c.begin() } -> micron::convertible_to<const typename C::value_type *>;
+};
+};      // namespace __impl
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // fills
@@ -75,11 +86,16 @@ template<typename T, class P>
 constexpr void
 fill(T *first, T *end, const P &value) noexcept
 {
-  if constexpr ( micron::is_class_v<T> ) {
-    for ( ; first != end; ++first ) *first = value;
-  } else {
-    constexpr_memset(first, value, end - first);
+  const usize n = static_cast<usize>(end - first);
+  // return early on a null test, avoids UB on nonnull
+  if ( n == 0 ) return;
+  if constexpr ( !micron::is_class_v<T> ) {
+    if ( !__builtin_is_constant_evaluated() ) {
+      micron::typeset(first, static_cast<T>(value), n);
+      return;
+    }
   }
+  for ( usize i = 0; i < n; ++i ) first[i] = value;
 }
 
 template<typename T, typename Fn>
@@ -115,7 +131,12 @@ template<is_iterable_container C, class P>
 constexpr C &
 fill(C &c, const P &value) noexcept
 {
-  fill(c.begin(), c.end(), value);
+  if constexpr ( __impl::__flat_readable<C> ) {
+    fill(c.begin(), c.end(), value);
+  } else {
+    // no pointer to hand the broadcast, and for a ring no flat range to broadcast over either
+    for ( auto &e : c ) e = value;
+  }
   return c;
 }
 
@@ -297,12 +318,17 @@ transform(const T *first1, const T *end1, const T *first2, O *out, Fn fn) noexce
   return out;
 }
 
+// see micron::unrollable
 template<is_iterable_container C, typename Fn>
   requires micron::invocable<Fn, typename C::value_type *>
 constexpr C &
 transform(C &c, Fn fn) noexcept
 {
-  transform(c.begin(), c.end(), fn);
+  if constexpr ( micron::unrollable<C> ) {
+    __impl::__unroll_transform_ptr(c.begin(), fn, make_index_sequence<C::static_size>{});
+  } else {
+    transform(c.begin(), c.end(), fn);
+  }
   return c;
 }
 
@@ -311,7 +337,11 @@ template<is_iterable_container C, typename Fn>
 constexpr C &
 transform(C &c, Fn fn) noexcept
 {
-  transform(c.begin(), c.end(), fn);
+  if constexpr ( micron::unrollable<C> ) {
+    __impl::__unroll_transform_val(c.begin(), fn, make_index_sequence<C::static_size>{});
+  } else {
+    transform(c.begin(), c.end(), fn);
+  }
   return c;
 }
 
@@ -496,36 +526,120 @@ rotate_right(C &c, usize n) noexcept
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // sums/fills
+//
+#pragma GCC push_options
+#pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
+
+namespace __impl
+{
+[[gnu::always_inline]] constexpr void
+__neumaier_add(f64 &acc, f64 &comp, f64 v) noexcept
+{
+  const f64 t = acc + v;
+  // whichever operand is larger in magnitude keeps its bits; the other loses the low end
+  comp += (__builtin_fabs(acc) >= __builtin_fabs(v)) ? ((acc - t) + v) : ((v - t) + acc);
+  acc = t;
+}
+
+[[gnu::always_inline]] constexpr bool
+__f64_finite(f64 v) noexcept
+{
+  return (__builtin_bit_cast(u64, v) & 0x7ff0000000000000ull) != 0x7ff0000000000000ull;
+}
+
+template<typename A>
+constexpr f64
+__sum_lanes(const A &a, usize n) noexcept
+{
+  f64 s[4] = { 0, 0, 0, 0 };
+  f64 c[4] = { 0, 0, 0, 0 };
+
+  usize i = 0;
+  for ( ; i + 4 <= n; i += 4 ) {
+    __neumaier_add(s[0], c[0], static_cast<f64>(a[i + 0]));
+    __neumaier_add(s[1], c[1], static_cast<f64>(a[i + 1]));
+    __neumaier_add(s[2], c[2], static_cast<f64>(a[i + 2]));
+    __neumaier_add(s[3], c[3], static_cast<f64>(a[i + 3]));
+  }
+  for ( ; i < n; ++i ) __neumaier_add(s[0], c[0], static_cast<f64>(a[i]));
+
+  f64 acc = 0, comp = 0;
+  for ( usize k = 0; k < 4; ++k ) {
+    __neumaier_add(acc, comp, s[k]);
+    comp += c[k];
+  }
+  return acc + comp;
+}
+
+template<typename A>
+constexpr f128
+__sum_wide(const A &a, usize n) noexcept
+{
+  f128 sm = 0;
+  for ( usize i = 0; i < n; ++i ) sm += static_cast<f128>(a[i]);
+  return sm;
+}
+
+template<typename A>
+constexpr f128
+__sum_fp(const A &a, usize n) noexcept
+{
+  const f64 fast = __sum_lanes(a, n);
+  if ( __f64_finite(fast) ) return static_cast<f128>(fast);
+  // overflowed an f64 lane
+  return __sum_wide(a, n);
+}
+};      // namespace __impl
+
 template<is_iterable_container T>
   requires micron::is_floating_point_v<typename T::value_type>
 constexpr f128
 sum(const T &src) noexcept
 {
-  f128 sm = 0;
-  for ( usize i = 0; i < src.size(); i++ ) sm += static_cast<f128>(src[i]);
-  return sm;
+  if constexpr ( __impl::__flat_readable<T> )
+    return __impl::__sum_fp(src.begin(), src.size());
+  else
+    return __impl::__sum_fp(src, src.size());
 }
+
+#pragma GCC pop_options
+
+namespace __impl
+{
+template<typename A>
+constexpr umax_t
+__sum_int(const A &a, usize n) noexcept
+{
+  // four accumulators
+  umax_t w = 0, x = 0, y = 0, z = 0;
+  usize i = 0;
+  for ( ; i + 4 <= n; i += 4 ) {
+    w += static_cast<umax_t>(a[i + 0]);
+    x += static_cast<umax_t>(a[i + 1]);
+    y += static_cast<umax_t>(a[i + 2]);
+    z += static_cast<umax_t>(a[i + 3]);
+  }
+  for ( ; i < n; ++i ) w += static_cast<umax_t>(a[i]);
+  return (w + x) + (y + z);
+}
+};      // namespace __impl
 
 template<is_iterable_container T>
   requires micron::is_integral_v<typename T::value_type>
 constexpr umax_t
 sum(const T &src) noexcept
 {
-  umax_t sm = 0;
-  for ( usize i = 0; i < src.size(); i++ ) sm += static_cast<umax_t>(src[i]);
-  return sm;
+  if constexpr ( __impl::__flat_readable<T> )
+    return __impl::__sum_int(src.begin(), src.size());
+  else
+    return __impl::__sum_int(src, src.size());
 }
 
 template<is_iterable_container T, typename R = typename T::value_type>
 constexpr T &
 clear(T &src, const R r = 0) noexcept
 {
-  if constexpr ( micron::is_object_v<micron::remove_cv_t<typename T::value_type>> ) {
-    for ( auto &n : src ) n = r;
-  } else if constexpr ( micron::is_fundamental_v<micron::remove_cv_t<typename T::value_type>> ) {
-    constexpr_memset(src.begin(), r, src.size());
-  }
-  return src;
+  return fill(src, static_cast<typename T::value_type>(r));
 }
 
 template<typename R = f64, typename T>
@@ -652,6 +766,7 @@ template<is_iterable_container C>
 constexpr C &
 reverse(C &c) noexcept
 {
+  if ( c.size() == 0 ) return c;
   reverse(c.begin(), c.end() - 1);
   return c;
 }
@@ -661,6 +776,7 @@ template<is_iterable_container C, typename Fn>
 constexpr C &
 reverse(C &c, Fn fn) noexcept
 {
+  if ( c.size() == 0 ) return c;
   reverse(c.begin(), c.end() - 1, fn);
   return c;
 }
@@ -670,6 +786,7 @@ template<is_iterable_container C, typename Fn>
 constexpr C &
 reverse(C &c, Fn fn) noexcept
 {
+  if ( c.size() == 0 ) return c;
   reverse(c.begin(), c.end() - 1, fn);
   return c;
 }
@@ -704,6 +821,7 @@ template<auto Fn, is_iterable_container C>
 constexpr C &
 reverse(C &c) noexcept
 {
+  if ( c.size() == 0 ) return c;
   reverse<Fn>(c.begin(), c.end() - 1);
   return c;
 }
@@ -837,20 +955,22 @@ min_at(const T &arr) noexcept
 }
 
 template<typename T>
-typename T::const_iterator
+const T *
 max_at(const T *first, const T *end) noexcept
 {
-  typename T::const_iterator max_v = first;
+  if ( first == end ) return end;
+  const T *max_v = first;
   for ( ; first != end; ++first )
     if ( *first > *max_v ) max_v = first;
   return max_v;
 }
 
 template<typename T>
-typename T::const_iterator
+const T *
 min_at(const T *first, const T *end) noexcept
 {
-  typename T::const_iterator min_v = first;
+  if ( first == end ) return end;
+  const T *min_v = first;
   for ( ; first != end; ++first )
     if ( *first < *min_v ) min_v = first;
   return min_v;

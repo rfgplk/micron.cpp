@@ -8,6 +8,20 @@
 namespace micron
 {
 
+// integer arithmetic now
+template<is_policy P>
+inline constexpr usize
+__grow_scale(usize len) noexcept
+{
+  constexpr usize num = static_cast<usize>(P::on_grow * 4.0f + 0.5f);      // 3.0 -> 12, 1.5 -> 6
+  constexpr usize den = 4;
+  static_assert(num > den, "growth policy must exceed 1.0 or a vector never grows");
+  if ( len == 0 ) return 0;
+  // saturate rather than wrap
+  if ( len > (static_cast<usize>(-1) / num) ) return static_cast<usize>(-1);
+  return (len * num) / den;
+}
+
 // serial standard allocator, cannot be mempooled, default *tripling* policy
 template<is_policy P = serial_allocation_policy> class allocator_serial: private abc_allocator<byte>
 {
@@ -39,16 +53,14 @@ public:
     // NOTE: in case we somehow provide zerod out mem
     if ( memory.len == 0 and memory.ptr == nullptr ) {
       n = to_page(n);
-      n = static_cast<usize>(static_cast<f32>(n) * static_cast<f32>(P::on_grow));
-
+      n = __grow_scale<P>(n);
       chunk<byte> mem = allocate(n);
       return mem;
     }
     n = to_granularity<P::granularity>(n);
-    f32 n_f = static_cast<f32>(n);
-    f32 len_f = static_cast<f32>(memory.len);
-    f32 result_f = (n_f / len_f < P::on_grow) ? P::on_grow * len_f : (n_f / len_f) * len_f;
-    n = static_cast<usize>(result_f);
+    // integer math
+    const usize scaled = __grow_scale<P>(memory.len);
+    if ( n < scaled ) n = scaled;
     chunk<byte> mem = allocate(n);
     micron::memcpy(mem.ptr, memory.ptr, memory.len);
     destroy(memory);

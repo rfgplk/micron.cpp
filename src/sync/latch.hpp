@@ -8,6 +8,8 @@
 #include "../memory/actions.hpp"
 #include "../mutex/mutex.hpp"
 
+#include "event_count.hpp"
+#include "futex.hpp"
 #include "yield.hpp"
 
 namespace micron
@@ -28,15 +30,26 @@ public:
     for ( ;; ) {
       if ( cur <= 0 ) return;
       int step = (cur < n) ? cur : n;
-      if ( counter.compare_exchange_weak(cur, cur - step, memory_order::seq_cst, memory_order::relaxed) ) return;
+      if ( counter.compare_exchange_weak(cur, cur - step, memory_order::seq_cst, memory_order::relaxed) ) {
+        // used to issue no wake
+        if ( cur - step <= 0 ) micron::wake_futex(counter.ptr(), 0x7fffffff);
+        return;
+      }
     }
   }
 
+  // spin briefly, then park
   void
   wait() const noexcept
   {
-    while ( counter.get(memory_order::seq_cst) > 0 ) {
-      yield();
+    default_backoff bo;
+    for ( ;; ) {
+      const int cur = counter.get(memory_order::acquire);
+      if ( cur <= 0 ) return;
+      if ( bo.next() != spin_step::park ) continue;
+      auto r = micron::__futex(const_cast<u32 *>(reinterpret_cast<const u32 *>(counter.ptr())), futex_wait | futex_private_flag,
+                               static_cast<u32>(cur), nullptr, nullptr, 0);
+      if ( r < 0 && r != -11 && r != -4 ) return;
     }
   }
 
@@ -57,6 +70,7 @@ class barrier
 {
   atomic_token<u64> state;
   const u32 threshold;
+  mutable event_count gate;
 
   static constexpr u64
   pack(u32 gen, u32 cnt) noexcept
@@ -81,9 +95,20 @@ public:
         desired = pack(gen, cnt - 1);
       }
       if ( state.compare_exchange_weak(cur, desired, memory_order::acq_rel, memory_order::acquire) ) {
-        if ( cnt == 1 ) return 0;
-        while ( (u32)(state.get(memory_order::acquire) >> 32) == gen ) {
-          yield();
+        if ( cnt == 1 ) {
+          gate.notify_all();
+          return 0;
+        }
+        default_backoff bo;
+        for ( ;; ) {
+          if ( (u32)(state.get(memory_order::acquire) >> 32) != gen ) break;
+          if ( bo.next() != spin_step::park ) continue;
+          const u32 key = gate.prepare_wait();
+          if ( (u32)(state.get(memory_order::acquire) >> 32) != gen ) {
+            gate.cancel_wait();
+            break;
+          }
+          gate.commit_wait(key);
         }
         return (int)(cnt - 1);
       }
@@ -98,7 +123,10 @@ public:
       u32 gen = (u32)(cur >> 32);
       u32 cnt = (u32)cur;
       u64 desired = (cnt == 1) ? pack(gen + 1, threshold) : pack(gen, cnt - 1);
-      if ( state.compare_exchange_weak(cur, desired, memory_order::acq_rel, memory_order::acquire) ) return;
+      if ( state.compare_exchange_weak(cur, desired, memory_order::acq_rel, memory_order::acquire) ) {
+        if ( cnt == 1 ) gate.notify_all();
+        return;
+      }
     }
   }
 

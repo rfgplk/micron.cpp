@@ -13,6 +13,9 @@
 namespace micron
 {
 
+// process-unique owner stamps, handed out once per thread
+inline atomic_token<usize> __lock_owner_ids{ 1 };
+
 class recursive_lock
 {
   static constexpr usize __ownerless = 0;
@@ -23,16 +26,24 @@ class recursive_lock
   static usize
   current_thread() noexcept
   {
-    // kernel tid: a stable unique-per-thread identity that needs no TLS and is never 0
-    return static_cast<usize>(micron::posix::gettid());
+    static thread_local usize __id = 0;
+    if ( __id == 0 ) [[unlikely]]
+      __id = __lock_owner_ids.fetch_add(1, memory_order::acq_rel);
+    return __id;
   }
 
   void
   reset()
   {
-    if ( owner.get(memory_order::relaxed) != current_thread() ) return;      // only the owner may unlock (no ownership theft)
+    if ( owner.get(memory_order::relaxed) != current_thread() ) {      // only the owner may unlock (no ownership theft)
+      __micron_lock_misuse("recursive_lock::unlock from a non-owner");
+      return;
+    }
     usize d = depth.get(memory_order::relaxed);
-    if ( d == 0 ) return;      // not actually held (no count underflow)
+    if ( d == 0 ) {      // not actually held (no count underflow)
+      __micron_lock_misuse("recursive_lock::unlock at depth 0");
+      return;
+    }
     if ( d > 1 ) {
       depth.store(d - 1, memory_order::relaxed);
     } else {
@@ -53,6 +64,7 @@ public:
   {
     const usize me = current_thread();
 
+    default_backoff bo;
     for ( ;; ) {
 
       usize cur = owner.get(memory_order::acquire);
@@ -68,7 +80,7 @@ public:
         }
       }
 
-      __cpu_pause();
+      bo.relax();
     }
   }
 

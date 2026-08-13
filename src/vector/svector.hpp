@@ -23,12 +23,13 @@ namespace micron
 // svector: vector on the stack, fixed capacity N, mutable.
 template<is_regular_object T, usize N = 64, bool Sf = true> class svector
 {
+  // WARNING: length must come first; otherwise it sits in a different cache line killing performance
+  usize length = 0;
+
   // NOTE: T[N] inside an anonymous union so non-trivial T is __NOT__ default constructed when the svector is created
   union {
     alignas(T) T stack[N];
   };
-
-  usize length = 0;
 
   // all svector instantiations are mutual friends so converting ctors may access stack/length across diff Ns and Sfs
   template<is_regular_object U, usize M, bool S> friend class svector;
@@ -215,8 +216,8 @@ public:
       }
 #endif
     } else {
-      size_type i = 0;
-      for ( T value : lst ) stack[i++] = value;
+
+      __impl_container::copy(real_addr_as<T>(stack), lst.begin(), lst.size());
     }
     length = lst.size();
   }
@@ -835,33 +836,29 @@ public:
   bool
   contains(const T &v) const
   {
-    for ( size_type i = 0; i < length; i++ )
-      if ( stack[i] == v ) return true;
-    return false;
+    return __impl_container::find_index(real_addr_as<const T>(stack), length, v) != length;
   }
 
   iterator
   find(const T &v)
   {
-    for ( iterator it = begin(); it != end(); ++it )
-      if ( *it == v ) return it;
-    return nullptr;
+    const size_type i = __impl_container::find_index(real_addr_as<const T>(stack), length, v);
+    return i == length ? nullptr : begin() + i;
   }
 
   const_iterator
   find(const T &v) const
   {
-    for ( const_iterator it = begin(); it != end(); ++it )
-      if ( *it == v ) return it;
-    return nullptr;
+    const size_type i = __impl_container::find_index(real_addr_as<const T>(stack), length, v);
+    return i == length ? nullptr : begin() + i;
   }
 
   size_type
   find_index(const T &v) const
   {
-    for ( size_type i = 0; i < length; i++ )
-      if ( stack[i] == v ) return i;
-    return npos;
+
+    const size_type i = __impl_container::find_index(real_addr_as<const T>(stack), length, v);
+    return i == length ? npos : i;
   }
 
   static constexpr bool
@@ -883,4 +880,4 @@ public:
   }
 };
 
-}      // namespace micron
+};      // namespace micron

@@ -221,12 +221,22 @@ run_props(void)
         mtest::ref_vec<CAP> fr;
         from_keys<E>(fv, fr, ks, n);
         u64 fk = mtest::gen_raw(rng, band::small);
+        // convector has no find(): its search answers an INDEX (npos on a miss) and so is spelled
+        // find_index(), because a pointer handed out by a self-locking container dangles the moment
+        // the lock is released.
         usize oi = fr.find(mtest::elem<E>::key(mtest::elem<E>::make(fk)));
-        auto pp = fv.find(mtest::elem<E>::make(fk));
-        if ( oi == mtest::VREF_NPOS )
-          ck(pp == nullptr, "find-miss", it);
-        else
-          ck(pp != nullptr && fv.at_n(pp) == oi, "find-hit", it);
+        auto pp = fv.find_index(mtest::elem<E>::make(fk));
+        if ( oi == mtest::VREF_NPOS ) {
+          ck(pp == V::npos, "find-miss", it);
+          ck(!fv.contains(mtest::elem<E>::make(fk)), "contains-miss", it);
+        } else {
+          ck(pp == oi, "find-hit", it);
+          ck(fv.contains(mtest::elem<E>::make(fk)), "contains-hit", it);
+          // remove_first(): the atomic find+erase, in one critical section.
+          fr.erase(oi);
+          ck(fv.remove_first(mtest::elem<E>::make(fk)), "remove_first-hit", it);
+          ck(veq<E>(fv, fr), "remove_first-oracle", it);
+        }
       }
     }
   }
@@ -552,6 +562,59 @@ mt_readwrite(micron::convector<u64> *v, u64 base, u64 cnt)
   }
 }
 
+// F1 regression -- the copy constructor and the copy assignment used to size their allocation from
+// an UNLOCKED read of the source length (a mem-initializer is sequenced before the body's lock) and
+// then copy a SECOND, locked, larger read of it: the destination was overrun by however much the
+// source grew in between, and the lock, being a barrier, is what kept the compiler from folding the
+// two reads into one. Two invariants catch it without a sanitizer:
+//   * length <= capacity on the result -- violated the instant the two reads disagree
+//   * the writer pushes 0,1,2,..., so every copy must be an exact prefix of that
+// Like any race regression it is probabilistic: against the defective ctor the capacity invariant
+// broke in roughly one run in three at -Ofast, and on the first copy under tests/build/sanitize.sh,
+// where ASan reports the overrun directly.
+static constexpr u64 CP_WRITES = 40000;
+static constexpr u64 CP_ROUNDS = 400;
+
+static void
+mt_prefix_writer(micron::convector<u64> *v, volatile bool *done)
+{
+  for ( u64 i = 0; i < CP_WRITES; ++i ) v->push_back(i);
+  *done = true;
+}
+
+static bool
+cp_intact(const micron::convector<u64> &c)
+{
+  const usize n = c.size();
+  if ( c.max_size() < n ) return false;
+  const u64 *d = c.data();
+  for ( usize i = 0; i < n; ++i )
+    if ( d[i] != static_cast<u64>(i) ) return false;
+  return true;
+}
+
+template<bool Assign>
+static void
+mt_copier(micron::convector<u64> *v, volatile bool *done, volatile bool *ok)
+{
+  for ( u64 r = 0; r < CP_ROUNDS && !*done; ++r ) {
+    if constexpr ( Assign ) {
+      micron::convector<u64> c;
+      c = *v;
+      if ( !cp_intact(c) ) {
+        *ok = false;
+        return;
+      }
+    } else {
+      micron::convector<u64> c(*v);
+      if ( !cp_intact(c) ) {
+        *ok = false;
+        return;
+      }
+    }
+  }
+}
+
 static void
 run_concurrency(void)
 {
@@ -592,6 +655,36 @@ run_concurrency(void)
       micron::auto_thread<> t2(mt_readwrite, micron::addr(shared), BASES[2], PER);
     }
     require(shared.size(), static_cast<usize>(3 * PER));
+  }
+  end_test_case();
+
+  test_case("cv copy-construct races push_back: allocation and copy share one length");
+  {
+    micron::convector<u64> src;
+    volatile bool done = false;
+    volatile bool ok = true;
+    {
+      micron::auto_thread<> w(mt_prefix_writer, micron::addr(src), micron::addr(done));
+      micron::auto_thread<> c0(mt_copier<false>, micron::addr(src), micron::addr(done), micron::addr(ok));
+      micron::auto_thread<> c1(mt_copier<false>, micron::addr(src), micron::addr(done), micron::addr(ok));
+    }
+    require(ok, true);
+    require(src.size(), static_cast<usize>(CP_WRITES));
+  }
+  end_test_case();
+
+  test_case("cv copy-assign races push_back: allocation and copy share one length");
+  {
+    micron::convector<u64> src;
+    volatile bool done = false;
+    volatile bool ok = true;
+    {
+      micron::auto_thread<> w(mt_prefix_writer, micron::addr(src), micron::addr(done));
+      micron::auto_thread<> c0(mt_copier<true>, micron::addr(src), micron::addr(done), micron::addr(ok));
+      micron::auto_thread<> c1(mt_copier<true>, micron::addr(src), micron::addr(done), micron::addr(ok));
+    }
+    require(ok, true);
+    require(src.size(), static_cast<usize>(CP_WRITES));
   }
   end_test_case();
 }

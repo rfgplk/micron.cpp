@@ -26,22 +26,38 @@ class circle_vector
   usize __size = 0;
   static constexpr usize __mask = N - 1;
 
+  template<bool Moving>
+  [[gnu::always_inline]] inline void
+  __copy_runs(micron::conditional_t<Moving, circle_vector &, const circle_vector &> other)
+  {
+    const usize n = other.__size;
+    const usize first = (N - other.__tail) < n ? (N - other.__tail) : n;
+    const usize second = n - first;
+    if constexpr ( micron::is_trivially_copyable_v<T> ) {
+      if ( first ) micron::memcpy(real_addr_as<T>(__buffer[0]), real_addr_as<const T>(other.__buffer[other.__tail]), first);
+      if ( second ) micron::memcpy(real_addr_as<T>(__buffer[first]), real_addr_as<const T>(other.__buffer[0]), second);
+    } else if constexpr ( Moving ) {
+      for ( usize i = 0; i < first; ++i ) __buffer[i] = micron::move(other.__buffer[other.__tail + i]);
+      for ( usize i = 0; i < second; ++i ) __buffer[first + i] = micron::move(other.__buffer[i]);
+    } else {
+      for ( usize i = 0; i < first; ++i ) __buffer[i] = other.__buffer[other.__tail + i];
+      for ( usize i = 0; i < second; ++i ) __buffer[first + i] = other.__buffer[i];
+    }
+    __tail = 0;
+    __size = n;
+    __head = n & __mask;
+  }
+
   inline void
   __assign_from(const circle_vector &other)
   {
-    for ( usize i = 0; i < other.__size; ++i ) __buffer[i] = other.__buffer[(other.__tail + i) & __mask];
-    __tail = 0;
-    __size = other.__size;
-    __head = other.__size & __mask;
+    __copy_runs<false>(other);
   }
 
   inline void
   __move_from(circle_vector &other)
   {
-    for ( usize i = 0; i < other.__size; ++i ) __buffer[i] = micron::move(other.__buffer[(other.__tail + i) & __mask]);
-    __tail = 0;
-    __size = other.__size;
-    __head = other.__size & __mask;
+    __copy_runs<true>(other);
     other.clear();
   }
 
@@ -335,9 +351,11 @@ public:
   T
   pop() noexcept
   {
+    if ( __size == 0 ) [[unlikely]]
+      return T{};
     T val = micron::move(__buffer[__tail]);
     __tail = (__tail + 1) & __mask;
-    if ( __size > 0 ) --__size;
+    --__size;
     return val;
   }
 
@@ -353,6 +371,9 @@ public:
   void
   clear() noexcept
   {
+    if constexpr ( !micron::is_trivially_destructible_v<T> ) {
+      for ( usize i = 0; i < __size; ++i ) __buffer[(__tail + i) & __mask] = T{};
+    }
     __head = 0;
     __tail = 0;
     __size = 0;

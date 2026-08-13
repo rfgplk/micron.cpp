@@ -18,17 +18,27 @@
 #include "../bits/__visit_kv.hpp"
 #include "../tuple.hpp"
 
+#include "__scan.hpp"
+
 namespace micron
 {
+
+template<typename T, typename C>
+concept __scan_eligible = __impl::lane_scannable<T> and micron::is_same_v<micron::remove_cv_t<T>, micron::remove_cv_t<C>>;
 
 template<typename T, typename C>
   requires(micron::same_as<T, C> or micron::comparable_with<T, C>)
 constexpr bool
 all_of(const T *first, const T *end, const C &comp) noexcept
 {
-  for ( ; first != end; ++first )
-    if ( *first != comp ) return false;
-  return true;
+  if constexpr ( __scan_eligible<T, C> ) {
+    const usize n = static_cast<usize>(end - first);
+    return __impl::scan_find_not(first, n, static_cast<T>(comp)) == n;
+  } else {
+    for ( ; first != end; ++first )
+      if ( *first != comp ) return false;
+    return true;
+  }
 }
 
 template<class T, typename C>
@@ -66,9 +76,14 @@ template<typename T, typename C>
 constexpr bool
 any_of(const T *first, const T *end, const C &comp) noexcept
 {
-  for ( ; first != end; ++first )
-    if ( *first == comp ) return true;
-  return false;
+  if constexpr ( __scan_eligible<T, C> ) {
+    const usize n = static_cast<usize>(end - first);
+    return __impl::scan_find(first, n, static_cast<T>(comp)) != n;
+  } else {
+    for ( ; first != end; ++first )
+      if ( *first == comp ) return true;
+    return false;
+  }
 }
 
 template<class T, typename C>
@@ -106,9 +121,14 @@ template<typename T, typename C>
 constexpr bool
 none_of(const T *first, const T *end, const C &comp) noexcept
 {
-  for ( ; first != end; ++first )
-    if ( *first == comp ) return false;
-  return true;
+  if constexpr ( __scan_eligible<T, C> ) {
+    const usize n = static_cast<usize>(end - first);
+    return __impl::scan_find(first, n, static_cast<T>(comp)) == n;
+  } else {
+    for ( ; first != end; ++first )
+      if ( *first == comp ) return false;
+    return true;
+  }
 }
 
 template<class T, typename C>
@@ -261,14 +281,15 @@ none_of(const C &c) noexcept
   return none_of<Fn>(c.begin(), c.end());
 }
 
+// NOTE: find already narrows the comparand
 template<typename T, class P>
   requires(micron::is_convertible_v<T, P>)
 constexpr T *
 find(T *first, T *end, const P &f) noexcept
 {
-  for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(f) ) return first;
-  return nullptr;
+  const usize n = static_cast<usize>(end - first);
+  const usize i = __impl::scan_find(static_cast<const T *>(first), n, static_cast<T>(f));
+  return i == n ? nullptr : first + i;
 }
 
 template<typename T, class P>
@@ -276,9 +297,9 @@ template<typename T, class P>
 constexpr const T *
 find(const T *first, const T *end, const P &f) noexcept
 {
-  for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(f) ) return first;
-  return nullptr;
+  const usize n = static_cast<usize>(end - first);
+  const usize i = __impl::scan_find(first, n, static_cast<T>(f));
+  return i == n ? nullptr : first + i;
 }
 
 template<typename T, typename Fn>
@@ -327,7 +348,7 @@ constexpr const T *
 find_if_not(const T *first, const T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !fn(first) ) return first;
+    if ( !fn(*first) ) return first;
   return nullptr;
 }
 
@@ -337,7 +358,7 @@ constexpr T *
 find_if_not(T *first, T *end, Fn fn) noexcept
 {
   for ( ; first != end; ++first )
-    if ( !fn(first) ) return first;
+    if ( !fn(*first) ) return first;
   return nullptr;
 }
 
@@ -446,10 +467,9 @@ template<typename T, class P>
 constexpr T *
 find_last(T *first, T *end, const P &f) noexcept
 {
-  T *found = nullptr;
-  for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(f) ) found = first;
-  return found;
+  const usize n = static_cast<usize>(end - first);
+  const usize i = __impl::scan_rfind(static_cast<const T *>(first), n, static_cast<T>(f));
+  return i == n ? nullptr : first + i;
 }
 
 template<typename T, class P>
@@ -457,10 +477,9 @@ template<typename T, class P>
 constexpr const T *
 find_last(const T *first, const T *end, const P &f) noexcept
 {
-  const T *found = nullptr;
-  for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(f) ) found = first;
-  return found;
+  const usize n = static_cast<usize>(end - first);
+  const usize i = __impl::scan_rfind(first, n, static_cast<T>(f));
+  return i == n ? nullptr : first + i;
 }
 
 template<typename T, typename Fn>
@@ -577,22 +596,25 @@ find_last_if_not(const C &c, Fn fn) noexcept
   return find_last_if_not(c.begin(), c.end(), fn);
 }
 
+// last occurrence of [pfirst,pend) in [first,end)
 template<typename T, class P>
 const T *
 find_end(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
   if ( pfirst == pend ) return end;
-  const T *result = nullptr;
-  for ( ; first != end; ++first ) {
-    const T *it1 = first;
-    const P *it2 = pfirst;
-    while ( it1 != end && it2 != pend && *it1 == static_cast<T>(*it2) ) {
-      ++it1;
-      ++it2;
-    }
-    if ( it2 == pend ) result = first;
+  const usize n = static_cast<usize>(end - first);
+  const usize m = static_cast<usize>(pend - pfirst);
+  if ( m > n ) return nullptr;
+
+  usize hit;
+  if ( m >= __impl::kmp_min_width and m <= __impl::kmp_stack_max ) {
+    __impl::kmp_slot tbl[__impl::kmp_stack_max];
+    __impl::kmp_table_rev<T>(pfirst, m, tbl);
+    hit = __impl::kmp_rscan(first, n, pfirst, m, tbl);
+  } else {
+    hit = __impl::skip_rscan(first, n, pfirst, m);
   }
-  return result;
+  return hit == n ? nullptr : first + hit;
 }
 
 template<typename T, class P, typename Fn>
@@ -629,14 +651,15 @@ find_end(const C &c, const P &p, Fn fn) noexcept
   return find_end(c.begin(), c.end(), p.begin(), p.end(), fn);
 }
 
+// O(n+k) for a byte-wide element
 template<typename T, class P>
 const T *
 find_first_of(const T *first, const T *end, const P *sfirst, const P *send) noexcept
 {
-  for ( ; first != end; ++first )
-    for ( const P *s = sfirst; s != send; ++s )
-      if ( *first == static_cast<T>(*s) ) return first;
-  return nullptr;
+  const usize n = static_cast<usize>(end - first);
+  const usize k = static_cast<usize>(send - sfirst);
+  const usize i = __impl::scan_find_first_of(first, n, sfirst, k);
+  return i == n ? nullptr : first + i;
 }
 
 template<typename T, class P, typename Fn>
@@ -875,10 +898,7 @@ template<typename T, class P>
 constexpr umax_t
 count(const T *first, const T *end, const P &v) noexcept
 {
-  umax_t n = 0;
-  for ( ; first != end; ++first )
-    if ( *first == static_cast<T>(v) ) ++n;
-  return n;
+  return static_cast<umax_t>(__impl::scan_count(first, static_cast<usize>(end - first), static_cast<T>(v)));
 }
 
 template<typename T, typename Fn>
@@ -948,16 +968,18 @@ template<typename T>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2) noexcept
 {
-  for ( ; first1 != end1 && *first1 == *first2; ++first1, ++first2 );
-  return { first1, first2 };
+  const usize d = __impl::scan_mismatch(first1, first2, static_cast<usize>(end1 - first1));
+  return { first1 + d, first2 + d };
 }
 
 template<typename T>
 constexpr micron::pair<const T *, const T *>
 mismatch(const T *first1, const T *end1, const T *first2, const T *end2) noexcept
 {
-  for ( ; first1 != end1 && first2 != end2 && *first1 == *first2; ++first1, ++first2 );
-  return { first1, first2 };
+  const usize n1 = static_cast<usize>(end1 - first1);
+  const usize n2 = static_cast<usize>(end2 - first2);
+  const usize d = __impl::scan_mismatch(first1, first2, n1 < n2 ? n1 : n2);
+  return { first1 + d, first2 + d };
 }
 
 template<typename T, typename Fn>
@@ -998,9 +1020,7 @@ template<typename T>
 constexpr bool
 equal(const T *first1, const T *end1, const T *first2) noexcept
 {
-  for ( ; first1 != end1; ++first1, ++first2 )
-    if ( !(*first1 == *first2) ) return false;
-  return true;
+  return __impl::scan_equal(first1, first2, static_cast<usize>(end1 - first1));
 }
 
 template<typename T>
@@ -1038,20 +1058,25 @@ equal(const C1 &a, const C2 &b, Fn fn) noexcept
   return equal(a.begin(), a.end(), b.begin(), fn);
 }
 
+// first occurrence of [pfirst,pend) in [first,end), O(n+m) via KMP
 template<typename T, class P>
 const T *
 search(const T *first, const T *end, const P *pfirst, const P *pend) noexcept
 {
-  for ( ; first != end; ++first ) {
-    const T *it1 = first;
-    const P *it2 = pfirst;
-    while ( it1 != end && it2 != pend && *it1 == static_cast<T>(*it2) ) {
-      ++it1;
-      ++it2;
-    }
-    if ( it2 == pend ) return first;
+  const usize n = static_cast<usize>(end - first);
+  const usize m = static_cast<usize>(pend - pfirst);
+  if ( m == 0 ) return n == 0 ? nullptr : first;
+  if ( m > n ) return nullptr;
+
+  usize hit;
+  if ( m >= __impl::kmp_min_width and m <= __impl::kmp_stack_max ) {
+    __impl::kmp_slot tbl[__impl::kmp_stack_max];
+    __impl::kmp_table<T>(pfirst, m, tbl);
+    hit = __impl::kmp_scan(first, n, pfirst, m, tbl);
+  } else {
+    hit = __impl::skip_scan(first, n, pfirst, m);
   }
-  return nullptr;
+  return hit == n ? nullptr : first + hit;
 }
 
 template<typename T, class P, typename Fn>
@@ -1071,14 +1096,27 @@ search(const T *first, const T *end, const P *pfirst, const P *pend, Fn fn) noex
   return nullptr;
 }
 
+// first run of n consecutive elements equal to value, O(len)
 template<typename T, class P>
 const T *
 search_n(const T *first, const T *end, usize n, const P &value) noexcept
 {
-  for ( ; first != end; ++first ) {
-    usize i = 0;
-    while ( first + i != end && i < n && *(first + i) == static_cast<T>(value) ) ++i;
-    if ( i == n ) return first;
+  const usize len = static_cast<usize>(end - first);
+  if ( n == 0 ) return len == 0 ? nullptr : first;
+  if ( n > len ) return nullptr;
+  const T needle = static_cast<T>(value);
+
+  usize run = 0;
+  for ( usize i = 0; i < len; ++i ) {
+    if ( first[i] == needle ) {
+      if ( ++run == n ) return first + (i + 1 - n);
+    } else {
+      run = 0;
+      // no run can start before the next element
+      const usize hop = __impl::scan_find(first + i + 1, len - i - 1, needle);
+      if ( hop == len - i - 1 ) return nullptr;
+      i += hop;
+    }
   }
   return nullptr;
 }

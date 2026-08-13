@@ -54,6 +54,14 @@ public:
   unique_lock(M &m)
     requires(S == lock_starts::defer)
       : mtx(&m), rptr(nullptr) { };
+
+  unique_lock(M *m)
+    requires(S == lock_starts::attempt)
+      : mtx(m), rptr(m->try_lock() ? m->retrieve() : nullptr) { };
+  unique_lock(M &m)
+    requires(S == lock_starts::attempt)
+      : mtx(&m), rptr(m.try_lock() ? m.retrieve() : nullptr) { };
+
   unique_lock(const unique_lock &) = delete;
 
   unique_lock(unique_lock &&o) : mtx(o.mtx), rptr(o.rptr)
@@ -102,6 +110,18 @@ public:
     __verify();
     if ( rptr ) (mtx->*rptr)();
     rptr = nullptr;
+  }
+
+  [[nodiscard]] bool
+  owns_lock() const noexcept
+  {
+    return rptr != nullptr;
+  }
+
+  explicit
+  operator bool() const noexcept
+  {
+    return rptr != nullptr;
   }
 
   auto

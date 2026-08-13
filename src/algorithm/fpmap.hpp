@@ -16,6 +16,8 @@
 #include "../types.hpp"
 #include "../vector/fvector.hpp"
 
+#include "fpfilter.hpp"
+
 #include "../bits/__map_build.hpp"
 #include "../bits/__visit_kv.hpp"
 #include "fperrors.hpp"
@@ -94,11 +96,12 @@ template<is_map_class M>
 micron::fvector<typename micron::remove_cvref_t<M>::mapped_type>
 nub(const M &m)
 {
-  micron::fvector<typename micron::remove_cvref_t<M>::mapped_type> out;
+  using V = typename micron::remove_cvref_t<M>::mapped_type;
+  micron::fvector<V> out;
+  micron::fp::__impl::seen_set<V> seen;
+  seen.reserve(m.size());
   micron::__impl::visit_kv(m, [&](const auto &, const auto &v) {
-    for ( const auto &e : out )
-      if ( e == v ) return;
-    out.push_back(v);
+    if ( seen.add(v) ) out.push_back(v);
   });
   return out;
 }

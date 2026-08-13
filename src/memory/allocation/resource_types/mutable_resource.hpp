@@ -78,10 +78,11 @@ struct __mutable_memory_resource: public __core_memory_resource<T> {
   }
 
   // start funcs
+  // n_el and capacity are both element counts
   inline bool
   has_space(const usize n_el) const
   {
-    return (((n_el * (sizeof(T) / sizeof(byte))) + length) <= (__core_memory_resource<T>::capacity));
+    return (n_el + length) <= __core_memory_resource<T>::capacity;
   }
 
   inline chunk<byte>
@@ -187,7 +188,7 @@ struct __mutable_memory_resource_move_only: public __core_memory_resource<T> {
   [[nodiscard]] bool
   has_space(const usize n_el) const
   {
-    return ((n_el * (sizeof(T) / sizeof(byte)) + length) <= __core_memory_resource<T>::capacity);
+    return (n_el + length) <= __core_memory_resource<T>::capacity;
   }
 
   [[nodiscard]] chunk<byte>
