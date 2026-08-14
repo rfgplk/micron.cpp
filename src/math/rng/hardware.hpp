@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../../bits/__arch.hpp"
+#include "../../linux/sys/time.hpp"
 #include "../../types.hpp"
 #include "../__asm/rdrand.hpp"
 #include "engines.hpp"
@@ -37,11 +38,15 @@ seed_from_hw() noexcept
   u64 a = 0, b = 0, c = 0, d = 0;
   const bool got = rdrand64(a) && rdrand64(b) && rdrand64(c) && rdrand64(d);
   if ( !got ) {
-#if defined(__micron_arch_amd64) || defined(__micron_arch_arm64) || defined(__micron_arch_arm32)
-    splitmix64 sm{ __asm_op::rdtsc64() ^ 0xa5a5a5a5a5a5a5a5ULL };
-#else
-    splitmix64 sm{ 0xc0ffee0123456789ULL };
-#endif
+    micron::timespec_t __ts{};
+    (void)micron::clock_gettime(micron::clock_monotonic, __ts);
+    u64 mix = (static_cast<u64>(__ts.tv_sec) * 1'000'000'000ull) ^ static_cast<u64>(__ts.tv_nsec);
+    micron::timespec_t __rt{};
+    (void)micron::clock_gettime(micron::clock_realtime, __rt);
+    mix ^= (static_cast<u64>(__rt.tv_sec) << 20) ^ static_cast<u64>(__rt.tv_nsec);
+    mix ^= reinterpret_cast<u64>(&__ts);      // ASLR contributes a few bits too
+    if constexpr ( __asm_op::rdtsc64_available ) mix ^= __asm_op::rdtsc64();
+    splitmix64 sm{ mix ^ 0xa5a5a5a5a5a5a5a5ULL };
     a = sm.next();
     b = sm.next();
     c = sm.next();

@@ -248,3 +248,19 @@ compile tests/compiletests/reflect.cpp --x86 --isa base -O2 -freflection -o bin/
 compile tests/compiletests/reflect.cpp --x86 --isa base -O2 -freflection -o bin/compiletests/refl_base_O2_ke -ke
 compile tests/compiletests/reflect.cpp --x86 -Ofast -freflection -o bin/compiletests/refl_Ofast_k -k
 compile tests/compiletests/reflect.cpp --x86 -Ofast -freflection -o bin/compiletests/refl_Ofast_ke -ke
+
+# %%%%%%%%%%%%%%
+# chrono
+
+compile tests/compiletests/chrono.cpp --x86 --isa base -O0 --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests/chrono_vdso_base_O0
+compile tests/compiletests/chrono.cpp --x86 --isa base -Ofast --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests/chrono_vdso_base_Ofast
+compile tests/compiletests/chrono.cpp --x86 --isa v3 -O2 --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests/chrono_vdso_v3_O2
+compile tests/compiletests/chrono.cpp --x86 -g --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests/chrono_vdso_debug
+compile tests/compiletests/chrono.cpp --x86 -O2 --def MICRON_CHRONO_VDSO=1 -o bin/compiletests/chrono_vdso_O2_k -k
+compile tests/compiletests/chrono.cpp --x86 -O2 --def MICRON_CHRONO_VDSO=1 -o bin/compiletests/chrono_vdso_O2_ke -ke
+compile tests/compiletests/chrono.cpp --arm64 -Ofast --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests/chrono_vdso_arm64_Ofast
+
+compile tests/compiletests/chrono.cpp --arm -O0 --def MICRON_CHRONO_ARM32_CNTVCT=1 --raw-obj -o bin/compiletests/chrono_cntvct_O0
+compile tests/compiletests/chrono.cpp --arm -Ofast --def MICRON_CHRONO_ARM32_CNTVCT=1 --raw-obj -o bin/compiletests/chrono_cntvct_Ofast
+compile tests/compiletests/chrono.cpp --arm -O2 --def MICRON_CHRONO_ARM32_CNTVCT=1 -o bin/compiletests/chrono_cntvct_O2_k -k
+compile tests/compiletests/chrono.cpp --arm -O2 --def MICRON_CHRONO_ARM32_CNTVCT=1 -o bin/compiletests/chrono_cntvct_O2_ke -ke

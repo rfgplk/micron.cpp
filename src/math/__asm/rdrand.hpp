@@ -71,6 +71,13 @@ rdseed64(u64 &out) noexcept
 
 // fallback method
 
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm64) \
+    || (defined(__micron_arch_arm32) && defined(MICRON_CHRONO_ARM32_CNTVCT))
+inline constexpr bool rdtsc64_available = true;
+#else
+inline constexpr bool rdtsc64_available = false;
+#endif
+
 [[nodiscard, gnu::always_inline]] inline u64
 rdtsc64() noexcept
 {
@@ -83,7 +90,7 @@ rdtsc64() noexcept
   u64 v;
   asm volatile("mrs %0, cntvct_el0" : "=r"(v));
   return v;
-#elif defined(__micron_arch_arm32)
+#elif defined(__micron_arch_arm32) && defined(MICRON_CHRONO_ARM32_CNTVCT)
   u32 lo, hi;
   asm volatile("mrrc p15, 1, %0, %1, c14" : "=r"(lo), "=r"(hi));
   return (u64(hi) << 32) | u64(lo);

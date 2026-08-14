@@ -728,6 +728,49 @@ futimens(i32 fd, const timespec_t *times)
   return utimensat(fd, nullptr, times, 0);
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// legacy file-time setters
+
+struct utimbuf_t {
+  time_t actime;
+  time_t modtime;
+};
+
+i32
+utime(const char *path, const utimbuf_t *times)
+{
+  if ( !times ) return utimensat(at_fdcwd, path, nullptr, 0);
+  const timespec_t ts[2] = { { times->actime, 0 }, { times->modtime, 0 } };
+  return utimensat(at_fdcwd, path, ts, 0);
+}
+
+i32
+utimes(const char *path, const timeval_t times[2])
+{
+  if ( !times ) return utimensat(at_fdcwd, path, nullptr, 0);
+  const timespec_t ts[2] = { { times[0].tv_sec, static_cast<decltype(timespec_t{}.tv_nsec)>(times[0].tv_usec) * 1'000 },
+                             { times[1].tv_sec, static_cast<decltype(timespec_t{}.tv_nsec)>(times[1].tv_usec) * 1'000 } };
+  return utimensat(at_fdcwd, path, ts, 0);
+}
+
+i32
+futimesat(i32 dirfd, const char *path, const timeval_t times[2])
+{
+  if ( !times ) return utimensat(dirfd, path, nullptr, 0);
+  const timespec_t ts[2] = { { times[0].tv_sec, static_cast<decltype(timespec_t{}.tv_nsec)>(times[0].tv_usec) * 1'000 },
+                             { times[1].tv_sec, static_cast<decltype(timespec_t{}.tv_nsec)>(times[1].tv_usec) * 1'000 } };
+  return utimensat(dirfd, path, ts, 0);
+}
+
+i32
+lutimes(const char *path, const timeval_t times[2])
+{
+  if ( !times ) return utimensat(at_fdcwd, path, nullptr, at_symlink_nofollow);
+  const timespec_t ts[2] = { { times[0].tv_sec, static_cast<decltype(timespec_t{}.tv_nsec)>(times[0].tv_usec) * 1'000 },
+                             { times[1].tv_sec, static_cast<decltype(timespec_t{}.tv_nsec)>(times[1].tv_usec) * 1'000 } };
+  return utimensat(at_fdcwd, path, ts, at_symlink_nofollow);
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // renames
 

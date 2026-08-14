@@ -1,4 +1,4 @@
-# Known Issues (as of 2026-08-04)
+# Known Issues (as of 2026-08-14)
 
 ## Hashing
 
@@ -130,3 +130,16 @@ run
   test comparing both signs saw the wrong string. Runtime values are unaffected (the converters read
   raw bits). In tests, launder constant ±0 bit patterns through a `volatile` u64/u32 first
   (`tests/rigor/rigor_format_ryu.cpp` `f64_opaque`).
+
+## chrono
+
+- **Timeout-carrying syscalls with no wrapper**, `semtimedop`, `mq_timedsend`/`mq_timedreceive`, `io_pgetevents`, `recvmmsg`, `pselect6`, and a
+  *timed* `rt_sigtimedwait`
+- **`i386: ftime = 35` is exposed as if usable.**
+- **`micron::user_hz` is a hardcoded `constexpr 100`** (`linux/process/resource.hpp:362`).
+- **`posix::sysconf` has only `_SC_CLK_TCK` and `_SC_PAGESIZE` implemented**
+- **The vDSO fast path is 64-bit only.**
+- **`chrono::core_hz()` is only as stable as the rig.**
+- **armv7-a reads no cycle counter by default.**
+- **`chrono/tz.hpp` reads TZif v2/v3 only.**
+- **Offsets render to minute resolution.**

@@ -105,11 +105,11 @@ template<contract_state S, typename T> class contract
     go([this]() {
       // __duration <= 0 => evaluate once, no waiting. otherwise treat __duration as the total budget (ms)
       const fduration_t budget = this->__duration;
-      const fduration_t deadline = micron::system_clock<>::now() + (budget > 0 ? budget : 0);
+      const fduration_t deadline = micron::steady_clock::now() + (budget > 0 ? budget : 0);
       // poll slice: a fraction of the budget, clamped to a sane [1ms, 50ms] range
       const fduration_t slice = budget > 0 ? (budget > 50.0 ? 50.0 : (budget < 1.0 ? budget : budget / 4.0)) : 0;
       bool ok = this->__all_satisfied();
-      while ( !ok && budget > 0 && micron::system_clock<>::now() < deadline ) {
+      while ( !ok && budget > 0 && micron::steady_clock::now() < deadline ) {
         sleep_duration(slice);
         ok = this->__all_satisfied();
       }

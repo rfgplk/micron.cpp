@@ -6,6 +6,9 @@
 
 #pragma once
 
+// NOTE: __syscall_ulong_type comes from bits-types.hpp through types.hpp
+#include "../../types.hpp"
+
 // WARNING: nasty workaround, but we need this here since the attr setting functions in pthread need cpu_set_t in global
 // ns and we'll run into conflicting declarations with bits/cpu-set otherwise
 

@@ -477,6 +477,15 @@ template<__nr_t __nr_Base = 0> struct arm32_syscalls {
     static constexpr __nr_t lsm_set_self_attr = __nr_Base + 460;
     static constexpr __nr_t lsm_list_modules = __nr_Base + 461;
     static constexpr __nr_t mseal = __nr_Base + 462;
+    static constexpr __nr_t setxattrat = __nr_Base + 463;
+    static constexpr __nr_t getxattrat = __nr_Base + 464;
+    static constexpr __nr_t listxattrat = __nr_Base + 465;
+    static constexpr __nr_t removexattrat = __nr_Base + 466;
+    static constexpr __nr_t open_tree_attr = __nr_Base + 467;
+    static constexpr __nr_t file_getattr = __nr_Base + 468;
+    static constexpr __nr_t file_setattr = __nr_Base + 469;
+    static constexpr __nr_t listns = __nr_Base + 470;
+    static constexpr __nr_t rseq_slice_yield = __nr_Base + 471;
 
     // private SWIs
     static constexpr __nr_t arm_private_base = __nr_Base + 0x0f0000;
@@ -908,6 +917,15 @@ inline constexpr __nr_t SYS_lsm_get_self_attr = arm32_eabi::nr::lsm_get_self_att
 inline constexpr __nr_t SYS_lsm_set_self_attr = arm32_eabi::nr::lsm_set_self_attr;
 inline constexpr __nr_t SYS_lsm_list_modules = arm32_eabi::nr::lsm_list_modules;
 inline constexpr __nr_t SYS_mseal = arm32_eabi::nr::mseal;
+inline constexpr __nr_t SYS_setxattrat = arm32_eabi::nr::setxattrat;
+inline constexpr __nr_t SYS_getxattrat = arm32_eabi::nr::getxattrat;
+inline constexpr __nr_t SYS_listxattrat = arm32_eabi::nr::listxattrat;
+inline constexpr __nr_t SYS_removexattrat = arm32_eabi::nr::removexattrat;
+inline constexpr __nr_t SYS_open_tree_attr = arm32_eabi::nr::open_tree_attr;
+inline constexpr __nr_t SYS_file_getattr = arm32_eabi::nr::file_getattr;
+inline constexpr __nr_t SYS_file_setattr = arm32_eabi::nr::file_setattr;
+inline constexpr __nr_t SYS_listns = arm32_eabi::nr::listns;
+inline constexpr __nr_t SYS_rseq_slice_yield = arm32_eabi::nr::rseq_slice_yield;
 
 // arm private swis
 inline constexpr __nr_t SYS_arm_breakpoint = arm32_eabi::nr::arm_breakpoint;

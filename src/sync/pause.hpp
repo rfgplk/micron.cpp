@@ -139,12 +139,13 @@ await(Args... args)
 
 // SLEEPING SECTION
 
+// NOTE: steady_clock, not system_clock<>
 inline void
 spin_for(fduration_t timeout)
 {
-  auto start = micron::system_clock<>::now();
+  auto start = micron::steady_clock::now();
   for ( ;; ) {
-    if ( (micron::system_clock<>::now() - start >= timeout) ) break;
+    if ( (micron::steady_clock::now() - start >= timeout) ) break;
     __cpu_pause();
   }
 }
@@ -152,9 +153,9 @@ spin_for(fduration_t timeout)
 inline void
 wait_for(fduration_t timeout)
 {
-  auto start = micron::system_clock<>::now();
+  auto start = micron::steady_clock::now();
   for ( ;; ) {
-    if ( (micron::system_clock<>::now() - start >= timeout) ) break;
+    if ( (micron::steady_clock::now() - start >= timeout) ) break;
     // since its a ms dt
     cpu_pause<1000>();
   }
@@ -221,7 +222,7 @@ sleep(ulong_t ms)
 
   for ( ;; ) {
     micron::__testcancel();
-    if ( micron::nanosleep(r) != -error::interrupted ) break;
+    if ( micron::nanosleep(r, r) != -error::interrupted ) break;
     __cpu_pause();
   }
 }

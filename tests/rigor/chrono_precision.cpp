@@ -15,7 +15,7 @@
 //       test_chrono_precision.cpp && ./test_chrono_precision
 
 #include "../snowball/snowball.hpp"
-#include "chrono.hpp"
+#include "../../src/chrono.hpp"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers

@@ -348,7 +348,9 @@ template<__nr_t __nr_Base = 0> struct amd64_syscalls {
     static constexpr __nr_t statx = __nr_Base + 332;
     static constexpr __nr_t io_pgetevents = __nr_Base + 333;
     static constexpr __nr_t rseq = __nr_Base + 334;
-    // __nr_Base + 335 – 423: reserved / unassigned on amd64
+    static constexpr __nr_t uretprobe = __nr_Base + 335;      // kernel-internal trampoline
+    static constexpr __nr_t uprobe = __nr_Base + 336;         // kernel-internal trampoline
+    // __nr_Base + 337 – 423: reserved / unassigned on amd64
     static constexpr __nr_t pidfd_send_signal = __nr_Base + 424;
     static constexpr __nr_t io_uring_setup = __nr_Base + 425;
     static constexpr __nr_t io_uring_enter = __nr_Base + 426;
@@ -388,6 +390,15 @@ template<__nr_t __nr_Base = 0> struct amd64_syscalls {
     static constexpr __nr_t lsm_set_self_attr = __nr_Base + 460;
     static constexpr __nr_t lsm_list_modules = __nr_Base + 461;
     static constexpr __nr_t mseal = __nr_Base + 462;
+    static constexpr __nr_t setxattrat = __nr_Base + 463;
+    static constexpr __nr_t getxattrat = __nr_Base + 464;
+    static constexpr __nr_t listxattrat = __nr_Base + 465;
+    static constexpr __nr_t removexattrat = __nr_Base + 466;
+    static constexpr __nr_t open_tree_attr = __nr_Base + 467;
+    static constexpr __nr_t file_getattr = __nr_Base + 468;
+    static constexpr __nr_t file_setattr = __nr_Base + 469;
+    static constexpr __nr_t listns = __nr_Base + 470;
+    static constexpr __nr_t rseq_slice_yield = __nr_Base + 471;
   };
 };
 
@@ -714,6 +725,8 @@ inline constexpr __nr_t SYS_pkey_free = amd64_native::nr::pkey_free;
 inline constexpr __nr_t SYS_statx = amd64_native::nr::statx;
 inline constexpr __nr_t SYS_io_pgetevents = amd64_native::nr::io_pgetevents;
 inline constexpr __nr_t SYS_rseq = amd64_native::nr::rseq;
+inline constexpr __nr_t SYS_uretprobe = amd64_native::nr::uretprobe;
+inline constexpr __nr_t SYS_uprobe = amd64_native::nr::uprobe;
 inline constexpr __nr_t SYS_pidfd_send_signal = amd64_native::nr::pidfd_send_signal;
 inline constexpr __nr_t SYS_io_uring_setup = amd64_native::nr::io_uring_setup;
 inline constexpr __nr_t SYS_io_uring_enter = amd64_native::nr::io_uring_enter;
@@ -753,3 +766,12 @@ inline constexpr __nr_t SYS_lsm_get_self_attr = amd64_native::nr::lsm_get_self_a
 inline constexpr __nr_t SYS_lsm_set_self_attr = amd64_native::nr::lsm_set_self_attr;
 inline constexpr __nr_t SYS_lsm_list_modules = amd64_native::nr::lsm_list_modules;
 inline constexpr __nr_t SYS_mseal = amd64_native::nr::mseal;
+inline constexpr __nr_t SYS_setxattrat = amd64_native::nr::setxattrat;
+inline constexpr __nr_t SYS_getxattrat = amd64_native::nr::getxattrat;
+inline constexpr __nr_t SYS_listxattrat = amd64_native::nr::listxattrat;
+inline constexpr __nr_t SYS_removexattrat = amd64_native::nr::removexattrat;
+inline constexpr __nr_t SYS_open_tree_attr = amd64_native::nr::open_tree_attr;
+inline constexpr __nr_t SYS_file_getattr = amd64_native::nr::file_getattr;
+inline constexpr __nr_t SYS_file_setattr = amd64_native::nr::file_setattr;
+inline constexpr __nr_t SYS_listns = amd64_native::nr::listns;
+inline constexpr __nr_t SYS_rseq_slice_yield = amd64_native::nr::rseq_slice_yield;

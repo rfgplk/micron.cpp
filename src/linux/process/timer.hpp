@@ -19,37 +19,42 @@ template<system_clocks C = system_clocks::monotonic> class timerfd_t
   static constexpr timespec_t
   __to_timespec(fduration_t value, unit u) noexcept
   {
-    timespec_t ts;
+    timespec_t ts{};
+    fduration_t secs = 0;
     switch ( u ) {
     case unit::nanoseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000'000'000LL);
       ts.tv_nsec = static_cast<long>(static_cast<i64>(value) % 1'000'000'000LL);
-      break;
+      return ts;
     case unit::microseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000'000LL);
       ts.tv_nsec = static_cast<long>(static_cast<i64>(value) % 1'000'000LL) * 1'000L;
-      break;
+      return ts;
     case unit::milliseconds:
       ts.tv_sec = static_cast<time_t>(value / 1'000LL);
       ts.tv_nsec = static_cast<long>(static_cast<i64>(value) % 1'000LL) * 1'000'000L;
-      break;
+      return ts;
     case unit::seconds:
-      ts.tv_sec = static_cast<time_t>(value);
-      ts.tv_nsec = 0;
+      secs = value;
       break;
     case unit::minutes:
-      ts.tv_sec = static_cast<time_t>(value * __dur_sec_per_min);
-      ts.tv_nsec = 0;
+      secs = value * __dur_sec_per_min;
       break;
     case unit::hours:
-      ts.tv_sec = static_cast<time_t>(value * __dur_sec_per_hr);
-      ts.tv_nsec = 0;
+      secs = value * __dur_sec_per_hr;
       break;
     case unit::days:
-      ts.tv_sec = static_cast<time_t>(value * __dur_sec_per_day);
-      ts.tv_nsec = 0;
+      secs = value * __dur_sec_per_day;
       break;
+    default:
+      return ts;      // disarmed, which is at least a defined answer
     }
+    if ( secs < 0 ) secs = 0;
+    const time_t whole = static_cast<time_t>(secs);
+    ts.tv_sec = whole;
+    ts.tv_nsec = static_cast<long>((secs - static_cast<fduration_t>(whole)) * 1'000'000'000.0);
+    if ( ts.tv_nsec > 999'999'999L ) ts.tv_nsec = 999'999'999L;
+    if ( ts.tv_nsec < 0 ) ts.tv_nsec = 0;
     return ts;
   }
 

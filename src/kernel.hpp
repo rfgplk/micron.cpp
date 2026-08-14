@@ -156,6 +156,18 @@ inline constexpr u32 uring_ftruncate = ver(6, 9);          // IORING_OP_FTRUNCAT
 inline constexpr u32 map_droppable = ver(6, 11);           // MAP_DROPPABLE
 inline constexpr u32 uring_resize_rings = ver(6, 13);      // IORING_REGISTER_RESIZE_RINGS (defer_taskrun rings only)
 inline constexpr u32 uring_sqe_mixed = ver(7, 1);          // IORING_SETUP_SQE_MIXED: 64B and 128B sqes on one ring
+
+// time
+inline constexpr u32 time64_syscalls = ver(5, 1);      // clock_gettime64 and the whole *_time64 family
+inline constexpr u32 futex_time64 = ver(5, 1);
+inline constexpr u32 futex_waitv = ver(5, 16);
+inline constexpr u32 futex2 = ver(6, 7);      // futex_wake / futex_wait / futex_requeue
+
+inline constexpr u32 xattrat = ver(6, 13);      // setxattrat / getxattrat / listxattrat / removexattrat
+inline constexpr u32 open_tree_attr = ver(6, 15);
+inline constexpr u32 file_attr = ver(6, 17);      // file_getattr / file_setattr
+inline constexpr u32 listns = ver(7, 0);
+inline constexpr u32 rseq_slice_yield = ver(7, 1);
 };      // namespace feature
 
 [[gnu::always_inline]] inline bool

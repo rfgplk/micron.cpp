@@ -7,6 +7,8 @@
 
 #include "../types.hpp"
 
+#include "../errno.hpp"
+#include "../kernel.hpp"
 #include "../linux/sys/time.hpp"
 #include "../syscall.hpp"
 #include "../type_traits.hpp"
@@ -35,9 +37,32 @@ constexpr static const u32 futex_futex_lock_pi2 = 13;      // >=5.14
 constexpr static const u32 futex_private_flag = 128;
 constexpr static const u32 futex_clock_realtime = 256;
 
+#if defined(__micron_arch_width_32)
+struct __futex_old_ts {
+  i32 tv_sec;
+  i32 tv_nsec;
+};
+
+inline kernel::probe_gate __futex_time64_gate{};
+#endif
+
 inline auto
 __futex(u32 *addr, int futex, u32 val, timespec_t *timeout, u32 *addr2, u32 val2)
 {
+#if defined(__micron_arch_width_32)
+  if ( timeout != nullptr ) {
+    if ( __futex_time64_gate.open(kernel::feature::futex_time64) ) [[likely]] {
+      const long r = micron::syscall(SYS_futex_time64, addr, futex, val, timeout, addr2, val2);
+      // demote on ENOSYS only
+      if ( r != -static_cast<long>(error::bad_syscall) ) return r;
+      __futex_time64_gate.demote();
+    }
+    // pre-5.1: narrow into the old layout rather than pass a struct the kernel will misread
+    const __futex_old_ts __old{ static_cast<i32>(timeout->tv_sec > 0x7FFF'FFFFll ? 0x7FFF'FFFFll : timeout->tv_sec),
+                                static_cast<i32>(timeout->tv_nsec) };
+    return micron::syscall(SYS_futex, addr, futex, val, &__old, addr2, val2);
+  }
+#endif
   return micron::syscall(SYS_futex, addr, futex, val, timeout, addr2, val2);
 }
 
