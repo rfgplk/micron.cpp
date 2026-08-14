@@ -23,6 +23,10 @@ namespace vk
 
 class pipeline
 {
+public:
+  enum class bind_point : u8 { graphics = 0, compute = 1 };
+
+private:
   VkDevice __dev = nullptr;
   VkPipeline __h = nullptr;
   bind_point __bp = bind_point::graphics;
@@ -31,19 +35,17 @@ class pipeline
   __create_graphics(VkDevice dev, const VkGraphicsPipelineCreateInfo &ci, VkPipeline *out) noexcept
   {
     if ( !vkCreateGraphicsPipelines ) return VK_ERROR_INITIALIZATION_FAILED;
-    return vkCreateGraphicsPipelines(dev, VK_NULL_HANDLE, 1, &ci, nullptr, out);
+    return vkCreateGraphicsPipelines(dev, VK_NULL_HANDLE, 1, &ci, host_allocation_callbacks(), out);
   }
 
   static VkResult
   __create_compute(VkDevice dev, const VkComputePipelineCreateInfo &ci, VkPipeline *out) noexcept
   {
     if ( !vkCreateComputePipelines ) return VK_ERROR_INITIALIZATION_FAILED;
-    return vkCreateComputePipelines(dev, VK_NULL_HANDLE, 1, &ci, nullptr, out);
+    return vkCreateComputePipelines(dev, VK_NULL_HANDLE, 1, &ci, host_allocation_callbacks(), out);
   }
 
 public:
-  enum class bind_point : u8 { graphics = 0, compute = 1 };
-
   ~pipeline() { reset(); }
 
   pipeline() = default;

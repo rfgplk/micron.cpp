@@ -11,6 +11,7 @@
 #include "allocator.hpp"
 #include "device.hpp"
 #include "errors.hpp"
+#include "flags.hpp"
 #include "memory.hpp"
 #include "vulkan.hpp"
 
@@ -21,24 +22,32 @@ namespace gfx
 namespace vk
 {
 
-enum class buffer_usage : VkBufferUsageFlags {
+using buffer_usage_mask = flags<VkBufferUsageFlagBits>::mask_type;
+
+enum class buffer_usage : buffer_usage_mask {
   none = 0,
-  transfer_src = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-  transfer_dst = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-  uniform_texel = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
-  storage_texel = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT,
-  uniform = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-  storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-  index = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-  vertex = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-  indirect = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
-  shader_device_address = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+  transfer_src = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
+  transfer_dst = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_TRANSFER_DST_BIT),
+  uniform_texel = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT),
+  storage_texel = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT),
+  uniform = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT),
+  storage = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_STORAGE_BUFFER_BIT),
+  index = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_INDEX_BUFFER_BIT),
+  vertex = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT),
+  indirect = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT),
+  shader_device_address = static_cast<buffer_usage_mask>(VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
 };
+
+inline constexpr VkBufferUsageFlags
+to_vk(buffer_usage u) noexcept
+{
+  return VkBufferUsageFlags(static_cast<buffer_usage_mask>(u));
+}
 
 inline constexpr buffer_usage
 operator|(buffer_usage a, buffer_usage b) noexcept
 {
-  return static_cast<buffer_usage>(static_cast<VkBufferUsageFlags>(a) | static_cast<VkBufferUsageFlags>(b));
+  return static_cast<buffer_usage>(static_cast<buffer_usage_mask>(a) | static_cast<buffer_usage_mask>(b));
 }
 
 inline constexpr buffer_usage &
@@ -49,9 +58,9 @@ operator|=(buffer_usage &a, buffer_usage b) noexcept
 }
 
 inline constexpr bool
-has(buffer_usage flags, buffer_usage bit) noexcept
+has(buffer_usage set, buffer_usage bit) noexcept
 {
-  return (static_cast<VkBufferUsageFlags>(flags) & static_cast<VkBufferUsageFlags>(bit)) != 0;
+  return (static_cast<buffer_usage_mask>(set) & static_cast<buffer_usage_mask>(bit)) != 0;
 }
 
 class buffer
@@ -73,7 +82,7 @@ public:
     VkBufferCreateInfo ci{};
     ci.sType = structure_type_of_v<VkBufferCreateInfo>;
     ci.size = size;
-    ci.usage = static_cast<VkBufferUsageFlags>(usage);
+    ci.usage = to_vk(usage);
     ci.sharingMode = sharing;
     check_vk(vkCreateBuffer(__dev, &ci, host_allocation_callbacks(), &__h), "vkCreateBuffer");
   }

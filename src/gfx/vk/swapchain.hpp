@@ -288,6 +288,29 @@ public:
     return vkAcquireNextImageKHR(__dev->handle(), __h, timeout_ns, s, f, out_index);
   }
 
+  VkResult
+  present(queue &q, u32 image_index, semaphore *wait = nullptr) noexcept
+  {
+    if ( !__h || !q.valid() || !vkQueuePresentKHR ) return VK_ERROR_INITIALIZATION_FAILED;
+
+    VkSemaphore w = wait ? wait->handle() : VK_NULL_HANDLE;
+    VkSwapchainKHR sc = __h;
+    VkResult per_swapchain = VK_SUCCESS;
+
+    VkPresentInfoKHR info{};
+    info.sType = structure_type_of_v<VkPresentInfoKHR>;
+    info.waitSemaphoreCount = w ? 1u : 0u;
+    info.pWaitSemaphores = w ? &w : nullptr;
+    info.swapchainCount = 1;
+    info.pSwapchains = &sc;
+    info.pImageIndices = &image_index;
+    info.pResults = &per_swapchain;
+
+    const VkResult r = vkQueuePresentKHR(q.handle(), &info);
+    if ( r == VK_SUCCESS && per_swapchain != VK_SUCCESS ) return per_swapchain;
+    return r;
+  }
+
   void
   recreate(VkExtent2D new_extent, const swapchain_request *overrides = nullptr)
   {

@@ -447,6 +447,25 @@ def emit_type(name: str, t: ET.Element, reg: Registry) -> str | None:
     return None
 
 
+def strip_int_suffix(v: str) -> str:
+    """Drop a C integer-literal suffix WITHOUT eating hex digits.
+
+    The naive form -- re.sub(r"([0-9])([UuLlFf]+)$", r"\\1", v) -- reads the
+    trailing F of 0x0000001F as a float suffix and truncates the constant:
+    VK_SHADER_STAGE_ALL_GRAPHICS became 0x0000001 (VERTEX_BIT alone) and
+    VK_SHADER_STAGE_ALL (0x7FFFFFFF) became 0x7. Neither is diagnosable -- they
+    compile, they bind, and they bind the wrong stages.
+
+    A hex literal has no F suffix to strip, only U and L. Everything else keeps
+    the old behaviour, including parenthesised shifts like (1ULL << 0), which
+    end in ')' and were never matched by either form.
+    """
+    v = v.strip()
+    if re.fullmatch(r"0[xX][0-9a-fA-F]+[UuLl]*", v):
+        return re.sub(r"[UuLl]+$", "", v)
+    return re.sub(r"([0-9])([UuLlFf]+)$", r"\1", v)
+
+
 def emit_enum_class(name: str, reg: Registry) -> str:
     if is_flagbits_type(name):
         underlying = flagbits_underlying(name)
@@ -466,7 +485,7 @@ def emit_enum_class(name: str, reg: Registry) -> str:
         if n in seen:
             continue
         seen.add(n)
-        clean = re.sub(r"([0-9])([UuLlFf]+)$", r"\1", v)
+        clean = strip_int_suffix(v)
         member = sanitize_member(n, pfx)
         lines.append(f"  {member} = {clean},")
     lines.append("};")
@@ -518,7 +537,7 @@ def emit_api_constants(consts: list[tuple[str, str, str]]) -> list[str]:
             continue
         seen.add(n)
         ct = cpp_value_type(v) if not t else map_enum_type(t)
-        clean = re.sub(r"([0-9])([UuLlFf]+)$", r"\1", v) if not v.startswith('"') else v
+        clean = strip_int_suffix(v) if not v.startswith('"') else v
         out.append(f"inline constexpr {ct} {n} = {clean};")
     return out
 

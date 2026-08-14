@@ -1108,8 +1108,8 @@ enum class VkShaderStageFlagBits : u32 {
   GEOMETRY_BIT = (1ULL << 3),
   FRAGMENT_BIT = (1ULL << 4),
   COMPUTE_BIT = (1ULL << 5),
-  ALL_GRAPHICS = 0x0000001,
-  ALL = 0x7,
+  ALL_GRAPHICS = 0x0000001F,
+  ALL = 0x7FFFFFFF,
 };
 enum class VkSparseMemoryBindFlagBits : u32 {
   METADATA_BIT = (1ULL << 0),

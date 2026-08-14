@@ -100,10 +100,28 @@ has_instance_extension(const char *name) noexcept
   constexpr u32 cap = 256;
   if ( n > cap ) n = cap;
   VkExtensionProperties props[cap]{};
-  if ( vkEnumerateInstanceExtensionProperties(nullptr, &n, props) != VK_SUCCESS && /* tolerate */ true ) { /* fallthrough */
-  }
+  const VkResult r = vkEnumerateInstanceExtensionProperties(nullptr, &n, props);
+  if ( r != VK_SUCCESS && r != VK_INCOMPLETE ) return false;
   for ( u32 i = 0; i < n; ++i ) {
     if ( micron::strcmp(props[i].extensionName, name) == 0 ) return true;
+  }
+  return false;
+}
+
+inline bool
+has_instance_layer(const char *name) noexcept
+{
+  if ( !name || !vkEnumerateInstanceLayerProperties ) return false;
+  u32 n = 0;
+  if ( vkEnumerateInstanceLayerProperties(&n, nullptr) != VK_SUCCESS ) return false;
+  if ( n == 0 ) return false;
+  constexpr u32 cap = 64;
+  if ( n > cap ) n = cap;
+  VkLayerProperties props[cap]{};
+  const VkResult r = vkEnumerateInstanceLayerProperties(&n, props);
+  if ( r != VK_SUCCESS && r != VK_INCOMPLETE ) return false;
+  for ( u32 i = 0; i < n; ++i ) {
+    if ( micron::strcmp(props[i].layerName, name) == 0 ) return true;
   }
   return false;
 }

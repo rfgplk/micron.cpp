@@ -42,7 +42,7 @@ private:
     if ( !name || i >= cap ) return i;
 
     for ( u32 k = 0; k < i; ++k ) {
-      if ( buf[k] == name ) return i;
+      if ( buf[k] == name || micron::strcmp(buf[k], name) == 0 ) return i;
     }
     buf[i] = name;
     return i + 1;
@@ -52,7 +52,7 @@ private:
   __build_layers(const instance_hints &h, const char **buf, u32 cap) noexcept
   {
     u32 n = 0;
-    if ( h.debug ) n = __append(buf, n, cap, VK_LAYER_KHRONOS_VALIDATION_NAME);
+    if ( h.debug && has_instance_layer(VK_LAYER_KHRONOS_VALIDATION_NAME) ) n = __append(buf, n, cap, VK_LAYER_KHRONOS_VALIDATION_NAME);
     for ( usize i = 0; i < h.extra_layers_count && n < cap; ++i ) n = __append(buf, n, cap, h.extra_layers[i]);
     return n;
   }

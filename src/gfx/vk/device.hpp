@@ -113,7 +113,7 @@ public:
     ci.pEnabledFeatures = &h.required_features;
     ci.pNext = &vk13;
 
-    check_vk(vkCreateDevice(pd.handle(), &ci, nullptr, &__h), "vkCreateDevice");
+    check_vk(vkCreateDevice(pd.handle(), &ci, host_allocation_callbacks(), &__h), "vkCreateDevice");
 
     __load_device_1_3(__h);
 
