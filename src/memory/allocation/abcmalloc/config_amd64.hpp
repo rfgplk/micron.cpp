@@ -21,6 +21,9 @@
 
 #pragma once
 
+// temporary workaround
+#define MICRON_ABC_MT 1
+
 #include "../../../bits/__profile.hpp"
 #include "../kmemory.hpp"
 
