@@ -103,15 +103,14 @@ compose(const config_t &conf, bool linking)
   if ( conf.lsan and !conf.asan ) __compose_add(c.sanitize, "-fsanitize=leak");      // asan already covers leak
 
   // stack protector: --no-ssp (none) > default (all) > --spall unset (strong)
-  const auto __ssp = conf.no_ssp ? gcc::profiling_flags::flags::nostack_protector
-                     : conf.spall
-                         ? gcc::profiling_flags::flags::stack_protector_all
-                         : gcc::profiling_flags::flags::stack_protector_strong;
-  c.extensions = fs ? (cpp ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals) : string_type{})
-                    : (cpp ? make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection,
-                                        gcc::profiling_flags::flags::strict_overflow, gcc::cpp_flags::flags::ext_numeric_literals)
-                           : make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection,
-                                        gcc::profiling_flags::flags::strict_overflow));
+  const auto __ssp = conf.no_ssp  ? gcc::profiling_flags::flags::nostack_protector
+                     : conf.spall ? gcc::profiling_flags::flags::stack_protector_all
+                                  : gcc::profiling_flags::flags::stack_protector_strong;
+  c.extensions
+      = fs ? (cpp ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals) : string_type{})
+           : (cpp ? make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow,
+                               gcc::cpp_flags::flags::ext_numeric_literals)
+                  : make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow));
   // LTO on by default except under sanitizers, freestanding EH, a raw object, or an explicit --no-lto
   if ( !sanitized and !conf.freestanding_eh and !conf.raw_object and !conf.no_lto ) {
     if ( !c.extensions.empty() ) c.extensions += ' ';
@@ -143,6 +142,7 @@ compose(const config_t &conf, bool linking)
   if ( conf.no_eh and cpp ) __compose_add(c.extensions, "-fno-exceptions");      // explicit only; hosted micron uses EH
   if ( conf.no_rtti and cpp ) __compose_add(c.extensions, "-fno-rtti");
   if ( conf.reflection and cpp ) __compose_add(c.extensions, "-freflection");      // validated in finalize_and_infer
+  if ( conf.opnames and cpp ) __compose_add(c.extensions, "-fno-operator-names");
 
   // links
   if ( linking ) {
@@ -166,13 +166,13 @@ compose(const config_t &conf, bool linking)
 string_type
 batch_cmp(const config_t &conf)
 {
-  string_type main_flags = (conf.mode == __opt_modes::optimized
-                                ? make_flags(conf.opt_mode, gcc::opt_flags::flags::modulo_sched,
-                                             gcc::opt_flags::flags::modulo_sched_allow_regmoves, gcc::opt_flags::flags::gcse_sm,
-                                             gcc::opt_flags::flags::gcse_las)
-                                : make_flags(conf.opt_mode, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three,
-                                             gcc::debug_flags::flags::gcolumn_info, gcc::debug_flags::flags::ginline_points,
-                                             gcc::debug_flags::flags::gstatement_frontiers));
+  string_type main_flags
+      = (conf.mode == __opt_modes::optimized
+             ? make_flags(conf.opt_mode, gcc::opt_flags::flags::modulo_sched, gcc::opt_flags::flags::modulo_sched_allow_regmoves,
+                          gcc::opt_flags::flags::gcse_sm, gcc::opt_flags::flags::gcse_las)
+             : make_flags(conf.opt_mode, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three,
+                          gcc::debug_flags::flags::gcolumn_info, gcc::debug_flags::flags::ginline_points,
+                          gcc::debug_flags::flags::gstatement_frontiers));
   __compose_add(main_flags, __isa_march(conf.isa));
   const string_type comp_type = (conf.compile_type == __comp_type::object)         ? "-c"
                                 : (conf.compile_type == __comp_type::assembly)     ? "-S"

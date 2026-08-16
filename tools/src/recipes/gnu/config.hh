@@ -166,6 +166,7 @@ struct config_t {
   bool strip = false;                    // -Wl,--strip-all
   bool check_compileability = true;      // check include paths for updates - default true
   bool raw_object = false;               // --raw-obj: a real machine-code object (no LTO) for an external linker
+  bool opnames = false;                  // -fno-operator-names: disables support for operator names in the standard (xor and or et al)
   u32 jobs{ 0 };                         // 0 = default to online cpu count when running parallel
   u32 timeout{ 0 };                      // --timeout <sec>
                                          // 0 = wait forever, which is duck's historical behavior
@@ -502,6 +503,8 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
       conf.no_rtti = true;
     } else if ( mc::strcmp(argv[i], "--strip") == 0 ) {
       conf.strip = true;
+    } else if ( mc::strcmp(argv[i], "--opnames") == 0 ) {
+      conf.opnames = true;
     } else if ( mc::strcmp(argv[i], "--harden") == 0 ) {
       // full hardening profile
       conf.cfi = true;
