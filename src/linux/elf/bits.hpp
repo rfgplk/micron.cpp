@@ -18,6 +18,8 @@ namespace micron
 namespace elf
 {
 
+using addr32 = u32;
+using off32 = u32;
 using addr64 = u64;
 using off64 = u64;
 using xword = u64;
@@ -28,6 +30,18 @@ using half = u16;
 
 enum class fmt_class : u8 { invalid = 0, elf32 = 1, elf64 = 2 };
 enum class fmt_data : u8 { invalid = 0, lsb = 1, msb = 2 };
+
+#if defined(__micron_arch_width_64)
+inline constexpr fmt_class native_class = fmt_class::elf64;
+#else
+inline constexpr fmt_class native_class = fmt_class::elf32;
+#endif
+
+#if defined(__micron_endian_big)
+inline constexpr fmt_data native_data = fmt_data::msb;
+#else
+inline constexpr fmt_data native_data = fmt_data::lsb;
+#endif
 
 inline constexpr u8 ident_size = 16;
 inline constexpr u8 mag0 = 0x7f;

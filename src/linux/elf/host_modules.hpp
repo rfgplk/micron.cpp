@@ -28,16 +28,29 @@ namespace micron
 namespace elf
 {
 
+using uptr = uintptr_t;
+
 constexpr inline usize host_max_modules = 256;
 
 struct host_module_t {
   u8 *base = nullptr;      // load base (lowest mapped address for this path)
+  usize span = 0;          // highest mapped end for this path, minus base
   u64 bias = 0;            // symbol-value addend: base - first_load_vaddr
   const char *soname = nullptr;
   dyn_info_t dyn{};
   micron::sstring<384> path;      // file path as printed in /proc/self/maps
+  bool exec = false;              // saw at least one executable mapping for this path
   bool valid = false;
 };
+
+inline bool
+__host_in_span(const host_module_t &m, uptr p, usize n) noexcept
+{
+  const uptr lo = reinterpret_cast<uptr>(m.base);
+  const uptr hi = lo + static_cast<uptr>(m.span);
+  if ( p < lo || p > hi ) return false;
+  return n <= static_cast<usize>(hi - p);
+}
 
 inline host_module_t __host_modules[host_max_modules] = {};
 inline usize __host_module_count = 0;
@@ -76,26 +89,53 @@ __parse_hex(const char *&p) noexcept
   return v;
 }
 
+struct maps_line_t {
+  u64 start = 0;
+  u64 end = 0;
+  bool exec = false;
+  micron::sstring<384> path;
+};
+
+// "7f3c1a200000-7f3c1a228000 r-xp 00002000 08:02 1179656   /usr/lib64/libc.so.6"
+//  ^ start      ^ end        ^ perms                       ^ path
 inline bool
-__line_path(const char *line, micron::sstring<384> &out) noexcept
+__parse_maps_line(const char *line, maps_line_t &out) noexcept
 {
-  out.set_size(0);
   const char *p = line;
-  for ( i32 f = 0; f < 5 && *p; ++f ) {
+  out.start = __parse_hex(p);
+  if ( *p != '-' ) return false;
+  ++p;
+  out.end = __parse_hex(p);
+  if ( out.end <= out.start ) return false;
+
+  while ( *p == ' ' || *p == '\t' ) ++p;
+  const char *perms = p;
+  usize pl = 0;
+  while ( perms[pl] && perms[pl] != ' ' && perms[pl] != '\t' && perms[pl] != '\n' ) ++pl;
+  if ( pl < 4 ) return false;
+  out.exec = (perms[2] == 'x');
+  p += pl;
+
+  for ( i32 f = 0; f < 3 && *p; ++f ) {      // offset, dev, inode
     while ( *p == ' ' || *p == '\t' ) ++p;
     while ( *p && *p != ' ' && *p != '\t' && *p != '\n' ) ++p;
   }
   while ( *p == ' ' || *p == '\t' ) ++p;
   if ( *p == 0 || *p == '\n' || *p != '/' ) return false;
 
-  while ( *p && *p != '\n' && out.size() + 1 < out.max_size() ) out += *p++;
-  out.null_term();
-  return !out.empty();
+  out.path.set_size(0);
+  while ( *p && *p != '\n' && out.path.size() + 1 < out.path.max_size() ) out.path += *p++;
+  out.path.null_term();
+  return !out.path.empty();
 }
 
 inline void
 __build_host_dyn(host_module_t &m)
 {
+  // a loaded module always has an executable mapping
+  if ( !m.exec ) return;
+  if ( m.span < sizeof(nehdr_t) ) return;
+
   volatile const u8 *probe = m.base;
   const u8 b0 = probe[0];
   if ( b0 != mag0 ) return;
@@ -106,51 +146,77 @@ __build_host_dyn(host_module_t &m)
   const u8 b3 = probe[3];
   if ( b3 != mag3 ) return;
 
-  const ehdr_t *eh = reinterpret_cast<const ehdr_t *>(m.base);
-  if ( eh->ident[ei_class] != elfclass64 ) return;
-  if ( eh->phnum == 0 || eh->phnum > 256 ) return;      // sanity bound on the phdr table
+  const nehdr_t *eh = reinterpret_cast<const nehdr_t *>(m.base);
+  if ( eh->ident[ei_class] != native_traits::ident_class ) return;
+  // WARNING: a class check alone is not enough; amd64 and an aarch64 object are both ELFCLASS64 with the same header layout
+  if ( expected_machine != 0 && eh->machine != expected_machine ) return;
+  if ( eh->ident[ei_data] != (native_data == fmt_data::msb ? elfdata2msb : elfdata2lsb) ) return;
+  if ( eh->type != et_dyn && eh->type != et_exec ) return;      // not a loadable image
+  if ( eh->phnum == 0 || eh->phnum > 256 ) return;              // sanity bound on the phdr table
 
-  const phdr_t *phdrs = reinterpret_cast<const phdr_t *>(m.base + eh->phoff);
-  const phdr_t *dyn_ph = nullptr;
-  u64 first_load_vaddr = ~u64(0);
+  const uptr phdr_at = reinterpret_cast<uptr>(m.base) + static_cast<uptr>(eh->phoff);
+  if ( !__host_in_span(m, phdr_at, static_cast<usize>(eh->phnum) * sizeof(nphdr_t)) ) return;
+
+  const nphdr_t *phdrs = reinterpret_cast<const nphdr_t *>(phdr_at);
+  const nphdr_t *dyn_ph = nullptr;
+  uptr first_load_vaddr = ~uptr(0);
   for ( half i = 0; i < eh->phnum; ++i ) {
-    if ( phdrs[i].type == pt_load && phdrs[i].vaddr < first_load_vaddr ) {
-      first_load_vaddr = phdrs[i].vaddr;
+    if ( phdrs[i].type == pt_load && static_cast<uptr>(phdrs[i].vaddr) < first_load_vaddr ) {
+      first_load_vaddr = static_cast<uptr>(phdrs[i].vaddr);
     }
     if ( phdrs[i].type == pt_dynamic ) dyn_ph = &phdrs[i];
   }
-  if ( !dyn_ph || first_load_vaddr == ~u64(0) ) return;
-  const u64 bias = reinterpret_cast<u64>(m.base) - first_load_vaddr;
-  m.bias = bias;      // store for host_resolve_sym (ET_EXEC / nonzero-vaddr modules need it)
+  if ( !dyn_ph || first_load_vaddr == ~uptr(0) ) return;
 
-  const dyn_t *dyn = reinterpret_cast<const dyn_t *>(bias + dyn_ph->vaddr);
+  const uptr base_u = reinterpret_cast<uptr>(m.base);
+  const uptr bias = base_u - first_load_vaddr;
+  m.bias = static_cast<u64>(bias);      // store for host_resolve_sym (ET_EXEC / nonzero-vaddr modules need it)
 
-  const u64 base_u = reinterpret_cast<u64>(m.base);
-  auto resolve = [&](u64 v) -> u64 { return (v >= base_u && v < base_u + (u64(1) << 32)) ? v : (bias + v); };
+  const uptr dyn_at = bias + static_cast<uptr>(dyn_ph->vaddr);
+  if ( !__host_in_span(m, dyn_at, sizeof(ndyn_t)) ) return;
 
-  for ( const dyn_t *d = dyn; d->tag != dt_null; ++d ) {
-    if ( d->tag == dt_strtab )
-      m.dyn.strtab = reinterpret_cast<const char *>(resolve(d->un.ptr));
-    else if ( d->tag == dt_strsz )
+  const ndyn_t *dyn = reinterpret_cast<const ndyn_t *>(dyn_at);
+  const uptr span_end = reinterpret_cast<uptr>(m.base) + static_cast<uptr>(m.span);
+  auto in_dyn = [&](const ndyn_t *d) { return reinterpret_cast<uptr>(d) + sizeof(ndyn_t) <= span_end; };
+
+  auto resolve = [&](u64 v) -> uptr {
+    const uptr uv = static_cast<uptr>(v);
+    return uv >= base_u ? uv : (bias + uv);
+  };
+
+  for ( const ndyn_t *d = dyn; in_dyn(d) && d->tag != dt_null; ++d ) {
+    if ( d->tag == dt_strtab ) {
+      const uptr at = resolve(d->un.ptr);
+      if ( __host_in_span(m, at, 1) ) m.dyn.strtab = reinterpret_cast<const char *>(at);
+    } else if ( d->tag == dt_strsz )
       m.dyn.strsz = d->un.val;
   }
 
   if ( !m.dyn.strtab ) return;
+  // clamp DT_STRSZ to what is actually mapped so a name offset can never leave the image
+  {
+    const uptr st = reinterpret_cast<uptr>(m.dyn.strtab);
+    const u64 avail = static_cast<u64>(span_end - st);
+    if ( m.dyn.strsz > avail ) m.dyn.strsz = avail;
+  }
 
-  for ( const dyn_t *d = dyn; d->tag != dt_null; ++d ) {
+  for ( const ndyn_t *d = dyn; in_dyn(d) && d->tag != dt_null; ++d ) {
+    const uptr at = resolve(d->un.ptr);
     switch ( d->tag ) {
     case dt_symtab:
-      m.dyn.symtab = reinterpret_cast<const sym_t *>(resolve(d->un.ptr));
+      if ( __host_in_span(m, at, sizeof(nsym_t)) ) m.dyn.symtab = reinterpret_cast<const nsym_t *>(at);
       break;
     case dt_hash:
-      m.dyn.hash = reinterpret_cast<const word *>(resolve(d->un.ptr));
+      if ( __host_in_span(m, at, 2 * sizeof(word)) ) m.dyn.hash = reinterpret_cast<const word *>(at);
       break;
     case dt_gnu_hash:
-      m.dyn.gnu_hash = reinterpret_cast<const word *>(resolve(d->un.ptr));
+      if ( __host_in_span(m, at, 4 * sizeof(word)) ) m.dyn.gnu_hash = reinterpret_cast<const word *>(at);
       break;
     case dt_soname:
-      m.dyn.soname = m.dyn.strtab + d->un.val;
-      m.soname = m.dyn.soname;
+      if ( d->un.val < m.dyn.strsz ) {
+        m.dyn.soname = m.dyn.strtab + d->un.val;
+        m.soname = m.dyn.soname;
+      }
       break;
     default:
       break;
@@ -192,30 +258,35 @@ init_host_modules()
     const char *line = reinterpret_cast<const char *>(buf + line_start);
     ++i;
 
-    micron::sstring<384> path;
-    if ( !__line_path(line, path) ) continue;
-
-    const char *cur = line;
-    u64 start = __parse_hex(cur);
+    maps_line_t ln;
+    if ( !__parse_maps_line(line, ln) ) continue;
 
     host_module_t *existing = nullptr;
     for ( usize k = 0; k < __host_module_count; ++k ) {
-      if ( __host_modules[k].path == path ) {
+      if ( __host_modules[k].path == ln.path ) {
         existing = &__host_modules[k];
         break;
       }
     }
+    // a module spans several lines (r--p / r-xp / rw-p); union them so span covers the whole image
     if ( existing ) {
-      if ( start < reinterpret_cast<u64>(existing->base) ) {
-        existing->base = reinterpret_cast<u8 *>(start);
-      }
+      const uptr lo = reinterpret_cast<uptr>(existing->base);
+      const uptr hi = lo + static_cast<uptr>(existing->span);
+      const uptr nlo = static_cast<uptr>(ln.start) < lo ? static_cast<uptr>(ln.start) : lo;
+      const uptr nhi = static_cast<uptr>(ln.end) > hi ? static_cast<uptr>(ln.end) : hi;
+      existing->base = reinterpret_cast<u8 *>(nlo);
+      existing->span = static_cast<usize>(nhi - nlo);
+      existing->exec = existing->exec || ln.exec;
       continue;
     }
     if ( __host_module_count >= host_max_modules ) continue;
 
     host_module_t &m = __host_modules[__host_module_count++];
-    m.base = reinterpret_cast<u8 *>(start);
-    m.path = path;
+    // NOTE: via uptr, never straight off the u64 -- a bare cast truncates/sign-extends on i386/arm32
+    m.base = reinterpret_cast<u8 *>(static_cast<uptr>(ln.start));
+    m.span = static_cast<usize>(ln.end - ln.start);
+    m.exec = ln.exec;
+    m.path = ln.path;
   }
 
   micron::munmap(reinterpret_cast<addr_t *>(buf), host_scratch_size);
@@ -247,9 +318,9 @@ host_resolve_sym(const char *name)
   for ( usize k = 0; k < __host_module_count; ++k ) {
     const host_module_t &m = __host_modules[k];
     if ( !m.valid ) continue;
-    const sym_t *s = lookup_sym(m.dyn, name);
+    const nsym_t *s = lookup_sym(m.dyn, name);
     if ( s && s->shndx != shn_undef ) {
-      return reinterpret_cast<void *>(m.bias + s->value);
+      return reinterpret_cast<void *>(static_cast<uptr>(m.bias) + static_cast<uptr>(s->value));
     }
   }
   return nullptr;
@@ -260,6 +331,14 @@ host_count() noexcept
 {
   if ( !__host_initialized ) init_host_modules();
   return __host_module_count;
+}
+
+inline void
+invalidate_host_modules() noexcept
+{
+  for ( usize k = 0; k < __host_module_count; ++k ) __host_modules[k] = host_module_t{};
+  __host_module_count = 0;
+  __host_initialized = false;
 }
 
 };      // namespace elf

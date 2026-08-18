@@ -13,6 +13,7 @@
 #include "types.hpp"
 
 #include "memory/new.hpp"
+#include "memory/placement_new.hpp"
 
 namespace micron
 {
@@ -35,18 +36,31 @@ struct bad_function_call {
 };      // namespace except
 
 inline constexpr usize __function_smallobj_size = 48;
-inline constexpr usize __function_smallobj_align = alignof(void *);
+inline constexpr usize __function_smallobj_align = 16;
 
 template<typename R, typename... Args> struct __fn_vtable {
-  R (*call)(const void *self, Args... args);
+  R (*call)(void *self, Args &&...args);
   void (*destroy)(void *self) noexcept;
   void (*copy)(void *dst, const void *src);            // nullptr if move-only
   void (*move_to)(void *dst, void *src) noexcept;      // always present
   // metadata
   const void *type_tag;      // unique per G, used by target<G>()
+  usize size;                // sizeof(G)
+  usize align;               // alignof(G)
   bool is_noexcept;
-  bool on_heap;
 };
+
+using __fn_copy_fn_t = void (*)(void *, const void *);
+
+template<typename G>
+constexpr __fn_copy_fn_t
+__fn_copy_thunk() noexcept
+{
+  if constexpr ( micron::is_copy_constructible_v<G> )
+    return +[](void *dst, const void *src) { new (dst) G(*static_cast<const G *>(src)); };
+  else
+    return nullptr;
+}
 
 template<typename G>
 inline const void *
@@ -62,20 +76,21 @@ const __fn_vtable<R, Args...> *
 __make_vtable() noexcept
 {
   static const __fn_vtable<R, Args...> vt
-      = { // cast self back to G and invoke
-          [](const void *self, Args... args) -> R { return (*static_cast<const G *>(self))(micron::forward<Args>(args)...); },
+      = { // cast self back to G and invoke; through G*
+          [](void *self, Args &&...args) -> R { return (*static_cast<G *>(self))(micron::forward<Args>(args)...); },
           // destroy
           [](void *self) noexcept { static_cast<G *>(self)->~G(); },
           // nullptr when G is not copy-constructible
-          micron::is_copy_constructible_v<G> ? +[](void *dst, const void *src) { new (dst) G(*static_cast<const G *>(src)); }
-                                             : static_cast<void (*)(void *, const void *)>(nullptr),
+          __fn_copy_thunk<G>(),
           // move_to
           [](void *dst, void *src) noexcept {
             new (dst) G(micron::move(*static_cast<G *>(src)));
             static_cast<G *>(src)->~G();
           },
           // type_tag
-          __fn_type_tag<micron::decay_t<G>>(), noexcept(micron::declval<G>()(micron::declval<Args>()...)), false
+          __fn_type_tag<micron::decay_t<G>>(), sizeof(G), alignof(G),
+          // probed as G&
+          noexcept(micron::declval<G &>()(micron::declval<Args>()...))
         };
   return &vt;
 }
@@ -106,17 +121,88 @@ template<typename R, typename... Args> class function<R(Args...)>
     return __vt == nullptr;
   }
 
+  static constexpr usize __aligned_floor = __STDCPP_DEFAULT_NEW_ALIGNMENT__;
+
+  static void *
+  __alloc_for(const __fn_vtable<R, Args...> *vt)
+  {
+    if ( vt->align <= __aligned_floor ) return ::operator new(vt->size);
+    return ::operator new(vt->size, static_cast<std::align_val_t>(vt->align));
+  }
+
+  static void
+  __free_for(void *p, const __fn_vtable<R, Args...> *vt) noexcept
+  {
+    if ( vt->align <= __aligned_floor )
+      ::operator delete(p, vt->size);
+    else
+      ::operator delete(p, vt->size, static_cast<std::align_val_t>(vt->align));
+  }
+
+  template<typename D>
+  static void *
+  __alloc_static()
+  {
+    if constexpr ( alignof(D) <= __aligned_floor )
+      return ::operator new(sizeof(D));
+    else
+      return ::operator new(sizeof(D), static_cast<std::align_val_t>(alignof(D)));
+  }
+
+  template<typename D>
+  static void
+  __free_static(void *p) noexcept
+  {
+    if constexpr ( alignof(D) <= __aligned_floor )
+      ::operator delete(p, sizeof(D));
+    else
+      ::operator delete(p, sizeof(D), static_cast<std::align_val_t>(alignof(D)));
+  }
+
+  template<typename D> struct __fn_guard_static {
+    void *p;
+
+    ~__fn_guard_static()
+    {
+      if ( p ) __free_static<D>(p);
+    }
+
+    void *
+    release() noexcept
+    {
+      void *r = p;
+      p = nullptr;
+      return r;
+    }
+  };
+
+  struct __fn_guard_vt {
+    void *p;
+    const __fn_vtable<R, Args...> *vt;
+
+    ~__fn_guard_vt()
+    {
+      if ( p ) __free_for(p, vt);
+    }
+
+    void *
+    release() noexcept
+    {
+      void *r = p;
+      p = nullptr;
+      return r;
+    }
+  };
+
   void
   __destroy() noexcept
   {
     if ( __vt ) {
       __vt->destroy(__self());
-      if ( __heap ) {
-        ::operator delete(__heap);
-        __heap = nullptr;
-      }
-      __vt = nullptr;
+      if ( __heap ) __free_for(__heap, __vt);
     }
+    __heap = nullptr;
+    __vt = nullptr;
   }
 
   template<typename G, typename... CArgs>
@@ -126,14 +212,16 @@ template<typename R, typename... Args> class function<R(Args...)>
     using D = micron::decay_t<G>;
     __destroy();
 
+    const __fn_vtable<R, Args...> *vt = __make_vtable<D, R, Args...>();
     if constexpr ( sizeof(D) <= __function_smallobj_size && alignof(D) <= __function_smallobj_align ) {
       new (__buf) D(micron::forward<CArgs>(cargs)...);
       __heap = nullptr;
     } else {
-      __heap = ::operator new(sizeof(D), static_cast<std::align_val_t>(alignof(D)));
-      new (__heap) D(micron::forward<CArgs>(cargs)...);
+      __fn_guard_static<D> __g{ __alloc_static<D>() };
+      new (__g.p) D(micron::forward<CArgs>(cargs)...);
+      __heap = __g.release();
     }
-    __vt = __make_vtable<D, R, Args...>();
+    __vt = vt;
   }
 
 public:
@@ -158,8 +246,9 @@ public:
     if ( !o.__empty() ) {
       if ( !o.__vt->copy ) exc<except::bad_function_call>();      // stored type is move-only
       if ( o.__heap ) {
-        __heap = ::operator new(__function_smallobj_size * 4);      // conservative
-        o.__vt->copy(__heap, o.__heap);
+        __fn_guard_vt __g{ __alloc_for(o.__vt), o.__vt };      // sizeof/alignof of the real target
+        o.__vt->copy(__g.p, o.__heap);
+        __heap = __g.release();
       } else {
         o.__vt->copy(__buf, o.__buf);
         __heap = nullptr;
@@ -204,6 +293,7 @@ public:
           o.__heap = nullptr;
         } else {
           o.__vt->move_to(__buf, o.__buf);
+          __heap = nullptr;
         }
         __vt = o.__vt;
         o.__vt = nullptr;
@@ -241,7 +331,7 @@ public:
   operator()(Args... args) const
   {
     if ( __empty() ) exc<except::bad_function_call>();
-    return __vt->call(__self(), micron::forward<Args>(args)...);
+    return __vt->call(const_cast<void *>(__self()), micron::forward<Args>(args)...);
   }
 
   explicit
@@ -906,10 +996,13 @@ operator|(A &&a, F &&f) -> micron::invoke_result_t<F, A>
 //  (f << g)(x)  =  f(g(x))
 //  (f >> g)(x)  =  g(f(x))
 
+template<typename T>
+concept __fn_composable = micron::is_class_v<micron::remove_cvref_t<T>> && !requires(const micron::remove_cvref_t<T> &__t) {
+  __t.operator<<(0);
+} && !requires(const micron::remove_cvref_t<T> &__t) { __t.operator>>(0); };
+
 // right-to-left composition: (f << g)(x) = f(g(x))
 template<typename F, typename G>
-  requires micron::invocable<G>      // at least nullary; real args checked below
-           || true                   // always enable, constraint on call site
 auto
 compose_rtl(F &&f, G &&g)
 {
@@ -920,12 +1013,11 @@ compose_rtl(F &&f, G &&g)
 }
 
 template<typename F, typename G>
-  requires micron::invocable<G>      // at least nullary; real args checked below
-           || true                   // always enable, constraint on call site
+  requires __fn_composable<F> && __fn_composable<G>
 auto
 operator<<(F &&f, G &&g)
 {
-  return compose_rtl(micron::forward<F &&>(f), micron::forward<G &&>(g));
+  return compose_rtl(micron::forward<F>(f), micron::forward<G>(g));
 }
 
 // left-to-right composition: (f >> g)(x) = g(f(x))
@@ -940,10 +1032,11 @@ compose_ltr(F &&f, G &&g)
 }
 
 template<typename F, typename G>
+  requires __fn_composable<F> && __fn_composable<G>
 auto
 operator>>(F &&f, G &&g)
 {
-  return compose_ltr(micron::forward<F &&>(f), micron::forward<G &&>(g));
+  return compose_ltr(micron::forward<F>(f), micron::forward<G>(g));
 }
 
 namespace __impl
@@ -1111,7 +1204,8 @@ template<typename A>
 auto
 const_fn(A &&a)
 {
-  return [a = micron::forward<A>(a)](auto &&...) mutable -> A & { return a; };
+  // by value
+  return [a = micron::forward<A>(a)](auto &&...) mutable -> micron::decay_t<A> { return a; };
 }
 
 constexpr bool

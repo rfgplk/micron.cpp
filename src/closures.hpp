@@ -21,6 +21,8 @@ template<typename F, typename R, typename... Args> struct lambda_return<R (F::*)
 template<typename F> using lambda_return_t = typename lambda_return<decltype(&F::operator())>::type;
 };      // namespace micron
 
+// WARNING: THE BELOW FUNCTIONS ARE DECLARED IN GLOBAL NAMESPACE AND NOT MICRON, THIS WAS ORIGINALLY DUE TO AN ERRONEOUS NAMESPACE CLOSURE
+
 template<typename T> struct function_traits;
 
 // free functions

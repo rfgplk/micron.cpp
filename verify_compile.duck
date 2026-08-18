@@ -4,14 +4,12 @@
 # {amd64, arm64, arm32, i386} x {-O0 -O1 -O2 -O3 -Ofast, debug (-g)} x hosted/freestanding
 #   plus  amd64 x {base, v2, v3, v4} ISA levels
 
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # x86 ISA levels
 #   base = -march=x86-64     
 #   v2   = -march=x86-64-v2 
 #   v3   = -march=x86-64-v3 
 #   v4   = -march=x86-64-v4 
-#
-# if you break the SSE2 fallbacks, `base` and `v2` go red here first.
 
 compile tests/compiletests/ --x86 --isa base -O0 --raw-obj -o bin/compiletests/amd64_base_O0
 compile tests/compiletests/ --x86 --isa base -O2 --raw-obj -o bin/compiletests/amd64_base_O2
@@ -264,3 +262,43 @@ compile tests/compiletests/chrono.cpp --arm -O0 --def MICRON_CHRONO_ARM32_CNTVCT
 compile tests/compiletests/chrono.cpp --arm -Ofast --def MICRON_CHRONO_ARM32_CNTVCT=1 --raw-obj -o bin/compiletests/chrono_cntvct_Ofast
 compile tests/compiletests/chrono.cpp --arm -O2 --def MICRON_CHRONO_ARM32_CNTVCT=1 -o bin/compiletests/chrono_cntvct_O2_k -k
 compile tests/compiletests/chrono.cpp --arm -O2 --def MICRON_CHRONO_ARM32_CNTVCT=1 -o bin/compiletests/chrono_cntvct_O2_ke -ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# elf
+
+compile tests/compiletests/elf.cpp --i386 -O0 -o bin/compiletests/elf_i386_O0_link
+compile tests/compiletests/elf.cpp --i386 -Ofast -o bin/compiletests/elf_i386_Ofast_link
+compile tests/compiletests/elf.cpp --arm -O0 -o bin/compiletests/elf_arm32_O0_link
+compile tests/compiletests/elf.cpp --arm -Ofast -o bin/compiletests/elf_arm32_Ofast_link
+compile tests/compiletests/elf.cpp --i386 -O2 -o bin/compiletests/elf_i386_O2_k -k
+compile tests/compiletests/elf.cpp --i386 -O2 -o bin/compiletests/elf_i386_O2_ke -ke
+compile tests/compiletests/elf.cpp --arm -O2 -o bin/compiletests/elf_arm32_O2_k -k
+compile tests/compiletests/elf.cpp --arm -O2 -o bin/compiletests/elf_arm32_O2_ke -ke
+
+compile tests/compiletests/dynamic.cpp --i386 -O0 -o bin/compiletests/dyn_i386_O0_link
+compile tests/compiletests/dynamic.cpp --i386 -Ofast -o bin/compiletests/dyn_i386_Ofast_link
+compile tests/compiletests/dynamic.cpp --arm -O0 -o bin/compiletests/dyn_arm32_O0_link
+compile tests/compiletests/dynamic.cpp --arm -Ofast -o bin/compiletests/dyn_arm32_Ofast_link
+compile tests/compiletests/dynamic.cpp --i386 -O2 -o bin/compiletests/dyn_i386_O2_k -k
+compile tests/compiletests/dynamic.cpp --i386 -O2 -o bin/compiletests/dyn_i386_O2_ke -ke
+compile tests/compiletests/dynamic.cpp --arm -O2 -o bin/compiletests/dyn_arm32_O2_k -k
+compile tests/compiletests/dynamic.cpp --arm -O2 -o bin/compiletests/dyn_arm32_O2_ke -ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# regex
+
+compile tests/compiletests/regex.cpp --x86 --isa base -O0 -o bin/compiletests/regex_base_O0_link
+compile tests/compiletests/regex.cpp --x86 --isa base -Ofast -o bin/compiletests/regex_base_Ofast_link
+compile tests/compiletests/regex.cpp --x86 --isa v2 -Ofast -o bin/compiletests/regex_v2_Ofast_link
+compile tests/compiletests/regex.cpp --i386 -Ofast -o bin/compiletests/regex_i386_Ofast_link
+compile tests/compiletests/regex.cpp --arm -Ofast -o bin/compiletests/regex_arm32_Ofast_link
+compile tests/compiletests/regex.cpp --arm64 -Ofast -o bin/compiletests/regex_arm64_Ofast_link
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# function
+
+compile tests/compiletests/function.cpp --i386 -Ofast -o bin/compiletests/function_i386_Ofast_link
+compile tests/compiletests/function.cpp --arm -Ofast -o bin/compiletests/function_arm32_Ofast_link
+compile tests/compiletests/function.cpp --arm64 -Ofast -o bin/compiletests/function_arm64_Ofast_link
+compile tests/compiletests/function.cpp --x86 --isa base -O2 -o bin/compiletests/function_base_O2_k -k
+compile tests/compiletests/function.cpp --x86 --isa base -O2 -o bin/compiletests/function_base_O2_ke -ke

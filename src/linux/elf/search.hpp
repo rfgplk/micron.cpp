@@ -11,23 +11,29 @@
 #include "../io/sys.hpp"
 #include "../sys/fcntl.hpp"
 #include "bits.hpp"
+#include "consts.hpp"
+#include "header.hpp"
 
 namespace micron
 {
 namespace elf
 {
 
-// NOTE: these are hard coded search paths; we don't read ld.so.cache nor LD_LIBRARY_PATH; for full proper support that's needed and i'll
-// get around to adding it eventually
+// NOTE: these are hard coded search paths; we don't read ld.so.cache nor LD_LIBRARY_PATH; for full
+// proper support that's needed and i'll get around to adding it eventually
 inline constexpr const char *default_search_paths[] = {
-  "/lib64",
-  "/usr/lib64",
+#if defined(__micron_arch_amd64)
+  "/lib64", "/usr/lib64", "/lib/x86_64-linux-gnu", "/usr/lib/x86_64-linux-gnu", "/lib", "/usr/lib",
+#elif defined(__micron_arch_arm64)
+  "/lib64", "/usr/lib64", "/lib/aarch64-linux-gnu", "/usr/lib/aarch64-linux-gnu", "/lib", "/usr/lib",
+#elif defined(__micron_arch_x86)
+  "/lib", "/usr/lib", "/lib/i386-linux-gnu", "/usr/lib/i386-linux-gnu", "/lib32", "/usr/lib32",
+#elif defined(__micron_arch_arm32)
+  "/lib", "/usr/lib", "/lib/arm-linux-gnueabihf", "/usr/lib/arm-linux-gnueabihf", "/lib/arm-linux-gnueabi", "/usr/lib/arm-linux-gnueabi",
+#else
   "/lib",
   "/usr/lib",
-  "/lib/x86_64-linux-gnu",
-  "/usr/lib/x86_64-linux-gnu",
-  "/lib/aarch64-linux-gnu",
-  "/usr/lib/aarch64-linux-gnu",
+#endif
 };
 
 inline constexpr usize default_search_path_count = sizeof(default_search_paths) / sizeof(default_search_paths[0]);
@@ -43,6 +49,28 @@ __file_exists(const char *path) noexcept
   if ( fd < 0 ) return false;
   posix::close(fd);
   return true;
+}
+
+inline bool
+__file_is_native_elf(const char *path) noexcept
+{
+  i32 fd = posix::open(path, posix::o_rdonly);
+  if ( fd < 0 ) return false;
+
+  // ident_size + e_type(2) + e_machine(2)
+  u8 probe[ident_size + 4];
+  const max_t n = posix::pread(fd, probe, sizeof(probe), 0);
+  posix::close(fd);
+  if ( n != static_cast<max_t>(sizeof(probe)) ) return false;
+
+  if ( probe[ei_mag0] != mag0 || probe[ei_mag1] != static_cast<u8>(mag1) || probe[ei_mag2] != static_cast<u8>(mag2)
+       || probe[ei_mag3] != static_cast<u8>(mag3) )
+    return false;
+  if ( probe[ei_class] != native_traits::ident_class ) return false;
+  if ( probe[ei_data] != (native_data == fmt_data::msb ? elfdata2msb : elfdata2lsb) ) return false;
+
+  const half machine = static_cast<half>(static_cast<half>(probe[ident_size + 2]) | (static_cast<half>(probe[ident_size + 3]) << 8));
+  return expected_machine == 0 || machine == expected_machine;
 }
 
 inline path_str_t
@@ -79,7 +107,7 @@ __try_runpath(const char *runpath, const char *soname) noexcept
       for ( usize i = start; i < end; ++i ) dir += runpath[i];
       dir.null_term();
       path_str_t cand = __join_path(dir.c_str(), soname);
-      if ( !cand.empty() && __file_exists(cand.c_str()) ) return cand;
+      if ( !cand.empty() && __file_is_native_elf(cand.c_str()) ) return cand;
     }
     start = end + 1;
   }
@@ -105,7 +133,7 @@ resolve_soname(const char *soname, const char *runpath = nullptr) noexcept
 
   for ( usize i = 0; i < default_search_path_count; ++i ) {
     path_str_t cand = __join_path(default_search_paths[i], soname);
-    if ( !cand.empty() && __file_exists(cand.c_str()) ) return cand;
+    if ( !cand.empty() && __file_is_native_elf(cand.c_str()) ) return cand;
   }
   return path_str_t{};
 }

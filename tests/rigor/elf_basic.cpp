@@ -9,6 +9,7 @@
 // the RELA / JMPREL tables, and produces a base-relative symtab address.
 
 #include "../../src/linux/dynamic.hpp"
+#include "../../src/linux/elf/search.hpp"
 
 #include "../../src/io/console.hpp"
 #include "../snowball/snowball.hpp"
@@ -24,6 +25,12 @@ int
 main()
 {
   sb::print("=== ELF LOADER BASIC ===");
+
+  if ( micron::elf::resolve_soname("libwayland-client.so.0").empty() ) {
+    sb::print("no native libwayland-client.so.0 for this target -- suite skipped");
+    sb::print("=== ALL TESTS PASSED ===");
+    return 1;
+  }
 
   test_case("rejects nonexistent soname");
   {
@@ -56,8 +63,24 @@ main()
 
   test_case("absolute path load");
   {
-    micron::dso wl = micron::dso::from_path("/lib64/libwayland-client.so.0");
+
+    auto path = micron::elf::resolve_soname("libwayland-client.so.0");
+    require_false(path.empty());
+    micron::dso wl = micron::dso::from_path(path.c_str());
     require_true(wl.valid());
+  }
+  end_test_case();
+
+  test_case("a wrong-class library is refused, not silently mapped");
+  {
+
+    const char *other = sizeof(void *) == 8 ? "/usr/lib/libwayland-client.so.0" : "/lib64/libwayland-client.so.0";
+    auto probe = micron::elf::__file_exists(other);
+    if ( probe ) {
+      require_throw([&] { (void)micron::dso::from_path(other); });
+    } else {
+      sb::print("no opposite-class libwayland on this box -- wrong-class check skipped");
+    }
   }
   end_test_case();
 

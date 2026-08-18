@@ -21,6 +21,8 @@
 
 ## Known-failing tests
 
+- **An ASAN-detected error grades as PASS.** AddressSanitizer's default error exit code is `1`, and `1` is exactly snowball's success sentinel (`tools/src/recipes/gnu/qemu.hh`)
+
 `tests/rigor/FAILING.md` is the current baseline of rigor tests that fail on a stock amd64 hosted
 run
 
@@ -46,12 +48,20 @@ run
 - `simd::memcpy512` / `memset512` / `memcmp512` etc. remain **loaded**: they carry
   `target("avx512f")`, are ungated, and are exported through `cmemory.hpp`, so calling one on a
   non-AVX-512 CPU is a SIGILL.
+- **`v256<T,F>::shuffle()` (`simd/types/simd256.hpp:1678`) uses an unguarded PSHUFB**
+- **`v128<T,F>::shuffle()` returns an uninitialised `v128` for every `T` other than `i128`.**
+- **`micron::function`'s move ctor / move-assign / `swap` are unconditionally `noexcept`**
+- **`micron::function<void(Args...)>` rejects a target that returns non-`void`.**
+- **`micron::lazy` rejects lvalues, and `__impl::__thunk` is not assignable.**
+- **`src/closures.hpp` closes `namespace micron` at line 22**
+- **`micron::function::target<G>()` tags types by the address of a function-local `static const int`**
 - `src/simd/arch/{load,shift}_amd64.hpp` are not self-contained, including `simd/load.hpp` or
   `simd/shift.hpp` standalone fails on an include-order cycle.
 - `src/regex/regex.hpp`: large bounded intervals (`a{50,99}`) overflow, falsly triggers no match
 - `src/regex/regex.hpp`: `cmatch<>` local scratch is O(maxi*maxslots) (~27KB stack for nested-group patterns); _very_ heavy comptime for large patterns
 - base move-assign does NOT free the destination's old buffer: `src/memory/allocation/core_resource.hpp` (`operator=(&&)`) delegate without `free()`; `resource_types/mutable_resource.hpp` copy-assign likewise. Microns containers free themselves by design, but be careful
 - `micron::alloc<T>(bytes)` returns RAW memory; doesn't perform default init
+- **`MICRON_ABCMALLOC_STD` is ON by default**
   **`from_chars` is strict and consumes the whole range, no leading or trailing whitespace**
 - **there are now two `%g` semantics in the (d2g_buffered) and (to_general), they don't yield the same results** 
 - io: cached `st_size` not invalidated after writes
@@ -90,12 +100,16 @@ run
 - gcc emits a `-Warray-bounds` false positive for `lock_guard<M>::~lock_guard`'s member-function-pointer call when `M` is a one-byte lock with an empty `[[no_unique_address]]` member
 
 ## Platform / Arch gaps
-- **On 32-bit targets, `src/function.hpp`'s unconstrained `operator>>` hijacks `uint128_t` shifts and
-  breaks `hash/rapidhash.hpp`.**
 - `src/simd/fma.hpp` is x86-only (`_mm_fmadd_*` / `_mm256_fmadd_*`)
 - `src/math/simd/trig.hpp` + `src/math/quaternions/batched.hpp`: NEON f32 on ARM, but f64 only on amd64/arm64; arm32 double-precision trig/quaternion falls back to scalar
 - arm32: reading CNTVCT (`mrrc p15,1,…c14`) faults SIGILL under qemu/PL0
 - arm32: `tests/coro/t_parallel_{map,quick,radix,sort}` fail to compile against the Linaro sysroot — `conflicting declaration 'typedef __time_t time_t'` / `suseconds_t` between micron's typedefs and glibc's `bits/types/time_t.h`
+
+## Math (vectors / matrices)
+
+- **The matrix move ctor/assign zero the source** (`matrix/bits.hpp`); deliberate
+- **`mat<T,R,C> a * b` is element-wise, not a matrix product**; deliberate
+- **`int_matrix_base_avx`'s variadic ctor is unconstrained on argument type.**
 
 ## Algorithms
 
@@ -136,9 +150,18 @@ run
 - **Timeout-carrying syscalls with no wrapper**, `semtimedop`, `mq_timedsend`/`mq_timedreceive`, `io_pgetevents`, `recvmmsg`, `pselect6`, and a
   *timed* `rt_sigtimedwait`
 - **`i386: ftime = 35` is exposed as if usable.**
+- **A dlopened module's C++ static destructors do not run.**
+- **`micron::dso`/`elf::handle_t` are best-effort.**
+- **`dynamic_error()` is a fixed 192-byte thread_local buffer.**
+- **`dl_iterate_phdr` reports host modules with a null `dlpi_phdr`.**
+- **micron's `r_debug` chain is its own, and a hosted gdb will not find it.**
+- **The host-module snapshot is invalidated entirely on every unmap.**
+- **Only executable mappings become host modules.**
+- **`resolve_dependency` is guarded via `AT_SECURE`.**
+- **Static TLS relocations are refused.**
 - **`micron::user_hz` is a hardcoded `constexpr 100`** (`linux/process/resource.hpp:362`).
 - **`posix::sysconf` has only `_SC_CLK_TCK` and `_SC_PAGESIZE` implemented**
-- **The vDSO fast path is 64-bit only.**
+- **The vDSO fast path resolves nothing under qemu-user.**
 - **`chrono::core_hz()` is only as stable as the rig.**
 - **armv7-a reads no cycle counter by default.**
 - **`chrono/tz.hpp` reads TZif v2/v3 only.**

@@ -40,14 +40,7 @@ __runtime_page_size() noexcept
   return micron::getpagesizelive();
 }
 
-inline constexpr u8 expected_machine
-#if defined(__micron_arch_amd64)
-    = static_cast<u8>(em_x86_64);
-#elif defined(__micron_arch_arm64)
-    = static_cast<u8>(em_aarch64);
-#else
-    = 0;
-#endif
+inline constexpr usize max_phdrs = 96;
 
 inline usize
 __page_floor(usize v) noexcept
@@ -78,6 +71,10 @@ struct module_t {
   usize load_span = 0;
   dyn_info_t dyn{};
   u64 tls_modid = 0;
+  usize relro_start = 0;
+  usize relro_len = 0;
+  const nphdr_t *phdrs = nullptr;
+  half phnum = 0;
   micron::sstring<512> path;      // path the .so was loaded from
   module_t *next = nullptr;
 
@@ -88,13 +85,17 @@ struct module_t {
   module_t &operator=(const module_t &) = delete;
 
   module_t(module_t &&o) noexcept
-      : load_base(o.load_base), load_span(o.load_span), dyn(o.dyn), tls_modid(o.tls_modid),
-        path(static_cast<micron::sstring<512> &&>(o.path)), next(o.next)
+      : load_base(o.load_base), load_span(o.load_span), dyn(o.dyn), tls_modid(o.tls_modid), relro_start(o.relro_start),
+        relro_len(o.relro_len), phdrs(o.phdrs), phnum(o.phnum), path(static_cast<micron::sstring<512> &&>(o.path)), next(o.next)
   {
     o.load_base = nullptr;
     o.load_span = 0;
     o.dyn = {};
     o.tls_modid = 0;
+    o.relro_start = 0;
+    o.relro_len = 0;
+    o.phdrs = nullptr;
+    o.phnum = 0;
     o.next = nullptr;
   }
 
@@ -107,12 +108,20 @@ struct module_t {
       load_span = o.load_span;
       dyn = o.dyn;
       tls_modid = o.tls_modid;
+      relro_start = o.relro_start;
+      relro_len = o.relro_len;
+      phdrs = o.phdrs;
+      phnum = o.phnum;
       path = static_cast<micron::sstring<512> &&>(o.path);
       next = o.next;
       o.load_base = nullptr;
       o.load_span = 0;
       o.dyn = {};
       o.tls_modid = 0;
+      o.relro_start = 0;
+      o.relro_len = 0;
+      o.phdrs = nullptr;
+      o.phnum = 0;
       o.next = nullptr;
     }
     return *this;
@@ -122,11 +131,18 @@ struct module_t {
   reset() noexcept
   {
     if ( tls_modid ) tls_unregister(tls_modid);
-    if ( load_base && load_span ) micron::munmap(reinterpret_cast<addr_t *>(load_base), load_span);
+    if ( load_base && load_span ) {
+      micron::munmap(reinterpret_cast<addr_t *>(load_base), load_span);
+      invalidate_host_modules();
+    }
     load_base = nullptr;
     load_span = 0;
     dyn = {};
     tls_modid = 0;
+    relro_start = 0;
+    relro_len = 0;
+    phdrs = nullptr;
+    phnum = 0;
   }
 };
 
@@ -134,11 +150,12 @@ inline module_t *__loaded_modules = nullptr;
 inline micron::mutex __loaded_modules_mtx;
 
 inline void *
-__resolve_across_loaded(void *user, const char *name) noexcept
+__resolve_across_loaded(void *user, const char *name, u32 sym_index) noexcept
 {
   (void)user;
+  (void)sym_index;
   for ( module_t *m = __loaded_modules; m; m = m->next ) {
-    const sym_t *s = lookup_sym(m->dyn, name);
+    const nsym_t *s = lookup_sym(m->dyn, name);
     if ( s && s->shndx != shn_undef ) {
       return reinterpret_cast<void *>(m->load_base + s->value);
     }
@@ -147,19 +164,26 @@ __resolve_across_loaded(void *user, const char *name) noexcept
 }
 
 inline void
-__build_dyn_info(dyn_info_t &out, u8 *base, const dyn_t *dyn) noexcept
+__build_dyn_info(dyn_info_t &out, u8 *base, const ndyn_t *dyn) noexcept
 {
-  for ( const dyn_t *d = dyn; d->tag != dt_null; ++d ) {
+  for ( const ndyn_t *d = dyn; d->tag != dt_null; ++d ) {
     if ( d->tag == dt_strtab )
       out.strtab = reinterpret_cast<const char *>(base + d->un.ptr);
     else if ( d->tag == dt_strsz )
       out.strsz = d->un.val;
   }
 
-  for ( const dyn_t *d = dyn; d->tag != dt_null; ++d ) {
+  for ( const ndyn_t *d = dyn; d->tag != dt_null; ++d ) {
     switch ( d->tag ) {
     case dt_symtab:
-      out.symtab = reinterpret_cast<const sym_t *>(base + d->un.ptr);
+      out.symtab = reinterpret_cast<const nsym_t *>(base + d->un.ptr);
+      break;
+    case dt_needed:
+      // kept as .dynstr offsets
+      if ( out.needed_count < dyn_info_t::max_needed )
+        out.needed[out.needed_count++] = static_cast<word>(d->un.val);
+      else
+        out.needed_truncated = true;
       break;
     case dt_hash:
       out.hash = reinterpret_cast<const word *>(base + d->un.ptr);
@@ -168,7 +192,22 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const dyn_t *dyn) noexcept
       out.gnu_hash = reinterpret_cast<const word *>(base + d->un.ptr);
       break;
     case dt_rela:
-      out.rela = reinterpret_cast<const rela_t *>(base + d->un.ptr);
+      out.rela = reinterpret_cast<const nrela_t *>(base + d->un.ptr);
+      break;
+    case dt_rel:
+      out.rel = reinterpret_cast<const nrel_t *>(base + d->un.ptr);
+      break;
+    case dt_relsz:
+      out.relsz = d->un.val;
+      break;
+    case dt_relent:
+      out.relent = d->un.val;
+      break;
+    case dt_relcount:
+      out.rel_count = d->un.val;
+      break;
+    case dt_pltgot:
+      out.pltgot = reinterpret_cast<naddr_t *>(base + d->un.ptr);
       break;
     case dt_relasz:
       out.relasz = d->un.val;
@@ -180,13 +219,13 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const dyn_t *dyn) noexcept
       out.rela_count = d->un.val;
       break;
     case dt_relr:
-      out.relr = reinterpret_cast<const xword *>(base + d->un.ptr);
+      out.relr = reinterpret_cast<const nword_t *>(base + d->un.ptr);
       break;
     case dt_relrsz:
       out.relrsz = d->un.val;
       break;
     case dt_jmprel:
-      out.jmprel = reinterpret_cast<const rela_t *>(base + d->un.ptr);
+      out.jmprel = reinterpret_cast<const void *>(base + d->un.ptr);
       break;
     case dt_pltrelsz:
       out.pltrelsz = d->un.val;
@@ -212,17 +251,23 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const dyn_t *dyn) noexcept
     case dt_fini_arraysz:
       out.fini_arraysz = d->un.val;
       break;
+    case dt_preinit_array:
+      out.preinit_array = reinterpret_cast<void (*const *)()>(base + d->un.ptr);
+      break;
+    case dt_preinit_arraysz:
+      out.preinit_arraysz = d->un.val;
+      break;
     case dt_versym:
       out.versym = reinterpret_cast<const half *>(base + d->un.ptr);
       break;
     case dt_verdef:
-      out.verdef = reinterpret_cast<const void *>(base + d->un.ptr);
+      out.verdef = reinterpret_cast<const verdef_t *>(base + d->un.ptr);
       break;
     case dt_verdefnum:
       out.verdefnum = static_cast<word>(d->un.val);
       break;
     case dt_verneed:
-      out.verneed = reinterpret_cast<const void *>(base + d->un.ptr);
+      out.verneed = reinterpret_cast<const verneed_t *>(base + d->un.ptr);
       break;
     case dt_verneednum:
       out.verneednum = static_cast<word>(d->un.val);
@@ -251,61 +296,111 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const dyn_t *dyn) noexcept
 }
 
 enum class reloc_mode_t : u8 {
-  // RELATIVE/IRELATIVE only; leave symbol-bearing relocs alone
+  // map only
+  defer,
+  // RELATIVE/IRELATIVE only
   relative_only,
   // try each and every relocation
   best_effort,
+  // as best_effort, but an unresolved non weak symbol fails
+  strict,
 };
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// relocation application
+// ..DT_RELA / DT_RELASZ      (amd64, arm64)
+// ..DT_REL  / DT_RELSZ       (i386, armv7)
+// ..DT_JMPREL / DT_PLTRELSZ  either, per DT_PLTREL
+
 inline bool
-__reloc_is_relative(const rela_t &r) noexcept
+__reloc_is_relative(u32 t) noexcept
 {
-  const u32 t = elf_r_type(r.info);
 #if defined(__micron_arch_amd64)
   return t == r_x86_64_relative || t == r_x86_64_irelative;
 #elif defined(__micron_arch_arm64)
   return t == r_aarch64_relative || t == r_aarch64_irelative;
+#elif defined(__micron_arch_x86)
+  return t == r_386_relative || t == r_386_irelative;
+#elif defined(__micron_arch_arm32)
+  return t == r_arm_relative || t == r_arm_irelative;
 #else
   return false;
 #endif
 }
 
-inline bool
-__apply_rela_table(module_t &m, const rela_t *tbl, usize count_bytes, reloc_mode_t mode)
+inline reloc_ctx_t
+__reloc_ctx_for(module_t &m, resolve_fn resolve = nullptr, void *user = nullptr) noexcept
 {
-  if ( !tbl || count_bytes == 0 ) return true;
-  const usize n = count_bytes / sizeof(rela_t);
   reloc_ctx_t ctx;
   ctx.load_base = m.load_base;
   ctx.d = &m.dyn;
-  ctx.resolve = &__resolve_across_loaded;
-  ctx.user = nullptr;
+  ctx.resolve = resolve ? resolve : &__resolve_across_loaded;
+  ctx.user = user;
   ctx.tls_modid = m.tls_modid;
   ctx.tls_offset = 0;
+  return ctx;
+}
+
+template<class Rec>
+inline bool
+__apply_reloc_table(module_t &m, const Rec *tbl, usize count_bytes, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)
+{
+  if ( !tbl || count_bytes == 0 ) return true;
+  const usize n = count_bytes / sizeof(Rec);
+  const reloc_ctx_t ctx = __reloc_ctx_for(m, resolve, user);
   for ( usize i = 0; i < n; ++i ) {
-    if ( mode == reloc_mode_t::relative_only && !__reloc_is_relative(tbl[i]) ) continue;
-    if ( apply_reloc(ctx, tbl[i]) == reloc_result::unsupported ) return false;
+    const reloc_view v = reloc_view_of<native_class>(tbl[i]);
+    if ( mode == reloc_mode_t::relative_only && !__reloc_is_relative(v.type) ) continue;
+    const reloc_result r = apply_reloc(ctx, v);
+    if ( r == reloc_result::unsupported ) return false;
+    if ( r == reloc_result::unresolved && mode == reloc_mode_t::strict ) return false;
   }
   return true;
+}
+
+inline bool
+__apply_plt_table(module_t &m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)
+{
+  if ( !m.dyn.jmprel || m.dyn.pltrelsz == 0 ) return true;
+  if ( m.dyn.pltrel == dt_rela )
+    return __apply_reloc_table(m, reinterpret_cast<const nrela_t *>(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
+  if ( m.dyn.pltrel == dt_rel )
+    return __apply_reloc_table(m, reinterpret_cast<const nrel_t *>(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
+  if constexpr ( arch_uses_rel )
+    return __apply_reloc_table(m, reinterpret_cast<const nrel_t *>(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
+  else
+    return __apply_reloc_table(m, reinterpret_cast<const nrela_t *>(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
+}
+
+inline bool
+__apply_all_relocs(module_t &m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)
+{
+  if ( mode == reloc_mode_t::defer ) return true;
+  if ( !__apply_reloc_table(m, m.dyn.rela, m.dyn.relasz, mode, resolve, user) ) return false;
+  if ( !__apply_reloc_table(m, m.dyn.rel, m.dyn.relsz, mode, resolve, user) ) return false;
+  return __apply_plt_table(m, mode, resolve, user);
 }
 
 inline void
 __apply_relr(module_t &m) noexcept
 {
+  using tr = native_traits;
+  using rw = tr::uword;
+
   if ( !m.dyn.relr || m.dyn.relrsz == 0 ) return;
   const uintptr_t l_addr = reinterpret_cast<uintptr_t>(m.load_base);
-  const usize n = m.dyn.relrsz / sizeof(xword);
+  const usize n = m.dyn.relrsz / sizeof(rw);
   uintptr_t *where = nullptr;
   for ( usize k = 0; k < n; ++k ) {
-    xword entry = m.dyn.relr[k];
+    rw entry = m.dyn.relr[k];
     if ( (entry & 1) == 0 ) {
       where = reinterpret_cast<uintptr_t *>(l_addr + entry);
       *where += l_addr;
       ++where;
     } else {
-      for ( int i = 0; (entry >>= 1) != 0; ++i )
+      for ( usize i = 0; (entry >>= 1) != 0; ++i )
         if ( (entry & 1) != 0 ) where[i] += l_addr;
-      where += (8 * sizeof(xword)) - 1;      // 63 words covered per bitmap entry
+      where += tr::relr_bits;
     }
   }
 }
@@ -313,6 +408,13 @@ __apply_relr(module_t &m) noexcept
 inline void
 __run_initializers(module_t &m) noexcept
 {
+  // DT_PREINIT_ARRAY is legal exclusively in actual executables
+  if ( m.dyn.preinit_array && m.dyn.preinit_arraysz ) {
+    const usize n = m.dyn.preinit_arraysz / sizeof(void *);
+    for ( usize i = 0; i < n; ++i ) {
+      if ( m.dyn.preinit_array[i] ) m.dyn.preinit_array[i]();
+    }
+  }
   if ( m.dyn.init ) m.dyn.init();
   if ( m.dyn.init_array && m.dyn.init_arraysz ) {
     const usize n = m.dyn.init_arraysz / sizeof(void *);
@@ -323,7 +425,39 @@ __run_initializers(module_t &m) noexcept
 }
 
 inline void
-__apply_relro(const u8 *base, const phdr_t *phdrs, half phnum) noexcept
+__run_finalizers(module_t &m) noexcept
+{
+  if ( m.dyn.fini_array && m.dyn.fini_arraysz ) {
+    usize n = m.dyn.fini_arraysz / sizeof(void *);
+    while ( n-- ) {
+      if ( m.dyn.fini_array[n] ) m.dyn.fini_array[n]();
+    }
+  }
+  if ( m.dyn.fini ) m.dyn.fini();
+}
+
+inline void
+__record_relro(module_t &m, const nphdr_t *phdrs, half phnum) noexcept
+{
+  for ( half i = 0; i < phnum; ++i ) {
+    if ( phdrs[i].type != pt_gnu_relro ) continue;
+    const usize start = __page_floor(phdrs[i].vaddr);
+    const usize end = __page_ceil(phdrs[i].vaddr + phdrs[i].memsz);
+    m.relro_start = start;
+    m.relro_len = end - start;
+    return;
+  }
+}
+
+inline void
+__apply_relro_now(module_t &m) noexcept
+{
+  if ( !m.relro_len || !m.load_base ) return;
+  micron::mprotect(reinterpret_cast<addr_t *>(m.load_base + m.relro_start), m.relro_len, prot_read);
+}
+
+inline void
+__apply_relro(const u8 *base, const nphdr_t *phdrs, half phnum) noexcept
 {
   for ( half i = 0; i < phnum; ++i ) {
     if ( phdrs[i].type != pt_gnu_relro ) continue;
@@ -336,6 +470,9 @@ __apply_relro(const u8 *base, const phdr_t *phdrs, half phnum) noexcept
 struct load_opts_t {
   reloc_mode_t reloc = reloc_mode_t::relative_only;
   bool run_init = false;
+  bool apply_relro = true;
+  resolve_fn resolve = nullptr;
+  void *resolve_user = nullptr;
 };
 
 // load a single .so by absolute path
@@ -348,7 +485,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
   i32 fd = posix::open(path, posix::o_rdonly);
   if ( fd < 0 ) exc<except::library_error>("elf: open failed");
 
-  ehdr_t eh;
+  nehdr_t eh;
   if ( posix::pread(fd, &eh, sizeof(eh), 0) != static_cast<max_t>(sizeof(eh)) ) {
     posix::close(fd);
     exc<except::library_error>("elf: short ehdr read");
@@ -357,34 +494,42 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     posix::close(fd);
     exc<except::library_error>("elf: bad magic");
   }
-  if ( eh.ident[ei_class] != elfclass64 || eh.ident[ei_data] != elfdata2lsb || eh.machine != expected_machine ) {
+  if ( eh.ident[ei_class] != native_traits::ident_class ) {
     posix::close(fd);
-    exc<except::library_error>("elf: wrong class/data/machine");
+    exc<except::library_error>("elf: wrong ELF class for this target (32/64-bit mismatch)");
+  }
+  if ( eh.ident[ei_data] != (native_data == fmt_data::msb ? elfdata2msb : elfdata2lsb) ) {
+    posix::close(fd);
+    exc<except::library_error>("elf: wrong byte order");
+  }
+  if ( eh.machine != expected_machine ) {
+    posix::close(fd);
+    exc<except::library_error>("elf: wrong machine");
   }
   if ( eh.type != et_dyn ) {
     posix::close(fd);
     exc<except::library_error>("elf: not a shared object");
   }
 
-  if ( eh.phentsize != sizeof(phdr_t) || eh.phnum == 0 ) {
+  if ( eh.phentsize != sizeof(nphdr_t) || eh.phnum == 0 ) {
     posix::close(fd);
     exc<except::library_error>("elf: bad phdr table");
   }
 
-  phdr_t phdrs[64];
-  if ( eh.phnum > 64 ) {
+  nphdr_t phdrs[max_phdrs];
+  if ( eh.phnum > max_phdrs ) {
     posix::close(fd);
     exc<except::library_error>("elf: too many phdrs");
   }
-  if ( posix::pread(fd, phdrs, sizeof(phdr_t) * eh.phnum, eh.phoff) != static_cast<max_t>(sizeof(phdr_t) * eh.phnum) ) {
+  if ( posix::pread(fd, phdrs, sizeof(nphdr_t) * eh.phnum, eh.phoff) != static_cast<max_t>(sizeof(nphdr_t) * eh.phnum) ) {
     posix::close(fd);
     exc<except::library_error>("elf: short phdr read");
   }
 
   usize vaddr_min = ~usize(0);
   usize vaddr_max = 0;
-  const phdr_t *dyn_ph = nullptr;
-  const phdr_t *tls_ph = nullptr;
+  const nphdr_t *dyn_ph = nullptr;
+  const nphdr_t *tls_ph = nullptr;
   for ( half i = 0; i < eh.phnum; ++i ) {
     if ( phdrs[i].type == pt_load ) {
       if ( phdrs[i].vaddr < vaddr_min ) vaddr_min = phdrs[i].vaddr;
@@ -419,14 +564,19 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     const usize vstart = __page_floor(phdrs[i].vaddr);
     const usize vend = __page_ceil(phdrs[i].vaddr + phdrs[i].memsz);
     const usize fstart = __page_floor(phdrs[i].offset);
+
+    if constexpr ( native_class == fmt_class::elf32 ) {
+      if ( (fstart & 0xfffu) != 0 ) {
+        micron::munmap(reinterpret_cast<addr_t *>(base), span);
+        posix::close(fd);
+        exc<except::library_error>("elf: PT_LOAD file offset is not a multiple of 4096 (mmap2 cannot express it)");
+      }
+    }
     const usize segoff = phdrs[i].vaddr - vstart;
     u8 *target = base + (vstart - vaddr_min);
 
     const i32 prot = __prot_from_phdr(phdrs[i].flags);
 
-    // ELF requires vaddr ≡ offset (mod p_align), and p_align >= page_size for loadable segments,
-    // so the sub-page bias of vaddr and offset must match. Reject a mis-aligned ELF up front
-    // rather than silently mapping file data at the wrong address.
     if ( ((phdrs[i].vaddr - phdrs[i].offset) & (__runtime_page_size() - 1)) != 0 ) {
       micron::munmap(reinterpret_cast<addr_t *>(base), span);
       posix::close(fd);
@@ -477,18 +627,35 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
   for ( usize i = 0; path[i] && m.path.size() + 1 < m.path.max_size(); ++i ) m.path += path[i];
   m.path.null_term();
 
-  const dyn_t *dyn = reinterpret_cast<const dyn_t *>(m.load_base + dyn_ph->vaddr);
+  const ndyn_t *dyn = reinterpret_cast<const ndyn_t *>(m.load_base + dyn_ph->vaddr);
   __build_dyn_info(m.dyn, m.load_base, dyn);
 
   if ( tls_ph ) {
     m.tls_modid = tls_register(m.load_base + tls_ph->vaddr, tls_ph->filesz, tls_ph->memsz, tls_ph->align);
   }
 
+  __record_relro(m, phdrs, eh.phnum);
+
+  // point at the phdr table inside the mapping itself
+  {
+    const usize ph_end = static_cast<usize>(eh.phoff) + static_cast<usize>(eh.phnum) * sizeof(nphdr_t);
+    for ( half i = 0; i < eh.phnum; ++i ) {
+      if ( phdrs[i].type != pt_load ) continue;
+      if ( eh.phoff >= phdrs[i].offset && ph_end <= phdrs[i].offset + phdrs[i].filesz ) {
+        m.phdrs = reinterpret_cast<const nphdr_t *>(m.load_base + phdrs[i].vaddr + (eh.phoff - phdrs[i].offset));
+        m.phnum = eh.phnum;
+        break;
+      }
+    }
+  }
+
+  if ( opts.reloc == reloc_mode_t::defer ) return m;
+
   micron::lock_guard __ll(__loaded_modules_mtx);      // held through reloc + unlink (line below) until return
   m.next = __loaded_modules;
   __loaded_modules = &m;
 
-  if ( !__apply_rela_table(m, m.dyn.rela, m.dyn.relasz, opts.reloc) || !__apply_rela_table(m, m.dyn.jmprel, m.dyn.pltrelsz, opts.reloc) ) {
+  if ( !__apply_all_relocs(m, opts.reloc, opts.resolve, opts.resolve_user) ) {
     __loaded_modules = m.next;      // unlink the partially-relocated module before unwinding
     micron::munmap(reinterpret_cast<addr_t *>(base), span);
     exc<except::library_error>("elf: unsupported relocation (static TLS / TLSDESC / COPY) — refusing to load module with corrupt TLS");
@@ -496,7 +663,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
 
   __apply_relr(m);
 
-  __apply_relro(m.load_base, phdrs, eh.phnum);
+  if ( opts.apply_relro ) __apply_relro_now(m);
   if ( opts.run_init ) __run_initializers(m);
 
   __loaded_modules = m.next;

@@ -7,17 +7,14 @@
 
 #include "bits.hpp"
 
-#if !defined(__micron_arch_width_64)
-#error "micron::elf loader requires a 64-bit target"
-#endif
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// ELF32 on-disk records variant;
+// compiled on every target
 
 namespace micron
 {
 namespace elf
 {
-
-using addr32 = u32;
-using off32 = u32;
 
 struct ehdr32_t {
   u8 ident[ident_size];

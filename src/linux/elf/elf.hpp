@@ -32,12 +32,13 @@ class handle_t
     if ( !d.symtab || !d.strtab || d.symcount == 0 ) return;
     __syms.reserve(d.symcount);
     for ( xword i = 0; i < d.symcount; ++i ) {
-      const sym_t &s = d.symtab[i];
+      const nsym_t &s = d.symtab[i];
       symbol_info_t row;
       row.name = d.strtab + s.name;
       row.size = s.size;
       row.type = elf_st_type(s.info);
       row.binding = elf_st_bind(s.info);
+      row.visibility = elf_st_visibility(s.other);
       row.defined = (s.shndx != shn_undef);
       row.address = row.defined ? reinterpret_cast<void *>(__mod.load_base + s.value) : nullptr;
       __syms.push_back(row);
@@ -116,11 +117,13 @@ public:
     return *this;
   }
 
+  static constexpr load_opts_t __legacy_opts{ reloc_mode_t::best_effort, true, true, nullptr, nullptr };
+
   static handle_t
   open(const char *soname, const char *runpath = nullptr)
   {
     handle_t h;
-    h.__mod = load(soname, runpath);
+    h.__mod = load(soname, runpath, __legacy_opts);
     h.__link_self();
     h.__build_symbols();
     return h;
@@ -130,7 +133,7 @@ public:
   open_path(const char *path)
   {
     handle_t h;
-    h.__mod = __load_module_from_path(path);
+    h.__mod = __load_module_from_path(path, __legacy_opts);
     h.__link_self();
     h.__build_symbols();
     return h;
@@ -152,7 +155,7 @@ public:
   sym(const char *name) const noexcept
   {
     if ( !valid() ) return nullptr;
-    const sym_t *s = lookup_sym(__mod.dyn, name);
+    const nsym_t *s = lookup_sym(__mod.dyn, name);
     if ( !s || s->shndx == shn_undef ) return nullptr;
     return reinterpret_cast<void *>(__mod.load_base + s->value);
   }

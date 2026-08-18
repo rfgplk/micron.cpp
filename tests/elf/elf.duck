@@ -1,0 +1,47 @@
+# elf validation
+#   duck tests/elf/elf.duck          (== duck batch tests/elf/elf.duck)
+#
+# dl_dynamic needs the fixture modules
+#   sh tests/support/dl/build.sh x64
+#   sh tests/support/dl/build.sh i386
+#   sh tests/support/dl/build.sh arm
+#   sh tests/support/dl/build.sh arm64
+
+test tests/rigor/elf_basic.cpp --timeout 60 -o bin/elf/x64
+test tests/rigor/elf_high_level.cpp --timeout 60 -o bin/elf/x64
+test tests/rigor/elf_host.cpp --timeout 60 -o bin/elf/x64
+test tests/rigor/elf_read32.cpp --timeout 60 -o bin/elf/x64
+test tests/rigor/tls_template.cpp --timeout 60 -o bin/elf/x64
+test tests/rigor/dl_dynamic.cpp --timeout 60 -o bin/elf/x64
+test tests/rigor/dl_secure.cpp --timeout 60 -o bin/elf/x64
+
+# i386
+test tests/rigor/elf_basic.cpp --i386 --timeout 60 -o bin/elf/i386
+test tests/rigor/elf_high_level.cpp --i386 --timeout 60 -o bin/elf/i386
+test tests/rigor/elf_host.cpp --i386 --timeout 60 -o bin/elf/i386
+test tests/rigor/elf_read32.cpp --i386 --timeout 60 -o bin/elf/i386
+test tests/rigor/dl_dynamic.cpp --i386 --timeout 60 -o bin/elf/i386
+test tests/rigor/dl_secure.cpp --i386 --timeout 60 -o bin/elf/i386
+
+# armv7-a and aarch64 via the Linaro cross compilers, under qemu
+test tests/rigor/elf_read32.cpp --arm -s --timeout 120 -o bin/elf/arm
+test tests/rigor/elf_basic.cpp --arm -s --timeout 120 -o bin/elf/arm
+test tests/rigor/elf_host.cpp --arm -s --timeout 120 -o bin/elf/arm
+test tests/rigor/dl_dynamic.cpp --arm -s --timeout 120 -o bin/elf/arm
+test tests/rigor/dl_secure.cpp --arm -s --timeout 120 -o bin/elf/arm
+
+test tests/rigor/elf_read32.cpp --arm64 -s --timeout 120 -o bin/elf/arm64
+test tests/rigor/elf_basic.cpp --arm64 -s --timeout 120 -o bin/elf/arm64
+test tests/rigor/elf_host.cpp --arm64 -s --timeout 120 -o bin/elf/arm64
+test tests/rigor/dl_dynamic.cpp --arm64 -s --timeout 120 -o bin/elf/arm64
+test tests/rigor/dl_secure.cpp --arm64 -s --timeout 120 -o bin/elf/arm64
+
+build tests/compiletests/elf.cpp -k -o bin/elf/free
+build tests/compiletests/elf.cpp -ke -o bin/elf/free
+build tests/compiletests/elf.cpp --i386 -k -o bin/elf/free_i386
+build tests/compiletests/elf.cpp --i386 -ke -o bin/elf/free_i386
+
+build tests/compiletests/dynamic.cpp -k -o bin/elf/free
+build tests/compiletests/dynamic.cpp -ke -o bin/elf/free
+build tests/compiletests/dynamic.cpp --i386 -k -o bin/elf/free_i386
+build tests/compiletests/dynamic.cpp --i386 -ke -o bin/elf/free_i386

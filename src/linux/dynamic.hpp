@@ -41,7 +41,7 @@ public:
   sym(const char *name) const noexcept
   {
     if ( !__mod ) return nullptr;
-    const elf::sym_t *s = elf::lookup_sym(__mod->dyn, name);
+    const elf::nsym_t *s = elf::lookup_sym(__mod->dyn, name);
     if ( !s || s->shndx == elf::shn_undef ) return nullptr;
     return reinterpret_cast<void *>(__mod->base + s->value);
   }
