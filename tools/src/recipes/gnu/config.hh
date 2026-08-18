@@ -45,15 +45,15 @@ __isa_march(u32 isa)
 {
   switch ( isa ) {
   case __isa::base:
-    return "-march=x86-64";
+    return gcc::x86_flags::get_string_flag(gcc::x86_flags::flags::march_x86_64);
   case __isa::v2:
-    return "-march=x86-64-v2";
+    return gcc::x86_flags::get_string_flag(gcc::x86_flags::flags::march_x86_64_v2);
   case __isa::v3:
-    return "-march=x86-64-v3";
+    return gcc::x86_flags::get_string_flag(gcc::x86_flags::flags::march_x86_64_v3);
   case __isa::v4:
-    return "-march=x86-64-v4";
+    return gcc::x86_flags::get_string_flag(gcc::x86_flags::flags::march_x86_64_v4);
   default:
-    return "-march=native";
+    return gcc::x86_flags::get_string_flag(gcc::x86_flags::flags::march_native);
   }
 }
 
@@ -177,7 +177,7 @@ struct config_t {
   u32 compiler{ __compilers::gnucc };
   u32 language{ __languages::cpp };
   u32 mode{ __opt_modes::optimized };
-  gcc::opt_flags::flags opt_mode{ gcc::opt_flags::flag_optimize_fast };
+  gcc::opt_flags::flags opt_mode{ gcc::opt_flags::flags::optimize_fast };
 };
 
 inline bool

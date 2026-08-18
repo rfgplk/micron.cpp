@@ -52,6 +52,36 @@ constexpr const string_type __standard_gnu1x = "-std=gnu1x";
 constexpr const string_type __standard_c2x = "-std=c2x";
 constexpr const string_type __standard_gnu2x = "-std=gnu2x";
 
+namespace driver_flags
+{
+constexpr static const i32 flag_compile_only = 0;
+constexpr static const i32 flag_assemble_only = 1;
+constexpr static const i32 flag_preprocess_only = 2;
+
+enum class flags : i32 {
+  compile_only = flag_compile_only,
+  assemble_only = flag_assemble_only,
+  preprocess_only = flag_preprocess_only
+};
+
+constexpr static const char *flag_strings[] = {
+  "-c",     // 0  flag_compile_only
+  "-S",     // 1  flag_assemble_only
+  "-E",     // 2  flag_preprocess_only
+};
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_preprocess_only + 1,
+              "flags.hh: driver_flags flag_strings[] is out of step with its index constants");
+
+constexpr const char *
+get_string_flag(flags f)
+{
+  return flag_strings[static_cast<i32>(f)];
+}
+
+}     // namespace driver_flags
+
+
 namespace c_flags
 {
 // C Language Standards and Extensions
@@ -126,6 +156,9 @@ constexpr static const char *flag_strings[] = { "-ansi",
                                                 "-funsigned-char",
                                                 "-fstrict-flex-arrays",
                                                 "-fsso-struct=" };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_sso_struct + 1,
+              "flags.hh: c_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -256,6 +289,8 @@ constexpr static const i32 flag_w_no_vexing_parse = 113;
 constexpr static const i32 flag_w_virtual_inheritance = 114;
 constexpr static const i32 flag_w_no_virtual_move_assign = 115;
 constexpr static const i32 flag_w_volatile = 116;
+constexpr static const i32 flag_exceptions = 117;
+constexpr static const i32 flag_rtti = 118;
 
 enum class flags : i32 {
   abi_version = flag_abi_version,
@@ -374,7 +409,9 @@ enum class flags : i32 {
   w_no_vexing_parse = flag_w_no_vexing_parse,
   w_virtual_inheritance = flag_w_virtual_inheritance,
   w_no_virtual_move_assign = flag_w_no_virtual_move_assign,
-  w_volatile = flag_w_volatile
+  w_volatile = flag_w_volatile,
+  exceptions = flag_exceptions,
+  rtti = flag_rtti
 };
 
 // String literals for C++ flags
@@ -494,7 +531,12 @@ constexpr static const char *flag_strings[] = { "-fabi-version=",
                                                 "-Wno-vexing-parse",
                                                 "-Wvirtual-inheritance",
                                                 "-Wno-virtual-move-assign",
-                                                "-Wvolatile" };
+                                                "-Wvolatile",
+                                                "-fexceptions",
+                                                "-frtti" };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_rtti + 1,
+              "flags.hh: cpp_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -534,6 +576,12 @@ constexpr static const i32 flag_diagnostics_column_unit = 25;
 constexpr static const i32 flag_diagnostics_column_origin = 26;
 constexpr static const i32 flag_diagnostics_escape_format = 27;
 constexpr static const i32 flag_diagnostics_text_art_charset = 28;
+constexpr static const i32 flag_diagnostics_color_always = 29;
+constexpr static const i32 flag_time_report = 30;
+constexpr static const i32 flag_time_report_details = 31;
+constexpr static const i32 flag_mem_report = 32;
+constexpr static const i32 flag_opt_info = 33;
+constexpr static const i32 flag_opt_info_missed = 34;
 
 enum class flags : i32 {
   message_length = flag_message_length,
@@ -564,8 +612,63 @@ enum class flags : i32 {
   diagnostics_column_unit = flag_diagnostics_column_unit,
   diagnostics_column_origin = flag_diagnostics_column_origin,
   diagnostics_escape_format = flag_diagnostics_escape_format,
-  diagnostics_text_art_charset = flag_diagnostics_text_art_charset
+  diagnostics_text_art_charset = flag_diagnostics_text_art_charset,
+  diagnostics_color_always = flag_diagnostics_color_always,
+  time_report = flag_time_report,
+  time_report_details = flag_time_report_details,
+  mem_report = flag_mem_report,
+  opt_info = flag_opt_info,
+  opt_info_missed = flag_opt_info_missed
 };
+
+// String literals for diagnostic flags
+constexpr static const char *flag_strings[] = {
+  "-fmessage-length=",                          // 0  flag_message_length
+  "-fdiagnostics-plain-output",                 // 1  flag_diagnostics_plain_output
+  "-fdiagnostics-show-location=",               // 2  flag_diagnostics_show_location
+  "-fdiagnostics-color=",                       // 3  flag_diagnostics_color
+  "-fdiagnostics-urls=",                        // 4  flag_diagnostics_urls
+  "-fdiagnostics-format=",                      // 5  flag_diagnostics_format
+  "-fdiagnostics-add-output=",                  // 6  flag_diagnostics_add_output
+  "-fdiagnostics-set-output=",                  // 7  flag_diagnostics_set_output
+  "-fno-diagnostics-json-formatting",           // 8  flag_no_diagnostics_json_formatting
+  "-fno-diagnostics-show-option",               // 9  flag_no_diagnostics_show_option
+  "-fno-diagnostics-show-caret",                // 10 flag_no_diagnostics_show_caret
+  "-fno-diagnostics-show-event-links",          // 11 flag_no_diagnostics_show_event_links
+  "-fno-diagnostics-show-labels",               // 12 flag_no_diagnostics_show_labels
+  "-fno-diagnostics-show-line-numbers",         // 13 flag_no_diagnostics_show_line_numbers
+  "-fno-diagnostics-show-cwe",                  // 14 flag_no_diagnostics_show_cwe
+  "-fno-diagnostics-show-rules",                // 15 flag_no_diagnostics_show_rules
+  "-fno-diagnostics-show-highlight-colors",     // 16 flag_no_diagnostics_show_highlight_colors
+  "-fdiagnostics-minimum-margin-width=",        // 17 flag_diagnostics_minimum_margin_width
+  "-fdiagnostics-parseable-fixits",             // 18 flag_diagnostics_parseable_fixits
+  "-fdiagnostics-generate-patch",               // 19 flag_diagnostics_generate_patch
+  "-fdiagnostics-show-template-tree",           // 20 flag_diagnostics_show_template_tree
+  "-fno-elide-type",                            // 21 flag_no_elide_type
+  "-fdiagnostics-path-format=",                 // 22 flag_diagnostics_path_format
+  "-fdiagnostics-show-path-depths",             // 23 flag_diagnostics_show_path_depths
+  "-fno-show-column",                           // 24 flag_no_show_column
+  "-fdiagnostics-column-unit=",                 // 25 flag_diagnostics_column_unit
+  "-fdiagnostics-column-origin=",               // 26 flag_diagnostics_column_origin
+  "-fdiagnostics-escape-format=",               // 27 flag_diagnostics_escape_format
+  "-fdiagnostics-text-art-charset=",            // 28 flag_diagnostics_text_art_charset
+  "-fdiagnostics-color=always",                 // 29 flag_diagnostics_color_always
+  "-ftime-report",                              // 30 flag_time_report
+  "-ftime-report-details",                      // 31 flag_time_report_details
+  "-fmem-report",                               // 32 flag_mem_report
+  "-fopt-info",                                 // 33 flag_opt_info
+  "-fopt-info-missed",                          // 34 flag_opt_info_missed
+};
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_opt_info_missed + 1,
+              "flags.hh: diagnostic_flags flag_strings[] is out of step with its index constants");
+
+constexpr const char *
+get_string_flag(flags f)
+{
+  return flag_strings[static_cast<i32>(f)];
+}
+
 }     // namespace diagnostic_flags
 
 namespace w_flags
@@ -814,6 +917,12 @@ constexpr static const i32 flag_w_no_virtual_move_assign = 239;
 constexpr static const i32 flag_w_volatile = 240;
 constexpr static const i32 flag_w_no_odr = 241;
 constexpr static const i32 flag_w_no_lto_type_mismatch = 242;
+constexpr static const i32 flag_w_no_variadic_macros = 243;
+constexpr static const i32 flag_w_no_inline = 244;
+constexpr static const i32 flag_w_no_missing_profile = 245;
+constexpr static const i32 flag_w_error_missing_field_initializers = 246;
+constexpr static const i32 flag_w_error_return_type = 247;
+constexpr static const i32 flag_fconcepts_diagnostics_depth_two = 248;
 
 enum class flags : i32 {
   fsyntax_only = flag_fsyntax_only,
@@ -1058,7 +1167,13 @@ enum class flags : i32 {
   Wno_virtual_move_assign = flag_w_no_virtual_move_assign,
   Wvolatile = flag_w_volatile,
   Wno_odr = flag_w_no_odr,
-  Wno_lto_type_mismatch = flag_w_no_lto_type_mismatch
+  Wno_lto_type_mismatch = flag_w_no_lto_type_mismatch,
+  Wno_variadic_macros = flag_w_no_variadic_macros,
+  Wno_inline = flag_w_no_inline,
+  Wno_missing_profile = flag_w_no_missing_profile,
+  Werror_missing_field_initializers = flag_w_error_missing_field_initializers,
+  Werror_return_type = flag_w_error_return_type,
+  fconcepts_diagnostics_depth_two = flag_fconcepts_diagnostics_depth_two
 };
 
 constexpr static const char *flag_strings[] = { "-fsyntax-only",
@@ -1303,7 +1418,16 @@ constexpr static const char *flag_strings[] = { "-fsyntax-only",
                                                 "-Wno-virtual-move-assign",
                                                 "-Wvolatile",
                                                 "-Wno-odr",
-                                                "-Wno-lto-type-mismatch" };
+                                                "-Wno-lto-type-mismatch",
+                                                "-Wno-variadic-macros",
+                                                "-Wno-inline",
+                                                "-Wno-missing-profile",
+                                                "-Werror=missing-field-initializers",
+                                                "-Werror=return-type",
+                                                "-fconcepts-diagnostics-depth=2" };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_fconcepts_diagnostics_depth_two + 1,
+              "flags.hh: w_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -1572,6 +1696,11 @@ constexpr static const i32 flag_optimize_debug = 253;
 constexpr static const i32 flag_optimize_z = 254;
 constexpr static const i32 flag_param = 255;
 constexpr static const i32 flag_lto_eight = 256;
+constexpr static const i32 flag_no_omit_frame_pointer = 257;
+constexpr static const i32 flag_no_lto = 258;
+constexpr static const i32 flag_PIE = 259;
+constexpr static const i32 flag_asynchronous_unwind_tables = 260;
+constexpr static const i32 flag_unwind_tables = 261;
 
 enum class flags : i32 {
   aggressive_loop_optimizations = flag_aggressive_loop_optimizations,
@@ -1830,7 +1959,12 @@ enum class flags : i32 {
   optimize_debug = flag_optimize_debug,
   optimize_z = flag_optimize_z,
   param = flag_param,
-  lto_eight = flag_lto_eight
+  lto_eight = flag_lto_eight,
+  no_omit_frame_pointer = flag_no_omit_frame_pointer,
+  no_lto = flag_no_lto,
+  PIE = flag_PIE,
+  asynchronous_unwind_tables = flag_asynchronous_unwind_tables,
+  unwind_tables = flag_unwind_tables
 };
 
 constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations",
@@ -2089,7 +2223,15 @@ constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations
                                                 "-Og",
                                                 "-Oz",
                                                 "--param ",
-                                                "-flto=8" };
+                                                "-flto=8",
+                                                "-fno-omit-frame-pointer",
+                                                "-fno-lto",
+                                                "-fPIE",
+                                                "-fasynchronous-unwind-tables",
+                                                "-funwind-tables" };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_unwind_tables + 1,
+              "flags.hh: opt_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -2378,10 +2520,10 @@ constexpr static const char *flag_strings[] = {
   "-g2",                                     // 2  flag_g_two
   "-g3",                                     // 3  flag_g_three
   "-gdwarf",                                 // 4  flag_gdwarf
-  "-gdwarf-",                                // 5  flag_gdwarf_version (requires version number)
+  "-gdwarf-",                                // 5  flag_gdwarf_version
   "-gbtf",                                   // 6  flag_gbtf
   "-gctf",                                   // 7  flag_gctf
-  "-gctf",                                   // 8  flag_gctflevel (can have level)
+  "-gctf",                                   // 8  flag_gctflevel
   "-gprune-btf",                             // 9  flag_gprune_btf
   "-gno-prune-btf",                          // 10 flag_gno_prune_btf
   "-ggdb",                                   // 11 flag_ggdb
@@ -2425,8 +2567,11 @@ constexpr static const char *flag_strings[] = {
   "-fno-merge-debug-strings",                // 49 flag_no_merge_debug_strings
   "-fno-dwarf2-cfi-asm",                     // 50 flag_no_dwarf2_cfi_asm
   "-fvar-tracking",                          // 51 flag_var_tracking
-  "-fvar-tracking-assignments"               // 52 flag_var_tracking_assignments
+  "-fvar-tracking-assignments",              // 52 flag_var_tracking_assignments
 };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_var_tracking_assignments + 1,
+              "flags.hh: debug_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -2504,6 +2649,11 @@ constexpr static const i32 flag_stack_clash_protection = 62;
 constexpr static const i32 flag_strict_overflow = 63;
 constexpr static const i32 flag_nostack_protector = 64;
 constexpr static const i32 flag_no_exceptions = 65;
+constexpr static const i32 flag_sanitize_address = 66;
+constexpr static const i32 flag_sanitize_undefined = 67;
+constexpr static const i32 flag_sanitize_thread = 68;
+constexpr static const i32 flag_sanitize_leak = 69;
+constexpr static const i32 flag_cf_protection_full = 70;
 
 enum class flags : i32 {
   p = flag_p,
@@ -2572,77 +2722,90 @@ enum class flags : i32 {
   strict_overflow = flag_strict_overflow,
   nostack_protector = flag_nostack_protector,
   no_exceptions = flag_no_exceptions,
+  sanitize_address = flag_sanitize_address,
+  sanitize_undefined = flag_sanitize_undefined,
+  sanitize_thread = flag_sanitize_thread,
+  sanitize_leak = flag_sanitize_leak,
+  cf_protection_full = flag_cf_protection_full
 };
 
 // String literals for profiling flags
 constexpr static const char *flag_strings[] = {
-  "-p",                                                // 0  flag_p
-  "-pg",                                               // 1  flag_pg
-  "-fprofile-arcs",                                    // 2  flag_profile_arcs
-  "--coverage",                                        // 3  flag_coverage
-  "-ftest-coverage",                                   // 4  flag_test_coverage
-  "-fcondition-coverage",                              // 5  flag_condition_coverage
-  "-fprofile-partial-training",                        // 6  flag_path_coverage
-  "-fprofile-abs-path",                                // 7  flag_profile_abs_path
-  "-fprofile-dir=",                                    // 8  flag_profile_dir
-  "-fprofile-generate",                                // 9  flag_profile_generate
-  "-fprofile-generate=",                               // 10 flag_profile_generate_path
-  "-fprofile-info-section",                            // 11 flag_profile_info_section
-  "-fprofile-info-section=",                           // 12 flag_profile_info_section_name
-  "-fprofile-note=",                                   // 13 flag_profile_note
-  "-fprofile-prefix-path=",                            // 14 flag_profile_prefix_path
-  "-fprofile-update=",                                 // 15 flag_profile_update
-  "-fprofile-filter-files=",                           // 16 flag_profile_filter_files
-  "-fprofile-exclude-files=",                          // 17 flag_profile_exclude_files
-  "-fprofile-reproducible",                            // 18 flag_profile_reproducible
-  "-fsanitize=",                                       // 19 flag_sanitize
-  "-fsanitize-recover=",                               // 20 flag_sanitize_recover
-  "-fsanitize-recover=",                               // 21 flag_sanitize_recover_style
-  "-fsanitize-trap=",                                  // 22 flag_sanitize_trap
-  "-fsanitize-trap=",                                  // 23 flag_sanitize_trap_style
-  "-fasan-shadow-offset=",                             // 24 flag_asan_shadow_offset
-  "-fsanitize-sections=",                              // 25 flag_sanitize_sections
-  "-fsanitize-undefined-trap-on-error",                // 26 flag_sanitize_undefined_trap_on_error
-  "-fbounds-check",                                    // 27 flag_bounds_check
-  "-fcf-protection",                                   // 28 flag_cf_protection
-  "-fcf-protection=",                                  // 29 flag_cf_protection_mode
-  "-fharden-compares",                                 // 30 flag_harden_compares
-  "-fharden-conditional-branches",                     // 31 flag_harden_conditional_branches
-  "-fhardened",                                        // 32 flag_hardened
-  "-fharden-control-flow-redundancy",                  // 33 flag_harden_control_flow_redundancy
-  "-fhardcfr-skip-leaf",                               // 34 flag_hardcfr_skip_leaf
-  "-fhardcfr-check-exceptions",                        // 35 flag_hardcfr_check_exceptions
-  "-fhardcfr-check-returning-calls",                   // 36 flag_hardcfr_check_returning_calls
-  "-fhardcfr-check-noreturn-calls=",                   // 37 flag_hardcfr_check_noreturn_calls
-  "-fstack-protector",                                 // 38 flag_stack_protector
-  "-fstack-protector-all",                             // 39 flag_stack_protector_all
-  "-fstack-protector-strong",                          // 40 flag_stack_protector_strong
-  "-fstack-protector-explicit",                        // 41 flag_stack_protector_explicit
-  "-fstack-check",                                     // 42 flag_stack_check
-  "-fstack-limit-register=",                           // 43 flag_stack_limit_register
-  "-fstack-limit-symbol=",                             // 44 flag_stack_limit_symbol
-  "-fno-stack-limit",                                  // 45 flag_no_stack_limit
-  "-fsplit-stack",                                     // 46 flag_split_stack
-  "-fstrub=disabled",                                  // 47 flag_strub_disable
-  "-fstrub=strict",                                    // 48 flag_strub_strict
-  "-fstrub=relaxed",                                   // 49 flag_strub_relaxed
-  "-fstrub=all",                                       // 50 flag_strub_all
-  "-fstrub=at-calls",                                  // 51 flag_strub_at_calls
-  "-fstrub=internal",                                  // 52 flag_strub_internal
-  "-fvtable-verify=",                                  // 53 flag_vtable_verify
-  "-fvtv-counts",                                      // 54 flag_vtv_counts
-  "-fvtv-debug",                                       // 55 flag_vtv_debug
-  "-finstrument-functions",                            // 56 flag_instrument_functions
-  "-finstrument-functions-once",                       // 57 flag_instrument_functions_once
-  "-finstrument-functions-exclude-function-list=",     // 58 flag_instrument_functions_exclude_function_list
-  "-finstrument-functions-exclude-file-list=",         // 59 flag_instrument_functions_exclude_file_list
-  "-fprofile-prefix-map=",                             // 60 flag_profile_prefix_map
-  "-fpatchable-function-entry=",
-  "-fstack-clash-protection",     // 61 flag_patchable_function_entry
-  "-fstrict-overflow",            // 62
-  "-fno-stack-protector",          // 63
-  "-fno-exceptions",              // 64
+  "-p",                                                 // 0  flag_p
+  "-pg",                                                // 1  flag_pg
+  "-fprofile-arcs",                                     // 2  flag_profile_arcs
+  "--coverage",                                         // 3  flag_coverage
+  "-ftest-coverage",                                    // 4  flag_test_coverage
+  "-fcondition-coverage",                               // 5  flag_condition_coverage
+  "-fpath-coverage",                                    // 6  flag_path_coverage
+  "-fprofile-abs-path",                                 // 7  flag_profile_abs_path
+  "-fprofile-dir=",                                     // 8  flag_profile_dir
+  "-fprofile-generate",                                 // 9  flag_profile_generate
+  "-fprofile-generate=",                                // 10 flag_profile_generate_path
+  "-fprofile-info-section",                             // 11 flag_profile_info_section
+  "-fprofile-info-section=",                            // 12 flag_profile_info_section_name
+  "-fprofile-note=",                                    // 13 flag_profile_note
+  "-fprofile-prefix-path=",                             // 14 flag_profile_prefix_path
+  "-fprofile-update=",                                  // 15 flag_profile_update
+  "-fprofile-filter-files=",                            // 16 flag_profile_filter_files
+  "-fprofile-exclude-files=",                           // 17 flag_profile_exclude_files
+  "-fprofile-reproducible",                             // 18 flag_profile_reproducible
+  "-fsanitize=",                                        // 19 flag_sanitize
+  "-fsanitize-recover=",                                // 20 flag_sanitize_recover
+  "-fsanitize-recover=",                                // 21 flag_sanitize_recover_style
+  "-fsanitize-trap=",                                   // 22 flag_sanitize_trap
+  "-fsanitize-trap=",                                   // 23 flag_sanitize_trap_style
+  "-fasan-shadow-offset=",                              // 24 flag_asan_shadow_offset
+  "-fsanitize-sections=",                               // 25 flag_sanitize_sections
+  "-fsanitize-undefined-trap-on-error",                 // 26 flag_sanitize_undefined_trap_on_error
+  "-fbounds-check",                                     // 27 flag_bounds_check
+  "-fcf-protection",                                    // 28 flag_cf_protection
+  "-fcf-protection=",                                   // 29 flag_cf_protection_mode
+  "-fharden-compares",                                  // 30 flag_harden_compares
+  "-fharden-conditional-branches",                      // 31 flag_harden_conditional_branches
+  "-fhardened",                                         // 32 flag_hardened
+  "-fharden-control-flow-redundancy",                   // 33 flag_harden_control_flow_redundancy
+  "-fhardcfr-skip-leaf",                                // 34 flag_hardcfr_skip_leaf
+  "-fhardcfr-check-exceptions",                         // 35 flag_hardcfr_check_exceptions
+  "-fhardcfr-check-returning-calls",                    // 36 flag_hardcfr_check_returning_calls
+  "-fhardcfr-check-noreturn-calls=",                    // 37 flag_hardcfr_check_noreturn_calls
+  "-fstack-protector",                                  // 38 flag_stack_protector
+  "-fstack-protector-all",                              // 39 flag_stack_protector_all
+  "-fstack-protector-strong",                           // 40 flag_stack_protector_strong
+  "-fstack-protector-explicit",                         // 41 flag_stack_protector_explicit
+  "-fstack-check",                                      // 42 flag_stack_check
+  "-fstack-limit-register=",                            // 43 flag_stack_limit_register
+  "-fstack-limit-symbol=",                              // 44 flag_stack_limit_symbol
+  "-fno-stack-limit",                                   // 45 flag_no_stack_limit
+  "-fsplit-stack",                                      // 46 flag_split_stack
+  "-fstrub=disabled",                                   // 47 flag_strub_disable
+  "-fstrub=strict",                                     // 48 flag_strub_strict
+  "-fstrub=relaxed",                                    // 49 flag_strub_relaxed
+  "-fstrub=all",                                        // 50 flag_strub_all
+  "-fstrub=at-calls",                                   // 51 flag_strub_at_calls
+  "-fstrub=internal",                                   // 52 flag_strub_internal
+  "-fvtable-verify=",                                   // 53 flag_vtable_verify
+  "-fvtv-counts",                                       // 54 flag_vtv_counts
+  "-fvtv-debug",                                        // 55 flag_vtv_debug
+  "-finstrument-functions",                             // 56 flag_instrument_functions
+  "-finstrument-functions-once",                        // 57 flag_instrument_functions_once
+  "-finstrument-functions-exclude-function-list=",      // 58 flag_instrument_functions_exclude_function_list
+  "-finstrument-functions-exclude-file-list=",          // 59 flag_instrument_functions_exclude_file_list
+  "-fprofile-prefix-map=",                              // 60 flag_profile_prefix_map
+  "-fpatchable-function-entry=",                        // 61 flag_patchable_function_entry
+  "-fstack-clash-protection",                           // 62 flag_stack_clash_protection
+  "-fstrict-overflow",                                  // 63 flag_strict_overflow
+  "-fno-stack-protector",                               // 64 flag_nostack_protector
+  "-fno-exceptions",                                    // 65 flag_no_exceptions
+  "-fsanitize=address",                                 // 66 flag_sanitize_address
+  "-fsanitize=undefined",                               // 67 flag_sanitize_undefined
+  "-fsanitize=thread",                                  // 68 flag_sanitize_thread
+  "-fsanitize=leak",                                    // 69 flag_sanitize_leak
+  "-fcf-protection=full",                               // 70 flag_cf_protection_full
 };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_cf_protection_full + 1,
+              "flags.hh: profiling_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -2704,6 +2867,9 @@ constexpr static const i32 flag_u_macro = 46;
 constexpr static const i32 flag_undef = 47;
 constexpr static const i32 flag_wp = 48;
 constexpr static const i32 flag_xpreprocessor = 49;
+constexpr static const i32 flag_i_dir = 50;
+constexpr static const i32 flag_fortify_source_two = 51;
+constexpr static const i32 flag_fortify_source_three = 52;
 
 enum class flags : i32 {
   a_question = flag_a_question,
@@ -2755,7 +2921,10 @@ enum class flags : i32 {
   u_macro = flag_u_macro,
   undef = flag_undef,
   wp = flag_wp,
-  xpreprocessor = flag_xpreprocessor
+  xpreprocessor = flag_xpreprocessor,
+  i_dir = flag_i_dir,
+  fortify_source_two = flag_fortify_source_two,
+  fortify_source_three = flag_fortify_source_three
 };
 
 // String literals for preprocessor flags
@@ -2809,8 +2978,14 @@ constexpr static const char *flag_strings[] = {
   "-U",                                // 46 flag_u_macro
   "-undef",                            // 47 flag_undef
   "-Wp,",                              // 48 flag_wp
-  "-Xpreprocessor"                     // 49 flag_xpreprocessor
+  "-Xpreprocessor",                    // 49 flag_xpreprocessor
+  "-I",                                // 50 flag_i_dir
+  "-D_FORTIFY_SOURCE=2",               // 51 flag_fortify_source_two
+  "-D_FORTIFY_SOURCE=3",               // 52 flag_fortify_source_three
 };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_fortify_source_three + 1,
+              "flags.hh: preprocessor_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -2853,6 +3028,16 @@ constexpr static const i32 flag_wl = 27;
 constexpr static const i32 flag_xlinker = 28;
 constexpr static const i32 flag_u_symbol = 29;
 constexpr static const i32 flag_z_keyword = 30;
+constexpr static const i32 flag_l_dir = 31;
+constexpr static const i32 flag_l_pthread = 32;
+constexpr static const i32 flag_wl_gc_sections = 33;
+constexpr static const i32 flag_wl_strip_all = 34;
+constexpr static const i32 flag_wl_eh_frame_hdr = 35;
+constexpr static const i32 flag_wl_no_dynamic_linker = 36;
+constexpr static const i32 flag_wl_entry_entry = 37;
+constexpr static const i32 flag_wl_z_relro = 38;
+constexpr static const i32 flag_wl_z_now = 39;
+constexpr static const i32 flag_wl_z_noexecstack = 40;
 
 enum class flags : i32 {
   object_file_name = flag_object_file_name,
@@ -2885,43 +3070,66 @@ enum class flags : i32 {
   wl = flag_wl,
   xlinker = flag_xlinker,
   u_symbol = flag_u_symbol,
-  z_keyword = flag_z_keyword
+  z_keyword = flag_z_keyword,
+  l_dir = flag_l_dir,
+  l_pthread = flag_l_pthread,
+  wl_gc_sections = flag_wl_gc_sections,
+  wl_strip_all = flag_wl_strip_all,
+  wl_eh_frame_hdr = flag_wl_eh_frame_hdr,
+  wl_no_dynamic_linker = flag_wl_no_dynamic_linker,
+  wl_entry_entry = flag_wl_entry_entry,
+  wl_z_relro = flag_wl_z_relro,
+  wl_z_now = flag_wl_z_now,
+  wl_z_noexecstack = flag_wl_z_noexecstack
 };
 
 // String literals for linker flags
 constexpr static const char *flag_strings[] = {
-  "-o",                    // 0  flag_object_file_name
-  "-fuse-ld=",             // 1  flag_use_ld
-  "-l",                    // 2  flag_l_library
-  "-nostartfiles",         // 3  flag_nostartfiles
-  "-nodefaultlibs",        // 4  flag_nodefaultlibs
-  "-nolibc",               // 5  flag_nolibc
-  "-nostdlib",             // 6  flag_nostdlib
-  "-nostdlib++",           // 7  flag_nostdlib_pp
-  "-e",                    // 8  flag_e_entry
-  "--entry=",              // 9  flag_entry
-  "-pie",                  // 10 flag_pie
-  "-pthread",              // 11 flag_pthread_link
-  "-r",                    // 12 flag_r
-  "-rdynamic",             // 13 flag_rdynamic
-  "-s",                    // 14 flag_s
-  "-static",               // 15 flag_static
-  "-static-pie",           // 16 flag_static_pie
-  "-static-libgcc",        // 17 flag_static_libgcc
-  "-static-libstdc++",     // 18 flag_static_libstdc_pp
-  "-static-libasan",       // 19 flag_static_libasan
-  "-static-libtsan",       // 20 flag_static_libtsan
-  "-static-liblsan",       // 21 flag_static_liblsan
-  "-static-libubsan",      // 22 flag_static_libubsan
-  "-shared",               // 23 flag_shared
-  "-shared-libgcc",        // 24 flag_shared_libgcc
-  "-symbolic",             // 25 flag_symbolic
-  "-T",                    // 26 flag_t_script
-  "-Wl,",                  // 27 flag_wl
-  "-Xlinker",              // 28 flag_xlinker
-  "-u",                    // 29 flag_u_symbol
-  "-z"                     // 30 flag_z_keyword
+  "-o",                          // 0  flag_object_file_name
+  "-fuse-ld=",                   // 1  flag_use_ld
+  "-l",                          // 2  flag_l_library
+  "-nostartfiles",               // 3  flag_nostartfiles
+  "-nodefaultlibs",              // 4  flag_nodefaultlibs
+  "-nolibc",                     // 5  flag_nolibc
+  "-nostdlib",                   // 6  flag_nostdlib
+  "-nostdlib++",                 // 7  flag_nostdlib_pp
+  "-e",                          // 8  flag_e_entry
+  "--entry=",                    // 9  flag_entry
+  "-pie",                        // 10 flag_pie
+  "-pthread",                    // 11 flag_pthread_link
+  "-r",                          // 12 flag_r
+  "-rdynamic",                   // 13 flag_rdynamic
+  "-s",                          // 14 flag_s
+  "-static",                     // 15 flag_static
+  "-static-pie",                 // 16 flag_static_pie
+  "-static-libgcc",              // 17 flag_static_libgcc
+  "-static-libstdc++",           // 18 flag_static_libstdc_pp
+  "-static-libasan",             // 19 flag_static_libasan
+  "-static-libtsan",             // 20 flag_static_libtsan
+  "-static-liblsan",             // 21 flag_static_liblsan
+  "-static-libubsan",            // 22 flag_static_libubsan
+  "-shared",                     // 23 flag_shared
+  "-shared-libgcc",              // 24 flag_shared_libgcc
+  "-symbolic",                   // 25 flag_symbolic
+  "-T",                          // 26 flag_t_script
+  "-Wl,",                        // 27 flag_wl
+  "-Xlinker",                    // 28 flag_xlinker
+  "-u",                          // 29 flag_u_symbol
+  "-z",                          // 30 flag_z_keyword
+  "-L",                          // 31 flag_l_dir
+  "-lpthread",                   // 32 flag_l_pthread
+  "-Wl,--gc-sections",           // 33 flag_wl_gc_sections
+  "-Wl,--strip-all",             // 34 flag_wl_strip_all
+  "-Wl,--eh-frame-hdr",          // 35 flag_wl_eh_frame_hdr
+  "-Wl,--no-dynamic-linker",     // 36 flag_wl_no_dynamic_linker
+  "-Wl,-e,entry",                // 37 flag_wl_entry_entry
+  "-Wl,-z,relro",                // 38 flag_wl_z_relro
+  "-Wl,-z,now",                  // 39 flag_wl_z_now
+  "-Wl,-z,noexecstack",          // 40 flag_wl_z_noexecstack
 };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_wl_z_noexecstack + 1,
+              "flags.hh: linker_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -3139,6 +3347,10 @@ constexpr static const i32 flag_mno_direct_extern_access = 202;
 constexpr static const i32 flag_munroll_only_small_loops = 203;
 constexpr static const i32 flag_mlam = 204;
 constexpr static const i32 flag_march_native = 205;
+constexpr static const i32 flag_march_x86_64 = 206;
+constexpr static const i32 flag_march_x86_64_v2 = 207;
+constexpr static const i32 flag_march_x86_64_v3 = 208;
+constexpr static const i32 flag_march_x86_64_v4 = 209;
 
 enum class flags : i32 {
   mtune = flag_mtune,
@@ -3346,7 +3558,11 @@ enum class flags : i32 {
   mno_direct_extern_access = flag_mno_direct_extern_access,
   munroll_only_small_loops = flag_munroll_only_small_loops,
   mlam = flag_mlam,
-  march_native = flag_march_native
+  march_native = flag_march_native,
+  march_x86_64 = flag_march_x86_64,
+  march_x86_64_v2 = flag_march_x86_64_v2,
+  march_x86_64_v3 = flag_march_x86_64_v3,
+  march_x86_64_v4 = flag_march_x86_64_v4
 };
 
 constexpr static const char *flag_strings[] = { "-mtune=",
@@ -3554,7 +3770,14 @@ constexpr static const char *flag_strings[] = { "-mtune=",
                                                 "-mno-direct-extern-access",
                                                 "-munroll-only-small-loops",
                                                 "-mlam=",
-                                                "-march=native" };
+                                                "-march=native",
+                                                "-march=x86-64",
+                                                "-march=x86-64-v2",
+                                                "-march=x86-64-v3",
+                                                "-march=x86-64-v4" };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_march_x86_64_v4 + 1,
+              "flags.hh: x86_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -3600,6 +3823,8 @@ constexpr static const i32 flag_moutline_atomics = 31;
 constexpr static const i32 flag_mearly_ldp_fusion = 32;
 constexpr static const i32 flag_mlate_ldp_fusion = 33;
 constexpr static const i32 flag_w_experimental_fmv_target = 34;
+constexpr static const i32 flag_mbranch_protection_standard = 35;
+constexpr static const i32 flag_mno_outline_atomics = 36;
 
 enum class flags : i32 {
   mabi = flag_mabi,
@@ -3636,7 +3861,9 @@ enum class flags : i32 {
   moutline_atomics = flag_moutline_atomics,
   mearly_ldp_fusion = flag_mearly_ldp_fusion,
   mlate_ldp_fusion = flag_mlate_ldp_fusion,
-  w_experimental_fmv_target = flag_w_experimental_fmv_target
+  w_experimental_fmv_target = flag_w_experimental_fmv_target,
+  mbranch_protection_standard = flag_mbranch_protection_standard,
+  mno_outline_atomics = flag_mno_outline_atomics
 };
 
 constexpr static const char *flag_strings[] = { "-mabi=",
@@ -3673,7 +3900,12 @@ constexpr static const char *flag_strings[] = { "-mabi=",
                                                 "-moutline-atomics",
                                                 "-mearly-ldp-fusion",
                                                 "-mlate-ldp-fusion",
-                                                "-Wexperimental-fmv-target" };
+                                                "-Wexperimental-fmv-target",
+                                                "-mbranch-protection=standard",
+                                                "-mno-outline-atomics" };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_mno_outline_atomics + 1,
+              "flags.hh: aarch64_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -3747,6 +3979,7 @@ constexpr static const i32 flag_march_armv7_a = 59;
 constexpr static const i32 flag_march_armv8_a = 60;
 constexpr static const i32 flag_mfpu_neon = 61;
 constexpr static const i32 flag_mfloat_abi_hard = 62;
+constexpr static const i32 flag_mbranch_protection_pac_ret = 63;
 
 enum class flags : i32 {
   mapcs_frame = flag_mapcs_frame,
@@ -3811,7 +4044,8 @@ enum class flags : i32 {
   march_armv7_a = flag_march_armv7_a,
   march_armv8_a = flag_march_armv8_a,
   mfpu_neon = flag_mfpu_neon,
-  mfloat_abi_hard = flag_mfloat_abi_hard
+  mfloat_abi_hard = flag_mfloat_abi_hard,
+  mbranch_protection_pac_ret = flag_mbranch_protection_pac_ret
 };
 
 constexpr static const char *flag_strings[] = { "-mapcs-frame",
@@ -3876,7 +4110,11 @@ constexpr static const char *flag_strings[] = { "-mapcs-frame",
                                                 "-march=armv7-a",
                                                 "-march=armv8-a",
                                                 "-mfpu=neon",
-                                                "-mfloat-abi=hard" };
+                                                "-mfloat-abi=hard",
+                                                "-mbranch-protection=pac-ret" };
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_mbranch_protection_pac_ret + 1,
+              "flags.hh: arm_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
 get_string_flag(flags f)
@@ -3886,3 +4124,35 @@ get_string_flag(flags f)
 }     // namespace arm_flags
 
 }     // namespace gcc
+
+// nasm is not gcc; its flags get their own table, same four-part shape
+namespace nasm
+{
+namespace format_flags
+{
+constexpr static const i32 flag_elf32 = 0;
+constexpr static const i32 flag_elf64 = 1;
+
+enum class flags : i32 {
+  elf32 = flag_elf32,
+  elf64 = flag_elf64
+};
+
+// String literals for nasm output-format flags. the embedded space is part of the flag
+constexpr static const char *flag_strings[] = {
+  "-f elf32",     // 0  flag_elf32
+  "-f elf64",     // 1  flag_elf64
+};
+
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_elf64 + 1,
+              "flags.hh: nasm::format_flags flag_strings[] is out of step with its index constants");
+
+constexpr const char *
+get_string_flag(flags f)
+{
+  return flag_strings[static_cast<i32>(f)];
+}
+
+}     // namespace format_flags
+}     // namespace nasm
+
