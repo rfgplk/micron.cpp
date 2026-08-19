@@ -7,15 +7,6 @@
 
 #include "../../../types.hpp"
 
-// Forward declarations of every X11 type we touch from gfx/platform/x11.hpp.
-// Layouts mirror /usr/include/X11/Xlib.h so we can build XSetWindowAttributes
-// and inspect XConfigureEvent / XClientMessageEvent without including Xlib
-// (which would pull in libc).
-//
-// XID, Atom, etc. are spelled `unsigned long` in Xlib, which matches the
-// host machine word on every Linux ABI we care about; using the plain type
-// keeps the wire-level layout 1:1 with what libX11 sees.
-
 namespace micron
 {
 namespace gfx
@@ -36,9 +27,8 @@ using XBool = int;
 using XStatus = int;
 
 struct __X11Display;
-using XDisplay = __X11Display;      // opaque; libX11 owns the layout
+using XDisplay = __X11Display;
 
-// XVisualInfo — we read `visual` and `visualid`; libX11 fills the rest.
 struct XVisual_opaque;
 
 struct XVisualInfo {
@@ -54,8 +44,6 @@ struct XVisualInfo {
   int bits_per_rgb;
 };
 
-// XSetWindowAttributes — passed to XCreateWindow. We typically set
-// background_pixel, border_pixel, colormap, event_mask, and override_redirect.
 struct XSetWindowAttributes {
   XPixmap background_pixmap;
   unsigned long background_pixel;
@@ -74,7 +62,6 @@ struct XSetWindowAttributes {
   XCursor cursor;
 };
 
-// CWxxx flags for XCreateWindow attribute mask.
 inline constexpr unsigned long CWBackPixmap = 1L << 0;
 inline constexpr unsigned long CWBackPixel = 1L << 1;
 inline constexpr unsigned long CWBorderPixmap = 1L << 2;
@@ -91,8 +78,6 @@ inline constexpr unsigned long CWDontPropagate = 1L << 12;
 inline constexpr unsigned long CWColormap = 1L << 13;
 inline constexpr unsigned long CWCursor = 1L << 14;
 
-// Event masks (XSelectInput). Graphics-only events; pointer/keyboard masks
-// go through io/uxin/ if the user wants input.
 inline constexpr long NoEventMask = 0L;
 inline constexpr long StructureNotifyMask = 1L << 17;
 inline constexpr long ExposureMask = 1L << 15;
@@ -101,18 +86,14 @@ inline constexpr long FocusChangeMask = 1L << 21;
 inline constexpr long EnterWindowMask = 1L << 4;
 inline constexpr long LeaveWindowMask = 1L << 5;
 
-// Window classes for XCreateWindow.
 inline constexpr int InputOutput = 1;
 inline constexpr int InputOnly = 2;
 
-// Visual class.
 inline constexpr int TrueColor = 4;
 
-// AllocNone / AllocAll for XCreateColormap.
 inline constexpr int AllocNone = 0;
 inline constexpr int AllocAll = 1;
 
-// Event types we care about (XEvent.type values).
 inline constexpr int KeyPress = 2;
 inline constexpr int KeyRelease = 3;
 inline constexpr int ButtonPress = 4;
@@ -127,9 +108,6 @@ inline constexpr int MapNotify = 19;
 inline constexpr int UnmapNotify = 18;
 inline constexpr int ConfigureNotify = 22;
 inline constexpr int ClientMessage = 33;
-
-// Specific event structs (XEvent is a union over all of these; type is at
-// offset 0 in every variant, so casting through type is sound).
 
 struct XConfigureEvent {
   int type;
@@ -202,9 +180,6 @@ struct XUnmapEvent {
   XBool from_configure;
 };
 
-// sizeof(XEvent) on x86_64 is 192 bytes; on i686 it is 96. We use a generous
-// upper bound so the buffer can hold any concrete subtype regardless of
-// architecture, and rely on the `type` field at offset 0 for dispatch.
 struct XEvent {
   union {
     int type;

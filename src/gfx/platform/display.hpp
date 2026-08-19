@@ -19,14 +19,11 @@ namespace gfx
 namespace platform
 {
 
-// Process-singleton lib accessors for the X11 / Wayland clients. Each is
-// constructed on first call and throws library_error if the lib can't be
-// loaded — subsequent calls retry per the C++ standard's "static local init
-// throws → not initialized, retry next time" rule.
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// lib accessors for the X11 / Wayland clients
 //
-// API-specific lib singletons (libGL.so.1 via glx_lib(), libEGL.so.1 via
-// egl_lib(), libwayland-egl.so.1 via wayland_egl_lib(), libvulkan.so.1 via
-// vk_lib()) live in their respective gfx/gl/ and gfx/vk/ headers.
+// (libGL.so.1 via glx_lib(), libEGL.so.1 via egl_lib(), libwayland-egl.so.1 via wayland_egl_lib(), libvulkan.so.1 viavk_lib()) live in
+// their respective gfx/gl/ and gfx/vk/ headers
 
 inline x11_lib_t &
 x11_lib() noexcept(false)
@@ -42,24 +39,13 @@ wayland_lib() noexcept(false)
   return lib;
 }
 
-// The user-facing display handle. Hides the X11 vs Wayland choice behind
-// a runtime tag; only the chosen backend's underlying state is live, the
-// other is left default-constructed (its destructor is a no-op when no
-// resources are held).
-//
-// `raw_fd()` is the integration point with io/uxin/ — a separate event
-// loop can register this fd in its own epoll instance to drive input
-// alongside the gfx module's rendering.
 class display
 {
 private:
   backend_tag_t __backend = backend_tag_t::none;
   x11_display_t __x11;
   wayland_display_t __wl;
-  // Static, statically-allocated buffers for the per-backend failure reason.
-  // Populated by __try_open so display::__throw_open_failed can include the
-  // actual cause (lib not loaded, server unreachable, missing entry points)
-  // instead of the misleading "DISPLAY/WAYLAND_DISPLAY both absent".
+
   static inline char __x11_last_err[256] = "";
   static inline char __wl_last_err[256] = "";
 
@@ -86,7 +72,7 @@ private:
     try {
       if ( tag == backend_tag_t::x11 ) {
         __x11.open(x11_lib());
-      } else {      // wayland
+      } else {
         __wl.open(wayland_lib());
       }
       __backend = tag;
@@ -99,11 +85,10 @@ private:
       return false;
     }
 #else
-    // below the eh gate open() aborts instead of throwing, so a failed probe cannot be reported as
-    // false. Acceptable: gfx dlopens libX11/libwayland and is unreachable in a freestanding build.
+
     if ( tag == backend_tag_t::x11 ) {
       __x11.open(x11_lib());
-    } else {      // wayland
+    } else {
       __wl.open(wayland_lib());
     }
     __backend = tag;
@@ -114,12 +99,7 @@ private:
   [[noreturn]] static void
   __throw_open_failed()
   {
-    // Compose a final message that captures the actual per-backend cause —
-    // typically "soname not present in host" when the binary didn't link
-    // -l:libX11.so.6 / -l:libwayland-client.so.0, or "XOpenDisplay returned
-    // null" when the server is unreachable. The old "absent or unbound"
-    // wording made it look like an env-var parsing bug; the env reads
-    // succeed, the lib lookup is what fails.
+
     static char buf[768];
     const char *p1 = "gfx::display: no display server reachable. x11: ";
     const char *p2 = "; wayland: ";
@@ -136,14 +116,10 @@ private:
   }
 
 public:
-  ~display() = default;      // member destructors handle cleanup
+  ~display() = default;
 
   display() : display(select_backend()) { }
 
-  // Try `requested` first, then fall back to the other backend if its env
-  // var is set. This is how we tolerate environments where both DISPLAY
-  // and WAYLAND_DISPLAY leak from the shell but only one is reachable —
-  // we open whichever responds and let the caller query `backend()` after.
   explicit display(backend_tag_t requested)
   {
     backend_tag_t alt = backend_tag_t::none;
@@ -182,9 +158,6 @@ public:
     }
   }
 
-  // Backend escape hatches. Return nullptr if this display isn't of that
-  // backend — call sites should check `backend()` first and only use the
-  // matching accessor.
   x11_display_t *
   as_x11() noexcept
   {

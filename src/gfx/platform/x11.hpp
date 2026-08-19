@@ -12,15 +12,10 @@
 #include "__bits/__x11_types.hpp"
 #include "platform.hpp"
 
-// X11 client + window-management backend. Loads libX11.so.6 via micron::dso
-// (prefers an already-loaded host copy if the host process linked -lX11;
-// otherwise the loader maps it fresh — though the host path is much safer
-// for a stateful lib like X11).
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// X11 client + window-management backend
 //
-// This module owns only "graphics-relevant" window state: size, title,
-// close request, visual / colormap. Input events stay in io/uxin/ — we
-// route them by sharing the X11 fd through gfx::display::raw_fd() so a
-// single epoll loop can drive both.
+// loads libX11.so.6 via micron::dso
 
 namespace micron
 {
@@ -53,10 +48,6 @@ using PFN_XFree = int (*)(void *data);
 using PFN_XResizeWindow = int (*)(XDisplay *display, XWindow w, unsigned int width, unsigned int height);
 using PFN_XMatchVisualInfo = XStatus (*)(XDisplay *display, int screen, int depth, int c_class, XVisualInfo *vinfo_return);
 
-// libX11 entry-point table. Constructed once per process, then borrowed by
-// every x11_display_t / x11_window_t. POD aggregate by design — direct member
-// access (lib.XOpenDisplay(...)). Throws library_error on missing required
-// symbols.
 struct x11_lib_t {
   host_dso host;
   PFN_XInitThreads XInitThreads = nullptr;
@@ -197,10 +188,6 @@ private:
   bool __should_close = false;
   x11_display_t *__disp = nullptr;
 
-  // Window-event callbacks installed by gfx::window. The owner pointer is
-  // the gfx::window* erased to void* (gfx::window is forward-declared up the
-  // include chain). All slots are nullable; an unset slot is silently
-  // ignored on the corresponding event.
   void *__owner = nullptr;
   void (*__cb_resize)(void *, i32, i32) noexcept = nullptr;
   void (*__cb_close)(void *) noexcept = nullptr;
@@ -286,11 +273,6 @@ public:
     __cb_move = f;
   }
 
-  // Caller chooses the visual. For GL, gfx::gl::pick_x11_visual returns one
-  // built from a GLX FBConfig; for Vulkan, the caller can build one from
-  // XGetVisualInfo with screen depth, or pass nullptr to use the root
-  // window's default visual (handled inside create() below — current API
-  // requires a non-null visual, kept for backwards compat).
   void
   create(x11_display_t &dpy, XVisualInfo *vi, i32 w, i32 h, const char *title)
   {
@@ -316,8 +298,6 @@ public:
 
     if ( title ) x.XStoreName(dpy.display(), __window, title);
 
-    // Subscribe to the WM_DELETE_WINDOW protocol so the close button fires
-    // a ClientMessage instead of killing our connection.
     __wm_protocols = x.XInternAtom(dpy.display(), "WM_PROTOCOLS", 0);
     __wm_delete_window = x.XInternAtom(dpy.display(), "WM_DELETE_WINDOW", 0);
     XAtom protos[1] = { __wm_delete_window };

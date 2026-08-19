@@ -7,12 +7,6 @@
 
 #include "../../../types.hpp"
 
-// Wayland-client opaque type forwards plus the few PFN typedefs we need.
-// Layouts are intentionally hidden: libwayland-client owns the actual
-// structures, and we only ever hold pointers and call wl_proxy_* on them.
-// The hand-written xdg-shell wire-protocol marshalling lives in
-// gfx/platform/wayland_xdg_shell.hpp; it uses the wl_proxy primitives below.
-
 namespace micron
 {
 namespace gfx
@@ -36,17 +30,12 @@ struct wl_shm;
 struct wl_region;
 struct wl_egl_window;
 
-// xdg-shell — also opaque (we treat its proxies as wl_proxy under the hood).
 struct xdg_wm_base;
 struct xdg_surface;
 struct xdg_toplevel;
 struct xdg_popup;
 struct xdg_positioner;
 
-// Full definition of the wl_interface / wl_message structs from
-// /usr/include/wayland-util.h. We replicate the layout 1:1 so that the
-// pointer we hand to wl_proxy_marshal_flags is laid out exactly as
-// libwayland expects.
 struct wl_interface;
 
 struct wl_message {
@@ -64,20 +53,17 @@ struct wl_interface {
   const wl_message *events;
 };
 
-// A wl_argument is the wire-format payload slot used by wl_proxy_marshal*.
-// Layout matches /usr/include/wayland-util.h.
 union wl_argument {
   i32 i;
   u32 u;
-  i32 f;      // wl_fixed_t — 24.8 signed
+  i32 f;
   const char *s;
   wl_proxy *o;
-  u32 n;        // new_id
-  void *a;      // wl_array*
-  i32 h;        // file descriptor
+  u32 n;
+  void *a;
+  i32 h;
 };
 
-// PFN typedefs for the wl_* entry points we resolve via micron::dso.
 using PFN_wl_display_connect = wl_display *(*)(const char *name);
 using PFN_wl_display_connect_to_fd = wl_display *(*)(int fd);
 using PFN_wl_display_disconnect = void (*)(wl_display *display);
@@ -100,12 +86,10 @@ using PFN_wl_proxy_set_user_data = void (*)(wl_proxy *proxy, void *user_data);
 using PFN_wl_proxy_get_version = u32 (*)(wl_proxy *proxy);
 using PFN_wl_proxy_get_id = u32 (*)(wl_proxy *proxy);
 
-// libwayland-egl.so.1 — separate library from libwayland-client.
 using PFN_wl_egl_window_create = wl_egl_window *(*)(wl_surface * surface, int width, int height);
 using PFN_wl_egl_window_destroy = void (*)(wl_egl_window *egl_window);
 using PFN_wl_egl_window_resize = void (*)(wl_egl_window *egl_window, int width, int height, int dx, int dy);
 
-// wl_proxy_marshal_flags flags.
 inline constexpr u32 WL_MARSHAL_FLAG_DESTROY = 1u << 0;
 
 };      // namespace platform

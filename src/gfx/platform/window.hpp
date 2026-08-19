@@ -20,20 +20,9 @@ namespace gfx
 namespace platform
 {
 
-// API-specific extension hooks for window creation. All slots are nullable
-// — leaving them empty (the default) yields a Vulkan-friendly window with
-// the screen's default X11 visual and no Wayland native handle (the caller
-// passes the raw wl_surface directly to vkCreateWaylandSurfaceKHR).
-//
-// GL fills these in via the helpers in gfx/gl/window.hpp:
-//   x11_pick_visual   → glx_context_t::pick_visual returning FBConfig + visual
-//   wl_create_native  → wayland_egl_lib::wl_egl_window_create
-//   wl_resize_native  → wayland_egl_lib::wl_egl_window_resize
-//   wl_destroy_native → wayland_egl_lib::wl_egl_window_destroy
-
 struct x11_visual_choice {
   XVisualInfo *visual = nullptr;
-  void *extra = nullptr;      // GL: GLXFBConfig (cast). VK: ignored.
+  void *extra = nullptr;
 };
 
 struct window_hooks {
@@ -46,23 +35,6 @@ struct window_hooks {
   void *wl_user = nullptr;
 };
 
-// User-facing window. Wraps the platform-specific native-window machinery
-// (x11_window_t or wayland_window_t) plus the visual/config selection that
-// API-specific contexts (gl::context / vk::surface) will reuse.
-//
-// Window-event callback API (set_*_func<auto Fn>()): each setter takes a
-// comptime-known callable as a non-type template parameter and synthesizes
-// a thunk that invokes Fn directly — no dynamic dispatch, no std::function.
-// Fn may be a free function, a function pointer, or a captureless lambda;
-// it must satisfy one of the two accepted signatures for that event (the
-// bare event-shape signature, or one prepended with `window&`).
-//
-// Derived classes (gfx::gl::window) may add their own set_*_func<Fn>
-// overloads constrained over their derived reference type — they install
-// a user-callback pointer via the `__set_user_*` helpers below; the
-// platform-level resize thunk always fires the wl_native_resize hook
-// before the user callback, so the EGL-side wl_egl_window stays in sync
-// with the wl_surface size even if no user resize handler is installed.
 class window
 {
 protected:
@@ -70,14 +42,11 @@ protected:
   x11_window_t __x11;
   wayland_window_t __wl;
   XVisualInfo *__x11_visual = nullptr;
-  XVisualInfo __x11_visual_storage{};      // fallback storage when no hook supplied one
+  XVisualInfo __x11_visual_storage{};
   void *__x11_extra = nullptr;
   void *__wl_native = nullptr;
   window_hooks __hooks{};
 
-  // User-facing callback slots. Set by set_*_func<Fn>() (in this class) or
-  // by derived classes' overloads. The platform thunks below chain these
-  // after any API-specific native-handle bookkeeping.
   void (*__user_resize)(void *, i32, i32) noexcept = nullptr;
   void (*__user_close)(void *) noexcept = nullptr;
   void (*__user_focus)(void *, bool) noexcept = nullptr;
@@ -85,16 +54,8 @@ protected:
   void (*__user_visibility)(void *, bool) noexcept = nullptr;
   void (*__user_move)(void *, i32, i32) noexcept = nullptr;
 
-  // Internal resize hook installed by an API-side renderer (e.g. gl::context)
-  // so it can re-bind its drawable when the window is resized. Fires AFTER
-  // the wl_native resize hook but BEFORE the user-facing callback, so the
-  // user's callback observes an already-rebound context. Single slot — only
-  // one renderer can bind to a window at a time, which matches how
-  // gl::context / vk::surface are designed.
   void (*__internal_resize)(void *, i32, i32) noexcept = nullptr;
   void *__internal_resize_data = nullptr;
-
-  // --- Platform thunks: always installed in the ctor below. ---------------
 
   static void
   __platform_resize_thunk(void *self_v, i32 w, i32 h) noexcept
@@ -156,16 +117,11 @@ protected:
       __x11_visual = choice.visual;
       __x11_extra = choice.extra;
     } else {
-      // Vulkan / headless case: no caller-supplied visual picker, so we
-      // build a default 24-bit TrueColor visual via XMatchVisualInfo and
-      // point at our inline-storage copy. Vulkan creates its VkSurfaceKHR
-      // from the raw Display* + XWindow — the visual is only used to
-      // satisfy XCreateWindow's mandatory visual argument.
+
       auto &lib = x11_lib();
       if ( !lib.XMatchVisualInfo ) throw except::library_error("gfx::window: x11_pick_visual hook absent and XMatchVisualInfo unavailable");
       const int xscreen = xd->screen();
-      // 24-bit TrueColor first, fall back to 32-bit TrueColor if the
-      // server's default depth differs.
+
       if ( !lib.XMatchVisualInfo(xd->display(), xscreen, 24, TrueColor, &__x11_visual_storage)
            && !lib.XMatchVisualInfo(xd->display(), xscreen, 32, TrueColor, &__x11_visual_storage) ) {
         throw except::library_error("gfx::window: XMatchVisualInfo found no TrueColor visual");
@@ -277,8 +233,6 @@ public:
     if ( __internal_resize ) __internal_resize(__internal_resize_data, w, h);
   }
 
-  // Install the internal resize hook described above. Used by gl::context /
-  // vk::surface; user code should generally use set_resize_func<Fn>() instead.
   void
   set_internal_resize_cb(void (*f)(void *, i32, i32) noexcept, void *data) noexcept
   {
@@ -336,14 +290,6 @@ public:
   {
     return __wl_native;
   }
-
-  // --- Window event callbacks (comptime auto-Fn dispatch) -----------------
-  //
-  // The set_*_func<Fn> overloads here constrain Fn over `window &` (this
-  // base class). Derived classes (gl::window / vk::window) may add their
-  // own overloads constrained over their derived reference type — the
-  // thunks they install go into the same __user_* slots, so a derived
-  // override transparently composes with the platform-level resize chain.
 
   template<auto Fn>
     requires(micron::is_invocable_v<decltype(Fn), i32, i32> || micron::is_invocable_v<decltype(Fn), window &, i32, i32>)

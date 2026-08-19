@@ -12,15 +12,6 @@
 #include "../../memory/mmap_bits.hpp"
 #include "../../types.hpp"
 
-// Runtime backend selection for the gfx module — used by both the GL and VK
-// API layers built on top.
-//
-// micron has no env-vector primitive yet, so we read /proc/self/environ
-// directly (a NUL-separated KEY=VALUE blob). Cached on first access; the
-// underlying mapping stays for the lifetime of the process. A future
-// linux/env.hpp can absorb this — for now it lives here because the gfx
-// platform layer is its only caller.
-
 namespace micron
 {
 namespace gfx
@@ -47,7 +38,6 @@ __load() noexcept
   if ( __loaded ) return;
   __loaded = true;
 
-  // /proc/self/environ reports size 0 in stat; read in chunks until EOF.
   i32 fd = posix::open("/proc/self/environ", posix::o_rdonly);
   if ( fd < 0 ) return;
   constexpr usize cap = 65536;
@@ -68,8 +58,6 @@ __load() noexcept
   __sz = total;
 }
 
-// Look up `key`. Returns nullptr if absent; otherwise a pointer to the value
-// substring inside __buf (NUL-terminated by the kernel's environ layout).
 inline const char *
 __get(const char *key) noexcept
 {
@@ -78,11 +66,11 @@ __get(const char *key) noexcept
   const usize klen = micron::strlen(key);
   usize i = 0;
   while ( i < __sz ) {
-    // Match "KEY=" — entry must be klen+1 bytes inside the blob and end with '='.
+
     if ( i + klen < __sz && __buf[i + klen] == '=' && micron::strncmp(__buf + i, key, klen) == 0 ) {
       return __buf + i + klen + 1;
     }
-    // Skip past the rest of this NUL-separated entry.
+
     while ( i < __sz && __buf[i] != 0 ) ++i;
     ++i;
   }
@@ -103,8 +91,6 @@ env(const char *key) noexcept
   return __env::__get(key);
 }
 
-// Pick a backend by examining standard XDG / X / Wayland environment vars.
-// Returns `none` if neither X11 nor Wayland are reachable.
 inline backend_tag_t
 select_backend() noexcept
 {
@@ -114,7 +100,7 @@ select_backend() noexcept
 
   if ( session && micron::strcmp(session, "wayland") == 0 && __env::__nonempty(wl) ) return backend_tag_t::wayland;
   if ( session && micron::strcmp(session, "x11") == 0 && __env::__nonempty(xdpy) ) return backend_tag_t::x11;
-  // No session hint — fall back to whatever transport is present.
+
   if ( __env::__nonempty(wl) ) return backend_tag_t::wayland;
   if ( __env::__nonempty(xdpy) ) return backend_tag_t::x11;
   return backend_tag_t::none;
