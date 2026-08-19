@@ -43,7 +43,7 @@ read_versym(const image &img, const section_row &sec)
 {
   micron::vector<half> out{};
   if ( sec.type != sht_gnu_versym || sec.size < 2 ) return out;
-  const u64 count = sec.size / 2;
+  const u64 count = clamp_records(img, sec.offset, 2, sec.size / 2);
   out.reserve(static_cast<usize>(count));
   for ( u64 i = 0; i < count; i++ ) {
     const span_t raw = img.at(sec.offset + i * 2, 2);

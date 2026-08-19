@@ -112,7 +112,8 @@ gnu_lookup_versioned(const dyn_info_t &d, const char *name, const char *want) no
   const u32 h = gnu_hash(name);
   const bloom_t bw = bloom[(h / bb) % bloom_size];
   const bloom_t bit_a = static_cast<bloom_t>(1) << (h % bb);
-  const bloom_t bit_b = static_cast<bloom_t>(1) << ((h >> (bloom_shift & 31u)) % bb);
+  // mask by the bloom word width, word size varies on arch spec
+  const bloom_t bit_b = static_cast<bloom_t>(1) << ((static_cast<bloom_t>(h) >> (bloom_shift & (bb - 1))) % bb);
   if ( (bw & (bit_a | bit_b)) != (bit_a | bit_b) ) return nullptr;
 
   word idx = buckets[h % nbuckets];

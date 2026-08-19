@@ -79,6 +79,8 @@ walk_sections(const image &img)
   micron::vector<section_row> out{};
   if ( !img.ok() || img.hdr.shoff == 0 ) return out;
 
+  if ( img.hdr.shentsize == 0 ) return out;
+
   u64 shnum = img.hdr.shnum;
   u64 shstrndx = img.hdr.shstrndx;
 
@@ -90,6 +92,7 @@ walk_sections(const image &img)
       if ( shstrndx == shn_xindex ) shstrndx = sec0.link;
     }
   }
+  shnum = clamp_records(img, img.hdr.shoff, img.hdr.shentsize, shnum);
   if ( shnum == 0 ) return out;
 
   out.reserve(static_cast<usize>(shnum));

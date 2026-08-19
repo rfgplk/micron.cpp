@@ -66,7 +66,7 @@ read_dynamic(const image &img, const micron::vector<segment_row> &segs, const mi
 
   const u64 entsize = img.is64() ? sizeof(dyn_t) : sizeof(dyn32_t);
   if ( span < entsize ) return out;
-  const u64 count = span / entsize;
+  const u64 count = clamp_records(img, base, entsize, span / entsize);
 
   micron::vector<dyn_row> entries{};
   entries.reserve(static_cast<usize>(count));

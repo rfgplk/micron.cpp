@@ -212,6 +212,12 @@ __build_host_dyn(host_module_t &m)
     case dt_gnu_hash:
       if ( __host_in_span(m, at, 4 * sizeof(word)) ) m.dyn.gnu_hash = reinterpret_cast<const word *>(at);
       break;
+    case dt_versym:
+      if ( __host_in_span(m, at, sizeof(half)) ) m.dyn.versym = reinterpret_cast<const half *>(at);
+      break;
+    case dt_syment:
+      m.dyn.syment = d->un.val;
+      break;
     case dt_soname:
       if ( d->un.val < m.dyn.strsz ) {
         m.dyn.soname = m.dyn.strtab + d->un.val;
@@ -320,7 +326,12 @@ host_resolve_sym(const char *name)
     if ( !m.valid ) continue;
     const nsym_t *s = lookup_sym(m.dyn, name);
     if ( s && s->shndx != shn_undef ) {
-      return reinterpret_cast<void *>(static_cast<uptr>(m.bias) + static_cast<uptr>(s->value));
+      void *a = reinterpret_cast<void *>(static_cast<uptr>(m.bias) + static_cast<uptr>(s->value));
+      if ( elf_st_type(s->info) == stt_gnu_ifunc ) {
+        using ifn = void *(*)();
+        a = reinterpret_cast<ifn>(a)();
+      }
+      return a;
     }
   }
   return nullptr;

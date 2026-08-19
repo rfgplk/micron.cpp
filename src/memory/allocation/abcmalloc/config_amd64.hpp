@@ -173,7 +173,10 @@ constexpr static const u32 __default_oom_check_interval = 1024;
 
 // enforce provenance forces the allocator to verify if a req. pointer has been allocated within that session. if it
 // hasn't fail out according to __default_fail_result
-constexpr static const bool __default_enforce_provenance = false;
+#ifndef MICRON_ABC_ENFORCE_PROVENANCE
+#define MICRON_ABC_ENFORCE_PROVENANCE false
+#endif
+constexpr static const bool __default_enforce_provenance = MICRON_ABC_ENFORCE_PROVENANCE;
 // NOTE: by enabling this the allocator will never return memory that has been freed to a new allocation
 // UNLESS the page on which it resides has been unmapped
 //
@@ -201,8 +204,15 @@ static_assert(!(__default_persistent_mode && __default_self_cleanup),
 static_assert(!(__default_persistent_mode && __default_per_class_free_cache),
               "abcmalloc: persistent mode requires __default_per_class_free_cache off (it regrants freed blocks).");
 constexpr static const bool __default_debug_notices = false;
-constexpr static const bool __default_zero_on_alloc = false;
-constexpr static const bool __default_zero_on_free = false;
+// scrub handed-out memory
+#ifndef MICRON_ABC_ZERO_ON_ALLOC
+#define MICRON_ABC_ZERO_ON_ALLOC false
+#endif
+constexpr static const bool __default_zero_on_alloc = MICRON_ABC_ZERO_ON_ALLOC;
+#ifndef MICRON_ABC_ZERO_ON_FREE
+#define MICRON_ABC_ZERO_ON_FREE false
+#endif
+constexpr static const bool __default_zero_on_free = MICRON_ABC_ZERO_ON_FREE;
 constexpr static const bool __default_full_on_free = false;
 constexpr static const bool __default_sanitize = false;
 constexpr static const byte __default_sanitize_with_on_alloc = 0xcc;
@@ -225,13 +235,20 @@ constexpr static const bool __default_unsafe_size_recovery = false;
 
 constexpr static const bool __default_check_alignment = false;      // verify that addresses passed to pop/freeze are naturally aligned
 
-constexpr static const bool __default_poison_on_free = false;
+#ifndef MICRON_ABC_POISON_ON_FREE
+#define MICRON_ABC_POISON_ON_FREE false
+#endif
+constexpr static const bool __default_poison_on_free = MICRON_ABC_POISON_ON_FREE;
 // fill freed regions with __default_poison_byte to detect use-after-free.
 
 constexpr static const byte __default_poison_byte = 0x7B;
 
-constexpr static const bool __default_redzone = false;      // insert canary bytes before/after user region on TLSF allocations
-                                                            // NOTE: uses 2 * __default_redzone_size bytes per alloc
+#ifndef MICRON_ABC_REDZONE
+#define MICRON_ABC_REDZONE false
+#endif
+constexpr static const bool __default_redzone = MICRON_ABC_REDZONE;      // insert canary bytes before/after user region on TLSF allocs
+                                                                         // NOTE: uses 2 * __default_redzone_size bytes per alloc
+                                                                         // (verified in __tier_remove*, so it DOES cover remote frees)
 
 constexpr static const byte __default_redzone_byte = 0xC1;
 constexpr static const usize __default_redzone_size = 8;

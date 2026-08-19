@@ -38,7 +38,7 @@ walk_segments(const image &img)
   micron::vector<segment_row> out{};
   if ( !img.ok() || img.hdr.phoff == 0 || img.hdr.phnum == 0 ) return out;
 
-  out.reserve(img.hdr.phnum);
+  out.reserve(static_cast<usize>(clamp_records(img, img.hdr.phoff, img.hdr.phentsize, img.hdr.phnum)));
   for ( u16 i = 0; i < img.hdr.phnum; i++ ) {
     const u64 off = img.hdr.phoff + static_cast<u64>(i) * static_cast<u64>(img.hdr.phentsize);
     segment_row row{};

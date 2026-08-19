@@ -21,7 +21,12 @@
 
 #pragma once
 
-#ifdef __ABC_AMD64
+// you may supplant a custom whole config via
+//  --def|-DABCMALLOC_CONFIG_HEADER='<ox/abc_config.hpp>'
+// the header must define every abc:: constant this tree references
+#if defined(ABCMALLOC_CONFIG_HEADER)
+#include ABCMALLOC_CONFIG_HEADER
+#elif defined(__ABC_AMD64)
 #include "config_amd64.hpp"
 #elif defined(__ABC_EMBED)
 #include "config_embed.hpp"

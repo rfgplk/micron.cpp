@@ -70,7 +70,7 @@ walk_one_table(const image &img, const section_row *symtab_sec, const micron::ve
   if ( symtab_sec == nullptr || img.src == nullptr ) return;
   const u64 entsize = img.is64() ? sizeof(sym_t) : sizeof(sym32_t);
   if ( symtab_sec->size < entsize ) return;
-  const u64 count = symtab_sec->size / entsize;
+  const u64 count = clamp_records(img, symtab_sec->offset, entsize, symtab_sec->size / entsize);
 
   const section_row *strtab_sec = symtab_sec->link < secs.size() ? &secs[symtab_sec->link] : nullptr;
 

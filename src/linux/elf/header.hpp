@@ -231,6 +231,7 @@ template<fmt_class C> struct dyn_info {
   const typename tr::sym *symtab = nullptr;
   const char *strtab = nullptr;
   xword strsz = 0;
+  xword syment = 0;        // DT_SYMENT; 0 means absent, assume sizeof(sym)
   xword symcount = 0;      // entries in .dynsym
 
   const word *hash = nullptr;
@@ -276,7 +277,8 @@ template<fmt_class C> struct dyn_info {
   const char *rpath = nullptr;
   const char *runpath = nullptr;
 
-  static constexpr usize max_needed = 64;
+  // raise if needed
+  static constexpr usize max_needed = 256;
   word needed[max_needed] = {};
   usize needed_count = 0;
   bool needed_truncated = false;

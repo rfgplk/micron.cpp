@@ -1,0 +1,7 @@
+/* Hide every definition so .dynsym holds nothing but UND imports.
+ *
+ * Required, not decoration: -fvisibility=hidden alone is not enough, because GNU ld emits
+ * __bss_start, _edata and _end as DEFINED globals. Those land in .dynsym as definitions, populate
+ * a gnu-hash bucket, and make the chain walk accidentally correct -- which would leave the
+ * fixture proving nothing. */
+{ local: *; };

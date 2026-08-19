@@ -68,6 +68,22 @@ struct image {
   }
 };
 
+inline u64
+records_available(const image &img, u64 off, u64 esz) noexcept
+{
+  if ( esz == 0 || img.src == nullptr ) return 0;
+  const u64 len = static_cast<u64>(img.src->size());
+  if ( off >= len ) return 0;
+  return (len - off) / esz;
+}
+
+inline u64
+clamp_records(const image &img, u64 off, u64 esz, u64 want) noexcept
+{
+  const u64 room = records_available(img, off, esz);
+  return want < room ? want : room;
+}
+
 inline micron::option<image, const char *>
 open_image(const source &src) noexcept
 {

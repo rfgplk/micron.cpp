@@ -36,6 +36,40 @@ test tests/rigor/elf_host.cpp --arm64 -s --timeout 120 -o bin/elf/arm64
 test tests/rigor/dl_dynamic.cpp --arm64 -s --timeout 120 -o bin/elf/arm64
 test tests/rigor/dl_secure.cpp --arm64 -s --timeout 120 -o bin/elf/arm64
 
+# ------------------------------------------------------------------------
+# corpus sweep: every ELF under /bin and /usr/lib64 (15,222 on a stock Fedora
+# box) through elf::read, cross-checked field by field against the oracle
+# inside the test. ~139M comparisons, ~4s native.
+#
+# The cross rows stride the corpus rather than taking a prefix, so the sample
+# spans the whole tree, and cap the per-file size: mapping a 60MB+ binary into
+# a 32-bit address space is a hazard, not coverage. The 32-bit rows also need
+# the stride because micron's default allocator rounds every request to 4096,
+# so one binary with ~100k symbols costs hundreds of MB in name strings alone.
+#
+# /bin does not exist in either Linaro sysroot, so qemu's -L remapping falls
+# through to the host and the arm/arm64 rows parse the SAME x86-64 corpus from
+# a non-x86 build. That is the point: either class, either host. (/usr/lib64
+# DOES exist in the aarch64 sysroot and resolves there, which is why arm64
+# sees a smaller corpus than arm32.)
+test tests/rigor/elf_corpus.cpp --timeout 600 -o bin/elf/x64
+test tests/rigor/elf_corpus.cpp --i386 --def MICRON_ELF_CORPUS_STRIDE=2 --def MICRON_ELF_CORPUS_MAX_FILE_MB=64 --timeout 600 -o bin/elf/i386
+test tests/rigor/elf_corpus.cpp --arm -s --def MICRON_ELF_CORPUS_STRIDE=2 --def MICRON_ELF_CORPUS_MAX_FILE_MB=32 --def MICRON_ELF_CORPUS_MIN_FILES=256 --timeout 900 -o bin/elf/arm
+test tests/rigor/elf_corpus.cpp --arm64 -s --def MICRON_ELF_CORPUS_MAX_FILE_MB=48 --def MICRON_ELF_CORPUS_MIN_FILES=256 --timeout 900 -o bin/elf/arm64
+
+# malformed-input robustness: truncation ladders, header mutations, the class
+# fork, the allocation-amplification shapes, and a byte-flip fuzz on a FIXED
+# seed. Runs over a heap copy, so ASan's redzone sits exactly at src.size().
+#
+# The 32-bit rows matter most here. Before read::clamp_records, an oversized
+# reserve() merely threw except::critical_error on a 64-bit host but reached
+# abc::abort_state() on a 32-bit one -- sys_exit(11), uncatchable, so the suite
+# died before reporting anything. That is the shape these rows guard.
+test tests/rigor/elf_malformed.cpp --timeout 300 -o bin/elf/x64
+test tests/rigor/elf_malformed.cpp --i386 --timeout 300 -o bin/elf/i386
+test tests/rigor/elf_malformed.cpp --arm -s --def MICRON_ELF_FUZZ_ITERS=512 --timeout 300 -o bin/elf/arm
+test tests/rigor/elf_malformed.cpp --arm64 -s --def MICRON_ELF_FUZZ_ITERS=1024 --timeout 300 -o bin/elf/arm64
+
 build tests/compiletests/elf.cpp -k -o bin/elf/free
 build tests/compiletests/elf.cpp -ke -o bin/elf/free
 build tests/compiletests/elf.cpp --i386 -k -o bin/elf/free_i386

@@ -88,14 +88,20 @@ constexpr i32 file_ok = 0;
 constexpr i32 access_ok = 0;
 
 // WARNING: O_DIRECTORY / O_NOFOLLOW / O_DIRECT / O_LARGEFILE are encoded with DIFFERENT bit values depending on the kernel ABI
-#if defined(__micron_arch_arm32)
+//
+// arm64 belongs with arm32
+#if defined(__micron_arch_arm32) || defined(__micron_arch_arm64)
 constexpr i32 o_direct = 0200000;                         // 0x10000
 constexpr i32 o_directory = 040000;                       // 0x4000
 constexpr i32 o_tmpfile = (020000000 | o_directory);      // __O_TMPFILE | O_DIRECTORY
 constexpr i32 o_nofollow = 0100000;                       // 0x8000
-constexpr i32 o_largefile = 0400000;                      // 0x20000 (ILP32: must be requested)
+#if defined(__micron_arch_width_64)
+constexpr i32 o_largefile = 00;      // LP64: large files are the default
 #else
-// asm-generic encoding: amd64, i386, arm64 (and riscv, ...)
+constexpr i32 o_largefile = 0400000;      // 0x20000 (ILP32: must be requested)
+#endif
+#else
+// asm-generic encoding: amd64, i386 (and riscv, ...)
 constexpr i32 o_direct = 040000;                          // 0x4000
 constexpr i32 o_directory = 0200000;                      // 0x10000
 constexpr i32 o_tmpfile = (020000000 | o_directory);      // __O_TMPFILE | O_DIRECTORY

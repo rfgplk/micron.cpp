@@ -157,7 +157,12 @@ __resolve_across_loaded(void *user, const char *name, u32 sym_index) noexcept
   for ( module_t *m = __loaded_modules; m; m = m->next ) {
     const nsym_t *s = lookup_sym(m->dyn, name);
     if ( s && s->shndx != shn_undef ) {
-      return reinterpret_cast<void *>(m->load_base + s->value);
+      void *a = reinterpret_cast<void *>(m->load_base + s->value);
+      if ( elf_st_type(s->info) == stt_gnu_ifunc ) {
+        using ifn = void *(*)();
+        a = reinterpret_cast<ifn>(a)();
+      }
+      return a;
     }
   }
   return host_resolve_sym(name);
@@ -177,6 +182,9 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const ndyn_t *dyn) noexcept
     switch ( d->tag ) {
     case dt_symtab:
       out.symtab = reinterpret_cast<const nsym_t *>(base + d->un.ptr);
+      break;
+    case dt_syment:
+      out.syment = d->un.val;
       break;
     case dt_needed:
       // kept as .dynstr offsets
@@ -442,7 +450,8 @@ __record_relro(module_t &m, const nphdr_t *phdrs, half phnum) noexcept
   for ( half i = 0; i < phnum; ++i ) {
     if ( phdrs[i].type != pt_gnu_relro ) continue;
     const usize start = __page_floor(phdrs[i].vaddr);
-    const usize end = __page_ceil(phdrs[i].vaddr + phdrs[i].memsz);
+    const usize end = __page_floor(phdrs[i].vaddr + phdrs[i].memsz);
+    if ( end <= start ) continue;
     m.relro_start = start;
     m.relro_len = end - start;
     return;

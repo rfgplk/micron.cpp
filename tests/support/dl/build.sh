@@ -53,6 +53,35 @@ $CC $FLAGS $common -Wl,-soname,libmc_dl_top.so.1 -Wl,-rpath,'$ORIGIN' \
 $CC $FLAGS $common -Wl,-soname,libmc_dl_dia.so.1 -Wl,-rpath,'$ORIGIN' \
     -o "$out/libmc_dl_dia.so.1" "$here/dl_dia.c" "$out/libmc_dl_leaf.so.1" "$out/libmc_dl_mid.so.1"
 
+# void: exports NOTHING (local.map hides every definition) but imports four symbols from leaf, so
+# its .gnu.hash has one empty bucket and any symcount derived by walking the chains comes out as
+# symoffset instead of the real .dynsym length -- which makes every symbolic relocation look out of
+# range and fails the load under reloc_mode_t::strict. This is the librxe-rdmav59.so shape,
+# reproduced without needing libibverbs to be installed.
+#
+# --hash-style=gnu is MANDATORY, not decoration: the Linaro arm/arm64 toolchains default to 'both',
+# and a present DT_HASH sends count_dynsyms down the nchain path where the bug does not appear. The
+# fixture would then pass on two of the four targets for the wrong reason.
+$CC $FLAGS $common -Wl,--hash-style=gnu -Wl,--version-script,"$here/local.map" \
+    -Wl,-soname,libmc_dl_void.so.1 -Wl,-rpath,'$ORIGIN' \
+    -o "$out/libmc_dl_void.so.1" "$here/dl_void.c" "$out/libmc_dl_leaf.so.1"
+
+# the fixture is worthless if the toolchain exported something after all, so assert the shape here
+# rather than letting the suite pass vacuously
+# only GLOBAL/WEAK definitions matter: STT_SECTION entries are LOCAL, live below symoffset and
+# never populate a gnu-hash bucket, and the arm/arm64 toolchains emit two of them
+if readelf --dyn-syms -W "$out/libmc_dl_void.so.1" \
+     | awk 'NR>3 && NF>=8 && ($5=="GLOBAL"||$5=="WEAK") && $7!="UND"{n++} END{exit !n}'; then
+  echo "error: libmc_dl_void.so.1 exports a defined symbol; --version-script did not take" >&2
+  exit 1
+fi
+if ! readelf -dW "$out/libmc_dl_void.so.1" | grep -q GNU_HASH; then
+  echo "error: libmc_dl_void.so.1 has no DT_GNU_HASH" >&2; exit 1
+fi
+if readelf -dW "$out/libmc_dl_void.so.1" | grep -qE '\(HASH\)'; then
+  echo "error: libmc_dl_void.so.1 also has DT_HASH; --hash-style=gnu did not take" >&2; exit 1
+fi
+
 echo "built $arch fixtures in $out:"
 for f in "$out"/*.so.1; do
   printf '  %-28s ' "$(basename "$f")"

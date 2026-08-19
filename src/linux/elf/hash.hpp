@@ -106,7 +106,8 @@ gnu_lookup(const dyn_info<C> &d, const char *name) noexcept
   const u32 h = gnu_hash(name);
   const bloom_t bw = bloom[(h / bb) % bloom_size];
   const bloom_t bit_a = static_cast<bloom_t>(1) << (h % bb);
-  const bloom_t bit_b = static_cast<bloom_t>(1) << ((h >> (bloom_shift & 31u)) % bb);
+  // mask by the bloom word width
+  const bloom_t bit_b = static_cast<bloom_t>(1) << ((static_cast<bloom_t>(h) >> (bloom_shift & (bb - 1))) % bb);
   if ( (bw & (bit_a | bit_b)) != (bit_a | bit_b) ) return nullptr;
 
   word idx = buckets[h % nbuckets];
@@ -153,39 +154,102 @@ sym_version_hidden(const dyn_info<C> &d, const typename elf_traits<C>::sym *s) n
   return (d.versym[i] & ver_ndx_hidden) != 0;
 }
 
+// libLLVM.so.22.1 is the largest .dynsym on a stock box at ~42k entries
+inline constexpr xword max_dynsyms = xword(1) << 24;
+
+// WARNING: do NOT simplify this to (DT_STRTAB - DT_SYMTAB); wrong for lld
+// which lays out .dynsym, .gnu.version, .gnu.version_r, .gnu.hash, .dynstr
 template<fmt_class C>
 inline xword
-count_dynsyms(const dyn_info<C> &d) noexcept
+__dynsym_upper_bound(const dyn_info<C> &d) noexcept
+{
+  using tr = elf_traits<C>;
+
+  const u8 *const base = reinterpret_cast<const u8 *>(d.symtab);
+  if ( !base ) return 0;
+
+  const void *const cands[] = {
+    reinterpret_cast<const void *>(d.strtab),     reinterpret_cast<const void *>(d.versym),
+    reinterpret_cast<const void *>(d.verdef),     reinterpret_cast<const void *>(d.verneed),
+    reinterpret_cast<const void *>(d.gnu_hash),   reinterpret_cast<const void *>(d.hash),
+    reinterpret_cast<const void *>(d.rela),       reinterpret_cast<const void *>(d.rel),
+    reinterpret_cast<const void *>(d.relr),       reinterpret_cast<const void *>(d.jmprel),
+    reinterpret_cast<const void *>(d.pltgot),     reinterpret_cast<const void *>(d.init_array),
+    reinterpret_cast<const void *>(d.fini_array), reinterpret_cast<const void *>(d.preinit_array),
+  };
+
+  const u8 *first = nullptr;
+  for ( const void *c : cands ) {
+    const u8 *p = reinterpret_cast<const u8 *>(c);
+    if ( !p || p <= base ) continue;
+    if ( !first || p < first ) first = p;
+  }
+  if ( !first ) return 0;
+
+  const usize ent = d.syment ? static_cast<usize>(d.syment) : sizeof(typename tr::sym);
+  if ( ent < sizeof(typename tr::sym) ) return 0;      // a bogus DT_SYMENT would mis-stride symtab[]
+
+  return static_cast<xword>(static_cast<usize>(first - base) / ent);
+}
+
+// WARNING: the GNU hash chains cover only the exported definitions, [symoffset, symcount)
+template<fmt_class C>
+inline xword
+__gnu_hash_high_water(const dyn_info<C> &d, xword limit) noexcept
 {
   using tr = elf_traits<C>;
   using bloom_t = typename tr::uword;
 
-  if ( d.hash ) {
-    return static_cast<xword>(d.hash[1]);
-  }
-  if ( d.gnu_hash ) {
-    const word *gh = d.gnu_hash;
-    const word nbuckets = gh[0];
-    const word symbias = gh[1];
-    const word bloom_size = gh[2];
-    if ( !nbuckets ) return symbias;
-    const bloom_t *bloom = reinterpret_cast<const bloom_t *>(gh + 4);
-    const word *buckets = reinterpret_cast<const word *>(bloom + bloom_size);
-    const word *chain = buckets + nbuckets;
+  if ( !d.gnu_hash ) return 0;
+  const word *gh = d.gnu_hash;
+  const word nbuckets = gh[0];
+  const word symbias = gh[1];
+  const word bloom_size = gh[2];
+  if ( !nbuckets ) return symbias;
 
-    word max_idx = symbias;
-    for ( word b = 0; b < nbuckets; ++b ) {
-      word idx = buckets[b];
-      if ( idx < symbias ) continue;
-      for ( word guard = 0; guard < (static_cast<word>(1) << 24); ++guard ) {
-        if ( idx >= max_idx ) max_idx = idx + 1;
-        if ( chain[idx - symbias] & 1 ) break;
-        ++idx;
-      }
+  const bloom_t *bloom = reinterpret_cast<const bloom_t *>(gh + 4);
+  const word *buckets = reinterpret_cast<const word *>(bloom + bloom_size);
+  const word *chain = buckets + nbuckets;
+
+  const word cap = (limit && limit < max_dynsyms) ? static_cast<word>(limit) : static_cast<word>(max_dynsyms);
+
+  word high = symbias;
+  for ( word b = 0; b < nbuckets; ++b ) {
+    word idx = buckets[b];
+    if ( idx < symbias ) continue;
+    for ( ; idx < cap; ++idx ) {
+      if ( idx >= high ) high = idx + 1;
+      if ( chain[idx - symbias] & 1 ) break;
     }
-    return max_idx;
   }
-  return 0;
+  return high;
+}
+
+template<fmt_class C>
+inline xword
+count_dynsyms(const dyn_info<C> &d) noexcept
+{
+  if ( !d.symtab ) return 0;      // no table to index; every consumer bails on the null pointer
+
+  const xword bound = __dynsym_upper_bound(d);
+
+  if ( d.hash ) {
+    const xword n = static_cast<xword>(d.hash[1]);
+    if ( n && n <= max_dynsyms && (bound == 0 || n <= bound) ) return n;
+  }
+
+  if ( bound ) {
+    const xword floor_hi = __gnu_hash_high_water(d, bound);
+    const xword n = floor_hi > bound ? floor_hi : bound;
+    return n <= max_dynsyms ? n : max_dynsyms;
+  }
+
+  if ( d.gnu_hash ) {
+    const xword n = __gnu_hash_high_water(d, 0);
+    return n ? n : 1;
+  }
+
+  return 1;
 }
 
 };      // namespace elf

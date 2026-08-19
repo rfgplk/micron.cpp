@@ -353,6 +353,34 @@ main()
   }
   end_test_case();
 
+  test_case("a module that exports nothing still loads and binds every one of its imports");
+  {
+    // libmc_dl_void exports NOTHING, so its .gnu.hash has a single empty bucket and any .dynsym
+    // count derived by walking the chains comes out as symoffset (1) instead of the real length.
+    // Every relocation index >= 1 then reads as out of range and reloc_mode_t::strict -- which
+    // dynamic_open uses -- refuses the load. 381 ELF files under /bin and /usr/lib64 have this
+    // shape, /usr/lib64/libibverbs/librxe-rdmav59.so among them.
+    const auto void_so = fixture("libmc_dl_void.so.1");
+
+    mc::dynamic_t d = mc::dynamic_open(void_so.c_str());
+    require_true(static_cast<bool>(d));
+
+    // it exports nothing, so everything observable comes through its DT_NEEDED leaf
+    require_true(mc::dynamic_sym(d, "mc_dl_leaf_value") != nullptr);
+
+    auto trace = mc::dynamic_sym_as<trace_get_fn>(d, "mc_dl_trace_get");
+    require_true(trace != nullptr);
+    // "void+" rather than "void?" is what proves the JUMP_SLOT and GLOB_DAT slots got real
+    // addresses: the constructor computed mc_dl_leaf_value() + mc_dl_leaf_global == 49 through them
+    require_true(micron::strcmp(trace(), "leaf+void+") == 0);
+
+    auto reset = mc::dynamic_sym_as<trace_reset_fn>(d, "mc_dl_trace_reset");
+    require_true(reset != nullptr);
+    reset();
+    require_true(mc::dynamic_close(d));
+  }
+  end_test_case();
+
   sb::print("=== ALL TESTS PASSED ===");
   return 1;
 }

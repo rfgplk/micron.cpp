@@ -37,7 +37,7 @@ walk_relocs(const image &img, const section_row &sec)
 
   const u64 esz = img.is64() ? (rela ? sizeof(rela_t) : sizeof(rel_t)) : (rela ? sizeof(rela32_t) : sizeof(rel32_t));
   if ( esz == 0 || sec.size < esz ) return out;
-  const u64 count = sec.size / esz;
+  const u64 count = clamp_records(img, sec.offset, esz, sec.size / esz);
 
   out.reserve(static_cast<usize>(count));
   for ( u64 i = 0; i < count; i++ ) {

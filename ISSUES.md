@@ -151,6 +151,12 @@ run
   *timed* `rt_sigtimedwait`
 - **`i386: ftime = 35` is exposed as if usable.**
 - **A dlopened module's C++ static destructors do not run.**
+- **`handle_t::open_path` runs a module's initializers over `best_effort` relocations.**
+  `__legacy_opts` (`src/linux/elf/elf.hpp:120`) is `{ best_effort, run_init = true, ... }` and
+  `__load_module_from_path` does *not* load `DT_NEEDED`. So opening any module with an import that
+  `__resolve_across_loaded` cannot satisfy leaves the slot unbound and then calls the constructor
+  through it -- `handle_t::open_path("/usr/lib64/libibverbs/librxe-rdmav59.so")` SIGSEGVs the host
+  process. Reproduced against unmodified `src/`; unrelated to `count_dynsyms`.
 - **`micron::dso`/`elf::handle_t` are best-effort.**
 - **`dynamic_error()` is a fixed 192-byte thread_local buffer.**
 - **`dl_iterate_phdr` reports host modules with a null `dlpi_phdr`.**
@@ -158,7 +164,8 @@ run
 - **The host-module snapshot is invalidated entirely on every unmap.**
 - **Only executable mappings become host modules.**
 - **`resolve_dependency` is guarded via `AT_SECURE`.**
-- **Static TLS relocations are refused.**
+- **Static TLS relocations are refused** -- and `unsupported` is fatal in *every* mode.
+- **The `*_name` tables have no entry for several things for now.**
 - **`micron::user_hz` is a hardcoded `constexpr 100`** (`linux/process/resource.hpp:362`).
 - **`posix::sysconf` has only `_SC_CLK_TCK` and `_SC_PAGESIZE` implemented**
 - **The vDSO fast path resolves nothing under qemu-user.**

@@ -116,11 +116,8 @@ __map_recursive(const char *path, rtld flags, load_state &st, usize depth) noexc
   }
 
   const dyn_info_t &d = m->mod.dyn;
-  if ( d.needed_truncated ) {
-    __err_set_once("dynamic_open: more than 64 DT_NEEDED entries", path);
-    st.failed = true;
-    return nullptr;
-  }
+  // a module with more DT_NEEDED entries than the table holds still loads
+  if ( d.needed_truncated ) __err_set_once("dynamic_open: DT_NEEDED list truncated", path);
   for ( usize i = 0; i < d.needed_count && !st.failed; ++i ) {
     if ( !d.strtab ) break;
     const char *dep_name = d.strtab + d.needed[i];
