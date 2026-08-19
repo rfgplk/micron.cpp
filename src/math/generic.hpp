@@ -474,10 +474,10 @@ template<typename T>
 constexpr T
 round(T t)
 {
-  if ( t >= 0 )
-    return T((i64)(t + T(0.5)));
+  if constexpr ( sizeof(T) == 4 || sizeof(T) == 8 )
+    return mkbits::round_ns::round<T>(t);
   else
-    return T((i64)(t - T(0.5)));
+    return static_cast<T>(mkbits::round_ns::round<f64>(static_cast<f64>(t)));
 }
 
 template<typename T>
@@ -505,10 +505,10 @@ template<typename R, typename T>
 constexpr R
 round(T t)
 {
-  if ( t >= 0 )
-    return static_cast<R>(T((i64)(t + T(0.5))));
+  if constexpr ( sizeof(T) == 4 || sizeof(T) == 8 )
+    return static_cast<R>(mkbits::round_ns::round<T>(t));
   else
-    return static_cast<R>(T((i64)(t - T(0.5))));
+    return static_cast<R>(mkbits::round_ns::round<f64>(static_cast<f64>(t)));
 }
 
 template<typename R, typename T>
