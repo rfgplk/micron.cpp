@@ -232,6 +232,41 @@ __flags_freestanding(const config_t &conf, bool linking)
   return r;
 }
 
+// -k/-ke entry stub, one per arch+width. --direct swaps __micron_startc for __micron_directc
+inline const char *
+__start_stub_name(const config_t &conf)
+{
+  if ( conf.arch == __arch::arm ) return conf.direct ? "direct_arm32.s" : "start_arm32.s";
+  if ( conf.arch == __arch::arm64 ) return conf.direct ? "direct_arm64.s" : "start_arm64.s";
+  // width-aware _start: a -32 freestanding link must use the i386 crt, not the amd64 one
+  return (conf.width == 32) ? (conf.direct ? "direct_i386.s" : "start_i386.s") : (conf.direct ? "direct.s" : "start.s");
+}
+
+inline void
+__start_append(string_type &dst, const config_t &conf, const char *file)
+{
+  string_type p = conf.start_dir;      // already slash-terminated by finalize_and_infer
+  p += file;
+  if ( !mc::posix::exists(p.c_str()) )
+    mc::cerror("freestanding link needs '", p, "' - install the micron crt with 'scripts/install_start.py <dir>', ",
+               "then point duck at it with --start <dir> or MICRON_START");
+  if ( !dst.empty() ) dst += ' ';
+  dst += p;
+}
+
+// the crt inputs of a freestanding link, or empty
+inline string_type
+__startup_objs(const config_t &conf, bool linking)
+{
+  string_type r;
+  if ( !conf.freestanding or !linking ) return r;
+  if ( conf.arch == __arch::x86 and conf.static_pie ) return r;
+  __start_append(r, conf, __start_stub_name(conf));
+  __start_append(r, conf, "start.cpp");
+  if ( conf.freestanding_eh ) __start_append(r, conf, "eh_runtime.cpp");
+  return r;
+}
+
 inline string_type
 __flags_warn_extra()
 {
@@ -353,15 +388,7 @@ batch_cmp(const config_t &conf)
   const string_type freestanding = __flags_freestanding(conf, linking);
   // -Wno-odr placed after -flto=8 so it actually disables Wodr
   const string_type freestanding_post = __flags_freestanding_post(conf);
-  // the eh trampoline must live in its own TU (separate from throwing code)
-  // width-aware _start: a -32 freestanding link must use the i386 crt, not the amd64 one
-  string_type startup_objs;
-  // a static-PIE freestanding image has no _start
-  if ( conf.freestanding and linking and !conf.static_pie ) {
-    startup_objs = (conf.width == 32) ? "/usr/src/mc_start/start_i386.s " : "/usr/src/mc_start/start.s ";
-    startup_objs += "/usr/src/mc_start/start.cpp";
-    if ( conf.freestanding_eh ) startup_objs += " /usr/src/mc_start/eh_runtime.cpp";
-  }
+  const string_type startup_objs = __startup_objs(conf, linking);
   const string_type arch_width = (conf.width == 64) ? make_flags(gcc::x86_flags::flags::m64) : make_flags(gcc::x86_flags::flags::m32);
   const string_type compile_libs = __flags_link_libs(conf, linking);
   const string_type compile_objs = __flags_bonus_objs(conf);
@@ -422,11 +449,7 @@ batch_cmp_armv7(const config_t &conf)
   const string_type freestanding = __flags_freestanding(conf, linking);
   // -Wno-odr placed after -flto=8 so it disable Wodr
   const string_type freestanding_post = __flags_freestanding_post(conf);
-  const string_type startup_objs
-      = (conf.freestanding and linking)
-            ? (conf.freestanding_eh ? "/usr/src/mc_start/start_arm32.s /usr/src/mc_start/start.cpp /usr/src/mc_start/eh_runtime.cpp"
-                                    : "/usr/src/mc_start/start_arm32.s /usr/src/mc_start/start.cpp")
-            : "";
+  const string_type startup_objs = __startup_objs(conf, linking);
   const string_type compile_libs = __flags_link_libs(conf, linking);
   const string_type compile_objs = __flags_bonus_objs(conf);
   const string_type flags_warn_base = __flags_warn_base();
@@ -483,11 +506,7 @@ batch_cmp_aarch64(const config_t &conf)
   const string_type bin_type = __flags_bin_type(conf, linking);
   const string_type freestanding = __flags_freestanding(conf, linking);
   const string_type freestanding_post = __flags_freestanding_post(conf);
-  const string_type startup_objs
-      = (conf.freestanding and linking)
-            ? (conf.freestanding_eh ? "/usr/src/mc_start/start_arm64.s /usr/src/mc_start/start.cpp /usr/src/mc_start/eh_runtime.cpp"
-                                    : "/usr/src/mc_start/start_arm64.s /usr/src/mc_start/start.cpp")
-            : "";
+  const string_type startup_objs = __startup_objs(conf, linking);
   const string_type compile_libs = __flags_link_libs(conf, linking);
   const string_type compile_objs = __flags_bonus_objs(conf);
   const string_type flags_warn_base = __flags_warn_base();
