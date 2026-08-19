@@ -78,6 +78,7 @@ round(F x) noexcept
 {
   if ( ieee::is_nan(x) || ieee::is_inf(x) || x == F(0) ) return x;
   F a = manip::fabs(x);
+  if ( a >= _impl::magic<F>() ) return x;
   if ( a < F(0.5) ) return manip::copysign<F>(F(0), x);
   return trunc<F>(F(x + manip::copysign<F>(F(0.5), x)));
 }

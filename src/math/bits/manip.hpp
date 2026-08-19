@@ -198,7 +198,7 @@ nextafter(F a, F b) noexcept
     using U = typename T::uint_type;
     return ieee::from_bits<F>((b > 0 ? U(0) : T::sign_mask) | U(1));
   }
-  return (b > a) == (a > 0) ? ieee::next_up<F>(a) : ieee::next_down<F>(a);
+  return b > a ? ieee::next_up<F>(a) : ieee::next_down<F>(a);      // next_up/down are ORDERED, sign included
 }
 
 };      // namespace manip
