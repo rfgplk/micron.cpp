@@ -4,6 +4,7 @@
 #include "io/console.hpp"
 #include "io/fsys.hpp"
 #include "io/ftw.hpp"
+#include "linux/process/environ.hpp"
 #include "memory/addr.hpp"
 #include "vector/vector.hpp"
 
@@ -76,6 +77,8 @@ constexpr const string_type __compiler_gpp_arm_cross = "/usr/gcc-linaro/bin/arm-
 constexpr const string_type __compiler_gcc_aarch64_cross = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-gcc";
 constexpr const string_type __compiler_gpp_aarch64_cross = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-g++";
 
+constexpr const string_type __mc_start_default = "/usr/src/mc_start";
+
 struct std_entry {
   const string_type *full;
   const char *suffix;
@@ -133,6 +136,7 @@ struct config_t {
   string_type target_out;
   string_type bin_dir;
   string_type standard;
+  string_type start_dir;      // --start <dir> / MICRON_START; empty until finalize_and_infer resolves it
   mc::vector<string_type> include_path;
   mc::vector<string_type> lib_path;
   mc::vector<string_type> bonus_objs;
@@ -143,6 +147,7 @@ struct config_t {
   bool static_binary = false;
   bool freestanding = false;
   bool freestanding_eh = false;      // freestanding + the micron C++ exception trampoline
+  bool direct = false;               // --direct: link direct*.s (enters __micron_directc, no runtime init)
   bool asan = false;
   bool ubsan = false;
   bool tsan = false;
@@ -191,7 +196,7 @@ __flag_takes_value(const char *a)
 {
   return mc::strcmp(a, "-o") == 0 or mc::strcmp(a, "-i") == 0 or mc::strcmp(a, "-l") == 0 or mc::strcmp(a, "--lib") == 0
          or mc::strcmp(a, "--def") == 0 or mc::strcmp(a, "--std") == 0 or mc::strcmp(a, "--isa") == 0 or mc::strcmp(a, "-j") == 0
-         or mc::strcmp(a, "--timeout") == 0;
+         or mc::strcmp(a, "--timeout") == 0 or mc::strcmp(a, "--start") == 0;
 }
 
 inline int
@@ -350,6 +355,23 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
     if ( conf.compiler == __compilers::clang )
       mc::cerror("-freflection is the gcc spelling; clang gates reflection behind a different flag");
   }
+
+  // --start/--direct are freestanding-only knobs. MICRON_START is deliberately NOT validated here:
+  // an env var applies to a whole run and must stay inert on the hosted lines of a batchfile
+  if ( !conf.start_dir.empty() and !conf.freestanding )
+    mc::cerror("--start only means something on a freestanding build - add -k (or -ke)");
+  if ( conf.direct and !conf.freestanding )
+    mc::cerror("--direct only means something on a freestanding build - add -k (or -ke)");
+  if ( conf.direct and conf.static_pie and conf.arch == __arch::x86 )
+    mc::cerror("--direct has nothing to swap: a static-PIE x86 freestanding image links no _start stub");
+
+  // the crt location: --start > MICRON_START > the built-in /usr/src/mc_start
+  if ( conf.start_dir.empty() ) {
+    const char *__start_env = mc::env_get("MICRON_START");
+    conf.start_dir = (__start_env != nullptr and *__start_env != '\0') ? string_type{ __start_env } : __mc_start_default;
+  }
+  // normalized once, for all three sources; batch.hh joins by plain concatenation
+  if ( *(conf.start_dir.end() - 1) != '/' ) conf.start_dir.insert(conf.start_dir.end(), '/');
 }
 
 // create every missing component of a (trailing-slash) directory path
@@ -444,6 +466,17 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
     } else if ( mc::strcmp(argv[i], "--eh") == 0 or mc::strcmp(argv[i], "-ke") == 0 ) {
       conf.freestanding = true;
       conf.freestanding_eh = true;
+    } else if ( mc::strcmp(argv[i], "--start") == 0 ) {
+      if ( ++i >= argc ) mc::cerror("the --start flag must be followed by a path to a micron crt directory");
+      // without this a forgotten value silently eats the next flag, and the failure surfaces two
+      // layers away as a missing crt at some nonsense path
+      if ( __is_flag(argv[i]) ) mc::cerror("the --start flag wants a path, but got the flag '", argv[i], "'");
+      conf.start_dir = argv[i];
+      if ( conf.start_dir.empty() ) mc::cerror("--start was given an empty path");
+    } else if ( mc::strcmp(argv[i], "--direct") == 0 ) {
+      // direct*.s enters __micron_directc: TLS + stack + auxv only. no atexit, no threadpool, no io
+      // buffers, no .init_array -- global constructors do NOT run. you boot what you need
+      conf.direct = true;
     } else if ( mc::strcmp(argv[i], "-f") == 0 ) {
       conf.check_compileability = false;
     } else if ( mc::strcmp(argv[i], "--recursive") == 0 ) {

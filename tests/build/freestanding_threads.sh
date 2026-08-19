@@ -30,14 +30,15 @@ cd "$(dirname "$0")/../.."
 DUCK=./bin/duck
 [[ -x "$DUCK" ]] || DUCK=duck   # fall back to PATH, but prefer the freshly-built one
 
-# --- reinstall guard: start/ is consumed from /usr/src/mc_start, not in-tree ---
-MC_START=/usr/src/mc_start
+# --- reinstall guard: start/ is consumed from the crt dir, not in-tree ---
+MC_START="${MICRON_START:-/usr/src/mc_start}"
 if [[ -d start && -d "$MC_START" ]]; then
   newest_local=$(find start -type f -newer "$MC_START/start.cpp" 2>/dev/null | head -1)
   if [[ -n "$newest_local" ]]; then
     echo "WARNING: start/ has edits newer than $MC_START (e.g. $newest_local)."
     echo "         Freestanding (-k/-ke) builds will use the STALE installed copy."
     echo "         Run:  sudo python3 scripts/install_start.py"
+    echo "         ...or build against the tree directly:  duck ... -k --start ./start -i ."
     echo ""
   fi
 fi

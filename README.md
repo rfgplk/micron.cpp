@@ -66,6 +66,8 @@ The same exact steps as above. If you are cross compiling on amd64 for arm32 or 
  
 In order to compile micron binaries in freestanding mode (not linking against glibc or any system objects), you'll first need to run `scripts/install_start.py` which copies over all the `start/` files (containing _start and various other init code) to `/usr/src/mc_start`. Then you'll need to compile your binaries by providing the path to the start source files, example: 
 
+Neither the path nor the `sudo` is mandatory: `install_start.py <dir>` takes a destination, and duck finds the crt via `--start <dir>`, else `$MICRON_START`, else `/usr/src/mc_start`. To build straight out of a clone with no install at all, use `duck build x.cpp -k --start ./start -i .` -- the `-i .` matters, because the crt sources pull `<micron/...>` off the include path and the repo-root `micron -> src` symlink is what resolves it in-tree.
+
 ```bash
 /usr/bin/g++ -std=c++26 -Ofast -march=native -fmodulo-sched -fmodulo-sched-allow-regmoves -fgcse-sm -fgcse-las -ffreestanding -nostdlib -nostdlib++ -fno-stack-protector -fno-exceptions -fno-rtti -m64 -Wall -Wextra -Wpedantic -Wno-variadic-macros -Wno-inline -flto=8 -Wno-odr -Wno-lto-type-mismatch -Wno-variadic-macros -Wno-inline tools/src/main.cc /usr/src/mc_start/start.s /usr/src/mc_start/start.cpp -I./src -L./libs/ -o bin/duck
 ```

@@ -313,3 +313,12 @@ compile tests/rigor/abcmalloc_harden.cpp --i386 -Ofast --def MICRON_ABC_REDZONE=
 compile tests/rigor/abcmalloc_harden.cpp --arm -Ofast --def MICRON_ABC_REDZONE=true -o bin/compiletests/abc_harden_rz_arm32
 compile tests/rigor/abcmalloc_harden.cpp --arm64 -Ofast --def MICRON_ABC_ZERO_ON_FREE=true -o bin/compiletests/abc_harden_zero_arm64
 compile tests/rigor/abcmalloc_harden.cpp --x86 --isa base -O2 --def MICRON_ABC_REDZONE=true -o bin/compiletests/abc_harden_rz_base
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the crt path override
+build tests/compiletests/containers.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests/amd64_k_startdir
+build tests/compiletests/containers.cpp --x86 -Ofast -ke --start ./start -i . -i ./src -o bin/compiletests/amd64_ke_startdir
+build tests/compiletests/containers.cpp --x86 -Ofast -k --direct --start ./start -i . -i ./src -o bin/compiletests/amd64_k_direct
+# containers.cpp does not link freestanding on arm64 (abcmalloc pulls __float128 soft-float
+# builtins the cross toolchain has no library for) -- pre-existing, unrelated to --start
+build tests/memory/free/cabi_shims_freestanding.cpp --arm64 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests/arm64_k_startdir

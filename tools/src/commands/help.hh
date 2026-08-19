@@ -179,6 +179,20 @@ help(void)
   mc::console("    -k                freestanding / kernel build");
   mc::console("                      (-ffreestanding, -nostdlib, -nostdlib++; drops");
   mc::console("                      default -lpthread linkage)");
+  mc::console("    -ke, --eh         freestanding WITH the micron exception trampoline:");
+  mc::console("                      -fexceptions -frtti -D__micron_eh, links eh_runtime.cpp.");
+  mc::console("                      implies -k, and disables the default -flto=8");
+  mc::console("    --start <dir>     where the micron crt lives: the _start stub, start.cpp and");
+  mc::console("                      (under -ke) eh_runtime.cpp. Order: --start, else $MICRON_START,");
+  mc::console("                      else /usr/src/mc_start. Put one there with");
+  mc::console("                      scripts/install_start.py <dir>. Freestanding c/c++ targets only:");
+  mc::console("                      a .s/.asm target links bare and ignores it. NOTE this relocates");
+  mc::console("                      the crt SOURCES only -- they still take <micron/...> off the");
+  mc::console("                      include path, so pair it with -i . to stay in-tree");
+  mc::console("    --direct          link direct*.s instead of start*.s, entering __micron_directc:");
+  mc::console("                      TLS, stack and auxv, then main. NO .init_array (global ctors");
+  mc::console("                      never run), no atexit, no threadpool, no io buffers (printing");
+  mc::console("                      is dead). You boot what you need. Freestanding only");
   mc::console("    --asan            AddressSanitizer (-fsanitize=address,");
   mc::console("                      -fno-omit-frame-pointer); disables -flto");
   mc::console("    --ubsan           UBSanitizer (-fsanitize=undefined); disables -flto;");
@@ -227,6 +241,17 @@ help(void)
   mc::console("                      (libX11, libGL, libwayland-client, libwayland-egl, libEGL)");
   mc::console("    -vk               link the libs micron::gfx::vk needs");
   mc::console("                      (libX11, libwayland-client, libvulkan)");
+  mc::console("");
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // environment
+  mc::set_color(mc::color::yellow);
+  mc::console("ENVIRONMENT");
+  mc::set_color(mc::color::reset);
+  mc::console("    MICRON_START      fallback for --start: the micron crt directory, applied to every");
+  mc::console("                      line of a run, so a batchfile needs no per-line flag. --start");
+  mc::console("                      outranks it, and it stays inert on non-freestanding lines.");
+  mc::console("                      Unset or empty means /usr/src/mc_start");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,6 +325,8 @@ help(void)
   mc::console("    duck build src/blob.asm               # nasm path, emits boot/blob.o");
   mc::console("    duck build src/x.cpp --asan --ubsan   # sanitized build, no lto");
   mc::console("    duck build src/k.cpp -k -s --std c++23  # freestanding static");
+  mc::console("    duck build src/k.cpp -k --start ./start -i .  # crt from the tree, not /usr/src");
+  mc::console("    duck build src/k.cpp -k --direct        # no runtime init at all");
   mc::console("    duck build src/svc.cpp --harden       # full hosted hardening profile");
   mc::console("    duck build --arm64 src/k.cpp -k --gc --cfi  # freestanding, gc'd, PAC/BTI");
   mc::console("    duck build src/hot.cpp --perf         # -O3 + unroll (FP-safe)");

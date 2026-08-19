@@ -23,6 +23,13 @@ printf 'int main(){return 1;}\n' > u.cpp
 printf 'int f();\n'              > deep/top.cpp
 printf 'int g();\n'              > deep/nest/inner.cpp
 
+# a fake micron crt, so the freestanding checks below never depend on what this host installed
+mkdir -p mystart
+touch mystart/start.s        mystart/start_i386.s  mystart/start_arm32.s  mystart/start_arm64.s \
+      mystart/direct.s       mystart/direct_i386.s mystart/direct_arm32.s mystart/direct_arm64.s \
+      mystart/start.cpp      mystart/eh_runtime.cpp
+printf '.text\n.global _start\n_start:\n'  > boot.s
+
 pass=0
 fail=0
 
@@ -51,6 +58,18 @@ same() {
     no "$desc -- orders disagree"
     printf '        A: %s\n        B: %s\n' "$a" "$b"
   fi
+}
+
+# the emitted compile line must contain none of the needles
+wantnot() {
+  desc="$1"; shift
+  line="$1"; shift
+  for needle in "$@"; do
+    case "$line" in
+      *"$needle"*) no "$desc -- unexpected '$needle'"; printf '        got: %s\n' "$line"; return ;;
+    esac
+  done
+  ok
 }
 
 # a malformed line must not succeed quietly
@@ -137,6 +156,55 @@ norec=$("$duck" splat build deep 2>/dev/null | grep -c 'inner\.cpp')
 # same basename in two subdirectories collides on bin/<name>
 cp deep/top.cpp deep/nest/top.cpp
 must_fail "basename collision under --recursive" build deep --recursive
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo "[freestanding crt: --start / MICRON_START / --direct]"
+# the crt path is --start > $MICRON_START > /usr/src/mc_start, resolved in finalize_and_infer
+k=$(compile_line build t.cpp -k --start mystart -o out)
+want    "--start relocates the crt"     "$k" "mystart/start.s" "mystart/start.cpp"
+wantnot "--start replaces the default"  "$k" "usr/src/mc_start"
+want    "-ke adds the eh trampoline"    "$(compile_line build t.cpp -ke --start mystart -o out)" "mystart/eh_runtime.cpp"
+same    "a trailing slash is idempotent" "$k" "$(compile_line build t.cpp -k --start mystart/ -o out)"
+
+# the stub is arch- and width-aware; --direct swaps it for the __micron_directc entry
+want "-32 takes the i386 stub"    "$(compile_line build t.cpp -k -32     --start mystart -o out)" "mystart/start_i386.s"
+want "--arm takes the arm32 stub" "$(compile_line build t.cpp -k --arm   --start mystart -o out)" "mystart/start_arm32.s"
+want "--arm64 takes the arm64 stub" "$(compile_line build t.cpp -k --arm64 --start mystart -o out)" "mystart/start_arm64.s"
+d=$(compile_line build t.cpp -k --direct --start mystart -o out)
+want    "--direct swaps the stub"  "$d" "mystart/direct.s" "mystart/start.cpp"
+wantnot "--direct drops start.s"   "$d" "mystart/start.s "
+want "--direct -32"     "$(compile_line build t.cpp -k --direct -32     --start mystart -o out)" "mystart/direct_i386.s"
+want "--direct --arm"   "$(compile_line build t.cpp -k --direct --arm   --start mystart -o out)" "mystart/direct_arm32.s"
+want "--direct --arm64" "$(compile_line build t.cpp -k --direct --arm64 --start mystart -o out)" "mystart/direct_arm64.s"
+
+# MICRON_START is the whole-run fallback; the flag outranks it
+want "MICRON_START is honoured" \
+     "$(MICRON_START=mystart "$duck" splat build t.cpp -k -o out 2>/dev/null | head -1)" "mystart/start.s"
+want "--start outranks MICRON_START" \
+     "$(MICRON_START=/nope "$duck" splat build t.cpp -k --start mystart -o out 2>/dev/null | head -1)" "mystart/start.s"
+wantnot "MICRON_START stays off hosted lines" \
+     "$(MICRON_START=/nope "$duck" splat build t.cpp -o out 2>/dev/null | head -1)" "/nope"
+
+# --start takes a value, so __find_source must step over it rather than build the directory
+want "--start does not swallow the source" "$(compile_line build --start mystart -k t.cpp -o out)" " t.cpp "
+
+# the three places a freestanding build links no crt: static-PIE on x86, a non-linking compile,
+# and a .s/.asm target (batch_gas links bare). none of them may demand the files
+want    "x86 static-PIE links no crt" "$(compile_line build t.cpp -k --static-pie --start /nope -o out)" "-static-pie"
+wantnot "x86 static-PIE links no crt" "$(compile_line build t.cpp -k --static-pie --start /nope -o out)" "start.s" "start.cpp"
+want    "--raw-obj never links a crt" "$(compile_line build t.cpp -k --raw-obj --start /nope -o out)" " t.cpp "
+want    "a .s target links bare"      "$(compile_line build boot.s -k --start /nope -o out)" "boot.s"
+# ...but arm has never made the static-PIE exclusion, and that asymmetry is deliberate
+want "arm64 static-PIE still links its crt" \
+     "$(compile_line build t.cpp -k --arm64 --static-pie --start mystart -o out)" "mystart/start_arm64.s"
+
+must_fail "crt directory does not exist"  build t.cpp -k --start ./nonexistent
+must_fail "--start with no value"         build t.cpp -k --start
+must_fail "--start followed by a flag"    build t.cpp -k --start -o out
+must_fail "--start without -k"            build t.cpp --start mystart
+must_fail "--direct without -k"           build t.cpp --direct
+must_fail "--direct under x86 static-PIE" build t.cpp -k --direct --static-pie
+must_fail "--start but no source"         build --start mystart -k
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
