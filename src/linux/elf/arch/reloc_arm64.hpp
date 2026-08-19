@@ -35,9 +35,13 @@ inline constexpr word r_aarch64_tls_tprel = 1030;
 inline constexpr word r_aarch64_tlsdesc = 1031;
 inline constexpr word r_aarch64_irelative = 1032;
 
-struct reloc_ctx_t;
+// amd64/arm64 dynamic tables are DT_RELA
+inline constexpr bool arch_uses_rel = false;
 
-inline reloc_result apply_reloc(const reloc_ctx_t &ctx, const rela_t &r) noexcept;
+struct reloc_ctx_t;
+struct reloc_view;
+
+inline reloc_result apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept;
 
 };      // namespace elf
 };      // namespace micron
