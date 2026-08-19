@@ -24,8 +24,8 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 <br/>
 
 
-> [!WARNING]
-> micron is still in active development, the ABI may change at any point, and without notice.
+> [!IMPORTANT]
+> Branch 1.9.11 will serve as a LTS(-ish) branch. No new micron features or API breaking changes will be pushed here, only bug and correctness fixes.
 
 #### Features
   - a *fully functional*, templated C++ standard library implementation, designed from the **ground up** with modern principles in mind
