@@ -851,9 +851,20 @@ class __arena: private cache
   {
     if constexpr ( __default_redzone ) {
       usize inflated = sz + 2 * __default_redzone_size;
-      if ( inflated < __class_medium ) return inflated;
+      if ( inflated < __class_medium ) return inflated;      // stays in TLSF territory, redzoned
+      // only the boundary band is pushed out to the buddy tier;
+      // anything already at or above __class_medium is served un-redzoned exactly as before
+      if ( sz < __class_medium ) return __class_medium;
     }
     return sz;
+  }
+
+  // true iff the block __rz_inflate(sz) lands on actually carries canaries
+  static inline __attribute__((always_inline)) bool
+  __rz_active(usize sz)
+  {
+    if constexpr ( __default_redzone ) return (sz + 2 * __default_redzone_size) < __class_medium;
+    return false;
   }
 
   // apply redzones to a freshly-allocated TLSF chunk, shift pointer to user region
@@ -1141,8 +1152,13 @@ class __arena: private cache
       auto &sh = *tier.__idx[range_idx].nd->nd;
       if ( !sh.is_block_allocated(chunk.ptr) || tier.__cache.contains(chunk.ptr) ) [[unlikely]]
         return handle_double_free(chunk.ptr);
-      if ( tier.__cache.push(chunk.ptr, static_cast<u32>(chunk.len)) ) [[likely]]
-        return true;
+      const usize bsz = sh.block_size_of(chunk.ptr);
+      if ( bsz > __hdr_offset ) [[likely]] {
+        const usize cap = bsz - __hdr_offset;
+        const usize clen = (chunk.len > cap) ? cap : chunk.len;
+        if ( tier.__cache.push(chunk.ptr, static_cast<u32>(clen)) ) [[likely]]
+          return true;
+      }
     }
     return __tier_remove(tier, range_idx, chunk);
   }
@@ -1376,6 +1392,57 @@ class __arena: private cache
     }
   }
 
+  // user pointer -> allocator block pointer
+  [[gnu::always_inline]] inline byte *
+  __block_ptr_of(byte *user) const
+  {
+    if constexpr ( __default_redzone ) {
+      addr_t *a = reinterpret_cast<addr_t *>(user);
+      if ( _precise.find_range(a) >= 0 or _small.find_range(a) >= 0 ) return user - __default_redzone_size;
+    }
+    return user;
+  }
+
+  template<bool HasSize>
+  [[gnu::always_inline]] inline bool
+  __free_admit(byte *p, [[maybe_unused]] usize len)
+  {
+    if constexpr ( HasSize ) {
+      if ( !check_chunk_valid(p, len) ) [[unlikely]]
+        return fail_state();
+    } else {
+      if ( !check_ptr_valid(p) ) [[unlikely]]
+        return fail_state();
+    }
+    if ( !check_alignment(p) ) [[unlikely]]
+      return fail_state();
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !is_valid_block(reinterpret_cast<addr_t *>(p)) ) [[unlikely]] {
+        __debug_print_addr("__free_admit()!!!: provenance check failed for: ", p);
+        return fail_state();
+      }
+    }
+    return true;
+  }
+
+  // poison / full / zero on free
+  void
+  __free_scrub([[maybe_unused]] byte *p, [[maybe_unused]] usize len)
+  {
+    if constexpr ( __default_zero_on_free or ABC_EFF_POISON_ON_FREE or __default_full_on_free ) {
+      const usize real = __size_of_alloc(reinterpret_cast<addr_t *>(p));
+      if ( real == 0 ) [[unlikely]]
+        return;      // not ours: never write through it
+      // a block parked in the tier free-cache may already have been handed back out
+      if ( __is_cached(__block_ptr_of(p)) ) [[unlikely]]
+        return;
+      const usize n = (len == 0 or len > real) ? real : len;
+      poison_on_free(p, n);
+      full_on_free(p, n);
+      zero_on_free(p, n);
+    }
+  }
+
 public:
   // MPSC multithreading code
   // the if constexprs will allow the compiler to instantly eliminate this for st workloads
@@ -1400,19 +1467,27 @@ public:
     }
   }
 
+  void
+  __remote_release(byte *p, usize sz) noexcept
+  {
+    if constexpr ( __default_enforce_provenance ) {
+      if ( !__free_admit<false>(p, sz) ) return;
+    }
+    __free_scrub(p, sz);
+    collect_stats<stat_type::dealloc>();
+    collect_stats<stat_type::total_memory_freed>(sz);
+    const bool ok = sz ? __vmap_remove({ p, sz }) : __vmap_remove_at(p);
+    ABC_DOCTOR(if ( !ok ) doctor::on_free_result(p, ok, __FILE__, __LINE__);)
+    (void)ok;
+  }
+
   [[gnu::noinline]] u32
   __remote_drain(void) noexcept
   {
     if constexpr ( !__default_multithread_safe ) {
       return 0;
     } else {
-      u32 n = __remote_free.drain([this](byte *p, usize sz) {
-        if ( sz ) {
-          (void)this->__vmap_remove({ p, sz });
-        } else {
-          (void)this->__vmap_remove_at(p);
-        }
-      });
+      u32 n = __remote_free.drain([this](byte *p, usize sz) { this->__remote_release(p, sz); });
       if ( __remote_ovf.get(micron::memory_order_relaxed) != nullptr ) {
         // take-all: producers only push, so swapping the head detaches a consistent list
         __remote_ovf_node *nd = __remote_ovf.swap(nullptr, micron::memory_order::acq_rel);
@@ -1420,11 +1495,8 @@ public:
           __remote_ovf_node *nx = nd->next;      // read the embedded node before the map free recycles it
           const usize sz = nd->sz;
           byte *p = reinterpret_cast<byte *>(nd);
-          if ( sz ) {
-            (void)this->__vmap_remove({ p, sz });
-          } else {
-            (void)this->__vmap_remove_at(p);
-          }
+          // NOTE: nx/sz are read out first
+          __remote_release(p, sz);
           ++n;
           nd = nx;
         }
@@ -1578,7 +1650,7 @@ public:
     }
 
     usize alloc_sz = __rz_inflate(sz);
-    bool rz_active = (alloc_sz != sz);
+    bool rz_active = __rz_active(sz);
 
     micron::__chunk<byte> memory;
 
@@ -1680,7 +1752,7 @@ public:
     }
 
     usize alloc_sz = __rz_inflate(sz);
-    bool rz_active = (alloc_sz != sz);
+    bool rz_active = __rz_active(sz);
 
     micron::__chunk<byte> memory;
 
@@ -1739,21 +1811,11 @@ public:
   {
     __debug_print_addr("pop() address: ", mem.ptr);
     if ( mem.zero() ) return true;
-    if ( !check_ptr_valid(mem.ptr) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem.ptr) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem.ptr)) ) {
-        __debug_print_addr("pop()!!!: provenance check failed for: ", mem.ptr);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<false>(mem.ptr, mem.len) ) [[unlikely]]
+      return false;
     collect_stats<stat_type::dealloc>();
     collect_stats<stat_type::total_memory_freed>(mem.len);
-    poison_on_free(mem.ptr, mem.len);
-    full_on_free(mem.ptr, mem.len);
-    zero_on_free(mem.ptr, mem.len);
+    __free_scrub(mem.ptr, mem.len);
     bool ok = __vmap_remove(mem);
     // record the free only after it succeeds
     ABC_DOCTOR(if ( ok ) doctor::record_free(mem.ptr, mem.len); else doctor::on_free_result(mem.ptr, false, __FILE__, __LINE__);)
@@ -1766,20 +1828,10 @@ public:
   {
     __debug_print_addr("pop() address: ", mem);
     if ( mem == nullptr ) return true;
-    if ( !check_ptr_valid(mem) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
-        __debug_print_addr("pop()!!!: provenance check failed for: ", mem);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<false>(mem, 0) ) [[unlikely]]
+      return false;
     collect_stats<stat_type::dealloc>();
-    poison_on_free(mem);
-    full_on_free(mem);
-    zero_on_free(mem);
+    __free_scrub(mem, 0);
     bool ok = __vmap_remove_at(mem);
     ABC_DOCTOR(if ( ok ) doctor::record_free(mem, 0); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
     __debug_print("pop() addr: removal result: ", (usize)ok);
@@ -1819,20 +1871,10 @@ public:
   pop(byte *mem, usize len)
   {
     if ( !mem ) return false;
-    if ( !check_chunk_valid(mem, len) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
-        __debug_print_addr("pop(len)!!!: provenance check failed for: ", mem);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<true>(mem, len) ) [[unlikely]]
+      return false;
     collect_stats<stat_type::total_memory_freed>(len);
-    poison_on_free(mem, len);
-    full_on_free(mem, len);
-    zero_on_free(mem, len);
+    __free_scrub(mem, len);
     bool ok = __vmap_remove({ mem, len });
     ABC_DOCTOR(if ( ok ) doctor::record_free(mem, len); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
     __debug_print("pop(len): removal result: ", (usize)ok);
@@ -1843,21 +1885,11 @@ public:
   ts_pop(const micron::__chunk<byte> &mem)
   {
     if ( mem.zero() ) return false;
-    if ( !check_ptr_valid(mem.ptr) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem.ptr) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem.ptr)) ) {
-        __debug_print_addr("ts_pop()!!!: provenance check failed for: ", mem.ptr);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<false>(mem.ptr, mem.len) ) [[unlikely]]
+      return false;
     collect_stats<stat_type::dealloc>();
     collect_stats<stat_type::total_memory_freed>(mem.len);
-    poison_on_free(mem.ptr, mem.len);
-    full_on_free(mem.ptr, mem.len);
-    zero_on_free(mem.ptr, mem.len);
+    __free_scrub(mem.ptr, mem.len);
     bool ok = __vmap_tombstone(mem);
     ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem.ptr, mem.len); else doctor::on_free_result(mem.ptr, false, __FILE__, __LINE__);)
     __debug_print("ts_pop(): tombstone result: ", (usize)ok);
@@ -1868,20 +1900,10 @@ public:
   ts_pop(byte *mem)
   {
     if ( !mem ) return false;
-    if ( !check_ptr_valid(mem) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
-        __debug_print_addr("ts_pop() addr!!!: provenance check failed for: ", mem);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<false>(mem, 0) ) [[unlikely]]
+      return false;
     collect_stats<stat_type::dealloc>();
-    poison_on_free(mem);
-    full_on_free(mem);
-    zero_on_free(mem);
+    __free_scrub(mem, 0);
     bool ok = __vmap_tombstone_at(mem);
     ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem, 0); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
     __debug_print("ts_pop() addr: tombstone result: ", (usize)ok);
@@ -1892,20 +1914,10 @@ public:
   ts_pop(byte *mem, usize len)
   {
     if ( !mem ) return false;
-    if ( !check_chunk_valid(mem, len) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
-        __debug_print_addr("ts_pop(len)!!!: provenance check failed for: ", mem);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<true>(mem, len) ) [[unlikely]]
+      return false;
     collect_stats<stat_type::total_memory_freed>(len);
-    poison_on_free(mem, len);
-    full_on_free(mem, len);
-    zero_on_free(mem, len);
+    __free_scrub(mem, len);
     bool ok = __vmap_tombstone({ mem, len });
     ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem, len); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
     __debug_print("ts_pop(len): tombstone result: ", (usize)ok);
@@ -1916,16 +1928,8 @@ public:
   freeze(const micron::__chunk<byte> &mem)
   {
     if ( mem.zero() ) return false;
-    if ( !check_ptr_valid(mem.ptr) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem.ptr) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem.ptr)) ) {
-        __debug_print_addr("freeze()!!!: provenance check failed for: ", mem.ptr);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<false>(mem.ptr, mem.len) ) [[unlikely]]
+      return false;
     __debug_print_addr("freeze(): freezing region at: ", mem.ptr);
     return __vmap_freeze(mem);
   }
@@ -1934,16 +1938,8 @@ public:
   freeze(byte *mem)
   {
     if ( !mem ) return false;
-    if ( !check_ptr_valid(mem) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
-        __debug_print_addr("freeze() addr!!!: provenance check failed for: ", mem);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<false>(mem, 0) ) [[unlikely]]
+      return false;
     __debug_print_addr("freeze() addr: freezing region at: ", mem);
     return __vmap_freeze_at(mem);
   }
@@ -1952,16 +1948,8 @@ public:
   freeze(byte *mem, usize len)
   {
     if ( !mem ) return false;
-    if ( !check_chunk_valid(mem, len) ) [[unlikely]]
-      return fail_state();
-    if ( !check_alignment(mem) ) [[unlikely]]
-      return fail_state();
-    if constexpr ( __default_enforce_provenance ) {
-      if ( !is_valid_block(reinterpret_cast<addr_t *>(mem)) ) {
-        __debug_print_addr("freeze(len)!!!: provenance check failed for: ", mem);
-        return fail_state();
-      }
-    }
+    if ( !__free_admit<true>(mem, len) ) [[unlikely]]
+      return false;
     __debug_print_addr("freeze(len): freezing region at: ", mem);
     __debug_print("freeze(len): region length: ", len);
     return __vmap_freeze({ mem, len });
@@ -2042,6 +2030,13 @@ public:
       return nullptr;
     // in-place reuse
     if ( old_size >= new_sz and new_sz > (old_size >> 1) ) {
+      // the trailing canary still sits at ptr + the ORIGINAL request, i.e. inside the region the
+      // caller may now legally write, so re-lay it at the new bound. new_sz <= old_size ==
+      // bs - hdr - 2 * rz guarantees ptr + new_sz + rz <= block end
+      if constexpr ( __default_redzone ) {
+        if ( _precise.find_range(reinterpret_cast<addr_t *>(ptr)) >= 0 or _small.find_range(reinterpret_cast<addr_t *>(ptr)) >= 0 )
+          write_redzone(ptr, new_sz);
+      }
       ABC_DOCTOR(doctor::record_realloc(ptr, new_sz);)
       return ptr;
     }

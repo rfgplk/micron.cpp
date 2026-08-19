@@ -817,6 +817,11 @@ record_tombstone(byte *ptr, usize len) noexcept
   __mark_free_locked(ptr, __rec_state::tombstoned, len);
 }
 
+// marks the block freed at ROUTE time, not at drain time. the owner may not touch its arena
+// again before exit, and a block sitting undrained in the remote ring is not a leak -- reporting
+// it as one at process exit is worse than the (harmless) window where a sweep sees "freed" for a
+// block still resident in the owner's tier. __remote_release re-reports it later, which
+// __mark_free_locked treats as a no-op, so the attribution stays with the thread that freed it
 inline void
 record_remote_free(byte *ptr, usize len) noexcept
 {
@@ -1333,7 +1338,7 @@ __forensics(const void *p, bool bt) noexcept
   if ( !inva ) return;      // do NOT dereference arena/memory state for foreign pointers
 
   // NOTE: use the raw TLS arena / owner table directly, never __current_arena()
-  // here, which would drain the remote-free ring -> pop() -> record_free() ->
+  // here, which would drain the remote-free ring -> __remote_release() -> record_free() ->
   // re-enter the (non-recursive) doctor lock we already hold -> deadlock
   __arena *owner = __owner_of(ptr);
   __arena *cur = __tls_arena;

@@ -8,3 +8,13 @@ test tests/rigor/abcmalloc_sizes.cpp --arm -s -o bin/abc/arm32 --timeout 300
 test tests/rigor/abcmalloc_huge_boundary.cpp --arm64 -s -o bin/abc/arm64 --timeout 300
 test tests/rigor/abcmalloc_sizes.cpp --arm64 -s -o bin/abc/arm64 --timeout 300
 test tests/rigor/abcmalloc_concurrent.cpp --arm64 -s -o bin/abc/arm64 --timeout 300
+
+# hardening
+test tests/rigor/abcmalloc_harden.cpp -o bin/abc/harden --timeout 300
+test tests/rigor/abcmalloc_harden.cpp --def MICRON_ABC_ZERO_ON_FREE=true -o bin/abc/harden_zero --timeout 300
+test tests/rigor/abcmalloc_harden.cpp --def MICRON_ABC_POISON_ON_FREE=true -o bin/abc/harden_poison --timeout 300
+test tests/rigor/abcmalloc_harden.cpp --def MICRON_ABC_REDZONE=true -o bin/abc/harden_rz --timeout 300
+test tests/rigor/abcmalloc_harden.cpp --def MICRON_ABC_ENFORCE_PROVENANCE=true -o bin/abc/harden_prov --timeout 300
+test tests/rigor/abcmalloc_harden.cpp --def MICRON_ABC_REDZONE=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -o bin/abc/harden_rz_prov --timeout 300
+test tests/rigor/abcmalloc_harden.cpp --arm64 -s --def MICRON_ABC_ZERO_ON_FREE=true -o bin/abc/harden_arm64 --timeout 300
+test tests/rigor/abcmalloc_harden.cpp --arm64 -s --def MICRON_ABC_REDZONE=true -o bin/abc/harden_rz_arm64 --timeout 300

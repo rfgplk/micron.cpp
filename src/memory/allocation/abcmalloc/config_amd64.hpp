@@ -230,9 +230,6 @@ constexpr static const bool __default_guard_arena_metadata = MICRON_ABC_GUARD_AR
 // insert guard pages at the trail of each arena metadata
 // same protection flags as __default_guard_page_perms
 
-constexpr static const bool __default_unsafe_size_recovery = false;
-// when true, sz==0 scrub paths read size from addr - __hdr_offset (only for TLSF) when false sz==0 scrubs are skipped
-
 constexpr static const bool __default_check_alignment = false;      // verify that addresses passed to pop/freeze are naturally aligned
 
 #ifndef MICRON_ABC_POISON_ON_FREE
@@ -248,10 +245,11 @@ constexpr static const byte __default_poison_byte = 0x7B;
 #endif
 constexpr static const bool __default_redzone = MICRON_ABC_REDZONE;      // insert canary bytes before/after user region on TLSF allocs
                                                                          // NOTE: uses 2 * __default_redzone_size bytes per alloc
-                                                                         // (verified in __tier_remove*, so it DOES cover remote frees)
+                                                                         // (verified in __vmap_remove*, which the remote-free drain also goes through)
 
 constexpr static const byte __default_redzone_byte = 0xC1;
-constexpr static const usize __default_redzone_size = 8;
+// must be a multiple of __rz_min_align
+constexpr static const usize __default_redzone_size = 16;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // doctor mode configuration

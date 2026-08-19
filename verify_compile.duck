@@ -302,3 +302,14 @@ compile tests/compiletests/function.cpp --arm -Ofast -o bin/compiletests/functio
 compile tests/compiletests/function.cpp --arm64 -Ofast -o bin/compiletests/function_arm64_Ofast_link
 compile tests/compiletests/function.cpp --x86 --isa base -O2 -o bin/compiletests/function_base_O2_k -k
 compile tests/compiletests/function.cpp --x86 --isa base -O2 -o bin/compiletests/function_base_O2_ke -ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# abcmalloc hardening
+compile tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_ZERO_ON_FREE=true -o bin/compiletests/abc_harden_zero_x86
+compile tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_POISON_ON_FREE=true -o bin/compiletests/abc_harden_poison_x86
+compile tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_REDZONE=true -o bin/compiletests/abc_harden_rz_x86
+compile tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_ENFORCE_PROVENANCE=true -o bin/compiletests/abc_harden_prov_x86
+compile tests/rigor/abcmalloc_harden.cpp --i386 -Ofast --def MICRON_ABC_REDZONE=true -o bin/compiletests/abc_harden_rz_i386
+compile tests/rigor/abcmalloc_harden.cpp --arm -Ofast --def MICRON_ABC_REDZONE=true -o bin/compiletests/abc_harden_rz_arm32
+compile tests/rigor/abcmalloc_harden.cpp --arm64 -Ofast --def MICRON_ABC_ZERO_ON_FREE=true -o bin/compiletests/abc_harden_zero_arm64
+compile tests/rigor/abcmalloc_harden.cpp --x86 --isa base -O2 --def MICRON_ABC_REDZONE=true -o bin/compiletests/abc_harden_rz_base

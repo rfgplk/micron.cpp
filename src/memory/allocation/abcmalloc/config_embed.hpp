@@ -238,9 +238,6 @@ constexpr static const bool __default_guard_arena_metadata = MICRON_ABC_GUARD_AR
 // insert guard pages at the trail of each arena metadata
 // same protection flags as __default_guard_page_perms
 
-constexpr static const bool __default_unsafe_size_recovery = false;
-// when true, sz==0 scrub paths read size from addr - __hdr_offset (only for TLSF) when false sz==0 scrubs are skipped
-
 constexpr static const bool __default_check_alignment = false;      // verify that addresses passed to pop/freeze are naturally aligned
 
 constexpr static const bool __default_poison_on_free = false;
@@ -251,7 +248,8 @@ constexpr static const byte __default_poison_byte = 0x7B;
 constexpr static const bool __default_redzone = false;
 
 constexpr static const byte __default_redzone_byte = 0xC1;
-constexpr static const usize __default_redzone_size = 8;
+// must be a multiple of __rz_min_align
+constexpr static const usize __default_redzone_size = 16;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // doctor mode configuration

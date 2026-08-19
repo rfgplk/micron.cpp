@@ -140,29 +140,10 @@ check_alignment(const addr_t *addr)
 // ...user_ptr = block_start
 // ...header is at block_start + order_size - __hdr_offset (at TAIL)
 
-inline __attribute__((always_inline)) usize
-__recover_size_from_hdr(byte *addr)
-{
-  if constexpr ( __default_unsafe_size_recovery ) {
-    u32 bsize = *reinterpret_cast<u32 *>(addr - __hdr_offset);
-    if ( bsize < __hdr_offset or bsize > (1ULL << 31) ) [[unlikely]] {
-      __debug_print("__recover_size_from_hdr(): suspicious bsize recovered: ", (usize)bsize);
-      return 0;
-    }
-    return static_cast<usize>(bsize) - __hdr_offset;
-  }
-  (void)addr;
-  return 0;
-}
-
 inline __attribute__((always_inline)) void
-sanitize_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
+sanitize_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz)
 {
   if constexpr ( __default_sanitize ) {
-    if ( sz == 0 ) {
-      sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 ) return;
-    }
     micron::memset(addr, __default_sanitize_with_on_alloc, sz);
   } else {
     // nothing
@@ -170,13 +151,9 @@ sanitize_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
 }
 
 inline __attribute__((always_inline)) void
-zero_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
+zero_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz)
 {
   if constexpr ( __default_zero_on_alloc ) {
-    if ( sz == 0 ) {
-      sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 ) return;
-    }
     micron::bzero(addr, sz);
   } else {
     // nothing
@@ -184,13 +161,9 @@ zero_on_alloc([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
 }
 
 inline __attribute__((always_inline)) void
-poison_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
+poison_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz)
 {
   if constexpr ( ABC_EFF_POISON_ON_FREE ) {
-    if ( sz == 0 ) {
-      sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 ) return;
-    }
     micron::memset(addr, __default_poison_byte, sz);
   } else {
     // nothing
@@ -198,13 +171,9 @@ poison_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
 }
 
 inline __attribute__((always_inline)) void
-zero_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
+zero_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz)
 {
   if constexpr ( __default_zero_on_free ) {
-    if ( sz == 0 ) {
-      sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 ) return;
-    }
     micron::bzero(addr, sz);
   } else {
     // nothibng
@@ -212,18 +181,18 @@ zero_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
 }
 
 inline __attribute__((always_inline)) void
-full_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz = 0)
+full_on_free([[maybe_unused]] byte *addr, [[maybe_unused]] usize sz)
 {
   if constexpr ( __default_full_on_free ) {
-    if ( sz == 0 ) {
-      sz = __recover_size_from_hdr(addr);
-      if ( sz == 0 ) return;
-    }
     micron::memset(addr, 0xFF, sz);
   } else {
     // nothing
   }
 }
+
+constexpr static const usize __rz_min_align = 16;
+static_assert(!__default_redzone or (__default_redzone_size != 0 and (__default_redzone_size % __rz_min_align) == 0),
+              "abcmalloc: __default_redzone_size must be a non-zero multiple of 16");
 
 // start canary: __default_redzone_size bytes starting at user_ptr - __default_redzone_size
 // end canary: __default_redzone_size bytes starting at user_ptr + user_sz
@@ -310,5 +279,8 @@ check_chunk_valid(const byte *ptr, usize len)
 static_assert(!(__default_zero_on_alloc and __default_sanitize),
               "abcmalloc: __default_zero_on_alloc and __default_sanitize are mutually exclusive; "
               "zero fills with 0x00, sanitize fills with __default_sanitize_with_on_alloc; pick one");
+
+static_assert((__default_zero_on_free ? 1 : 0) + (__default_full_on_free ? 1 : 0) + (ABC_EFF_POISON_ON_FREE ? 1 : 0) <= 1,
+              "abcmalloc: zero/full/poison-on-free are mutually exclusive");
 
 };      // namespace abc
