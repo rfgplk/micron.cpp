@@ -1326,11 +1326,22 @@ public:
     }
   }
 
+  // PSHUFB is SSSE3
   inline v128
   shuffle(const v128 &control) const
   {
     v128 _r;
-    if constexpr ( micron::is_same_v<T, i128> ) _r.value = _mm_shuffle_epi8(value, control.value);
+    if constexpr ( micron::is_same_v<T, i128> ) {
+#if defined(__micron_x86_ssse3)
+      _r.value = _mm_shuffle_epi8(value, control.value);
+#else
+      byte __src[16], __ctl[16], __out[16];
+      _mm_storeu_si128(reinterpret_cast<i128 *>(__src), value);
+      _mm_storeu_si128(reinterpret_cast<i128 *>(__ctl), control.value);
+      for ( usize __i = 0; __i < 16; ++__i ) __out[__i] = (__ctl[__i] & 0x80) ? byte(0) : __src[__ctl[__i] & 0x0F];
+      _r.value = _mm_loadu_si128(reinterpret_cast<const i128 *>(__out));
+#endif
+    }
     return _r;
   }
 

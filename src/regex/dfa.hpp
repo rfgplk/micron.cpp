@@ -22,6 +22,13 @@ inline constexpr i32 kDfaMaxStates = 255;      // state ids fit in a u8
 inline constexpr u8 kShengAccept = 0x10;       // bit 4 -- $-less accept
 inline constexpr u8 kShengEol = 0x20;          // bit 5 -- accept only at end ($)
 
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_ssse3) )                                                                      \
+    || ((defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon))
+inline constexpr bool kShengAvailable = true;
+#else
+inline constexpr bool kShengAvailable = false;
+#endif
+
 struct dfa {
   i32 nstates = 0;
   i32 start = 0;
@@ -218,15 +225,17 @@ build_dfa(prog_view pv, char *seen) noexcept
     }
   }
 
-  d->has_sheng = (nstates <= 16);
-  if ( d->has_sheng ) {
-    auto sbyte = [&](i32 s) -> u8 { return (u8)(s | (d->accept[s] ? kShengAccept : 0) | (d->eol_accept[s] ? kShengEol : 0)); };
-    for ( i32 c = 0; c < 256; ++c )
-      for ( i32 s = 0; s < 16; ++s ) {
-        i32 ns = (s < nstates) ? d->table[(usize)s * 256 + (usize)c] : 0;
-        d->masks[c][s] = sbyte(ns);
-      }
-    d->start_byte = sbyte(start);
+  d->has_sheng = kShengAvailable && (nstates <= 16);
+  if constexpr ( kShengAvailable ) {
+    if ( d->has_sheng ) {
+      auto sbyte = [&](i32 s) -> u8 { return (u8)(s | (d->accept[s] ? kShengAccept : 0) | (d->eol_accept[s] ? kShengEol : 0)); };
+      for ( i32 c = 0; c < 256; ++c )
+        for ( i32 s = 0; s < 16; ++s ) {
+          i32 ns = (s < nstates) ? d->table[(usize)s * 256 + (usize)c] : 0;
+          d->masks[c][s] = sbyte(ns);
+        }
+      d->start_byte = sbyte(start);
+    }
   }
 
   micron::free(keys);
@@ -329,7 +338,10 @@ inline bool
 dfa_has_match(const dfa *d, const char *in, usize n) noexcept
 {
   if ( d->has_accel ) return dfa_accel_has_match(d, in, n);
-  return d->has_sheng ? dfa_sheng_has_match(d, in, n) : dfa_table_has_match(d, in, n);
+  if constexpr ( kShengAvailable ) {
+    if ( d->has_sheng ) return dfa_sheng_has_match(d, in, n);
+  }
+  return dfa_table_has_match(d, in, n);
 }
 
 };      // namespace rgx

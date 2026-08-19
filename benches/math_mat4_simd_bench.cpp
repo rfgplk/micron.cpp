@@ -145,7 +145,7 @@ median(f64 *xs, u32 n) noexcept
   return xs[n / 2];
 }
 
-enum class op { gemm_ref, gemm_sse, gemv_ref, gemv_sse };
+enum class op { gemm_ref, gemm_sse, gemv_ref, gemv_sse, matmul_mc, matvec_mc };
 
 template<op Op>
 f64
@@ -162,6 +162,12 @@ measure() noexcept
           clobber(&g_c[i]);
         } else if constexpr ( Op == op::gemv_ref ) {
           ref_gemv4(g_a[i], g_v[i], g_vout[i]);
+          clobber(&g_vout[i]);
+        } else if constexpr ( Op == op::matmul_mc ) {
+          g_c[i] = ml::matmul(g_a[i], g_b[i]);
+          clobber(&g_c[i]);
+        } else if constexpr ( Op == op::matvec_mc ) {
+          g_vout[i] = ml::matvec(g_a[i], g_v[i]);
           clobber(&g_vout[i]);
         }
 #if defined(__AVX2__) && defined(__FMA__)
@@ -232,6 +238,8 @@ main()
   micron::io::println("=== mat4*mat4 f32 ===");
   const f64 gm_ref = measure<op::gemm_ref>();
   report("  scalar (col-access)  : ", gm_ref);
+  const f64 gm_mc = measure<op::matmul_mc>();
+  report("  math::matmul         : ", gm_mc);
 #if defined(__AVX2__) && defined(__FMA__)
   const f64 gm_sse = measure<op::gemm_sse>();
   report("  hand SSE LinearComb  : ", gm_sse);
@@ -242,6 +250,8 @@ main()
   micron::io::println("=== mat4*vec4 f32 ===");
   const f64 gv_ref = measure<op::gemv_ref>();
   report("  scalar               : ", gv_ref);
+  const f64 gv_mc = measure<op::matvec_mc>();
+  report("  math::matvec         : ", gv_mc);
 #if defined(__AVX2__) && defined(__FMA__)
   const f64 gv_sse = measure<op::gemv_sse>();
   report("  hand SSE (mul+hadd)  : ", gv_sse);
