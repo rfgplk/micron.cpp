@@ -71,6 +71,13 @@ struct alignas(vec_align_v<__conditional_t<micron::is_floating_point_v<T>, T, do
   }
 
   [[gnu::always_inline]] constexpr vec &
+  operator/=(const vec &o) noexcept
+  {
+    for ( usize i = 0; i < N; ++i ) data[i] /= o.data[i];
+    return *this;
+  }
+
+  [[gnu::always_inline]] constexpr vec &
   operator*=(T s) noexcept
   {
     for ( usize i = 0; i < N; ++i ) data[i] *= s;
@@ -141,6 +148,33 @@ operator/(const vec<T, N> &a, T s) noexcept
     // integral T: T(1)/s integer-divides to 0 for |s|>1, so divide directly
     for ( usize i = 0; i < N; ++i ) r.data[i] = a.data[i] / s;
   }
+  return r;
+}
+
+template<arith_scalar T, usize N>
+[[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
+operator*(const vec<T, N> &a, const vec<T, N> &b) noexcept
+{
+  vec<T, N> r{};
+  for ( usize i = 0; i < N; ++i ) r.data[i] = a.data[i] * b.data[i];
+  return r;
+}
+
+template<arith_scalar T, usize N>
+[[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
+operator/(const vec<T, N> &a, const vec<T, N> &b) noexcept
+{
+  vec<T, N> r{};
+  for ( usize i = 0; i < N; ++i ) r.data[i] = a.data[i] / b.data[i];
+  return r;
+}
+
+template<arith_scalar T, usize N>
+[[nodiscard, gnu::always_inline]] inline constexpr vec<T, N>
+operator/(T s, const vec<T, N> &a) noexcept
+{
+  vec<T, N> r{};
+  for ( usize i = 0; i < N; ++i ) r.data[i] = s / a.data[i];
   return r;
 }
 

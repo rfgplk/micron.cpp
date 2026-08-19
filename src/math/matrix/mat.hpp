@@ -123,5 +123,104 @@ operator*(T s, const mat<T, R, C> &a) noexcept
   return a * s;
 }
 
+template<arith_scalar T, usize R, usize C>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
+operator*(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
+{
+  mat<T, R, C> r{};
+  for ( usize i = 0; i < R * C; ++i ) r.data[i] = a.data[i] * b.data[i];
+  return r;
+}
+
+template<arith_scalar T, usize R, usize C>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
+operator/(const mat<T, R, C> &a, const mat<T, R, C> &b) noexcept
+{
+  mat<T, R, C> r{};
+  for ( usize i = 0; i < R * C; ++i ) r.data[i] = a.data[i] / b.data[i];
+  return r;
+}
+
+template<arith_scalar T, usize R, usize C>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
+operator/(const mat<T, R, C> &a, T s) noexcept
+{
+  mat<T, R, C> r{};
+  for ( usize i = 0; i < R * C; ++i ) r.data[i] = a.data[i] / s;
+  return r;
+}
+
+template<arith_scalar T, usize R, usize C>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
+operator+(const mat<T, R, C> &a, T s) noexcept
+{
+  mat<T, R, C> r{};
+  for ( usize i = 0; i < R * C; ++i ) r.data[i] = a.data[i] + s;
+  return r;
+}
+
+template<arith_scalar T, usize R, usize C>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
+operator+(T s, const mat<T, R, C> &a) noexcept
+{
+  return a + s;
+}
+
+template<arith_scalar T, usize R, usize C>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
+operator-(const mat<T, R, C> &a, T s) noexcept
+{
+  mat<T, R, C> r{};
+  for ( usize i = 0; i < R * C; ++i ) r.data[i] = a.data[i] - s;
+  return r;
+}
+
+template<arith_scalar T, usize R, usize C>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
+operator-(T s, const mat<T, R, C> &a) noexcept
+{
+  mat<T, R, C> r{};
+  for ( usize i = 0; i < R * C; ++i ) r.data[i] = s - a.data[i];
+  return r;
+}
+
+template<arith_scalar T, usize R, usize C>
+[[nodiscard, gnu::always_inline]] inline constexpr mat<T, R, C>
+operator-(const mat<T, R, C> &a) noexcept
+{
+  mat<T, R, C> r{};
+  for ( usize i = 0; i < R * C; ++i ) r.data[i] = -a.data[i];
+  return r;
+}
+
+// real matrix (mat * mat) product
+template<arith_scalar T, usize R, usize K, usize C>
+[[nodiscard]] inline constexpr mat<T, R, C>
+matmul(const mat<T, R, K> &a, const mat<T, K, C> &b) noexcept
+{
+  mat<T, R, C> r{};
+  for ( usize i = 0; i < R; ++i )
+    for ( usize j = 0; j < C; ++j ) {
+      T s = T(0);
+      for ( usize k = 0; k < K; ++k ) s += a.data[i * K + k] * b.data[k * C + j];
+      r.data[i * C + j] = s;
+    }
+  return r;
+}
+
+template<arith_scalar T, usize R, usize C>
+  requires(R >= 2 && R <= 16 && C >= 2 && C <= 16)
+[[nodiscard]] inline constexpr vec<T, R>
+matvec(const mat<T, R, C> &m, const vec<T, C> &v) noexcept
+{
+  vec<T, R> r{};
+  for ( usize i = 0; i < R; ++i ) {
+    T s = T(0);
+    for ( usize j = 0; j < C; ++j ) s += m.data[i * C + j] * v.data[j];
+    r.data[i] = s;
+  }
+  return r;
+}
+
 };      // namespace math
 };      // namespace micron

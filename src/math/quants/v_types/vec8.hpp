@@ -62,7 +62,7 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   {                                                                                                                                        \
     return { x op o.x, y op o.y, z op o.z, w op o.w, a op o.a, b op o.b, c op o.c, d op o.d };                                             \
   }
-  __v8_binop(+) __v8_binop(-) __v8_binop(*)
+  __v8_binop(+) __v8_binop(-) __v8_binop(*) __v8_binop(/)
 #undef __v8_binop
 
 #define __v8_selfop(op)                                                                                                                    \
@@ -78,12 +78,18 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
     d op o.d;                                                                                                                              \
     return *this;                                                                                                                          \
   }
-      __v8_selfop(+=) __v8_selfop(-=)
+      __v8_selfop(+=) __v8_selfop(-=) __v8_selfop(*=) __v8_selfop(/=)
 #undef __v8_selfop
 
           constexpr vector_8<T> product(const vector_8<T> &o) const
   {
     return *this * o;
+  }
+
+  constexpr vector_8<T>
+  quotient(const vector_8<T> &o) const
+  {
+    return *this / o;
   }
 
   constexpr vector_8<T>
@@ -130,12 +136,6 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
     c /= s;
     d /= s;
     return *this;
-  }
-
-  constexpr vector_8<T>
-  operator/(const vector_8<T> &v)
-  {
-    return { x / v.x, y / v.y, z / v.z, w / v.w, a / v.a, b / v.b, c / v.c, d / v.d };
   }
 
   friend constexpr vector_8<T>

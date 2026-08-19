@@ -885,6 +885,26 @@ ffma(double a, double b, double c) noexcept
   return __builtin_fma(a, b, c);
 }
 
+template<typename T>
+  requires is_floating_point_v<T>
+constexpr T
+ffma(T a, T b, T c) noexcept
+{
+  if constexpr ( is_same_v<T, float> ) {
+    return __builtin_fmaf(a, b, c);
+  } else if constexpr ( is_same_v<T, double> ) {
+    return __builtin_fma(a, b, c);
+  } else if constexpr ( is_same_v<T, long double> ) {
+    return __builtin_fmal(a, b, c);
+  } else if constexpr ( sizeof(T) <= sizeof(float) ) {
+    return static_cast<T>(__builtin_fmaf(static_cast<float>(a), static_cast<float>(b), static_cast<float>(c)));
+  } else if constexpr ( sizeof(T) <= sizeof(double) ) {
+    return static_cast<T>(__builtin_fma(static_cast<double>(a), static_cast<double>(b), static_cast<double>(c)));
+  } else {
+    return static_cast<T>(__builtin_fmal(static_cast<long double>(a), static_cast<long double>(b), static_cast<long double>(c)));
+  }
+}
+
 constexpr long double
 ffmal(long double a, long double b, long double c) noexcept
 {

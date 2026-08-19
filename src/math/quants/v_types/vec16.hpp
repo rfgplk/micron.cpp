@@ -175,7 +175,7 @@ struct alignas(micron::math::vec_align_v<T, 16>) vector_16 {
     return { x op o.x, y op o.y, z op o.z, w op o.w, a op o.a, b op o.b, c op o.c, d op o.d,                                               \
              e op o.e, f op o.f, g op o.g, h op o.h, i op o.i, j op o.j, k op o.k, l op o.l };                                             \
   }
-  __v16_binop(+) __v16_binop(-) __v16_binop(*)
+  __v16_binop(+) __v16_binop(-) __v16_binop(*) __v16_binop(/)
 #undef __v16_binop
 
 #define __v16_selfop(op)                                                                                                                   \
@@ -199,12 +199,18 @@ struct alignas(micron::math::vec_align_v<T, 16>) vector_16 {
     l op o.l;                                                                                                                              \
     return *this;                                                                                                                          \
   }
-      __v16_selfop(+=) __v16_selfop(-=)
+      __v16_selfop(+=) __v16_selfop(-=) __v16_selfop(*=) __v16_selfop(/=)
 #undef __v16_selfop
 
           constexpr vector_16<T> product(const vector_16<T> &o) const
   {
     return *this * o;
+  }
+
+  constexpr vector_16<T>
+  quotient(const vector_16<T> &o) const
+  {
+    return *this / o;
   }
 
   constexpr vector_16<T>

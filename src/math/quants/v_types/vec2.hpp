@@ -77,6 +77,22 @@ struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
     return *this;
   }
 
+  constexpr vector_2<T> &
+  operator*=(const vector_2<T> &o)
+  {
+    x *= o.x;
+    y *= o.y;
+    return *this;
+  }
+
+  constexpr vector_2<T> &
+  operator/=(const vector_2<T> &o)
+  {
+    x /= o.x;
+    y /= o.y;
+    return *this;
+  }
+
   constexpr vector_2<T>
   operator*(T s) const
   {
@@ -104,9 +120,9 @@ struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
   }
 
   constexpr vector_2<T>
-  operator/(const vector_2<T> &v)
+  operator/(const vector_2<T> &v) const
   {
-    return { x / v.x, y / v.y };
+    return quotient(v);
   }
 
   constexpr vector_2<T> &
@@ -163,6 +179,12 @@ struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
   operator*(const vector_2<T> &o) const
   {
     return product(o);
+  }
+
+  constexpr vector_2<T>
+  quotient(const vector_2<T> &o) const
+  {
+    return { x / o.x, y / o.y };
   }
 
   constexpr T
@@ -849,13 +871,13 @@ struct alignas(micron::math::vec_align_v<T, 2>) vector_2 {
   constexpr vector_2<T>
   mul_add(const vector_2<T> &v, const vector_2<T> &w) const
   {
-    return math::fma(v, w);
+    return fma(v, w);
   }
 
   constexpr vector_2<T>
   mul_add(T s, const vector_2<T> &w) const
   {
-    return math::fma(s, w);
+    return fma(s, w);
   }
 
   constexpr vector_2<T>

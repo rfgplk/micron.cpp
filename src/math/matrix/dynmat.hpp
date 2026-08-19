@@ -35,9 +35,28 @@ template<arith_scalar T> struct dynmat {
   dynmat(usize r, usize c, const T &fill) : buf(r * c, fill), rows(r), cols(c), ld(c) { }
 
   dynmat(const dynmat &) = default;
-  dynmat(dynmat &&) noexcept = default;
   dynmat &operator=(const dynmat &) = default;
-  dynmat &operator=(dynmat &&) noexcept = default;
+
+  dynmat(dynmat &&o) noexcept : buf(micron::move(o.buf)), rows(o.rows), cols(o.cols), ld(o.ld)
+  {
+    o.rows = 0;
+    o.cols = 0;
+    o.ld = 0;
+  }
+
+  dynmat &
+  operator=(dynmat &&o) noexcept
+  {
+    if ( this == &o ) return *this;
+    buf = micron::move(o.buf);
+    rows = o.rows;
+    cols = o.cols;
+    ld = o.ld;
+    o.rows = 0;
+    o.cols = 0;
+    o.ld = 0;
+    return *this;
+  }
 
   [[nodiscard, gnu::always_inline]] T *
   data() noexcept

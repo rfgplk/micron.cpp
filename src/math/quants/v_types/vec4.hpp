@@ -84,6 +84,26 @@ struct alignas(micron::math::vec_align_v<T, 4>) vector_4 {
     return *this;
   }
 
+  constexpr vector_4<T> &
+  operator*=(const vector_4<T> &o)
+  {
+    x *= o.x;
+    y *= o.y;
+    z *= o.z;
+    w *= o.w;
+    return *this;
+  }
+
+  constexpr vector_4<T> &
+  operator/=(const vector_4<T> &o)
+  {
+    x /= o.x;
+    y /= o.y;
+    z /= o.z;
+    w /= o.w;
+    return *this;
+  }
+
   constexpr vector_4<T>
   operator*(T s) const
   {
@@ -113,9 +133,9 @@ struct alignas(micron::math::vec_align_v<T, 4>) vector_4 {
   }
 
   constexpr vector_4<T>
-  operator/(const vector_4<T> &v)
+  operator/(const vector_4<T> &v) const
   {
-    return { x / v.x, y / v.y, z / v.z, w / v.w };
+    return quotient(v);
   }
 
   constexpr vector_4<T> &
@@ -174,6 +194,12 @@ struct alignas(micron::math::vec_align_v<T, 4>) vector_4 {
   operator*(const vector_4<T> &o) const
   {
     return product(o);
+  }
+
+  constexpr vector_4<T>
+  quotient(const vector_4<T> &o) const
+  {
+    return { x / o.x, y / o.y, z / o.z, w / o.w };
   }
 
   constexpr T
