@@ -1,0 +1,30 @@
+# micron::lz
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# default build (-Ofast, native ISA)
+test tests/rigor/rigor_lz_laziness.cpp  -o bin/lz --timeout 300 -f
+test tests/rigor/rigor_lz_terminals.cpp -o bin/lz --timeout 300 -f
+test tests/rigor/rigor_lz_buffered.cpp  -o bin/lz --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# IEEE-honest build: sum's Neumaier compensation is only meaningful here, and the bit-exact
+# agreement with micron::sum is asserted in the terminals suite
+test tests/rigor/rigor_lz_laziness.cpp  -o bin/lz/o2 -O2 --timeout 300 -f
+test tests/rigor/rigor_lz_terminals.cpp -o bin/lz/o2 -O2 --timeout 300 -f
+test tests/rigor/rigor_lz_buffered.cpp  -o bin/lz/o2 -O2 --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# SSE2 floor: count_of / elem / find_of take the scalar arm of the lane scans here
+test tests/rigor/rigor_lz_laziness.cpp  -o bin/lz/base --isa base --timeout 300 -f
+test tests/rigor/rigor_lz_terminals.cpp -o bin/lz/base --isa base --timeout 300 -f
+test tests/rigor/rigor_lz_buffered.cpp  -o bin/lz/base --isa base --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# sanitizers -- flatten's manual-lifetime inner slot is the reason this cell matters
+test tests/rigor/rigor_lz_laziness.cpp  -o bin/lz/asan --asan --timeout 600 -f
+test tests/rigor/rigor_lz_terminals.cpp -o bin/lz/asan --asan --timeout 600 -f
+test tests/rigor/rigor_lz_buffered.cpp  -o bin/lz/asan --asan --timeout 600 -f
+
+test tests/rigor/rigor_lz_laziness.cpp  -o bin/lz/ubsan --ubsan --timeout 600 -f
+test tests/rigor/rigor_lz_terminals.cpp -o bin/lz/ubsan --ubsan --timeout 600 -f
+test tests/rigor/rigor_lz_buffered.cpp  -o bin/lz/ubsan --ubsan --timeout 600 -f

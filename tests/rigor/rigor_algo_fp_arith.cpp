@@ -365,6 +365,104 @@ main()
       },
       10000);
 
+  // ════════════════════════════════════════════════════════════════════
+  // *_zip on MISMATCHED sizes
+  //
+  // these used to iterate `a` to its end while advancing `b` blindly, reading past the shorter
+  // operand. they now stop at min(n, m) and leave a's tail untouched.
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("add_zip / subtract_zip / multiply_zip stop at the shorter operand");
+  {
+    micron::vector<int> a(6, 10);
+    micron::vector<int> b;
+    b.push_back(1);
+    b.push_back(2);
+
+    auto s = micron::fp::add_zip(a, b);
+    require(s.size(), usize(6));
+    require(s[0], 11);
+    require(s[1], 12);
+    for ( usize i = 2; i < 6; ++i ) require(s[i], 10);      // untouched, not garbage
+
+    auto d = micron::fp::subtract_zip(a, b);
+    require(d[0], 9);
+    require(d[1], 8);
+    for ( usize i = 2; i < 6; ++i ) require(d[i], 10);
+
+    auto m = micron::fp::multiply_zip(a, b);
+    require(m[0], 10);
+    require(m[1], 20);
+    for ( usize i = 2; i < 6; ++i ) require(m[i], 10);
+  }
+  end_test_case();
+
+  test_case("*_zip with the LONGER operand second is also bounded");
+  {
+    micron::vector<int> a(2, 10);
+    micron::vector<int> b(9, 3);
+    auto s = micron::fp::add_zip(a, b);
+    require(s.size(), usize(2));
+    require(s[0], 13);
+    require(s[1], 13);
+  }
+  end_test_case();
+
+  test_case("divide_zip stops at the shorter operand and still catches a zero divisor");
+  {
+    micron::vector<int> a(5, 100);
+    micron::vector<int> b;
+    b.push_back(2);
+    b.push_back(5);
+
+    auto q = micron::fp::divide_zip(a, b);
+    require_true(q.is_first());
+    const auto &g = q.cast<micron::vector<int>>();
+    require(g[0], 50);
+    require(g[1], 20);
+    for ( usize i = 2; i < 5; ++i ) require(g[i], 100);
+
+    // a zero inside the overlap is still an error; a zero PAST it is never read
+    micron::vector<int> z;
+    z.push_back(2);
+    z.push_back(0);
+    require_true(micron::fp::divide_zip(a, z).is_second());
+
+    micron::vector<int> tail_zero;
+    tail_zero.push_back(2);
+    require_true(micron::fp::divide_zip(a, tail_zero).is_first());
+  }
+  end_test_case();
+
+  test_case("*_zip on equal sizes is unchanged");
+  {
+    micron::vector<int> a(4, 10);
+    micron::vector<int> b(4, 3);
+    auto s = micron::fp::add_zip(a, b);
+    for ( usize i = 0; i < 4; ++i ) require(s[i], 13);
+    auto m = micron::fp::multiply_zip(a, b);
+    for ( usize i = 0; i < 4; ++i ) require(m[i], 30);
+  }
+  end_test_case();
+
+  property_test(
+      "add_zip on ragged operands touches exactly the overlap (10k)",
+      [](u32 raw_n, u32 raw_m) {
+        usize n = (raw_n & 0x1f) + 1;
+        usize m = (raw_m & 0x1f) + 1;
+        const usize ov = n < m ? n : m;
+        micron::vector<int> a(n, 0), b(m, 0);
+        prng rng(raw_n + 149);
+        for ( usize i = 0; i < n; ++i ) a[i] = static_cast<int>(rng.next_in(200)) - 100;
+        for ( usize i = 0; i < m; ++i ) b[i] = static_cast<int>(rng.next_in(200)) - 100;
+        micron::vector<int> before(a);
+        auto got = micron::fp::add_zip(a, b);
+        require(got.size(), n);
+        for ( usize i = 0; i < ov; ++i ) require(got[i], before[i] + b[i]);
+        for ( usize i = ov; i < n; ++i ) require(got[i], before[i]);
+      },
+      10000);
+
   sb::print("=== ALGO/FP-ARITH RIGOR SUITE PASSED ===");
   return 1;
 }

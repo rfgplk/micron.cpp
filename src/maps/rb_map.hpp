@@ -723,6 +723,111 @@ public:
     micron::swap(__total, o.__total);
   }
 
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // two-phase cursor
+  class const_iterator
+  {
+    const rb_map *__m = nullptr;
+    usize __soa_i = 0;
+    usize __bin_i = 0;
+    typename __tree_t::const_iterator __ti{};
+
+    void
+    __enter_bin(usize b)
+    {
+      __bin_i = b;
+      while ( __bin_i < __m->__n_bins ) {
+        const __tree_t *t = __m->__bins[__bin_i].tree;
+        if ( t ) {
+          __ti = t->begin();
+          if ( __ti != t->end() ) return;
+        }
+        ++__bin_i;
+      }
+      __ti = typename __tree_t::const_iterator{};
+    }
+
+  public:
+    using value_type = micron::pair<const K &, const V &>;
+    using reference = micron::pair<const K &, const V &>;
+    using difference_type = ssize_t;
+
+    constexpr const_iterator() = default;
+
+    const_iterator(const rb_map *__mm, bool __end) : __m(__mm), __soa_i(__end ? __mm->__n_soa : 0), __bin_i(__end ? __mm->__n_bins : 0)
+    {
+      if ( __end ) return;
+      if ( __soa_i >= __m->__n_soa ) __enter_bin(0);
+    }
+
+    reference
+    operator*() const
+    {
+      if ( __soa_i < __m->__n_soa ) return reference{ __m->__keys[__soa_i], __m->__values[__soa_i] };
+      return reference{ __ti->key, __ti->value };
+    }
+
+    const_iterator &
+    operator++()
+    {
+      if ( __soa_i < __m->__n_soa ) {
+        ++__soa_i;
+        if ( __soa_i >= __m->__n_soa ) __enter_bin(0);
+        return *this;
+      }
+      ++__ti;
+      const __tree_t *t = __m->__bins[__bin_i].tree;
+      if ( __ti == t->end() ) __enter_bin(__bin_i + 1);
+      return *this;
+    }
+
+    const_iterator
+    operator++(int)
+    {
+      const_iterator __t = *this;
+      ++*this;
+      return __t;
+    }
+
+    bool
+    operator==(const const_iterator &__o) const noexcept
+    {
+      return __soa_i == __o.__soa_i && __bin_i == __o.__bin_i && __ti == __o.__ti;
+    }
+
+    bool
+    operator!=(const const_iterator &__o) const noexcept
+    {
+      return !(*this == __o);
+    }
+  };
+
+  using iterator = const_iterator;
+
+  const_iterator
+  begin() const
+  {
+    return const_iterator{ this, false };
+  }
+
+  const_iterator
+  end() const
+  {
+    return const_iterator{ this, true };
+  }
+
+  const_iterator
+  cbegin() const
+  {
+    return begin();
+  }
+
+  const_iterator
+  cend() const
+  {
+    return end();
+  }
+
   template<typename Fn>
   void
   for_each(Fn &&fn)

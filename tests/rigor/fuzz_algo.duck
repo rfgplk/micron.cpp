@@ -6,6 +6,7 @@ test tests/rigor/fuzz_algo_search.cpp -o bin/fuzz/algo --timeout 600 -f
 test tests/rigor/fuzz_algo_core.cpp   -o bin/fuzz/algo --timeout 600 -f
 test tests/rigor/fuzz_algo_fp.cpp     -o bin/fuzz/algo --timeout 600 -f
 test tests/rigor/fuzz_algo_data.cpp   -o bin/fuzz/algo --timeout 600 -f
+test tests/rigor/fuzz_lz.cpp          -o bin/fuzz/algo --timeout 600 -f
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # IEEE-honest build: the NaN / signed-zero assertions are live here
@@ -13,6 +14,7 @@ test tests/rigor/fuzz_algo_search.cpp -o bin/fuzz/algo_o2 -O2 --timeout 600 -f
 test tests/rigor/fuzz_algo_core.cpp   -o bin/fuzz/algo_o2 -O2 --timeout 600 -f
 test tests/rigor/fuzz_algo_fp.cpp     -o bin/fuzz/algo_o2 -O2 --timeout 600 -f
 test tests/rigor/fuzz_algo_data.cpp   -o bin/fuzz/algo_o2 -O2 --timeout 600 -f
+test tests/rigor/fuzz_lz.cpp          -o bin/fuzz/algo_o2 -O2 --timeout 600 -f
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # SSE2 floor: the 128-bit and scalar arms of every lane scan
@@ -20,6 +22,7 @@ test tests/rigor/fuzz_algo_search.cpp -o bin/fuzz/algo_base --isa base --timeout
 test tests/rigor/fuzz_algo_core.cpp   -o bin/fuzz/algo_base --isa base --timeout 600 -f
 test tests/rigor/fuzz_algo_fp.cpp     -o bin/fuzz/algo_base --isa base --timeout 600 -f
 test tests/rigor/fuzz_algo_data.cpp   -o bin/fuzz/algo_base --isa base --timeout 600 -f
+test tests/rigor/fuzz_lz.cpp          -o bin/fuzz/algo_base --isa base --timeout 600 -f
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # sanitizers
@@ -27,8 +30,10 @@ test tests/rigor/fuzz_algo_search.cpp -o bin/fuzz/algo_asan --asan --timeout 900
 test tests/rigor/fuzz_algo_core.cpp   -o bin/fuzz/algo_asan --asan --timeout 900 -f
 test tests/rigor/fuzz_algo_fp.cpp     -o bin/fuzz/algo_asan --asan --timeout 900 -f
 test tests/rigor/fuzz_algo_data.cpp   -o bin/fuzz/algo_asan --asan --timeout 900 -f
+test tests/rigor/fuzz_lz.cpp          -o bin/fuzz/algo_asan --asan --timeout 900 -f
 
 test tests/rigor/fuzz_algo_search.cpp -o bin/fuzz/algo_ubsan --ubsan --timeout 900 -f
 test tests/rigor/fuzz_algo_core.cpp   -o bin/fuzz/algo_ubsan --ubsan --timeout 900 -f
 test tests/rigor/fuzz_algo_fp.cpp     -o bin/fuzz/algo_ubsan --ubsan --timeout 900 -f
 test tests/rigor/fuzz_algo_data.cpp   -o bin/fuzz/algo_ubsan --ubsan --timeout 900 -f
+test tests/rigor/fuzz_lz.cpp          -o bin/fuzz/algo_ubsan --ubsan --timeout 900 -f

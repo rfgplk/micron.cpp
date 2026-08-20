@@ -134,7 +134,19 @@ test_list()
     sb::require(l.front() == 1);
     sb::require(l.back() == 4);
     sb::require(*l.begin() == 1);
-    sb::require(*l.end() == 4);
+    // end() is now one-past-the-end, not the address of the last element -- it used to return
+    // &last->data, which made begin()/end() unusable as an iteration pair (++ on the returned T*
+    // walked into the node's `next` field). back() is how you ask for the last element.
+    sb::require(l.begin() != l.end());
+    {
+      usize walked = 0;
+      for ( auto it = l.begin(); it != l.end(); ++it ) ++walked;
+      sb::require(walked, l.size());
+      int seen[4] = { 0, 0, 0, 0 };
+      usize k = 0;
+      for ( const auto &x : l ) seen[k++] = x;
+      for ( usize i = 0; i < 4; ++i ) sb::require(seen[i], e[i]);
+    }
   }
   sb::end_test_case();
 

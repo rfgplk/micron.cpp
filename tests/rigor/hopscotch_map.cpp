@@ -687,28 +687,44 @@ main(void)
     micron::hopscotch_map<micron::hstring<char>, int> m;
     m.insert("iter_a", 1);
     m.insert("iter_b", 2);
+    // begin()/end() are a real half-open pair now, not two raw Nd* into the slot array, so the
+    // old `b != nullptr` / `e >= b` pointer assertions no longer apply (and never meant much).
     auto b = m.begin();
     auto e = m.end();
-    sb::require(b != nullptr);
-    sb::require(e != nullptr);
-    sb::require(e >= b);
+    sb::require(b != e);
+    size_t n = 0;
+    for ( auto it = b; it != e; ++it ) ++n;
+    sb::require(n == m.size());
   }
   sb::end_test_case();
-  /*
-    sb::test_case("iterator - traversal counts exactly 'size' occupied slots");
-    {
-      micron::hopscotch_map<micron::hstring<char>, int> m;
-      const int N = 20;
-      for ( int i = 0; i < N; ++i )
-        m.insert(make_key(i), i);
-      size_t occupied = 0;
-      for ( auto it = m.begin(); it != m.end(); ++it )
-        if ( it->key )
-          ++occupied;
-      sb::require(occupied == (size_t)N);
-    }
-    sb::end_test_case();
-  */
+
+  // this used to be commented out because the iterator walked the raw slot array and handed back
+  // every VACANT slot; it needed an `if (it->key)` guard to get the right answer. begin()/end() now
+  // skip unoccupied slots, so the guard is gone and the count is exact.
+  sb::test_case("iterator - traversal counts exactly 'size' occupied slots");
+  {
+    micron::hopscotch_map<micron::hstring<char>, int> m;
+    const int N = 20;
+    for ( int i = 0; i < N; ++i ) m.insert(make_key(i), i);
+    size_t occupied = 0;
+    for ( auto it = m.begin(); it != m.end(); ++it ) ++occupied;
+    // NOT `occupied == N`: at --isa v3 and above the default string hash is zzz, which ignores every
+    // 8th byte, so "key_0000".."key_0019" collapse to 2 distinct hashes and hopscotch -- which
+    // stores only the hash -- keeps 2 entries. See ISSUES.md. What the iterator owes us is that it
+    // visits every occupied slot and no vacant one, which is exactly size().
+    sb::require(occupied == m.size());
+    sb::require(occupied > 0u);
+  }
+  sb::end_test_case();
+
+  sb::test_case("iterator - empty map yields no elements");
+  {
+    micron::hopscotch_map<micron::hstring<char>, int> m;
+    size_t n = 0;
+    for ( auto it = m.begin(); it != m.end(); ++it ) ++n;
+    sb::require(n == 0u);
+  }
+  sb::end_test_case();
   // ── edge cases ────────────────────────────────────────────────────────────
 
   sb::test_case("edge - single character keys");

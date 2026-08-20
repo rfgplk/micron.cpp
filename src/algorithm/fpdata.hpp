@@ -105,13 +105,10 @@ flat_map_c(Fn &&fn)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // chunk  (split container into consecutive chunks of size n)
-template<is_iterable_container C>
-micron::option<C, empty_container_error>
-chunk(const C &c, usize n)
-{
-  if ( n == 0 ) return micron::option<C, empty_container_error>{ empty_container_error{} };
-  return micron::option<C, empty_container_error>{ c };
-}
+template<is_iterable_container Out, is_iterable_container C>
+  requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
+micron::option<Out, empty_container_error>
+chunk(const C &c, usize n);
 
 template<is_iterable_container Out, is_iterable_container C>
   requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
@@ -133,6 +130,15 @@ chunk_into(const C &c, usize n)
     i = end;
   }
   return out;
+}
+
+template<is_iterable_container Out, is_iterable_container C>
+  requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
+micron::option<Out, empty_container_error>
+chunk(const C &c, usize n)
+{
+  if ( n == 0 ) return micron::option<Out, empty_container_error>{ empty_container_error{} };
+  return micron::option<Out, empty_container_error>{ chunk_into<Out>(c, n) };
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,16 +345,16 @@ transpose(const O &mat)
 // merge/concat
 template<is_iterable_container C>
 auto
-merge_c(const C &b)
+merge_c(C b)
 {
-  return [&b](C a) { return micron::merge(micron::move(a), b); };
+  return [b = micron::move(b)](C a) { return micron::merge(micron::move(a), b); };
 }
 
 template<is_iterable_container C>
 auto
-concat_c(const C &b)
+concat_c(C b)
 {
-  return [&b](C a) { return micron::concat(micron::move(a), b); };
+  return [b = micron::move(b)](C a) { return micron::concat(micron::move(a), b); };
 }
 
 template<is_iterable_container C, typename E>

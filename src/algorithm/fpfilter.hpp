@@ -295,13 +295,13 @@ drop(const C &c, usize n) noexcept
   return out;
 }
 
-auto
+inline auto
 take_c(usize n) noexcept
 {
   return [n](auto c) noexcept { return fp::take(c, n); };
 }
 
-auto
+inline auto
 drop_c(usize n) noexcept
 {
   return [n](auto c) noexcept { return fp::drop(c, n); };

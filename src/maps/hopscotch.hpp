@@ -309,8 +309,92 @@ public:
   typedef const Nd &const_ref;
   typedef Nd *pointer;
   typedef const Nd *const_pointer;
-  typedef Nd *iterator;
-  typedef const Nd *const_iterator;
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // occupancy-skipping cursor
+  template<bool Const> class __cursor
+  {
+    using __slot = micron::conditional_t<Const, const Nd, Nd>;
+    __slot *__p;
+    __slot *__e;
+
+    void
+    __skip() noexcept
+    {
+      while ( __p != __e && !__p->key ) ++__p;
+    }
+
+  public:
+    using value_type = Nd;
+    using reference = micron::conditional_t<Const, const Nd &, Nd &>;
+    using pointer = micron::conditional_t<Const, const Nd *, Nd *>;
+    using difference_type = ssize_t;
+
+    constexpr __cursor() noexcept : __p(nullptr), __e(nullptr) { }
+
+    __cursor(__slot *__b, __slot *__end) noexcept : __p(__b), __e(__end) { __skip(); }
+
+    constexpr __cursor(const __cursor<!Const> &__o) noexcept
+      requires(Const)
+        : __p(__o.slot()), __e(__o.limit())
+    {
+    }
+
+    reference
+    operator*() const
+    {
+      return *__p;
+    }
+
+    pointer
+    operator->() const
+    {
+      return __p;
+    }
+
+    __cursor &
+    operator++()
+    {
+      ++__p;
+      __skip();
+      return *this;
+    }
+
+    __cursor
+    operator++(int)
+    {
+      __cursor __t = *this;
+      ++*this;
+      return __t;
+    }
+
+    bool
+    operator==(const __cursor &__o) const noexcept
+    {
+      return __p == __o.__p;
+    }
+
+    bool
+    operator!=(const __cursor &__o) const noexcept
+    {
+      return __p != __o.__p;
+    }
+
+    __slot *
+    slot() const noexcept
+    {
+      return __p;
+    }
+
+    __slot *
+    limit() const noexcept
+    {
+      return __e;
+    }
+  };
+
+  typedef __cursor<false> iterator;
+  typedef __cursor<true> const_iterator;
 
   ~hopscotch_map() { }
 
@@ -685,40 +769,50 @@ public:
     return *result;
   }
 
+  usize
+  __slot_count() const noexcept
+  {
+    return __bmask == 0 ? 0u : __bmask + 1u;
+  }
+
   iterator
   begin()
   {
-    return entries.data();
+    Nd *__b = entries.data();
+    return iterator{ __b, __b + __slot_count() };
   }
 
   iterator
   end()
   {
-    return entries.data() + entries.size();
+    Nd *__e = entries.data() + __slot_count();
+    return iterator{ __e, __e };
   }
 
   const_iterator
   begin() const
   {
-    return entries.data();
+    const Nd *__b = entries.data();
+    return const_iterator{ __b, __b + __slot_count() };
   }
 
   const_iterator
   end() const
   {
-    return entries.data() + entries.size();
+    const Nd *__e = entries.data() + __slot_count();
+    return const_iterator{ __e, __e };
   }
 
   const_iterator
   cbegin() const
   {
-    return entries.data();
+    return begin();
   }
 
   const_iterator
   cend() const
   {
-    return entries.data() + entries.size();
+    return end();
   }
 
   template<typename Fn>

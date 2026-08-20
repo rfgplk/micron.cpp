@@ -5,6 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "bits/__iter_concepts.hpp"
 #include "concepts.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
@@ -1224,5 +1225,113 @@ template<typename R> using range_rvalue_reference_t = decltype(micron::move(*mic
 
 template<typename R> using range_common_reference_t = micron::common_type_t<range_reference_t<R>, range_rvalue_reference_t<R>>;
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// range / view concepts
+
+template<typename R>
+concept range = requires(R &__r) {
+  micron::ranges::begin(__r);
+  micron::ranges::end(__r);
+} && micron::sentinel_for<micron::ranges::sentinel_t<R>, micron::ranges::iterator_t<R>>;
+
+template<typename R>
+concept sized_range = range<R> && requires(const R &__r) { micron::ranges::size(__r); };
+
+template<typename R>
+concept input_range = range<R> && micron::input_iterator<micron::ranges::iterator_t<R>>;
+
+template<typename R>
+concept forward_range = input_range<R> && micron::forward_iterator<micron::ranges::iterator_t<R>>;
+
+template<typename R>
+concept bidirectional_range = forward_range<R> && micron::bidirectional_iterator<micron::ranges::iterator_t<R>>;
+
+template<typename R>
+concept random_access_range = bidirectional_range<R> && micron::random_access_iterator<micron::ranges::iterator_t<R>>;
+
+template<typename R>
+concept contiguous_range = random_access_range<R> && micron::contiguous_iterator<micron::ranges::iterator_t<R>>;
+
+template<typename R>
+concept view = range<R> && micron::is_move_constructible_v<micron::remove_cvref_t<R>>
+               && requires { typename micron::remove_cvref_t<R>::__lazy_view_tag; };
+
+template<typename R>
+concept viewable_range = view<micron::remove_cvref_t<R>> || range<micron::remove_reference_t<R>>;
+
+// a borrowed range's iterators outlive the range object
+template<typename R>
+concept borrowed_range = range<R> && (micron::is_lvalue_reference_v<R> || requires { typename micron::remove_cvref_t<R>::__borrowed_tag; });
+
 };      // namespace ranges
+
+// %%%%%%%%%%%%%%%%%
+// view_interface
+
+template<typename D> class view_interface
+{
+  constexpr D &
+  __self() noexcept
+  {
+    return static_cast<D &>(*this);
+  }
+
+  constexpr const D &
+  __self() const noexcept
+  {
+    return static_cast<const D &>(*this);
+  }
+
+public:
+  template<typename V = D>
+  constexpr bool
+  empty() const
+    requires micron::ranges::range<const V>
+  {
+    return micron::ranges::begin(__self()) == micron::ranges::end(__self());
+  }
+
+  template<typename V = D>
+  constexpr explicit
+  operator bool() const
+    requires micron::ranges::range<const V>
+  {
+    return !empty();
+  }
+
+  template<typename V = D>
+  constexpr usize
+  size() const
+    requires requires(const V &__v) {
+      { __v.__size_exact() } -> micron::convertible_to<usize>;
+    }
+  {
+    return static_cast<usize>(__self().__size_exact());
+  }
+
+  template<typename V = D>
+  constexpr ssize_t
+  ssize() const
+    requires requires(const V &__v) { __v.__size_exact(); }
+  {
+    return static_cast<ssize_t>(__self().__size_exact());
+  }
+
+  template<typename V = D>
+  constexpr decltype(auto)
+  front() const
+    requires micron::ranges::range<const V>
+  {
+    return *micron::ranges::begin(__self());
+  }
+
+  template<typename V = D>
+  constexpr decltype(auto)
+  operator[](usize __n) const
+    requires micron::ranges::random_access_range<const V>
+  {
+    return micron::ranges::begin(__self())[static_cast<micron::iter_diff_t<micron::ranges::iterator_t<const V>>>(__n)];
+  }
+};
+
 };      // namespace micron

@@ -118,53 +118,33 @@ public:
     return __m.erase(k);
   }
 
-  // iterator -- yields const K&
-  class iterator
+  using const_iterator = micron::__set_key_iter<typename __map_t::const_iterator, K>;
+  using iterator = const_iterator;
+
+  const_iterator
+  begin() const
   {
-    typename __map_t::iterator __it;
-    typename __map_t::iterator __end;
+    return const_iterator{ __m.begin() };
+  }
 
-    void
-    skip()
-    {
-      while ( __it != __end ) {
-        // robin map iterator is Nd*, where Nd has .key
-        // ctrl gates visibility - cheap visibility check via underlying map design
-        break;
-      }
-    }
+  const_iterator
+  end() const
+  {
+    return const_iterator{ __m.end() };
+  }
 
-  public:
-    iterator(typename __map_t::iterator it, typename __map_t::iterator e) : __it(it), __end(e) { }
+  const_iterator
+  cbegin() const
+  {
+    return begin();
+  }
 
-    const K &
-    operator*() const
-    {
-      return __it->key;
-    }
+  const_iterator
+  cend() const
+  {
+    return end();
+  }
 
-    iterator &
-    operator++()
-    {
-      ++__it;
-      return *this;
-    }
-
-    bool
-    operator==(const iterator &o) const
-    {
-      return __it == o.__it;
-    }
-
-    bool
-    operator!=(const iterator &o) const
-    {
-      return __it != o.__it;
-    }
-  };
-
-  // robin_map iterators expose raw node pointers; users wanting a clean walk
-  // should use for_each which honors the occupancy ctrl bytes.
   template<typename Fn>
   void
   for_each(Fn &&fn)

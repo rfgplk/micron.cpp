@@ -28,7 +28,7 @@ add_c(const Y y) noexcept
 {
   return [y](auto cont) noexcept {
     if constexpr ( micron::unrollable<decltype(cont)> ) {
-      __impl::__unroll_add(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
+      micron::__impl::__unroll_add(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
     } else {
       micron::add(cont, y);
     }
@@ -43,7 +43,7 @@ subtract_c(const Y y) noexcept
 {
   return [y](auto cont) noexcept {
     if constexpr ( micron::unrollable<decltype(cont)> ) {
-      __impl::__unroll_subtract(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
+      micron::__impl::__unroll_subtract(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
     } else {
       micron::subtract(cont, y);
     }
@@ -58,7 +58,7 @@ multiply_c(const Y y) noexcept
 {
   return [y](auto cont) noexcept {
     if constexpr ( micron::unrollable<decltype(cont)> ) {
-      __impl::__unroll_multiply(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
+      micron::__impl::__unroll_multiply(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
     } else {
       micron::multiply(cont, y);
     }
@@ -73,7 +73,7 @@ divide_c(const Y y) noexcept
 {
   return [y](auto cont) noexcept {
     if constexpr ( micron::unrollable<decltype(cont)> ) {
-      __impl::__unroll_divide(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
+      micron::__impl::__unroll_divide(cont.begin(), y, make_index_sequence<decltype(cont)::static_size>{});
     } else {
       micron::divide(cont, y);
     }
@@ -100,7 +100,7 @@ safe_divide(C cont, const Y y) noexcept
 {
   if ( y == Y{} ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_divide(cont.begin(), y, make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_divide(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::divide(cont, y);
   }
@@ -125,7 +125,7 @@ add(micron::option<C, E> opt, const Y y) noexcept
   if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_add(cont.begin(), y, make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_add(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::add(cont, y);
   }
@@ -140,7 +140,7 @@ subtract(micron::option<C, E> opt, const Y y) noexcept
   if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_subtract(cont.begin(), y, make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_subtract(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::subtract(cont, y);
   }
@@ -155,7 +155,7 @@ multiply(micron::option<C, E> opt, const Y y) noexcept
   if ( !opt.is_first() ) return opt;
   auto cont = opt.template cast<C>();
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_multiply(cont.begin(), y, make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_multiply(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::multiply(cont, y);
   }
@@ -171,7 +171,7 @@ divide(micron::option<C, E> opt, const Y y) noexcept
   if ( y == Y{} ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
   auto cont = opt.template cast<C>();
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_divide(cont.begin(), y, make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_divide(cont.begin(), y, make_index_sequence<C::static_size>{});
   } else {
     micron::divide(cont, y);
   }
@@ -195,12 +195,12 @@ C
 add_zip(C a, const C &b) noexcept
 {
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_zip_add(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_zip_add(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
   } else {
+    const usize __n = a.size() < b.size() ? a.size() : b.size();
     auto *fa = a.begin();
-    const auto *ea = a.end();
     const auto *fb = b.begin();
-    for ( ; fa != ea; ++fa, ++fb ) *fa = *fa + *fb;
+    for ( usize __i = 0; __i < __n; ++__i, ++fa, ++fb ) *fa = *fa + *fb;
   }
   return a;
 }
@@ -210,12 +210,12 @@ C
 subtract_zip(C a, const C &b) noexcept
 {
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_zip_subtract(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_zip_subtract(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
   } else {
+    const usize __n = a.size() < b.size() ? a.size() : b.size();
     auto *fa = a.begin();
-    const auto *ea = a.end();
     const auto *fb = b.begin();
-    for ( ; fa != ea; ++fa, ++fb ) *fa = *fa - *fb;
+    for ( usize __i = 0; __i < __n; ++__i, ++fa, ++fb ) *fa = *fa - *fb;
   }
   return a;
 }
@@ -225,12 +225,12 @@ C
 multiply_zip(C a, const C &b) noexcept
 {
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_zip_multiply(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_zip_multiply(a.begin(), b.begin(), make_index_sequence<C::static_size>{});
   } else {
+    const usize __n = a.size() < b.size() ? a.size() : b.size();
     auto *fa = a.begin();
-    const auto *ea = a.end();
     const auto *fb = b.begin();
-    for ( ; fa != ea; ++fa, ++fb ) *fa = *fa * *fb;
+    for ( usize __i = 0; __i < __n; ++__i, ++fa, ++fb ) *fa = *fa * *fb;
   }
   return a;
 }
@@ -239,10 +239,10 @@ template<is_iterable_container C>
 micron::option<C, division_by_zero_error>
 divide_zip(C a, const C &b) noexcept
 {
+  const usize __n = a.size() < b.size() ? a.size() : b.size();
   auto *fa = a.begin();
-  const auto *ea = a.end();
   const auto *fb = b.begin();
-  for ( ; fa != ea; ++fa, ++fb ) {
+  for ( usize __i = 0; __i < __n; ++__i, ++fa, ++fb ) {
     if ( *fb == typename C::value_type{} ) return micron::option<C, division_by_zero_error>{ division_by_zero_error{} };
     *fa = *fa / *fb;
   }
@@ -256,7 +256,7 @@ R
 inner_product(const C &a, const C &b, R init = R{}) noexcept
 {
   if constexpr ( micron::unrollable<C> ) {
-    return __impl::__unroll_inner_product(a.begin(), b.begin(), init, make_index_sequence<C::static_size>{});
+    return micron::__impl::__unroll_inner_product(a.begin(), b.begin(), init, make_index_sequence<C::static_size>{});
   } else {
     const auto *fa = a.begin();
     const auto *ea = a.end();
@@ -310,7 +310,7 @@ C
 negate(C cont) noexcept
 {
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_negate(cont.begin(), make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_negate(cont.begin(), make_index_sequence<C::static_size>{});
   } else {
     auto *first = cont.begin();
     const auto *end = cont.end();

@@ -4,6 +4,7 @@
 //   fmap (with lambda, with member-function call)
 //   scanl / scanr / scan (prefix/suffix scan)
 //   zip_with / zip_with_trunc
+//   unzip<CA, CB>
 //   replicate
 //   safe_max / safe_min / safe_sum / safe_mean
 //     (return option<T, empty_container_error>)
@@ -323,6 +324,66 @@ main()
         for ( usize i = 0; i < n; ++i ) {
           running += buf[i];
           require(out[i + 1], running);
+        }
+      },
+      10000);
+
+  // ════════════════════════════════════════════════════════════════════
+  // unzip
+  //
+  // this used to declare both halves as C and cast each component back to C::value_type -- an A cast
+  // to tuple<A,B> -- so it was uninstantiable for any real pair type. the halves are now named.
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("unzip<CA, CB> splits a container of tuples");
+  {
+    using vi = micron::vector<int>;
+    using vf = micron::vector<float>;
+    micron::vector<micron::tuple<int, float>> z;
+    z.push_back(micron::make_tuple(1, 1.5f));
+    z.push_back(micron::make_tuple(2, 2.5f));
+    z.push_back(micron::make_tuple(3, 3.5f));
+
+    auto u = micron::fp::unzip<vi, vf>(z);
+    const auto &as = micron::get<0>(u);
+    const auto &bs = micron::get<1>(u);
+    require(as.size(), usize(3));
+    require(bs.size(), usize(3));
+    require(as[0], 1);
+    require(as[2], 3);
+    require_true(bs[0] == 1.5f);
+    require_true(bs[2] == 3.5f);
+  }
+  end_test_case();
+
+  test_case("unzip of an empty container gives two empty halves");
+  {
+    using vi = micron::vector<int>;
+    micron::vector<micron::tuple<int, int>> z;
+    auto u = micron::fp::unzip<vi, vi>(z);
+    require(micron::get<0>(u).size(), usize(0));
+    require(micron::get<1>(u).size(), usize(0));
+  }
+  end_test_case();
+
+  property_test(
+      "zip_with_trunc(unzip.a, unzip.b, make_tuple) round-trips (10k)",
+      [](u32 raw_n) {
+        using vi = micron::vector<int>;
+        usize n = (raw_n & 0x1f) + 1;
+        prng rng(raw_n + 109);
+        micron::vector<micron::tuple<int, int>> z;
+        for ( usize i = 0; i < n; ++i )
+          z.push_back(micron::make_tuple(static_cast<int>(rng.next_in(200)) - 100, static_cast<int>(rng.next_in(200)) - 100));
+
+        auto u = micron::fp::unzip<vi, vi>(z);
+        const auto &as = micron::get<0>(u);
+        const auto &bs = micron::get<1>(u);
+        require(as.size(), n);
+        require(bs.size(), n);
+        for ( usize i = 0; i < n; ++i ) {
+          require(as[i], micron::get<0>(z[i]));
+          require(bs[i], micron::get<1>(z[i]));
         }
       },
       10000);

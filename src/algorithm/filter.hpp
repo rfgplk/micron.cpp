@@ -17,8 +17,25 @@
 
 namespace micron
 {
+
+namespace __impl
+{
+
+// T is an explicit parameter, not deduced from the call
+template<typename Fn, typename T> struct __deref_pred {
+  [[no_unique_address]] Fn __fn;
+
+  [[gnu::always_inline]] constexpr bool
+  operator()(const T *__p) const
+  {
+    return static_cast<bool>(__fn(*__p));
+  }
+};
+
+};      // namespace __impl
+
 template<class T, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *>
+  requires(!micron::fn_predicate<Fn, T>) && micron::is_invocable_v<Fn, const T *>
 T *
 filter(const T *first, const T *end, Fn fn, T *out)
 {
@@ -28,7 +45,7 @@ filter(const T *first, const T *end, Fn fn, T *out)
 }
 
 template<class T, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *>
+  requires(!micron::fn_predicate<Fn, T>) && micron::is_invocable_v<Fn, const T *>
 T *
 filter(const T *first, const T *end, Fn fn, T *out, usize limit)
 {
@@ -41,7 +58,7 @@ filter(const T *first, const T *end, Fn fn, T *out, usize limit)
 }
 
 template<class T, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *>
+  requires(!micron::fn_predicate<Fn, T>) && micron::is_invocable_v<Fn, const T *>
 T *
 filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
 {
@@ -53,7 +70,7 @@ filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
 }
 
 template<class T, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *>
+  requires(!micron::fn_predicate<Fn, T>) && micron::is_invocable_v<Fn, const T *>
 const T *
 prune(const T *first, const T *end, Fn fn, T *out, usize limit)
 {
@@ -66,7 +83,7 @@ prune(const T *first, const T *end, Fn fn, T *out, usize limit)
 }
 
 template<class T, typename Fn>
-  requires micron::is_invocable_v<Fn, const T *>
+  requires(!micron::fn_predicate<Fn, T>) && micron::is_invocable_v<Fn, const T *>
 const T *
 prune(const T *first, const T *end, Fn fn, T *out, T *out_end)
 {
@@ -78,7 +95,7 @@ prune(const T *first, const T *end, Fn fn, T *out, T *out_end)
 }
 
 template<is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *>
+  requires(!micron::fn_predicate<Fn, typename C::value_type>) && micron::is_invocable_v<Fn, const typename C::value_type *>
 C
 filter(const C &c, Fn fn)
 {
@@ -90,7 +107,7 @@ filter(const C &c, Fn fn)
 }
 
 template<is_iterable_container C, typename F>
-  requires micron::is_invocable_v<F, const typename C::value_type *>
+  requires(!micron::fn_predicate<F, typename C::value_type>) && micron::is_invocable_v<F, const typename C::value_type *>
 C &
 filter_inplace(C &c, F fn)
 {
@@ -104,7 +121,7 @@ filter_inplace(C &c, F fn)
 }
 
 template<is_iterable_container C, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *>
+  requires(!micron::fn_predicate<Fn, typename C::value_type>) && micron::is_invocable_v<Fn, const typename C::value_type *>
 C
 filter(const C &c, Fn fn, usize limit)
 {
@@ -116,7 +133,8 @@ filter(const C &c, Fn fn, usize limit)
 }
 
 template<is_iterable_container C, is_iterable_container O, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
+  requires(!micron::fn_predicate<Fn, typename C::value_type>)
+          && micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 typename O::value_type *
 filter(const C &c_in, Fn fn, O &c_out)
 {
@@ -124,7 +142,8 @@ filter(const C &c_in, Fn fn, O &c_out)
 }
 
 template<is_iterable_container C, is_iterable_container O, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
+  requires(!micron::fn_predicate<Fn, typename C::value_type>)
+          && micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 typename O::value_type *
 filter(const C &c_in, Fn fn, O &c_out, usize limit)
 {
@@ -132,7 +151,8 @@ filter(const C &c_in, Fn fn, O &c_out, usize limit)
 }
 
 template<is_iterable_container C, is_iterable_container O, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
+  requires(!micron::fn_predicate<Fn, typename C::value_type>)
+          && micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 const typename C::value_type *
 prune(const C &c_in, Fn fn, O &c_out, usize limit)
 {
@@ -140,13 +160,111 @@ prune(const C &c_in, Fn fn, O &c_out, usize limit)
 }
 
 template<is_iterable_container C, is_iterable_container O, typename Fn>
-  requires micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
+  requires(!micron::fn_predicate<Fn, typename C::value_type>)
+          && micron::is_invocable_v<Fn, const typename C::value_type *> && micron::is_same_v<typename C::value_type, typename O::value_type>
 const typename C::value_type *
 prune(const C &c_in, Fn fn, O &c_out)
 {
   return prune(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end());
 }
 
+template<class T, typename Fn>
+  requires micron::fn_predicate<Fn, T>
+T *
+filter(const T *first, const T *end, Fn fn, T *out)
+{
+  return filter(first, end, __impl::__deref_pred<Fn, T>{ micron::move(fn) }, out);
+}
+
+template<class T, typename Fn>
+  requires micron::fn_predicate<Fn, T>
+T *
+filter(const T *first, const T *end, Fn fn, T *out, usize limit)
+{
+  return filter(first, end, __impl::__deref_pred<Fn, T>{ micron::move(fn) }, out, limit);
+}
+
+template<class T, typename Fn>
+  requires micron::fn_predicate<Fn, T>
+T *
+filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
+{
+  return filter(first, end, __impl::__deref_pred<Fn, T>{ micron::move(fn) }, out, out_end);
+}
+
+template<class T, typename Fn>
+  requires micron::fn_predicate<Fn, T>
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, usize limit)
+{
+  return prune(first, end, __impl::__deref_pred<Fn, T>{ micron::move(fn) }, out, limit);
+}
+
+template<class T, typename Fn>
+  requires micron::fn_predicate<Fn, T>
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, T *out_end)
+{
+  return prune(first, end, __impl::__deref_pred<Fn, T>{ micron::move(fn) }, out, out_end);
+}
+
+template<is_iterable_container C, typename Fn>
+  requires micron::fn_predicate<Fn, typename C::value_type>
+C
+filter(const C &c, Fn fn)
+{
+  return filter(c, __impl::__deref_pred<Fn, typename C::value_type>{ micron::move(fn) });
+}
+
+template<is_iterable_container C, typename F>
+  requires micron::fn_predicate<F, typename C::value_type>
+C &
+filter_inplace(C &c, F fn)
+{
+  return filter_inplace(c, __impl::__deref_pred<F, typename C::value_type>{ micron::move(fn) });
+}
+
+template<is_iterable_container C, typename Fn>
+  requires micron::fn_predicate<Fn, typename C::value_type>
+C
+filter(const C &c, Fn fn, usize limit)
+{
+  return filter(c, __impl::__deref_pred<Fn, typename C::value_type>{ micron::move(fn) }, limit);
+}
+
+template<is_iterable_container C, is_iterable_container O, typename Fn>
+  requires micron::fn_predicate<Fn, typename C::value_type> && micron::is_same_v<typename C::value_type, typename O::value_type>
+typename O::value_type *
+filter(const C &c_in, Fn fn, O &c_out)
+{
+  return filter(c_in, __impl::__deref_pred<Fn, typename C::value_type>{ micron::move(fn) }, c_out);
+}
+
+template<is_iterable_container C, is_iterable_container O, typename Fn>
+  requires micron::fn_predicate<Fn, typename C::value_type> && micron::is_same_v<typename C::value_type, typename O::value_type>
+typename O::value_type *
+filter(const C &c_in, Fn fn, O &c_out, usize limit)
+{
+  return filter(c_in, __impl::__deref_pred<Fn, typename C::value_type>{ micron::move(fn) }, c_out, limit);
+}
+
+template<is_iterable_container C, is_iterable_container O, typename Fn>
+  requires micron::fn_predicate<Fn, typename C::value_type> && micron::is_same_v<typename C::value_type, typename O::value_type>
+const typename C::value_type *
+prune(const C &c_in, Fn fn, O &c_out, usize limit)
+{
+  return prune(c_in, __impl::__deref_pred<Fn, typename C::value_type>{ micron::move(fn) }, c_out, limit);
+}
+
+template<is_iterable_container C, is_iterable_container O, typename Fn>
+  requires micron::fn_predicate<Fn, typename C::value_type> && micron::is_same_v<typename C::value_type, typename O::value_type>
+const typename C::value_type *
+prune(const C &c_in, Fn fn, O &c_out)
+{
+  return prune(c_in, __impl::__deref_pred<Fn, typename C::value_type>{ micron::move(fn) }, c_out);
+}
+
+// NTTP forms
 template<auto Fn, typename T>
 constexpr T *
 filter(const T *first, const T *end, T *out) noexcept

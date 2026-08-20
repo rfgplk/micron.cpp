@@ -68,6 +68,33 @@ public:
     return __m.contains(k);
   }
 
+  using const_iterator = micron::__set_key_iter<typename __map_t::const_iterator, K>;
+  using iterator = const_iterator;
+
+  const_iterator
+  begin() const
+  {
+    return const_iterator{ __m.begin() };
+  }
+
+  const_iterator
+  end() const
+  {
+    return const_iterator{ __m.end() };
+  }
+
+  const_iterator
+  cbegin() const
+  {
+    return begin();
+  }
+
+  const_iterator
+  cend() const
+  {
+    return end();
+  }
+
   template<typename Fn>
   void
   for_each(Fn &&fn)
