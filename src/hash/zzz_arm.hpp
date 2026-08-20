@@ -204,7 +204,6 @@ z(const u8 *__restrict data, usize sz, u64 *__restrict out)
 
   const u8 *ptr = data;
   const u8 *end = data + sz;
-  const __m256_neon mask64 = __zset1_epi64((i64)0xFFFFFFFFFFFFULL);
 
   while ( ptr < end ) {
     __m256_neon block;
@@ -223,11 +222,11 @@ z(const u8 *__restrict data, usize sz, u64 *__restrict out)
     for ( u64 r = 0; r < __zzzrounds; ++r ) {
       __m256_neon T0 = __zslli64<3>(S0_next);
       __m256_neon A0 = __zsub64(S0_next, T0);
-      S0_next = __zand(A0, mask64);
+      S0_next = A0;
 
       __m256_neon T1 = __zslli64<2>(S1_next);
       __m256_neon A1 = __zsub64(S1_next, T1);
-      S1_next = __zand(A1, mask64);
+      S1_next = A1;
     }
 
     S0 = S0_next;
@@ -250,7 +249,6 @@ z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 
   const u8 *ptr = data;
   const u8 *end = data + sz;
-  const __m256_neon mask64 = __zset1_epi64((i64)0xFFFFFFFFFFFFULL);
 
   while ( ptr < end ) {
     __m256_neon block;
@@ -269,11 +267,11 @@ z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
     for ( u64 r = 0; r < __zzzrounds; ++r ) {
       __m256_neon T0 = __zslli64<3>(S0_next);
       __m256_neon A0 = __zsub64(S0_next, T0);
-      S0_next = __zand(A0, mask64);
+      S0_next = A0;
 
       __m256_neon T1 = __zslli64<2>(S1_next);
       __m256_neon A1 = __zsub64(S1_next, T1);
-      S1_next = __zand(A1, mask64);
+      S1_next = A1;
     }
 
     S0 = S0_next;
@@ -462,7 +460,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 
   const u8 *ptr = data;
   const u8 *end = data + sz;
-  const __m256_neon mask64 = __zset1_epi64((i64)0xFFFFFFFFFFFFULL);
 
   while ( ptr < end ) {
     __m256_neon block;
@@ -489,7 +486,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       S0_next = __zadd64(S0_next, T0);
       T0 = __zsrli64<4>(S0_next);
       S0_next = __zsub64(S0_next, T0);
-      S0_next = __zand(S0_next, mask64);
 
       __m256_neon T1 = __zslli64<3>(S1_next);
       S1_next = __zsub64(S1_next, T1);
@@ -499,7 +495,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       S1_next = __zadd64(S1_next, T1);
       T1 = __zsrli64<4>(S1_next);
       S1_next = __zsub64(S1_next, T1);
-      S1_next = __zand(S1_next, mask64);
 
       __m256_neon T2 = __zslli64<2>(S2_next);
       S2_next = __zsub64(S2_next, T2);
@@ -509,7 +504,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       S2_next = __zadd64(S2_next, T2);
       T2 = __zsrli64<5>(S2_next);
       S2_next = __zsub64(S2_next, T2);
-      S2_next = __zand(S2_next, mask64);
 
       __m256_neon T3 = __zslli64<3>(S3_next);
       S3_next = __zsub64(S3_next, T3);
@@ -519,7 +513,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       S3_next = __zadd64(S3_next, T3);
       T3 = __zsrli64<3>(S3_next);
       S3_next = __zsub64(S3_next, T3);
-      S3_next = __zand(S3_next, mask64);
     }
 
     S0 = S0_next;
@@ -547,7 +540,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
 
   const u8 *ptr = data;
   const u8 *end = data + sz;
-  const __m256_neon mask64 = __zset1_epi64((i64)0xFFFFFFFFFFFFULL);
 
   while ( ptr < end ) {
     __m256_neon block;
@@ -574,7 +566,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       S0_next = __zadd64(S0_next, T0);
       T0 = __zsrli64<4>(S0_next);
       S0_next = __zsub64(S0_next, T0);
-      S0_next = __zand(S0_next, mask64);
 
       __m256_neon T1 = __zslli64<3>(S1_next);
       S1_next = __zsub64(S1_next, T1);
@@ -584,7 +575,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       S1_next = __zadd64(S1_next, T1);
       T1 = __zsrli64<4>(S1_next);
       S1_next = __zsub64(S1_next, T1);
-      S1_next = __zand(S1_next, mask64);
 
       __m256_neon T2 = __zslli64<2>(S2_next);
       S2_next = __zsub64(S2_next, T2);
@@ -594,7 +584,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       S2_next = __zadd64(S2_next, T2);
       T2 = __zsrli64<5>(S2_next);
       S2_next = __zsub64(S2_next, T2);
-      S2_next = __zand(S2_next, mask64);
 
       __m256_neon T3 = __zslli64<3>(S3_next);
       S3_next = __zsub64(S3_next, T3);
@@ -604,7 +593,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       S3_next = __zadd64(S3_next, T3);
       T3 = __zsrli64<3>(S3_next);
       S3_next = __zsub64(S3_next, T3);
-      S3_next = __zand(S3_next, mask64);
     }
 
     S0 = S0_next;

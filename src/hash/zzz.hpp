@@ -56,7 +56,6 @@ z(const u8 *__restrict data, usize sz, u64 *__restrict out)
 
   const u8 *ptr = data;
   const u8 *end = data + sz;
-  const __m256i mask64 = simd::avx::splat_i64(0xFFFFFFFFFFFFULL);
 
   while ( ptr < end ) {
     __m256i block;
@@ -78,11 +77,11 @@ z(const u8 *__restrict data, usize sz, u64 *__restrict out)
     for ( u64 r = 0; r < __zzzrounds; ++r ) {
       __m256i T0 = simd::avx2::shl_i64(S0_next, 3);
       __m256i A0 = simd::avx2::sub_i64(S0_next, T0);
-      S0_next = simd::avx2::and_i256(A0, mask64);
+      S0_next = A0;
 
       __m256i T1 = simd::avx2::shl_i64(S1_next, 2);
       __m256i A1 = simd::avx2::sub_i64(S1_next, T1);
-      S1_next = simd::avx2::and_i256(A1, mask64);
+      S1_next = A1;
     }
 
     S0 = S0_next;
@@ -104,7 +103,6 @@ z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 
   const u8 *ptr = data;
   const u8 *end = data + sz;
-  const __m256i mask64 = simd::avx::splat_i64(0xFFFFFFFFFFFFULL);
 
   while ( ptr < end ) {
     __m256i block;
@@ -126,11 +124,11 @@ z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
     for ( u64 r = 0; r < __zzzrounds; ++r ) {
       __m256i T0 = simd::avx2::shl_i64(S0_next, 3);
       __m256i A0 = simd::avx2::sub_i64(S0_next, T0);
-      S0_next = simd::avx2::and_i256(A0, mask64);
+      S0_next = A0;
 
       __m256i T1 = simd::avx2::shl_i64(S1_next, 2);
       __m256i A1 = simd::avx2::sub_i64(S1_next, T1);
-      S1_next = simd::avx2::and_i256(A1, mask64);
+      S1_next = A1;
     }
 
     S0 = S0_next;
@@ -314,7 +312,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 
   const u8 *ptr = data;
   const u8 *end = data + sz;
-  const __m256i mask64 = simd::avx::splat_i64(0xFFFFFFFFFFFFULL);
 
   while ( ptr < end ) {
     __m256i block;
@@ -344,7 +341,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       S0_next = simd::avx2::add_i64(S0_next, T0);
       T0 = simd::avx2::shr_i64(S0_next, 4);
       S0_next = simd::avx2::sub_i64(S0_next, T0);
-      S0_next = simd::avx2::and_i256(S0_next, mask64);
 
       __m256i T1 = simd::avx2::shl_i64(S1_next, 3);
       S1_next = simd::avx2::sub_i64(S1_next, T1);
@@ -354,7 +350,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       S1_next = simd::avx2::add_i64(S1_next, T1);
       T1 = simd::avx2::shr_i64(S1_next, 4);
       S1_next = simd::avx2::sub_i64(S1_next, T1);
-      S1_next = simd::avx2::and_i256(S1_next, mask64);
 
       __m256i T2 = simd::avx2::shl_i64(S2_next, 2);
       S2_next = simd::avx2::sub_i64(S2_next, T2);
@@ -364,7 +359,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       S2_next = simd::avx2::add_i64(S2_next, T2);
       T2 = simd::avx2::shr_i64(S2_next, 5);
       S2_next = simd::avx2::sub_i64(S2_next, T2);
-      S2_next = simd::avx2::and_i256(S2_next, mask64);
 
       __m256i T3 = simd::avx2::shl_i64(S3_next, 3);
       S3_next = simd::avx2::sub_i64(S3_next, T3);
@@ -374,7 +368,6 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
       S3_next = simd::avx2::add_i64(S3_next, T3);
       T3 = simd::avx2::shr_i64(S3_next, 3);
       S3_next = simd::avx2::sub_i64(S3_next, T3);
-      S3_next = simd::avx2::and_i256(S3_next, mask64);
     }
 
     S0 = S0_next;
@@ -402,7 +395,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
 
   const u8 *ptr = data;
   const u8 *end = data + sz;
-  const __m256i mask64 = simd::avx::splat_i64(0xFFFFFFFFFFFFULL);
 
   while ( ptr < end ) {
     __m256i block;
@@ -432,7 +424,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       S0_next = simd::avx2::add_i64(S0_next, T0);
       T0 = simd::avx2::shr_i64(S0_next, 4);
       S0_next = simd::avx2::sub_i64(S0_next, T0);
-      S0_next = simd::avx2::and_i256(S0_next, mask64);
 
       __m256i T1 = simd::avx2::shl_i64(S1_next, 3);
       S1_next = simd::avx2::sub_i64(S1_next, T1);
@@ -442,7 +433,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       S1_next = simd::avx2::add_i64(S1_next, T1);
       T1 = simd::avx2::shr_i64(S1_next, 4);
       S1_next = simd::avx2::sub_i64(S1_next, T1);
-      S1_next = simd::avx2::and_i256(S1_next, mask64);
 
       __m256i T2 = simd::avx2::shl_i64(S2_next, 2);
       S2_next = simd::avx2::sub_i64(S2_next, T2);
@@ -452,7 +442,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       S2_next = simd::avx2::add_i64(S2_next, T2);
       T2 = simd::avx2::shr_i64(S2_next, 5);
       S2_next = simd::avx2::sub_i64(S2_next, T2);
-      S2_next = simd::avx2::and_i256(S2_next, mask64);
 
       __m256i T3 = simd::avx2::shl_i64(S3_next, 3);
       S3_next = simd::avx2::sub_i64(S3_next, T3);
@@ -462,7 +451,6 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
       S3_next = simd::avx2::add_i64(S3_next, T3);
       T3 = simd::avx2::shr_i64(S3_next, 3);
       S3_next = simd::avx2::sub_i64(S3_next, T3);
-      S3_next = simd::avx2::and_i256(S3_next, mask64);
     }
 
     S0 = S0_next;
