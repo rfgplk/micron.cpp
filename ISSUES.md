@@ -45,9 +45,12 @@ run
 - certain heavy abc tests need `vm.overcommit_memory=0|1` otherwise they'll fail at RUNTIME with `critical_error` (mmap refused)
 
 ## Bugs / Limitations you should know
-- `simd::memcpy512` / `memset512` / `memcmp512` etc. remain **loaded**: they carry
-  `target("avx512f")`, are ungated, and are exported through `cmemory.hpp`, so calling one on a
-  non-AVX-512 CPU is a SIGILL.
+- **`external/bbench` can only be built against the working tree with `-i .`.**
+- **`micron::hashes::z64` and `zz64` are weak. Neither is a default.**
+- **`duck --clang` is broken on anything that pulls in AVX**
+- **micron is single-TU BY DESIGN.**
+- **`hopscotch_map::begin()`/`end()` iterate the raw slot array**
+- **`micron::list` / `micron::doublelist` `begin()`/`end()` are not an iteration pair.**
 - **`v256<T,F>::shuffle()` (`simd/types/simd256.hpp:1678`) uses an unguarded PSHUFB**
 - **`v128<T,F>::shuffle()` returns an uninitialised `v128` for every `T` other than `i128`.**
 - **`micron::function`'s move ctor / move-assign / `swap` are unconditionally `noexcept`**

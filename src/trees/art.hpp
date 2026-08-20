@@ -717,6 +717,179 @@ public:
     return ok;
   }
 
+  // explicit-stack cursor
+  class const_iterator
+  {
+    struct __frame {
+      const __node_base *n;
+      u16 i;      // next child slot to try
+    };
+
+    __frame __st[__hash_bytes + 2]{};
+    i32 __top = -1;
+    const __leaf *__lf = nullptr;
+
+    static const __node_base *
+    __child_at(const __node_base *n, u16 i) noexcept
+    {
+      switch ( n->kind ) {
+      case __node_kind::n4: {
+        auto *p = static_cast<const __n4 *>(n);
+        return i < p->num_children ? p->children[i] : nullptr;
+      }
+      case __node_kind::n16: {
+        auto *p = static_cast<const __n16 *>(n);
+        return i < p->num_children ? p->children[i] : nullptr;
+      }
+      case __node_kind::n48: {
+        auto *p = static_cast<const __n48 *>(n);
+        return i < 48u ? p->children[i] : nullptr;
+      }
+      case __node_kind::n256: {
+        auto *p = static_cast<const __n256 *>(n);
+        return i < 256u ? p->children[i] : nullptr;
+      }
+      default:
+        return nullptr;
+      }
+    }
+
+    static u16
+    __slot_count(const __node_base *n) noexcept
+    {
+      switch ( n->kind ) {
+      case __node_kind::n4:
+        return static_cast<const __n4 *>(n)->num_children;
+      case __node_kind::n16:
+        return static_cast<const __n16 *>(n)->num_children;
+      case __node_kind::n48:
+        return 48u;
+      case __node_kind::n256:
+        return 256u;
+      default:
+        return 0u;
+      }
+    }
+
+    // descend into n, pushing frames, until a leaf is reached
+    void
+    __descend(const __node_base *n)
+    {
+      while ( n ) {
+        if ( n->kind == __node_kind::leaf ) {
+          __lf = static_cast<const __leaf *>(n);
+          return;
+        }
+        __st[++__top] = __frame{ n, 0 };
+        n = __step_top();
+      }
+      __unwind();
+    }
+
+    const __node_base *
+    __step_top() noexcept
+    {
+      __frame &f = __st[__top];
+      const u16 cnt = __slot_count(f.n);
+      while ( f.i < cnt ) {
+        const __node_base *c = __child_at(f.n, f.i++);
+        if ( c ) return c;
+      }
+      return nullptr;
+    }
+
+    // pop exhausted frames and resume the first one that still has children
+    void
+    __unwind()
+    {
+      while ( __top >= 0 ) {
+        const __node_base *c = __step_top();
+        if ( c ) {
+          __descend(c);
+          return;
+        }
+        --__top;
+      }
+      __lf = nullptr;
+    }
+
+  public:
+    using value_type = micron::pair<const K &, const V &>;
+    using reference = micron::pair<const K &, const V &>;
+    using difference_type = ssize_t;
+
+    constexpr const_iterator() = default;
+
+    explicit const_iterator(const __node_base *root)
+    {
+      if ( root ) __descend(root);
+    }
+
+    reference
+    operator*() const
+    {
+      return reference{ __lf->key, __lf->value };
+    }
+
+    const_iterator &
+    operator++()
+    {
+      if ( __lf && __lf->next ) {
+        __lf = __lf->next;
+        return *this;
+      }
+      __lf = nullptr;
+      __unwind();
+      return *this;
+    }
+
+    const_iterator
+    operator++(int)
+    {
+      const_iterator __t = *this;
+      ++*this;
+      return __t;
+    }
+
+    bool
+    operator==(const const_iterator &__o) const noexcept
+    {
+      return __lf == __o.__lf;
+    }
+
+    bool
+    operator!=(const const_iterator &__o) const noexcept
+    {
+      return __lf != __o.__lf;
+    }
+  };
+
+  using iterator = const_iterator;
+
+  const_iterator
+  begin() const
+  {
+    return const_iterator{ __root };
+  }
+
+  const_iterator
+  end() const
+  {
+    return const_iterator{};
+  }
+
+  const_iterator
+  cbegin() const
+  {
+    return begin();
+  }
+
+  const_iterator
+  cend() const
+  {
+    return end();
+  }
+
   template<typename Fn>
   void
   for_each(Fn &&fn)

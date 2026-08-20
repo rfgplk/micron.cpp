@@ -9,6 +9,8 @@
 #include "algorithm/memory.hpp"
 #include "except.hpp"
 #include "tags.hpp"
+#include "memory/addr.hpp"
+#include "type_traits.hpp"
 #include "types.hpp"
 
 namespace micron
@@ -74,8 +76,103 @@ public:
   typedef const T &const_ref;
   typedef double_list_node_t *pointer;
   typedef const double_list_node_t *const_pointer;
-  typedef T *iterator;
-  typedef const T *const_iterator;
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // bidirectional node walking cursor
+  template<bool Const> class __cursor
+  {
+    using __node = micron::conditional_t<Const, const double_list_node_t, double_list_node_t>;
+    __node *__n;
+    __node *__tail;
+
+    friend class double_list;
+
+  public:
+    using value_type = T;
+    using reference = micron::conditional_t<Const, const T &, T &>;
+    using pointer = micron::conditional_t<Const, const T *, T *>;
+    using difference_type = ssize_t;
+
+    constexpr __cursor() noexcept : __n(nullptr), __tail(nullptr) { }
+
+    constexpr __cursor(__node *__p, __node *__t) noexcept : __n(__p), __tail(__t) { }
+
+    constexpr __cursor(const __cursor<!Const> &__o) noexcept
+      requires(Const)
+        : __n(__o.node()), __tail(__o.tail())
+    {
+    }
+
+    reference
+    operator*() const
+    {
+      return __n->data;
+    }
+
+    pointer
+    operator->() const
+    {
+      return micron::addressof(__n->data);
+    }
+
+    __cursor &
+    operator++()
+    {
+      __n = __n->next;
+      return *this;
+    }
+
+    __cursor
+    operator++(int)
+    {
+      __cursor __t = *this;
+      __n = __n->next;
+      return __t;
+    }
+
+    // decrementing end() lands on the tail; that is the only case that needs __tail
+    __cursor &
+    operator--()
+    {
+      __n = (__n == nullptr) ? __tail : __n->prev;
+      return *this;
+    }
+
+    __cursor
+    operator--(int)
+    {
+      __cursor __t = *this;
+      --(*this);
+      return __t;
+    }
+
+    bool
+    operator==(const __cursor &__o) const noexcept
+    {
+      return __n == __o.__n;
+    }
+
+    bool
+    operator!=(const __cursor &__o) const noexcept
+    {
+      return __n != __o.__n;
+    }
+
+    __node *
+    node() const noexcept
+    {
+      return __n;
+    }
+
+    __node *
+    tail() const noexcept
+    {
+      return __tail;
+    }
+  };
+
+  typedef __cursor<false> iterator;
+  typedef __cursor<true> const_iterator;
 
   double_list() : root(nullptr) { }
 
@@ -151,22 +248,40 @@ public:
     return root;
   }
 
-  // address of last element's data (nullptr when empty)
-  const_iterator
-  end() const
+  iterator
+  begin()
   {
-    if ( root == nullptr ) return nullptr;
-    double_list_node_t *ptr = root;
-    while ( ptr->next != nullptr ) ptr = ptr->next;
-    return &ptr->data;
+    return iterator{ root, const_cast<double_list_node_t *>(iend()) };
   }
 
-  // address of first element's data (nullptr when empty)
+  iterator
+  end()
+  {
+    return iterator{ nullptr, const_cast<double_list_node_t *>(iend()) };
+  }
+
   const_iterator
   begin() const
   {
-    if ( root == nullptr ) return nullptr;
-    return &root->data;
+    return const_iterator{ root, iend() };
+  }
+
+  const_iterator
+  end() const
+  {
+    return const_iterator{ nullptr, iend() };
+  }
+
+  const_iterator
+  cbegin() const
+  {
+    return begin();
+  }
+
+  const_iterator
+  cend() const
+  {
+    return end();
   }
 
   void
@@ -220,7 +335,8 @@ public:
   }
 
   // address of the matching element's data, or nullptr if absent
-  const_iterator
+  // NOTE returns a raw element pointer, not an iterator, and nullptr (not end()) on a miss
+  const T *
   find(const T &srch) const
   {
     for ( const double_list_node_t *ptr = root; ptr != nullptr; ptr = ptr->next )
@@ -317,7 +433,7 @@ public:
   back() const
   {
     if ( root == nullptr ) exc<except::runtime_error>("micron::double_list back() is empty");
-    return *end();
+    return iend()->data;      // NOT *end() -- end() is one-past-the-end now
   }
 
   void

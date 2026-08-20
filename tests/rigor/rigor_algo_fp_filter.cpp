@@ -2,7 +2,7 @@
 //   src/algorithm/filter.hpp + src/algorithm/fpfilter.hpp
 //
 // Coverage:
-//   filter (pointer + container variants)
+//   filter (pointer + VALUE + container variants)
 //   prune
 //   reject
 //   partition
@@ -726,6 +726,64 @@ main()
     require(rt.size(), usize(2));
     require_true(rt[0].b[1] == 'x');
     require_true(rt[1].b[1] == 'y');
+  }
+  end_test_case();
+
+  // ════════════════════════════════════════════════════════════════════
+  // predicate shape -- micron::filter used to accept POINTER predicates only
+  // ════════════════════════════════════════════════════════════════════
+
+  test_case("micron::filter accepts a value predicate, a pointer predicate, and a generic lambda");
+  {
+    micron::vector<int> v;
+    for ( int i = -4; i < 6; ++i ) v.push_back(i);
+
+    auto by_ptr = micron::filter(v, [](const int *p) { return *p > 0; });
+    auto by_val = micron::filter(v, [](int x) { return x > 0; });
+    // the trap this fixes: a generic lambda IS invocable with const int*, so it used to bind the
+    // pointer arm and compare POINTERS -- which is true for every element, not five of them.
+    auto by_gen = micron::filter(v, [](auto x) { return x > 0; });
+
+    require(by_ptr.size(), usize(5));
+    require(by_val.size(), usize(5));
+    require(by_gen.size(), usize(5));
+    for ( usize i = 0; i < 5; ++i ) {
+      require(by_val[i], by_ptr[i]);
+      require(by_gen[i], by_ptr[i]);
+    }
+  }
+  end_test_case();
+
+  test_case("fp::filter_c and the option-lifted fp::filter take value predicates");
+  {
+    using vi = micron::vector<int>;
+    vi v;
+    for ( int i = -4; i < 6; ++i ) v.push_back(i);
+
+    auto piped = v | micron::fp::filter_c([](int x) { return x > 0; });
+    require(piped.size(), usize(5));
+
+    // fpfilter.hpp's value-predicate option overload was uninstantiable: its constraint accepted a
+    // value predicate and its body then hard-errored inside micron::filter.
+    micron::option<vi, micron::fp::empty_container_error> o{ vi(v) };
+    auto lifted = micron::fp::filter(micron::move(o), [](int x) { return x > 0; });
+    require_true(lifted.is_first());
+    require(lifted.cast<vi>().size(), usize(5));
+
+    // the error branch still short-circuits
+    micron::option<vi, micron::fp::empty_container_error> bad{ micron::fp::empty_container_error{} };
+    require_true(micron::fp::filter(micron::move(bad), [](int x) { return x > 0; }).is_second());
+  }
+  end_test_case();
+
+  test_case("filter_inplace takes a value predicate");
+  {
+    micron::vector<int> v;
+    for ( int i = -4; i < 6; ++i ) v.push_back(i);
+    micron::filter_inplace(v, [](int x) { return (x & 1) == 0; });
+    require(v.size(), usize(5));      // -4 -2 0 2 4
+    require(v[0], -4);
+    require(v[4], 4);
   }
   end_test_case();
 

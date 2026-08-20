@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../except.hpp"
+#include "../memory/addr.hpp"
 #include "../memory/new.hpp"
 #include "../tags.hpp"
 #include "../types.hpp"
@@ -806,6 +807,119 @@ public:
     T data = micron::move(z->data);
     __erase_node(z);
     return data;
+  }
+
+  template<bool Const> class __cursor
+  {
+    using __node = micron::conditional_t<Const, const node, node>;
+    __node *__n;
+
+    static __node *
+    __succ(__node *__x) noexcept
+    {
+      if ( __x->right ) {
+        __x = __x->right;
+        while ( __x->left ) __x = __x->left;
+        return __x;
+      }
+      __node *__p = __x->parent;
+      while ( __p && __x == __p->right ) {
+        __x = __p;
+        __p = __p->parent;
+      }
+      return __p;
+    }
+
+  public:
+    using value_type = T;
+    using reference = const T &;
+    using pointer = const T *;
+    using difference_type = ssize_t;
+
+    constexpr __cursor() noexcept : __n(nullptr) { }
+
+    constexpr explicit __cursor(__node *__p) noexcept : __n(__p) { }
+
+    constexpr __cursor(const __cursor<!Const> &__o) noexcept
+      requires(Const)
+        : __n(__o.node_ptr())
+    {
+    }
+
+    const T &
+    operator*() const
+    {
+      return __n->data;
+    }
+
+    const T *
+    operator->() const
+    {
+      return micron::addressof(__n->data);
+    }
+
+    __cursor &
+    operator++()
+    {
+      __n = __succ(__n);
+      return *this;
+    }
+
+    __cursor
+    operator++(int)
+    {
+      __cursor __t = *this;
+      __n = __succ(__n);
+      return __t;
+    }
+
+    bool
+    operator==(const __cursor &__o) const noexcept
+    {
+      return __n == __o.__n;
+    }
+
+    bool
+    operator!=(const __cursor &__o) const noexcept
+    {
+      return __n != __o.__n;
+    }
+
+    __node *
+    node_ptr() const noexcept
+    {
+      return __n;
+    }
+  };
+
+  using iterator = __cursor<true>;
+  using const_iterator = __cursor<true>;
+
+  const_iterator
+  begin() const noexcept
+  {
+    const node *__x = root_;
+    if ( !__x ) return const_iterator{};
+    while ( __x->left ) __x = __x->left;
+    return const_iterator{ __x };
+  }
+
+  const_iterator
+  end() const noexcept
+  {
+    return const_iterator{};
+  }
+
+  const_iterator
+  cbegin() const noexcept
+  {
+    return begin();
+  }
+
+  const_iterator
+  cend() const noexcept
+  {
+    return end();
   }
 
   template<class Fn>

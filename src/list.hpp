@@ -8,7 +8,9 @@
 #include "algorithm/algorithm.hpp"
 #include "algorithm/memory.hpp"
 #include "except.hpp"
+#include "memory/addr.hpp"
 #include "tags.hpp"
+#include "type_traits.hpp"
 #include "types.hpp"
 
 namespace micron
@@ -69,8 +71,81 @@ public:
   typedef const T &const_ref;
   typedef list_node_t *pointer;
   typedef const list_node_t *const_pointer;
-  typedef T *iterator;
-  typedef const T *const_iterator;
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // unidirectional node-walking cursor
+  template<bool Const> class __cursor
+  {
+    using __node = micron::conditional_t<Const, const list_node_t, list_node_t>;
+    __node *__n;
+
+    friend class list;
+
+  public:
+    using value_type = T;
+    using reference = micron::conditional_t<Const, const T &, T &>;
+    using pointer = micron::conditional_t<Const, const T *, T *>;
+    using difference_type = ssize_t;
+
+    constexpr __cursor() noexcept : __n(nullptr) { }
+
+    constexpr explicit __cursor(__node *__p) noexcept : __n(__p) { }
+
+    // const_iterator is constructible from iterator, never the reverse
+    constexpr __cursor(const __cursor<!Const> &__o) noexcept
+      requires(Const)
+        : __n(__o.node())
+    {
+    }
+
+    reference
+    operator*() const
+    {
+      return __n->data;
+    }
+
+    pointer
+    operator->() const
+    {
+      return micron::addressof(__n->data);
+    }
+
+    __cursor &
+    operator++()
+    {
+      __n = __n->next;
+      return *this;
+    }
+
+    __cursor
+    operator++(int)
+    {
+      __cursor __t = *this;
+      __n = __n->next;
+      return __t;
+    }
+
+    bool
+    operator==(const __cursor &__o) const noexcept
+    {
+      return __n == __o.__n;
+    }
+
+    bool
+    operator!=(const __cursor &__o) const noexcept
+    {
+      return __n != __o.__n;
+    }
+
+    __node *
+    node() const noexcept
+    {
+      return __n;
+    }
+  };
+
+  typedef __cursor<false> iterator;
+  typedef __cursor<true> const_iterator;
 
   ~list() { __destroy(); }
 
@@ -142,20 +217,40 @@ public:
     return root;
   }
 
-  const_iterator
-  end() const
+  iterator
+  begin()
   {
-    if ( root == nullptr ) return nullptr;
-    list_node_t *ptr = root;
-    while ( ptr->next != nullptr ) ptr = ptr->next;
-    return &ptr->data;
+    return iterator{ root };
+  }
+
+  iterator
+  end()
+  {
+    return iterator{ nullptr };
   }
 
   const_iterator
   begin() const
   {
-    if ( root == nullptr ) return nullptr;
-    return &root->data;
+    return const_iterator{ root };
+  }
+
+  const_iterator
+  end() const
+  {
+    return const_iterator{ nullptr };
+  }
+
+  const_iterator
+  cbegin() const
+  {
+    return const_iterator{ root };
+  }
+
+  const_iterator
+  cend() const
+  {
+    return const_iterator{ nullptr };
   }
 
   void
@@ -204,7 +299,7 @@ public:
     end_p->next = ptr;
   }
 
-  const_iterator
+  const T *
   find(const T &srch) const
   {
     for ( const list_node_t *ptr = root; ptr != nullptr; ptr = ptr->next )
@@ -280,7 +375,7 @@ public:
   back() const
   {
     if ( root == nullptr ) exc<except::runtime_error>("micron::list back() is empty");
-    return *end();
+    return iend()->data;      // NOT *end() -- end() is one-past-the-end now
   }
 
   void

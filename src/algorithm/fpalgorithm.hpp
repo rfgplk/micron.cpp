@@ -34,7 +34,7 @@ C
 fmap(Fn &&fn, C c)
 {
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_transform_val(c.begin(), fn, make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_transform_val(c.begin(), fn, make_index_sequence<C::static_size>{});
   } else {
     micron::transform(c, micron::forward<Fn>(fn));
   }
@@ -47,7 +47,7 @@ C
 fmap(Fn &&fn, C c)
 {
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_transform_ptr(c.begin(), fn, make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_transform_ptr(c.begin(), fn, make_index_sequence<C::static_size>{});
   } else {
     auto *first = c.begin();
     const auto *last = c.end();
@@ -287,7 +287,7 @@ zip_with(const C &a, const C &b, Fn fn)
   auto *dst = out.begin();
   const auto *end = a.end();
   if constexpr ( micron::unrollable<C> ) {
-    __impl::__unroll_transform_bin(fa, fb, dst, fn, make_index_sequence<C::static_size>{});
+    micron::__impl::__unroll_transform_bin(fa, fb, dst, fn, make_index_sequence<C::static_size>{});
   } else {
     for ( ; fa != end; ++fa, ++fb, ++dst ) *dst = fn(*fa, *fb);
   }
@@ -371,20 +371,17 @@ zip_with_c(Fn &&fn)
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// unzip  (C<tuple<A,B>> -> tuple<C<A>, C<B>>)
-template<is_iterable_container C>
+// unzip  (C<tuple<A,B>> -> tuple<CA, CB>)
+template<is_iterable_container CA, is_iterable_container CB, is_iterable_container C>
   requires requires(typename C::value_type p) {
-    micron::get<0>(p);
-    micron::get<1>(p);
+    { micron::get<0>(p) } -> micron::convertible_to<typename CA::value_type>;
+    { micron::get<1>(p) } -> micron::convertible_to<typename CB::value_type>;
   }
-auto
+micron::tuple<CA, CB>
 unzip(const C &c)
 {
-  // using P = typename C::value_type;
-  //  using A = micron::remove_cvref_t<decltype(micron::get<0>(micron::declval<P>()))>;
-  //  using B = micron::remove_cvref_t<decltype(micron::get<1>(micron::declval<P>()))>;
-
-  C as, bs;
+  CA as;
+  CB bs;
   as.resize(c.size());
   bs.resize(c.size());
   auto *da = as.begin();
@@ -392,8 +389,8 @@ unzip(const C &c)
   const auto *first = c.begin();
   const auto *last = c.end();
   for ( ; first != last; ++first, ++da, ++db ) {
-    *da = static_cast<typename C::value_type>(micron::get<0>(*first));
-    *db = static_cast<typename C::value_type>(micron::get<1>(*first));
+    *da = static_cast<typename CA::value_type>(micron::get<0>(*first));
+    *db = static_cast<typename CB::value_type>(micron::get<1>(*first));
   }
   return micron::make_tuple(micron::move(as), micron::move(bs));
 }
@@ -697,7 +694,7 @@ clamp_each_c(const T lo, const T hi) noexcept
 {
   return [lo, hi](auto c) noexcept {
     if constexpr ( micron::unrollable<decltype(c)> ) {
-      __impl::__unroll_clamp(c.begin(), lo, hi, make_index_sequence<decltype(c)::static_size>{});
+      micron::__impl::__unroll_clamp(c.begin(), lo, hi, make_index_sequence<decltype(c)::static_size>{});
     } else {
       auto *first = c.begin();
       const auto *last = c.end();

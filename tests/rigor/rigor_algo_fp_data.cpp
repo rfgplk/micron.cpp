@@ -280,14 +280,48 @@ main()
   // chunk / sliding
   // ════════════════════════════════════════════════════════════════════
 
-  test_case("chunk(c, n) is currently a stub returning option<C>");
+  test_case("chunk<Out>(c, n) splits into consecutive runs");
   {
+    // was a stub that ignored n and returned the input verbatim; it is now the option-returning
+    // spelling of chunk_into, so the outer container type has to be named.
     auto v = mk({ 1, 2, 3, 4, 5, 6 });
-    auto opt = micron::fp::chunk(v, usize(2));
-    // chunk in fpdata.hpp is presently a passthrough returning option<C>{c}
-    // for n > 0 — proper chunk semantics live in chunk_into which requires
-    // explicit Inner template arg (omitted here for brevity).
+    auto opt = micron::fp::chunk<vec_vi>(v, usize(2));
     require_true(opt.is_first());
+    const auto &got = opt.cast<vec_vi>();
+    require(got.size(), usize(3));
+    require(got[0].size(), usize(2));
+    require(got[0][0], 1);
+    require(got[0][1], 2);
+    require(got[2][0], 5);
+    require(got[2][1], 6);
+  }
+  end_test_case();
+
+  test_case("chunk<Out> with a ragged tail, and n == 0 is the error branch");
+  {
+    auto v = mk({ 1, 2, 3, 4, 5, 6, 7 });
+    auto opt = micron::fp::chunk<vec_vi>(v, usize(3));
+    require_true(opt.is_first());
+    const auto &got = opt.cast<vec_vi>();
+    require(got.size(), usize(3));
+    require(got[2].size(), usize(1));
+    require(got[2][0], 7);
+
+    auto bad = micron::fp::chunk<vec_vi>(v, usize(0));
+    require_true(bad.is_second());
+  }
+  end_test_case();
+
+  test_case("flatten . chunk == id");
+  {
+    auto v = mk({ 3, 1, 4, 1, 5, 9, 2, 6 });
+    for ( usize n = 1; n <= 9; ++n ) {
+      auto opt = micron::fp::chunk<vec_vi>(v, n);
+      require_true(opt.is_first());
+      auto back = micron::fp::flatten(opt.cast<vec_vi>());
+      require(back.size(), v.size());
+      for ( usize i = 0; i < v.size(); ++i ) require(back[i], v[i]);
+    }
   }
   end_test_case();
 

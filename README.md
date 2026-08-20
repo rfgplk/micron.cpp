@@ -189,6 +189,7 @@ All headers live under `src/` and may be included directly. Each top-level modul
 - **`hash/`** -- hash function family (`zzz`, `xxhash`, `fnv`, `murmur`, `crc`, `bernstein`, `fib`, `checksum`).
 - **`sort/`** -- sorting algorithms (quick, merge, heap, radix, bitonic, comb, counting, insertion, bubble, stable, selection)
 - **`algorithm/`** -- generic container algorithms (`find`, `filter`, `fold`, `accumulate`, arithmetic, data, unroll) plus a functional-programming variant suite (`fp*`)
+- **`algorithm/lazy/`** (`micron::lz``) -- the lazy counterpart to `fp`
 - **`simd/`** -- SIMD primitives, intrinsics, dispatch and per-architecture backends (`amd64`, `arm32`, `arm64`) for 128/256/512-bit registers and NEON
 
 ###### Graphics and GPU

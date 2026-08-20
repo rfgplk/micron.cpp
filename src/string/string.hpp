@@ -1128,6 +1128,7 @@ public:
   };
 
   template<typename R>
+  requires requires(const R &__r) { __as_key(__r); }
   inline hstring
   operator^(const R &rhs) const
   {
@@ -1139,6 +1140,7 @@ public:
   };
 
   template<typename R>
+  requires requires(const R &__r) { __as_key(__r); }
   inline hstring &
   operator^=(const R &rhs)
   {
@@ -1149,6 +1151,7 @@ public:
   };
 
   template<typename R>
+  requires requires(const R &__r) { __as_key(__r); }
   inline hstring
   operator&(const R &rhs) const
   {
@@ -1160,6 +1163,7 @@ public:
   };
 
   template<typename R>
+  requires requires(const R &__r) { __as_key(__r); }
   inline hstring &
   operator&=(const R &rhs)
   {
@@ -1170,6 +1174,7 @@ public:
   };
 
   template<typename R>
+  requires requires(const R &__r) { __as_key(__r); }
   inline hstring
   operator|(const R &rhs) const
   {
@@ -1181,6 +1186,7 @@ public:
   };
 
   template<typename R>
+  requires requires(const R &__r) { __as_key(__r); }
   inline hstring &
   operator|=(const R &rhs)
   {

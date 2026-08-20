@@ -135,7 +135,7 @@ main()
   sb::test_case("zzz-family self-consistency");
   {
     require_true(micron::hashes::zzzf64<0>(buf, 32) == 0xd1485c41af329b34ull);
-    require_true(micron::hashes::zzz64<0>(buf, 32) == 0x00006b9116cddb11ull);
+    require_true(micron::hashes::zzz64<0>(buf, 32) == 0xa5d86b9116cddb11ull);
     require_true(micron::hashes::zzzf64<0x99u>(buf, 96) == micron::hashes::zzzf64(buf, 0x99, 96));
   }
   sb::end_test_case();

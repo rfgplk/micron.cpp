@@ -80,7 +80,7 @@ public:
     return __m.erase(k);
   }
 
-  // no for_each; hopscotch_map doesn't store the key itself, it cannot enumerate its own value_type
+  // NOT ENUMERABLE
 };
 
 };      // namespace micron
