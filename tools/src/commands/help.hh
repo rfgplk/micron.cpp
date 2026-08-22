@@ -216,6 +216,8 @@ help(void)
   mc::console("                      to --cfi --relro under -k; drops --pie under -s)");
   mc::console("    -freflection      c++26 reflection (p2996). Needs gcc 16+ and --std c++26");
   mc::console("                      also defines MICRON_REFLECTION");
+  mc::console("    --opnames         C++ alternative-token identifiers: -fno-operator-names plus");
+  mc::console("                      -DFUNGUS_OPERATOR_NAMES (the two are intentionally inseparable)");
   mc::console("    -f                force build:  skip include-mtime change detection");
   mc::console("    -j <N>            cap for the parallel commands (default: online cpus)");
   mc::console("    --timeout <sec>   `test` only: SIGKILL a target that outruns <sec> and grade it");

@@ -355,6 +355,8 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
     if ( conf.compiler == __compilers::clang )
       mc::cerror("-freflection is the gcc spelling; clang gates reflection behind a different flag");
   }
+  if ( conf.opnames and conf.language != __languages::cpp )
+    mc::cerror("--opnames is a C++ flag, but the target is not C++");
 
   // --start/--direct are freestanding-only knobs. MICRON_START is deliberately NOT validated here:
   // an env var applies to a whole run and must stay inert on the hosted lines of a batchfile

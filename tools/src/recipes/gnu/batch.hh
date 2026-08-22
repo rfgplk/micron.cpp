@@ -333,6 +333,11 @@ inline string_type
 __flags_defines(const config_t &conf)
 {
   string_type defines_flags;
+  if ( conf.opnames ) {
+    // workaround
+    defines_flags += get_string_flag(gcc::preprocessor_flags::flags::d_macro);
+    defines_flags += "FUNGUS_OPERATOR_NAMES ";
+  }
   for ( const auto &p : conf.defines ) {
     defines_flags += get_string_flag(gcc::preprocessor_flags::flags::d_macro);
     defines_flags += p;
