@@ -119,6 +119,33 @@ run_line=$("$duck" splat emulate --arm64 -i inc1 -o out t.cpp 2>/dev/null | tail
 want "emulate run line goes through qemu" "$run_line" "qemu-aarch64-static" "-L " "out/t"
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo "[clang profile]"
+clang_fast=$(compile_line build t.cpp --clang -Ofast -o out)
+want "clang executable and fast mapping" "$clang_fast" "/clang++" "-O3" "-ffast-math" "-flto=thin"
+wantnot "clang drops GCC-only optimization flags" "$clang_fast" \
+        "-fmodulo-sched" "-fgcse-sm" "-flto=8" "-fext-numeric-literals" "-fconcepts-diagnostics-depth"
+want "clang --no-lto" "$(compile_line build t.cpp --clang --no-lto -o out)" "-fno-lto"
+wantnot "clang --no-lto drops ThinLTO" "$(compile_line build t.cpp --clang --no-lto -o out)" "-flto=thin"
+want "clang arm32 cross driver" "$(compile_line build t.cpp --clang --arm --raw-obj -o out)" \
+     "/clang++" "--target=arm-none-linux-gnueabihf" "--gcc-toolchain=/usr/gcc-linaro" \
+     "--sysroot=/usr/gcc-linaro/arm-none-linux-gnueabihf/libc"
+want "clang arm64 cross driver" "$(compile_line build t.cpp --clang --arm64 --raw-obj -o out)" \
+     "/clang++" "--target=aarch64-none-linux-gnu" "--gcc-toolchain=/usr/gcc-linaro-aarch64" \
+     "--sysroot=/usr/gcc-linaro-aarch64/aarch64-none-linux-gnu/libc"
+want "clang gas follows the target" "$(compile_line build boot.s --clang --arm --raw-obj -o out)" \
+     "/clang " "--target=arm-none-linux-gnueabihf" "-march=armv7-a"
+clang_k=$(compile_line build t.cpp --clang -k --start mystart -o out)
+want "clang freestanding preserves the main ABI" "$clang_k" \
+     "-fhosted" "-fno-builtin" "-D__micron_freestanding=1" "-fno-unwind-tables" "-fno-asynchronous-unwind-tables"
+wantnot "clang freestanding does not mangle main" "$clang_k" "-ffreestanding"
+clang_ke=$(compile_line build t.cpp --clang -ke --start mystart -o out)
+want "clang EH keeps unwind tables" "$clang_ke" "-fhosted" "-D__micron_freestanding=1" "-fasynchronous-unwind-tables"
+wantnot "clang EH keeps unwind tables" "$clang_ke" "-fno-unwind-tables" "-fno-asynchronous-unwind-tables"
+want "clang arm64 links binary128 support" "$(compile_line build t.cpp --clang --arm64 -k --start mystart -o out)" "-lgcc"
+must_fail "clang armv7 rejects CFI" build t.cpp --clang --arm --cfi
+must_fail "clang rejects static TSAN" build t.cpp --clang --tsan -s
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo "[malformed lines are rejected, not absorbed]"
 must_fail "unknown flag"          build t.cpp --urign
 must_fail "gcc-style glued -I"    build t.cpp -I./inc1

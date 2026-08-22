@@ -232,6 +232,29 @@ StatementAttributeLikeMacros:
 StatementMacros:
   - Q_UNUSED
   - QT_REQUIRE_VERSION
+  - __mc_arm_unary
+  - __mc_arm_binary
+  - __mc_arm_ternary
+  - __mc_arm_absdiff
+  - __mc_arm_absacc
+  - __mc_arm_half_add
+  - __mc_arm_half_sub
+  - __mc_arm_rhalf_add_signed
+  - __mc_arm_rhalf_add_unsigned
+  - __mc_arm_add_sat
+  - __mc_arm_sub_sat
+  - __mc_arm_widen_acc
+  - __mc_arm_reduce
+  - __mc_clang_gather
+  - __mc_clang_abs
+  - __mc_clang_min
+  - __mc_clang_max
+  - __mc_clang_add_sat
+  - __mc_clang_sub_sat
+  - __mc_unsigned_min
+  - __mc_unsigned_max
+  - __mc_unsigned_add_sat
+  - __mc_unsigned_sub_sat
 TabWidth:        8
 UseTab:          Never
 VerilogBreakBetweenInstancePorts: true
@@ -242,4 +265,3 @@ WhitespaceSensitiveMacros:
   - PP_STRINGIZE
   - STRINGIZE
 ...
-

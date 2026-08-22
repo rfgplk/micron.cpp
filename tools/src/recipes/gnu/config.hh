@@ -77,6 +77,18 @@ constexpr const string_type __compiler_gpp_arm_cross = "/usr/gcc-linaro/bin/arm-
 constexpr const string_type __compiler_gcc_aarch64_cross = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-gcc";
 constexpr const string_type __compiler_gpp_aarch64_cross = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-g++";
 
+// Clang is a native cross compiler, but it still needs the target ABI, GCC runtime/sysroot,
+// and the matching GNU linker spelled out. Without the explicit linker it silently reaches
+// for the host /usr/bin/ld and fails only at link time.
+constexpr const string_type __clang_target_arm = "arm-none-linux-gnueabihf";
+constexpr const string_type __clang_target_arm64 = "aarch64-none-linux-gnu";
+constexpr const string_type __clang_toolchain_arm = "/usr/gcc-linaro";
+constexpr const string_type __clang_toolchain_arm64 = "/usr/gcc-linaro-aarch64";
+constexpr const string_type __clang_sysroot_arm = "/usr/gcc-linaro/arm-none-linux-gnueabihf/libc";
+constexpr const string_type __clang_sysroot_arm64 = "/usr/gcc-linaro-aarch64/aarch64-none-linux-gnu/libc";
+constexpr const string_type __clang_linker_arm = "/usr/gcc-linaro/bin/arm-none-linux-gnueabihf-ld";
+constexpr const string_type __clang_linker_arm64 = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-ld";
+
 constexpr const string_type __mc_start_default = "/usr/src/mc_start";
 
 struct std_entry {
@@ -339,31 +351,32 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
     }
     break;
   case __compilers::clang:
-    if ( conf.language == __languages::c ) {
+    if ( conf.language == __languages::c or conf.language == __languages::gas ) {
       conf.compiler_path = __compiler_clang;
-      conf.standard = gcc::__standard_c11;
+      if ( conf.language == __languages::c ) conf.standard = gcc::__standard_c11;
     } else if ( conf.language == __languages::cpp )
       conf.compiler_path = __compiler_clangpp;
     break;
   }
 
   if ( conf.reflection ) {
-    if ( conf.language != __languages::cpp )
-      mc::cerror("-freflection is a C++ flag, but the target is not C++");
-    if ( !__is_cxx26_standard(conf.standard) )
-      mc::cerror("-freflection requires --std c++26 or gnu++26");
+    if ( conf.language != __languages::cpp ) mc::cerror("-freflection is a C++ flag, but the target is not C++");
+    if ( !__is_cxx26_standard(conf.standard) ) mc::cerror("-freflection requires --std c++26 or gnu++26");
     if ( conf.compiler == __compilers::clang )
       mc::cerror("-freflection is the gcc spelling; clang gates reflection behind a different flag");
+    if ( conf.arch != __arch::x86 ) mc::cerror("-freflection is unavailable in micron's GCC cross toolchains");
   }
-  if ( conf.opnames and conf.language != __languages::cpp )
-    mc::cerror("--opnames is a C++ flag, but the target is not C++");
+  if ( conf.opnames and conf.language != __languages::cpp ) mc::cerror("--opnames is a C++ flag, but the target is not C++");
+  if ( conf.compiler == __compilers::clang and conf.arch == __arch::arm and conf.cfi )
+    mc::cerror("clang cannot provide -mbranch-protection for the armv7-a target; drop --cfi/--harden or use --gcc");
+  if ( conf.compiler == __compilers::clang and conf.tsan and conf.static_binary )
+    mc::cerror("clang has no -static-libtsan equivalent; drop -s or use --gcc");
 
   // --start/--direct are freestanding-only knobs. MICRON_START is deliberately NOT validated here:
   // an env var applies to a whole run and must stay inert on the hosted lines of a batchfile
   if ( !conf.start_dir.empty() and !conf.freestanding )
     mc::cerror("--start only means something on a freestanding build - add -k (or -ke)");
-  if ( conf.direct and !conf.freestanding )
-    mc::cerror("--direct only means something on a freestanding build - add -k (or -ke)");
+  if ( conf.direct and !conf.freestanding ) mc::cerror("--direct only means something on a freestanding build - add -k (or -ke)");
   if ( conf.direct and conf.static_pie and conf.arch == __arch::x86 )
     mc::cerror("--direct has nothing to swap: a static-PIE x86 freestanding image links no _start stub");
 

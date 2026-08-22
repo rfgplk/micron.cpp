@@ -45,6 +45,14 @@ public:
   __base_exception() noexcept = default;
   virtual ~__base_exception() = default;
 
+  // NOTE: thrown objects are released by __cxa_free_exception; 
+  // the deleting dtor needs this ABI slot even when no global new/delete
+  // header is part of the translation unit
+  static void
+  operator delete(void *, __SIZE_TYPE__) noexcept
+  {
+  }
+
   virtual const char *
   what() const noexcept
   {

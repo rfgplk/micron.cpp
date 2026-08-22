@@ -2207,6 +2207,28 @@ __mc_vshll_n(u32, "u32", uint32x2_t, uint64x2_t);
 
 #undef __mc_vshll_n
 
+#if defined(__clang__)
+#define __mc_vshrn_plain(SUF, ASM, T_IN, T_OUT)                                                                                            \
+  __inline_g T_OUT vshrn_n_##SUF(T_IN v, const int n) noexcept { return __builtin_convertvector(v >> n, T_OUT); }
+#else
+#define __mc_vshrn_plain(SUF, ASM, T_IN, T_OUT)                                                                                            \
+  __inline_g T_OUT vshrn_n_##SUF(T_IN v, const int n) noexcept                                                                             \
+  {                                                                                                                                        \
+    T_OUT r;                                                                                                                               \
+    __asm__("vshrn." ASM " %P0, %q1, %2" : "=w"(r) : "w"(v), "i"(n));                                                                      \
+    return r;                                                                                                                              \
+  }
+#endif
+
+__mc_vshrn_plain(s16, "i16", int16x8_t, int8x8_t);
+__mc_vshrn_plain(s32, "i32", int32x4_t, int16x4_t);
+__mc_vshrn_plain(s64, "i64", int64x2_t, int32x2_t);
+__mc_vshrn_plain(u16, "i16", uint16x8_t, uint8x8_t);
+__mc_vshrn_plain(u32, "i32", uint32x4_t, uint16x4_t);
+__mc_vshrn_plain(u64, "i64", uint64x2_t, uint32x2_t);
+
+#undef __mc_vshrn_plain
+
 #define __mc_vshrn_n(NAME, SUF, ASM, T_IN, T_OUT)                                                                                          \
   __inline_g T_OUT v##NAME##_n_##SUF(T_IN v, const int n) noexcept                                                                         \
   {                                                                                                                                        \
@@ -2214,13 +2236,6 @@ __mc_vshll_n(u32, "u32", uint32x2_t, uint64x2_t);
     __asm__("v" #NAME "." ASM " %P0, %q1, %2" : "=w"(r) : "w"(v), "i"(n));                                                                 \
     return r;                                                                                                                              \
   }
-
-__mc_vshrn_n(shrn, s16, "i16", int16x8_t, int8x8_t);
-__mc_vshrn_n(shrn, s32, "i32", int32x4_t, int16x4_t);
-__mc_vshrn_n(shrn, s64, "i64", int64x2_t, int32x2_t);
-__mc_vshrn_n(shrn, u16, "i16", uint16x8_t, uint8x8_t);
-__mc_vshrn_n(shrn, u32, "i32", uint32x4_t, uint16x4_t);
-__mc_vshrn_n(shrn, u64, "i64", uint64x2_t, uint32x2_t);
 
 __mc_vshrn_n(qshrn, s16, "s16", int16x8_t, int8x8_t);
 __mc_vshrn_n(qshrn, s32, "s32", int32x4_t, int16x4_t);

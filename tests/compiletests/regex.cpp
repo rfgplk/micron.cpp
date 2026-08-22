@@ -6,7 +6,7 @@
 //
 // compile-validity gate for src/regex/. Not run.
 //
-// This file exists because `grep -i regex verify_compile.duck` used to return nothing: the regex engine
+// This file exists because `grep -i regex verify_compile_*.duck` used to return nothing: the regex engine
 // had never been built at --isa base. When it finally was, it did not compile -- rgx::dfa_sheng_has_match
 // spends a v128::shuffle per input byte, v128::shuffle emitted _mm_shuffle_epi8 with no SSSE3 gate, and
 // micron's _mm_shuffle_epi8 is always_inline + target("ssse3"). Below SSSE3 that is not a slow path and
@@ -17,7 +17,7 @@
 //   1. it must ODR-USE the entry points. every rgx::dfa_* is `inline`; a bare #include emits nothing and
 //      passes at every tier.
 //   2. it must be built with real CODEGEN. `-fsyntax-only` passes even with the defect present, because
-//      always_inline failures are not diagnosed by the front end. verify_compile.duck's --raw-obj does
+//      always_inline failures are not diagnosed by the front end. verify_compile_*.duck's --raw-obj does
 //      the right thing; do not "optimise" this into a syntax-only check.
 
 #include "../../src/regex.hpp"

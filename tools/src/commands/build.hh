@@ -13,7 +13,7 @@
 
 #include "verify.hh"
 
-template <bool Wait = mc::exec_wait>
+template<bool Wait = mc::exec_wait>
   requires(recipes::__using_gnu)
 mc::status_t
 build(const recipes::gnu::config_t &conf)
@@ -41,8 +41,7 @@ build(const recipes::gnu::config_t &conf)
     mc::set_color(mc::color::reset);
     status = mc::execute<Wait>(conf.compiler_path, command);
   };
-  if constexpr ( Wait == mc::exec_continue )
-    return status;
+  if constexpr ( Wait == mc::exec_continue ) return status;
   auto end = mc::now();
   mc::set_color(mc::color::yellow);
   if ( end - start > 1000 )
@@ -61,7 +60,7 @@ recipe_debug(recipes::gnu::config_t &conf)
   conf.opt_mode = gcc::opt_flags::flags::optimize_debug;
 }
 
-template <typename T = void>
+template<typename T = void>
 int
 build_debug(recipes::gnu::config_t &conf)
   requires(recipes::__using_gnu)
@@ -78,11 +77,12 @@ build_debug(recipes::gnu::config_t &conf)
   mc::set_color(mc::color::yellow);
   auto start = mc::now();
 
+  mc::status_t status;
   {
     auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
-    mc::execute<mc::exec_wait>(conf.compiler_path, command);
+    status = mc::execute<mc::exec_wait>(conf.compiler_path, command);
   };
   auto end = mc::now();
   mc::set_color(mc::color::yellow);
@@ -91,5 +91,5 @@ build_debug(recipes::gnu::config_t &conf)
   else
     mc::console("Compilation took: ", (end - start), " milliseconds");
   mc::set_color(mc::color::reset);
-  return 0;
+  return mc::wexitstatus(status);
 }

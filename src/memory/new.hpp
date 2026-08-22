@@ -23,15 +23,14 @@ constexpr static const bool __micron_global__alloc_debug = true;
 constexpr static const bool __micron_global__alloc_debug = false;
 #endif
 
-/*
-// NOTE:cpp aligned allocs really want align_val_t to be in the std namespace so this is the best workaround i could come up with without
-including <new>. may cause compilation options if you include <new> AFTER this file, since theres no reliable way to stop <new> from
-including align_val_t #ifndef __cpp_aligned_new namespace std
+// Clang does not inject this compiler-required type until <new> is included. Micron cannot
+// include that STL header, so provide the language ABI declaration itself.
+#if defined(__clang__)
+namespace std
 {
-enum class align_val_t : size_t {};
+enum class align_val_t : usize { };
 };
 #endif
-*/
 #if !defined(__micron_sanitizer_owns_heap)
 
 // §17.6.3 — scalar new/delete

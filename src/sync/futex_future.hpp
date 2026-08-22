@@ -137,7 +137,7 @@ public:
   }
 
   bool
-  __arm(usize __tok, void (*__res)(usize)) noexcept
+  __arm_waiter(usize __tok, void (*__res)(usize)) noexcept
   {
     __wresume = __res;
     usize __exp = 0;
@@ -259,7 +259,7 @@ public:
   }
 
   bool
-  __arm(usize __tok, void (*__res)(usize)) noexcept
+  __arm_waiter(usize __tok, void (*__res)(usize)) noexcept
   {
     __wresume = __res;
     usize __exp = 0;

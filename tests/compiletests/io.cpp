@@ -29,7 +29,7 @@
 #include "../../src/string/strings.hpp"
 #include "../../src/vector/vector.hpp"
 
-#if defined(__STDC_HOSTED__) && __STDC_HOSTED__ == 0
+#if defined(__micron_freestanding)
 #include "../../src/math/__gcc_int_syms.hpp"
 #endif
 

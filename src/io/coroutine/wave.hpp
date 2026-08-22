@@ -75,7 +75,7 @@ class wave
   // WARNING: the slab must be prefaulted before the ring reads into it;
   // io_uring cannot fault a page from the submit path
   bool
-  __arm() noexcept
+  __arm_slab() noexcept
   {
     if ( __slab != nullptr ) return true;
     void *__p = micron::mmap(nullptr, __slab_sz, prot_read | prot_write, map_private | map_anonymous, -1, 0);
@@ -180,7 +180,7 @@ public:
   run()
   {
     if ( __n == 0 ) co_return 0;
-    if ( !__arm() ) co_return -error::out_of_memory;
+    if ( !__arm_slab() ) co_return -error::out_of_memory;
 
     for ( u32 __i = 0; __i < __n; ++__i ) {
       __res[__i] = wave_result{};

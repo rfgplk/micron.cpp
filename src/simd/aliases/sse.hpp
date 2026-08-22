@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../types.hpp"
 #include "../intrin.hpp"
 
 #if !defined(__micron_arch_x86_any)

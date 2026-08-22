@@ -180,7 +180,7 @@ __drain_atexit_table() noexcept
       __atexit_fn_t f = __claim(i);
       if ( f == nullptr ) continue;      // another drainer got there first
       progress = true;
-      f(__atexit_table[i].arg);          // arg is safe to read
+      f(__atexit_table[i].arg);      // arg is safe to read
     }
     const u32 next = micron::atom::load(&__atexit_count, micron::atomic_acquire);
     if ( pending == hi ) {      // everything below hi is accounted for
@@ -265,3 +265,47 @@ group_exit(int s = exit_ok)
 }
 
 };      // namespace micron
+
+#if defined(__micron_freestanding)
+extern "C" {
+
+#if defined(__clang__) && defined(__micron_arch_arm32) && !defined(__micron_eh)
+// WARNING: Clang's O0 coroutine lowering leaves EHABI index entries behind even with
+// exceptions and unwind tables disabled
+[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr0()
+{
+  micron::abort(6);
+}
+
+[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr1()
+{
+  micron::abort(6);
+}
+
+[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr2()
+{
+  micron::abort(6);
+}
+#endif
+
+[[noreturn]] inline void
+__cxa_pure_virtual()
+{
+  static const char msg[] = "pure virtual function called\n";
+  micron::syscall(SYS_write, 2, msg, sizeof(msg) - 1);
+  micron::abort(6);
+}
+
+[[noreturn]] inline void
+__cxa_deleted_virtual()
+{
+  static const char msg[] = "deleted virtual function called\n";
+  micron::syscall(SYS_write, 2, msg, sizeof(msg) - 1);
+  micron::abort(6);
+}
+
+}      // extern "C"
+#endif

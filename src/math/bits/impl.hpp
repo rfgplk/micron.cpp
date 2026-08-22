@@ -60,6 +60,11 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fma(F a, F b, F c) noexcept
 {
+  if consteval {
+#if defined(__micron_compiler_clang)
+    return F(a * b + c);
+#endif
+  }
   // __builtins are ok, compiler splices in place
   if constexpr ( sizeof(F) == sizeof(float) )
     return F(__builtin_fmaf(float(a), float(b), float(c)));

@@ -1141,8 +1141,8 @@ template<class T> struct __futex_future_awaiter {
   await_suspend(std::coroutine_handle<P> __h) noexcept
   {
     __frame_base *__f = &__h.promise();
-    bool __ready
-        = __s->__arm(reinterpret_cast<usize>(__f), +[](usize __t) { __global_engine->submit(reinterpret_cast<__frame_base *>(__t)); });
+    bool __ready = __s->__arm_waiter(
+        reinterpret_cast<usize>(__f), +[](usize __t) { __global_engine->submit(reinterpret_cast<__frame_base *>(__t)); });
     return !__ready;
   }
 
@@ -1305,7 +1305,7 @@ template<class T> struct [[nodiscard]] __when_any_awaiter {
     __st->__parent = &__h.promise();
     for ( usize __i = 0; __i < __n; ++__i ) {
       __st->__nodes[__i] = { __st, static_cast<i32>(__i) };
-      bool __ready = __futs[__i].__shared()->__arm(reinterpret_cast<usize>(&__st->__nodes[__i]), __sel_fire);
+      bool __ready = __futs[__i].__shared()->__arm_waiter(reinterpret_cast<usize>(&__st->__nodes[__i]), __sel_fire);
       if ( __ready ) __sel_fire(reinterpret_cast<usize>(&__st->__nodes[__i]));      // already ready: fire inline
     }
     i32 __exp = -1;

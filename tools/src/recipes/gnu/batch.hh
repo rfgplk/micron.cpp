@@ -16,6 +16,7 @@
 
 #include "linux/std.hpp"
 
+#include "../clang/flags.hh"
 #include "flags.hh"
 
 #include "config.hh"
@@ -80,6 +81,72 @@ __compose_flags(string_type &dst, Fs... fs)
   (__compose_add(dst, get_string_flag(fs)), ...);
 }
 
+inline bool
+__is_clang(const config_t &conf)
+{
+  return conf.compiler == __compilers::clang;
+}
+
+inline string_type
+__opt_flags(const config_t &conf)
+{
+  if ( !__is_clang(conf) ) return make_flags(conf.opt_mode);
+  using O = gcc::opt_flags::flags;
+  if ( conf.opt_mode == O::optimize_zero ) return clang_flags::optimize_zero;
+  if ( conf.opt_mode == O::optimize_one ) return clang_flags::optimize_one;
+  if ( conf.opt_mode == O::optimize_two ) return clang_flags::optimize_two;
+  if ( conf.opt_mode == O::optimize_three ) return clang_flags::optimize_three;
+  if ( conf.opt_mode == O::optimize_size ) return clang_flags::optimize_size;
+  if ( conf.opt_mode == O::optimize_z ) return clang_flags::optimize_tiny;
+  if ( conf.opt_mode == O::optimize_debug ) return clang_flags::optimize_debug;
+  // Clang 22 deprecated -Ofast in favor of its exact expansion.
+  string_type r = clang_flags::optimize_three;
+  __compose_add(r, clang_flags::fast_math);
+  return r;
+}
+
+inline string_type
+__main_opt_flags(const config_t &conf)
+{
+  string_type r = __opt_flags(conf);
+  if ( conf.mode == __opt_modes::optimized ) {
+    if ( !__is_clang(conf) )
+      __compose_flags(r, gcc::opt_flags::flags::modulo_sched, gcc::opt_flags::flags::modulo_sched_allow_regmoves,
+                      gcc::opt_flags::flags::gcse_sm, gcc::opt_flags::flags::gcse_las);
+  } else if ( __is_clang(conf) ) {
+    __compose_add(r, clang_flags::debug_three);
+    __compose_add(r, clang_flags::debug_gdb_three);
+    __compose_add(r, clang_flags::debug_columns);
+  } else
+    __compose_flags(r, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three, gcc::debug_flags::flags::gcolumn_info,
+                    gcc::debug_flags::flags::ginline_points, gcc::debug_flags::flags::gstatement_frontiers);
+  return r;
+}
+
+inline string_type
+__clang_cross_flags(const config_t &conf, bool linking)
+{
+  if ( !__is_clang(conf) or conf.arch == __arch::x86 ) return {};
+  const string_type &target = conf.arch == __arch::arm ? __clang_target_arm : __clang_target_arm64;
+  const string_type &toolchain = conf.arch == __arch::arm ? __clang_toolchain_arm : __clang_toolchain_arm64;
+  const string_type &sysroot = conf.arch == __arch::arm ? __clang_sysroot_arm : __clang_sysroot_arm64;
+  const string_type &linker = conf.arch == __arch::arm ? __clang_linker_arm : __clang_linker_arm64;
+  string_type r = clang_flags::target;
+  r += target;
+  r += ' ';
+  r += clang_flags::gcc_toolchain;
+  r += toolchain;
+  r += ' ';
+  r += clang_flags::sysroot;
+  r += sysroot;
+  if ( linking ) {
+    r += ' ';
+    r += clang_flags::ld_path;
+    r += linker;
+  }
+  return r;
+}
+
 inline composed_t
 compose(const config_t &conf, bool linking)
 {
@@ -99,14 +166,18 @@ compose(const config_t &conf, bool linking)
   const auto __ssp = conf.no_ssp  ? gcc::profiling_flags::flags::nostack_protector
                      : conf.spall ? gcc::profiling_flags::flags::stack_protector_all
                                   : gcc::profiling_flags::flags::stack_protector_strong;
-  c.extensions
-      = fs ? (cpp ? make_flags(gcc::cpp_flags::flags::ext_numeric_literals) : string_type{})
-           : (cpp ? make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow,
-                               gcc::cpp_flags::flags::ext_numeric_literals)
-                  : make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow));
+  if ( fs ) {
+    if ( cpp and !__is_clang(conf) ) c.extensions = make_flags(gcc::cpp_flags::flags::ext_numeric_literals);
+  } else if ( __is_clang(conf) )
+    c.extensions = make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow);
+  else
+    c.extensions
+        = cpp ? make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow,
+                           gcc::cpp_flags::flags::ext_numeric_literals)
+              : make_flags(__ssp, gcc::profiling_flags::flags::stack_clash_protection, gcc::profiling_flags::flags::strict_overflow);
   // LTO on by default except under sanitizers, freestanding EH, a raw object, or an explicit --no-lto
   if ( !sanitized and !conf.freestanding_eh and !conf.raw_object and !conf.no_lto )
-    __compose_flags(c.extensions, gcc::opt_flags::flags::lto_eight);
+    __compose_add(c.extensions, __is_clang(conf) ? clang_flags::thin_lto : get_string_flag(gcc::opt_flags::flags::lto_eight));
   if ( conf.raw_object or conf.no_lto ) __compose_flags(c.extensions, gcc::opt_flags::flags::no_lto);
 
   // more safeties
@@ -131,9 +202,11 @@ compose(const config_t &conf, bool linking)
   if ( conf.pgo_gen and conf.pgo_use ) mc::cerror("--pgo-gen and --pgo-use are mutually exclusive");
   if ( (conf.pgo_gen or conf.pgo_use) and fs ) mc::cerror("PGO needs a hosted runtime; not valid under -k");
   if ( conf.pgo_gen ) __compose_flags(c.extensions, gcc::profiling_flags::flags::profile_generate);
-  if ( conf.pgo_use )
-    __compose_flags(c.extensions, gcc::opt_flags::flags::profile_use, gcc::opt_flags::flags::profile_correction,
-                    gcc::w_flags::flags::Wno_missing_profile);
+  if ( conf.pgo_use ) {
+    __compose_flags(c.extensions, gcc::opt_flags::flags::profile_use);
+    if ( !__is_clang(conf) )
+      __compose_flags(c.extensions, gcc::opt_flags::flags::profile_correction, gcc::w_flags::flags::Wno_missing_profile);
+  }
   // explicit only; hosted micron uses EH
   if ( conf.no_eh and cpp ) __compose_flags(c.extensions, gcc::profiling_flags::flags::no_exceptions);
   if ( conf.no_rtti and cpp ) __compose_flags(c.extensions, gcc::cpp_flags::flags::no_rtti);
@@ -156,7 +229,7 @@ compose(const config_t &conf, bool linking)
                       gcc::linker_flags::flags::wl_z_noexecstack);
     if ( conf.gc ) __compose_flags(c.link_tail, gcc::linker_flags::flags::wl_gc_sections);
     if ( conf.strip ) __compose_flags(c.link_tail, gcc::linker_flags::flags::wl_strip_all);
-    if ( conf.tsan and conf.static_binary ) __compose_flags(c.link_tail, gcc::linker_flags::flags::static_libtsan);
+    if ( conf.tsan and conf.static_binary and !__is_clang(conf) ) __compose_flags(c.link_tail, gcc::linker_flags::flags::static_libtsan);
   }
 
   return c;
@@ -214,9 +287,18 @@ __flags_freestanding(const config_t &conf, bool linking)
 {
   string_type r;
   if ( !conf.freestanding ) return r;
-  r = linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib, gcc::linker_flags::flags::nostdlib_pp,
-                           gcc::profiling_flags::flags::nostack_protector)
-              : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector);
+  // Clang gives main ordinary C++ linkage under -ffreestanding. Keep its hosted
+  // main ABI while reproducing freestanding semantics explicitly.
+  if ( __is_clang(conf) ) {
+    __compose_add(r, clang_flags::hosted_main);
+    __compose_add(r, clang_flags::no_builtin);
+    __compose_add(r, clang_flags::micron_freestanding);
+    if ( linking ) __compose_flags(r, gcc::linker_flags::flags::nostdlib, gcc::linker_flags::flags::nostdlib_pp);
+    __compose_flags(r, gcc::profiling_flags::flags::nostack_protector);
+  } else
+    r = linking ? make_flags(gcc::c_flags::flags::freestanding, gcc::linker_flags::flags::nostdlib, gcc::linker_flags::flags::nostdlib_pp,
+                             gcc::profiling_flags::flags::nostack_protector)
+                : make_flags(gcc::c_flags::flags::freestanding, gcc::profiling_flags::flags::nostack_protector);
   // mic-thread futex/mutex use __atomic builtins
   if ( conf.arch == __arch::arm64 ) __compose_flags(r, gcc::aarch64_flags::flags::mno_outline_atomics);
   if ( conf.freestanding_eh ) {
@@ -229,6 +311,10 @@ __flags_freestanding(const config_t &conf, bool linking)
     if ( linking and conf.arch != __arch::arm ) __compose_flags(r, gcc::linker_flags::flags::wl_eh_frame_hdr);
   } else
     __compose_flags(r, gcc::profiling_flags::flags::no_exceptions, gcc::cpp_flags::flags::no_rtti);
+  if ( !conf.freestanding_eh and __is_clang(conf) ) {
+    __compose_add(r, clang_flags::no_unwind_tables);
+    __compose_add(r, clang_flags::no_async_unwind_tables);
+  }
   return r;
 }
 
@@ -268,8 +354,9 @@ __startup_objs(const config_t &conf, bool linking)
 }
 
 inline string_type
-__flags_warn_extra()
+__flags_warn_extra(const config_t &conf)
 {
+  if ( __is_clang(conf) ) return clang_flags::warnings_extra;
   return make_flags(gcc::w_flags::flags::Wunused, gcc::w_flags::flags::Wshadow, gcc::w_flags::flags::Wlogical_op,
                     gcc::w_flags::flags::Wnull_dereference, gcc::w_flags::flags::Wconversion, gcc::w_flags::flags::Wcast_qual,
                     gcc::w_flags::flags::Woverlength_strings, gcc::w_flags::flags::Wpointer_arith, gcc::w_flags::flags::Wunused,
@@ -285,7 +372,9 @@ __flags_warn_extra()
 inline string_type
 __flags_freestanding_post(const config_t &conf)
 {
-  return conf.freestanding ? make_flags(gcc::w_flags::flags::Wno_odr, gcc::w_flags::flags::Wno_lto_type_mismatch) : "";
+  if ( !conf.freestanding ) return {};
+  return __is_clang(conf) ? make_flags(gcc::w_flags::flags::Wno_odr)
+                          : make_flags(gcc::w_flags::flags::Wno_odr, gcc::w_flags::flags::Wno_lto_type_mismatch);
 }
 
 // -fdiagnostics-* for C++ always
@@ -293,12 +382,20 @@ inline string_type
 __flags_extensions_supple(const config_t &conf)
 {
   string_type r;
-  if ( __is_cpp_standard(conf.standard) )
-    __compose_flags(r, gcc::diagnostic_flags::flags::diagnostics_color_always, gcc::w_flags::flags::fconcepts_diagnostics_depth_two);
-  if ( conf.doctor )
-    __compose_flags(r, gcc::diagnostic_flags::flags::time_report, gcc::diagnostic_flags::flags::time_report_details,
-                    gcc::diagnostic_flags::flags::mem_report, gcc::diagnostic_flags::flags::opt_info,
-                    gcc::diagnostic_flags::flags::opt_info_missed);
+  if ( __is_cpp_standard(conf.standard) ) {
+    __compose_flags(r, gcc::diagnostic_flags::flags::diagnostics_color_always);
+    if ( !__is_clang(conf) ) __compose_flags(r, gcc::w_flags::flags::fconcepts_diagnostics_depth_two);
+  }
+  if ( conf.doctor ) {
+    __compose_flags(r, gcc::diagnostic_flags::flags::time_report);
+    if ( __is_clang(conf) ) {
+      __compose_add(r, clang_flags::remarks_passed);
+      __compose_add(r, clang_flags::remarks_missed);
+      __compose_add(r, clang_flags::remarks_analysis);
+    } else
+      __compose_flags(r, gcc::diagnostic_flags::flags::time_report_details, gcc::diagnostic_flags::flags::mem_report,
+                      gcc::diagnostic_flags::flags::opt_info, gcc::diagnostic_flags::flags::opt_info_missed);
+  }
   return r;
 }
 
@@ -306,6 +403,10 @@ inline string_type
 __flags_link_libs(const config_t &conf, bool linking)
 {
   string_type compile_libs = (conf.freestanding or !linking) ? "" : make_flags(gcc::linker_flags::flags::l_pthread);
+  // AArch64 long double is IEEE binary128; Clang lowers its support operations
+  // to the GCC compiler runtime supplied by the selected cross toolchain.
+  if ( linking and conf.freestanding and __is_clang(conf) and conf.arch == __arch::arm64 )
+    __compose_add(compile_libs, clang_flags::gcc_runtime);
   if ( linking and !conf.bonus_libs.empty() )
     for ( auto &n : conf.bonus_libs ) {
       if ( !compile_libs.empty() ) compile_libs += ' ';
@@ -378,13 +479,7 @@ __flags_lib_paths(const config_t &conf, bool linking)
 string_type
 batch_cmp(const config_t &conf)
 {
-  string_type main_flags
-      = (conf.mode == __opt_modes::optimized
-             ? make_flags(conf.opt_mode, gcc::opt_flags::flags::modulo_sched, gcc::opt_flags::flags::modulo_sched_allow_regmoves,
-                          gcc::opt_flags::flags::gcse_sm, gcc::opt_flags::flags::gcse_las)
-             : make_flags(conf.opt_mode, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three,
-                          gcc::debug_flags::flags::gcolumn_info, gcc::debug_flags::flags::ginline_points,
-                          gcc::debug_flags::flags::gstatement_frontiers));
+  string_type main_flags = __main_opt_flags(conf);
   __compose_add(main_flags, __isa_march(conf.isa));
   const char *comp_type = __flags_comp_type(conf);
   // -c/-S/-E never reach the linker: link inputs and link flags must stay out of those commands
@@ -400,7 +495,7 @@ batch_cmp(const config_t &conf)
   const string_type flags_warn_base = __flags_warn_base();
 
   // no more useless cast + floats
-  const string_type flags_warn_extra = __flags_warn_extra();
+  const string_type flags_warn_extra = __flags_warn_extra(conf);
 
   const string_type flags_errors_extra = __flags_errors_extra();
 
@@ -438,15 +533,9 @@ batch_cmp(const config_t &conf)
 string_type
 batch_cmp_armv7(const config_t &conf)
 {
-  const string_type main_flags = (conf.mode == __opt_modes::optimized
-                                      ? make_flags(conf.opt_mode, gcc::arm_flags::flags::march_armv7_a, gcc::arm_flags::flags::mfpu_neon,
-                                                   gcc::arm_flags::flags::mfloat_abi_hard, gcc::opt_flags::flags::modulo_sched,
-                                                   gcc::opt_flags::flags::modulo_sched_allow_regmoves, gcc::opt_flags::flags::gcse_sm,
-                                                   gcc::opt_flags::flags::gcse_las)
-                                      : make_flags(conf.opt_mode, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three,
-                                                   gcc::debug_flags::flags::gcolumn_info, gcc::debug_flags::flags::ginline_points,
-                                                   gcc::debug_flags::flags::gstatement_frontiers, gcc::arm_flags::flags::march_armv7_a,
-                                                   gcc::arm_flags::flags::mfpu_neon, gcc::arm_flags::flags::mfloat_abi_hard));
+  string_type main_flags = __main_opt_flags(conf);
+  __compose_flags(main_flags, gcc::arm_flags::flags::march_armv7_a, gcc::arm_flags::flags::mfpu_neon,
+                  gcc::arm_flags::flags::mfloat_abi_hard);
   const char *comp_type = __flags_comp_type(conf);
   // -c/-S/-E never reach the linker: link inputs and link flags must stay out of those commands
   const bool linking = (conf.compile_type == __comp_type::linked);
@@ -460,7 +549,7 @@ batch_cmp_armv7(const config_t &conf)
   const string_type flags_warn_base = __flags_warn_base();
 
   // no more useless cast + floats
-  const string_type flags_warn_extra = __flags_warn_extra();
+  const string_type flags_warn_extra = __flags_warn_extra(conf);
 
   const string_type flags_errors_extra = __flags_errors_extra();
 
@@ -478,12 +567,14 @@ batch_cmp_armv7(const config_t &conf)
   const string_type includes_location = __flags_includes(conf);
   const string_type libs_static = __flags_libs_static(conf, linking);
 
+  const string_type cross_flags = __clang_cross_flags(conf, linking);
   string_type command_pre
-      = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
-                                     flags_warn_base, flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions,
-                                     freestanding_post, flags_extensions_supple)
-                      : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
-                                     flags_warn_base, flags_warn_ignore, flags_extensions, freestanding_post, flags_extensions_supple);
+      = conf.warnings
+            ? make_command(conf.compiler_path, cross_flags, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
+                           flags_warn_base, flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions, freestanding_post,
+                           flags_extensions_supple)
+            : make_command(conf.compiler_path, cross_flags, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
+                           flags_warn_base, flags_warn_ignore, flags_extensions, freestanding_post, flags_extensions_supple);
 
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
@@ -498,13 +589,8 @@ batch_cmp_armv7(const config_t &conf)
 string_type
 batch_cmp_aarch64(const config_t &conf)
 {
-  const string_type main_flags = (conf.mode == __opt_modes::optimized
-                                      ? make_flags(conf.opt_mode, gcc::arm_flags::flags::march_armv8_a, gcc::opt_flags::flags::modulo_sched,
-                                                   gcc::opt_flags::flags::modulo_sched_allow_regmoves, gcc::opt_flags::flags::gcse_sm,
-                                                   gcc::opt_flags::flags::gcse_las)
-                                      : make_flags(conf.opt_mode, gcc::debug_flags::flags::g_three, gcc::debug_flags::flags::ggdb_three,
-                                                   gcc::debug_flags::flags::gcolumn_info, gcc::debug_flags::flags::ginline_points,
-                                                   gcc::debug_flags::flags::gstatement_frontiers, gcc::arm_flags::flags::march_armv8_a));
+  string_type main_flags = __main_opt_flags(conf);
+  __compose_flags(main_flags, gcc::arm_flags::flags::march_armv8_a);
   const char *comp_type = __flags_comp_type(conf);
   // -c/-S/-E never reach the linker: link inputs and link flags must stay out of those commands
   const bool linking = (conf.compile_type == __comp_type::linked);
@@ -516,7 +602,7 @@ batch_cmp_aarch64(const config_t &conf)
   const string_type compile_objs = __flags_bonus_objs(conf);
   const string_type flags_warn_base = __flags_warn_base();
 
-  const string_type flags_warn_extra = __flags_warn_extra();
+  const string_type flags_warn_extra = __flags_warn_extra(conf);
 
   const string_type flags_errors_extra = __flags_errors_extra();
 
@@ -534,12 +620,14 @@ batch_cmp_aarch64(const config_t &conf)
   const string_type includes_location = __flags_includes(conf);
   const string_type libs_static = __flags_libs_static(conf, linking);
 
+  const string_type cross_flags = __clang_cross_flags(conf, linking);
   string_type command_pre
-      = conf.warnings ? make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
-                                     flags_warn_base, flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions,
-                                     freestanding_post, flags_extensions_supple)
-                      : make_command(conf.compiler_path, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
-                                     flags_warn_base, flags_warn_ignore, flags_extensions, freestanding_post, flags_extensions_supple);
+      = conf.warnings
+            ? make_command(conf.compiler_path, cross_flags, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
+                           flags_warn_base, flags_warn_extra, flags_warn_ignore, flags_errors_extra, flags_extensions, freestanding_post,
+                           flags_extensions_supple)
+            : make_command(conf.compiler_path, cross_flags, conf.standard, comp_type, main_flags, flags_sanitize, bin_type, freestanding,
+                           flags_warn_base, flags_warn_ignore, flags_extensions, freestanding_post, flags_extensions_supple);
 
   string_type command_post = make_command(defines_flags, compile_libs, includes_location, libs_location);
 
@@ -586,8 +674,9 @@ batch_gas(const config_t &conf)
   const string_type defines_flags = __flags_defines(conf);
   const string_type includes_location = __flags_includes(conf);
   const string_type compile_objs = __flags_bonus_objs(conf);
+  const string_type cross_flags = __clang_cross_flags(conf, linking);
 
-  string_type command_pre = make_command(conf.compiler_path, comp_type, main_flags, debug_flags, bin_type, freestanding);
+  string_type command_pre = make_command(conf.compiler_path, cross_flags, comp_type, main_flags, debug_flags, bin_type, freestanding);
   string_type command_post = make_command(defines_flags, includes_location);
 
   return make_command(command_pre, conf.target, command_post, compile_objs, __flags_output(), conf.target_out);

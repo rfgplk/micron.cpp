@@ -74,6 +74,25 @@ Neither the path nor the `sudo` is mandatory: `install_start.py <dir>` takes a d
 
 This installation guide serves only as a rough suggestion, exact paths may depend on your use case and configuration.
 
+###### GCC and Clang
+
+`duck` has separate GCC and Clang flag profiles. Select Clang with `--clang`; its optimization,
+warning, LTO, freestanding, and cross-compilation flags are translated to Clang spellings.
+
+```bash
+CXX=clang++ sh scripts/bootstap_duck.sh
+duck compile examples/ --clang -O2 -o bin/examples-clang
+```
+
+The complete compile matrices are compiler-specific. The Clang matrix covers amd64, i386, ARMv7,
+AArch64, ISA tiers, optimization levels, hosted/freestanding builds, and real links; GCC-only C++26
+reflection rows remain in the GCC matrix.
+
+```bash
+duck batch parallel verify_compile_gcc.duck
+duck batch parallel verify_compile_clang.duck
+```
+
 ###### x86 ISA levels
 
 micron's x86 floor is **SSE2**, it runs on any amd64 CPU, back to 2003.
