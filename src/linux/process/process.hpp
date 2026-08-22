@@ -7,6 +7,8 @@
 
 // libelves
 
+#include "../../bits/__abc_mt.hpp"
+
 #include "../process/spawn.hpp"
 #include "../sys/clone.hpp"
 #include "../sys/limits.hpp"

@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 //
-// compile-validity gate for micron::lz on every arch/opt/freestanding cell (verify_compile.duck).
+// compile-validity gate for micron::lz on every arch/opt/freestanding cell (verify_compile_*.duck).
 // Not run. The static_asserts below are the load-bearing part: each one pins a property that, if it
 // silently flipped, would either break the pipe or quietly hand a pipeline to the EAGER fp:: layer.
 

@@ -23,7 +23,7 @@ visit_kv(M &m, Fn &&fn)
   using K = typename micron::remove_cvref_t<M>::key_type;
   using V_ = typename micron::remove_cvref_t<M>::mapped_type;
   using V = micron::conditional_t<micron::is_const_v<M>, const V_, V_>;
-  if constexpr ( requires { m.for_each([&](const K &, V &) { }); } ) {
+  if constexpr ( requires { m.for_each([](const K &, V &) { }); } ) {
     m.for_each([&](const K &k, V &v) { fn(k, v); });
   } else {
     auto it = m.begin();

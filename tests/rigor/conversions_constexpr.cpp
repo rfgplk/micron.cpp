@@ -1,6 +1,6 @@
 // conversions_constexpr.cpp
 // Compile-time proof that micron's number<->text layer constant-evaluates: the strict integer and
-// float parsers, the Ryu shortest-form writers, and the fixed-buffer integer writers.
+// float parsers, both shortest-form writers, and the fixed-buffer integer writers.
 //
 // Every assertion is a static_assert, so the file failing to compile IS the failing test. main()
 // re-runs a handful of the same cases through a noinline volatile round-trip, because the whole
@@ -31,6 +31,8 @@
 namespace mc = micron;
 namespace ry = micron::__impl::__ryu;
 namespace r32 = micron::__impl::__ryu::__f32;
+namespace zj = micron::__impl::__zmij;
+namespace fp = micron::__impl::__fpconv;
 namespace fi = micron::format::__impl;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +147,7 @@ static_assert(__f("-0.125", 6, -0.125f));
 static_assert(__f("1e10", 4, 1e10f));
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// the Ryu writers -- this is what the five union removals bought
+// the legacy Ryu writer and the selected Żmij facade
 
 consteval bool
 __d2s(f64 v, const char *want, usize wn)
@@ -172,6 +174,51 @@ __f2s_starts(f32 v, char c)
 }
 static_assert(__f2s_starts(2.5f, '2'));
 static_assert(__f2s_starts(-1.0f, '-'));
+
+consteval bool
+__zmij_selected(f64 v, const char *want, usize wn)
+{
+  char a[32] = {};
+  char b[32] = {};
+  const usize an = zj::d2s_buffered(v, a);
+  const usize bn = fp::d2s_buffered(v, b);
+  if ( an != wn || bn != wn ) return false;
+  for ( usize i = 0; i < wn; ++i )
+    if ( a[i] != want[i] || b[i] != want[i] ) return false;
+  return true;
+}
+static_assert(__zmij_selected(1.5, "1.5", 3));
+static_assert(__zmij_selected(1e-163, "1e-163", 6));
+static_assert(__zmij_selected(-0.0, "-0.0", 4));
+
+consteval bool
+__zmij_batch()
+{
+  const f64 values[4] = { 1.5, -0.0, 1e-163, 123456789.0 };
+  char out[4 * mc::f64_shortest_chars_capacity] = {};
+  const mc::chars4_result result = mc::to_chars4(out, mc::f64_shortest_chars_capacity, values);
+  constexpr const char *want[4] = { "1.5", "-0.0", "1e-163", "1.23456789e+8" };
+  constexpr usize lengths[4] = { 3, 4, 6, 13 };
+  for ( usize lane = 0; lane < 4; ++lane ) {
+    if ( result[lane] != lengths[lane] ) return false;
+    for ( usize i = 0; i < lengths[lane]; ++i )
+      if ( out[lane * mc::f64_shortest_chars_capacity + i] != want[lane][i] ) return false;
+  }
+  return true;
+}
+static_assert(__zmij_batch());
+
+consteval bool
+__zmij_precision(f64 v, u32 precision, const char *want, usize wn)
+{
+  char b[64] = {};
+  const usize n = fp::d2e_buffered(v, b, sizeof(b), precision);
+  if ( n != wn ) return false;
+  for ( usize i = 0; i < wn; ++i )
+    if ( b[i] != want[i] ) return false;
+  return true;
+}
+static_assert(__zmij_precision(9.99, 1, "1.0e+01", 7));
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // the precision writers -- %f and %e, both tiers

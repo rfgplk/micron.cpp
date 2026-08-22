@@ -137,12 +137,10 @@ topology_set_cpu(const unsigned long n)
 {
   int pid = getpid();
   cpu_set_t cpu;
-  if ( -1 == sched_getaffinity(pid, sizeof(cpu), &cpu) )
-    return 0;
+  if ( -1 == sched_getaffinity(pid, sizeof(cpu), &cpu) ) return 0;
   CPU_ZERO(&cpu);
   CPU_SET(n, &cpu);
-  if ( -1 == sched_setaffinity(pid, sizeof(cpu), &cpu) )
-    return 0;
+  if ( -1 == sched_setaffinity(pid, sizeof(cpu), &cpu) ) return 0;
   return 1;
 }
 #else
@@ -185,15 +183,15 @@ void frequency_kernel(void);
 __inline__ void
 frequency_user(core_t (*ptr)[256])
 {
-  unsigned long long start, end, rax, rdx, aux;
+  unsigned long long start, end;
+  unsigned int rax, rdx, aux;
   __rdtscp(rax, rdx, aux);
-  start = (rdx << 32) + rax;
+  start = ((unsigned long long)rdx << 32) + rax;
   sleep(1);
   __rdtscp(rax, rdx, aux);
-  end = (rdx << 32) + rax;
+  end = ((unsigned long long)rdx << 32) + rax;
   unsigned long long freq = (end - start);
-  for ( int i = 0; i < 256; i++ )
-    (*ptr)[i].freq = freq;
+  for ( int i = 0; i < 256; i++ ) (*ptr)[i].freq = freq;
 }
 
 __inline__ void
@@ -211,14 +209,12 @@ cores_all(char *__restrict__ total, core_t (*ptr)[256])
     char bits = (char)rbit(cs.eax, 4, 0);
     char apic = (char)rbit(cs.edx, 31, 0);
 
-    if ( (char)rbit(cs.eax, 4, 0) == 0 && (char)rbit(cs.ebx, 15, 0) == 0 )
-      break;
+    if ( (char)rbit(cs.eax, 4, 0) == 0 && (char)rbit(cs.ebx, 15, 0) == 0 ) break;
     while ( tmp-- ) {
       apic >>= bits;
       (*ptr)[counter].apic = apic;
       (*ptr)[counter++].type = (char)tmp_c;
     }
   };
-  for ( ; counter < 256; counter++ )
-    (*ptr)[counter].type = 0x00;
+  for ( ; counter < 256; counter++ ) (*ptr)[counter].type = 0x00;
 }

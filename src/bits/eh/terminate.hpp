@@ -103,22 +103,6 @@ __cxa_call_unexpected(void *)
   micron::eh::__terminate();
 }
 
-[[noreturn]] inline void
-__cxa_pure_virtual()
-{
-  static const char m[] = "pure virtual function called\n";
-  micron::eh::__eh_diag(m, sizeof(m) - 1);
-  micron::abort(6);
-}
-
-[[noreturn]] inline void
-__cxa_deleted_virtual()
-{
-  static const char m[] = "deleted virtual function called\n";
-  micron::eh::__eh_diag(m, sizeof(m) - 1);
-  micron::abort(6);
-}
-
 };      // extern "C"
 
 #endif      // __micron_eh

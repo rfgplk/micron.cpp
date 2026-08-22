@@ -8,7 +8,7 @@
 // static_assert, so failing to compile IS the failing test.
 //
 // this has to hold in the freestanding cells too (-k / -ke). a compiler-required-header port that
-// only works hosted is the failure mode that matters, and verify_compile.duck sweeps this
+// only works hosted is the failure mode that matters, and verify_compile_*.duck sweeps this
 // directory under both.
 
 #include "../../src/compare.hpp"

@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 //
 // compile-validity gate for src/function.hpp. Not run -- the point is that every instantiation below
-// COMPILES, on every arch x ISA x EH cell verify_compile.duck sweeps this directory under.
+// COMPILES, on every arch x ISA x EH cell verify_compile_*.duck sweeps this directory under.
 //
 // Three of the shapes here were hard compile errors before 2026-08-18, and none of them were reachable
 // from any test in the tree:

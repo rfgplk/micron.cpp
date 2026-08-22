@@ -19,6 +19,20 @@ namespace hw
 {
 
 template<typename F>
+[[nodiscard]] inline constexpr F
+__constexpr_sqrt(F x) noexcept
+{
+  if ( x == F(0) or x == F(1) ) return x;
+  F r = x > F(1) ? x : F(1);
+  for ( int i = 0; i < (sizeof(F) == sizeof(f32) ? 20 : 40); ++i ) {
+    const F next = (r + x / r) * F(0.5);
+    if ( next == r ) break;
+    r = next;
+  }
+  return r;
+}
+
+template<typename F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fp_barrier(F x) noexcept
 {
@@ -37,7 +51,11 @@ fp_barrier(F x) noexcept
 sqrt_ss(f32 x) noexcept
 {
   if consteval {
+#if defined(__micron_compiler_gcc)
     return f32(__builtin_sqrtf(x));
+#else
+    return __constexpr_sqrt(x);
+#endif
   }
 #if defined(__micron_arch_x86_any)
   f32 r;
@@ -58,7 +76,11 @@ sqrt_ss(f32 x) noexcept
 sqrt_sd(f64 x) noexcept
 {
   if consteval {
+#if defined(__micron_compiler_gcc)
     return f64(__builtin_sqrt(x));
+#else
+    return __constexpr_sqrt(x);
+#endif
   }
 #if defined(__micron_arch_x86_any) && defined(__micron_x86_sse2)
   f64 r;
@@ -89,7 +111,7 @@ sqrt(F x) noexcept
 rsqrt_approx_ss(f32 x) noexcept
 {
   if consteval {
-    return 1.0f / f32(__builtin_sqrtf(x));
+    return 1.0f / __constexpr_sqrt(x);
   }
 #if defined(__micron_arch_x86_any) && defined(__micron_x86_sse)
   f32 r;

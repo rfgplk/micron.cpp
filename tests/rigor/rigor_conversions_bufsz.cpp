@@ -36,7 +36,7 @@
 #include "../support/oracles.hpp"
 
 using mtest::prng;
-namespace ry = micron::__impl::__ryu;
+namespace fc = micron::__impl::__fpconv;
 using sb::end_test_case;
 using sb::print;
 using sb::require_true;
@@ -158,18 +158,18 @@ main()
     canary_buf cb;
     for ( u32 p : { 0xFFFFFFFFu, 0xFFFFFFFEu, 0x80000000u, 0x7FFFFFFFu, 1000000u } ) {
       char *b = cb.arm();
-      require_true(ry::d2f_buffered(1.0, b, 64, p) == 0);
+      require_true(fc::d2f_buffered(1.0, b, 64, p) == 0);
       require_true(cb.intact_from(0));
       b = cb.arm();
-      require_true(ry::d2e_buffered(1.0, b, 64, p) == 0);
+      require_true(fc::d2e_buffered(1.0, b, 64, p) == 0);
       require_true(cb.intact_from(0));
       b = cb.arm();
-      require_true(ry::d2a_buffered(1.0, b, 64, p, true, false) == 0);
+      require_true(fc::d2a_buffered(1.0, b, 64, p, true, false) == 0);
       require_true(cb.intact_from(0));
       // the size queries must not wrap either -- a caller sizing a buffer from one of these
       // would otherwise allocate ~0 bytes and then be told the write fits
-      require_true(ry::d2f_size(1.0, p) > p);
-      require_true(ry::d2e_size(1.0, p) > p);
+      require_true(fc::d2f_size(1.0, p) > p);
+      require_true(fc::d2e_size(1.0, p) > p);
     }
 
     // parse_spec saturates rather than wrapping, so an absurd digit run cannot land on a value
@@ -189,9 +189,9 @@ main()
       const u32 prec = static_cast<u32>(rng.next() % 250ull);
 
       // what the writer produces when it certainly has room -- the oracle for this round
-      const usize want_f = ry::d2f_buffered(v, ref, BIG, prec);
+      const usize want_f = fc::d2f_buffered(v, ref, BIG, prec);
       require_true(want_f != 0);
-      require_true(want_f <= ry::d2f_size(v, prec));
+      require_true(want_f <= fc::d2f_size(v, prec));
 
       // the boundary capacities plus a random interior one: below want_f it must refuse and write
       // nothing, at or above it must produce exactly the oracle bytes
@@ -200,7 +200,7 @@ main()
       for ( usize cap : caps ) {
         if ( cap >= BIG ) continue;
         char *b = cb.arm();
-        const usize n = ry::d2f_buffered(v, b, cap, prec);
+        const usize n = fc::d2f_buffered(v, b, cap, prec);
         require_true(cb.intact_from(cap));      // never past the capacity, whatever it answered
         if ( cap < want_f ) {
           require_true(n == 0);
@@ -222,31 +222,31 @@ main()
       const f64 v = pick_value(rng, i);
       const u32 prec = static_cast<u32>(rng.next() % 200ull);
 
-      const usize want_e = ry::d2e_buffered(v, ref, BIG, prec);
+      const usize want_e = fc::d2e_buffered(v, ref, BIG, prec);
       require_true(want_e != 0);
-      require_true(want_e <= ry::d2e_size(v, prec));
+      require_true(want_e <= fc::d2e_size(v, prec));
 
       char *b = cb.arm();
-      require_true(ry::d2e_buffered(v, b, want_e - 1, prec) == 0);
+      require_true(fc::d2e_buffered(v, b, want_e - 1, prec) == 0);
       require_true(cb.intact_from(want_e - 1));
       b = cb.arm();
-      require_true(ry::d2e_buffered(v, b, want_e, prec) == want_e);
+      require_true(fc::d2e_buffered(v, b, want_e, prec) == want_e);
       require_true(cb.intact_from(want_e));
 
       // %g: the answer is the TRIMMED text, so the capacity test has to be against that. this is
       // the whole of finding 10 -- d2g_buffered sized on the pre-trim width and refused buffers
       // that could hold the result, and there was no d2g_size to ask instead.
       for ( bool alt : { false, true } ) {
-        const usize want_g = ry::d2g_buffered(v, ref, BIG, prec, alt, false);
-        require_true(want_g == ry::d2g_size(v, prec, alt));
+        const usize want_g = fc::d2g_buffered(v, ref, BIG, prec, alt, false);
+        require_true(want_g == fc::d2g_size(v, prec, alt));
         require_true(want_g != 0);
         b = cb.arm();
-        require_true(ry::d2g_buffered(v, b, want_g, prec, alt, false) == want_g);
+        require_true(fc::d2g_buffered(v, b, want_g, prec, alt, false) == want_g);
         require_true(cb.intact_from(want_g));
         for ( usize k = 0; k < want_g; ++k ) require_true(b[k] == ref[k]);
         if ( want_g > 0 ) {
           b = cb.arm();
-          require_true(ry::d2g_buffered(v, b, want_g - 1, prec, alt, false) == 0);
+          require_true(fc::d2g_buffered(v, b, want_g - 1, prec, alt, false) == 0);
           require_true(cb.intact_from(want_g - 1));
         }
       }
@@ -300,12 +300,12 @@ main()
       const f64 v = pick_value(rng, i);
       const u32 prec = static_cast<u32>(rng.next() % 900ull);
 
-      const usize want = ry::d2f_buffered(v, ref, BIG, prec);
+      const usize want = fc::d2f_buffered(v, ref, BIG, prec);
       micron::hstring<char> s = micron::to_fixed(v, prec);
       require_true(s.size() == want);
       for ( usize k = 0; k < want; ++k ) require_true(s[k] == ref[k]);
 
-      const usize wante = ry::d2e_buffered(v, ref, BIG, prec);
+      const usize wante = fc::d2e_buffered(v, ref, BIG, prec);
       micron::hstring<char> se = micron::to_scientific(v, prec);
       require_true(se.size() == wante);
       for ( usize k = 0; k < wante; ++k ) require_true(se[k] == ref[k]);
@@ -321,7 +321,7 @@ main()
       const f64 v = pick_value(rng, i);
       const u32 prec = static_cast<u32>(rng.next() % 120ull);
 
-      const usize want = ry::d2f_buffered(v, ref, BIG, prec);
+      const usize want = fc::d2f_buffered(v, ref, BIG, prec);
       const usize cap = 64;
       micron::sstring<cap, char> s = micron::to_fixed_stack<cap, char>(v, prec);
       const usize expect = want > cap - 1 ? cap - 1 : want;

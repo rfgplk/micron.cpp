@@ -182,9 +182,9 @@ report(const char *type, const char *op, usize elems, usize payload, f64 ns, f64
   l.emit();
 }
 
-template<int SZ, int CK, typename FmtFn>
+template<int SZ, int CK, bool IS, typename FmtFn>
 void
-run_fmt_case(micron::io::stream_sink<SZ, CK> &sink, micron::io::stream<SZ, CK> &st, const char *type, usize elems, u64 iters,
+run_fmt_case(micron::io::stream_sink<SZ, CK, IS> &sink, micron::io::stream<SZ, CK, IS> &st, const char *type, usize elems, u64 iters,
              FmtFn &&fmt_fn) noexcept
 {
   st.rewind();
@@ -220,7 +220,7 @@ bench_all(u64 iters_scalar, u64 iters_container) noexcept
   constexpr int SZ = 32768;
   constexpr int CK = 4096;
   micron::io::stream<SZ, CK> st;
-  micron::io::stream_sink<SZ, CK> sink{ st };
+  micron::io::stream_sink<SZ, CK, false> sink{ st };
 
   static volatile int vi = 123456;
   static volatile f64 vf = 3.14159265358979;
@@ -240,7 +240,7 @@ bench_all(u64 iters_scalar, u64 iters_container) noexcept
     return micron::io::printk(sink, x);
   });
 
-  run_fmt_case(sink, st, "f64(ryu)", 1, iters_scalar, [&]() -> max_t {
+  run_fmt_case(sink, st, "f64(zmij)", 1, iters_scalar, [&]() -> max_t {
     f64 x = vf;
     return micron::io::printk(sink, x);
   });

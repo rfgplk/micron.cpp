@@ -12,7 +12,7 @@
 //   - stack_swiss_map lives entirely on the stack (no heap).
 //   - robin / hopscotch use SIMD probing (AVX2/SSE2/NEON).
 //   - Aliases: micron::map<K,V> = robin_map,
-//              micron::fmap<V>  = hopscotch_map<hash64_t, V>
+//              micron::fast_map<V> = hopscotch_map<hash64_t, V>
 
 #include "../src/except.hpp"
 #include "../src/io/console.hpp"
@@ -75,10 +75,10 @@ main()
   hm.insert(8, 88);
   micron::io::println("hopscotch find(7)=", *hm.find(7));
 
-  // fmap<V> is hopscotch_map<hash64_t, V> — keys are pre-hashed 64-bit integers
-  micron::fmap<int> fm;
+  // fast_map<V> is hopscotch_map<hash64_t, V> — keys are pre-hashed 64-bit integers
+  micron::fast_map<int> fm;
   fm.insert(0xDEADBEEFu, 42);
-  micron::io::println("fmap find(0xDEADBEEF)=", *fm.find(0xDEADBEEFu));
+  micron::io::println("fast_map find(0xDEADBEEF)=", *fm.find(0xDEADBEEFu));
 
   // ================================================================
   // --- stack_swiss_map<K, V, N> ---

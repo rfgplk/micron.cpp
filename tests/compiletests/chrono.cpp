@@ -350,7 +350,7 @@ use_legacy(void)
 int
 main(void)
 {
-  // never actually run -- this file is built by verify_compile.duck and graded on compiling
+  // never actually run -- this file is built by verify_compile_*.duck and graded on compiling
   if ( g_sink_u == 0xDEADBEEFull ) {
     use_clock();
     use_format();

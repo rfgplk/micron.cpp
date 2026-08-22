@@ -20,7 +20,7 @@
 // conversions/chars.hpp:146 documents the same trap and keys its own 128-bit entry points on the
 // TYPE; printk now does too, via io::__printk_arith. int_to_string got the same treatment for the
 // same reason -- tests/compiletests/strings.cpp used int_to_string<u128> as though it were
-// portable, which broke every --arm/--arm64/--i386 cell of verify_compile.duck.
+// portable, which broke every --arm/--arm64/--i386 cell of verify_compile_*.duck.
 //
 // Nothing here is run. Failing to compile IS the failing test, on whichever cell fails.
 

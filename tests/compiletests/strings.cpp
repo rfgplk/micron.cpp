@@ -79,6 +79,8 @@ main()
   {
     char fbuf[1400];
     namespace ry = micron::__impl::__ryu;
+    namespace zj = micron::__impl::__zmij;
+    namespace fp = micron::__impl::__fpconv;
     acc += static_cast<int>(ry::d2f_buffered(3.5, fbuf, sizeof(fbuf), 6));
     acc += static_cast<int>(ry::d2f_trim_buffered(3.5, fbuf, sizeof(fbuf), 6));
     acc += static_cast<int>(ry::d2e_buffered(3.5, fbuf, sizeof(fbuf), 6));
@@ -88,6 +90,13 @@ main()
     acc += static_cast<int>(ry::d2f_buffered(1e300, fbuf, sizeof(fbuf), 30));      // forces tier 2
     acc += static_cast<int>(ry::d2g_buffered(1.5, fbuf, sizeof(fbuf), 6, false, false));
     acc += static_cast<int>(ry::d2a_buffered(1.5, fbuf, sizeof(fbuf), 3, true, false));
+    acc += static_cast<int>(zj::d2s_buffered(1.5, fbuf));
+    acc += static_cast<int>(zj::f2s_buffered(1.5f, fbuf));
+    acc += static_cast<int>(zj::d2f_buffered(3.5, fbuf, sizeof(fbuf), 6));
+    acc += static_cast<int>(zj::d2e_buffered(3.5, fbuf, sizeof(fbuf), 6));
+    acc += static_cast<int>(zj::d2g_buffered(3.5, fbuf, sizeof(fbuf), 6, false, false));
+    acc += static_cast<int>(fp::d2s_buffered(1.5, fbuf));
+    acc += static_cast<int>(fp::f2s_buffered(1.5f, fbuf));
   }
 
   // conversions/chars.hpp -- to_chars/from_chars at every width. the integer templates are
@@ -109,6 +118,13 @@ main()
     acc += static_cast<int>(micron::to_chars(cbuf, sizeof(cbuf), 1.5f, micron::float_format::shortest));
     acc += static_cast<int>(micron::to_chars(cbuf, sizeof(cbuf), 1.5, micron::float_format::general, 6));
     acc += static_cast<int>(micron::to_chars(cbuf, sizeof(cbuf), 1.5, micron::float_format::hex, -1));
+    const f64 doubles4[4] = { 1.5, -0.0, 1e-163, 123456789.0 };
+    const f32 floats4[4] = { 1.5f, -0.0f, 1e-20f, 123456.0f };
+    char dbuf4[4 * micron::f64_shortest_chars_capacity];
+    char fbuf4[4 * micron::f32_shortest_chars_capacity];
+    const micron::chars4_result dresult = micron::to_chars4(dbuf4, micron::f64_shortest_chars_capacity, doubles4);
+    const micron::chars4_result fresult = micron::to_chars4(fbuf4, micron::f32_shortest_chars_capacity, floats4);
+    acc += static_cast<int>(dresult[0] + dresult[3] + fresult[0] + fresult[3]);
 
     i8 a1{};
     u8 a2{};

@@ -1,0 +1,306 @@
+#  duck verify_compile_clang.duck
+#  duck batch parallel verify_compile_clang.duck   (pool every cell concurrently)
+#
+# {amd64, arm64, arm32, i386} x {-O0 -O1 -O2 -O3 -Ofast, debug (-g)} x hosted/freestanding
+#   plus  amd64 x {base, v2, v3, v4} ISA levels
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# x86 ISA levels
+#   base = -march=x86-64     
+#   v2   = -march=x86-64-v2 
+#   v3   = -march=x86-64-v3 
+#   v4   = -march=x86-64-v4 
+
+compile --clang tests/compiletests/ --x86 --isa base -O0 --raw-obj -o bin/compiletests-clang/amd64_base_O0
+compile --clang tests/compiletests/ --x86 --isa base -O2 --raw-obj -o bin/compiletests-clang/amd64_base_O2
+compile --clang tests/compiletests/ --x86 --isa base -Ofast --raw-obj -o bin/compiletests-clang/amd64_base_Ofast
+compile --clang tests/compiletests/ --x86 --isa base -g --raw-obj -o bin/compiletests-clang/amd64_base_debug
+compile --clang tests/compiletests/ --x86 --isa v2 -O0 --raw-obj -o bin/compiletests-clang/amd64_v2_O0
+compile --clang tests/compiletests/ --x86 --isa v2 -O2 --raw-obj -o bin/compiletests-clang/amd64_v2_O2
+compile --clang tests/compiletests/ --x86 --isa v2 -Ofast --raw-obj -o bin/compiletests-clang/amd64_v2_Ofast
+compile --clang tests/compiletests/ --x86 --isa v2 -g --raw-obj -o bin/compiletests-clang/amd64_v2_debug
+compile --clang tests/compiletests/ --x86 --isa v3 -O2 --raw-obj -o bin/compiletests-clang/amd64_v3_O2
+compile --clang tests/compiletests/ --x86 --isa v3 -Ofast --raw-obj -o bin/compiletests-clang/amd64_v3_Ofast
+compile --clang tests/compiletests/ --x86 --isa v4 -O2 --raw-obj -o bin/compiletests-clang/amd64_v4_O2
+compile --clang tests/compiletests/ --x86 --isa v4 -Ofast --raw-obj -o bin/compiletests-clang/amd64_v4_Ofast
+
+# the same, freestanding
+compile --clang tests/compiletests/ --x86 --isa base -O2 --raw-obj -o bin/compiletests-clang/amd64_base_O2_k -ke
+compile --clang tests/compiletests/ --x86 --isa base -O2 --raw-obj -o bin/compiletests-clang/amd64_base_O2_knoeh -k
+compile --clang tests/compiletests/ --x86 --isa base -Ofast --raw-obj -o bin/compiletests-clang/amd64_base_Ofast_k -ke
+compile --clang tests/compiletests/ --x86 --isa base -Ofast --raw-obj -o bin/compiletests-clang/amd64_base_Ofast_knoeh -k
+compile --clang tests/compiletests/ --x86 --isa v2 -O2 --raw-obj -o bin/compiletests-clang/amd64_v2_O2_k -ke
+compile --clang tests/compiletests/ --x86 --isa v2 -O2 --raw-obj -o bin/compiletests-clang/amd64_v2_O2_knoeh -k
+compile --clang tests/compiletests/ --x86 --isa v3 -O2 --raw-obj -o bin/compiletests-clang/amd64_v3_O2_k -ke
+compile --clang tests/compiletests/ --x86 --isa v3 -O2 --raw-obj -o bin/compiletests-clang/amd64_v3_O2_knoeh -k
+compile --clang tests/compiletests/ --x86 --isa v4 -O2 --raw-obj -o bin/compiletests-clang/amd64_v4_O2_k -ke
+compile --clang tests/compiletests/ --x86 --isa v4 -O2 --raw-obj -o bin/compiletests-clang/amd64_v4_O2_knoeh -k
+
+# and link real binaries at the two ends of the range
+compile --clang tests/compiletests/ --x86 --isa base -O2 -i . -o bin/compiletests-clang/amd64_base_O2_link
+compile --clang tests/compiletests/ --x86 --isa v4 -O2 -i . -o bin/compiletests-clang/amd64_v4_O2_link
+
+# hosted
+
+# ---- amd64 (x86-64) ----
+compile --clang tests/compiletests/ --x86 -O0 --raw-obj -o bin/compiletests-clang/amd64_O0
+compile --clang tests/compiletests/ --x86 -O1 --raw-obj -o bin/compiletests-clang/amd64_O1
+compile --clang tests/compiletests/ --x86 -O2 --raw-obj -o bin/compiletests-clang/amd64_O2
+compile --clang tests/compiletests/ --x86 -O3 --raw-obj -o bin/compiletests-clang/amd64_O3
+compile --clang tests/compiletests/ --x86 -Ofast --raw-obj -o bin/compiletests-clang/amd64_Ofast
+compile --clang tests/compiletests/ --x86 -g --raw-obj -o bin/compiletests-clang/amd64_debug
+
+# ---- arm64 (armv8-a) ----
+compile --clang tests/compiletests/ --arm64 -O0 --raw-obj -o bin/compiletests-clang/arm64_O0
+compile --clang tests/compiletests/ --arm64 -O1 --raw-obj -o bin/compiletests-clang/arm64_O1
+compile --clang tests/compiletests/ --arm64 -O2 --raw-obj -o bin/compiletests-clang/arm64_O2
+compile --clang tests/compiletests/ --arm64 -O3 --raw-obj -o bin/compiletests-clang/arm64_O3
+compile --clang tests/compiletests/ --arm64 -Ofast --raw-obj -o bin/compiletests-clang/arm64_Ofast
+compile --clang tests/compiletests/ --arm64 -g --raw-obj -o bin/compiletests-clang/arm64_debug
+
+# ---- arm32 (armv7-a, NEON, hard-float) ----
+compile --clang tests/compiletests/ --arm -O0 --raw-obj -o bin/compiletests-clang/arm32_O0
+compile --clang tests/compiletests/ --arm -O1 --raw-obj -o bin/compiletests-clang/arm32_O1
+compile --clang tests/compiletests/ --arm -O2 --raw-obj -o bin/compiletests-clang/arm32_O2
+compile --clang tests/compiletests/ --arm -O3 --raw-obj -o bin/compiletests-clang/arm32_O3
+compile --clang tests/compiletests/ --arm -Ofast --raw-obj -o bin/compiletests-clang/arm32_Ofast
+compile --clang tests/compiletests/ --arm -g --raw-obj -o bin/compiletests-clang/arm32_debug
+
+# ---- i386 (x86, 32-bit) ----
+compile --clang tests/compiletests/ --i386 -O0 --raw-obj -o bin/compiletests-clang/i386_O0
+compile --clang tests/compiletests/ --i386 -O1 --raw-obj -o bin/compiletests-clang/i386_O1
+compile --clang tests/compiletests/ --i386 -O2 --raw-obj -o bin/compiletests-clang/i386_O2
+compile --clang tests/compiletests/ --i386 -O3 --raw-obj -o bin/compiletests-clang/i386_O3
+compile --clang tests/compiletests/ --i386 -Ofast --raw-obj -o bin/compiletests-clang/i386_Ofast
+compile --clang tests/compiletests/ --i386 -g --raw-obj -o bin/compiletests-clang/i386_debug
+
+# freestanding
+
+# ---- amd64 (x86-64) ----
+compile --clang tests/compiletests/ --x86 -O0 --raw-obj -o bin/compiletests-clang/amd64_O0_k -ke
+compile --clang tests/compiletests/ --x86 -O0 --raw-obj -o bin/compiletests-clang/amd64_O0_knoeh -k
+compile --clang tests/compiletests/ --x86 -O1 --raw-obj -o bin/compiletests-clang/amd64_O1_k -ke
+compile --clang tests/compiletests/ --x86 -O1 --raw-obj -o bin/compiletests-clang/amd64_O1_knoeh -k
+compile --clang tests/compiletests/ --x86 -O2 --raw-obj -o bin/compiletests-clang/amd64_O2_k -ke
+compile --clang tests/compiletests/ --x86 -O2 --raw-obj -o bin/compiletests-clang/amd64_O2_knoeh -k
+compile --clang tests/compiletests/ --x86 -O3 --raw-obj -o bin/compiletests-clang/amd64_O3_k -ke
+compile --clang tests/compiletests/ --x86 -O3 --raw-obj -o bin/compiletests-clang/amd64_O3_knoeh -k
+compile --clang tests/compiletests/ --x86 -Ofast --raw-obj -o bin/compiletests-clang/amd64_Ofast_k -ke
+compile --clang tests/compiletests/ --x86 -Ofast --raw-obj -o bin/compiletests-clang/amd64_Ofast_knoeh -k
+compile --clang tests/compiletests/ --x86 -g --raw-obj -o bin/compiletests-clang/amd64_debug_k -ke
+compile --clang tests/compiletests/ --x86 -g --raw-obj -o bin/compiletests-clang/amd64_debug_knoeh -k
+
+# ---- arm64 (armv8-a) ----
+compile --clang tests/compiletests/ --arm64 -O0 --raw-obj -o bin/compiletests-clang/arm64_O0_k -ke
+compile --clang tests/compiletests/ --arm64 -O0 --raw-obj -o bin/compiletests-clang/arm64_O0_knoeh -k
+compile --clang tests/compiletests/ --arm64 -O1 --raw-obj -o bin/compiletests-clang/arm64_O1_k -ke
+compile --clang tests/compiletests/ --arm64 -O1 --raw-obj -o bin/compiletests-clang/arm64_O1_knoeh -k
+compile --clang tests/compiletests/ --arm64 -O2 --raw-obj -o bin/compiletests-clang/arm64_O2_k -ke
+compile --clang tests/compiletests/ --arm64 -O2 --raw-obj -o bin/compiletests-clang/arm64_O2_knoeh -k
+compile --clang tests/compiletests/ --arm64 -O3 --raw-obj -o bin/compiletests-clang/arm64_O3_k -ke
+compile --clang tests/compiletests/ --arm64 -O3 --raw-obj -o bin/compiletests-clang/arm64_O3_knoeh -k
+compile --clang tests/compiletests/ --arm64 -Ofast --raw-obj -o bin/compiletests-clang/arm64_Ofast_k -ke
+compile --clang tests/compiletests/ --arm64 -Ofast --raw-obj -o bin/compiletests-clang/arm64_Ofast_knoeh -k
+compile --clang tests/compiletests/ --arm64 -g --raw-obj -o bin/compiletests-clang/arm64_debug_k -ke
+compile --clang tests/compiletests/ --arm64 -g --raw-obj -o bin/compiletests-clang/arm64_debug_knoeh -k
+
+# ---- arm32 (armv7-a, NEON, hard-float) ----
+compile --clang tests/compiletests/ --arm -O0 --raw-obj -o bin/compiletests-clang/arm32_O0_k -ke
+compile --clang tests/compiletests/ --arm -O0 --raw-obj -o bin/compiletests-clang/arm32_O0_knoeh -k
+compile --clang tests/compiletests/ --arm -O1 --raw-obj -o bin/compiletests-clang/arm32_O1_k -ke
+compile --clang tests/compiletests/ --arm -O1 --raw-obj -o bin/compiletests-clang/arm32_O1_knoeh -k
+compile --clang tests/compiletests/ --arm -O2 --raw-obj -o bin/compiletests-clang/arm32_O2_k -ke
+compile --clang tests/compiletests/ --arm -O2 --raw-obj -o bin/compiletests-clang/arm32_O2_knoeh -k
+compile --clang tests/compiletests/ --arm -O3 --raw-obj -o bin/compiletests-clang/arm32_O3_k -ke
+compile --clang tests/compiletests/ --arm -O3 --raw-obj -o bin/compiletests-clang/arm32_O3_knoeh -k
+compile --clang tests/compiletests/ --arm -Ofast --raw-obj -o bin/compiletests-clang/arm32_Ofast_k -ke
+compile --clang tests/compiletests/ --arm -Ofast --raw-obj -o bin/compiletests-clang/arm32_Ofast_knoeh -k
+compile --clang tests/compiletests/ --arm -g --raw-obj -o bin/compiletests-clang/arm32_debug_k -ke
+compile --clang tests/compiletests/ --arm -g --raw-obj -o bin/compiletests-clang/arm32_debug_knoeh -k
+
+# ---- i386 (x86, 32-bit) ----
+compile --clang tests/compiletests/ --i386 -O0 --raw-obj -o bin/compiletests-clang/i386_O0_k -ke
+compile --clang tests/compiletests/ --i386 -O0 --raw-obj -o bin/compiletests-clang/i386_O0_knoeh -k
+compile --clang tests/compiletests/ --i386 -O1 --raw-obj -o bin/compiletests-clang/i386_O1_k -ke
+compile --clang tests/compiletests/ --i386 -O1 --raw-obj -o bin/compiletests-clang/i386_O1_knoeh -k
+compile --clang tests/compiletests/ --i386 -O2 --raw-obj -o bin/compiletests-clang/i386_O2_k -ke
+compile --clang tests/compiletests/ --i386 -O2 --raw-obj -o bin/compiletests-clang/i386_O2_knoeh -k
+compile --clang tests/compiletests/ --i386 -O3 --raw-obj -o bin/compiletests-clang/i386_O3_k -ke
+compile --clang tests/compiletests/ --i386 -O3 --raw-obj -o bin/compiletests-clang/i386_O3_knoeh -k
+compile --clang tests/compiletests/ --i386 -Ofast --raw-obj -o bin/compiletests-clang/i386_Ofast_k -ke
+compile --clang tests/compiletests/ --i386 -Ofast --raw-obj -o bin/compiletests-clang/i386_Ofast_knoeh -k
+compile --clang tests/compiletests/ --i386 -g --raw-obj -o bin/compiletests-clang/i386_debug_k -ke
+compile --clang tests/compiletests/ --i386 -g --raw-obj -o bin/compiletests-clang/i386_debug_knoeh -k
+
+# actually compile and link full bins
+# hosted
+
+# ---- amd64 (x86-64) ----
+compile --clang tests/compiletests/ --x86 -O0 -i . -o bin/compiletests-clang/amd64_O0_link
+compile --clang tests/compiletests/ --x86 -O1 -i . -o bin/compiletests-clang/amd64_O1_link
+compile --clang tests/compiletests/ --x86 -O2 -i . -o bin/compiletests-clang/amd64_O2_link
+compile --clang tests/compiletests/ --x86 -O3 -i . -o bin/compiletests-clang/amd64_O3_link
+compile --clang tests/compiletests/ --x86 -Ofast -i . -o bin/compiletests-clang/amd64_Ofast_link
+compile --clang tests/compiletests/ --x86 -g -i . -o bin/compiletests-clang/amd64_debug_link
+
+# ---- arm64 (armv8-a) ----
+compile --clang tests/compiletests/ --arm64 -O0 -i . -o bin/compiletests-clang/arm64_O0_link
+compile --clang tests/compiletests/ --arm64 -O1 -i . -o bin/compiletests-clang/arm64_O1_link
+compile --clang tests/compiletests/ --arm64 -O2 -i . -o bin/compiletests-clang/arm64_O2_link
+compile --clang tests/compiletests/ --arm64 -O3 -i . -o bin/compiletests-clang/arm64_O3_link
+compile --clang tests/compiletests/ --arm64 -Ofast -i . -o bin/compiletests-clang/arm64_Ofast_link
+compile --clang tests/compiletests/ --arm64 -g -i . -o bin/compiletests-clang/arm64_debug_link
+
+# ---- arm32 (armv7-a, NEON, hard-float) ----
+compile --clang tests/compiletests/ --arm -O0 -i . -o bin/compiletests-clang/arm32_O0_link
+compile --clang tests/compiletests/ --arm -O1 -i . -o bin/compiletests-clang/arm32_O1_link
+compile --clang tests/compiletests/ --arm -O2 -i . -o bin/compiletests-clang/arm32_O2_link
+compile --clang tests/compiletests/ --arm -O3 -i . -o bin/compiletests-clang/arm32_O3_link
+compile --clang tests/compiletests/ --arm -Ofast -i . -o bin/compiletests-clang/arm32_Ofast_link
+compile --clang tests/compiletests/ --arm -g -i . -o bin/compiletests-clang/arm32_debug_link
+
+# ---- i386 (x86, 32-bit) ----
+compile --clang tests/compiletests/ --i386 -O0 -i . -o bin/compiletests-clang/i386_O0_link
+compile --clang tests/compiletests/ --i386 -O1 -i . -o bin/compiletests-clang/i386_O1_link
+compile --clang tests/compiletests/ --i386 -O2 -i . -o bin/compiletests-clang/i386_O2_link
+compile --clang tests/compiletests/ --i386 -O3 -i . -o bin/compiletests-clang/i386_O3_link
+compile --clang tests/compiletests/ --i386 -Ofast -i . -o bin/compiletests-clang/i386_Ofast_link
+compile --clang tests/compiletests/ --i386 -g -i . -o bin/compiletests-clang/i386_debug_link
+
+# freestanding
+
+# ---- amd64 (x86-64) ----
+compile --clang tests/compiletests/ --x86 -O0 -i . -o bin/compiletests-clang/amd64_O0_k_link -ke
+compile --clang tests/compiletests/ --x86 -O0 -i . -o bin/compiletests-clang/amd64_O0_knoeh_link -k
+compile --clang tests/compiletests/ --x86 -O1 -i . -o bin/compiletests-clang/amd64_O1_k_link -ke
+compile --clang tests/compiletests/ --x86 -O1 -i . -o bin/compiletests-clang/amd64_O1_knoeh_link -k
+compile --clang tests/compiletests/ --x86 -O2 -i . -o bin/compiletests-clang/amd64_O2_k_link -ke
+compile --clang tests/compiletests/ --x86 -O2 -i . -o bin/compiletests-clang/amd64_O2_knoeh_link -k
+compile --clang tests/compiletests/ --x86 -O3 -i . -o bin/compiletests-clang/amd64_O3_k_link -ke
+compile --clang tests/compiletests/ --x86 -O3 -i . -o bin/compiletests-clang/amd64_O3_knoeh_link -k
+compile --clang tests/compiletests/ --x86 -Ofast -i . -o bin/compiletests-clang/amd64_Ofast_k_link -ke
+compile --clang tests/compiletests/ --x86 -Ofast -i . -o bin/compiletests-clang/amd64_Ofast_knoeh_link -k
+compile --clang tests/compiletests/ --x86 -g -i . -o bin/compiletests-clang/amd64_debug_k_link -ke
+compile --clang tests/compiletests/ --x86 -g -i . -o bin/compiletests-clang/amd64_debug_knoeh_link -k
+
+# ---- arm64 (armv8-a) ----
+compile --clang tests/compiletests/ --arm64 -O0 -i . -o bin/compiletests-clang/arm64_O0_k_link -ke
+compile --clang tests/compiletests/ --arm64 -O0 -i . -o bin/compiletests-clang/arm64_O0_knoeh_link -k
+compile --clang tests/compiletests/ --arm64 -O1 -i . -o bin/compiletests-clang/arm64_O1_k_link -ke
+compile --clang tests/compiletests/ --arm64 -O1 -i . -o bin/compiletests-clang/arm64_O1_knoeh_link -k
+compile --clang tests/compiletests/ --arm64 -O2 -i . -o bin/compiletests-clang/arm64_O2_k_link -ke
+compile --clang tests/compiletests/ --arm64 -O2 -i . -o bin/compiletests-clang/arm64_O2_knoeh_link -k
+compile --clang tests/compiletests/ --arm64 -O3 -i . -o bin/compiletests-clang/arm64_O3_k_link -ke
+compile --clang tests/compiletests/ --arm64 -O3 -i . -o bin/compiletests-clang/arm64_O3_knoeh_link -k
+compile --clang tests/compiletests/ --arm64 -Ofast -i . -o bin/compiletests-clang/arm64_Ofast_k_link -ke
+compile --clang tests/compiletests/ --arm64 -Ofast -i . -o bin/compiletests-clang/arm64_Ofast_knoeh_link -k
+compile --clang tests/compiletests/ --arm64 -g -i . -o bin/compiletests-clang/arm64_debug_k_link -ke
+compile --clang tests/compiletests/ --arm64 -g -i . -o bin/compiletests-clang/arm64_debug_knoeh_link -k
+
+# ---- arm32 (armv7-a, NEON, hard-float) ----
+compile --clang tests/compiletests/ --arm -O0 -i . -o bin/compiletests-clang/arm32_O0_k_link -ke
+compile --clang tests/compiletests/ --arm -O0 -i . -o bin/compiletests-clang/arm32_O0_knoeh_link -k
+compile --clang tests/compiletests/ --arm -O1 -i . -o bin/compiletests-clang/arm32_O1_k_link -ke
+compile --clang tests/compiletests/ --arm -O1 -i . -o bin/compiletests-clang/arm32_O1_knoeh_link -k
+compile --clang tests/compiletests/ --arm -O2 -i . -o bin/compiletests-clang/arm32_O2_k_link -ke
+compile --clang tests/compiletests/ --arm -O2 -i . -o bin/compiletests-clang/arm32_O2_knoeh_link -k
+compile --clang tests/compiletests/ --arm -O3 -i . -o bin/compiletests-clang/arm32_O3_k_link -ke
+compile --clang tests/compiletests/ --arm -O3 -i . -o bin/compiletests-clang/arm32_O3_knoeh_link -k
+compile --clang tests/compiletests/ --arm -Ofast -i . -o bin/compiletests-clang/arm32_Ofast_k_link -ke
+compile --clang tests/compiletests/ --arm -Ofast -i . -o bin/compiletests-clang/arm32_Ofast_knoeh_link -k
+compile --clang tests/compiletests/ --arm -g -i . -o bin/compiletests-clang/arm32_debug_k_link -ke
+compile --clang tests/compiletests/ --arm -g -i . -o bin/compiletests-clang/arm32_debug_knoeh_link -k
+
+# ---- i386 (x86, 32-bit) ----
+compile --clang tests/compiletests/ --i386 -O0 -i . -o bin/compiletests-clang/i386_O0_k_link -ke
+compile --clang tests/compiletests/ --i386 -O0 -i . -o bin/compiletests-clang/i386_O0_knoeh_link -k
+compile --clang tests/compiletests/ --i386 -O1 -i . -o bin/compiletests-clang/i386_O1_k_link -ke
+compile --clang tests/compiletests/ --i386 -O1 -i . -o bin/compiletests-clang/i386_O1_knoeh_link -k
+compile --clang tests/compiletests/ --i386 -O2 -i . -o bin/compiletests-clang/i386_O2_k_link -ke
+compile --clang tests/compiletests/ --i386 -O2 -i . -o bin/compiletests-clang/i386_O2_knoeh_link -k
+compile --clang tests/compiletests/ --i386 -O3 -i . -o bin/compiletests-clang/i386_O3_k_link -ke
+compile --clang tests/compiletests/ --i386 -O3 -i . -o bin/compiletests-clang/i386_O3_knoeh_link -k
+compile --clang tests/compiletests/ --i386 -Ofast -i . -o bin/compiletests-clang/i386_Ofast_k_link -ke
+compile --clang tests/compiletests/ --i386 -Ofast -i . -o bin/compiletests-clang/i386_Ofast_knoeh_link -k
+compile --clang tests/compiletests/ --i386 -g -i . -o bin/compiletests-clang/i386_debug_k_link -ke
+compile --clang tests/compiletests/ --i386 -g -i . -o bin/compiletests-clang/i386_debug_knoeh_link -k
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Clang has no -freflection spelling compatible with micron's GCC reflection gate.
+# Reflection-off coverage remains part of every directory cell above.
+
+# %%%%%%%%%%%%%%
+# chrono
+
+compile --clang tests/compiletests/chrono.cpp --x86 --isa base -O0 --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_base_O0
+compile --clang tests/compiletests/chrono.cpp --x86 --isa base -Ofast --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_base_Ofast
+compile --clang tests/compiletests/chrono.cpp --x86 --isa v3 -O2 --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_v3_O2
+compile --clang tests/compiletests/chrono.cpp --x86 -g --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_debug
+compile --clang tests/compiletests/chrono.cpp --x86 -O2 --def MICRON_CHRONO_VDSO=1 -i . -o bin/compiletests-clang/chrono_vdso_O2_k -k
+compile --clang tests/compiletests/chrono.cpp --x86 -O2 --def MICRON_CHRONO_VDSO=1 -i . -o bin/compiletests-clang/chrono_vdso_O2_ke -ke
+compile --clang tests/compiletests/chrono.cpp --arm64 -Ofast --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_arm64_Ofast
+
+compile --clang tests/compiletests/chrono.cpp --arm -O0 --def MICRON_CHRONO_ARM32_CNTVCT=1 --raw-obj -o bin/compiletests-clang/chrono_cntvct_O0
+compile --clang tests/compiletests/chrono.cpp --arm -Ofast --def MICRON_CHRONO_ARM32_CNTVCT=1 --raw-obj -o bin/compiletests-clang/chrono_cntvct_Ofast
+compile --clang tests/compiletests/chrono.cpp --arm -O2 --def MICRON_CHRONO_ARM32_CNTVCT=1 -i . -o bin/compiletests-clang/chrono_cntvct_O2_k -k
+compile --clang tests/compiletests/chrono.cpp --arm -O2 --def MICRON_CHRONO_ARM32_CNTVCT=1 -i . -o bin/compiletests-clang/chrono_cntvct_O2_ke -ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# elf
+
+compile --clang tests/compiletests/elf.cpp --i386 -O0 -i . -o bin/compiletests-clang/elf_i386_O0_link
+compile --clang tests/compiletests/elf.cpp --i386 -Ofast -i . -o bin/compiletests-clang/elf_i386_Ofast_link
+compile --clang tests/compiletests/elf.cpp --arm -O0 -i . -o bin/compiletests-clang/elf_arm32_O0_link
+compile --clang tests/compiletests/elf.cpp --arm -Ofast -i . -o bin/compiletests-clang/elf_arm32_Ofast_link
+compile --clang tests/compiletests/elf.cpp --i386 -O2 -i . -o bin/compiletests-clang/elf_i386_O2_k -k
+compile --clang tests/compiletests/elf.cpp --i386 -O2 -i . -o bin/compiletests-clang/elf_i386_O2_ke -ke
+compile --clang tests/compiletests/elf.cpp --arm -O2 -i . -o bin/compiletests-clang/elf_arm32_O2_k -k
+compile --clang tests/compiletests/elf.cpp --arm -O2 -i . -o bin/compiletests-clang/elf_arm32_O2_ke -ke
+
+compile --clang tests/compiletests/dynamic.cpp --i386 -O0 -i . -o bin/compiletests-clang/dyn_i386_O0_link
+compile --clang tests/compiletests/dynamic.cpp --i386 -Ofast -i . -o bin/compiletests-clang/dyn_i386_Ofast_link
+compile --clang tests/compiletests/dynamic.cpp --arm -O0 -i . -o bin/compiletests-clang/dyn_arm32_O0_link
+compile --clang tests/compiletests/dynamic.cpp --arm -Ofast -i . -o bin/compiletests-clang/dyn_arm32_Ofast_link
+compile --clang tests/compiletests/dynamic.cpp --i386 -O2 -i . -o bin/compiletests-clang/dyn_i386_O2_k -k
+compile --clang tests/compiletests/dynamic.cpp --i386 -O2 -i . -o bin/compiletests-clang/dyn_i386_O2_ke -ke
+compile --clang tests/compiletests/dynamic.cpp --arm -O2 -i . -o bin/compiletests-clang/dyn_arm32_O2_k -k
+compile --clang tests/compiletests/dynamic.cpp --arm -O2 -i . -o bin/compiletests-clang/dyn_arm32_O2_ke -ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# regex
+
+compile --clang tests/compiletests/regex.cpp --x86 --isa base -O0 -i . -o bin/compiletests-clang/regex_base_O0_link
+compile --clang tests/compiletests/regex.cpp --x86 --isa base -Ofast -i . -o bin/compiletests-clang/regex_base_Ofast_link
+compile --clang tests/compiletests/regex.cpp --x86 --isa v2 -Ofast -i . -o bin/compiletests-clang/regex_v2_Ofast_link
+compile --clang tests/compiletests/regex.cpp --i386 -Ofast -i . -o bin/compiletests-clang/regex_i386_Ofast_link
+compile --clang tests/compiletests/regex.cpp --arm -Ofast -i . -o bin/compiletests-clang/regex_arm32_Ofast_link
+compile --clang tests/compiletests/regex.cpp --arm64 -Ofast -i . -o bin/compiletests-clang/regex_arm64_Ofast_link
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# function
+
+compile --clang tests/compiletests/function.cpp --i386 -Ofast -i . -o bin/compiletests-clang/function_i386_Ofast_link
+compile --clang tests/compiletests/function.cpp --arm -Ofast -i . -o bin/compiletests-clang/function_arm32_Ofast_link
+compile --clang tests/compiletests/function.cpp --arm64 -Ofast -i . -o bin/compiletests-clang/function_arm64_Ofast_link
+compile --clang tests/compiletests/function.cpp --x86 --isa base -O2 -i . -o bin/compiletests-clang/function_base_O2_k -k
+compile --clang tests/compiletests/function.cpp --x86 --isa base -O2 -i . -o bin/compiletests-clang/function_base_O2_ke -ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# abcmalloc hardening
+compile --clang tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_ZERO_ON_FREE=true -i . -o bin/compiletests-clang/abc_harden_zero_x86
+compile --clang tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_POISON_ON_FREE=true -i . -o bin/compiletests-clang/abc_harden_poison_x86
+compile --clang tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_x86
+compile --clang tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_ENFORCE_PROVENANCE=true -i . -o bin/compiletests-clang/abc_harden_prov_x86
+compile --clang tests/rigor/abcmalloc_harden.cpp --i386 -Ofast --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_i386
+compile --clang tests/rigor/abcmalloc_harden.cpp --arm -Ofast --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_arm32
+compile --clang tests/rigor/abcmalloc_harden.cpp --arm64 -Ofast --def MICRON_ABC_ZERO_ON_FREE=true -i . -o bin/compiletests-clang/abc_harden_zero_arm64
+compile --clang tests/rigor/abcmalloc_harden.cpp --x86 --isa base -O2 --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_base
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the crt path override
+build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_startdir
+build --clang tests/compiletests/containers.cpp --x86 -Ofast -ke --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_ke_startdir
+build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --direct --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_direct
+# Keep the ARM64 CRT override cell focused on startup plumbing; the C ABI shim
+# does not pull the full allocator/math surface into this one targeted row.
+build --clang tests/memory/free/cabi_shims_freestanding.cpp --arm64 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/arm64_k_startdir

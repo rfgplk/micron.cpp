@@ -87,10 +87,40 @@ __micron_math_builtin_fn(erf);
 __micron_math_builtin_fn(erfc);
 __micron_math_builtin_fn(tgamma);
 __micron_math_builtin_fn(lgamma);
+#if defined(__clang__)
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+bi_j0(F x) noexcept
+{
+  return special_ns::j0<F>(x);
+}
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+bi_j1(F x) noexcept
+{
+  return special_ns::j1<F>(x);
+}
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+bi_y0(F x) noexcept
+{
+  return special_ns::y0<F>(x);
+}
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+bi_y1(F x) noexcept
+{
+  return special_ns::y1<F>(x);
+}
+#else
 __micron_math_builtin_fn(j0);
 __micron_math_builtin_fn(j1);
 __micron_math_builtin_fn(y0);
 __micron_math_builtin_fn(y1);
+#endif
 __micron_math_builtin_fn(floor);
 __micron_math_builtin_fn(ceil);
 __micron_math_builtin_fn(trunc);

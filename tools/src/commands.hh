@@ -2,10 +2,10 @@
 
 #include "commands/build.hh"
 #include "commands/doctor.hh"
+#include "commands/emulate.hh"
 #include "commands/help.hh"
 #include "commands/parallel.hh"
 #include "commands/run.hh"
-#include "commands/emulate.hh"
 #include "commands/test.hh"
 
 #include "splat.hh"
@@ -14,7 +14,7 @@
 
 enum class __modes : i32 { build, batch, link, compile, debug, emulate, run, make, test, doctor, recipes, __end };
 
-template <typename T = void>
+template<typename T = void>
 auto
 match(char **argv) -> __modes
   requires(recipes::__using_gnu)
@@ -54,7 +54,7 @@ match(char **argv) -> __modes
 }
 
 // duck splat <cmdline>: emit the command(s) we would have issued
-template <typename T = void>
+template<typename T = void>
 inline int
 splat_dispatch(__modes mode, int argc, char **argv)
   requires(recipes::__using_gnu)
@@ -63,9 +63,9 @@ splat_dispatch(__modes mode, int argc, char **argv)
   auto emit = [](const string_type &command) { mc::console(command); };
 
   switch ( mode ) {
-  case __modes::build :
-  case __modes::test : {
-    const int fi = ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) ? 3 : 2;
+  case __modes::build:
+  case __modes::test: {
+    const int fi = (argc > 2 and mc::strcmp(argv[2], "parallel") == 0) ? 3 : 2;
     if ( argc <= fi ) mc::cerror("splat requires at least one source");
     for ( auto &conf : parse_argv_build(argc - fi, argv + fi) ) {
       emit(batch(conf));
@@ -74,53 +74,53 @@ splat_dispatch(__modes mode, int argc, char **argv)
     }
     break;
   }
-  case __modes::compile :
-  case __modes::link : {
-    const int fi = ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) ? 3 : 2;
+  case __modes::compile:
+  case __modes::link: {
+    const int fi = (argc > 2 and mc::strcmp(argv[2], "parallel") == 0) ? 3 : 2;
     if ( argc <= fi ) mc::cerror("splat requires at least one source");
     for ( auto &conf : parse_argv_build(argc - fi, argv + fi) ) emit(batch(conf));
     break;
   }
-  case __modes::debug : {
+  case __modes::debug: {
     for ( auto &conf : parse_argv_build(argc - 2, argv + 2) ) {
       recipe_debug(conf);
       emit(batch(conf));
     }
     break;
   }
-  case __modes::doctor : {
+  case __modes::doctor: {
     for ( auto &conf : parse_argv_build(argc - 2, argv + 2) ) {
       recipe_doctor(conf);
       emit(batch(conf));
     }
     break;
   }
-  case __modes::run : {
+  case __modes::run: {
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
     emit(batch(conf));
     emit(conf.target_out);      // run execs the binary directly, never under qemu
     break;
   }
-  case __modes::emulate : {
+  case __modes::emulate: {
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
     emit(batch(conf));
     emit(run_command(conf));
     break;
   }
   // batch is handled by parse_main; make/recipes are reserved. nothing to issue for any of them
-  case __modes::batch :
-  case __modes::make :
-  case __modes::recipes : {
+  case __modes::batch:
+  case __modes::make:
+  case __modes::recipes: {
     break;
   }
-  case __modes::__end : {
+  case __modes::__end: {
     mc::cerror("Invalid command argument provided");
   }
   };
   return 0;
 }
 
-template <typename T = void>
+template<typename T = void>
 inline int
 parse_main(int argc, char **argv)
   requires(recipes::__using_gnu)
@@ -159,25 +159,26 @@ parse_main(int argc, char **argv)
   // splat: emit what we would have run then stop
   if ( splat::active() and mode != __modes::batch ) return splat_dispatch(mode, argc, argv);
   switch ( mode ) {
-  case __modes::build : {
+  case __modes::build: {
     if ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) {
       if ( argc < 4 ) mc::cerror("build parallel requires at least one source");
       auto confs = parse_argv_build(argc - 3, argv + 3);
       return build_parallel(confs);
     }
     auto confs = parse_argv_build(argc - 2, argv + 2);
-    for ( auto &conf : confs ) build<mc::exec_wait>(conf);
-    break;
+    int rc = 0;
+    for ( auto &conf : confs )
+      if ( int r = mc::wexitstatus(build<mc::exec_wait>(conf)); r != 0 ) rc = r;
+    return rc;
   }
-  case __modes::batch : {
+  case __modes::batch: {
     bool parallel = false;
     int fi = 2;
     if ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) {
       parallel = true;
       fi = 3;
     }
-    if ( parallel ? argc <= fi : argc != fi + 1 )
-      mc::cerror("Must provide a path to a valid batchfile");
+    if ( parallel ? argc <= fi : argc != fi + 1 ) mc::cerror("Must provide a path to a valid batchfile");
     if ( !mc::posix::exists(argv[fi]) ) mc::cerror("File doesn't exist");
     // there is nothing to pool when we only print
     if ( splat::active() ) parallel = false;
@@ -236,8 +237,8 @@ parse_main(int argc, char **argv)
 
     return rc;
   }
-  case __modes::compile : {
-    const int fi = ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) ? 3 : 2;
+  case __modes::compile: {
+    const int fi = (argc > 2 and mc::strcmp(argv[2], "parallel") == 0) ? 3 : 2;
     if ( argc <= fi ) mc::cerror("compile requires at least one source");
     auto confs = parse_argv_build(argc - fi, argv + fi);
     mc::vector<mc::status_t> stats;
@@ -245,43 +246,53 @@ parse_main(int argc, char **argv)
     for ( auto &conf : confs ) stats.push_back(build<mc::exec_continue>(conf));
     // reap before exiting: don't orphan compilers, and surface their failures
     for ( auto &s : stats ) mc::waitpid(s);
+    int failed = 0;
     for ( usize i = 0; i < confs.size(); i++ )
-      if ( int r = mc::wexitstatus(stats[i].status); r != 0 ) mc::console("[ ", confs[i].target, " failed, exit: ", r, " ]");
-    break;
+      if ( int r = mc::wexitstatus(stats[i].status); r != 0 ) {
+        ++failed;
+        mc::console("[ ", confs[i].target, " failed, exit: ", r, " ]");
+      }
+    return failed ? 1 : 0;
   }
-  case __modes::link : {
-    const int fi = ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) ? 3 : 2;
+  case __modes::link: {
+    const int fi = (argc > 2 and mc::strcmp(argv[2], "parallel") == 0) ? 3 : 2;
     if ( argc <= fi ) mc::cerror("link requires at least one source");
     auto confs = parse_argv_build(argc - fi, argv + fi);
     mc::vector<mc::status_t> stats;
     stats.reserve(confs.size());
     for ( auto &conf : confs ) stats.push_back(build<mc::exec_continue>(conf));
     for ( auto &s : stats ) mc::waitpid(s);
+    int failed = 0;
     for ( usize i = 0; i < confs.size(); i++ )
-      if ( int r = mc::wexitstatus(stats[i].status); r != 0 ) mc::console("[ ", confs[i].target, " failed, exit: ", r, " ]");
-    break;
+      if ( int r = mc::wexitstatus(stats[i].status); r != 0 ) {
+        ++failed;
+        mc::console("[ ", confs[i].target, " failed, exit: ", r, " ]");
+      }
+    return failed ? 1 : 0;
   }
-  case __modes::debug : {
+  case __modes::debug: {
     auto confs = parse_argv_build(argc - 2, argv + 2);
-    for ( auto &conf : confs ) build_debug(conf);
-    break;
+    int rc = 0;
+    for ( auto &conf : confs )
+      if ( int r = build_debug(conf); r != 0 ) rc = r;
+    return rc;
   }
-  case __modes::run : {
+  case __modes::run: {
     // can't be batched doesn't make sense
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
     build_and_run(conf);
     break;
   }
-  case __modes::emulate : {
+  case __modes::emulate: {
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
     return build_and_emulate(conf);
   }
-  case __modes::make : {
+  case __modes::make: {
     break;
     // config_t conf = parse_argv_make(argc - 2, argv + 2);
     // return make(conf);
   }
-  case __modes::test : {
+  case __modes::test: {
     if ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) {
       if ( argc < 4 ) mc::cerror("test parallel requires at least one source");
       auto confs = parse_argv_build(argc - 3, argv + 3);
@@ -290,15 +301,17 @@ parse_main(int argc, char **argv)
     auto confs = parse_argv_build(argc - 2, argv + 2);
     return cicd_test(confs);
   }
-  case __modes::doctor : {
+  case __modes::doctor: {
     auto confs = parse_argv_build(argc - 2, argv + 2);
-    for ( auto &conf : confs ) doctor<mc::exec_wait>(conf);
+    int rc = 0;
+    for ( auto &conf : confs )
+      if ( int r = doctor<mc::exec_wait>(conf); r != 0 ) rc = r;
+    return rc;
+  }
+  case __modes::recipes: {
     break;
   }
-  case __modes::recipes : {
-    break;
-  }
-  case __modes::__end : {
+  case __modes::__end: {
     mc::cerror("Invalid command argument provided");
   }
   };

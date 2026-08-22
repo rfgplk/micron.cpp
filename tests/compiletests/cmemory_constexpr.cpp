@@ -8,10 +8,9 @@
 // every assertion here is a static_assert, so failing to compile IS the failing test.
 //
 // this lives in compiletests rather than rigor for a reason: tests/rigor/memcmp.cpp cannot link on
-// a hosted build at all (micron::get_stack() is declared but only defined under
-// __micron_freestanding -- src/memory/stack.hpp:31), which is why `memcmp` sits on
+// Historically a hosted link could not reach micron::get_stack(), which is why `memcmp` sits on
 // tests/rigor/FAILING.md. static_asserts need no linker, and they sweep every arch x opt x
-// freestanding cell of verify_compile.duck instead of just amd64 hosted.
+// freestanding cell of verify_compile_*.duck instead of just amd64 hosted.
 
 #include "../../src/memory/cmemory/memcmp.hpp"
 #include "../../src/memory/cmemory/memcpy.hpp"

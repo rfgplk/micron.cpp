@@ -30,9 +30,10 @@
 //   - do_once<F> generates one specialisation per F at compile time;
 //     std::call_once tracks state in a separate flag.
 
-#include "../src/io/console.hpp"
-#include "../src/mutex/locks.hpp"
 #include "../src/mutex/mutex.hpp"
+#include "../src/io/console.hpp"
+#include "../src/mutex/barrier.hpp"
+#include "../src/mutex/locks.hpp"
 #include "../src/mutex/once.hpp"
 
 // A free function for do_once<>. do_once forwards args to F, and its
@@ -65,7 +66,7 @@ main()
 
   micron::mutex m2;
   bool first = m2.try_lock();
-  bool second = m2.try_lock();     // already held → false
+  bool second = m2.try_lock();      // already held → false
   micron::io::println("first try=", first, " second try=", second);
   m2.unlock();
 
@@ -81,7 +82,7 @@ main()
     micron::lock_guard<micron::mutex> g(m3);
     micron::io::println("inside scope, is_locked=", m3.is_locked());
     // ... protected section ...
-  }     // g destroyed here -> m3 released
+  }      // g destroyed here -> m3 released
   micron::io::println("after scope, is_locked=", m3.is_locked());
 
   // ================================================================
@@ -136,9 +137,9 @@ main()
   // ================================================================
   micron::io::println("-- 7. do_once --");
 
-  micron::do_once<&init_table>{42};
-  micron::do_once<&init_table>{99};     // no-op: F already ran
-  micron::do_once<&init_table>{0};      // still no-op
+  micron::do_once<&init_table>{ 42 };
+  micron::do_once<&init_table>{ 99 };      // no-op: F already ran
+  micron::do_once<&init_table>{ 0 };       // still no-op
 
   // ================================================================
   // 8. Memory barriers

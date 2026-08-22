@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 //
 // compile-validity gate: micron containers instantiate + exercise their basic
-// surface on every arch/opt combo (see tests/verify_compile.duck). Not run.
+// surface on every arch/opt combo (see verify_compile_*.duck). Not run.
 
 #include "../../src/array.hpp"
 #include "../../src/list.hpp"

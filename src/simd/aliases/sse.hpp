@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../types.hpp"
 #include "../intrin.hpp"
 
 #if !defined(__micron_arch_x86_any)
@@ -1730,6 +1731,34 @@ __inline_sse __m128d
 div_scalar_f64(__m128d a, __m128d b) noexcept
 {
   return _mm_div_sd(a, b);
+}
+
+__inline_sse void
+decimal_digits_16(char *out, u64 value) noexcept
+{
+  constexpr u64 hundred_million = 100000000ull;
+  constexpr u32 div10k_sig = static_cast<u32>((1ull << 40) / 10000 + 1);
+  constexpr u32 neg10k = static_cast<u32>((1ull << 32) - 10000);
+  constexpr u32 div100_sig = (1u << 19) / 100 + 1;
+  constexpr u16 div10_sig = (1u << 16) / 10 + 1;
+
+  const u32 hi = static_cast<u32>(value / hundred_million);
+  const u32 lo = static_cast<u32>(value - static_cast<u64>(hi) * hundred_million);
+  const __m128i x = set_i64(hi, lo);
+  const __m128i div10k = splat_i64(div10k_sig);
+  const __m128i n10k = splat_i64(neg10k);
+  __m128i y = add_i64(x, mul_2x32_to_2x64_u(n10k, shr_i64(mul_2x32_to_2x64_u(x, div10k), 40)));
+  y = shuffle_i32<27>(y);
+
+  const __m128i div100 = splat_i32(static_cast<i32>(div100_sig));
+  const __m128i hundred = splat_i32(100);
+  const __m128i div10 = splat_i16(static_cast<i16>(div10_sig));
+  const __m128i moddiv10 = splat_i16(10 * (1 << 8) - 1);
+  const __m128i y_div_100 = shr_i16(mul_hi_u16(y, div100), 3);
+  const __m128i y_mod_100 = sub_i16(y, mul_lo_i16(y_div_100, hundred));
+  const __m128i z = or_i128(shl_i32(y_mod_100, 16), y_div_100);
+  const __m128i bcd = sub_i16(shl_i16(z, 8), mul_lo_i16(moddiv10, mul_hi_u16(z, div10)));
+  storeu_i128(reinterpret_cast<__m128i_u *>(out), or_i128(bcd, splat_i8('0')));
 }
 
 #undef __inline_sse

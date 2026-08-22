@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 //
 // compile-validity gate: the eager functional layer (src/algorithm/fp*.hpp) instantiates on every
-// arch/opt/freestanding combo (see verify_compile.duck). Not run.
+// arch/opt/freestanding combo (see verify_compile_*.duck). Not run.
 //
 // this gate did not exist before the lazy layer went in. the eager layer is the lazy layer's test
 // oracle, so an arm64 or -k failure has to be attributable to one or the other -- without this cell

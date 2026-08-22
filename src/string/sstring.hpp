@@ -26,7 +26,9 @@ namespace micron
 {
 // string on the stack, inplace (sstring means stackstring), interally SIMD dispatched
 template<usize N, is_scalar_literal T = schar, bool Sf = true>
-struct alignas(N * sizeof(T) >= 32 ? 32 : (N * sizeof(T) >= 16 ? 16 : alignof(T))) sstring {
+struct alignas(N * sizeof(T) >= 32   ? 32
+               : N * sizeof(T) >= 16 ? 16
+                                     : (alignof(T) > alignof(usize) ? alignof(T) : alignof(usize))) sstring {
   using category_type = string_tag;
   using contiguous_tag = void;
   using mutability_type = mutable_tag;
@@ -2471,7 +2473,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline sstring
   operator^(const R &rhs) const
   {
@@ -2483,7 +2485,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline sstring &
   operator^=(const R &rhs)
   {
@@ -2494,7 +2496,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline sstring
   operator&(const R &rhs) const
   {
@@ -2506,7 +2508,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline sstring &
   operator&=(const R &rhs)
   {
@@ -2517,7 +2519,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline sstring
   operator|(const R &rhs) const
   {
@@ -2529,7 +2531,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline sstring &
   operator|=(const R &rhs)
   {

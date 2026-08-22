@@ -79,6 +79,10 @@
 #include "__bits/__round_modes.hpp"
 #include "__bits/__vector_types_amd64.hpp"
 
+#if defined(__clang__)
+#include "__bits/__clang_compat_amd64.hpp"
+#endif
+
 // NOTE: always pull every ISA header on x86; each file has its own gnu::target attribute
 // this allows you to compile even when targets are mismatched
 #include "__bits/__aes.hpp"
@@ -105,8 +109,11 @@
 // AArch64 NEON
 #if defined(__micron_arch_arm64) && defined(__micron_arm_neon)
 
-#include "__bits/__neon_arm64.hpp"
 #include "__bits/__vector_types_arm64.hpp"
+#if defined(__clang__)
+#include "__bits/__clang_compat_arm64.hpp"
+#endif
+#include "__bits/__neon_arm64.hpp"
 
 #if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
 #include "__bits/__neon_fma.hpp"
