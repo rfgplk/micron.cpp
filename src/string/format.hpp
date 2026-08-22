@@ -156,7 +156,7 @@ fmt_int_to_buf(char *buf, usize buf_sz, i64 val, u32 base, bool upper)
 inline usize
 fmt_float_to_buf(char *buf, usize buf_sz, f64 val, u32 precision)
 {
-  return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, precision);
+  return micron::__impl::__fpconv::d2f_buffered(val, buf, buf_sz, precision);
 }
 
 inline usize
@@ -165,10 +165,10 @@ fmt_float_to_buf_typed(char *buf, usize buf_sz, f64 val, u32 precision, char typ
   switch ( type ) {
   case 'a':
   case 'A':
-    return micron::__impl::__ryu::d2a_buffered(val, buf, buf_sz, precision, has_prec, type == 'A');
+    return micron::__impl::__fpconv::d2a_buffered(val, buf, buf_sz, precision, has_prec, type == 'A');
   case 'e':
   case 'E': {
-    const usize n = micron::__impl::__ryu::d2e_buffered(val, buf, buf_sz, precision);
+    const usize n = micron::__impl::__fpconv::d2e_buffered(val, buf, buf_sz, precision);
     if ( type == 'E' )
       for ( usize i = 0; i < n; ++i )
         if ( buf[i] == 'e' ) buf[i] = 'E';
@@ -176,11 +176,11 @@ fmt_float_to_buf_typed(char *buf, usize buf_sz, f64 val, u32 precision, char typ
   }
   case 'g':
   case 'G':
-    return micron::__impl::__ryu::d2g_buffered(val, buf, buf_sz, has_prec ? precision : 6u, alt, type == 'G');
+    return micron::__impl::__fpconv::d2g_buffered(val, buf, buf_sz, has_prec ? precision : 6u, alt, type == 'G');
   case 'f':
   case 'F':
   default:
-    return micron::__impl::__ryu::d2f_buffered(val, buf, buf_sz, precision);
+    return micron::__impl::__fpconv::d2f_buffered(val, buf, buf_sz, precision);
   }
 }
 
@@ -2596,7 +2596,7 @@ inline hstring<schar>
 precision(f64 value, u32 digits)
 {
   char buf[__impl::__fmt_float_buf_size];
-  usize n = micron::__impl::__ryu::d2f_buffered(value, buf, __impl::__fmt_float_buf_size, digits);
+  usize n = micron::__impl::__fpconv::d2f_buffered(value, buf, __impl::__fmt_float_buf_size, digits);
   return hstring<schar>(buf, buf + n);
 }
 

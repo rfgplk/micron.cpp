@@ -242,6 +242,19 @@ enum class float_format : u8 {
   hex              // %a
 };
 
+inline constexpr usize f32_shortest_chars_capacity = 16;
+inline constexpr usize f64_shortest_chars_capacity = 26;
+
+struct chars4_result {
+  usize lengths[4];
+
+  inline constexpr usize
+  operator[](usize lane) const noexcept
+  {
+    return lengths[lane];
+  }
+};
+
 inline usize
 to_chars(char *buf, usize cap, f64 v, float_format fmt = float_format::shortest, i32 precision = -1)
 {
@@ -250,24 +263,24 @@ to_chars(char *buf, usize cap, f64 v, float_format fmt = float_format::shortest,
   const u32 prec = has_prec ? static_cast<u32>(precision) : 6u;
   switch ( fmt ) {
   case float_format::fixed:
-    return __impl::__ryu::d2f_buffered(v, buf, cap, prec);
+    return __impl::__fpconv::d2f_buffered(v, buf, cap, prec);
   case float_format::scientific:
-    return __impl::__ryu::d2e_buffered(v, buf, cap, prec);
+    return __impl::__fpconv::d2e_buffered(v, buf, cap, prec);
   case float_format::general:
-    return __impl::__ryu::d2g_buffered(v, buf, cap, prec, false, false);
+    return __impl::__fpconv::d2g_buffered(v, buf, cap, prec, false, false);
   case float_format::hex:
-    return __impl::__ryu::d2a_buffered(v, buf, cap, prec, has_prec, false);
+    return __impl::__fpconv::d2a_buffered(v, buf, cap, prec, has_prec, false);
   default:
     break;
   }
   if ( cap < 26u ) {
     char tmp[26];
-    const usize n = __impl::__ryu::d2s_buffered(v, tmp);
+    const usize n = __impl::__fpconv::d2s_buffered(v, tmp);
     if ( n > cap ) return 0;
     for ( usize i = 0; i < n; ++i ) buf[i] = tmp[i];
     return n;
   }
-  return __impl::__ryu::d2s_buffered(v, buf);
+  return __impl::__fpconv::d2s_buffered(v, buf);
 }
 
 inline usize
@@ -277,12 +290,29 @@ to_chars(char *buf, usize cap, f32 v, float_format fmt = float_format::shortest,
   if ( fmt != float_format::shortest ) return to_chars(buf, cap, static_cast<f64>(v), fmt, precision);
   if ( cap < 16u ) {
     char tmp[16];
-    const usize n = __impl::__ryu::__f32::f2s_buffered(v, tmp);
+    const usize n = __impl::__fpconv::f2s_buffered(v, tmp);
     if ( n > cap ) return 0;
     for ( usize i = 0; i < n; ++i ) buf[i] = tmp[i];
     return n;
   }
-  return __impl::__ryu::__f32::f2s_buffered(v, buf);
+  return __impl::__fpconv::f2s_buffered(v, buf);
+}
+
+// four fixed-stride shortest conversions
+inline constexpr chars4_result
+to_chars4(char *out, usize stride, const f64 (&values)[4]) noexcept
+{
+  chars4_result result{};
+  __impl::__fpconv::d2s_buffered4(values, out, stride, result.lengths);
+  return result;
+}
+
+inline constexpr chars4_result
+to_chars4(char *out, usize stride, const f32 (&values)[4]) noexcept
+{
+  chars4_result result{};
+  __impl::__fpconv::f2s_buffered4(values, out, stride, result.lengths);
+  return result;
 }
 
 constexpr bool

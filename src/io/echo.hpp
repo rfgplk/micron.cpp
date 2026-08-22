@@ -231,13 +231,13 @@ arith_to_buf(char *buf, usize buf_sz, u64 val)
 inline usize
 arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, f32 val)
 {
-  return micron::__impl::__ryu::__f32::f2s_buffered(val, buf);
+  return micron::__impl::__fpconv::f2s_buffered(val, buf);
 }
 
 inline usize
 arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, f64 val)
 {
-  return micron::__impl::__ryu::d2s_buffered(val, buf);
+  return micron::__impl::__fpconv::d2s_buffered(val, buf);
 }
 
 // wide floats
@@ -245,9 +245,9 @@ inline usize
 arith_to_buf(char *buf, usize buf_sz, long double val)
 {
 #if defined(__micron_ldbl_binary64)
-  return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
+  return micron::__impl::__fpconv::d2s_buffered(static_cast<f64>(val), buf);
 #else
-  if ( static_cast<long double>(static_cast<f64>(val)) == val ) return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
+  if ( static_cast<long double>(static_cast<f64>(val)) == val ) return micron::__impl::__fpconv::d2s_buffered(static_cast<f64>(val), buf);
   return micron::__impl::__ryu::x2a_buffered(val, buf, buf_sz);
 #endif
 }
@@ -257,7 +257,7 @@ arith_to_buf(char *buf, usize buf_sz, long double val)
 inline usize
 arith_to_buf(char *buf, usize buf_sz, f128 val)
 {
-  if ( static_cast<f128>(static_cast<f64>(val)) == val ) return micron::__impl::__ryu::d2s_buffered(static_cast<f64>(val), buf);
+  if ( static_cast<f128>(static_cast<f64>(val)) == val ) return micron::__impl::__fpconv::d2s_buffered(static_cast<f64>(val), buf);
   return micron::__impl::__ryu::x2a_buffered(val, buf, buf_sz);
 }
 #endif

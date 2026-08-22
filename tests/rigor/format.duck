@@ -1,0 +1,19 @@
+# float formatting: default Żmij, legacy backend, ISA floor, sanitizers, and NEON
+
+test tests/rigor/rigor_format_zmij.cpp -o bin/format/zmij --timeout 300 -f
+test tests/rigor/rigor_format_ryu.cpp -o bin/format/oracle --timeout 300 -f
+test tests/rigor/rigor_format_write.cpp -o bin/format/precision --timeout 300 -f
+test tests/rigor/rigor_format_g.cpp -o bin/format/general --timeout 300 -f
+test tests/rigor/rigor_format_parse.cpp -o bin/format/roundtrip --timeout 300 -f
+test tests/rigor/rigor_conversions_bufsz.cpp -o bin/format/bufsz --timeout 300 -f
+test tests/rigor/conversions_constexpr.cpp -o bin/format/constexpr --timeout 300 -f
+
+test tests/rigor/rigor_format_zmij.cpp --isa base -O2 -o bin/format/base --timeout 300 -f
+test tests/rigor/rigor_format_zmij.cpp -Oz -o bin/format/size --timeout 300 -f
+test tests/rigor/rigor_format_zmij.cpp --def MICRON_USE_RYU -O2 -o bin/format/ryu --timeout 300 -f
+test tests/rigor/rigor_format_zmij.cpp --asan -o bin/format/asan --timeout 600 -f
+test tests/rigor/rigor_format_zmij.cpp --ubsan -o bin/format/ubsan --timeout 600 -f
+
+test tests/rigor/rigor_format_zmij.cpp --i386 -O2 -o bin/format/i386 --timeout 300 -f
+test tests/rigor/rigor_format_zmij.cpp --arm -O2 -o bin/format/arm32 --timeout 300 -f
+test tests/rigor/rigor_format_zmij.cpp --arm64 -O2 -o bin/format/arm64 --timeout 300 -f

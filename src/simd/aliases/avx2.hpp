@@ -25,6 +25,18 @@ namespace avx2
 #define __inline_avx [[gnu::always_inline, gnu::artificial, gnu::target("avx2")]] static inline
 
 __inline_avx __m256i
+splat_i64(long long v) noexcept
+{
+  return _mm256_set1_epi64x(v);
+}
+
+__inline_avx __m256i
+set_i64(long long e3, long long e2, long long e1, long long e0) noexcept
+{
+  return _mm256_set_epi64x(e3, e2, e1, e0);
+}
+
+__inline_avx __m256i
 add_i8(__m256i a, __m256i b) noexcept
 {
   return _mm256_add_epi8(a, b);

@@ -1,0 +1,12 @@
+=== FLOAT FORMAT: ZMIJ VS RYU (isolated median-of-7, ns/value) ===
+# 2026-08-22, x86-64 SSE2 floor, taskset -c 2, --perf --fp --no-ssp --no-lto
+f64-shortest-hot         zmij=23.12 ns  ryu=40.44 ns  zmij/ryu=0.5718
+f32-shortest-hot         zmij=22.41 ns  ryu=24.82 ns  zmij/ryu=0.9029
+f64-shortest-stream      zmij=31.93 ns  ryu=48.45 ns  zmij/ryu=0.6591
+f32-shortest-stream      zmij=30.65 ns  ryu=35.48 ns  zmij/ryu=0.8640
+f64-shortest-batch4-hot  batch=23.91 ns scalar=23.97 ns speedup=1.0025
+f32-shortest-batch4-hot  batch=22.81 ns scalar=23.43 ns speedup=1.0270
+f64-fixed.6-hot          zmij=25.72 ns  ryu=21.40 ns  zmij/ryu=1.2021
+f64-scientific.6-hot     zmij=22.68 ns  ryu=358.61 ns zmij/ryu=0.0633
+f64-general.6-hot        zmij=35.43 ns  ryu=385.84 ns zmij/ryu=0.0918
+f64-fixed.6-extreme      zmij=378.34 ns ryu=8760.48 ns zmij/ryu=0.0432

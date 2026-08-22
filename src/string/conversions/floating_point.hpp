@@ -338,6 +338,12 @@ f2s_buffered(f32 val, char *buf)
 
 };      // namespace __ryu
 };      // namespace __impl
+};      // namespace micron
+
+#include "zmij.hpp"
+
+namespace micron
+{
 
 // NOTE: consider moving to base format.hpp
 
@@ -345,8 +351,8 @@ template<typename C, typename Fn>
 inline micron::hstring<C>
 __fp_to_hstring(usize need, Fn &&emit)
 {
-  if ( need <= __impl::__ryu::__fmt_fixed_max ) {
-    char buf[__impl::__ryu::__fmt_fixed_max];
+  if ( need <= __impl::__fpconv::__fmt_fixed_max ) {
+    char buf[__impl::__fpconv::__fmt_fixed_max];
     const usize n = emit(buf, sizeof(buf));
     if ( n == 0 ) return micron::hstring<C>();
     return micron::hstring<C>(buf, buf + n);
@@ -362,7 +368,7 @@ inline micron::hstring<C>
 float_to_string(f32 val)
 {
   char buf[16];
-  usize n = __impl::__ryu::__f32::f2s_buffered(val, buf);
+  usize n = __impl::__fpconv::f2s_buffered(val, buf);
   return micron::hstring<C>(buf, buf + n);
 }
 
@@ -371,7 +377,7 @@ inline micron::hstring<C>
 double_to_string(f64 val)
 {
   char buf[26];
-  usize n = __impl::__ryu::d2s_buffered(val, buf);
+  usize n = __impl::__fpconv::d2s_buffered(val, buf);
   return micron::hstring<C>(buf, buf + n);
 }
 
@@ -380,16 +386,16 @@ inline micron::hstring<C>
 float_to_string(f32 val, u32 prec)
 {
   const f64 v = static_cast<f64>(val);
-  return __fp_to_hstring<C>(__impl::__ryu::d2f_size(v, prec),
-                            [&](char *b, usize c) { return __impl::__ryu::d2f_buffered(v, b, c, prec); });
+  return __fp_to_hstring<C>(__impl::__fpconv::d2f_size(v, prec),
+                            [&](char *b, usize c) { return __impl::__fpconv::d2f_buffered(v, b, c, prec); });
 }
 
 template<typename C = char>
 inline micron::hstring<C>
 double_to_string(f64 val, u32 prec)
 {
-  return __fp_to_hstring<C>(__impl::__ryu::d2f_size(val, prec),
-                            [&](char *b, usize c) { return __impl::__ryu::d2f_buffered(val, b, c, prec); });
+  return __fp_to_hstring<C>(__impl::__fpconv::d2f_size(val, prec),
+                            [&](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); });
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,8 +405,8 @@ template<typename C = char>
 inline micron::hstring<C>
 to_fixed(f64 val, u32 precision = 6)
 {
-  return __fp_to_hstring<C>(__impl::__ryu::d2f_size(val, precision),
-                            [&](char *b, usize c) { return __impl::__ryu::d2f_buffered(val, b, c, precision); });
+  return __fp_to_hstring<C>(__impl::__fpconv::d2f_size(val, precision),
+                            [&](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, precision); });
 }
 
 // fixed precision with trailing fractional zeros trimmed
@@ -408,23 +414,23 @@ template<typename C = char>
 inline micron::hstring<C>
 to_fixed_trim(f64 val, u32 precision = 6)
 {
-  return __fp_to_hstring<C>(__impl::__ryu::d2f_size(val, precision),
-                            [&](char *b, usize c) { return __impl::__ryu::d2f_trim_buffered(val, b, c, precision); });
+  return __fp_to_hstring<C>(__impl::__fpconv::d2f_size(val, precision),
+                            [&](char *b, usize c) { return __impl::__fpconv::d2f_trim_buffered(val, b, c, precision); });
 }
 
 template<typename C = char>
 inline micron::hstring<C>
 to_scientific(f64 val, u32 precision = 6)
 {
-  return __fp_to_hstring<C>(__impl::__ryu::d2e_size(val, precision),
-                            [&](char *b, usize c) { return __impl::__ryu::d2e_buffered(val, b, c, precision); });
+  return __fp_to_hstring<C>(__impl::__fpconv::d2e_size(val, precision),
+                            [&](char *b, usize c) { return __impl::__fpconv::d2e_buffered(val, b, c, precision); });
 }
 
 template<typename C = char>
 inline micron::hstring<C>
 to_general(f64 val, u32 precision = 6)
 {
-  // derive sciExp directly from the Ryu decomposition
+  // derive sciExp directly from the selected shortest-decimal decomposition
   const u64 __b = micron::math::ieee::to_bits<f64>(val);
   u64 ieeeMantissa = __b & ((1ull << 52) - 1);
   u32 ieeeExponent = static_cast<u32>((__b >> 52) & 0x7FF);
@@ -432,9 +438,15 @@ to_general(f64 val, u32 precision = 6)
   // specials & zero pass through to_fixed
   if ( ieeeExponent == 0x7FF || (ieeeExponent == 0 && ieeeMantissa == 0) ) return to_fixed<C>(val, precision);
 
-  __impl::__ryu::decimal64 dec = __impl::__ryu::d2d(ieeeMantissa, ieeeExponent);
-  u32 olength = __impl::__ryu::decimalLength(dec.mantissa);
-  i32 exp10 = dec.exponent + static_cast<i32>(olength) - 1;
+#if defined(MICRON_USE_RYU)
+  const __impl::__ryu::decimal64 dec = __impl::__ryu::d2d(ieeeMantissa, ieeeExponent);
+  const u32 olength = __impl::__ryu::decimalLength(dec.mantissa);
+  const i32 exp10 = dec.exponent + static_cast<i32>(olength) - 1;
+#else
+  const __impl::__zmij::decimal_fp dec = __impl::__zmij::to_decimal(val);
+  const u32 olength = __impl::__ryu::decimalLength(dec.sig);
+  const i32 exp10 = dec.exp + static_cast<i32>(olength) - 1;
+#endif
 
   if ( exp10 < -4 || exp10 >= static_cast<i32>(precision) ) return to_scientific<C>(val, precision > 0 ? precision - 1 : 0);
   return to_fixed<C>(val, precision);

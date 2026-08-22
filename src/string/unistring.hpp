@@ -12,7 +12,7 @@
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // unistring & formatting
-// for float conversions uses the ryu alg strategy
+// float conversions use Zmij by default; MICRON_USE_RYU selects the legacy engine
 // for integral conversions uses 10^8 chunked method approach
 // gets roughly ~55 cycles per integer (1 to 1 billion)
 // ~48 cycles for low numbers (sub 1 mil)
@@ -347,9 +347,9 @@ template<usize Sz = 32, typename C = char>
 inline micron::sstring<Sz, C>
 to_string_stack(f32 val)
 {
-  // shortest representation via ryu, then copy to stack
+  // selected shortest representation, then copy to stack
   char tmp[32];
-  usize n = __impl::__ryu::d2s_buffered(static_cast<f64>(val), tmp);
+  usize n = __impl::__fpconv::d2s_buffered(static_cast<f64>(val), tmp);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -363,9 +363,9 @@ template<usize Sz = 32, typename C = char>
 inline micron::sstring<Sz, C>
 to_string_stack(f64 val)
 {
-  // shortest representation via ryu, then copy to stack
+  // selected shortest representation, then copy to stack
   char tmp[32];
-  usize n = __impl::__ryu::d2s_buffered(val, tmp);
+  usize n = __impl::__fpconv::d2s_buffered(val, tmp);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -379,7 +379,7 @@ template<usize Sz, typename C, typename Fn>
 inline micron::sstring<Sz, C>
 __fp_to_sstring(Fn &&emit)
 {
-  char tmp[__impl::__ryu::__fmt_fixed_max];
+  char tmp[__impl::__fpconv::__fmt_fixed_max];
   usize n = emit(tmp, sizeof(tmp));
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
@@ -394,14 +394,14 @@ template<usize Sz = 48, typename C = char>
 inline micron::sstring<Sz, C>
 to_string_stack(f32 val, u32 prec)
 {
-  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__ryu::d2f_buffered(static_cast<f64>(val), b, c, prec); });
+  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__fpconv::d2f_buffered(static_cast<f64>(val), b, c, prec); });
 }
 
 template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 to_string_stack(f64 val, u32 prec)
 {
-  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__ryu::d2f_buffered(val, b, c, prec); });
+  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); });
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,7 +413,7 @@ inline micron::sstring<Sz, C>
 float_to_string_stack(f32 val)
 {
   char tmp[32];
-  usize n = __impl::__ryu::d2s_buffered(static_cast<f64>(val), tmp);
+  usize n = __impl::__fpconv::d2s_buffered(static_cast<f64>(val), tmp);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -428,7 +428,7 @@ inline micron::sstring<Sz, C>
 double_to_string_stack(f64 val)
 {
   char tmp[32];
-  usize n = __impl::__ryu::d2s_buffered(val, tmp);
+  usize n = __impl::__fpconv::d2s_buffered(val, tmp);
   if ( n > Sz - 1 ) n = Sz - 1;
   micron::sstring<Sz, C> result;
   C *out = &result[0];
@@ -442,14 +442,14 @@ template<usize Sz = 48, typename C = char>
 inline micron::sstring<Sz, C>
 float_to_string_stack(f32 val, u32 prec)
 {
-  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__ryu::d2f_buffered(static_cast<f64>(val), b, c, prec); });
+  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__fpconv::d2f_buffered(static_cast<f64>(val), b, c, prec); });
 }
 
 template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 double_to_string_stack(f64 val, u32 prec)
 {
-  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__ryu::d2f_buffered(val, b, c, prec); });
+  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); });
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -459,21 +459,21 @@ template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 to_fixed_stack(f64 val, u32 precision = 6)
 {
-  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__ryu::d2f_buffered(val, b, c, precision); });
+  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, precision); });
 }
 
 template<usize Sz = 64, typename C = char>
 inline micron::sstring<Sz, C>
 to_fixed_trim_stack(f64 val, u32 precision = 6)
 {
-  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__ryu::d2f_trim_buffered(val, b, c, precision); });
+  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__fpconv::d2f_trim_buffered(val, b, c, precision); });
 }
 
 template<usize Sz = 80, typename C = char>
 inline micron::sstring<Sz, C>
 to_scientific_stack(f64 val, u32 precision = 6)
 {
-  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__ryu::d2e_buffered(val, b, c, precision); });
+  return __fp_to_sstring<Sz, C>([&](char *b, usize c) { return __impl::__fpconv::d2e_buffered(val, b, c, precision); });
 }
 
 template<usize Sz = 80, typename C = char>

@@ -152,7 +152,7 @@ build(corpus &c, kind k) noexcept
       if (((b >> 52) & 0x7FF) == 0x7FF ) b &= ~(1ull << 62);
       f64 v;
       __builtin_memcpy(&v, &b, 8);
-      n = micron::__impl::__ryu::d2s_buffered(v, buf);
+      n = micron::__impl::__fpconv::d2s_buffered(v, buf);
       break;
     }
     case kind::f32_rt: {
@@ -160,14 +160,14 @@ build(corpus &c, kind k) noexcept
       if (((b >> 23) & 0xFF) == 0xFF ) b &= ~(1u << 30);
       f32 v;
       __builtin_memcpy(&v, &b, 4);
-      n = micron::__impl::__ryu::__f32::f2s_buffered(v, buf);
+      n = micron::__impl::__fpconv::f2s_buffered(v, buf);
       break;
     }
     case kind::subnormal: {
       u64 b = (rnd() & 0x000FFFFFFFFFFFFFull) | 1ull;
       f64 v;
       __builtin_memcpy(&v, &b, 8);
-      n = micron::__impl::__ryu::d2s_buffered(v, buf);
+      n = micron::__impl::__fpconv::d2s_buffered(v, buf);
       break;
     }
     case kind::long768: {

@@ -2815,6 +2815,31 @@ store4_f32(float *p, float32x4x4_t v) noexcept
   vst4q_f32(p, v);
 }
 
+__inline_neon void
+decimal_digits_16(char *out, u64 value) noexcept
+{
+  constexpr u64 hundred_million = 100000000ull;
+  constexpr u64 div10k_sig = (1ull << 40) / 10000 + 1;
+  constexpr u64 neg10k = (1ull << 32) - 10000;
+  constexpr u64 div100_sig = (1ull << 19) / 100 + 1;
+  constexpr u64 neg100 = (1ull << 16) - 100;
+  constexpr u64 div10_sig = (1ull << 10) / 10 + 1;
+  constexpr u64 neg10 = (1ull << 8) - 10;
+
+  const auto bcd8 = [](u64 x) noexcept {
+    const u64 abcd_efgh = x + neg10k * ((x * div10k_sig) >> 40);
+    const u64 ab_cd_ef_gh = abcd_efgh + neg100 * (((abcd_efgh * div100_sig) >> 19) & 0x7f0000007full);
+    const u64 a_b_c_d_e_f_g_h = ab_cd_ef_gh + neg10 * (((ab_cd_ef_gh * div10_sig) >> 10) & 0xf000f000f000full);
+    return __builtin_bswap64(a_b_c_d_e_f_g_h);
+  };
+
+  const u64 hi = value / hundred_million;
+  const u64 lo = value - hi * hundred_million;
+  const u64 packed[2] = { bcd8(hi), bcd8(lo) };
+  const uint8x16_t digits = vreinterpretq_u8_u64(vld1q_u64(packed));
+  vst1q_u8(reinterpret_cast<u8 *>(out), vaddq_u8(digits, vdupq_n_u8('0')));
+}
+
 #undef __inline_neon
 
 #pragma GCC diagnostic pop

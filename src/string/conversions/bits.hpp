@@ -50,6 +50,19 @@ umul128(u64 a, u64 b)
 }
 #endif
 
+[[gnu::always_inline]] inline constexpr u64
+umul128_add_hi64(u64 a, u64 b, u64 c)
+{
+#if defined(__SIZEOF_INT128__)
+  if !consteval {
+    const unsigned __int128 p = static_cast<unsigned __int128>(a) * static_cast<unsigned __int128>(b) + c;
+    return static_cast<u64>(p >> 64);
+  }
+#endif
+  const __fmt_uint128_t p = umul128(a, b);
+  return p.hi + (p.lo + c < p.lo);
+}
+
 inline constexpr u64
 shiftright128(u64 lo, u64 hi, u32 dist)
 {
