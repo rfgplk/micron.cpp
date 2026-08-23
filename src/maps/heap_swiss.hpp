@@ -11,6 +11,8 @@
 #include "../simd/types.hpp"
 #include "../types.hpp"
 
+#include "bits.hpp"
+
 #include "../allocator.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
@@ -43,6 +45,8 @@ class heap_swiss_map
     __hs_entry &operator=(const __hs_entry &) = default;
     __hs_entry &operator=(__hs_entry &&) = default;
   };
+
+  using __storage_alloc = __maps::storage_allocator<Alloc, __hs_entry>;
 
   u8 *__ctrl = nullptr;
   __hs_entry *__entries = nullptr;
@@ -147,11 +151,13 @@ class heap_swiss_map
   void
   __alloc_storage(usize n_slots)
   {
+    if ( n_slots > static_cast<usize>(-1) - __group || n_slots > static_cast<usize>(-1) / sizeof(__hs_entry) )
+      exc<except::library_error>("heap_swiss_map: capacity overflow");
     u8 *ctrl = new u8[n_slots + __group];
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
-      chunk<byte> blk = Alloc::create(n_slots * sizeof(__hs_entry));
+      chunk<byte> blk = __storage_alloc::create(n_slots * sizeof(__hs_entry));
       micron::memset(ctrl, __empty, n_slots + __group);
       __ctrl = ctrl;
       __entries = reinterpret_cast<__hs_entry *>(blk.ptr);
@@ -187,7 +193,7 @@ class heap_swiss_map
     }
     if ( __entries ) {
       chunk<byte> ch{ reinterpret_cast<byte *>(__entries), __n_slots * sizeof(__hs_entry) };
-      Alloc::destroy(ch);
+      __storage_alloc::destroy(ch);
       __entries = nullptr;
     }
   }
@@ -209,10 +215,11 @@ class heap_swiss_map
       ::micron::__mask em = __match_empty_or_del(g);
       if ( em.any() ) {
         usize probe = (g + em.lowest()) & __cap_mask;
+        bool consumed_empty = (__ctrl[probe] == __empty);
         new (micron::addr(__entries[probe])) __hs_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
         __mirror_ctrl(probe, h2);
         ++__size;
-        --__growth_left;
+        if ( consumed_empty ) --__growth_left;
         return micron::addr(__entries[probe].value);
       }
       i += __group;
@@ -221,7 +228,7 @@ class heap_swiss_map
   }
 
   V *
-  __probe_find(const K &key, u8 h2, usize start) const noexcept
+  __probe_find(const K &key, u8 h2, usize start) const
   {
     if ( !__ctrl ) return nullptr;
     usize i = 0;
@@ -242,49 +249,49 @@ class heap_swiss_map
   void
   __rehash(usize new_n_slots)
   {
-    u8 *old_ctrl = __ctrl;
-    __hs_entry *old_entries = __entries;
-    usize old_n = __n_slots;
-#if !defined(__micron_freestanding) || defined(__micron_eh)
-    // rollback-only: read solely by the catch below, so they must not be declared without it
-    usize old_mask = __cap_mask;
-    usize old_size = __size;
-    usize old_growth = __growth_left;
-    try {
-#endif
-      __ctrl = nullptr;
-      __entries = nullptr;
-      __n_slots = 0;
-      __cap_mask = 0;
-      __size = 0;
-      __growth_left = 0;
-      __alloc_storage(new_n_slots);
-#if !defined(__micron_freestanding) || defined(__micron_eh)
-    } catch ( ... ) {
-      __ctrl = old_ctrl;
-      __entries = old_entries;
-      __n_slots = old_n;
-      __cap_mask = old_mask;
-      __size = old_size;
-      __growth_left = old_growth;
-      throw;
-    }
-#endif
-    if ( old_entries && old_ctrl ) {
-      for ( usize i = 0; i < old_n; ++i ) {
-        u8 c = old_ctrl[i];
-        if ( c != __empty && c != __deleted ) {
-          hash64_t kh = hash<hash64_t>(old_entries[i].key);
-          __probe_insert(micron::move(old_entries[i].key), micron::move(old_entries[i].value), __h2(kh), __h1(kh) & __cap_mask);
-          if constexpr ( !micron::is_trivially_destructible_v<__hs_entry> ) old_entries[i].~__hs_entry();
-        }
+    heap_swiss_map next(new_n_slots);
+    if constexpr ( micron::is_copy_constructible_v<K> ) {
+      for ( usize i = 0; i < __n_slots; ++i ) {
+        u8 c = __ctrl[i];
+        if ( c == __empty || c == __deleted ) continue;
+        hash64_t kh = hash<hash64_t>(__entries[i].key);
+        next.__probe_insert(__entries[i].key, __entries[i].value, __h2(kh), __h1(kh) & next.__cap_mask);
+      }
+    } else {
+      for ( usize i = 0; i < __n_slots; ++i ) {
+        u8 c = __ctrl[i];
+        if ( c == __empty || c == __deleted ) continue;
+        hash64_t kh = hash<hash64_t>(__entries[i].key);
+        next.__probe_insert(micron::move(__entries[i].key), micron::move(__entries[i].value), __h2(kh),
+                            __h1(kh) & next.__cap_mask);
       }
     }
-    if ( old_ctrl ) delete[] old_ctrl;
-    if ( old_entries ) {
-      chunk<byte> ch{ reinterpret_cast<byte *>(old_entries), old_n * sizeof(__hs_entry) };
-      Alloc::destroy(ch);
+    swap(next);
+  }
+
+  void
+  __grow_for_insert()
+  {
+    if ( __n_slots > static_cast<usize>(-1) / 2u ) exc<except::library_error>("heap_swiss_map: capacity overflow");
+    __rehash(__n_slots * 2u);
+  }
+
+  template<typename KK, typename VV>
+  micron::pair<bool, V *>
+  __insert_known_hash(hash64_t kh, KK &&key, VV &&value, bool assign)
+  {
+    u8 h2 = __h2(kh);
+    usize start = __h1(kh) & __cap_mask;
+    V *existing = __probe_find(key, h2, start);
+    if ( existing ) {
+      if ( assign ) *existing = micron::forward<VV>(value);
+      return { false, existing };
     }
+    if ( __growth_left == 0 ) {
+      __grow_for_insert();
+      start = __h1(kh) & __cap_mask;
+    }
+    return { true, __probe_insert(micron::forward<KK>(key), micron::forward<VV>(value), h2, start) };
   }
 
 public:
@@ -312,15 +319,28 @@ public:
 
   heap_swiss_map(const heap_swiss_map &o)
   {
+    if ( !o.__ctrl ) return;
     __alloc_storage(o.__n_slots);
-    for ( usize i = 0; i < o.__n_slots; ++i ) {
-      u8 c = o.__ctrl[i];
-      if ( c != __empty && c != __deleted ) {
-        new (micron::addr(__entries[i])) __hs_entry(o.__entries[i]);
-        __mirror_ctrl(i, c);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( usize i = 0; i < o.__n_slots; ++i ) {
+        u8 c = o.__ctrl[i];
+        if ( c == __deleted ) {
+          __mirror_ctrl(i, __deleted);
+        } else if ( c != __empty ) {
+          new (micron::addr(__entries[i])) __hs_entry(o.__entries[i]);
+          __mirror_ctrl(i, c);
+          ++__size;
+        }
       }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __destroy_occupied();
+      __free_storage();
+      throw;
     }
-    __size = o.__size;
+#endif
     __growth_left = o.__growth_left;
   }
 
@@ -340,18 +360,8 @@ public:
   operator=(const heap_swiss_map &o)
   {
     if ( this == &o ) return *this;
-    __destroy_occupied();
-    __free_storage();
-    __alloc_storage(o.__n_slots);
-    for ( usize i = 0; i < o.__n_slots; ++i ) {
-      u8 c = o.__ctrl[i];
-      if ( c != __empty && c != __deleted ) {
-        new (micron::addr(__entries[i])) __hs_entry(o.__entries[i]);
-        __mirror_ctrl(i, c);
-      }
-    }
-    __size = o.__size;
-    __growth_left = o.__growth_left;
+    heap_swiss_map next(o);
+    swap(next);
     return *this;
   }
 
@@ -426,40 +436,22 @@ public:
   micron::pair<bool, V *>
   insert_or_assign(KK &&key, VV &&value)
   {
-    if ( __growth_left == 0 ) __rehash(__n_slots * 2);
     hash64_t kh = hash<hash64_t>(key);
-    u8 h2 = __h2(kh);
-    usize start = __h1(kh) & __cap_mask;
-    V *ex = __probe_find(key, h2, start);
-    if ( ex ) {
-      *ex = micron::forward<VV>(value);
-      return { false, ex };
-    }
-    return { true, __probe_insert(micron::forward<KK>(key), micron::forward<VV>(value), h2, start) };
+    return __insert_known_hash(kh, micron::forward<KK>(key), micron::forward<VV>(value), true);
   }
 
   micron::pair<bool, V *>
   insert(const K &key, const V &value)
   {
-    if ( __growth_left == 0 ) __rehash(__n_slots * 2);
     hash64_t kh = hash<hash64_t>(key);
-    u8 h2 = __h2(kh);
-    usize start = __h1(kh) & __cap_mask;
-    V *ex = __probe_find(key, h2, start);
-    if ( ex ) return { false, ex };
-    return { true, __probe_insert(key, value, h2, start) };
+    return __insert_known_hash(kh, key, value, false);
   }
 
   micron::pair<bool, V *>
   insert(K &&key, V &&value)
   {
-    if ( __growth_left == 0 ) __rehash(__n_slots * 2);
     hash64_t kh = hash<hash64_t>(key);
-    u8 h2 = __h2(kh);
-    usize start = __h1(kh) & __cap_mask;
-    V *ex = __probe_find(key, h2, start);
-    if ( ex ) return { false, ex };
-    return { true, __probe_insert(micron::move(key), micron::move(value), h2, start) };
+    return __insert_known_hash(kh, micron::move(key), micron::move(value), false);
   }
 
   micron::pair<bool, V *>
@@ -468,41 +460,60 @@ public:
     return insert(kv.a, kv.b);
   }
 
+  micron::pair<bool, V *>
+  insert_hash(hash64_t kh, const K &key, const V &value)
+  {
+    return __insert_known_hash(kh, key, value, false);
+  }
+
+  micron::pair<bool, V *>
+  insert_hash(hash64_t kh, const K &key, V &&value)
+  {
+    return __insert_known_hash(kh, key, micron::move(value), false);
+  }
+
   template<typename... Args>
   micron::pair<bool, V *>
   emplace(const K &key, Args &&...args)
   {
-    if ( __growth_left == 0 ) __rehash(__n_slots * 2);
     hash64_t kh = hash<hash64_t>(key);
-    u8 h2 = __h2(kh);
-    usize start = __h1(kh) & __cap_mask;
-    V *ex = __probe_find(key, h2, start);
-    if ( ex ) return { false, ex };
-    return { true, __probe_insert(K(key), V(micron::forward<Args>(args)...), h2, start) };
+    return __insert_known_hash(kh, K(key), V(micron::forward<Args>(args)...), false);
   }
 
   V *
-  find(const K &key) noexcept
+  find_hash(hash64_t kh, const K &key)
   {
-    hash64_t kh = hash<hash64_t>(key);
     return __probe_find(key, __h2(kh), __h1(kh) & __cap_mask);
   }
 
   const V *
-  find(const K &key) const noexcept
+  find_hash(hash64_t kh, const K &key) const
   {
-    hash64_t kh = hash<hash64_t>(key);
     return __probe_find(key, __h2(kh), __h1(kh) & __cap_mask);
   }
 
+  V *
+  find(const K &key)
+  {
+    hash64_t kh = hash<hash64_t>(key);
+    return find_hash(kh, key);
+  }
+
+  const V *
+  find(const K &key) const
+  {
+    hash64_t kh = hash<hash64_t>(key);
+    return find_hash(kh, key);
+  }
+
   bool
-  contains(const K &key) const noexcept
+  contains(const K &key) const
   {
     return find(key) != nullptr;
   }
 
   usize
-  count(const K &key) const noexcept
+  count(const K &key) const
   {
     return find(key) ? 1u : 0u;
   }
@@ -528,9 +539,10 @@ public:
   V &
   operator[](const K &key)
   {
-    V *v = find(key);
+    hash64_t kh = hash<hash64_t>(key);
+    V *v = find_hash(kh, key);
     if ( v ) return *v;
-    auto r = insert(key, V{});
+    auto r = __insert_known_hash(kh, key, V{}, false);
     if ( !r.b ) [[unlikely]]
       exc<except::library_error>("heap_swiss_map::operator[](): insertion failed");
     return *r.b;
@@ -570,7 +582,7 @@ public:
   }
 
   bool
-  erase(const K &key) noexcept
+  erase(const K &key)
   {
     if ( !__ctrl ) return false;
     hash64_t kh = hash<hash64_t>(key);

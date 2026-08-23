@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../atomic/intrin.hpp"
 #include "../concepts.hpp"
 #include "../memory/actions.hpp"
 #include "../memory/addr.hpp"
@@ -28,6 +29,8 @@ template<typename K, typename V>
   requires micron::totally_ordered<K> && micron::is_movable_object<V>
 class immutable_map
 {
+  struct __emplace_tag { };
+
   //  Layout on 64-bit:
   //    [0]  __packed_left
   //    [8]  right
@@ -42,6 +45,20 @@ class immutable_map
     mutable u32 refs;
     K key;
     V value;
+
+    template<typename Kf, typename Vf>
+    __node(Kf &&k, Vf &&v, __node *l, __node *r, bool rd)
+        : __packed_left(reinterpret_cast<uintptr_t>(l) | uintptr_t(rd)), right(r), refs(1), key(micron::forward<Kf>(k)),
+          value(micron::forward<Vf>(v))
+    {
+    }
+
+    template<typename Kf, typename... Args>
+    __node(__emplace_tag, Kf &&k, __node *l, __node *r, bool rd, Args &&...args)
+        : __packed_left(reinterpret_cast<uintptr_t>(l) | uintptr_t(rd)), right(r), refs(1), key(micron::forward<Kf>(k)),
+          value(micron::forward<Args>(args)...)
+    {
+    }
 
     inline __attribute__((always_inline)) __node *
     left() const noexcept
@@ -74,87 +91,75 @@ class immutable_map
     }
   };
 
+  static inline byte *
+  __alloc_node()
+  {
+    if constexpr ( alignof(__node) <= 32 ) {
+      return abc::alloc(sizeof(__node));
+    } else {
+      constexpr usize bytes = (sizeof(__node) + alignof(__node) - 1) & ~(alignof(__node) - 1);
+      return reinterpret_cast<byte *>(abc::aligned_alloc(alignof(__node), bytes));
+    }
+  }
+
+  static inline void
+  __free_node(__node *n)
+  {
+    if constexpr ( alignof(__node) <= 32 )
+      abc::dealloc(reinterpret_cast<byte *>(n));
+    else
+      abc::aligned_free(n);
+  }
+
   template<typename Kf, typename Vf>
   static inline __node *
   __make_node(Kf &&k, Vf &&v, __node *l, __node *r, bool rd)
   {
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
+    auto *n = reinterpret_cast<__node *>(__alloc_node());
     if ( !n ) [[unlikely]] {      // abc::alloc returns nullptr on OOM (it does NOT throw)
       __release(l);
       __release(r);
       exc<except::critical_error>("immutable_map: node allocation failed (out of memory)");
     }
 #if !defined(__micron_freestanding) || defined(__micron_eh)
-    [[maybe_unused]] bool key_built = false;
     try {
 #endif
-      if constexpr ( micron::is_trivially_copyable_v<K> )
-        n->key = static_cast<Kf &&>(k);
-      else
-        new (micron::addr(n->key)) K(static_cast<Kf &&>(k));
-#if !defined(__micron_freestanding) || defined(__micron_eh)
-      key_built = true;
-#endif
-      if constexpr ( micron::is_trivially_copyable_v<V> )
-        n->value = static_cast<Vf &&>(v);
-      else
-        new (micron::addr(n->value)) V(static_cast<Vf &&>(v));
+      new (n) __node(micron::forward<Kf>(k), micron::forward<Vf>(v), l, r, rd);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
-      if constexpr ( !micron::is_trivially_destructible_v<K> )
-        if ( key_built ) n->key.~K();
-      abc::dealloc(reinterpret_cast<byte *>(n));
+      __free_node(n);
       __release(l);
       __release(r);
       throw;
     }
 #endif
-
-    n->set_left_and_red(l, rd);
-    n->right = r;
-    n->refs = 1;
     return n;
   }
 
-  // construct V in-place from args
   // construct V in-place from args; same consume-and-release-on-failure contract
   // for l/r as __make_node.
   template<typename Kf, typename... Args>
   static inline __node *
   __make_node_emplace(Kf &&k, __node *l, __node *r, bool rd, Args &&...args)
   {
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
+    auto *n = reinterpret_cast<__node *>(__alloc_node());
     if ( !n ) [[unlikely]] {      // abc::alloc returns nullptr on OOM (it does NOT throw)
       __release(l);
       __release(r);
       exc<except::critical_error>("immutable_map: node allocation failed (out of memory)");
     }
 #if !defined(__micron_freestanding) || defined(__micron_eh)
-    [[maybe_unused]] bool key_built = false;
     try {
 #endif
-      if constexpr ( micron::is_trivially_copyable_v<K> )
-        n->key = static_cast<Kf &&>(k);
-      else
-        new (micron::addr(n->key)) K(static_cast<Kf &&>(k));
-#if !defined(__micron_freestanding) || defined(__micron_eh)
-      key_built = true;
-#endif
-      new (micron::addr(n->value)) V(micron::forward<Args>(args)...);
+      new (n) __node(__emplace_tag{}, micron::forward<Kf>(k), l, r, rd, micron::forward<Args>(args)...);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
-      if constexpr ( !micron::is_trivially_destructible_v<K> )
-        if ( key_built ) n->key.~K();
-      abc::dealloc(reinterpret_cast<byte *>(n));
+      __free_node(n);
       __release(l);
       __release(r);
       throw;
     }
 #endif
-
-    n->set_left_and_red(l, rd);
-    n->right = r;
-    n->refs = 1;
     return n;
   }
 
@@ -167,17 +172,25 @@ class immutable_map
   static inline void
   __dealloc_node(__node *n)
   {
-    if constexpr ( !micron::is_trivially_destructible_v<K> ) n->key.~K();
-    if constexpr ( !micron::is_trivially_destructible_v<V> ) n->value.~V();
-    abc::dealloc(reinterpret_cast<byte *>(n));
+    n->~__node();
+    __free_node(n);
   }
 
   static inline __attribute__((always_inline)) __node *
   __retain(__node *n)
   {
     if ( n ) [[likely]]
-      __atomic_fetch_add(&n->refs, 1u, __ATOMIC_RELAXED);
+      atom::fetch_add(&n->refs, 1u, atomic_relaxed);
     return n;
+  }
+
+  static inline __attribute__((always_inline)) bool
+  __release_ref(__node *n) noexcept
+  {
+    if ( atom::fetch_sub(&n->refs, 1u, atomic_release) != 1u ) [[likely]]
+      return false;
+    atom::thread_fence(atomic_acquire);
+    return true;
   }
 
   // full slow path
@@ -189,8 +202,7 @@ class immutable_map
     usize depth = 0;
 
     while ( n ) [[likely]] {
-      // acq_rel: the thread that drives refs 1->0 synchronizes-with all prior releases.
-      if ( __atomic_fetch_sub(&n->refs, 1u, __ATOMIC_ACQ_REL) != 1u ) [[likely]]
+      if ( !__release_ref(n) ) [[likely]]
         break;
       __node *l = n->left();
       __node *r = n->right;
@@ -212,7 +224,7 @@ class immutable_map
   {
     if ( !n ) [[unlikely]]
       return;
-    if ( __atomic_fetch_sub(&n->refs, 1u, __ATOMIC_ACQ_REL) != 1u ) [[likely]]
+    if ( !__release_ref(n) ) [[likely]]
       return;
     __node *l = n->left();
     __node *r = n->right;
@@ -236,9 +248,9 @@ class immutable_map
   {
     // refs==1 means this version is the sole owner -> unreachable by any other
     // thread, so an in-place mutation is safe
-    if ( __atomic_load_n(&h->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
+    if ( atom::load(&h->refs, atomic_acquire) == 1u ) [[likely]] {
       __node *n = const_cast<__node *>(h);
-      __atomic_fetch_add(&n->refs, 1u, __ATOMIC_RELAXED);
+      atom::fetch_add(&n->refs, 1u, atomic_relaxed);
       return n;
     }
     return __copy_node(h);
@@ -264,7 +276,7 @@ class immutable_map
   {
     __node *x = h->right;
 
-    if ( __atomic_load_n(&x->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
+    if ( atom::load(&x->refs, atomic_acquire) == 1u ) [[likely]] {
       // both exclusive relink
       bool h_color = h->red();
       h->right = x->left();
@@ -293,7 +305,7 @@ class immutable_map
   {
     __node *x = h->left();
 
-    if ( __atomic_load_n(&x->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
+    if ( atom::load(&x->refs, atomic_acquire) == 1u ) [[likely]] {
       bool h_color = h->red();
       h->set_left(x->right);
       h->set_red(true);
@@ -322,7 +334,7 @@ class immutable_map
     h->set_red(!h->red());
 
     if ( __node *l = h->left() ) [[likely]] {
-      if ( __atomic_load_n(&l->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
+      if ( atom::load(&l->refs, atomic_acquire) == 1u ) [[likely]] {
         l->set_red(!l->red());
       } else {
         __node *nl = __make_node(l->key, l->value, __retain(l->left()), __retain(l->right), !l->red());
@@ -332,7 +344,7 @@ class immutable_map
     }
 
     if ( __node *r = h->right ) [[likely]] {
-      if ( __atomic_load_n(&r->refs, __ATOMIC_ACQUIRE) == 1u ) [[likely]] {
+      if ( atom::load(&r->refs, atomic_acquire) == 1u ) [[likely]] {
         r->set_red(!r->red());
       } else {
         __node *nr = __make_node(r->key, r->value, __retain(r->left()), __retain(r->right), !r->red());
@@ -394,11 +406,11 @@ class immutable_map
     // build the recursive child into a local BEFORE retaining the sibling
     __node *n;
     if ( less ) [[likely]] {
-      __node *nl = __insert_impl(h->left(), k, v, inserted);
+      __node *nl = __insert_impl(h->left(), k, micron::forward<Vf>(v), inserted);
       __node *nr = __retain(h->right);
       n = __clone_with(h, nl, nr, h->red());
     } else if ( h->key < k ) {
-      __node *nr = __insert_impl(h->right, k, v, inserted);
+      __node *nr = __insert_impl(h->right, k, micron::forward<Vf>(v), inserted);
       __node *nl = __retain(h->left());
       n = __clone_with(h, nl, nr, h->red());
     } else {
@@ -517,20 +529,9 @@ class immutable_map
       if ( equal ) [[unlikely]] {
         const __node *m = __find_min(n->right);
 
-        if constexpr ( micron::is_trivially_copyable_v<K> && micron::is_trivially_copyable_v<V> ) {
-          micron::bytecpy(reinterpret_cast<byte *>(micron::addr(n->key)), reinterpret_cast<const byte *>(micron::addr(m->key)), sizeof(K));
-          micron::bytecpy(reinterpret_cast<byte *>(micron::addr(n->value)), reinterpret_cast<const byte *>(micron::addr(m->value)),
-                          sizeof(V));
-        } else {
-          // build the successor's key/value into temporaries FIRST: a throwing
-          // copy ctor then leaves n fully intact
-          K tmpk(m->key);
-          V tmpv(m->value);
-          if constexpr ( !micron::is_trivially_destructible_v<K> ) n->key.~K();
-          if constexpr ( !micron::is_trivially_destructible_v<V> ) n->value.~V();
-          new (micron::addr(n->key)) K(micron::move(tmpk));
-          new (micron::addr(n->value)) V(micron::move(tmpv));
-        }
+        __node *replacement = __make_node(m->key, m->value, __retain(n->left()), __retain(n->right), n->red());
+        __release(n);
+        n = replacement;
 
         __node *old_right = n->right;
         n->right = __erase_min_impl(old_right);
@@ -927,36 +928,11 @@ public:
     return const_iterator();
   }
 
-  //  morris in-order traversal
-  //
-  //  WARNING: modifies node->right pointers
-  //  ONLY safe when no other version shares any node in this tree
-  //  for shared trees, use for_each() or the iterator instead
-
   template<typename Fn>
   void
   for_each_morris(Fn &&fn) const
   {
-    __node *cur = const_cast<__node *>(__root);
-
-    while ( cur ) {
-      if ( !cur->left() ) {
-        fn(static_cast<const K &>(cur->key), static_cast<const V &>(cur->value));
-        cur = cur->right;
-      } else {
-        __node *pred = cur->left();
-        while ( pred->right && pred->right != cur ) pred = pred->right;
-
-        if ( !pred->right ) {
-          pred->right = cur;      // thread
-          cur = cur->left();
-        } else {
-          pred->right = nullptr;      // unthread
-          fn(static_cast<const K &>(cur->key), static_cast<const V &>(cur->value));
-          cur = cur->right;
-        }
-      }
-    }
+    for_each(micron::forward<Fn>(fn));
   }
 
   template<typename Fn>

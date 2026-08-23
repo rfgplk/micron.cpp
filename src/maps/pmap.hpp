@@ -14,6 +14,7 @@
 #include "../memory/actions.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/new.hpp"
+#include "../numerics.hpp"
 #include "../tuple.hpp"
 
 namespace micron
@@ -41,7 +42,7 @@ class pmap
   static constexpr usize __natural_depth = 12;           // 12 * 5 = 60 natural hash bits
   static constexpr usize __max_depth = 24;               // one re-mix grants 60 more bits
   static constexpr u32 __split_threshold = 8;            // grow leaf entries up to this, then split
-  static constexpr u32 __immortal_refs = ~u32{ 0 };      // saturating immortal sentinel
+  static constexpr u32 __immortal_refs = numeric_limits<u32>::max();      // saturating immortal sentinel
 
   //   bit 0 = 1 -> leaf
   //   bit 0 = 0 -> internal (or 0 null)
@@ -86,6 +87,8 @@ class pmap
   struct __internal {
     mutable u32 refs;
     u32 bitmap;
+
+    explicit __internal(u32 bm) : refs(1), bitmap(bm) { }
   };
 
   // chain links
@@ -95,9 +98,11 @@ class pmap
     K key;
     V value;
 
-    __chain(hash64_t hh, const K &k, const V &v, __chain *nx = nullptr) : h(hh), next(nx), key(k), value(v) { }
-
-    __chain(hash64_t hh, K &&k, V &&v, __chain *nx = nullptr) : h(hh), next(nx), key(micron::move(k)), value(micron::move(v)) { }
+    template<typename Kf, typename Vf>
+    __chain(hash64_t hh, Kf &&k, Vf &&v, __chain *nx = nullptr)
+        : h(hh), next(nx), key(micron::forward<Kf>(k)), value(micron::forward<Vf>(v))
+    {
+    }
   };
 
   // leaf: refcount + first entry fused inline + zero-or-more chained overflow
@@ -110,9 +115,11 @@ class pmap
     K key;
     V value;
 
-    __leaf(hash64_t hh, const K &k, const V &v) : refs(1), overflow_len(0), h(hh), overflow(nullptr), key(k), value(v) { }
-
-    __leaf(hash64_t hh, K &&k, V &&v) : refs(1), overflow_len(0), h(hh), overflow(nullptr), key(micron::move(k)), value(micron::move(v)) { }
+    template<typename Kf, typename Vf>
+    __leaf(hash64_t hh, Kf &&k, Vf &&v)
+        : refs(1), overflow_len(0), h(hh), overflow(nullptr), key(micron::forward<Kf>(k)), value(micron::forward<Vf>(v))
+    {
+    }
   };
 
   static inline __attribute__((always_inline)) uintptr_t *
@@ -145,8 +152,7 @@ class pmap
     usize n = static_cast<usize>(micron::popcount(bitmap));
     void *raw = ::operator new(sizeof(__internal) + n * sizeof(uintptr_t));
     auto *in = static_cast<__internal *>(raw);
-    in->refs = 1;
-    in->bitmap = bitmap;
+    new (in) __internal(bitmap);
     uintptr_t *cs = __children_of(in);
     for ( usize i = 0; i < n; ++i ) cs[i] = 0;
     return in;
@@ -187,22 +193,27 @@ class pmap
   static inline __attribute__((always_inline)) void
   __retain_refs(u32 *p) noexcept
   {
-    u32 cur = atom::load(p, __ATOMIC_RELAXED);
+    u32 cur = atom::load(p, atomic_relaxed);
     for ( ;; ) {
       if ( cur == __immortal_refs ) [[unlikely]]
         return;
-      if ( atom::compare_exchange(p, &cur, cur + 1u, true, __ATOMIC_RELAXED, __ATOMIC_RELAXED) ) return;
+      if ( atom::compare_exchange(p, &cur, cur + 1u, true, atomic_relaxed, atomic_relaxed) ) return;
     }
   }
 
   static inline __attribute__((always_inline)) bool
   __dec_refs(u32 *p) noexcept
   {
-    u32 cur = atom::load(p, __ATOMIC_RELAXED);
+    u32 cur = atom::load(p, atomic_relaxed);
     for ( ;; ) {
       if ( cur == __immortal_refs ) [[unlikely]]
         return false;
-      if ( atom::compare_exchange(p, &cur, cur - 1u, true, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED) ) return cur - 1u == 0u;
+      if ( atom::compare_exchange(p, &cur, cur - 1u, true, atomic_release, atomic_relaxed) ) {
+        if ( cur != 1u ) [[likely]]
+          return false;
+        atom::thread_fence(atomic_acquire);
+        return true;
+      }
     }
   }
 
@@ -232,6 +243,7 @@ class pmap
     usize n = static_cast<usize>(micron::popcount(in->bitmap));
     uintptr_t *cs = __children_of(in);
     for ( usize i = 0; i < n; ++i ) __release(cs[i]);
+    in->~__internal();
     ::operator delete(in);
   }
 
@@ -337,7 +349,7 @@ class pmap
   }
 
   static bool
-  __chain_has(const __chain *c, hash64_t h, const K &k) noexcept
+  __chain_has(const __chain *c, hash64_t h, const K &k)
   {
     for ( ; c; c = c->next ) {
       if ( c->h == h && c->key == k ) return true;
@@ -346,7 +358,7 @@ class pmap
   }
 
   static const V *
-  __chain_find(const __chain *c, hash64_t h, const K &k) noexcept
+  __chain_find(const __chain *c, hash64_t h, const K &k)
   {
     for ( ; c; c = c->next ) {
       if ( c->h == h && c->key == k ) return micron::addressof(c->value);
@@ -418,14 +430,15 @@ class pmap
     return false;
   }
 
+  template<typename Vf>
   static void
-  __child_absorb(uintptr_t *slot, hash64_t h, const K &k, const V &v)
+  __child_absorb(uintptr_t *slot, hash64_t h, const K &k, Vf &&v)
   {
     if ( *slot == 0 ) {
-      *slot = __tag_leaf_ptr(new __leaf(h, k, v));
+      *slot = __tag_leaf_ptr(new __leaf(h, k, micron::forward<Vf>(v)));
     } else {
       __leaf *l = __as_leaf(*slot);
-      l->overflow = new __chain(h, k, v, l->overflow);
+      l->overflow = new __chain(h, k, micron::forward<Vf>(v), l->overflow);
       ++l->overflow_len;
     }
   }
@@ -441,9 +454,9 @@ class pmap
     __internal *in = __alloc_internal(bm);
     uintptr_t *cs = __children_of(in);
 
-    auto place = [&](hash64_t h, const K &k, const V &v) {
+    auto place = [&]<typename Vf>(hash64_t h, const K &k, Vf &&v) {
       u32 idx = __idx_at(h, depth);
-      __child_absorb(&cs[__phys_idx(bm, idx)], h, k, v);
+      __child_absorb(&cs[__phys_idx(bm, idx)], h, k, micron::forward<Vf>(v));
     };
 
 #if !defined(__micron_freestanding) || defined(__micron_eh)
@@ -451,7 +464,7 @@ class pmap
 #endif
       place(l->h, l->key, l->value);
       for ( const __chain *c = l->overflow; c; c = c->next ) place(c->h, c->key, c->value);
-      __child_absorb(&cs[__phys_idx(bm, __idx_at(new_h, depth))], new_h, new_k, micron::move(new_v));
+      place(new_h, new_k, micron::move(new_v));
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       __release(__tag_internal_ptr(in));
@@ -467,14 +480,14 @@ class pmap
   {
     if ( n == 0 ) {
       existed = false;
-      return __tag_leaf_ptr(new __leaf(h, K(k), micron::move(v)));
+      return __tag_leaf_ptr(new __leaf(h, k, micron::move(v)));
     }
     if ( __is_leaf(n) ) {
       const __leaf *l = __as_leaf(n);
 
       if ( l->h == h && l->key == k ) {
         existed = true;
-        __leaf *nl = new __leaf(h, K(k), micron::move(v));
+        __leaf *nl = new __leaf(h, k, micron::move(v));
         __node_guard g{ __tag_leaf_ptr(nl) };
         nl->overflow_len = l->overflow_len;
         nl->overflow = __copy_chain(l->overflow);      // if it throws, g frees nl (overflow still null)
@@ -487,7 +500,7 @@ class pmap
         __leaf *nl = new __leaf(l->h, l->key, l->value);
         __node_guard g{ __tag_leaf_ptr(nl) };
         nl->overflow_len = l->overflow_len;
-        nl->overflow = __chain_copy_with_replace(l->overflow, h, K(k), micron::move(v));
+        nl->overflow = __chain_copy_with_replace(l->overflow, h, k, micron::move(v));
         g.dismiss();
         return __tag_leaf_ptr(nl);
       }
@@ -503,7 +516,7 @@ class pmap
       nl->overflow_len = l->overflow_len + 1u;
       __chain *rest = __copy_chain(l->overflow);
       nl->overflow = rest;      // nl now owns rest; if the prepend below throws, g frees nl + rest
-      nl->overflow = new __chain(h, K(k), micron::move(v), rest);
+      nl->overflow = new __chain(h, k, micron::move(v), rest);
       g.dismiss();
       return __tag_leaf_ptr(nl);
     }
@@ -512,7 +525,7 @@ class pmap
     u32 idx = __idx_at(h, depth);
     if ( !__has(in->bitmap, idx) ) {
       existed = false;
-      __leaf *nl = new __leaf(h, K(k), micron::move(v));
+      __leaf *nl = new __leaf(h, k, micron::move(v));
       __node_guard g{ __tag_leaf_ptr(nl) };      // freed if __internal_insert's alloc throws (OOM)
       uintptr_t res = __tag_internal_ptr(__internal_insert(in, idx, __tag_leaf_ptr(nl)));
       g.dismiss();
@@ -528,7 +541,7 @@ class pmap
   }
 
   static const V *
-  __find_in(uintptr_t n, hash64_t h, const K &k, usize depth) noexcept
+  __find_in(uintptr_t n, hash64_t h, const K &k, usize depth)
   {
     while ( n != 0 ) {
       if ( __is_leaf(n) ) {
@@ -688,21 +701,31 @@ public:
   }
 
   pmap
-  insert(const K &k, const V &v) const
+  insert_hash(hash64_t h, const K &k, const V &v) const
   {
     bool existed = false;
-    hash64_t h = hash<hash64_t>(k);
     uintptr_t nr = __insert_into(__root, h, k, V(v), 0, existed);
     return pmap(nr, existed ? __length : __length + 1);
   }
 
   pmap
-  insert(const K &k, V &&v) const
+  insert_hash(hash64_t h, const K &k, V &&v) const
   {
     bool existed = false;
-    hash64_t h = hash<hash64_t>(k);
     uintptr_t nr = __insert_into(__root, h, k, micron::move(v), 0, existed);
     return pmap(nr, existed ? __length : __length + 1);
+  }
+
+  pmap
+  insert(const K &k, const V &v) const
+  {
+    return insert_hash(hash<hash64_t>(k), k, v);
+  }
+
+  pmap
+  insert(const K &k, V &&v) const
+  {
+    return insert_hash(hash<hash64_t>(k), k, micron::move(v));
   }
 
   pmap
@@ -719,12 +742,17 @@ public:
   }
 
   pmap
-  erase(const K &k) const
+  erase_hash(hash64_t h, const K &k) const
   {
     bool erased = false;
-    hash64_t h = hash<hash64_t>(k);
     uintptr_t nr = __erase_from(__root, h, k, 0, erased);
     return pmap(nr, erased ? __length - 1 : __length);
+  }
+
+  pmap
+  erase(const K &k) const
+  {
+    return erase_hash(hash<hash64_t>(k), k);
   }
 
   pmap
@@ -734,13 +762,19 @@ public:
   }
 
   const V *
-  find(const K &k) const noexcept
+  find_hash(hash64_t h, const K &k) const
   {
-    return __find_in(__root, hash<hash64_t>(k), k, 0);
+    return __find_in(__root, h, k, 0);
+  }
+
+  const V *
+  find(const K &k) const
+  {
+    return find_hash(hash<hash64_t>(k), k);
   }
 
   bool
-  contains(const K &k) const noexcept
+  contains(const K &k) const
   {
     return find(k) != nullptr;
   }

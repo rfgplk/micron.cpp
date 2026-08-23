@@ -78,7 +78,11 @@ template<typename K, typename V> struct hopscotch_node {
 
   hopscotch_node(const hopscotch_node &o) : key(o.key), value(o.value) { }
 
-  hopscotch_node(hopscotch_node &&o) noexcept : key(o.key), value(micron::move(o.value)) { o.key = 0; }
+  hopscotch_node(hopscotch_node &&o) noexcept(micron::is_nothrow_move_constructible_v<V>)
+      : key(o.key), value(micron::move(o.value))
+  {
+    o.key = 0;
+  }
 
   hopscotch_node &
   operator=(const hopscotch_node &o)
@@ -91,7 +95,7 @@ template<typename K, typename V> struct hopscotch_node {
   }
 
   hopscotch_node &
-  operator=(hopscotch_node &&o) noexcept
+  operator=(hopscotch_node &&o) noexcept(micron::is_nothrow_move_assignable_v<V>)
   {
     if ( this != &o ) {
       key = o.key;
@@ -144,12 +148,23 @@ template<typename K, typename V> struct hopscotch_node {
 // this is by design
 template<typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, V>> class hopscotch_map
 {
-  micron::fvector<Nd> entries;
+  using __storage_alloc = __maps::storage_allocator<micron::allocator_serial<>, Nd>;
+  using __entries_t = micron::fvector<Nd, __storage_alloc>;
+
+  __entries_t entries;
   usize length;
   usize __bmask;
 
   static constexpr usize __min_size = 64;
   static constexpr usize __max_displacement = 256;      // Maximum distance to search for swap
+
+  static usize
+  __slots_for_bytes(usize bytes) noexcept
+  {
+    usize slots = bytes / sizeof(Nd);
+    if ( slots < __min_size ) slots = __min_size;
+    return __hop_impl::round_pow2(slots);
+  }
 
   bool
   find_closer_slot(usize target, usize empty_slot, usize &result_slot)
@@ -204,8 +219,8 @@ template<typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, 
   void
   resize()
   {
-    const micron::fvector<Nd> old_entries = micron::move(entries);
-    usize old_size = old_entries.size();
+    usize old_size = entries.size();
+    if ( old_size > static_cast<usize>(-1) / 2u ) exc<except::library_error>("hopscotch_map: capacity overflow");
     usize new_size = __hop_impl::round_pow2(old_size * 2);
 
     if ( new_size < __min_size ) {
@@ -214,35 +229,28 @@ template<typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, 
 
     constexpr usize max_resize_attmpt = 4;
     for ( usize attempt = 0; attempt < max_resize_attmpt; ++attempt ) {
-      entries.clear();
-      entries.resize(new_size);
-      usize target = __hop_impl::round_pow2(entries.max_size());
-      if ( target > new_size ) {
-        entries.resize(target);
-        new_size = target;
-      }
-      __bmask = new_size - 1u;
-      length = 0;
-
-      for ( usize i = 0; i < new_size; ++i ) {
-        entries[i].key = 0;
-      }
+      if ( new_size > static_cast<usize>(-1) / sizeof(Nd) ) exc<except::library_error>("hopscotch_map: capacity overflow");
+      hopscotch_map next(new_size * sizeof(Nd));
 
       bool success = true;
-      for ( const auto &n : old_entries ) {
-        if ( n.key ) {
-          if ( !insert_unhash(n.key, n.value) ) {
-            success = false;
-            break;
-          }
+      for ( const auto &node : entries ) {
+        if ( node.key && !next.insert_unhash(node.key, node.value) ) {
+          success = false;
+          break;
         }
       }
 
       if ( success ) {
+        entries = micron::move(next.entries);
+        length = next.length;
+        __bmask = next.__bmask;
+        next.length = 0;
+        next.__bmask = 0;
         return;
       }
 
-      new_size *= 2;
+      if ( new_size > static_cast<usize>(-1) / 2u ) exc<except::library_error>("hopscotch_map: capacity overflow");
+      new_size *= 2u;
     }
 
     exc<except::library_error>("Failed to resize hopscotch map after multiple attempts");
@@ -293,6 +301,52 @@ template<typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, 
     }
 
     return false;
+  }
+
+  template<typename VV>
+  V *
+  __insert_hashed(hash64_t hsh, VV &&value)
+  {
+    if ( hsh == 0 ) exc<except::library_error>("Invalid hash value (0)");
+    if ( __bmask == 0 ) exc<except::library_error>("Hopscotch map not initialized");
+
+    usize home = __hop_impl::mix(hsh) & __bmask;
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) & __bmask;
+      if ( entries[probe].key == hsh ) return micron::addressof(entries[probe].value);
+    }
+
+    if ( length >= (__bmask + 1u) * 3u / 4u ) {
+      resize();
+      return __insert_hashed(hsh, micron::forward<VV>(value));
+    }
+
+    for ( usize i = 0; i <= MH; ++i ) {
+      usize probe = (home + i) & __bmask;
+      if ( !entries[probe].key ) {
+        entries[probe] = Nd{ hsh, micron::forward<VV>(value) };
+        ++length;
+        return micron::addressof(entries[probe].value);
+      }
+    }
+
+    usize empty_slot = (home + MH + 1u) & __bmask;
+    constexpr usize SEARCH_LIMIT = 512;
+    for ( usize i = 0; i < SEARCH_LIMIT; ++i ) {
+      usize check = (empty_slot + i) & __bmask;
+      if ( !entries[check].key ) {
+        usize result_slot;
+        if ( find_closer_slot(home, check, result_slot) ) {
+          entries[result_slot] = Nd{ hsh, micron::forward<VV>(value) };
+          ++length;
+          return micron::addressof(entries[result_slot].value);
+        }
+        break;
+      }
+    }
+
+    resize();
+    return __insert_hashed(hsh, micron::forward<VV>(value));
   }
 
 public:
@@ -398,22 +452,12 @@ public:
 
   ~hopscotch_map() { }
 
-  hopscotch_map(const usize n = 4096) : length(0), __bmask(0)
+  hopscotch_map(const usize n = 4096) : entries(__slots_for_bytes(n)), length(0), __bmask(0)
   {
-    usize initial_size = (n / sizeof(Nd));
-    if ( initial_size < __min_size ) {
-      initial_size = __min_size;
-    }
-    initial_size = __hop_impl::round_pow2(initial_size);
-    entries.resize(initial_size);
-    usize target = __hop_impl::round_pow2(entries.max_size());
-    if ( target > initial_size ) {
-      entries.resize(target);
-      initial_size = target;
-    }
-    __bmask = initial_size - 1u;
-
-    for ( usize i = 0; i < initial_size; ++i ) {
+    usize target = __hop_impl::round_pow2_down(entries.max_size());
+    if ( target > entries.size() ) entries.resize(target);
+    __bmask = entries.size() - 1u;
+    for ( usize i = 0; i < entries.size(); ++i ) {
       entries[i].key = 0;
     }
   }
@@ -471,8 +515,11 @@ public:
     if ( __bmask == 0 ) return;
     // clear only the logical table (__bmask+1)
     usize sz = __bmask + 1u;
-    for ( usize i = 0; i < sz; ++i ) {
-      entries[i].clear();
+    if constexpr ( micron::is_trivially_copyable_v<V> ) {
+      for ( usize i = 0; i < sz; ++i ) entries[i].key = 0;
+    } else {
+      for ( usize i = 0; i < sz; ++i )
+        if ( entries[i].key ) entries[i].clear();
     }
     length = 0;
   }
@@ -480,55 +527,13 @@ public:
   V *
   insert_asis(const hash64_t &hsh, const V &value)
   {
-    if ( hsh == 0 ) {
-      exc<except::library_error>("Invalid hash value (0)");
-    }
+    return __insert_hashed(hsh, value);
+  }
 
-    usize size = entries.max_size();
-    if ( size == 0 ) {
-      exc<except::library_error>("Hopscotch map not initialized");
-    }
-
-    if ( length >= (__bmask + 1u) * 3 / 4 ) {
-      resize();
-    }
-
-    usize home = __hop_impl::mix(hsh) & __bmask;
-
-    for ( usize i = 0; i <= MH; ++i ) {
-      usize probe = (home + i) & __bmask;
-      if ( entries[probe].key == hsh ) {
-        return micron::addressof(entries[probe].value);
-      }
-    }
-
-    for ( usize i = 0; i <= MH; ++i ) {
-      usize probe = (home + i) & __bmask;
-      if ( !entries[probe].key ) {
-        entries[probe] = Nd{ hsh, value };
-        ++length;
-        return micron::addressof(entries[probe].value);
-      }
-    }
-
-    usize empty_slot = (home + MH + 1) & __bmask;
-    constexpr usize SEARCH_LIMIT = 512;
-
-    for ( usize i = 0; i < SEARCH_LIMIT; ++i ) {
-      usize check = (empty_slot + i) & __bmask;
-      if ( !entries[check].key ) {
-        usize result_slot;
-        if ( find_closer_slot(home, check, result_slot) ) {
-          entries[result_slot] = Nd{ hsh, value };
-          ++length;
-          return micron::addressof(entries[result_slot].value);
-        }
-        break;
-      }
-    }
-
-    resize();
-    return insert_asis(hsh, value);
+  V *
+  insert_asis(const hash64_t &hsh, V &&value)
+  {
+    return __insert_hashed(hsh, micron::move(value));
   }
 
   V *
@@ -542,56 +547,7 @@ public:
   insert(const K &k, V &&value)
   {
     hash64_t hsh = hash<hash64_t>(k);
-
-    if ( hsh == 0 ) {
-      exc<except::library_error>("Invalid hash value (0)");
-    }
-
-    usize size = entries.max_size();
-    if ( size == 0 ) {
-      exc<except::library_error>("Hopscotch map not initialized");
-    }
-
-    if ( length >= (__bmask + 1u) * 3 / 4 ) {
-      resize();
-    }
-
-    usize home = __hop_impl::mix(hsh) & __bmask;
-
-    for ( usize i = 0; i <= MH; ++i ) {
-      usize probe = (home + i) & __bmask;
-      if ( entries[probe].key == hsh ) {
-        return micron::addressof(entries[probe].value);
-      }
-    }
-
-    for ( usize i = 0; i <= MH; ++i ) {
-      usize probe = (home + i) & __bmask;
-      if ( !entries[probe].key ) {
-        entries[probe] = Nd{ hsh, micron::move(value) };
-        ++length;
-        return micron::addressof(entries[probe].value);
-      }
-    }
-
-    usize empty_slot = (home + MH + 1) & __bmask;
-    constexpr usize SEARCH_LIMIT = 512;
-
-    for ( usize i = 0; i < SEARCH_LIMIT; ++i ) {
-      usize check = (empty_slot + i) & __bmask;
-      if ( !entries[check].key ) {
-        usize result_slot;
-        if ( find_closer_slot(home, check, result_slot) ) {
-          entries[result_slot] = Nd{ hsh, micron::move(value) };
-          ++length;
-          return micron::addressof(entries[result_slot].value);
-        }
-        break;
-      }
-    }
-
-    resize();
-    return insert(k, micron::move(value));
+    return __insert_hashed(hsh, micron::move(value));
   }
 
   template<typename... Args>
@@ -599,33 +555,15 @@ public:
   emplace(const K &k, Args &&...args)
   {
     hash64_t hsh = hash<hash64_t>(k);
-
-    if ( hsh == 0 ) {
-      exc<except::library_error>("Invalid hash value (0)");
-    }
-
-    usize size = entries.max_size();
-    if ( size == 0 ) {
-      exc<except::library_error>("Hopscotch map not initialized");
-    }
-
-    usize home = __hop_impl::mix(hsh) & __bmask;
-
-    for ( usize i = 0; i <= MH; ++i ) {
-      usize probe = (home + i) & __bmask;
-      if ( entries[probe].key == hsh ) {
-        return micron::addressof(entries[probe].value);
-      }
-    }
+    if ( V *existing = find_hash(hsh) ) return existing;
 
     V value(micron::forward<Args>(args)...);
-    return insert(k, micron::move(value));
+    return __insert_hashed(hsh, micron::move(value));
   }
 
   V *
-  find(const K &k)
+  find_hash(hash64_t hsh)
   {
-    hash64_t hsh = hash<hash64_t>(k);
     if ( hsh == 0 ) {
       return nullptr;
     }
@@ -666,9 +604,21 @@ public:
   }
 
   const V *
+  find_hash(hash64_t hsh) const
+  {
+    return const_cast<hopscotch_map *>(this)->find_hash(hsh);
+  }
+
+  V *
+  find(const K &k)
+  {
+    return find_hash(hash<hash64_t>(k));
+  }
+
+  const V *
   find(const K &k) const
   {
-    return const_cast<hopscotch_map *>(this)->find(k);
+    return find_hash(hash<hash64_t>(k));
   }
 
   bool
@@ -678,9 +628,8 @@ public:
   }
 
   bool
-  erase(const K &k)
+  erase_hash(hash64_t hsh)
   {
-    hash64_t hsh = hash<hash64_t>(k);
     if ( hsh == 0 ) {
       return false;
     }
@@ -724,15 +673,22 @@ public:
     return false;
   }
 
+  bool
+  erase(const K &k)
+  {
+    return erase_hash(hash<hash64_t>(k));
+  }
+
   V &
   operator[](const K &k)
   {
-    V *v = find(k);
+    hash64_t hsh = hash<hash64_t>(k);
+    V *v = find_hash(hsh);
     if ( v ) {
       return *v;
     }
 
-    V *result = insert(k, V{});
+    V *result = __insert_hashed(hsh, V{});
     if ( !result ) {
       exc<except::library_error>("Failed to insert into hopscotch map");
     }

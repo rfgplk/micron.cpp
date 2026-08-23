@@ -13,6 +13,7 @@
 #include "../memory/actions.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/new.hpp"
+#include "../numerics.hpp"
 #include "../tuple.hpp"
 
 #include "../trees/rb.hpp"
@@ -90,13 +91,63 @@ class rb_map
 
   usize __total = 0;
 
+  template<typename T>
+  static T *
+  __alloc_array(usize count)
+  {
+    if ( count > static_cast<usize>(-1) / sizeof(T) ) exc<except::library_error>("rb_map: allocation overflow");
+    if constexpr ( alignof(T) <= 32 )
+      return static_cast<T *>(::operator new(sizeof(T) * count));
+    else
+      return static_cast<T *>(::operator new(sizeof(T) * count, static_cast<std::align_val_t>(alignof(T))));
+  }
+
+  template<typename T>
+  static void
+  __free_array(T *ptr) noexcept
+  {
+    if ( !ptr ) return;
+    if constexpr ( alignof(T) <= 32 )
+      ::operator delete(ptr);
+    else
+      ::operator delete(ptr, static_cast<std::align_val_t>(alignof(T)));
+  }
+
+  struct __raw_bins_tag { };
+
+  rb_map(__raw_bins_tag, usize count) { __alloc_bins(count); }
+
   static usize
   __round_pow2(usize n) noexcept
   {
     if ( n <= __min_bins ) return __min_bins;
     usize p = 1;
-    while ( p < n ) p <<= 1;
+    while ( p < n ) {
+      usize next = p << 1u;
+      if ( next <= p ) return p;
+      p = next;
+    }
     return p;
+  }
+
+  static constexpr usize
+  __load_limit(usize bins) noexcept
+  {
+    return (bins / __load_denom) * __load_num + ((bins % __load_denom) * __load_num) / __load_denom;
+  }
+
+  void
+  __alloc_bins(usize count)
+  {
+    if ( count > static_cast<usize>(numeric_limits<i32>::max()) ) exc<except::library_error>("rb_map: bin index capacity overflow");
+    __bins = __alloc_array<__bin_t>(count);
+    for ( usize i = 0; i < count; ++i ) {
+      __bins[i].list_head = -1;
+      __bins[i].tree = nullptr;
+      __bins[i].chain_len = 0;
+    }
+    __n_bins = count;
+    __bin_mask = count - 1u;
   }
 
   __attribute__((always_inline)) usize
@@ -108,20 +159,50 @@ class rb_map
   void
   __grow_soa()
   {
+    if ( __cap_soa > static_cast<usize>(numeric_limits<i32>::max()) / 2u )
+      exc<except::library_error>("rb_map: SoA index capacity overflow");
     usize new_cap = __cap_soa == 0 ? 16 : __cap_soa * 2;
-    auto *nh = static_cast<hash64_t *>(::operator new(sizeof(hash64_t) * new_cap));
-    auto *nn = static_cast<i32 *>(::operator new(sizeof(i32) * new_cap));
-    auto *nb = static_cast<i32 *>(::operator new(sizeof(i32) * new_cap));
-    auto *nk = static_cast<K *>(::operator new(sizeof(K) * new_cap));
-    auto *nv = static_cast<V *>(::operator new(sizeof(V) * new_cap));
+    hash64_t *nh = nullptr;
+    i32 *nn = nullptr;
+    i32 *nb = nullptr;
+    K *nk = nullptr;
+    V *nv = nullptr;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      nh = __alloc_array<hash64_t>(new_cap);
+      nn = __alloc_array<i32>(new_cap);
+      nb = __alloc_array<i32>(new_cap);
+      nk = __alloc_array<K>(new_cap);
+      nv = __alloc_array<V>(new_cap);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __free_array(nv);
+      __free_array(nk);
+      __free_array(nb);
+      __free_array(nn);
+      __free_array(nh);
+      throw;
+    }
+#endif
     usize moved = 0;
     if ( __n_soa > 0 ) {
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       try {
         for ( ; moved < __n_soa; ++moved ) {
-          new (nk + moved) K(micron::move(__keys[moved]));
+          if constexpr ( micron::is_nothrow_move_constructible_v<K> && micron::is_nothrow_move_constructible_v<V> )
+            new (nk + moved) K(micron::move(__keys[moved]));
+          else if constexpr ( micron::is_copy_constructible_v<K> )
+            new (nk + moved) K(__keys[moved]);
+          else
+            new (nk + moved) K(micron::move(__keys[moved]));
           try {
-            new (nv + moved) V(micron::move(__values[moved]));
+            if constexpr ( micron::is_nothrow_move_constructible_v<K> && micron::is_nothrow_move_constructible_v<V> )
+              new (nv + moved) V(micron::move(__values[moved]));
+            else if constexpr ( micron::is_copy_constructible_v<K> )
+              new (nv + moved) V(__values[moved]);
+            else
+              new (nv + moved) V(micron::move(__values[moved]));
           } catch ( ... ) {
             nk[moved].~K();
             throw;
@@ -132,11 +213,11 @@ class rb_map
           nv[i].~V();
           nk[i].~K();
         }
-        ::operator delete(nv);
-        ::operator delete(nk);
-        ::operator delete(nb);
-        ::operator delete(nn);
-        ::operator delete(nh);
+        __free_array(nv);
+        __free_array(nk);
+        __free_array(nb);
+        __free_array(nn);
+        __free_array(nh);
         throw;
       }
 #else
@@ -153,11 +234,11 @@ class rb_map
         __values[i].~V();
       }
     }
-    if ( __hashes ) ::operator delete(__hashes);
-    if ( __keys ) ::operator delete(__keys);
-    if ( __values ) ::operator delete(__values);
-    if ( __next ) ::operator delete(__next);
-    if ( __home_bin ) ::operator delete(__home_bin);
+    __free_array(__hashes);
+    __free_array(__keys);
+    __free_array(__values);
+    __free_array(__next);
+    __free_array(__home_bin);
     __hashes = nh;
     __keys = nk;
     __values = nv;
@@ -167,7 +248,7 @@ class rb_map
   }
 
   void
-  __soa_remove(i32 idx) noexcept
+  __soa_remove(i32 idx)
   {
     i32 last = static_cast<i32>(__n_soa) - 1;
     if ( idx != last ) {
@@ -203,11 +284,23 @@ class rb_map
     auto *t = new __tree_t();
 
     i32 cur = b.list_head;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
     while ( cur != -1 ) {
       i32 nxt = __next[cur];
-      t->insert(__tree_entry(__hashes[cur], micron::move(__keys[cur]), micron::move(__values[cur])));
+      if constexpr ( micron::is_copy_constructible_v<K> )
+        t->insert(__tree_entry(__hashes[cur], __keys[cur], __values[cur]));
+      else
+        t->insert(__tree_entry(__hashes[cur], micron::move(__keys[cur]), micron::move(__values[cur])));
       cur = nxt;
     }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      delete t;
+      throw;
+    }
+#endif
 
     b.list_head = -1;
     b.tree = t;
@@ -253,7 +346,9 @@ class rb_map
   bool
   __resize_if_needed()
   {
-    if ( __total < __n_bins * __load_num / __load_denom ) return false;
+    if ( __total < __load_limit(__n_bins) ) return false;
+    if ( __n_bins > static_cast<usize>(numeric_limits<i32>::max()) / 2u )
+      exc<except::library_error>("rb_map: bin index capacity overflow");
     __rehash(__n_bins * 2);
     return true;
   }
@@ -264,8 +359,20 @@ class rb_map
     if ( new_n_bins < __min_bins ) new_n_bins = __min_bins;
     new_n_bins = __round_pow2(new_n_bins);
 
+    if constexpr ( micron::is_copy_constructible_v<K> ) {
+      rb_map next(__raw_bins_tag{}, new_n_bins);
+      for ( usize i = 0; i < __n_soa; ++i ) next.__insert_absent(__hashes[i], __keys[i], __values[i]);
+      for ( usize i = 0; i < __n_bins; ++i ) {
+        const __tree_t *tree = __bins[i].tree;
+        if ( !tree ) continue;
+        tree->for_each([&next](const __tree_entry &entry) { next.__insert_absent(entry.hash, entry.key, entry.value); });
+      }
+      swap(next);
+      return;
+    }
+
     usize total = __total;
-    auto *snap = total ? static_cast<__tree_entry *>(::operator new(sizeof(__tree_entry) * total)) : nullptr;
+    auto *snap = total ? __alloc_array<__tree_entry>(total) : nullptr;
     usize w = 0;
 
 #if !defined(__micron_freestanding) || defined(__micron_eh)
@@ -276,7 +383,7 @@ class rb_map
       }
     } catch ( ... ) {
       for ( usize j = 0; j < w; ++j ) snap[j].~__tree_entry();
-      if ( snap ) ::operator delete(snap);
+      __free_array(snap);
       throw;
     }
 #else
@@ -304,10 +411,10 @@ class rb_map
         }
       } catch ( ... ) {
         for ( usize j = 0; j < w; ++j ) snap[j].~__tree_entry();
-        if ( snap ) ::operator delete(snap);
+        __free_array(snap);
         for ( usize i = 0; i < __n_bins; ++i )
           if ( __bins[i].tree ) delete __bins[i].tree;
-        ::operator delete(__bins);
+        __free_array(__bins);
         __bins = nullptr;
         __n_bins = 0;
         __bin_mask = 0;
@@ -326,11 +433,11 @@ class rb_map
 #endif
       for ( usize i = 0; i < __n_bins; ++i )
         if ( __bins[i].tree ) delete __bins[i].tree;
-      ::operator delete(__bins);
+      __free_array(__bins);
       __bins = nullptr;
     }
 
-    __bins = static_cast<__bin_t *>(::operator new(sizeof(__bin_t) * new_n_bins));
+    __bins = __alloc_array<__bin_t>(new_n_bins);
     for ( usize i = 0; i < new_n_bins; ++i ) {
       __bins[i].list_head = -1;
       __bins[i].tree = nullptr;
@@ -372,11 +479,11 @@ class rb_map
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
       for ( usize j = consumed; j < w; ++j ) snap[j].~__tree_entry();
-      if ( snap ) ::operator delete(snap);
+      __free_array(snap);
       throw;
     }
 #endif
-    if ( snap ) ::operator delete(snap);
+    __free_array(snap);
   }
 
   void
@@ -385,7 +492,7 @@ class rb_map
     if ( __bins ) {
       for ( usize i = 0; i < __n_bins; ++i )
         if ( __bins[i].tree ) delete __bins[i].tree;
-      ::operator delete(__bins);
+      __free_array(__bins);
       __bins = nullptr;
     }
     if ( __n_soa > 0 ) {
@@ -394,11 +501,11 @@ class rb_map
         __values[i].~V();
       }
     }
-    if ( __hashes ) ::operator delete(__hashes);
-    if ( __keys ) ::operator delete(__keys);
-    if ( __values ) ::operator delete(__values);
-    if ( __next ) ::operator delete(__next);
-    if ( __home_bin ) ::operator delete(__home_bin);
+    __free_array(__hashes);
+    __free_array(__keys);
+    __free_array(__values);
+    __free_array(__next);
+    __free_array(__home_bin);
     __hashes = nullptr;
     __keys = nullptr;
     __values = nullptr;
@@ -409,6 +516,72 @@ class rb_map
     __n_bins = 0;
     __bin_mask = 0;
     __total = 0;
+  }
+
+  V *
+  __find_hash(hash64_t h, const K &key)
+  {
+    if ( !__bins ) return nullptr;
+    __bin_t &bin = __bins[__bin_of(h)];
+    if ( bin.tree ) {
+      __tree_entry *entry = bin.tree->find_by(
+          [h, &key](const __tree_entry &data) { return h != data.hash ? h < data.hash : key < data.key; },
+          [h, &key](const __tree_entry &data) { return data.hash != h ? data.hash < h : data.key < key; });
+      return entry ? micron::addressof(entry->value) : nullptr;
+    }
+    for ( i32 i = bin.list_head; i != -1; i = __next[i] )
+      if ( __hashes[i] == h && __keys[i] == key ) return micron::addressof(__values[i]);
+    return nullptr;
+  }
+
+  const V *
+  __find_hash(hash64_t h, const K &key) const
+  {
+    return const_cast<rb_map *>(this)->__find_hash(h, key);
+  }
+
+  template<class KK, class VV>
+  micron::pair<bool, V *>
+  __insert_absent(hash64_t h, KK &&key, VV &&value)
+  {
+    if ( __total == numeric_limits<usize>::max() ) exc<except::library_error>("rb_map: size overflow");
+    if ( __total + 1u > __load_limit(__n_bins) ) {
+      if ( __n_bins > static_cast<usize>(numeric_limits<i32>::max()) / 2u )
+        exc<except::library_error>("rb_map: bin index capacity overflow");
+      __rehash(__n_bins * 2u);
+    }
+    usize bin_index = __bin_of(h);
+    __bin_t &bin = __bins[bin_index];
+
+    if ( !bin.tree && bin.chain_len + 1u >= __treeify_threshold && __n_bins >= __min_treeify_cap ) __treeify(bin_index);
+    if ( bin.tree ) {
+      __tree_entry &inserted =
+          bin.tree->insert(__tree_entry(h, K(micron::forward<KK>(key)), V(micron::forward<VV>(value))));
+      ++__total;
+      return { true, micron::addressof(inserted.value) };
+    }
+
+    if ( __n_soa == __cap_soa ) __grow_soa();
+    i32 index = static_cast<i32>(__n_soa);
+    new (__keys + index) K(micron::forward<KK>(key));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      new (__values + index) V(micron::forward<VV>(value));
+    } catch ( ... ) {
+      __keys[index].~K();
+      throw;
+    }
+#else
+    new (__values + index) V(micron::forward<VV>(value));
+#endif
+    __hashes[index] = h;
+    __next[index] = bin.list_head;
+    __home_bin[index] = static_cast<i32>(bin_index);
+    bin.list_head = index;
+    ++bin.chain_len;
+    ++__n_soa;
+    ++__total;
+    return { true, micron::addressof(__values[index]) };
   }
 
 public:
@@ -423,20 +596,10 @@ public:
 
   rb_map()
   {
-    __n_bins = __min_bins;
-    __bin_mask = __n_bins - 1u;
-    __bins = static_cast<__bin_t *>(::operator new(sizeof(__bin_t) * __n_bins));
-    for ( usize i = 0; i < __n_bins; ++i ) {
-      __bins[i].list_head = -1;
-      __bins[i].tree = nullptr;
-      __bins[i].chain_len = 0;
-    }
+    __alloc_bins(__min_bins);
   }
 
-  explicit rb_map(usize cap) : rb_map()
-  {
-    if ( cap > __min_bins ) __rehash(cap);
-  }
+  explicit rb_map(usize cap) { __alloc_bins(__round_pow2(cap)); }
 
   rb_map(const rb_map &) = delete;
   rb_map &operator=(const rb_map &) = delete;
@@ -508,14 +671,7 @@ public:
   clear()
   {
     __free_all();
-    __n_bins = __min_bins;
-    __bin_mask = __n_bins - 1u;
-    __bins = static_cast<__bin_t *>(::operator new(sizeof(__bin_t) * __n_bins));
-    for ( usize i = 0; i < __n_bins; ++i ) {
-      __bins[i].list_head = -1;
-      __bins[i].tree = nullptr;
-      __bins[i].chain_len = 0;
-    }
+    __alloc_bins(__min_bins);
   }
 
   bool
@@ -525,36 +681,37 @@ public:
   }
 
   V *
-  find(const K &k) noexcept
+  find_hash(hash64_t h, const K &key)
   {
-    hash64_t h = hash<hash64_t>(k);
-    __bin_t &b = __bins[__bin_of(h)];
-    if ( b.tree ) {
-      // heterogeneous lookup by (hash,key)
-      __tree_entry *e = b.tree->find_by([h, &k](const __tree_entry &d) { return h != d.hash ? h < d.hash : k < d.key; },
-                                        [h, &k](const __tree_entry &d) { return d.hash != h ? d.hash < h : d.key < k; });
-      return e ? micron::addressof(e->value) : nullptr;
-    }
-    for ( i32 i = b.list_head; i != -1; i = __next[i] ) {
-      if ( __hashes[i] == h && __keys[i] == k ) return micron::addressof(__values[i]);
-    }
-    return nullptr;
+    return __find_hash(h, key);
   }
 
   const V *
-  find(const K &k) const noexcept
+  find_hash(hash64_t h, const K &key) const
   {
-    return const_cast<rb_map *>(this)->find(k);
+    return __find_hash(h, key);
+  }
+
+  V *
+  find(const K &key)
+  {
+    return __find_hash(hash<hash64_t>(key), key);
+  }
+
+  const V *
+  find(const K &key) const
+  {
+    return __find_hash(hash<hash64_t>(key), key);
   }
 
   bool
-  contains(const K &k) const noexcept
+  contains(const K &k) const
   {
     return find(k) != nullptr;
   }
 
   usize
-  count(const K &k) const noexcept
+  count(const K &k) const
   {
     return find(k) ? 1u : 0u;
   }
@@ -583,60 +740,11 @@ public:
   insert_or_assign(KK &&k, VV &&v)
   {
     hash64_t h = hash<hash64_t>(k);
-
-    {
-      __bin_t &b = __bins[__bin_of(h)];
-      if ( b.tree ) {
-        __tree_entry *e = b.tree->find_by([h, &k](const __tree_entry &d) { return h != d.hash ? h < d.hash : k < d.key; },
-                                          [h, &k](const __tree_entry &d) { return d.hash != h ? d.hash < h : d.key < k; });
-        if ( e ) {
-          e->value = micron::forward<VV>(v);
-          return { false, micron::addressof(e->value) };
-        }
-      } else {
-        for ( i32 i = b.list_head; i != -1; i = __next[i] ) {
-          if ( __hashes[i] == h && __keys[i] == k ) {
-            __values[i] = micron::forward<VV>(v);
-            return { false, micron::addressof(__values[i]) };
-          }
-        }
-      }
+    if ( V *existing = __find_hash(h, k) ) {
+      *existing = micron::forward<VV>(v);
+      return { false, existing };
     }
-
-    if ( __total + 1u > __n_bins * __load_num / __load_denom ) __rehash(__n_bins * 2);
-    usize bi = __bin_of(h);
-    __bin_t &b = __bins[bi];
-
-    if ( !b.tree && b.chain_len + 1u >= __treeify_threshold && __n_bins >= __min_treeify_cap ) {
-      __treeify(bi);
-    }
-    if ( b.tree ) {
-      __tree_entry &inserted = b.tree->insert(__tree_entry(h, K(micron::forward<KK>(k)), V(micron::forward<VV>(v))));
-      ++__total;
-      return { true, micron::addressof(inserted.value) };
-    }
-
-    if ( __n_soa == __cap_soa ) __grow_soa();
-    i32 ix = static_cast<i32>(__n_soa);
-    new (__keys + ix) K(micron::forward<KK>(k));
-#if !defined(__micron_freestanding) || defined(__micron_eh)
-    try {
-      new (__values + ix) V(micron::forward<VV>(v));
-    } catch ( ... ) {
-      __keys[ix].~K();
-      throw;
-    }
-#else
-    new (__values + ix) V(micron::forward<VV>(v));
-#endif
-    __hashes[ix] = h;
-    __next[ix] = b.list_head;
-    __home_bin[ix] = static_cast<i32>(bi);
-    b.list_head = ix;
-    ++b.chain_len;
-    ++__n_soa;
-    ++__total;
-    return { true, micron::addressof(__values[ix]) };
+    return __insert_absent(h, micron::forward<KK>(k), micron::forward<VV>(v));
   }
 
   template<class KK, class VV>
@@ -644,10 +752,18 @@ public:
   micron::pair<bool, V *>
   insert(KK &&k, VV &&v)
   {
+    hash64_t h = hash<hash64_t>(k);
+    if ( V *existing = __find_hash(h, k) ) return { false, existing };
+    return __insert_absent(h, micron::forward<KK>(k), micron::forward<VV>(v));
+  }
 
-    V *ex = find(k);
-    if ( ex ) return { false, ex };
-    return insert_or_assign(micron::forward<KK>(k), micron::forward<VV>(v));
+  template<class KK, class VV>
+    requires(micron::is_same_v<micron::remove_cvref_t<KK>, K> && micron::is_same_v<micron::remove_cvref_t<VV>, V>)
+  micron::pair<bool, V *>
+  insert_hash(hash64_t h, KK &&k, VV &&v)
+  {
+    if ( V *existing = __find_hash(h, k) ) return { false, existing };
+    return __insert_absent(h, micron::forward<KK>(k), micron::forward<VV>(v));
   }
 
   template<class KK, typename... Args>
@@ -655,17 +771,18 @@ public:
   micron::pair<bool, V *>
   emplace(KK &&k, Args &&...args)
   {
-    V *ex = find(k);
-    if ( ex ) return { false, ex };
-    return insert_or_assign(micron::forward<KK>(k), V(micron::forward<Args>(args)...));
+    hash64_t h = hash<hash64_t>(k);
+    if ( V *existing = __find_hash(h, k) ) return { false, existing };
+    return __insert_absent(h, micron::forward<KK>(k), V(micron::forward<Args>(args)...));
   }
 
   V &
   operator[](const K &k)
   {
-    V *v = find(k);
+    hash64_t h = hash<hash64_t>(k);
+    V *v = __find_hash(h, k);
     if ( v ) return *v;
-    auto r = insert_or_assign(k, V{});
+    auto r = __insert_absent(h, k, V{});
     return *r.b;
   }
 
