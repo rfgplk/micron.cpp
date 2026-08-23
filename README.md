@@ -54,6 +54,22 @@ or https:
 
 Below are the specific steps you need to take to properly set up micron for your desired target.
 
+###### the Duck build tool
+
+The authoritative build tool for micron (and micron powered projects) is `duck`. Duck itself is a no-build tool, inspired by Alexey Kutepov's (better known as Tsoding) nob idea. Duck does not read any build files (except for .duck batch command files), instead it orchestrates and marshalls compiler flags directly to the compiler.
+
+To build it run:
+
+`sh scripts/bootstap_duck.sh` 
+
+or
+
+`/usr/bin/g++ -std=c++26 -Ofast -fmodulo-sched -fmodulo-sched-allow-regmoves -fgcse-sm -fgcse-las -march=native -ffreestanding -nostdlib -nostdlib++ -fno-stack-protector -fexceptions -frtti -fasynchronous-unwind-tables -D__micron_eh -Wl,--eh-frame-hdr -m64 -Wall -Wextra -Wpedantic -Wno-variadic-macros -Wno-inline -fext-numeric-literals -Wno-odr -Wno-lto-type-mismatch -fdiagnostics-color=always -fconcepts-diagnostics-depth=2 tools/src/main.cc ./start/start.s ./start/start.cpp ./start/eh_runtime.cpp -I./src -L./libs/ -o bin/duck`
+
+and then compile any one of our examples tests, ie:
+
+`duck run tests/rigor/vector.cpp`
+
 ###### amd64 / x86_64 / i386 (x86)
 
 The simplest, most straightforward installation; just copy all the files in `src/` and `external/` to either your desired location; or to the system header include directories `/usr/include/` or `/usr/local/include/`. Either use `cp -r`, `rsync`, or you can run `scripts/install_local.py` and `scripts/install_externals.py`, which will automatically copy all files to `/usr/include/micron` and `/usr/include/external` (NOTE: directories will be created if they don't exist).
