@@ -255,7 +255,7 @@ struct chars4_result {
   }
 };
 
-inline usize
+inline constexpr usize
 to_chars(char *buf, usize cap, f64 v, float_format fmt = float_format::shortest, i32 precision = -1)
 {
   if ( buf == nullptr ) return 0;

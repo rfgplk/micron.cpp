@@ -44,6 +44,7 @@ __u64(const char *s, usize n, u64 want)
   u64 v = 0;
   return mc::try_parse_uint64(s, n, v) && v == want;
 }
+
 static_assert(__u64("0", 1, 0));
 static_assert(__u64("12345", 5, 12345u));
 static_assert(__u64("18446744073709551615", 20, ~static_cast<u64>(0)));
@@ -54,6 +55,7 @@ __i64(const char *s, usize n, i64 want)
   i64 v = 0;
   return mc::try_parse_int64(s, n, v) && v == want;
 }
+
 static_assert(__i64("-987", 4, -987));
 static_assert(__i64("+7", 2, 7));
 static_assert(__i64("0", 1, 0));
@@ -64,6 +66,7 @@ __hex(const char *s, usize n, u64 want)
   u64 v = 0;
   return mc::try_parse_hex64(s, n, v) && v == want;
 }
+
 static_assert(__hex("beef", 4, 0xbeefu));
 static_assert(__hex("DEADBEEF", 8, 0xDEADBEEFu));
 
@@ -74,6 +77,7 @@ __u64_rejects(const char *s, usize n)
   u64 v = 0;
   return !mc::try_parse_uint64(s, n, v);
 }
+
 static_assert(__u64_rejects("12x", 3));
 static_assert(__u64_rejects("", 0));
 
@@ -112,6 +116,7 @@ __is_inf(const char *s, usize n, bool neg)
   if ( !mc::try_parse_double(s, n, v) ) return false;
   return mc::math::ieee::to_bits<f64>(v) == mc::math::ieee::to_bits<f64>(neg ? -__builtin_huge_val() : __builtin_huge_val());
 }
+
 static_assert(__is_inf("inf", 3, false));
 static_assert(__is_inf("-inf", 4, true));
 
@@ -122,6 +127,7 @@ __neg_zero(void)
   f64 v = 1.0;
   return mc::try_parse_double("-0.0", 4, v) && mc::math::ieee::to_bits<f64>(v) == (static_cast<u64>(1) << 63);
 }
+
 static_assert(__neg_zero());
 
 // strict rejects what a prefix parse would accept
@@ -131,6 +137,7 @@ __d_rejects(const char *s, usize n)
   f64 v = 0.0;
   return !mc::try_parse_double(s, n, v);
 }
+
 static_assert(__d_rejects("1.5x", 4));
 static_assert(__d_rejects("abc", 3));
 static_assert(__d_rejects("", 0));
@@ -142,6 +149,7 @@ __f(const char *s, usize n, f32 want)
   f32 v = 0.0f;
   return mc::try_parse_float(s, n, v) && v == want;
 }
+
 static_assert(__f("2.5", 3, 2.5f));
 static_assert(__f("-0.125", 6, -0.125f));
 static_assert(__f("1e10", 4, 1e10f));
@@ -159,6 +167,7 @@ __d2s(f64 v, const char *want, usize wn)
     if ( b[i] != want[i] ) return false;
   return true;
 }
+
 // d2s emits shortest-form with a mandatory fractional digit: 0.0 is "0.0", not "0"
 static_assert(__d2s(1.5, "1.5", 3));
 static_assert(__d2s(0.0, "0.0", 3));
@@ -172,6 +181,7 @@ __f2s_starts(f32 v, char c)
   const usize n = r32::f2s_buffered(v, b);
   return n > 0 && b[0] == c;
 }
+
 static_assert(__f2s_starts(2.5f, '2'));
 static_assert(__f2s_starts(-1.0f, '-'));
 
@@ -187,9 +197,26 @@ __zmij_selected(f64 v, const char *want, usize wn)
     if ( a[i] != want[i] || b[i] != want[i] ) return false;
   return true;
 }
+
 static_assert(__zmij_selected(1.5, "1.5", 3));
 static_assert(__zmij_selected(1e-163, "1e-163", 6));
 static_assert(__zmij_selected(-0.0, "-0.0", 4));
+
+consteval bool
+__public_shortest(u64 bits, const char *want, usize wn)
+{
+  char out[mc::f64_shortest_chars_capacity] = {};
+  const f64 value = mc::math::ieee::from_bits<f64>(bits);
+  const usize n = mc::to_chars(out, sizeof(out), value);
+  if ( n != wn ) return false;
+  for ( usize i = 0; i < n; ++i )
+    if ( out[i] != want[i] ) return false;
+  f64 parsed = 0;
+  return mc::try_parse_double(out, n, parsed) && mc::math::ieee::to_bits(parsed) == bits;
+}
+
+static_assert(__public_shortest(mc::math::ieee::to_bits<f64>(1.5), "1.5", 3));
+static_assert(__public_shortest(0x2db34076d9def5a7ull, "1.512143231392231e-88", 21));
 
 consteval bool
 __zmij_batch()
@@ -206,6 +233,7 @@ __zmij_batch()
   }
   return true;
 }
+
 static_assert(__zmij_batch());
 
 consteval bool
@@ -218,6 +246,7 @@ __zmij_precision(f64 v, u32 precision, const char *want, usize wn)
     if ( b[i] != want[i] ) return false;
   return true;
 }
+
 static_assert(__zmij_precision(9.99, 1, "1.0e+01", 7));
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -280,15 +309,15 @@ __d2f_rejects(f64 v, u32 prec, usize cap)
   char b[64] = {};
   return ry::d2f_buffered(v, b, cap, prec) == 0;
 }
+
 static_assert(__d2f_rejects(1.5, 2, 3));
 static_assert(!__d2f_rejects(1.5, 2, 4));
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // to_chars / from_chars
 //
-// the integer and bool halves fold; the float to_chars does not (d2s_buffered is constexpr but
-// the porcelain overload set is not marked, and the hex/general paths reach __exact_round which
-// is fine -- what cannot fold is nothing here, so both directions are asserted).
+// The integer, bool, and float halves fold. The public shortest float overload is asserted above;
+// the fixed-buffer integer and strict from_chars overloads are asserted here.
 
 consteval bool
 __tc(auto v, u32 base, const char *want, usize wn)
@@ -300,6 +329,7 @@ __tc(auto v, u32 base, const char *want, usize wn)
     if ( b[i] != want[i] ) return false;
   return true;
 }
+
 static_assert(__tc(0, 10u, "0", 1));
 static_assert(__tc(-1, 10u, "-1", 2));
 static_assert(__tc(255u, 16u, "ff", 2));
@@ -314,6 +344,7 @@ __fc(const char *s, usize n, u32 base, I want)
   I v{};
   return mc::from_chars(v, s, n, base) && v == want;
 }
+
 static_assert(__fc<i32>("-42", 3, 10u, -42));
 static_assert(__fc<u64>("18446744073709551615", 20, 10u, ~0ull));
 static_assert(__fc<u8>("255", 3, 10u, 255));
@@ -327,13 +358,14 @@ __fc_rejects(const char *s, usize n, u32 base = 10u)
   I v{};
   return !mc::from_chars(v, s, n, base);
 }
-static_assert(__fc_rejects<u8>("256", 3));           // out of range for the width
+
+static_assert(__fc_rejects<u8>("256", 3));      // out of range for the width
 static_assert(__fc_rejects<i8>("128", 3));
-static_assert(__fc_rejects<u32>("-1", 2));           // unsigned rejects a sign
-static_assert(__fc_rejects<i32>(" 1", 2));           // strict: no leading whitespace
-static_assert(__fc_rejects<i32>("1 ", 2));           // strict: no trailing whitespace
+static_assert(__fc_rejects<u32>("-1", 2));      // unsigned rejects a sign
+static_assert(__fc_rejects<i32>(" 1", 2));      // strict: no leading whitespace
+static_assert(__fc_rejects<i32>("1 ", 2));      // strict: no trailing whitespace
 static_assert(__fc_rejects<i32>("1x", 2));
-static_assert(__fc_rejects<i32>("2", 1, 2u));        // digit outside the base
+static_assert(__fc_rejects<i32>("2", 1, 2u));      // digit outside the base
 
 consteval bool
 __tc_bool(bool v, const char *want, usize wn)
@@ -345,6 +377,7 @@ __tc_bool(bool v, const char *want, usize wn)
     if ( b[i] != want[i] ) return false;
   return true;
 }
+
 static_assert(__tc_bool(true, "true", 4));
 static_assert(__tc_bool(false, "false", 5));
 
@@ -354,6 +387,7 @@ __fc_bool(const char *s, usize n, bool want)
   bool v = false;
   return mc::from_chars(v, s, n) && v == want;
 }
+
 static_assert(__fc_bool("true", 4, true));
 static_assert(__fc_bool("false", 5, false));
 static_assert(__fc_bool("1", 1, true));
@@ -370,6 +404,7 @@ __b2h(bool upper, const char *want)
     if ( b[i] != want[i] ) return false;
   return true;
 }
+
 static_assert(__b2h(false, "ab0f"));
 static_assert(__b2h(true, "AB0F"));
 
@@ -380,6 +415,7 @@ __fc_f64(const char *s, usize n, f64 want)
   f64 v = 0.0;
   return mc::from_chars(v, s, n) && v == want;
 }
+
 static_assert(__fc_f64("1.5", 3, 1.5));
 static_assert(__fc_f64("1e5", 3, 100000.0));
 static_assert(__fc_f64("0x1p+0", 6, 1.0));
@@ -390,6 +426,7 @@ __fc_f64_rejects(const char *s, usize n)
   f64 v = 0.0;
   return !mc::from_chars(v, s, n);
 }
+
 static_assert(__fc_f64_rejects(" 1.5", 4));
 static_assert(__fc_f64_rejects("1.5x", 4));
 
@@ -410,6 +447,7 @@ __roundtrip(f64 v)
   if ( !mc::try_parse_double(b, n, back) ) return false;
   return mc::math::ieee::to_bits<f64>(back) == mc::math::ieee::to_bits<f64>(v);
 }
+
 static_assert(__roundtrip(1.5));
 static_assert(__roundtrip(0.0));
 static_assert(__roundtrip(-0.0));      // the sign of a zero has to survive both directions
@@ -419,8 +457,8 @@ static_assert(__roundtrip(3.141592653589793));
 static_assert(__roundtrip(2.718281828459045));
 static_assert(__roundtrip(1e300));
 static_assert(__roundtrip(1e-300));
-static_assert(__roundtrip(1.7976931348623157e308));         // DBL_MAX
-static_assert(__roundtrip(2.2250738585072014e-308));        // DBL_MIN, smallest normal
+static_assert(__roundtrip(1.7976931348623157e308));       // DBL_MAX
+static_assert(__roundtrip(2.2250738585072014e-308));      // DBL_MIN, smallest normal
 static_assert(__roundtrip(-2.2250738585072014e-308));
 static_assert(__roundtrip(123456789.123456789));
 static_assert(__roundtrip(0.1));
@@ -439,6 +477,7 @@ __u2b(u64 v, u32 base, const char *want, usize wn)
     if ( b[i] != want[i] ) return false;
   return true;
 }
+
 static_assert(__u2b(12345, 10, "12345", 5));
 static_assert(__u2b(0, 10, "0", 1));
 static_assert(__u2b(0xbeef, 16, "beef", 4));
@@ -454,6 +493,7 @@ __i2b(i64 v, const char *want, usize wn)
     if ( b[i] != want[i] ) return false;
   return true;
 }
+
 static_assert(__i2b(-42, "-42", 3));
 static_assert(__i2b(0, "0", 1));
 static_assert(__i2b(-9223372036854775807LL - 1, "-9223372036854775808", 20));      // INT64_MIN
@@ -464,6 +504,7 @@ __b2b(void)
   char t[8] = {}, f[8] = {};
   return fi::bool_to_buf(t, 8, true) == 4 && t[0] == 't' && fi::bool_to_buf(f, 8, false) == 5 && f[0] == 'f';
 }
+
 static_assert(__b2b());
 
 // the format-spec parser
@@ -474,6 +515,7 @@ __spec(void)
   const fi::fmt_spec p = fi::parse_spec(s, s + 5);
   return p.align == '>' && p.width == 8 && p.prec == 3 && p.has_prec && p.type == 'f';
 }
+
 static_assert(__spec());
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -511,11 +553,11 @@ main()
   sb::require(rt_roundtrip(3.141592653589793));
   sb::require(rt_roundtrip(1e300));
   sb::require(rt_roundtrip(0.1));
-  sb::require(rt_roundtrip(f64_opaque(0x0000000000000000ull)));        // +0.0
-  sb::require(rt_roundtrip(f64_opaque(0x8000000000000000ull)));        // -0.0
-  sb::require(rt_roundtrip(f64_opaque(0x7FEFFFFFFFFFFFFFull)));        // DBL_MAX
-  sb::require(rt_roundtrip(f64_opaque(0x0010000000000000ull)));        // smallest normal
-  sb::require(rt_roundtrip(f64_opaque(0x0000000000000001ull)));        // smallest subnormal
+  sb::require(rt_roundtrip(f64_opaque(0x0000000000000000ull)));      // +0.0
+  sb::require(rt_roundtrip(f64_opaque(0x8000000000000000ull)));      // -0.0
+  sb::require(rt_roundtrip(f64_opaque(0x7FEFFFFFFFFFFFFFull)));      // DBL_MAX
+  sb::require(rt_roundtrip(f64_opaque(0x0010000000000000ull)));      // smallest normal
+  sb::require(rt_roundtrip(f64_opaque(0x0000000000000001ull)));      // smallest subnormal
 
   {
     u64 v = 0;
