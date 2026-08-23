@@ -53,6 +53,31 @@ template<typename K, typename V, usize N, usize NH = N>
   requires(N >= 16 and (N % 16) == 0 and NH <= N)
 class stack_swiss_map
 {
+public:
+  struct __emplace_tag { };
+
+  struct __swiss_entry {
+    K key;
+    V value;
+
+    __swiss_entry(const K &k, const V &v) : key(k), value(v) { }
+
+    __swiss_entry(K &&k, V &&v) : key(micron::move(k)), value(micron::move(v)) { }
+
+    template<typename KK, typename VV>
+    __swiss_entry(KK &&k, VV &&v) : key(micron::forward<KK>(k)), value(micron::forward<VV>(v))
+    {
+    }
+
+    template<typename... Args>
+    __swiss_entry(__emplace_tag, const K &k, Args &&...args) : key(k), value(micron::forward<Args>(args)...)
+    {
+    }
+  };
+
+private:
+  using __entry_storage_t = micron::aligned_storage_t<sizeof(__swiss_entry), alignof(__swiss_entry)>;
+
   static constexpr u8
   __h2(hash64_t h)
   {
@@ -85,6 +110,37 @@ class stack_swiss_map
   __b_index_key(hash64_t k)
   {
     return __h1(k) % N;
+  }
+
+  __attribute__((always_inline)) __swiss_entry &
+  __entry(usize i) noexcept
+  {
+    return *reinterpret_cast<__swiss_entry *>(&__entry_storage[i]);
+  }
+
+  __attribute__((always_inline)) const __swiss_entry &
+  __entry(usize i) const noexcept
+  {
+    return *reinterpret_cast<const __swiss_entry *>(&__entry_storage[i]);
+  }
+
+  __attribute__((always_inline)) static __mask
+  __clip(__mask mask, usize remaining) noexcept
+  {
+    if ( remaining >= 16 ) return mask;
+    return __mask(mask.bits & static_cast<i32>((u32{ 1 } << remaining) - 1u));
+  }
+
+  __attribute__((always_inline)) bool
+  __occupied(usize i) const noexcept
+  {
+    return __control_bytes[i] != __empty && __control_bytes[i] != __deleted;
+  }
+
+  __attribute__((always_inline)) void
+  __destroy_entry(usize i) noexcept
+  {
+    __entry(i).~__swiss_entry();
   }
 
   __mask
@@ -154,47 +210,83 @@ class stack_swiss_map
   }
 
   template<typename KK, typename VV>
-  micron::pair<bool, V *>
-  __insert_impl(KK &&key, VV &&value)
+  __attribute__((always_inline)) V *
+  __place(usize probe, u8 h2, KK &&key, VV &&value)
   {
-    V *existing = find(key);
-    if ( existing ) {
-      return { false, existing };
-    }
+    new (&__entry_storage[probe]) __swiss_entry(micron::forward<KK>(key), micron::forward<VV>(value));
+    __control_bytes[probe] = h2;
+    ++__size;
+    return micron::addressof(__entry(probe).value);
+  }
 
-    if ( __size >= N ) {
-      return { false, nullptr };
-    }
-
-    u8 h2 = __hash(key);
-    usize start = __b_index(key);
-
+  usize
+  __find_insert_slot(usize start) const noexcept
+  {
     for ( usize i = 0; i < NH; i += 16 ) {
       usize group_start = (start + i) % N;
+      usize remaining = NH - i;
 
       if ( group_start + 16 <= N ) {
-        __mask m = __match_empty_or_deleted(group_start);
-        if ( m.any() ) {
-          usize probe = group_start + m.lowest();
-          __control_bytes[probe] = h2;
-          __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
-          ++__size;
-          return { true, micron::addressof(__entries[probe].value) };
-        }
+        __mask m = __clip(__match_empty_or_deleted(group_start), remaining);
+        if ( m.any() ) return group_start + static_cast<usize>(m.lowest());
       } else {
-        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
-          usize probe = (start + i + j) % N;
-          if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
-            __control_bytes[probe] = h2;
-            __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
-            ++__size;
-            return { true, micron::addressof(__entries[probe].value) };
-          }
+        usize span = remaining < 16 ? remaining : 16;
+        for ( usize j = 0; j < span; ++j ) {
+          usize probe = (group_start + j) % N;
+          if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) return probe;
         }
       }
     }
+    return static_cast<usize>(-1);
+  }
 
-    return { false, nullptr };
+  const V *
+  __find_hash_impl(hash64_t kh, const K &key) const
+  {
+    u8 h2 = __h2(kh);
+    usize start = __b_index_key(kh);
+
+    for ( usize i = 0; i < NH; i += 16 ) {
+      usize group_start = (start + i) % N;
+      usize remaining = NH - i;
+
+      if ( group_start + 16 <= N ) {
+        __mask m = __clip(__match(h2, group_start), remaining);
+        while ( m.any() ) {
+          usize probe = group_start + static_cast<usize>(m.lowest());
+          if ( __entry(probe).key == key ) return micron::addressof(__entry(probe).value);
+          m.clear_lowest();
+        }
+        if ( __clip(__match_empty(group_start), remaining).any() ) return nullptr;
+      } else {
+        usize span = remaining < 16 ? remaining : 16;
+        for ( usize j = 0; j < span; ++j ) {
+          usize probe = (group_start + j) % N;
+          if ( __control_bytes[probe] == h2 && __entry(probe).key == key ) return micron::addressof(__entry(probe).value);
+          if ( __control_bytes[probe] == __empty ) return nullptr;
+        }
+      }
+    }
+    return nullptr;
+  }
+
+  template<typename KK, typename VV>
+  micron::pair<bool, V *>
+  __insert_hash_impl(hash64_t kh, KK &&key, VV &&value)
+  {
+    if ( V *existing = const_cast<V *>(__find_hash_impl(kh, key)) ) return { false, existing };
+    if ( __size >= N ) return { false, nullptr };
+    usize probe = __find_insert_slot(__b_index_key(kh));
+    if ( probe == static_cast<usize>(-1) ) return { false, nullptr };
+    return { true, __place(probe, __h2(kh), micron::forward<KK>(key), micron::forward<VV>(value)) };
+  }
+
+  template<typename KK, typename VV>
+  micron::pair<bool, V *>
+  __insert_impl(KK &&key, VV &&value)
+  {
+    hash64_t kh = hash<hash64_t>(key);
+    return __insert_hash_impl(kh, micron::forward<KK>(key), micron::forward<VV>(value));
   }
 
   template<typename VV>
@@ -202,45 +294,71 @@ class stack_swiss_map
   micron::pair<bool, V *>
   __load_impl(hash64_t key, VV &&value)
   {
-    V *existing = exists(key);
-    if ( existing ) {
-      return { false, existing };
+    return __insert_hash_impl(key, key, micron::forward<VV>(value));
+  }
+
+  void
+  __destroy_all() noexcept
+  {
+    if constexpr ( !micron::is_trivially_destructible_v<__swiss_entry> ) {
+      for ( usize i = 0; i < N; ++i )
+        if ( __occupied(i) ) __destroy_entry(i);
     }
+    micron::memset(__control_bytes, __empty, N);
+    __size = 0;
+  }
 
-    if ( __size >= N ) {
-      return { false, nullptr };
-    }
-
-    u8 h2 = __h2(key);
-    usize start = __b_index_key(key);
-
-    for ( usize i = 0; i < NH; i += 16 ) {
-      usize group_start = (start + i) % N;
-
-      if ( group_start + 16 <= N ) {
-        __mask m = __match_empty_or_deleted(group_start);
-        if ( m.any() ) {
-          usize probe = group_start + m.lowest();
-          __control_bytes[probe] = h2;
-          // NOTE: treat the hash as the key itself, obviously will only be valid for u64 keys
-          __entries[probe] = __swiss_entry{ key, micron::forward<VV>(value) };
+  void
+  __copy_from(const stack_swiss_map &other)
+  {
+    micron::memset(__control_bytes, __empty, N);
+    __size = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( usize i = 0; i < N; ++i ) {
+        u8 c = other.__control_bytes[i];
+        if ( c == __deleted ) {
+          __control_bytes[i] = __deleted;
+        } else if ( c != __empty ) {
+          new (&__entry_storage[i]) __swiss_entry(other.__entry(i));
+          __control_bytes[i] = c;
           ++__size;
-          return { true, micron::addressof(__entries[probe].value) };
-        }
-      } else {
-        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
-          usize probe = (start + i + j) % N;
-          if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
-            __control_bytes[probe] = h2;
-            __entries[probe] = __swiss_entry{ key, micron::forward<VV>(value) };
-            ++__size;
-            return { true, micron::addressof(__entries[probe].value) };
-          }
         }
       }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __destroy_all();
+      throw;
     }
+#endif
+  }
 
-    return { false, nullptr };
+  void
+  __move_from(stack_swiss_map &other)
+  {
+    micron::memset(__control_bytes, __empty, N);
+    __size = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( usize i = 0; i < N; ++i ) {
+        u8 c = other.__control_bytes[i];
+        if ( c == __deleted ) {
+          __control_bytes[i] = __deleted;
+        } else if ( c != __empty ) {
+          new (&__entry_storage[i]) __swiss_entry(micron::move(other.__entry(i)));
+          __control_bytes[i] = c;
+          ++__size;
+        }
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __destroy_all();
+      throw;
+    }
+#endif
+    other.__destroy_all();
   }
 
 public:
@@ -251,84 +369,40 @@ public:
   using mapped_type = V;
   using size_type = usize;
 
-  struct __swiss_entry {
-    K key;
-    V value;
-
-    __swiss_entry() : key{}, value{} { }
-
-    __swiss_entry(const K &k, const V &v) : key(k), value(v) { }
-
-    __swiss_entry(K &&k, V &&v) : key(micron::move(k)), value(micron::move(v)) { }
-  };
-
   alignas(16) u8 __control_bytes[N];
-  __swiss_entry __entries[N];
+  __entry_storage_t __entry_storage[N];
   usize __size = 0;
 
-  ~stack_swiss_map() = default;
+  ~stack_swiss_map() { clear(); }
 
   stack_swiss_map() : __size(0)
   {
-    for ( usize i = 0; i < N; ++i ) {
-      __control_bytes[i] = __empty;
-    }
+    micron::memset(__control_bytes, __empty, N);
   }
 
-  stack_swiss_map(const stack_swiss_map &other) : __size(other.__size)
-  {
-    for ( usize i = 0; i < N; ++i ) {
-      __control_bytes[i] = other.__control_bytes[i];
-      if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) {
-        __entries[i] = other.__entries[i];
-      }
-    }
-  }
+  stack_swiss_map(const stack_swiss_map &other) { __copy_from(other); }
 
-  stack_swiss_map(stack_swiss_map &&other) noexcept : __size(other.__size)
+  stack_swiss_map(stack_swiss_map &&other) noexcept(micron::is_nothrow_move_constructible_v<__swiss_entry>)
   {
-    for ( usize i = 0; i < N; ++i ) {
-      __control_bytes[i] = other.__control_bytes[i];
-      if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) {
-        __entries[i] = micron::move(other.__entries[i]);
-      }
-    }
-    other.__size = 0;
-    for ( usize i = 0; i < N; ++i ) {
-      other.__control_bytes[i] = __empty;
-    }
+    __move_from(other);
   }
 
   stack_swiss_map &
   operator=(const stack_swiss_map &other)
   {
     if ( this != &other ) {
-      __size = other.__size;
-      for ( usize i = 0; i < N; ++i ) {
-        __control_bytes[i] = other.__control_bytes[i];
-        if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) {
-          __entries[i] = other.__entries[i];
-        }
-      }
+      __destroy_all();
+      __copy_from(other);
     }
     return *this;
   }
 
   stack_swiss_map &
-  operator=(stack_swiss_map &&other) noexcept
+  operator=(stack_swiss_map &&other) noexcept(micron::is_nothrow_move_constructible_v<__swiss_entry>)
   {
     if ( this != &other ) {
-      __size = other.__size;
-      for ( usize i = 0; i < N; ++i ) {
-        __control_bytes[i] = other.__control_bytes[i];
-        if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) {
-          __entries[i] = micron::move(other.__entries[i]);
-        }
-      }
-      other.__size = 0;
-      for ( usize i = 0; i < N; ++i ) {
-        other.__control_bytes[i] = __empty;
-      }
+      __destroy_all();
+      __move_from(other);
     }
     return *this;
   }
@@ -360,11 +434,7 @@ public:
   void
   clear() noexcept
   {
-    // __control_bytes is a plain u8[N]; the optimized byte-wise memset avoids
-    // the strict-aliasing UB of writing through a u64* (illegal under -Ofast)
-    // and is internally SIMD-accelerated
-    micron::memset(&__control_bytes[0], __empty, N);
-    __size = 0;
+    __destroy_all();
   }
 
   // prehashed
@@ -415,143 +485,90 @@ public:
     return insert(kv.a, kv.b);
   }
 
+  micron::pair<bool, V *>
+  insert_hash(hash64_t kh, const K &key, const V &value)
+  {
+    return __insert_hash_impl(kh, key, value);
+  }
+
+  micron::pair<bool, V *>
+  insert_hash(hash64_t kh, const K &key, V &&value)
+  {
+    return __insert_hash_impl(kh, key, micron::move(value));
+  }
+
+  V *
+  find_hash(hash64_t kh, const K &key)
+  {
+    return const_cast<V *>(__find_hash_impl(kh, key));
+  }
+
+  const V *
+  find_hash(hash64_t kh, const K &key) const
+  {
+    return __find_hash_impl(kh, key);
+  }
+
   template<typename KK, typename VV>
   micron::pair<bool, V *>
   insert_or_assign(KK &&key, VV &&value)
   {
-    u8 h2 = __hash(key);
-    usize start = __b_index(key);
-
-    // first pass: check for existing key and overwrite
-    for ( usize i = 0; i < NH; i += 16 ) {
-      usize group_start = (start + i) % N;
-
-      if ( group_start + 16 <= N ) {
-        __mask m = __match(h2, group_start);
-        while ( m.any() ) {
-          usize probe = group_start + m.lowest();
-          if ( __entries[probe].key == key ) {
-            __entries[probe].value = micron::forward<VV>(value);
-            return { false, micron::addressof(__entries[probe].value) };
-          }
-          m.clear_lowest();
-        }
-        if ( __match_empty(group_start).any() ) break;
-      } else {
-        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
-          usize probe = (start + i + j) % N;
-          if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
-            __entries[probe].value = micron::forward<VV>(value);
-            return { false, micron::addressof(__entries[probe].value) };
-          }
-          if ( __control_bytes[probe] == __empty ) goto insert;
-        }
-      }
+    hash64_t kh = hash<hash64_t>(key);
+    if ( V *existing = const_cast<V *>(__find_hash_impl(kh, key)) ) {
+      *existing = micron::forward<VV>(value);
+      return { false, existing };
     }
-
-  insert:
     if ( __size >= N ) return { false, nullptr };
-
-    // second pass: find first empty or deleted slot
-    for ( usize i = 0; i < NH; i += 16 ) {
-      usize group_start = (start + i) % N;
-
-      if ( group_start + 16 <= N ) {
-        __mask m = __match_empty_or_deleted(group_start);
-        if ( m.any() ) {
-          usize probe = group_start + m.lowest();
-          __control_bytes[probe] = h2;
-          __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
-          ++__size;
-          return { true, micron::addressof(__entries[probe].value) };
-        }
-      } else {
-        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
-          usize probe = (start + i + j) % N;
-          if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
-            __control_bytes[probe] = h2;
-            __entries[probe] = __swiss_entry{ micron::forward<KK>(key), micron::forward<VV>(value) };
-            ++__size;
-            return { true, micron::addressof(__entries[probe].value) };
-          }
-        }
-      }
-    }
-
-    return { false, nullptr };
+    usize probe = __find_insert_slot(__b_index_key(kh));
+    if ( probe == static_cast<usize>(-1) ) return { false, nullptr };
+    return { true, __place(probe, __h2(kh), micron::forward<KK>(key), micron::forward<VV>(value)) };
   }
 
   template<typename... Args>
   micron::pair<bool, V *>
   emplace(const K &key, Args &&...args)
   {
-    V *existing = find(key);
-    if ( existing ) {
-      return { false, existing };
-    }
-
-    if ( __size >= N ) {
-      return { false, nullptr };
-    }
-
-    u8 h2 = __hash(key);
-    usize start = __b_index(key);
-
-    for ( usize i = 0; i < NH; i += 16 ) {
-      usize group_start = (start + i) % N;
-
-      if ( group_start + 16 <= N ) {
-        __mask m = __match_empty_or_deleted(group_start);
-        if ( m.any() ) {
-          usize probe = group_start + m.lowest();
-          __control_bytes[probe] = h2;
-          __entries[probe].key = key;
-          new (micron::addr(__entries[probe].value)) V(micron::forward<Args>(args)...);
-          ++__size;
-          return { true, micron::addressof(__entries[probe].value) };
-        }
-      } else {
-        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
-          usize probe = (start + i + j) % N;
-          if ( __control_bytes[probe] == __empty || __control_bytes[probe] == __deleted ) {
-            __control_bytes[probe] = h2;
-            __entries[probe].key = key;
-            new (micron::addr(__entries[probe].value)) V(micron::forward<Args>(args)...);
-            ++__size;
-            return { true, micron::addressof(__entries[probe].value) };
-          }
-        }
-      }
-    }
-
-    return { false, nullptr };
+    hash64_t kh = hash<hash64_t>(key);
+    if ( V *existing = const_cast<V *>(__find_hash_impl(kh, key)) ) return { false, existing };
+    if ( __size >= N ) return { false, nullptr };
+    usize probe = __find_insert_slot(__b_index_key(kh));
+    if ( probe == static_cast<usize>(-1) ) return { false, nullptr };
+    new (&__entry_storage[probe]) __swiss_entry(__emplace_tag{}, key, micron::forward<Args>(args)...);
+    __control_bytes[probe] = __h2(kh);
+    ++__size;
+    return { true, micron::addressof(__entry(probe).value) };
   }
 
   bool
   erase(const K &key)
   {
-    u8 h2 = __hash(key);
-    usize start = __b_index(key);
+    hash64_t kh = hash<hash64_t>(key);
+    u8 h2 = __h2(kh);
+    usize start = __b_index_key(kh);
 
     for ( usize i = 0; i < NH; i += 16 ) {
       usize group_start = (start + i) % N;
+      usize remaining = NH - i;
 
       if ( group_start + 16 <= N ) {
-        __mask m = __match(h2, group_start);
+        __mask m = __clip(__match(h2, group_start), remaining);
         while ( m.any() ) {
-          usize probe = group_start + m.lowest();
-          if ( __entries[probe].key == key ) {
+          usize probe = group_start + static_cast<usize>(m.lowest());
+          if ( __entry(probe).key == key ) {
+            __destroy_entry(probe);
             __control_bytes[probe] = __deleted;
             --__size;
             return true;
           }
           m.clear_lowest();
         }
-        if ( __match_empty(group_start).any() ) return false;      // first empty -> key absent (see find)
+        if ( __clip(__match_empty(group_start), remaining).any() ) return false;
       } else {
-        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
-          usize probe = (start + i + j) % N;
-          if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
+        usize span = remaining < 16 ? remaining : 16;
+        for ( usize j = 0; j < span; ++j ) {
+          usize probe = (group_start + j) % N;
+          if ( __control_bytes[probe] == h2 && __entry(probe).key == key ) {
+            __destroy_entry(probe);
             __control_bytes[probe] = __deleted;
             --__size;
             return true;
@@ -567,42 +584,15 @@ public:
   V *
   find(const K &key)
   {
-    u8 h2 = __hash(key);
-    usize start = __b_index(key);
-
-    for ( usize i = 0; i < NH; i += 16 ) {
-      usize group_start = (start + i) % N;
-
-      if ( group_start + 16 <= N ) {
-        __mask m = __match(h2, group_start);
-        while ( m.any() ) {
-          usize probe = group_start + m.lowest();
-          if ( __entries[probe].key == key ) {
-            return micron::addressof(__entries[probe].value);
-          }
-          m.clear_lowest();
-        }
-        // a key is always placed at/ before the first never-used EMPTY slot in its
-        // probe sequence, so an empty group means the key is absent -> stop here
-        if ( __match_empty(group_start).any() ) return nullptr;
-      } else {
-        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
-          usize probe = (start + i + j) % N;
-          if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
-            return micron::addressof(__entries[probe].value);
-          }
-          if ( __control_bytes[probe] == __empty ) return nullptr;
-        }
-      }
-    }
-
-    return nullptr;
+    hash64_t kh = hash<hash64_t>(key);
+    return const_cast<V *>(__find_hash_impl(kh, key));
   }
 
   const V *
   find(const K &key) const
   {
-    return const_cast<stack_swiss_map *>(this)->find(key);
+    hash64_t kh = hash<hash64_t>(key);
+    return __find_hash_impl(kh, key);
   }
 
   template<typename X = void>
@@ -610,36 +600,7 @@ public:
   V *
   exists(const hash64_t key)
   {
-    u8 h2 = __h2(key);
-    usize start = __b_index_key(key);
-
-    for ( usize i = 0; i < NH; i += 16 ) {
-      usize group_start = (start + i) % N;
-
-      if ( group_start + 16 <= N ) {
-        __mask m = __match(h2, group_start);
-        while ( m.any() ) {
-          usize probe = group_start + m.lowest();
-          if ( __entries[probe].key == key ) {
-            return micron::addressof(__entries[probe].value);
-          }
-          m.clear_lowest();
-        }
-        // a key is always placed at/ before the first never-used EMPTY slot in its
-        // probe sequence, so an empty group means the key is absent -> stop here
-        if ( __match_empty(group_start).any() ) return nullptr;
-      } else {
-        for ( usize j = 0; j < 16 && i + j < NH; ++j ) {
-          usize probe = (start + i + j) % N;
-          if ( __control_bytes[probe] == h2 && __entries[probe].key == key ) {
-            return micron::addressof(__entries[probe].value);
-          }
-          if ( __control_bytes[probe] == __empty ) return nullptr;
-        }
-      }
-    }
-
-    return nullptr;
+    return const_cast<V *>(__find_hash_impl(key, key));
   }
 
   template<typename X = void>
@@ -647,7 +608,7 @@ public:
   const V *
   exists(const hash64_t &key) const
   {
-    return const_cast<stack_swiss_map *>(this)->exists(key);
+    return __find_hash_impl(key, key);
   }
 
   bool
@@ -718,13 +679,13 @@ public:
     reference
     operator*()
     {
-      return { map_->__entries[index_].key, map_->__entries[index_].value };
+      return { map_->__entry(index_).key, map_->__entry(index_).value };
     }
 
     pointer
     operator->()
     {
-      return { micron::addressof(map_->__entries[index_].key), micron::addressof(map_->__entries[index_].value) };
+      return { micron::addressof(map_->__entry(index_).key), micron::addressof(map_->__entry(index_).value) };
     }
 
     iterator &
@@ -781,13 +742,13 @@ public:
     reference
     operator*() const
     {
-      return { map_->__entries[index_].key, map_->__entries[index_].value };
+      return { map_->__entry(index_).key, map_->__entry(index_).value };
     }
 
     pointer
     operator->() const
     {
-      return { micron::addressof(map_->__entries[index_].key), micron::addressof(map_->__entries[index_].value) };
+      return { micron::addressof(map_->__entry(index_).key), micron::addressof(map_->__entry(index_).value) };
     }
 
     const_iterator &
@@ -861,7 +822,7 @@ public:
   for_each(Fn &&fn)
   {
     for ( usize i = 0; i < N; ++i )
-      if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) fn(__entries[i].key, __entries[i].value);
+      if ( __occupied(i) ) fn(__entry(i).key, __entry(i).value);
   }
 
   template<typename Fn>
@@ -870,7 +831,7 @@ public:
   for_each(Fn &&fn) const
   {
     for ( usize i = 0; i < N; ++i )
-      if ( __control_bytes[i] != __empty && __control_bytes[i] != __deleted ) fn(__entries[i].key, __entries[i].value);
+      if ( __occupied(i) ) fn(__entry(i).key, __entry(i).value);
   }
 };
 

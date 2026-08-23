@@ -23,6 +23,8 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
+#include "bits.hpp"
+
 namespace micron
 {
 
@@ -115,12 +117,6 @@ static constexpr usize __ctrl_window = 0;
 #endif
 
 #if defined(__micron_x86_avx2)
-static constexpr usize __node_alignment = 32;
-#else
-static constexpr usize __node_alignment = 16;
-#endif
-
-#if defined(__micron_x86_avx2)
 __attribute__((always_inline)) static inline u32
 ctrl_occ_mask_avx2(const u8 *__restrict__ p) noexcept
 {
@@ -159,7 +155,7 @@ ctrl_occ_mask_neon(const u8 *__restrict__ p) noexcept
 // NOTE: hash collisions will yield same map entry - this is by design
 // stores only (key, value)
 // metadata lives in ctrl
-template<typename K, typename V> struct alignas(__impl::__node_alignment) robin_map_node {
+template<typename K, typename V> struct robin_map_node {
   hash64_t hash;      // pre-computed hash: fast integer filter
   K key;              // original key: definitive equality after hash match
   V value;
@@ -191,9 +187,9 @@ template<typename K, typename V> struct alignas(__impl::__node_alignment) robin_
 // load factor capped at 7/8 to keep probe distances short
 template<typename K, typename V, class Alloc = micron::allocator_serial<>, typename Nd = robin_map_node<K, V>>
   requires micron::is_move_constructible_v<V>
-class robin_map: public __immutable_memory_resource<Nd, Alloc>
+class robin_map: public __immutable_memory_resource<Nd, __maps::storage_allocator<Alloc, Nd>>
 {
-  using __mem = __immutable_memory_resource<Nd, Alloc>;
+  using __mem = __immutable_memory_resource<Nd, __maps::storage_allocator<Alloc, Nd>>;
 
   u8 *ctrl_ = nullptr;
   usize n_slots_ = 0;
@@ -202,7 +198,6 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   static constexpr usize __load_num = 7;
   static constexpr usize __load_denom = 8;
   static constexpr float __max_load = static_cast<float>(__load_num) / static_cast<float>(__load_denom);
-  static constexpr usize __max_probe = 512;
   static constexpr usize __min_cap = 16;
   // insert_hash throws if a probe distance would exceed this
   static constexpr usize __max_stored_dist = 253;
@@ -225,6 +220,14 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   {
     usize auto_elems = Alloc::auto_size() / sizeof(Nd);
     return round_pow2(auto_elems < __min_cap ? __min_cap : auto_elems);
+  }
+
+  static usize
+  checked_n_slots(usize n)
+  {
+    usize slots = round_pow2(n);
+    if ( slots > static_cast<usize>(-1) / sizeof(Nd) ) exc<except::library_error>("robin_map: capacity overflow");
+    return slots;
   }
 
   __attribute__((always_inline)) Nd &
@@ -309,7 +312,7 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   // element at slot j with distance d had ideal = j - d
   // after moving to slot j-1 new distance becomes (j-1) - (j-d) = d-1
   void
-  backward_shift(usize i) noexcept
+  backward_shift(usize i)
   {
     for ( ;; ) {
       usize j = (i + 1u) & mask_;
@@ -334,8 +337,9 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   }
 
   V *
-  insert_hash(hash64_t kh, K &&orig_key, V &&value)
+  __insert_hash(hash64_t kh, K &&orig_key, V &&value, bool assign_existing, bool &inserted)
   {
+    inserted = true;
     usize index = static_cast<usize>(kh) & mask_;
     usize plen = 0;
     usize total_steps = 0;
@@ -356,23 +360,22 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
       }
 
       if ( node_at(index).hash == kh && node_at(index).key == orig_key ) {
-        node_at(index).value = micron::move(value);
+        inserted = false;
+        if ( assign_existing ) node_at(index).value = micron::move(value);
         return value_ptr(index);
       }
 
       usize sd = stored_dist(index);
-      bool steal = (sd < plen);
-      hash64_t hmask = -hash64_t(steal);
-      hash64_t dh = (kh ^ node_at(index).hash) & hmask;
-      kh ^= dh;
-      node_at(index).hash ^= dh;
-      if ( steal ) micron::swap(orig_key, node_at(index).key);
-      if ( steal ) micron::swap(value, node_at(index).value);
-      ctrl_[index] = steal ? encode_dist(plen) : ctrl_[index];
-      plen = steal ? sd : plen;
-      if ( steal && result_index == static_cast<usize>(-1) ) result_index = index;
+      if ( sd < plen ) {
+        micron::swap(kh, node_at(index).hash);
+        micron::swap(orig_key, node_at(index).key);
+        micron::swap(value, node_at(index).value);
+        ctrl_[index] = encode_dist(plen);
+        plen = sd;
+        if ( result_index == static_cast<usize>(-1) ) result_index = index;
+      }
 
-      if ( __builtin_expect(++total_steps > __max_probe, 0) )
+      if ( __builtin_expect(++total_steps >= n_slots_, 0) )
         exc<except::library_error>("robin_map: probe limit exceeded (table is full or hash is pathological)");
 
       ++plen;
@@ -381,7 +384,7 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   }
 
   V *
-  probe_find(hash64_t kh, const K &orig_key) noexcept
+  probe_find(hash64_t kh, const K &orig_key)
   {
     if ( __builtin_expect(!ctrl_ || !n_slots_, 0) ) return nullptr;
 
@@ -424,7 +427,7 @@ class robin_map: public __immutable_memory_resource<Nd, Alloc>
   }
 
   const V *
-  probe_find(hash64_t kh, const K &orig_key) const noexcept
+  probe_find(hash64_t kh, const K &orig_key) const
   {
     if ( __builtin_expect(!ctrl_ || !n_slots_, 0) ) return nullptr;
 
@@ -597,7 +600,10 @@ public:
 
   robin_map() : __mem(default_n_slots()), n_slots_(default_n_slots()), mask_(default_n_slots() - 1u) { alloc_ctrl(n_slots_); }
 
-  explicit robin_map(usize n) : __mem(round_pow2(n)), n_slots_(round_pow2(n)), mask_(round_pow2(n) - 1u) { alloc_ctrl(n_slots_); }
+  explicit robin_map(usize n) : __mem(checked_n_slots(n)), n_slots_(checked_n_slots(n)), mask_(checked_n_slots(n) - 1u)
+  {
+    alloc_ctrl(n_slots_);
+  }
 
   robin_map(const robin_map &) = delete;
 
@@ -733,26 +739,76 @@ public:
   V &
   operator[](const K &k)
   {
-    V *v = probe_find(hash<hash64_t>(k), k);
+    hash64_t kh = hash<hash64_t>(k);
+    V *v = probe_find(kh, k);
     if ( v ) [[likely]]
       return *v;
-    return *insert(k, V{});
+    return *insert_hash(kh, k, V{});
+  }
+
+  V *
+  insert_hash(hash64_t kh, const K &k, V &&value)
+  {
+    if ( __mem::length >= n_slots_ * __load_num / __load_denom ) [[unlikely]] {
+      if ( V *existing = probe_find(kh, k) ) {
+        *existing = micron::move(value);
+        return existing;
+      }
+      exc<except::library_error>("robin_map: load factor limit reached; container is fixed-size");
+    }
+    K kc = k;
+    bool inserted;
+    return __insert_hash(kh, micron::move(kc), micron::move(value), true, inserted);
+  }
+
+  V *
+  insert_hash(hash64_t kh, K &&k, V &&value)
+  {
+    if ( __mem::length >= n_slots_ * __load_num / __load_denom ) [[unlikely]] {
+      if ( V *existing = probe_find(kh, k) ) {
+        *existing = micron::move(value);
+        return existing;
+      }
+      exc<except::library_error>("robin_map: load factor limit reached; container is fixed-size");
+    }
+    bool inserted;
+    return __insert_hash(kh, micron::move(k), micron::move(value), true, inserted);
+  }
+
+  micron::pair<bool, V *>
+  insert_hash_if_absent(hash64_t kh, const K &k, V &&value)
+  {
+    if ( __mem::length >= n_slots_ * __load_num / __load_denom ) [[unlikely]] {
+      if ( V *existing = probe_find(kh, k) ) return { false, existing };
+      exc<except::library_error>("robin_map: load factor limit reached; container is fixed-size");
+    }
+    K copy = k;
+    bool inserted;
+    V *result = __insert_hash(kh, micron::move(copy), micron::move(value), false, inserted);
+    return { inserted, result };
+  }
+
+  micron::pair<bool, V *>
+  insert_hash_if_absent(hash64_t kh, K &&k, V &&value)
+  {
+    if ( __mem::length >= n_slots_ * __load_num / __load_denom ) [[unlikely]] {
+      if ( V *existing = probe_find(kh, k) ) return { false, existing };
+      exc<except::library_error>("robin_map: load factor limit reached; container is fixed-size");
+    }
+    bool inserted;
+    V *result = __insert_hash(kh, micron::move(k), micron::move(value), false, inserted);
+    return { inserted, result };
   }
 
   V *
   insert(const K &k, V &&value)
   {
-    if ( __mem::length >= n_slots_ * __load_num / __load_denom ) [[unlikely]]
-      exc<except::library_error>("robin_map: load factor limit reached; container is fixed-size");
-    K kc = k;
-    return insert_hash(hash<hash64_t>(k), micron::move(kc), micron::move(value));
+    return insert_hash(hash<hash64_t>(k), k, micron::move(value));
   }
 
   V *
   insert(K &&k, V &&value)
   {
-    if ( __mem::length >= n_slots_ * __load_num / __load_denom ) [[unlikely]]
-      exc<except::library_error>("robin_map: load factor limit reached; container is fixed-size");
     hash64_t kh = hash<hash64_t>(k);
     return insert_hash(kh, micron::move(k), micron::move(value));
   }

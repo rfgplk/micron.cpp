@@ -42,15 +42,22 @@ class conmap
 
   using __map_t = robin_map<K, V, Alloc>;
 
-  struct __stripe {
+  struct alignas(__cache_line) __stripe {
     mutable spin_lock lock;
     __map_t map;
-    // pad to a multiple of cache line to keep stripes on separate lines
-    char __pad[((sizeof(spin_lock) + sizeof(__map_t)) % __cache_line == 0)
-                   ? 1
-                   : __cache_line - ((sizeof(spin_lock) + sizeof(__map_t)) % __cache_line)];
 
     __stripe(usize cap_per_stripe) : lock(), map(cap_per_stripe) { }
+  };
+
+  class __guard
+  {
+    spin_lock *__lock;
+
+  public:
+    __attribute__((always_inline)) explicit __guard(spin_lock &lock) : __lock(micron::addressof(lock)) { __lock->lock(); }
+    __guard(const __guard &) = delete;
+    __guard &operator=(const __guard &) = delete;
+    __attribute__((always_inline)) ~__guard() { __lock->unlock(); }
   };
 
   __stripe *__stripes_buf = nullptr;
@@ -78,7 +85,7 @@ public:
   {
     if ( !__stripes_buf ) return;
     for ( usize i = 0; i < Stripes; ++i ) __stripes_buf[i].~__stripe();
-    ::operator delete(__stripes_buf);
+    ::operator delete(__stripes_buf, static_cast<std::align_val_t>(__cache_line));
     __stripes_buf = nullptr;
   }
 
@@ -87,12 +94,27 @@ public:
 
   explicit conmap(usize total_capacity = Stripes * 64u)
   {
+    if constexpr ( Stripes > static_cast<usize>(-1) / sizeof(__stripe) )
+      exc<except::library_error>("conmap: stripe allocation overflow");
     __per_stripe_cap = total_capacity / Stripes;
     if ( __per_stripe_cap < 16 ) __per_stripe_cap = 16;
-    __stripes_buf = static_cast<__stripe *>(::operator new(sizeof(__stripe) * Stripes));
+    __stripes_buf = static_cast<__stripe *>(
+        ::operator new(sizeof(__stripe) * Stripes, static_cast<std::align_val_t>(__cache_line)));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    usize built = 0;
+    try {
+      for ( ; built < Stripes; ++built ) new (&__stripes_buf[built]) __stripe(__per_stripe_cap);
+    } catch ( ... ) {
+      while ( built ) __stripes_buf[--built].~__stripe();
+      ::operator delete(__stripes_buf, static_cast<std::align_val_t>(__cache_line));
+      __stripes_buf = nullptr;
+      throw;
+    }
+#else
     for ( usize i = 0; i < Stripes; ++i ) {
       new (&__stripes_buf[i]) __stripe(__per_stripe_cap);
     }
+#endif
   }
 
   // NOT safe to move/move-assign/swap concurrently with any other access to
@@ -109,7 +131,7 @@ public:
     if ( this == &o ) return *this;
     if ( __stripes_buf ) {
       for ( usize i = 0; i < Stripes; ++i ) __stripes_buf[i].~__stripe();
-      ::operator delete(__stripes_buf);
+      ::operator delete(__stripes_buf, static_cast<std::align_val_t>(__cache_line));
     }
     __stripes_buf = o.__stripes_buf;
     __per_stripe_cap = o.__per_stripe_cap;
@@ -128,9 +150,10 @@ public:
   usize
   size() const noexcept
   {
+    if ( !__stripes_buf ) return 0;
     usize total = 0;
     for ( usize i = 0; i < Stripes; ++i ) {
-      lock_guard<spin_lock> __g(__stripes_buf[i].lock);
+      __guard __g(__stripes_buf[i].lock);
       total += __stripes_buf[i].map.size();
     }
     return total;
@@ -139,6 +162,7 @@ public:
   usize
   capacity() const noexcept
   {
+    if ( !__stripes_buf ) return 0;
     usize total = 0;
     for ( usize i = 0; i < Stripes; ++i ) total += __stripes_buf[i].map.max_size();
     return total;
@@ -153,49 +177,65 @@ public:
   void
   clear() noexcept
   {
+    if ( !__stripes_buf ) return;
     for ( usize i = 0; i < Stripes; ++i ) {
-      lock_guard<spin_lock> __g(__stripes_buf[i].lock);
+      __guard __g(__stripes_buf[i].lock);
       __stripes_buf[i].map.clear();
     }
   }
 
   bool
-  insert(const K &k, const V &v)
+  insert_hash(hash64_t kh, const K &k, const V &v)
   {
-    hash64_t kh = hash<hash64_t>(k);
+    if ( !__stripes_buf ) [[unlikely]]
+      exc<except::library_error>("conmap: insert on moved-from map");
     __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);      // RAII: a throw from robin (stripe full) still unlocks
+    __guard __g(s.lock);      // RAII: a throw from robin (stripe full) still unlocks
     bool existed = (s.map.find_hash(kh, k) != nullptr);
     if ( !existed ) {
       V cv = v;
-      s.map.insert(k, micron::move(cv));
+      s.map.insert_hash(kh, k, micron::move(cv));
     }
     return !existed;
+  }
+
+  bool
+  insert_hash(hash64_t kh, K &&k, V &&v)
+  {
+    if ( !__stripes_buf ) [[unlikely]]
+      exc<except::library_error>("conmap: insert on moved-from map");
+    __stripe &s = __stripes_buf[__sid(kh)];
+    __guard __g(s.lock);
+    return s.map.insert_hash_if_absent(kh, micron::move(k), micron::move(v)).a;
+  }
+
+  bool
+  insert_hash(hash64_t kh, const K &k, V &&v)
+  {
+    if ( !__stripes_buf ) [[unlikely]]
+      exc<except::library_error>("conmap: insert on moved-from map");
+    __stripe &s = __stripes_buf[__sid(kh)];
+    __guard __g(s.lock);
+    return s.map.insert_hash_if_absent(kh, k, micron::move(v)).a;
+  }
+
+  bool
+  insert(const K &k, const V &v)
+  {
+    return insert_hash(hash<hash64_t>(k), k, v);
   }
 
   bool
   insert(K &&k, V &&v)
   {
     hash64_t kh = hash<hash64_t>(k);
-    __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);
-    bool existed = (s.map.find_hash(kh, k) != nullptr);
-    if ( !existed ) {
-      K kc = micron::move(k);
-      s.map.insert(micron::move(kc), micron::move(v));
-    }
-    return !existed;
+    return insert_hash(kh, micron::move(k), micron::move(v));
   }
 
   bool
   insert(const K &k, V &&v)
   {
-    hash64_t kh = hash<hash64_t>(k);
-    __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);
-    bool existed = (s.map.find_hash(kh, k) != nullptr);
-    if ( !existed ) s.map.insert(k, micron::move(v));
-    return !existed;
+    return insert_hash(hash<hash64_t>(k), k, micron::move(v));
   }
 
   float
@@ -241,14 +281,16 @@ public:
   bool
   insert_or_assign(const K &k, const V &v)
   {
+    if ( !__stripes_buf ) [[unlikely]]
+      exc<except::library_error>("conmap: insert on moved-from map");
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);
+    __guard __g(s.lock);
     V *ex = s.map.find_hash(kh, k);
     bool newly = (ex == nullptr);
     if ( newly ) {
       V cv = v;
-      s.map.insert(k, micron::move(cv));
+      s.map.insert_hash(kh, k, micron::move(cv));
     } else {
       *ex = v;
     }
@@ -256,11 +298,11 @@ public:
   }
 
   bool
-  find(const K &k, V &out) const
+  find_hash(hash64_t kh, const K &k, V &out) const
   {
-    hash64_t kh = hash<hash64_t>(k);
+    if ( !__stripes_buf ) return false;
     const __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);        // s.lock is mutable
+    __guard __g(s.lock);        // s.lock is mutable
     const V *p = s.map.find_hash(kh, k);      // const overload: a const conmap does not mutate
     bool ok = (p != nullptr);
     if ( ok ) out = *p;
@@ -268,12 +310,24 @@ public:
   }
 
   bool
+  find(const K &k, V &out) const
+  {
+    return find_hash(hash<hash64_t>(k), k, out);
+  }
+
+  bool
+  contains_hash(hash64_t kh, const K &k) const
+  {
+    if ( !__stripes_buf ) return false;
+    const __stripe &s = __stripes_buf[__sid(kh)];
+    __guard __g(s.lock);
+    return s.map.find_hash(kh, k) != nullptr;
+  }
+
+  bool
   contains(const K &k) const
   {
-    hash64_t kh = hash<hash64_t>(k);
-    const __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);
-    return s.map.find_hash(kh, k) != nullptr;
+    return contains_hash(hash<hash64_t>(k), k);
   }
 
   usize
@@ -283,21 +337,28 @@ public:
   }
 
   bool
+  erase_hash(hash64_t kh, const K &k)
+  {
+    if ( !__stripes_buf ) return false;
+    __stripe &s = __stripes_buf[__sid(kh)];
+    __guard __g(s.lock);
+    return s.map.erase_hash(kh, k);
+  }
+
+  bool
   erase(const K &k)
   {
-    hash64_t kh = hash<hash64_t>(k);
-    __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);
-    return s.map.erase_hash(kh, k);
+    return erase_hash(hash<hash64_t>(k), k);
   }
 
   template<typename Fn>
   bool
   update(const K &k, Fn &&fn)
   {
+    if ( !__stripes_buf ) return false;
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);
+    __guard __g(s.lock);
     V *p = s.map.find_hash(kh, k);
     bool ok = (p != nullptr);
     if ( ok ) fn(*p);
@@ -308,26 +369,23 @@ public:
   bool
   upsert(const K &k, Fn &&fn, V fallback)
   {
+    if ( !__stripes_buf ) [[unlikely]]
+      exc<except::library_error>("conmap: insert on moved-from map");
     hash64_t kh = hash<hash64_t>(k);
     __stripe &s = __stripes_buf[__sid(kh)];
-    lock_guard<spin_lock> __g(s.lock);
-    V *p = s.map.find_hash(kh, k);
-    bool inserted = false;
-    if ( p ) {
-      fn(*p);
-    } else {
-      s.map.insert(k, micron::move(fallback));
-      inserted = true;
-    }
-    return inserted;
+    __guard __g(s.lock);
+    auto result = s.map.insert_hash_if_absent(kh, k, micron::move(fallback));
+    if ( !result.a ) fn(*result.b);
+    return result.a;
   }
 
   template<typename Fn>
   void
   for_each(Fn &&fn)
   {
+    if ( !__stripes_buf ) return;
     for ( usize i = 0; i < Stripes; ++i ) {
-      lock_guard<spin_lock> __g(__stripes_buf[i].lock);
+      __guard __g(__stripes_buf[i].lock);
       __stripes_buf[i].map.for_each([&](auto &node) { fn(node.key, node.value); });
     }
   }
@@ -336,9 +394,10 @@ public:
   void
   for_each(Fn &&fn) const
   {
+    if ( !__stripes_buf ) return;
     for ( usize i = 0; i < Stripes; ++i ) {
       const __stripe &st = __stripes_buf[i];
-      lock_guard<spin_lock> __g(st.lock);
+      __guard __g(st.lock);
       st.map.for_each([&](const auto &node) { fn(node.key, node.value); });
     }
   }

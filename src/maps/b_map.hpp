@@ -22,6 +22,8 @@
 #include "../tuple.hpp"
 #include "../types.hpp"
 
+#include "bits.hpp"
+
 namespace micron
 {
 
@@ -86,12 +88,7 @@ hash_scan_eq(const hash64_t *p, usize n, hash64_t h) noexcept
   while ( i + 4 <= n ) {
     __m256i v = simd::avx::loadu_i256(reinterpret_cast<const __m256i_u *>(p + i));
     __m256i eq = simd::avx2::eq_i64(v, target);
-    u32 b = static_cast<u32>(simd::avx2::movemask_i8(eq));
-    u32 lane = 0;
-    if ( b & (1u << 0) ) lane |= 1u << 0;
-    if ( b & (1u << 8) ) lane |= 1u << 1;
-    if ( b & (1u << 16) ) lane |= 1u << 2;
-    if ( b & (1u << 24) ) lane |= 1u << 3;
+    u32 lane = static_cast<u32>(simd::avx::movemask_f64(simd::avx::cast_i256_to_f64(eq)));
     mask |= lane << i;
     i += 4;
   }
@@ -104,11 +101,15 @@ hash_scan_eq(const hash64_t *p, usize n, hash64_t h) noexcept
   usize i = 0;
   while ( i + 2 <= n ) {
     __m128i v = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(p + i));
+#if defined(__micron_x86_sse4_1)
     __m128i eq = simd::sse::eq_i64(v, target);
-    u32 b = static_cast<u32>(static_cast<u16>(simd::sse::movemask_i8(eq)));
-    u32 lane = 0;
-    if ( b & (1u << 0) ) lane |= 1u << 0;
-    if ( b & (1u << 8) ) lane |= 1u << 1;
+    u32 lane = static_cast<u32>(simd::sse::movemask_f64(simd::sse::cast_i128_to_f64(eq)));
+#else
+    __m128i eq = simd::sse::eq_i32(v, target);
+    u32 bits = static_cast<u32>(simd::sse::movemask_f32(simd::sse::cast_i128_to_f32(eq)));
+    bits &= bits >> 1u;
+    u32 lane = (bits & 1u) | ((bits >> 1u) & 2u);
+#endif
     mask |= lane << i;
     i += 2;
   }
@@ -169,7 +170,7 @@ inline constexpr bool is_byte_relocatable_v = micron::is_trivially_copyable_v<T>
 
 template<typename T>
 __attribute__((always_inline)) static inline void
-typed_shift_right(T *base, usize first, usize last) noexcept
+typed_shift_right(T *base, usize first, usize last)
 {
   if ( first >= last ) return;
   if constexpr ( is_byte_relocatable_v<T> ) {
@@ -189,7 +190,7 @@ typed_shift_right(T *base, usize first, usize last) noexcept
 
 template<typename T>
 __attribute__((always_inline)) static inline void
-typed_erase_at(T *base, usize first, usize last) noexcept
+typed_erase_at(T *base, usize first, usize last)
 {
   if ( first >= last ) return;
   if constexpr ( is_byte_relocatable_v<T> ) {
@@ -317,10 +318,7 @@ private:
     node_idx children[__int_fanout];
     pending_op buffer[__buf_size];
 
-    internal_node() : nkeys(0), leaf_flag(0), buf_used(0)
-    {
-      for ( usize i = 0; i < __int_fanout; ++i ) children[i] = __k_empty;
-    }
+    internal_node() : nkeys(0), leaf_flag(0), buf_used(0) { }
 
     ~internal_node()
     {
@@ -342,10 +340,7 @@ private:
     alignas(K) raw_byte keys_raw[sizeof(K) * __leaf_fanout];
     alignas(V) raw_byte values_raw[sizeof(V) * __leaf_fanout];
 
-    leaf_node() : nkeys(0), leaf_flag(1), next_leaf(__k_empty), prev_leaf(__k_empty), overflow_next(__k_empty)
-    {
-      for ( usize i = 0; i < __leaf_fanout; ++i ) hashes[i] = 0;
-    }
+    leaf_node() : nkeys(0), leaf_flag(1), next_leaf(__k_empty), prev_leaf(__k_empty), overflow_next(__k_empty) { }
 
     ~leaf_node()
     {
@@ -389,13 +384,15 @@ private:
   };
 
   static constexpr usize __raw_max = sizeof(internal_node) > sizeof(leaf_node) ? sizeof(internal_node) : sizeof(leaf_node);
-  static constexpr usize __slot_size = (__raw_max + (__node_align - 1)) & ~(__node_align - 1);
+  static constexpr usize __slot_align = alignof(internal_node) > alignof(leaf_node) ? alignof(internal_node) : alignof(leaf_node);
+  static constexpr usize __slot_size = (__raw_max + (__slot_align - 1)) & ~(__slot_align - 1);
 
-  struct alignas(__node_align) node_slot {
+  struct alignas(__slot_align) node_slot {
     byte raw[__slot_size];
   };
 
-  using __mem = __immutable_memory_resource<node_slot, Alloc>;
+  using __slab_alloc = __maps::storage_allocator<Alloc, node_slot>;
+  using __mem = __immutable_memory_resource<node_slot, __slab_alloc>;
 
   struct bucket_head {
     node_idx root;
@@ -411,9 +408,26 @@ private:
   node_idx leaf_list_head_;
   bool __rehashing;      // re-entrance guard
 
+  struct __rehash_tag {
+  };
+
   static constexpr usize __min_buckets = 16;
   static constexpr usize __load_num = 7;
   static constexpr usize __load_denom = 8;
+
+  static constexpr usize
+  load_limit(usize buckets) noexcept
+  {
+    const usize capacity = buckets * __leaf_fanout;
+    return (capacity / __load_denom) * __load_num + ((capacity % __load_denom) * __load_num) / __load_denom;
+  }
+
+  btree_map(__rehash_tag, usize buckets, usize slab_slots)
+      : __slab(slab_slots), buckets_(nullptr), n_buckets_(round_pow2(buckets)), mask_(n_buckets_ - 1u), total_size_(0), __fhead(__k_empty),
+        leaf_list_head_(__k_empty), __rehashing(false)
+  {
+    alloc_buckets(n_buckets_);
+  }
 
   __attribute__((always_inline)) byte *
   slot_raw(node_idx i) noexcept
@@ -462,7 +476,11 @@ private:
   {
     if ( n <= __min_buckets ) return __min_buckets;
     usize p = 1;
-    while ( p < n ) p <<= 1;
+    while ( p < n ) {
+      usize next = p << 1u;
+      if ( next <= p ) return p;
+      p = next;
+    }
     return p;
   }
 
@@ -483,9 +501,153 @@ private:
   void
   grow_slab()
   {
-
     usize old_cap = __slab.capacity;
-    __slab.expand(old_cap == 0 ? __min_buckets : old_cap);
+    i16 grow = Alloc::get_grow();
+    usize scale = grow < 2 ? 2u : static_cast<usize>(grow);
+    if ( old_cap > static_cast<usize>(-1) / scale ) exc<except::library_error>("btree_map: slab capacity overflow");
+    usize requested = old_cap == 0 ? __min_buckets : old_cap * scale;
+    if ( requested > static_cast<usize>(-1) / sizeof(node_slot) ) exc<except::library_error>("btree_map: slab byte-size overflow");
+    if ( requested > static_cast<usize>(static_cast<node_idx>(-2)) ) exc<except::library_error>("btree_map: node index capacity overflow");
+
+    __mem next(requested);
+    const usize live_slots = __slab.length;
+    usize completed = 0;
+
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( ; completed < live_slots; ++completed ) {
+        node_slot &source_slot = __slab.memory[completed];
+        node_slot &target_slot = next.memory[completed];
+        if ( source_slot.raw[0] == __k_fsentinel ) {
+          micron::memcpy(target_slot.raw, source_slot.raw, sizeof(node_slot));
+          continue;
+        }
+
+        if ( source_slot.raw[1] != 0 ) {
+          leaf_node &source = *reinterpret_cast<leaf_node *>(source_slot.raw);
+          leaf_node *target = new (target_slot.raw) leaf_node();
+          target->next_leaf = source.next_leaf;
+          target->prev_leaf = source.prev_leaf;
+          target->overflow_next = source.overflow_next;
+          if constexpr ( micron::is_trivially_copyable_v<K> && micron::is_trivially_copyable_v<V> ) {
+            const u8 count = source.nkeys;
+            for ( u8 i = 0; i < count; ++i ) target->hashes[i] = source.hashes[i];
+            for ( u8 i = 0; i < count; ++i ) new (target->keys() + i) K(source.keys()[i]);
+            for ( u8 i = 0; i < count; ++i ) new (target->values() + i) V(source.values()[i]);
+            target->nkeys = count;
+          } else {
+            for ( u8 i = 0; i < source.nkeys; ++i ) {
+              target->hashes[i] = source.hashes[i];
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+              try {
+#endif
+                if constexpr ( micron::is_nothrow_move_constructible_v<K> && micron::is_nothrow_move_constructible_v<V> )
+                  new (target->keys() + i) K(micron::move(source.keys()[i]));
+                else if constexpr ( micron::is_copy_constructible_v<K> && micron::is_copy_constructible_v<V> )
+                  new (target->keys() + i) K(source.keys()[i]);
+                else
+                  new (target->keys() + i) K(micron::move(source.keys()[i]));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+                try {
+#endif
+                  if constexpr ( micron::is_nothrow_move_constructible_v<K> && micron::is_nothrow_move_constructible_v<V> )
+                    new (target->values() + i) V(micron::move(source.values()[i]));
+                  else if constexpr ( micron::is_copy_constructible_v<K> && micron::is_copy_constructible_v<V> )
+                    new (target->values() + i) V(source.values()[i]);
+                  else
+                    new (target->values() + i) V(micron::move(source.values()[i]));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+                } catch ( ... ) {
+                  target->keys()[i].~K();
+                  throw;
+                }
+#endif
+                ++target->nkeys;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+              } catch ( ... ) {
+                target->~leaf_node();
+                throw;
+              }
+#endif
+            }
+          }
+        } else {
+          internal_node &source = *reinterpret_cast<internal_node *>(source_slot.raw);
+          internal_node *target = new (target_slot.raw) internal_node();
+          target->nkeys = source.nkeys;
+          for ( u8 i = 0; i < source.nkeys; ++i ) target->pivots[i] = source.pivots[i];
+          for ( u8 i = 0; i <= source.nkeys; ++i ) target->children[i] = source.children[i];
+          for ( u8 i = 0; i < source.buf_used; ++i ) {
+            pending_op &source_op = source.buffer[i];
+            pending_op &target_op = target->buffer[i];
+            target_op.hash = source_op.hash;
+            target_op.tag = source_op.tag;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+            try {
+#endif
+              if constexpr ( micron::is_nothrow_move_constructible_v<K> )
+                new (target_op.key_ptr()) K(micron::move(*source_op.key_ptr()));
+              else if constexpr ( micron::is_copy_constructible_v<K> )
+                new (target_op.key_ptr()) K(*source_op.key_ptr());
+              else
+                new (target_op.key_ptr()) K(micron::move(*source_op.key_ptr()));
+              if ( source_op.tag != OP_ERASE ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+                try {
+#endif
+                  if constexpr ( micron::is_nothrow_move_constructible_v<V> )
+                    new (target_op.value_ptr()) V(micron::move(*source_op.value_ptr()));
+                  else if constexpr ( micron::is_copy_constructible_v<V> )
+                    new (target_op.value_ptr()) V(*source_op.value_ptr());
+                  else
+                    new (target_op.value_ptr()) V(micron::move(*source_op.value_ptr()));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+                } catch ( ... ) {
+                  target_op.key_ptr()->~K();
+                  throw;
+                }
+#endif
+              }
+              ++target->buf_used;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+            } catch ( ... ) {
+              target->~internal_node();
+              throw;
+            }
+#endif
+          }
+        }
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      for ( usize i = 0; i < completed; ++i ) {
+        if ( next.memory[i].raw[0] == __k_fsentinel ) continue;
+        if ( next.memory[i].raw[1] != 0 )
+          reinterpret_cast<leaf_node *>(next.memory[i].raw)->~leaf_node();
+        else
+          reinterpret_cast<internal_node *>(next.memory[i].raw)->~internal_node();
+      }
+      throw;
+    }
+#endif
+
+    for ( usize i = 0; i < live_slots; ++i ) {
+      if ( __slab.memory[i].raw[0] == __k_fsentinel ) continue;
+      if ( __slab.memory[i].raw[1] != 0 )
+        reinterpret_cast<leaf_node *>(__slab.memory[i].raw)->~leaf_node();
+      else
+        reinterpret_cast<internal_node *>(__slab.memory[i].raw)->~internal_node();
+    }
+
+    chunk<byte> old_chunk{ reinterpret_cast<byte *>(__slab.memory), old_cap * sizeof(node_slot) };
+    __slab.memory = next.memory;
+    __slab.capacity = next.capacity;
+    __slab.length = live_slots;
+    next.memory = nullptr;
+    next.capacity = 0;
+    next.length = 0;
+    if ( old_chunk.ptr ) __slab_alloc::destroy(old_chunk);
   }
 
   node_idx
@@ -537,6 +699,8 @@ private:
   void
   alloc_buckets(usize n)
   {
+    if ( n > static_cast<usize>(-1) / sizeof(bucket_head) || n > static_cast<usize>(-1) / __leaf_fanout )
+      exc<except::library_error>("btree_map: bucket capacity overflow");
     buckets_ = new bucket_head[n];
     for ( usize i = 0; i < n; ++i ) {
       buckets_[i].root = __k_empty;
@@ -612,7 +776,7 @@ private:
   }
 
   usize
-  leaf_find_slot(const leaf_node &L, hash64_t h, const K &k) const noexcept
+  leaf_find_slot(const leaf_node &L, hash64_t h, const K &k) const
   {
     u32 m = __btree_impl::hash_scan_eq(L.hashes, L.nkeys, h);
     while ( m ) {
@@ -632,23 +796,20 @@ private:
   }
 
   int
-  buffer_probe(const internal_node &N, hash64_t h, const K &k, V **out_value_ptr) const noexcept
+  buffer_probe(const internal_node &N, hash64_t h, const K &k, V **out_value_ptr) const
   {
-    u32 fields[__buf_size];
-    u32 cnt = 0;
-    for ( u8 i = 0; i < N.buf_used; ++i )
-      if ( N.buffer[i].hash == h && *N.buffer[i].key_ptr() == k ) fields[cnt++] = i;
-    if ( cnt == 0 ) return 0;
-
-    u32 winner = fields[cnt - 1];
-    const pending_op &op = N.buffer[winner];
-    if ( op.tag == OP_ERASE ) return 2;
-    *out_value_ptr = const_cast<V *>(op.value_ptr());
-    return 1;
+    for ( u8 i = N.buf_used; i > 0; --i ) {
+      const pending_op &op = N.buffer[i - 1u];
+      if ( op.hash != h || !(*op.key_ptr() == k) ) continue;
+      if ( op.tag == OP_ERASE ) return 2;
+      *out_value_ptr = const_cast<V *>(op.value_ptr());
+      return 1;
+    }
+    return 0;
   }
 
   V *
-  find_impl(hash64_t h, const K &k) noexcept
+  find_impl(hash64_t h, const K &k)
   {
     if ( !buckets_ || n_buckets_ == 0 ) return nullptr;
     bucket_head &b = buckets_[h & mask_];
@@ -656,7 +817,6 @@ private:
     node_idx cur = b.root;
     while ( !slot_is_leaf(cur) ) {
       internal_node &N = inode(cur);
-      __builtin_prefetch(N.children, 0, 1);
       V *bp = nullptr;
       int r = buffer_probe(N, h, k, &bp);
       if ( r == 1 ) return bp;
@@ -664,6 +824,7 @@ private:
       usize ci = __btree_impl::hash_route_gt<__int_fanout>(N.pivots, N.nkeys, h);
       cur = N.children[ci];
       if ( cur == __k_empty ) return nullptr;
+      __builtin_prefetch(slot_raw(cur), 0, 1);
     }
     while ( cur != __k_empty ) {
       leaf_node &L = lnode(cur);
@@ -675,7 +836,7 @@ private:
   }
 
   const V *
-  find_impl(hash64_t h, const K &k) const noexcept
+  find_impl(hash64_t h, const K &k) const
   {
     return const_cast<btree_map *>(this)->find_impl(h, k);
   }
@@ -1315,14 +1476,37 @@ private:
   maybe_rehash()
   {
     if ( __rehashing ) return;
-    if ( total_size_ * __load_denom < n_buckets_ * __leaf_fanout * __load_num ) return;
-    rehash(n_buckets_ * 2);
+    if ( total_size_ < load_limit(n_buckets_) ) return;
+    if ( n_buckets_ > static_cast<usize>(-1) / 2u ) exc<except::library_error>("btree_map: bucket capacity overflow");
+    rehash(n_buckets_ * 2u);
   }
 
   void
   rehash(usize new_n_buckets)
   {
     __rehashing = true;
+
+    struct __reset_rehash {
+      bool *flag;
+
+      ~__reset_rehash() { *flag = false; }
+    } reset_rehash{ &__rehashing };
+
+    new_n_buckets = round_pow2(new_n_buckets);
+    if constexpr ( micron::is_copy_constructible_v<K> && micron::is_copy_constructible_v<V> ) {
+      flush_all();
+      btree_map next(__rehash_tag{}, new_n_buckets, __slab.capacity);
+      for ( node_idx leaf = leaf_list_head_; leaf != __k_empty; leaf = lnode(leaf).next_leaf ) {
+        const leaf_node &source = lnode(leaf);
+        for ( u8 i = 0; i < source.nkeys; ++i ) {
+          V value(source.values()[i]);
+          next.insert_hash(source.hashes[i], source.keys()[i], micron::move(value));
+        }
+      }
+      swap(next);
+      return;
+    }
+
     bucket_head *new_buckets = new bucket_head[new_n_buckets];
     for ( usize i = 0; i < new_n_buckets; ++i ) {
       new_buckets[i].root = __k_empty;
@@ -1379,7 +1563,6 @@ private:
       }
       cur = next;
     }
-    __rehashing = false;
   }
 
   void
@@ -1806,9 +1989,10 @@ public:
   operator[](const K &key)
     requires micron::is_default_constructible_v<V>
   {
-    V *v = find(key);
+    hash64_t h = hash<hash64_t>(key);
+    V *v = find_hash(h, key);
     if ( v ) return *v;
-    return *insert(key, V{});
+    return *insert_hash(h, key, V{});
   }
 
   bool
@@ -1832,6 +2016,7 @@ public:
   V *
   hash_min()
   {
+    flush_all();
     V *best = nullptr;
     hash64_t best_h = 0;
     node_idx l = leaf_list_head_;
@@ -1857,6 +2042,7 @@ public:
   V *
   hash_max()
   {
+    flush_all();
     V *best = nullptr;
     hash64_t best_h = 0;
     node_idx l = leaf_list_head_;
@@ -1882,6 +2068,7 @@ public:
   V *
   hash_lower_bound(const K &key)
   {
+    flush_all();
     const hash64_t h = hash<hash64_t>(key);
     V *best = nullptr;
     hash64_t best_h = 0;
@@ -1908,6 +2095,7 @@ public:
   V *
   hash_upper_bound(const K &key)
   {
+    flush_all();
     const hash64_t h = hash<hash64_t>(key);
     V *best = nullptr;
     hash64_t best_h = 0;
@@ -1934,6 +2122,7 @@ public:
   V *
   hash_predecessor(const K &key)
   {
+    flush_all();
     const hash64_t h = hash<hash64_t>(key);
     V *best = nullptr;
     hash64_t best_h = 0;
@@ -1970,7 +2159,7 @@ public:
   }
 
   void
-  flush_all() noexcept
+  flush_all()
   {
     if ( !buckets_ ) return;
     for ( usize bi = 0; bi < n_buckets_; ++bi ) {
@@ -1979,7 +2168,7 @@ public:
   }
 
   iterator
-  begin() noexcept
+  begin()
   {
     flush_all();
     node_idx l = leaf_list_head_;
@@ -1994,7 +2183,7 @@ public:
   }
 
   const_iterator
-  begin() const noexcept
+  begin() const
   {
     const_cast<btree_map *>(this)->flush_all();
     node_idx l = leaf_list_head_;
@@ -2009,7 +2198,7 @@ public:
   }
 
   const_iterator
-  cbegin() const noexcept
+  cbegin() const
   {
     return begin();
   }

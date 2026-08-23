@@ -5,11 +5,13 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../atomic/intrin.hpp"
 #include "../concepts.hpp"
 #include "../memory/actions.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
 #include "../memory/memory.hpp"
+#include "../numerics.hpp"
 
 #include "../except.hpp"
 #include "../tags.hpp"
@@ -76,12 +78,16 @@ class immutable_table
     mutable u32 refs;
     K key;
     V value;
+
+    __leaf(K k, V v) : refs(1), key(k), value(v) { }
   };
 
   struct __branch {
     mutable u32 refs;
     u32 bit_pos;
     uintptr_t child[2];      // tagged pointers
+
+    __branch(u32 bp, uintptr_t c0, uintptr_t c1) : refs(1), bit_pos(bp), child{ c0, c1 } { }
   };
 
   static inline __attribute__((always_inline)) bool
@@ -127,9 +133,7 @@ class immutable_table
     auto *l = reinterpret_cast<__leaf *>(abc::alloc(sizeof(__leaf)));
     if ( !l ) [[unlikely]]      // abc::alloc returns nullptr on OOM (it does NOT throw)
       exc<except::critical_error>("immutable_table: leaf allocation failed (out of memory)");
-    l->refs = 1;
-    l->key = k;
-    l->value = v;
+    new (l) __leaf(k, v);
     return l;
   }
 
@@ -143,22 +147,21 @@ class immutable_table
       __release_tagged(c1);
       exc<except::critical_error>("immutable_table: branch allocation failed (out of memory)");
     }
-    b->refs = 1;
-    b->bit_pos = bp;
-    b->child[0] = c0;
-    b->child[1] = c1;
+    new (b) __branch(bp, c0, c1);
     return b;
   }
 
   static inline void
   __dealloc_leaf(__leaf *l)
   {
+    l->~__leaf();
     abc::dealloc(reinterpret_cast<byte *>(l));
   }
 
   static inline void
   __dealloc_branch(__branch *b)
   {
+    b->~__branch();
     abc::dealloc(reinterpret_cast<byte *>(b));
   }
 
@@ -169,13 +172,29 @@ class immutable_table
     if ( !p ) [[unlikely]]
       return;
     u32 *r = &__refs(p);
-    u32 cur = __atomic_load_n(r, __ATOMIC_RELAXED);
-    while ( cur < __UINT32_MAX__ ) {
-      if ( __atomic_compare_exchange_n(r, &cur, cur + 1u, true, __ATOMIC_RELAXED, __ATOMIC_RELAXED) ) [[likely]]
+    u32 cur = atom::load(r, atomic_relaxed);
+    while ( cur < numeric_limits<u32>::max() ) {
+      if ( atom::compare_exchange(r, &cur, cur + 1u, true, atomic_relaxed, atomic_relaxed) ) [[likely]]
         return;
       // cur was reloaded with the live value on failure; retry
     }
     // saturated -> immortal, leave as-is
+  }
+
+  static inline __attribute__((always_inline)) bool
+  __release_ref(uintptr_t p) noexcept
+  {
+    u32 *refs_ptr = &__refs(p);
+    u32 refs = atom::load(refs_ptr, atomic_relaxed);
+    while ( refs != numeric_limits<u32>::max() ) {
+      if ( atom::compare_exchange(refs_ptr, &refs, refs - 1u, true, atomic_release, atomic_relaxed) ) {
+        if ( refs != 1u ) [[likely]]
+          return false;
+        atom::thread_fence(atomic_acquire);
+        return true;
+      }
+    }
+    return false;
   }
 
   // full slow path
@@ -187,10 +206,7 @@ class immutable_table
     usize depth = 0;
 
     while ( p ) [[likely]] {
-      u32 *rp = &__refs(p);
-      if ( __atomic_load_n(rp, __ATOMIC_RELAXED) == __UINT32_MAX__ ) [[unlikely]]
-        break;      // saturated/immortal
-      if ( __atomic_fetch_sub(rp, 1u, __ATOMIC_ACQ_REL) != 1u ) [[likely]]
+      if ( !__release_ref(p) ) [[likely]]
         break;
 
       if ( __is_leaf(p) ) [[unlikely]] {
@@ -221,10 +237,7 @@ class immutable_table
   {
     if ( !p ) [[unlikely]]
       return;
-    u32 *rp = &__refs(p);
-    if ( __atomic_load_n(rp, __ATOMIC_RELAXED) == __UINT32_MAX__ ) [[unlikely]]
-      return;      // saturated/immortal
-    if ( __atomic_fetch_sub(rp, 1u, __ATOMIC_ACQ_REL) != 1u ) [[likely]]
+    if ( !__release_ref(p) ) [[likely]]
       return;
     if ( __is_leaf(p) ) [[unlikely]] {
       __dealloc_leaf(__to_leaf(p));
@@ -270,8 +283,8 @@ class immutable_table
     // splice above this node: new branch at dpos
     if ( __is_leaf(node) || __to_branch(node)->bit_pos > dpos ) {
       u32 dir = __bit_at(ord, dpos);
-      __retain_tagged(node);
       uintptr_t nl = __tag_leaf(__make_leaf(key, val));
+      __retain_tagged(node);
       return __tag_branch(__make_branch(dpos, dir == 0 ? nl : node, dir == 0 ? node : nl));
     }
 

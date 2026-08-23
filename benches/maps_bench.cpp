@@ -11,11 +11,15 @@
 //
 //   maps under test:
 //     btree_map (b_map.hpp)       — hash-routed Bε-tree, grows on demand
+//     rb_map (rb_map.hpp)         — hash-binned SoA with treeified bins
 //     robin_map (robin.hpp)       — fixed-capacity robin-hood w/ SIMD probe
-//     hopscotch_map (hopscotch)   — neighbourhood hopscotch, grows on demand
-//     stack_swiss_map (swiss)     — SSE/NEON ctrl-byte SIMD, fixed capacity
-//     immutable_map (immutable)   — persistent LLRB tree (functional)
-//     immutable_table (itable)    — persistent radix/patricia trie
+//     heap_swiss_map              — resizable heap Swiss table
+//     conmap                      — striped, locked robin maps
+//     hopscotch_map               — neighbourhood hopscotch, grows on demand
+//     stack_swiss_map             — SSE/NEON ctrl-byte SIMD, fixed capacity
+//     immutable_map               — persistent LLRB tree (functional)
+//     immutable_table             — persistent radix/patricia trie
+//     pmap                        — persistent HAMT
 //
 //   per (map, op, N, K-type) cell the harness reports
 //     cyc/op   IPC   bmiss%
@@ -35,6 +39,8 @@
 //     copy-ctor               container-level deep/structural copy
 //     move-ctor               container-level move
 //     clear                   drain to empty
+//     insert/find-hash        isolates table mechanics from hash cost
+//     tree-bin/collision      forces rb_map/btree tree and collision paths
 //
 //   key/value types:
 //     u64 → u64               cheap, trivially copyable, fast hash
@@ -61,7 +67,6 @@
 #include "../src/maps/swiss.hpp"
 #include "../src/std.hpp"
 #include "../src/string/string.hpp"
-#include "../src/trees/art.hpp"
 
 namespace
 {
@@ -83,6 +88,51 @@ struct anomaly {
 
 static anomaly g_anomalies[256];
 static u32 g_anomaly_count = 0;
+static const char *g_map_filter = nullptr;
+static const char *g_op_filter = nullptr;
+static u64 g_size_filter = 0;
+
+[[gnu::always_inline]] inline bool
+streq(const char *a, const char *b) noexcept
+{
+  while ( *a && *a == *b ) {
+    ++a;
+    ++b;
+  }
+  return *a == *b;
+}
+
+[[gnu::always_inline]] inline bool
+starts_with(const char *s, const char *prefix) noexcept
+{
+  while ( *prefix )
+    if ( *s++ != *prefix++ ) return false;
+  return true;
+}
+
+[[gnu::always_inline]] inline bool
+wanted_map(const char *impl) noexcept
+{
+  return g_map_filter == nullptr || streq(g_map_filter, impl);
+}
+
+[[gnu::always_inline]] inline bool
+wanted_cell(const char *op, u64 size) noexcept
+{
+  return (g_op_filter == nullptr || streq(g_op_filter, op)) && (g_size_filter == 0 || g_size_filter == size);
+}
+
+u64
+parse_u64(const char *s) noexcept
+{
+  u64 value = 0;
+  if ( *s == '\0' ) return 0;
+  while ( *s ) {
+    if ( *s < '0' || *s > '9' ) return 0;
+    value = value * 10 + static_cast<u64>(*s++ - '0');
+  }
+  return value;
+}
 
 [[gnu::always_inline]] inline u64
 splitmix64(u64 x) noexcept
@@ -253,11 +303,13 @@ struct row {
   f64 ipc;
   f64 bmiss_rate;
   bool unstable;
+  bool skipped;
 };
 
 [[gnu::cold]] void
 print_row(const row &r)
 {
+  if ( r.skipped ) return;
   if ( r.unstable ) {
     line ln;
     ln.s_lj_at(r.op, 24);
@@ -314,6 +366,7 @@ template<typename Setup, typename Kernel>
 [[gnu::noinline]] row
 measure(const char *op, const char *impl, u64 size, u64 ops_per_rep, u64 reps_per_meas, Setup &&setup, Kernel &&kernel) noexcept
 {
+  if ( !wanted_cell(op, size) ) return row{ op, impl, size, 0.0, 0.0, 0.0, false, true };
 
   try {
     for ( u64 i = 0; i < WARMUP_REPS; ++i ) {
@@ -321,7 +374,7 @@ measure(const char *op, const char *impl, u64 size, u64 ops_per_rep, u64 reps_pe
       kernel();
     }
   } catch ( ... ) {
-    return row{ op, impl, size, 0.0, 0.0, 0.0, true };
+    return row{ op, impl, size, 0.0, 0.0, 0.0, true, false };
   }
 
   f64 cpo_samples[K_MEASUREMENTS];
@@ -338,7 +391,7 @@ measure(const char *op, const char *impl, u64 size, u64 ops_per_rep, u64 reps_pe
       evs.end();
     } catch ( ... ) {
       evs.end();
-      return row{ op, impl, size, 0.0, 0.0, 0.0, true };
+      return row{ op, impl, size, 0.0, 0.0, 0.0, true, false };
     }
     const auto cyc = static_cast<u64>(evs.get<bbench::hardware_cycles>().retrieve());
     const auto ins = static_cast<u64>(evs.get<bbench::hardware_instructions>().retrieve());
@@ -356,6 +409,7 @@ measure(const char *op, const char *impl, u64 size, u64 ops_per_rep, u64 reps_pe
               median_f64(cpo_samples, K_MEASUREMENTS),
               median_f64(ipc_samples, K_MEASUREMENTS),
               median_f64(bm_samples, K_MEASUREMENTS),
+              false,
               false };
 }
 
@@ -377,6 +431,16 @@ sweep_mutable_u64(const char *impl_tag, u64 N)
 {
 
   auto make_empty = [&] { return Trait::make_empty(N); };
+  u64 keys[4096];
+  u64 misses[4096];
+  micron::hash64_t key_hashes[4096];
+  micron::hash64_t miss_hashes[4096];
+  for ( u64 i = 0; i < N; ++i ) {
+    keys[i] = key_u64(i);
+    misses[i] = key_u64(i + (1ULL << 40));
+    key_hashes[i] = micron::hash<micron::hash64_t>(keys[i]);
+    miss_hashes[i] = micron::hash<micron::hash64_t>(misses[i]);
+  }
 
   {
     M m = make_empty();
@@ -385,7 +449,17 @@ sweep_mutable_u64(const char *impl_tag, u64 N)
       for ( u64 i = 0; i < N; ++i ) Trait::insert(m, key_u64(i), val_u64(i));
       clobber(&m);
     };
-    print_row(measure("insert (build)", impl_tag, N, N, reps_for(N), setup, kernel));
+    print_row(measure("insert (build)", impl_tag, N, N, 1, setup, kernel));
+  }
+
+  if constexpr ( Trait::has_prehashed ) {
+    M m = make_empty();
+    auto setup = [&] { m = make_empty(); };
+    auto kernel = [&] {
+      for ( u64 i = 0; i < N; ++i ) Trait::insert_hash(m, key_hashes[i], keys[i], val_u64(i));
+      clobber(&m);
+    };
+    print_row(measure("insert-hash (build)", impl_tag, N, N, 1, setup, kernel));
   }
 
   {
@@ -436,6 +510,33 @@ sweep_mutable_u64(const char *impl_tag, u64 N)
     print_row(measure("find (miss)", impl_tag, N, N, reps_for(N), setup, kernel));
   }
 
+  if constexpr ( Trait::has_prehashed ) {
+    M m = make_empty();
+    auto setup = [&] {
+      m = make_empty();
+      for ( u64 i = 0; i < N; ++i ) Trait::insert_hash(m, key_hashes[i], keys[i], val_u64(i));
+    };
+    auto hit_kernel = [&] {
+      u64 acc = 0;
+      for ( u64 i = 0; i < N; ++i ) {
+        const auto *p = Trait::find_hash(m, key_hashes[i], keys[i]);
+        if ( p ) acc += *p;
+      }
+      sink_u64 += acc;
+    };
+    print_row(measure("find-hash (hit)", impl_tag, N, N, reps_for(N), setup, hit_kernel));
+
+    auto miss_kernel = [&] {
+      u64 acc = 0;
+      for ( u64 i = 0; i < N; ++i ) {
+        const auto *p = Trait::find_hash(m, miss_hashes[i], misses[i]);
+        if ( p ) acc += *p;
+      }
+      sink_u64 += acc;
+    };
+    print_row(measure("find-hash (miss)", impl_tag, N, N, reps_for(N), setup, miss_kernel));
+  }
+
   {
     M m = make_empty();
     auto setup = [&] {
@@ -474,7 +575,7 @@ sweep_mutable_u64(const char *impl_tag, u64 N)
       for ( u64 i = 0; i < N; ++i ) Trait::emplace(m, key_u64(i), val_u64(i));
       clobber(&m);
     };
-    print_row(measure("emplace (build)", impl_tag, N, N, reps_for(N), setup, kernel));
+    print_row(measure("emplace (build)", impl_tag, N, N, 1, setup, kernel));
   }
 
   {
@@ -487,7 +588,7 @@ sweep_mutable_u64(const char *impl_tag, u64 N)
       for ( u64 i = 0; i < N; ++i ) Trait::erase(m, key_u64(i));
       clobber(&m);
     };
-    print_row(measure("erase (drain)", impl_tag, N, N, reps_for(N), setup, kernel));
+    print_row(measure("erase (drain)", impl_tag, N, N, 1, setup, kernel));
   }
 
   {
@@ -527,7 +628,7 @@ sweep_mutable_u64(const char *impl_tag, u64 N)
       src = micron::move(tmp);
       clobber(&src);
     };
-    print_row(measure("move-ctor (pair)", impl_tag, N, N, reps_for(N) / 2 + 1, setup, kernel));
+    print_row(measure("move-ctor (pair)", impl_tag, N, 2, reps_for(2), setup, kernel));
   }
 
   {
@@ -540,7 +641,7 @@ sweep_mutable_u64(const char *impl_tag, u64 N)
       Trait::clear(m);
       clobber(&m);
     };
-    print_row(measure("clear (cyc/call)", impl_tag, N, 1, reps_for(N), setup, kernel));
+    print_row(measure("clear (cyc/call)", impl_tag, N, 1, 1, setup, kernel));
   }
 }
 
@@ -548,16 +649,43 @@ template<typename M, typename Trait>
 void
 sweep_immutable_u64(const char *impl_tag, u64 N)
 {
+  u64 keys[4096];
+  u64 misses[4096];
+  micron::hash64_t key_hashes[4096];
+  micron::hash64_t miss_hashes[4096];
+  for ( u64 i = 0; i < N; ++i ) {
+    keys[i] = key_u64(i);
+    misses[i] = key_u64(i + (1ULL << 40));
+    key_hashes[i] = micron::hash<micron::hash64_t>(keys[i]);
+    miss_hashes[i] = micron::hash<micron::hash64_t>(misses[i]);
+  }
 
   {
     M base;
-    auto setup = [&] { base = M{}; };
+    M result;
+    auto setup = [&] {
+      base = M{};
+      result = M{};
+    };
     auto kernel = [&] {
       M cur = base;
       for ( u64 i = 0; i < N; ++i ) cur = Trait::insert(cur, key_u64(i), val_u64(i));
-      sink_ptr(cur.identity());
+      result = micron::move(cur);
+      sink_ptr(result.identity());
     };
-    print_row(measure("insert (build)", impl_tag, N, N, reps_for(N), setup, kernel));
+    print_row(measure("insert (build)", impl_tag, N, N, 1, setup, kernel));
+  }
+
+  if constexpr ( Trait::has_prehashed ) {
+    M result;
+    auto setup = [&] { result = M{}; };
+    auto kernel = [&] {
+      M cur;
+      for ( u64 i = 0; i < N; ++i ) cur = Trait::insert_hash(cur, key_hashes[i], keys[i], val_u64(i));
+      result = micron::move(cur);
+      sink_ptr(result.identity());
+    };
+    print_row(measure("insert-hash (build)", impl_tag, N, N, 1, setup, kernel));
   }
 
   M filled;
@@ -589,6 +717,29 @@ sweep_immutable_u64(const char *impl_tag, u64 N)
     print_row(measure("find (miss)", impl_tag, N, N, reps_for(N), setup, kernel));
   }
 
+  if constexpr ( Trait::has_prehashed ) {
+    auto setup = [] { };
+    auto hit_kernel = [&] {
+      u64 acc = 0;
+      for ( u64 i = 0; i < N; ++i ) {
+        const auto *p = Trait::find_hash(filled, key_hashes[i], keys[i]);
+        if ( p ) acc += *p;
+      }
+      sink_u64 += acc;
+    };
+    print_row(measure("find-hash (hit)", impl_tag, N, N, reps_for(N), setup, hit_kernel));
+
+    auto miss_kernel = [&] {
+      u64 acc = 0;
+      for ( u64 i = 0; i < N; ++i ) {
+        const auto *p = Trait::find_hash(filled, miss_hashes[i], misses[i]);
+        if ( p ) acc += *p;
+      }
+      sink_u64 += acc;
+    };
+    print_row(measure("find-hash (miss)", impl_tag, N, N, reps_for(N), setup, miss_kernel));
+  }
+
   {
     auto setup = [] { };
     auto kernel = [&] {
@@ -613,12 +764,13 @@ sweep_immutable_u64(const char *impl_tag, u64 N)
   }
 
   {
-    auto setup = [] { };
+    M result;
+    auto setup = [&] { result = M{}; };
     auto kernel = [&] {
-      M next = Trait::erase(filled, key_u64(0));
-      sink_ptr(next.identity());
+      result = Trait::erase(filled, key_u64(0));
+      sink_ptr(result.identity());
     };
-    print_row(measure("erase (1 key)", impl_tag, N, 1, reps_for(1), setup, kernel));
+    print_row(measure("erase (1 key)", impl_tag, N, 1, 1, setup, kernel));
   }
 
   if constexpr ( Trait::has_iter ) {
@@ -631,21 +783,23 @@ sweep_immutable_u64(const char *impl_tag, u64 N)
   }
 
   {
-    auto setup = [] { };
+    M result;
+    auto setup = [&] { result = M{}; };
     auto kernel = [&] {
-      M tmp(filled);
-      sink_ptr(tmp.identity());
+      result = filled;
+      sink_ptr(result.identity());
     };
-    print_row(measure("copy-ctor", impl_tag, N, 1, reps_for(1), setup, kernel));
+    print_row(measure("copy (retain)", impl_tag, N, 1, reps_for(1), setup, kernel));
   }
 
   if constexpr ( Trait::has_update ) {
-    auto setup = [] { };
+    M result;
+    auto setup = [&] { result = M{}; };
     auto kernel = [&] {
-      M next = Trait::update(filled, key_u64(0));
-      sink_ptr(next.identity());
+      result = Trait::update(filled, key_u64(0));
+      sink_ptr(result.identity());
     };
-    print_row(measure("update (1 key)", impl_tag, N, 1, reps_for(1), setup, kernel));
+    print_row(measure("update (1 key)", impl_tag, N, 1, 1, setup, kernel));
   }
 }
 
@@ -654,6 +808,7 @@ struct robin_trait_u64 {
   static constexpr bool has_subscript = true;
   static constexpr bool has_emplace = true;
   static constexpr bool has_copy = false;
+  static constexpr bool has_prehashed = true;
 
   static map_t
   make_empty(u64 cap)
@@ -665,6 +820,18 @@ struct robin_trait_u64 {
   insert(map_t &m, u64 k, u64 v)
   {
     m.insert(k, u64{ v });
+  }
+
+  static void
+  insert_hash(map_t &m, micron::hash64_t h, u64 k, u64 v)
+  {
+    m.insert_hash(h, k, u64{ v });
+  }
+
+  static u64 *
+  find_hash(map_t &m, micron::hash64_t h, u64 k)
+  {
+    return m.find_hash(h, k);
   }
 
   static u64 *
@@ -718,6 +885,7 @@ struct btree_trait_u64 {
   static constexpr bool has_subscript = true;
   static constexpr bool has_emplace = true;
   static constexpr bool has_copy = false;
+  static constexpr bool has_prehashed = true;
 
   static map_t
   make_empty(u64 cap)
@@ -730,6 +898,18 @@ struct btree_trait_u64 {
   insert(map_t &m, u64 k, u64 v)
   {
     m.insert(k, u64{ v });
+  }
+
+  static void
+  insert_hash(map_t &m, micron::hash64_t h, u64 k, u64 v)
+  {
+    m.insert_hash(h, k, u64{ v });
+  }
+
+  static u64 *
+  find_hash(map_t &m, micron::hash64_t h, u64 k)
+  {
+    return m.find_hash(h, k);
   }
 
   static u64 *
@@ -782,6 +962,7 @@ struct hopscotch_trait_u64 {
   static constexpr bool has_subscript = true;
   static constexpr bool has_emplace = true;
   static constexpr bool has_copy = false;
+  static constexpr bool has_prehashed = true;
 
   static map_t
   make_empty(u64 cap)
@@ -794,6 +975,18 @@ struct hopscotch_trait_u64 {
   insert(map_t &m, u64 k, u64 v)
   {
     m.insert(k, u64{ v });
+  }
+
+  static void
+  insert_hash(map_t &m, micron::hash64_t h, u64, u64 v)
+  {
+    m.insert_asis(h, u64{ v });
+  }
+
+  static u64 *
+  find_hash(map_t &m, micron::hash64_t h, u64)
+  {
+    return m.find_hash(h);
   }
 
   static u64 *
@@ -847,6 +1040,7 @@ template<usize Cap> struct swiss_trait_u64 {
   static constexpr bool has_subscript = true;
   static constexpr bool has_emplace = true;
   static constexpr bool has_copy = true;
+  static constexpr bool has_prehashed = true;
 
   static map_t
   make_empty(u64)
@@ -858,6 +1052,18 @@ template<usize Cap> struct swiss_trait_u64 {
   insert(map_t &m, u64 k, u64 v)
   {
     m.insert(k, u64{ v });
+  }
+
+  static void
+  insert_hash(map_t &m, micron::hash64_t h, u64 k, u64 v)
+  {
+    m.insert_hash(h, k, u64{ v });
+  }
+
+  static u64 *
+  find_hash(map_t &m, micron::hash64_t h, u64 k)
+  {
+    return m.find_hash(h, k);
   }
 
   static u64 *
@@ -899,12 +1105,8 @@ template<usize Cap> struct swiss_trait_u64 {
   static u64
   iterate_sum(map_t &m)
   {
-
     u64 acc = 0;
-    for ( usize i = 0; i < Cap; ++i ) {
-      const u8 c = m.__control_bytes[i];
-      if ( c != 0xFFu && c != 0xFEu ) acc += m.__entries[i].value;
-    }
+    m.for_each([&](const u64 &, u64 &value) { acc += value; });
     return acc;
   }
 };
@@ -913,6 +1115,7 @@ struct immutable_trait_u64 {
   using map_t = micron::immutable_map<u64, u64>;
   static constexpr bool has_iter = true;
   static constexpr bool has_update = true;
+  static constexpr bool has_prehashed = false;
 
   static map_t
   insert(const map_t &m, u64 k, u64 v)
@@ -963,6 +1166,7 @@ struct itable_trait_u64 {
   using map_t = micron::immutable_table<u64, u64>;
   static constexpr bool has_iter = false;
   static constexpr bool has_update = true;
+  static constexpr bool has_prehashed = false;
 
   static map_t
   insert(const map_t &m, u64 k, u64 v)
@@ -1012,6 +1216,7 @@ struct heap_swiss_trait_u64 {
   static constexpr bool has_subscript = true;
   static constexpr bool has_emplace = true;
   static constexpr bool has_copy = true;
+  static constexpr bool has_prehashed = true;
 
   static map_t
   make_empty(u64 cap)
@@ -1023,6 +1228,18 @@ struct heap_swiss_trait_u64 {
   insert(map_t &m, u64 k, u64 v)
   {
     m.insert(k, u64{ v });
+  }
+
+  static void
+  insert_hash(map_t &m, micron::hash64_t h, u64 k, u64 v)
+  {
+    m.insert_hash(h, k, u64{ v });
+  }
+
+  static u64 *
+  find_hash(map_t &m, micron::hash64_t h, u64 k)
+  {
+    return m.find_hash(h, k);
   }
 
   static u64 *
@@ -1075,6 +1292,7 @@ struct conmap_trait_u64 {
   static constexpr bool has_subscript = false;
   static constexpr bool has_emplace = true;
   static constexpr bool has_copy = false;
+  static constexpr bool has_prehashed = true;
 
   static map_t
   make_empty(u64 cap)
@@ -1086,6 +1304,19 @@ struct conmap_trait_u64 {
   insert(map_t &m, u64 k, u64 v)
   {
     m.insert(k, u64{ v });
+  }
+
+  static void
+  insert_hash(map_t &m, micron::hash64_t h, u64 k, u64 v)
+  {
+    m.insert_hash(h, k, u64{ v });
+  }
+
+  static u64 *
+  find_hash(map_t &m, micron::hash64_t h, u64 k)
+  {
+    static thread_local u64 cache;
+    return m.find_hash(h, k, cache) ? &cache : nullptr;
   }
 
   static u64 *
@@ -1133,6 +1364,7 @@ struct rb_map_trait_u64 {
   static constexpr bool has_subscript = true;
   static constexpr bool has_emplace = true;
   static constexpr bool has_copy = false;
+  static constexpr bool has_prehashed = true;
 
   static map_t
   make_empty(u64 cap)
@@ -1145,6 +1377,18 @@ struct rb_map_trait_u64 {
   insert(map_t &m, u64 k, u64 v)
   {
     m.insert(k, u64{ v });
+  }
+
+  static void
+  insert_hash(map_t &m, micron::hash64_t h, u64 k, u64 v)
+  {
+    m.insert_hash(h, u64{ k }, u64{ v });
+  }
+
+  static u64 *
+  find_hash(map_t &m, micron::hash64_t h, u64 k)
+  {
+    return m.find_hash(h, k);
   }
 
   static u64 *
@@ -1192,67 +1436,11 @@ struct rb_map_trait_u64 {
   }
 };
 
-struct art_trait_u64 {
-  using map_t = micron::art<u64, u64>;
-  static constexpr bool has_subscript = false;
-  static constexpr bool has_emplace = true;
-  static constexpr bool has_copy = false;
-
-  static map_t
-  make_empty(u64)
-  {
-    return map_t{};
-  }
-
-  static void
-  insert(map_t &m, u64 k, u64 v)
-  {
-    m.insert_or_assign(k, u64{ v });
-  }
-
-  static u64 *
-  find(map_t &m, u64 k)
-  {
-    return m.find(k);
-  }
-
-  static bool
-  contains(const map_t &m, u64 k)
-  {
-    return m.contains(k);
-  }
-
-  static void
-  emplace(map_t &m, u64 k, u64 v)
-  {
-    m.emplace(k, u64{ v });
-  }
-
-  static void
-  erase(map_t &m, u64 k)
-  {
-    m.erase(k);
-  }
-
-  static void
-  clear(map_t &m)
-  {
-    m.clear();
-  }
-
-  static u64
-  iterate_sum(map_t &m)
-  {
-    u64 acc = 0;
-    m.for_each([&](const u64 &, const u64 &v) { acc += v; });
-    return acc;
-  }
-};
-
 struct pmap_trait_u64 {
   using map_t = micron::pmap<u64, u64>;
   static constexpr bool has_iter = true;
   static constexpr bool has_update = false;
+  static constexpr bool has_prehashed = true;
 
   static map_t
   insert(const map_t &m, u64 k, u64 v)
@@ -1260,10 +1448,22 @@ struct pmap_trait_u64 {
     return m.insert(k, u64{ v });
   }
 
+  static map_t
+  insert_hash(const map_t &m, micron::hash64_t h, u64 k, u64 v)
+  {
+    return m.insert_hash(h, k, u64{ v });
+  }
+
   static const u64 *
   find(const map_t &m, u64 k)
   {
     return m.find(k);
+  }
+
+  static const u64 *
+  find_hash(const map_t &m, micron::hash64_t h, u64 k)
+  {
+    return m.find_hash(h, k);
   }
 
   static bool
@@ -1518,7 +1718,7 @@ sweep_hstr_map(const char *impl_tag, u64 N)
       }
       clobber(&m);
     };
-    print_row(measure("insert (build)", impl_tag, N, N, reps_for(N * 4), setup, kernel));
+    print_row(measure("insert (build)", impl_tag, N, N, 1, setup, kernel));
   }
 
   map_t filled = Trait::make_empty(N);
@@ -1572,7 +1772,7 @@ sweep_hstr_map(const char *impl_tag, u64 N)
       }
       clobber(&filled);
     };
-    print_row(measure("erase (drain)", impl_tag, N, N, reps_for(N * 4), setup, kernel));
+    print_row(measure("erase (drain)", impl_tag, N, N, 1, setup, kernel));
   }
 
   {
@@ -1590,15 +1790,98 @@ sweep_hstr_map(const char *impl_tag, u64 N)
       Trait::clear(filled);
       clobber(&filled);
     };
-    print_row(measure("clear", impl_tag, N, N, reps_for(N), setup, kernel));
+    print_row(measure("clear", impl_tag, N, N, 1, setup, kernel));
+  }
+}
+
+template<typename Trait>
+void
+sweep_tree_paths(const char *impl_tag, u64 N)
+{
+  using map_t = typename Trait::map_t;
+  u64 keys[512];
+  u64 misses[512];
+  micron::hash64_t hashes[512];
+  for ( u64 i = 0; i < N; ++i ) {
+    keys[i] = key_u64(i);
+    misses[i] = key_u64(i + (1ULL << 40));
+    hashes[i] = static_cast<micron::hash64_t>((i + 1u) << 32u);
+  }
+
+  {
+    map_t map = Trait::make_empty(N);
+    auto setup = [&] { map = Trait::make_empty(N); };
+    auto kernel = [&] {
+      for ( u64 i = 0; i < N; ++i ) Trait::insert_hash(map, hashes[i], keys[i], val_u64(i));
+      clobber(&map);
+    };
+    print_row(measure("tree-bin insert-hash", impl_tag, N, N, 1, setup, kernel));
+  }
+
+  {
+    map_t map = Trait::make_empty(N);
+    auto setup = [&] {
+      map = Trait::make_empty(N);
+      for ( u64 i = 0; i < N; ++i ) Trait::insert_hash(map, hashes[i], keys[i], val_u64(i));
+    };
+    auto hit_kernel = [&] {
+      u64 acc = 0;
+      for ( u64 i = 0; i < N; ++i ) {
+        const u64 *value = Trait::find_hash(map, hashes[i], keys[i]);
+        if ( value ) acc += *value;
+      }
+      sink_u64 += acc;
+    };
+    print_row(measure("tree-bin find (hit)", impl_tag, N, N, reps_for(N), setup, hit_kernel));
+
+    auto miss_kernel = [&] {
+      u64 acc = 0;
+      for ( u64 i = 0; i < N; ++i ) {
+        const u64 *value = Trait::find_hash(map, hashes[i], misses[i]);
+        if ( value ) acc += *value;
+      }
+      sink_u64 += acc;
+    };
+    print_row(measure("tree-bin find (miss)", impl_tag, N, N, reps_for(N), setup, miss_kernel));
+  }
+
+  {
+    constexpr micron::hash64_t collision_hash = static_cast<micron::hash64_t>(0xD1B54A32D192ED03ULL);
+    map_t map = Trait::make_empty(N);
+    auto setup = [&] {
+      map = Trait::make_empty(N);
+      for ( u64 i = 0; i < N; ++i ) Trait::insert_hash(map, collision_hash, keys[i], val_u64(i));
+    };
+    auto kernel = [&] {
+      u64 acc = 0;
+      for ( u64 i = 0; i < N; ++i ) {
+        const u64 *value = Trait::find_hash(map, collision_hash, keys[i]);
+        if ( value ) acc += *value;
+      }
+      sink_u64 += acc;
+    };
+    print_row(measure("collision find (hit)", impl_tag, N, N, reps_for(N), setup, kernel));
   }
 }
 
 };      // namespace
 
 int
-main(void)
+main(int argc, char **argv)
 {
+  for ( int i = 1; i < argc; ++i ) {
+    if ( starts_with(argv[i], "--map=") )
+      g_map_filter = argv[i] + 6;
+    else if ( starts_with(argv[i], "--op=") )
+      g_op_filter = argv[i] + 5;
+    else if ( starts_with(argv[i], "--size=") )
+      g_size_filter = parse_u64(argv[i] + 7);
+    else {
+      micron::io::println("usage: maps_bench [--map=TAG] [--op=NAME] [--size=N]");
+      return 2;
+    }
+  }
+
   micron::posix::cpu_set_t set;
   set.cpu_zero();
   set.cpu_set(0);
@@ -1612,49 +1895,77 @@ main(void)
   constexpr u64 SIZES_MED[] = { 64, 256, 1024 };
   constexpr u64 SIZES_LARGE[] = { 256, 1024, 4096 };
 
-  print_header("robin_map<u64,u64>");
-  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename robin_trait_u64::map_t, robin_trait_u64>("robin", N);
+  if ( wanted_map("robin") ) {
+    print_header("robin_map<u64,u64>");
+    for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename robin_trait_u64::map_t, robin_trait_u64>("robin", N);
+  }
 
-  print_header("heap_swiss_map<u64,u64>");
-  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename heap_swiss_trait_u64::map_t, heap_swiss_trait_u64>("heap-swiss", N);
+  if ( wanted_map("heap-swiss") ) {
+    print_header("heap_swiss_map<u64,u64>");
+    for ( u64 N : SIZES_LARGE )
+      sweep_mutable_u64<typename heap_swiss_trait_u64::map_t, heap_swiss_trait_u64>("heap-swiss", N);
+  }
 
-  print_header("conmap<u64,u64>");
-  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename conmap_trait_u64::map_t, conmap_trait_u64>("conmap", N);
+  if ( wanted_map("conmap") ) {
+    print_header("conmap<u64,u64>");
+    for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename conmap_trait_u64::map_t, conmap_trait_u64>("conmap", N);
+  }
 
-  print_header("rb_map<u64,u64>");
-  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename rb_map_trait_u64::map_t, rb_map_trait_u64>("rb_map", N);
+  if ( wanted_map("rb_map") ) {
+    print_header("rb_map<u64,u64>");
+    for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename rb_map_trait_u64::map_t, rb_map_trait_u64>("rb_map", N);
+    sweep_tree_paths<rb_map_trait_u64>("rb_map", 256);
+  }
 
-  print_header("art<u64,u64>");
-  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename art_trait_u64::map_t, art_trait_u64>("art", N);
+  if ( wanted_map("btree") ) {
+    print_header("btree_map<u64,u64>");
+    for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename btree_trait_u64::map_t, btree_trait_u64>("btree", N);
+    sweep_tree_paths<btree_trait_u64>("btree", 256);
+  }
 
-  print_header("btree_map<u64,u64>");
-  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename btree_trait_u64::map_t, btree_trait_u64>("btree", N);
+  if ( wanted_map("hopscotch") ) {
+    print_header("hopscotch_map<u64,u64>");
+    for ( u64 N : SIZES_LARGE )
+      sweep_mutable_u64<typename hopscotch_trait_u64::map_t, hopscotch_trait_u64>("hopscotch", N);
+  }
 
-  print_header("hopscotch_map<u64,u64>");
-  for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename hopscotch_trait_u64::map_t, hopscotch_trait_u64>("hopscotch", N);
+  if ( wanted_map("swiss-2k") ) {
+    print_header("stack_swiss_map<u64,u64> N=2048 capacity");
+    using swiss_2k = swiss_trait_u64<2048>;
+    for ( u64 N : SIZES_SMALL ) sweep_mutable_u64<typename swiss_2k::map_t, swiss_2k>("swiss-2k", N);
+  }
 
-  print_header("stack_swiss_map<u64,u64> N=2048 capacity");
-  using swiss_2k = swiss_trait_u64<2048>;
-  for ( u64 N : SIZES_SMALL ) sweep_mutable_u64<typename swiss_2k::map_t, swiss_2k>("swiss-2k", N);
+  if ( wanted_map("immutable") ) {
+    print_header("immutable_map<u64,u64>");
+    for ( u64 N : SIZES_MED )
+      sweep_immutable_u64<typename immutable_trait_u64::map_t, immutable_trait_u64>("immutable", N);
+  }
 
-  print_header("immutable_map<u64,u64>");
-  for ( u64 N : SIZES_MED ) sweep_immutable_u64<typename immutable_trait_u64::map_t, immutable_trait_u64>("immutable", N);
+  if ( wanted_map("itable") ) {
+    print_header("immutable_table<u64,u64>");
+    for ( u64 N : SIZES_MED ) sweep_immutable_u64<typename itable_trait_u64::map_t, itable_trait_u64>("itable", N);
+  }
 
-  print_header("immutable_table<u64,u64>");
-  for ( u64 N : SIZES_MED ) sweep_immutable_u64<typename itable_trait_u64::map_t, itable_trait_u64>("itable", N);
-
-  print_header("pmap<u64,u64>");
-  for ( u64 N : SIZES_MED ) sweep_immutable_u64<typename pmap_trait_u64::map_t, pmap_trait_u64>("pmap", N);
+  if ( wanted_map("pmap") ) {
+    print_header("pmap<u64,u64>");
+    for ( u64 N : SIZES_MED ) sweep_immutable_u64<typename pmap_trait_u64::map_t, pmap_trait_u64>("pmap", N);
+  }
 
   constexpr u64 HSTR_SIZES[] = { 64, 256 };
-  print_header("robin_map<hstring,i32>");
-  for ( u64 N : HSTR_SIZES ) sweep_hstr_map<robin_trait_hstr>("robin", N);
+  if ( wanted_map("robin-hstr") ) {
+    print_header("robin_map<hstring,i32>");
+    for ( u64 N : HSTR_SIZES ) sweep_hstr_map<robin_trait_hstr>("robin-hstr", N);
+  }
 
-  print_header("hopscotch_map<hstring,i32>");
-  for ( u64 N : HSTR_SIZES ) sweep_hstr_map<hopscotch_trait_hstr>("hopscotch", N);
+  if ( wanted_map("hopscotch-hstr") ) {
+    print_header("hopscotch_map<hstring,i32>");
+    for ( u64 N : HSTR_SIZES ) sweep_hstr_map<hopscotch_trait_hstr>("hopscotch-hstr", N);
+  }
 
-  print_header("btree_map<hstring,i32>");
-  for ( u64 N : HSTR_SIZES ) sweep_hstr_map<btree_trait_hstr>("btree", N);
+  if ( wanted_map("btree-hstr") ) {
+    print_header("btree_map<hstring,i32>");
+    for ( u64 N : HSTR_SIZES ) sweep_hstr_map<btree_trait_hstr>("btree-hstr", N);
+  }
 
   micron::io::println("");
   micron::io::println("[anomalies] (rows flagged during run)");
