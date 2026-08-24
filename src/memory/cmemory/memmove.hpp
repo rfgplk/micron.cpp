@@ -19,7 +19,7 @@ namespace micron
 // TODO: also pull these out into plumbing
 
 // cold tier selection
-[[gnu::noinline]] static __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) byte *
+[[gnu::noinline]] static __micron_optimize_no_tree_loop_distribute byte *
 __memmove_large(byte *d, const byte *s, const u64 n) noexcept
 {
   if ( d < s || d >= s + n ) {
@@ -378,7 +378,7 @@ rscmemmove(F &dest, D &src) noexcept
 
 #if defined(__micron_freestanding)
 // c-abi
-extern "C" __attribute__((used, optimize("-fno-tree-loop-distribute-patterns"))) inline void *
+extern "C" __attribute__((used)) __micron_optimize_no_tree_loop_distribute inline void *
 memmove(void *d, const void *s, __SIZE_TYPE__ n) noexcept
 {
   micron::__memmove_bytes(static_cast<byte *>(d), static_cast<const byte *>(s), static_cast<u64>(n));

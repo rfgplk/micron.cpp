@@ -283,26 +283,26 @@ fwrite(T &ref, usize num, const fd_t &handle)
     if ( __global_buffer_stdout->full(num * sizeof(byte)) ) {
       (*__global_buffer_stdout) >> handle;
       posix::write(handle.fd, ref, num);
-      return num;
+      return static_cast<max_t>(num);
     force_flush_out:
       (*__global_buffer_stdout) >> handle;
-      return num;
+      return static_cast<max_t>(num);
     }
     __global_buffer_stdout->append(ref, num);
     if ( __stdout_line_buffered && simd::any_set_128(ref, num, __global_buffer_flush) ) goto force_flush_out;
-    return num;
+    return static_cast<max_t>(num);
   } else if ( handle == stderr ) {
     if ( __global_buffer_stderr->full(num * sizeof(byte)) ) {
       (*__global_buffer_stderr) >> handle;
       posix::write(handle.fd, ref, num);
-      return num;
+      return static_cast<max_t>(num);
     force_flush_err:
       (*__global_buffer_stderr) >> handle;
-      return num;
+      return static_cast<max_t>(num);
     }
     __global_buffer_stderr->append(ref, num);
     if ( simd::any_set_128(ref, num, __global_buffer_flush) ) goto force_flush_err;
-    return num;
+    return static_cast<max_t>(num);
   }
   return posix::write(handle.fd, ref, num);
 }
@@ -319,29 +319,29 @@ fwrite(T *ptr, usize num, const fd_t &handle)
     if ( __global_buffer_stdout->full(nbytes) ) {
       (*__global_buffer_stdout) >> handle;
       if ( max_t __w = posix::write_all(handle, reinterpret_cast<const byte *>(ptr), nbytes); __w < 0 ) return __w;
-      return num;
+      return static_cast<max_t>(num);
     force_flush_out:
       (*__global_buffer_stdout) >> handle;
-      return num;
+      return static_cast<max_t>(num);
     }
     __global_buffer_stdout->append(ptr, num);
     if ( __stdout_line_buffered && simd::any_set_128(ptr, nbytes, __global_buffer_flush) ) goto force_flush_out;
-    return num;
+    return static_cast<max_t>(num);
   } else if ( handle == stderr ) {
     if ( __global_buffer_stderr->full(nbytes) ) {
       (*__global_buffer_stderr) >> handle;
       if ( max_t __w = posix::write_all(handle, reinterpret_cast<const byte *>(ptr), nbytes); __w < 0 ) return __w;
-      return num;
+      return static_cast<max_t>(num);
     force_flush_err:
       (*__global_buffer_stderr) >> handle;
-      return num;
+      return static_cast<max_t>(num);
     }
     __global_buffer_stderr->append(ptr, num);
     if ( simd::any_set_128(ptr, nbytes, __global_buffer_flush) ) goto force_flush_err;
-    return num;
+    return static_cast<max_t>(num);
   }
   if ( max_t __w = posix::write_all(handle, reinterpret_cast<const byte *>(ptr), nbytes); __w < 0 ) return __w;
-  return num;
+  return static_cast<max_t>(num);
 }
 
 void

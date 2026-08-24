@@ -10,6 +10,8 @@
 #ifndef __MICRON_ARCH_H
 #define __MICRON_ARCH_H
 
+#include "__compilers.hpp"
+
 // this is here so we don't clutter the root dir
 // TODO: change all code macros to use these defs
 
@@ -427,32 +429,6 @@ inline constexpr unsigned __micron_width = __wordsize;
 
 // NOTE: this lib is only made for gcc, but it's good to have fallbacks
 
-#if defined(__clang__)
-#define __micron_compiler_clang 1
-#define __micron_compiler_clang_major __clang_major__
-#define __micron_compiler_clang_minor __clang_minor__
-#define __micron_compiler_clang_patch __clang_patchlevel__
-#elif defined(__GNUC__)
-#define __micron_compiler_gcc 1
-#define __micron_compiler_gcc_major __GNUC__
-#define __micron_compiler_gcc_minor __GNUC_MINOR__
-#define __micron_compiler_gcc_patch __GNUC_PATCHLEVEL__
-#elif defined(_MSC_VER)
-#define __micron_compiler_msvc 1
-#define __micron_compiler_msvc_ver _MSC_VER
-#elif defined(__INTEL_COMPILER) || defined(__ICC)
-#define __micron_compiler_icc 1
-#define __micron_compiler_icc_ver __INTEL_COMPILER
-#elif defined(__INTEL_LLVM_COMPILER)
-#define __micron_compiler_icx 1
-#else
-#define __micron_compiler_unknown 1
-#endif
-
-#if defined(__micron_compiler_gcc) || defined(__micron_compiler_clang)
-#define __micron_compiler_gcc_compat 1
-#endif
-
 #if defined(__cplusplus)
 #define __micron_lang_cpp 1
 // NOTE: gcc still reports the c++26 placeholder 202400L, so this cannot test for a 2026xx value
@@ -622,7 +598,11 @@ __attribute__((visibility("hidden"))) void __cxa_guard_abort(__micron_guard_t *)
 #if !defined(__micron_no_ssp)
 // gcc < 11 / clang < 12: the historical workaround. costs nothing here because every
 // naked fn in the tree is also noinline, so losing the inline-into-caller opts is moot
+#if defined(__micron_compiler_gcc)
 #define __micron_no_ssp __attribute__((optimize("no-stack-protector")))
+#else
+#define __micron_no_ssp
+#endif
 #endif
 
 #endif

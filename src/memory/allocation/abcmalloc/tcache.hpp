@@ -44,8 +44,7 @@ template<u32 Slots> struct alignas(64) __tier_tcache {
   {
     if ( _count == 0 ) [[unlikely]]
       return -1;
-#pragma GCC unroll 8
-    for ( u32 i = _count; i > 0; --i ) {
+__micron_gcc_unroll_8    for ( u32 i = _count; i > 0; --i ) {
       if ( _size[i - 1] == sz ) [[likely]]
         return static_cast<i32>(i - 1);
     }
@@ -57,8 +56,7 @@ template<u32 Slots> struct alignas(64) __tier_tcache {
   {
     if ( _count == 0 ) [[unlikely]]
       return -1;
-#pragma GCC unroll 8
-    for ( u32 i = _count; i > 0; --i ) {
+__micron_gcc_unroll_8    for ( u32 i = _count; i > 0; --i ) {
       if ( _size[i - 1] >= sz ) [[likely]]
         return static_cast<i32>(i - 1);
     }

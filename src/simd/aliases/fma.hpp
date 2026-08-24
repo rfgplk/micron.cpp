@@ -18,9 +18,8 @@ namespace simd
 namespace fma
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_fma [[gnu::always_inline, gnu::artificial, gnu::target("fma")]] static inline
 
 __inline_fma __m128
@@ -267,8 +266,7 @@ fnms_f64_v512(__m512d a, __m512d b, __m512d c) noexcept
   return _mm512_fnmsub_pd(a, b, c);
 }
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace fma
 };      // namespace simd
 };      // namespace micron

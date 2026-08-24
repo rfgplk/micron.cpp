@@ -16,9 +16,8 @@
 #include "type_traits.hpp"
 
 // must surpress int128 extensions
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wpedantic")
 typedef unsigned char __u_char;
 typedef unsigned short int __u_short;
 typedef unsigned int __u_int;
@@ -196,4 +195,4 @@ union max_align_t {
 
 #include "bits/__ctasserts.hpp"
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

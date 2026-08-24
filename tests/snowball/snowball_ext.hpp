@@ -56,7 +56,6 @@ void
 property_test(const char *name, Fn &&fn, size_t count)
 {
   using traits = function_traits<decltype(&Fn::operator())>;
-  using args_tuple = typename traits::args_tuple;
 
   test_case(name);
   u64 state = __impl::__property_seed();

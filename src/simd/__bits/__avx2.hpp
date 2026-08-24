@@ -21,11 +21,10 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("avx2")]] static inline
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -925,8 +924,7 @@ _mm256_stream_load_si256(const __m256i *p) noexcept
                                           (::micron::simd::__bits::__v4si)(::__m128i)(INDEX),                                              \
                                           (::micron::simd::__bits::__v4di)(::__m256i)(MASK), (int)(SCALE)))
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 #define __inject_i(name) using ::micron::simd::__bits::name
 

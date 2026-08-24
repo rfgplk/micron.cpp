@@ -22,11 +22,10 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("avx512bw")]] static inline
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,19 +259,19 @@ _mm512_unpacklo_epi16(__m512i a, __m512i b) noexcept
 __inline_g __m512i
 _mm512_slli_epi16(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_psllwi512_mask((__v32hi)a, n, (__v32hi){ 0 }, (__mmask32)-1);
+  return (__m512i)__builtin_ia32_psllwi512_mask((__v32hi)a, static_cast<unsigned int>(n), (__v32hi){ 0 }, (__mmask32)-1);
 }
 
 __inline_g __m512i
 _mm512_srli_epi16(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_psrlwi512_mask((__v32hi)a, n, (__v32hi){ 0 }, (__mmask32)-1);
+  return (__m512i)__builtin_ia32_psrlwi512_mask((__v32hi)a, static_cast<unsigned int>(n), (__v32hi){ 0 }, (__mmask32)-1);
 }
 
 __inline_g __m512i
 _mm512_srai_epi16(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_psrawi512_mask((__v32hi)a, n, (__v32hi){ 0 }, (__mmask32)-1);
+  return (__m512i)__builtin_ia32_psrawi512_mask((__v32hi)a, static_cast<unsigned int>(n), (__v32hi){ 0 }, (__mmask32)-1);
 }
 
 __inline_g __mmask64
@@ -313,8 +312,7 @@ _mm512_cmpgt_epi16_mask(__m512i a, __m512i b) noexcept
 
 #undef __inline_g
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron

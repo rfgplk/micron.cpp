@@ -14,9 +14,8 @@
 // text -> binary floating point, correctly rounded (round-to-nearest, ties-to-even)
 //
 // NOTE: we __must__ disable fast-math and associated opts
-#pragma GCC push_options
-#pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
-
+__micron_push_options
+__micron_optimize_no_fast_math
 namespace micron
 {
 namespace __impl
@@ -1130,4 +1129,4 @@ try_string_to_float(const micron::hstring<T> &buf, f32 &out)
 
 };      // namespace micron
 
-#pragma GCC pop_options
+__micron_pop_options

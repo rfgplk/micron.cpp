@@ -16,9 +16,8 @@ namespace simd
 // #define __micron_simd_svml 1   // requires an SVML backend; OFF by default
 #endif
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // abs
 
@@ -2746,7 +2745,6 @@ mask_svml_round(B src, M k, B &o)
 
 #endif      // __micron_simd_svml
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace simd
 };      // namespace micron

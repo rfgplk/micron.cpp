@@ -21,8 +21,8 @@ constexpr static const i32 nowait = 0x01000000;     /* Don't reap, just poll sta
 constexpr static const i32 nothread = 0x20000000;   /* Don't wait on children of other threads
                                     in this group */
 constexpr static const i32 wait_all = 0x40000000;   /* Wait for any child.  */
-constexpr static const i32 wait_clone = 0x80000000; /* Wait for cloned process.  */
-constexpr static const clock_t clocks_per_sec = 1000000;
+constexpr static const i32 wait_clone = static_cast<i32>(0x80000000u); /* Wait for cloned process.  */
+constexpr static const clock_t clocks_per_sec = static_cast<i32>(1000000u);
 constexpr static const i32 clock_realtime = 0;
 /* Monotonic system-wide clock.  */
 constexpr static const i32 clock_monotonic = 1;

@@ -203,7 +203,7 @@ create_info_handler(Fn &&fn, signal sig, int extra_flags = 0)
   posix::sigaction_t sa = {};
   sa.sigaction_handler.sa_sigaction = fn;
   micron::posix::sigemptyset(sa.sa_mask);
-  sa.sa_flags = posix::sa_restart | posix::sa_siginfo | extra_flags;
+  sa.sa_flags = static_cast<unsigned int>(posix::sa_restart | posix::sa_siginfo | static_cast<unsigned int>(extra_flags));
   micron::posix::sigaction(static_cast<int>(sig), sa, nullptr);
   return sa;
 }

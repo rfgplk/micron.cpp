@@ -195,10 +195,10 @@ hash64(const byte *data, usize len, u64 seed)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 ) return hashes::xxhash64_rtseed(data, seed, len);
 #if defined(__micron_hash_zzz)
-  if constexpr ( default_hash_64 == hash_types::zzz ) return hashes::zzz64(data, seed, len);
-  if constexpr ( default_hash_64 == hash_types::zzzf ) return hashes::zzzf64(data, seed, len);
-  if constexpr ( default_hash_64 == hash_types::zz ) return hashes::zz64(data, seed, len);
-  if constexpr ( default_hash_64 == hash_types::z ) return hashes::z64(data, seed, len);
+  if constexpr ( default_hash_64 == hash_types::zzz ) return static_cast<hash64_t>(hashes::zzz64(data, static_cast<i64>(seed), len));
+  if constexpr ( default_hash_64 == hash_types::zzzf ) return static_cast<hash64_t>(hashes::zzzf64(data, static_cast<i64>(seed), len));
+  if constexpr ( default_hash_64 == hash_types::zz ) return static_cast<hash64_t>(hashes::zz64(data, static_cast<i64>(seed), len));
+  if constexpr ( default_hash_64 == hash_types::z ) return static_cast<hash64_t>(hashes::z64(data, static_cast<i64>(seed), len));
 #endif
   if constexpr ( default_hash_64 == hash_types::rapidhash ) return hashes::rapidhash(data, seed, len);
 #if defined(__micron_arch_x86_any)

@@ -257,7 +257,7 @@ private:
       __m256i any = _mm256_cmpeq_epi8(v, cv[0]);
       for ( size_type k = 1; k < K; ++k ) any = _mm256_or_si256(any, _mm256_cmpeq_epi8(v, cv[k]));
       u32 m = static_cast<u32>(_mm256_movemask_epi8(any));
-      if ( m ) return i + __builtin_ctz(m);
+      if ( m ) return i + static_cast<size_type>(__builtin_ctz(static_cast<unsigned int>(m)));
     }
 #endif
 #if defined(__micron_x86_sse2)
@@ -268,7 +268,7 @@ private:
       __m128i any = _mm_cmpeq_epi8(v, cv128[0]);
       for ( size_type k = 1; k < K; ++k ) any = _mm_or_si128(any, _mm_cmpeq_epi8(v, cv128[k]));
       u32 m = static_cast<u32>(_mm_movemask_epi8(any));
-      if ( m ) return i + __builtin_ctz(m);
+      if ( m ) return i + static_cast<size_type>(__builtin_ctz(static_cast<unsigned int>(m)));
     }
 #elif defined(__micron_arm_neon)
     micron::simd::__bits::uint8x16_t cv_n[K];
@@ -278,7 +278,7 @@ private:
       auto any = vceqq_u8(v, cv_n[0]);
       for ( size_type k = 1; k < K; ++k ) any = vorrq_u8(any, vceqq_u8(v, cv_n[k]));
       u32 m = micron::simd::__neon_movemask_u8(any);
-      if ( m ) return i + __builtin_ctz(m);
+      if ( m ) return i + static_cast<size_type>(__builtin_ctz(static_cast<unsigned int>(m)));
     }
 #endif
     for ( ; i < len; ++i )
@@ -307,7 +307,7 @@ private:
       for ( size_type k = 1; k < K; ++k ) any = _mm256_or_si256(any, _mm256_cmpeq_epi8(v, cv[k]));
       u32 m = static_cast<u32>(_mm256_movemask_epi8(any));
       if ( m ) {
-        const u32 hi = 31u - __builtin_clz(m);
+        const u32 hi = static_cast<u32>(31 - __builtin_clz(static_cast<unsigned int>(m)));
         return (i - 32) + hi;
       }
       i -= 32;
@@ -322,7 +322,7 @@ private:
       for ( size_type k = 1; k < K; ++k ) any = _mm_or_si128(any, _mm_cmpeq_epi8(v, cv128[k]));
       u32 m = static_cast<u32>(_mm_movemask_epi8(any)) & 0xFFFFu;
       if ( m ) {
-        const u32 hi = 31u - __builtin_clz(m);
+        const u32 hi = static_cast<u32>(31 - __builtin_clz(static_cast<unsigned int>(m)));
         return (i - 16) + hi;
       }
       i -= 16;
@@ -379,8 +379,8 @@ private:
       __m256i v = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(hay + pos));
       u32 mask = static_cast<u32>(_mm256_movemask_epi8(_mm256_cmpeq_epi8(v, first)));
       while ( mask ) {
-        const u32 bit = __builtin_ctz(mask);
-        const size_type cand = pos + bit;
+        const u32 bit = static_cast<u32>(__builtin_ctz(static_cast<unsigned int>(mask)));
+        const size_type cand = pos + static_cast<size_type>(bit);
         bool match
             = (nlen == 1)
               || (micron::memcmp<byte>(reinterpret_cast<const byte *>(hay + cand + 1), reinterpret_cast<const byte *>(needle + 1), nlen - 1)
@@ -407,7 +407,7 @@ private:
       auto v = vld1q_u8(reinterpret_cast<const u8 *>(hay + pos));
       u32 mask = micron::simd::__neon_movemask_u8(vceqq_u8(v, first));
       while ( mask ) {
-        const u32 bit = __builtin_ctz(mask);
+        const u32 bit = static_cast<u32>(__builtin_ctz(static_cast<unsigned int>(mask)));
         const size_type cand = pos + bit;
         bool match
             = (nlen == 1)
@@ -1543,7 +1543,7 @@ public:
                                       _mm256_or_si256(_mm256_cmpeq_epi8(v, cv[2]), _mm256_cmpeq_epi8(v, cv[3])));
         u32 m = static_cast<u32>(_mm256_movemask_epi8(any));
         if ( m != 0xFFFFFFFFu ) {
-          i += __builtin_ctz(~m);
+          i += static_cast<size_type>(__builtin_ctz(static_cast<unsigned int>(~m)));
           goto sstring_trim_left_done;
         }
       }
@@ -1557,7 +1557,7 @@ public:
         auto any = vorrq_u8(vorrq_u8(vceqq_u8(v, cv_n[0]), vceqq_u8(v, cv_n[1])), vorrq_u8(vceqq_u8(v, cv_n[2]), vceqq_u8(v, cv_n[3])));
         u32 m = micron::simd::__neon_movemask_u8(any);
         if ( m != 0xFFFFu ) {
-          i += __builtin_ctz(static_cast<u32>(~m) & 0xFFFFu);
+          i += static_cast<size_type>(__builtin_ctz(static_cast<unsigned int>(static_cast<u32>(~m) & 0xFFFFu)));
           goto sstring_trim_left_done;
         }
       }
@@ -1606,7 +1606,7 @@ public:
                                       _mm256_or_si256(_mm256_cmpeq_epi8(v, cv[2]), _mm256_cmpeq_epi8(v, cv[3])));
         u32 m = static_cast<u32>(_mm256_movemask_epi8(any));
         if ( m != 0xFFFFFFFFu ) {
-          i -= __builtin_clz(~m);
+          i -= static_cast<size_type>(__builtin_clz(static_cast<unsigned int>(~m)));
           goto sstring_trim_right_done;
         }
         i -= 32;

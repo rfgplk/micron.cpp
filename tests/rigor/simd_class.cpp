@@ -10,9 +10,8 @@ using ::sb::print;
 using ::sb::require_true;
 using ::sb::test_case;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #if defined(__micron_arch_x86_any)
 
 namespace ms = ::micron::simd;
@@ -260,4 +259,4 @@ main()
 
 #endif
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

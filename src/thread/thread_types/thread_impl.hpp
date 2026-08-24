@@ -115,7 +115,7 @@ struct __thread_payload {
 };
 
 // the running thread kernel self-exit routine
-inline void
+[[noreturn]] inline void
 __micron_thread_die_impl() noexcept
 {
   // run this thread's C++ thread_local dtors (guest modules) before the arena hook

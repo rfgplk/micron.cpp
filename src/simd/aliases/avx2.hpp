@@ -18,10 +18,9 @@ namespace simd
 namespace avx2
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpedantic")
 #define __inline_avx [[gnu::always_inline, gnu::artificial, gnu::target("avx2")]] static inline
 
 __inline_avx __m256i
@@ -940,8 +939,7 @@ insert_i128(__m256i a, __m128i b) noexcept
 
 #undef __inline_avx
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace avx2
 };      // namespace simd
 };      // namespace micron

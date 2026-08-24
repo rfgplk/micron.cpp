@@ -25,7 +25,7 @@ constexpr static const bool __micron_global__alloc_debug = false;
 
 // Clang does not inject this compiler-required type until <new> is included. Micron cannot
 // include that STL header, so provide the language ABI declaration itself.
-#if defined(__clang__)
+#if defined(__clang__) && !defined(_NEW) && !defined(_LIBCPP_NEW) && !defined(_LIBCPP___NEW)
 namespace std
 {
 enum class align_val_t : usize { };

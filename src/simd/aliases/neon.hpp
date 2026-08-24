@@ -18,9 +18,8 @@ namespace simd
 namespace neon
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_neon [[gnu::always_inline, gnu::artificial]] static inline
 
 __inline_neon int8x16_t
@@ -2842,8 +2841,7 @@ decimal_digits_16(char *out, u64 value) noexcept
 
 #undef __inline_neon
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace neon
 };      // namespace simd
 };      // namespace micron

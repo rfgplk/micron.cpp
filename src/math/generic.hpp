@@ -364,14 +364,14 @@ constexpr i32
 log2(i32 x)
 {
   if ( x <= 0 ) return -1;
-  return 31 - __builtin_clz(x);
+  return static_cast<i32>(31 - __builtin_clz(static_cast<unsigned int>(x)));
 }
 
 constexpr i64
 log2ll(i64 x)
 {
   if ( x <= 0 ) return -1;
-  return (i64)63 - (i64)__builtin_clzll(x);
+  return static_cast<i64>(63 - __builtin_clzll(static_cast<unsigned long long>(x)));
 }
 
 constexpr f32
@@ -843,6 +843,8 @@ remquo(f64 x, f64 y, int *q)
   return f64(mkbits::rem::remquo<f64>(f64(x), f64(y), q));
 }
 
+__micron_diagnostic_push
+__micron_diagnostic_nan
 inline f32
 nanf(const char *tag)
 {
@@ -854,6 +856,7 @@ nan(const char *tag)
 {
   return __builtin_nan(tag);
 }
+__micron_diagnostic_pop
 
 constexpr i32
 abs(i32 x)

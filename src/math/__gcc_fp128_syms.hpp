@@ -15,9 +15,8 @@
 #include "../types.hpp"
 
 #if defined(__SIZEOF_INT128__) && defined(__FLT128_MANT_DIG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wpedantic")
 // IEEE-754 binary128 soft float runtime helpers
 namespace
 {
@@ -556,5 +555,5 @@ __unordtf2(_Float128 fa, _Float128 fb) noexcept
   return __tf_either_nan(__tf_bits(fa), __tf_bits(fb)) ? 1 : 0;
 }
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop
 #endif

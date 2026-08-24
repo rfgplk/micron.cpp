@@ -23,7 +23,7 @@ find_first_set_128(const void *_ptr, usize len, const char b)
     i128 chunk = _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr + i));
     i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
     int mask = _mm_movemask_epi8(cmp);
-    if ( mask ) return i + __builtin_ctz(mask);
+    if ( mask ) return i + static_cast<usize>(__builtin_ctz(static_cast<unsigned int>(mask)));
   }
   for ( ; i < len; ++i )
     if ( ptr[i] == b ) return i;
@@ -41,7 +41,7 @@ find_first_set_256(const void *_ptr, usize len, const char b)
     i256 chunk = _mm256_loadu_si256(reinterpret_cast<const i256 *>(ptr + i));
     i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
     int mask = _mm256_movemask_epi8(cmp);
-    if ( mask ) return i + __builtin_ctz(mask);
+    if ( mask ) return i + static_cast<usize>(__builtin_ctz(static_cast<unsigned int>(mask)));
   }
   for ( ; i < len; ++i )
     if ( ptr[i] == b ) return i;
@@ -61,7 +61,7 @@ count_set_128(const void *_ptr, usize len, const char b)
   for ( ; i + 15 < len; i += 16 ) {
     i128 chunk = _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr + i));
     i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
-    cnt += _mm_popcnt_u32(_mm_movemask_epi8(cmp));
+    cnt += static_cast<usize>(_mm_popcnt_u32(static_cast<unsigned int>(_mm_movemask_epi8(cmp))));
   }
   for ( ; i < len; ++i )
     if ( ptr[i] == b ) ++cnt;
@@ -79,7 +79,7 @@ count_set_256(const void *_ptr, usize len, const char b)
   for ( ; i + 31 < len; i += 32 ) {
     i256 chunk = _mm256_loadu_si256(reinterpret_cast<const i256 *>(ptr + i));
     i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
-    cnt += _mm_popcnt_u32(_mm256_movemask_epi8(cmp));
+    cnt += static_cast<usize>(_mm_popcnt_u32(static_cast<unsigned int>(_mm256_movemask_epi8(cmp))));
   }
   for ( ; i < len; ++i )
     if ( ptr[i] == b ) ++cnt;

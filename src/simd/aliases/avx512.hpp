@@ -18,13 +18,11 @@ namespace simd
 namespace avx512
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
-#pragma GCC push_options
-#pragma GCC target("avx512f,avx512bw,avx512dq,avx512vl")
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpedantic")
+__micron_push_options
+__micron_gcc_target_avx512
 #define __inline_avx512 [[gnu::always_inline, gnu::artificial, gnu::target("avx512f,avx512bw,avx512dq,avx512vl")]] static inline
 
 __inline_avx512 __m512
@@ -1163,10 +1161,8 @@ gather_i64(__m512i idx, const long long *base) noexcept
 
 #undef __inline_avx512
 
-#pragma GCC pop_options
-
-#pragma GCC diagnostic pop
-
+__micron_pop_options
+__micron_diagnostic_pop
 };      // namespace avx512
 };      // namespace simd
 };      // namespace micron

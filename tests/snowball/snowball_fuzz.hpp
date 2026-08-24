@@ -25,7 +25,6 @@
 #include "../../src/linux/process/wait.hpp"
 
 #include <initializer_list>
-#include <new>
 
 #if defined(__cpp_impl_reflection) && __has_include(<meta>)
 #define SNOWBALL_FUZZ_REFLECTION 1

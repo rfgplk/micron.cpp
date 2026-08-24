@@ -16,9 +16,8 @@ namespace micron
 namespace simd
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 namespace __sm
 {
 __attribute__((always_inline)) static inline float
@@ -1736,7 +1735,6 @@ svml_round(d128 &o)
 #undef _rf32u
 #undef _rf64u
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace simd
 };      // namespace micron

@@ -22,7 +22,7 @@ namespace micron
 // TODO: also move this out into plubming
 
 // cold tier selection
-[[gnu::noinline]] static __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) byte *
+[[gnu::noinline]] static __micron_optimize_no_tree_loop_distribute byte *
 __memset_large(byte *restrict d, const byte v, const u64 n) noexcept
 {
 #if defined(__micron_arch_x86_any)
@@ -69,7 +69,7 @@ __memset_bytes(byte *restrict d, const byte v, const u64 bytes) noexcept
   return __memset_large(d, v, bytes);
 }
 
-[[gnu::noinline]] static __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) byte *
+[[gnu::noinline]] static __micron_optimize_no_tree_loop_distribute byte *
 __memset_words_large(byte *restrict d, const u64 w, const u64 n) noexcept
 {
   return simd::__wordset_bulk(d, w, n);
@@ -146,13 +146,13 @@ constexpr_memset(F *src, const byte in, const u64 cnt) noexcept
 {
   if ( cnt % 4 == 0 )
     for ( u64 n = 0; n < cnt; n += 4 ) {
-      src[n] = (in);
-      src[n + 1] = (in);
-      src[n + 2] = (in);
-      src[n + 3] = (in);
+      src[n] = static_cast<F>(in);
+      src[n + 1] = static_cast<F>(in);
+      src[n + 2] = static_cast<F>(in);
+      src[n + 3] = static_cast<F>(in);
     }
   else
-    for ( u64 n = 0; n < cnt; n++ ) src[n] = (in);
+    for ( u64 n = 0; n < cnt; n++ ) src[n] = static_cast<F>(in);
   return src;
 };
 
@@ -1157,7 +1157,7 @@ rzero(F &s, const M cnt) noexcept
 // ZERO - COMPILE-TIME CONSTANT COUNT WITH REFERENCE RETURN
 template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>
-           or micron::is_trivially_constructible_v<F> && micron::is_trivially_destructible_v<F>)
+           or (micron::is_trivially_constructible_v<F> && micron::is_trivially_destructible_v<F>))
 constexpr F &
 czero(F &src) noexcept
 {
@@ -1168,7 +1168,7 @@ czero(F &src) noexcept
 // ZERO - COMPILE-TIME CONSTANT COUNT
 template<u64 M, typename F>
   requires(micron::is_fundamental_v<F> or micron::is_pointer_v<F>
-           or micron::is_trivially_constructible_v<F> && micron::is_trivially_destructible_v<F>)
+           or (micron::is_trivially_constructible_v<F> && micron::is_trivially_destructible_v<F>))
 constexpr F *
 czero(F *src) noexcept
 {
@@ -2205,7 +2205,7 @@ memfrob(F *src, u64 n) noexcept
 
 #if defined(__micron_freestanding)
 // c-abi - dispatches to handrolled-asm tier (scalar splat ≤32 B, simd::memset* otherwise)
-extern "C" __attribute__((used, optimize("-fno-tree-loop-distribute-patterns"))) inline void *
+extern "C" __attribute__((used)) __micron_optimize_no_tree_loop_distribute inline void *
 memset(void *s, int c, __SIZE_TYPE__ n) noexcept
 {
   micron::__memset_bytes(static_cast<byte *>(s), static_cast<byte>(c), static_cast<u64>(n));

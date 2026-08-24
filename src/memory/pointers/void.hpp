@@ -12,8 +12,6 @@ namespace micron
 
 class void_pointer      //: private __internal_pointer_alloc<void>
 {
-  void *internal_pointer;
-
 public:
   using pointer_type = void_pointer_tag;
   using category_type = pointer_tag;

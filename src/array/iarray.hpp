@@ -325,8 +325,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
     return arr;
   }
 
@@ -338,8 +337,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
     return arr;
   }
 
@@ -351,8 +349,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
     return arr;
   }
 
@@ -364,8 +361,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     return arr;
   }
 
@@ -377,8 +373,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     return arr;
   }
 
@@ -390,8 +385,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] += o;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] += o;
     return arr;
   }
 
@@ -400,8 +394,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] -= o;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] -= o;
     return arr;
   }
 
@@ -410,8 +403,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] *= o;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] *= o;
     return arr;
   }
 
@@ -420,8 +412,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] /= o;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] /= o;
     return arr;
   }
 
@@ -431,8 +422,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
     return arr;
   }
 
@@ -447,8 +437,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
     return arr;
   }
 
@@ -460,8 +449,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
     return arr;
   }
 
@@ -473,8 +461,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
     return arr;
   }
 
@@ -486,8 +473,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     return arr;
   }
 
@@ -499,8 +485,7 @@ public:
     iarray arr(*this);
     T *__restrict dst = arr.stack;
     const T *__restrict src = o.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     return arr;
   }
 
@@ -512,8 +497,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
     return arr;
   }
 
@@ -522,8 +506,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
     return arr;
   }
 
@@ -532,8 +515,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
     return arr;
   }
 
@@ -542,8 +524,7 @@ public:
   {
     iarray arr(*this);
     T *__restrict dst = arr.stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] += n;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] += n;
     return arr;
   }
 
@@ -555,8 +536,7 @@ public:
   {
     const T *__restrict src = stack;
     T sm = T{};
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) sm += src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) sm += src[i];
     return sm;
   }
 
@@ -565,8 +545,7 @@ public:
   {
     const T *__restrict src = stack;
     T m = src[0];
-#pragma GCC ivdep
-    for ( size_type i = 1; i < N; i++ ) m *= src[i];
+__micron_loop_ivdep    for ( size_type i = 1; i < N; i++ ) m *= src[i];
     return m;
   }
 

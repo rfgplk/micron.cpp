@@ -147,10 +147,10 @@ f2d(u32 ieeeMant, u32 ieeeExp)
   i32 e2;
   u32 m2;
   if ( ieeeExp == 0 ) {
-    e2 = 1 - __float_bias - __float_mantissa_bits - 2;
+    e2 = 1 - __float_bias - static_cast<i32>(__float_mantissa_bits) - 2;
     m2 = ieeeMant;
   } else {
-    e2 = static_cast<i32>(ieeeExp) - __float_bias - __float_mantissa_bits - 2;
+    e2 = static_cast<i32>(ieeeExp) - __float_bias - static_cast<i32>(__float_mantissa_bits) - 2;
     m2 = (1u << __float_mantissa_bits) | ieeeMant;
   }
   bool even = (m2 & 1) == 0;

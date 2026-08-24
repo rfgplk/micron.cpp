@@ -832,7 +832,7 @@ format_to_sink(S &s, const char *fmt, const Args &...args)
           index = 0;
           num_p = p;
           while ( num_p < colon ) {
-            index = index * 10 + (*num_p - '0');
+            index = index * 10 + static_cast<usize>(*num_p - '0');
             ++num_p;
           }
           has_explicit_index = true;

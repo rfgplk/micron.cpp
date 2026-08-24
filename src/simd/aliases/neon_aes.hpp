@@ -18,9 +18,8 @@ namespace simd
 namespace neon_crypto
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_nc [[gnu::always_inline, gnu::artificial]] static inline
 
 __inline_nc uint8x16_t
@@ -99,8 +98,7 @@ inv_mix_columns(uint8x16_t state) noexcept
 
 #undef __inline_nc
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace neon_crypto
 };      // namespace simd
 };      // namespace micron

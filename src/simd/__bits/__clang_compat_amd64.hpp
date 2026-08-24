@@ -20,6 +20,8 @@ namespace __bits
 
 // NOTE: clang deliberately exposes a smaller set of GCC-compatible __builtin_ia32_* spellings
 
+__micron_diagnostic_push
+__micron_diagnostic_nan
 template<typename V>
 [[gnu::always_inline]] static inline V
 __clang_scalar_add(V a, V b) noexcept
@@ -56,7 +58,7 @@ template<typename V>
 [[gnu::always_inline]] static inline V
 __clang_scalar_sqrt(V a) noexcept
 {
-  a[0] = __builtin_sqrt(a[0]);
+  a[0] = static_cast<__typeof__(a[0])>(__builtin_elementwise_sqrt(a[0]));
   return a;
 }
 
@@ -64,7 +66,7 @@ template<typename V, typename S>
 [[gnu::always_inline]] static inline V
 __clang_scalar_convert(V a, S value) noexcept
 {
-  a[0] = value;
+  a[0] = static_cast<__typeof__(a[0])>(value);
   return a;
 }
 
@@ -74,7 +76,7 @@ __clang_convert_low(In in) noexcept
 {
   Out out{};
   constexpr unsigned n = sizeof(Out) / sizeof(out[0]);
-  for ( unsigned i = 0; i < n; ++i ) out[i] = in[i];
+  for ( unsigned i = 0; i < n; ++i ) out[i] = static_cast<__typeof__(out[0])>(in[i]);
   return out;
 }
 
@@ -84,7 +86,7 @@ __clang_broadcast(In in) noexcept
 {
   Out out{};
   constexpr unsigned n = sizeof(Out) / sizeof(out[0]);
-  for ( unsigned i = 0; i < n; ++i ) out[i] = in[i % Period];
+  for ( unsigned i = 0; i < n; ++i ) out[i] = static_cast<__typeof__(out[0])>(in[i % Period]);
   return out;
 }
 
@@ -94,7 +96,7 @@ __clang_broadcast_scalar(In in) noexcept
 {
   Out out{};
   constexpr unsigned n = sizeof(Out) / sizeof(out[0]);
-  for ( unsigned i = 0; i < n; ++i ) out[i] = in;
+  for ( unsigned i = 0; i < n; ++i ) out[i] = static_cast<__typeof__(out[0])>(in);
   return out;
 }
 
@@ -164,6 +166,7 @@ __clang_compare_mask(V a, V b, int predicate) noexcept
   }
   return mask;
 }
+__micron_diagnostic_pop
 
 template<bool High, typename V>
 [[gnu::always_inline]] static inline V
@@ -200,7 +203,7 @@ __clang_shift_right_logical(V a, unsigned count) noexcept
   if ( count >= width ) return V{};
   V out{};
   constexpr unsigned n = sizeof(V) / sizeof(a[0]);
-  for ( unsigned i = 0; i < n; ++i ) out[i] = static_cast<unsigned long long>(a[i]) >> count;
+  for ( unsigned i = 0; i < n; ++i ) out[i] = static_cast<__typeof__(out[0])>(static_cast<unsigned long long>(a[i]) >> count);
   return out;
 }
 
@@ -284,7 +287,11 @@ __clang_gather(V src, Base base, I indexes, M mask, int scale) noexcept
   constexpr unsigned n = sizeof(V) / sizeof(src[0]);
   const char *bytes = (const char *)base;
   for ( unsigned i = 0; i < n; ++i ) {
-    if ( mask[i] != 0 ) src[i] = *(const __typeof__(*base) *)(bytes + indexes[i] * scale);
+    if ( mask[i] != 0 ) {
+      __typeof__(src[0]) value;
+      __builtin_memcpy(&value, bytes + indexes[i] * scale, sizeof(value));
+      src[i] = value;
+    }
   }
   return src;
 }
@@ -371,7 +378,8 @@ __clang_avg_unsigned(V a, V b) noexcept
 {
   V out{};
   constexpr unsigned n = sizeof(V) / sizeof(a[0]);
-  for ( unsigned i = 0; i < n; ++i ) out[i] = (static_cast<unsigned long long>(a[i]) + static_cast<unsigned long long>(b[i]) + 1) >> 1;
+  for ( unsigned i = 0; i < n; ++i )
+    out[i] = static_cast<__typeof__(out[0])>((static_cast<unsigned long long>(a[i]) + static_cast<unsigned long long>(b[i]) + 1ULL) >> 1);
   return out;
 }
 
@@ -383,10 +391,11 @@ __clang_mulhi16(V a, V b) noexcept
   constexpr unsigned n = sizeof(V) / sizeof(a[0]);
   for ( unsigned i = 0; i < n; ++i ) {
     if constexpr ( Unsigned )
-      out[i] = (static_cast<unsigned int>(static_cast<unsigned short>(a[i])) * static_cast<unsigned int>(static_cast<unsigned short>(b[i])))
-               >> 16;
+      out[i] = static_cast<__typeof__(out[0])>((static_cast<unsigned int>(static_cast<unsigned short>(a[i]))
+                                                * static_cast<unsigned int>(static_cast<unsigned short>(b[i])))
+                                               >> 16);
     else
-      out[i] = (static_cast<int>(a[i]) * static_cast<int>(b[i])) >> 16;
+      out[i] = static_cast<__typeof__(out[0])>((static_cast<int>(a[i]) * static_cast<int>(b[i])) >> 16);
   }
   return out;
 }
@@ -399,10 +408,10 @@ __clang_mul_even32(V a, V b) noexcept
   constexpr unsigned n = sizeof(Out) / sizeof(out[0]);
   for ( unsigned i = 0; i < n; ++i ) {
     if constexpr ( Unsigned )
-      out[i] = static_cast<unsigned long long>(static_cast<unsigned int>(a[i * 2]))
-               * static_cast<unsigned long long>(static_cast<unsigned int>(b[i * 2]));
+      out[i] = static_cast<__typeof__(out[0])>(static_cast<unsigned long long>(static_cast<unsigned int>(a[i * 2]))
+                                               * static_cast<unsigned long long>(static_cast<unsigned int>(b[i * 2])));
     else
-      out[i] = static_cast<long long>(a[i * 2]) * static_cast<long long>(b[i * 2]);
+      out[i] = static_cast<__typeof__(out[0])>(static_cast<long long>(a[i * 2]) * static_cast<long long>(b[i * 2]));
   }
   return out;
 }
@@ -413,7 +422,8 @@ __clang_madd16(V a, V b) noexcept
 {
   Out out{};
   constexpr unsigned n = sizeof(Out) / sizeof(out[0]);
-  for ( unsigned i = 0; i < n; ++i ) out[i] = a[i * 2] * b[i * 2] + a[i * 2 + 1] * b[i * 2 + 1];
+  for ( unsigned i = 0; i < n; ++i )
+    out[i] = static_cast<__typeof__(out[0])>(a[i * 2] * b[i * 2] + a[i * 2 + 1] * b[i * 2 + 1]);
   return out;
 }
 
@@ -422,6 +432,7 @@ template<typename Out, typename In>
 __clang_pack(In a, In b, long long low, unsigned long long high) noexcept
 {
   Out out{};
+  const long long high_value = static_cast<long long>(high);
   constexpr unsigned blocks = sizeof(In) / 16;
   constexpr unsigned in_lanes = 16 / sizeof(a[0]);
   constexpr unsigned out_lanes = 16 / sizeof(out[0]);
@@ -431,10 +442,10 @@ __clang_pack(In a, In b, long long low, unsigned long long high) noexcept
       long long bv = b[block * in_lanes + i];
       if ( av < low ) av = low;
       if ( bv < low ) bv = low;
-      if ( av > static_cast<long long>(high) ) av = high;
-      if ( bv > static_cast<long long>(high) ) bv = high;
-      out[block * out_lanes + i] = av;
-      out[block * out_lanes + in_lanes + i] = bv;
+      if ( av > high_value ) av = high_value;
+      if ( bv > high_value ) bv = high_value;
+      out[block * out_lanes + i] = static_cast<__typeof__(out[0])>(av);
+      out[block * out_lanes + in_lanes + i] = static_cast<__typeof__(out[0])>(bv);
     }
   }
   return out;

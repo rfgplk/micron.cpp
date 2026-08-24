@@ -12,16 +12,14 @@
 #include "../bits/coeff/exp_f64.hpp"
 #include "_dispatch.hpp"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_ignored("-Wignored-attributes")
 // NOTE: the two-step 2^k reconstruction below relies on the multiply order ((tw*exp_r)*sh)*sl
 // -ffast-math (-Ofast) may reassociate/collapse it to (tw*exp_r)*(sh*sl), which
 // overflows (sh*sl == 2^128 == +Inf) and reintroduces the bug
-#pragma GCC push_options
-#pragma GCC optimize("-fno-unsafe-math-optimizations", "-fno-associative-math", "-fno-reciprocal-math")
-
+__micron_push_options
+__micron_optimize_no_unsafe_math
 namespace micron
 {
 namespace math
@@ -330,5 +328,5 @@ exp(simd::f512 x) noexcept
 };      // namespace math
 };      // namespace micron
 
-#pragma GCC pop_options
-#pragma GCC diagnostic pop
+__micron_pop_options
+__micron_diagnostic_pop

@@ -49,6 +49,12 @@ struct __buddy_list {
     free_block *next;
   };
 
+  static inline free_block *
+  __free_block_at(void *addr) noexcept
+  {
+    return reinterpret_cast<free_block *>(__builtin_assume_aligned(addr, alignof(free_block)));
+  }
+
   static constexpr int __log2_min = []() constexpr {
     int r = 0;
     i64 v = Min;
@@ -237,7 +243,7 @@ struct __buddy_list {
   __attribute__((always_inline)) inline void
   freelist_push(byte *addr, i64 o) noexcept
   {
-    free_block *nb = (free_block *)addr;
+    free_block *nb = __free_block_at(addr);
     nb->next = free_lists[o];
     free_lists[o] = nb;
     mask_set(o);
@@ -247,7 +253,7 @@ struct __buddy_list {
   __attribute__((always_inline)) inline void
   freelist_push_off(byte *addr, i64 o, usize off) noexcept
   {
-    free_block *nb = (free_block *)addr;
+    free_block *nb = __free_block_at(addr);
     nb->next = free_lists[o];
     free_lists[o] = nb;
     mask_set(o);
@@ -463,7 +469,7 @@ struct __buddy_list {
 
     for ( usize i = 0; i < tag_count; ++i ) block_tags[i] = __tag_none;
 
-    free_lists[max_order - 1] = (free_block *)base;
+    free_lists[max_order - 1] = __free_block_at(base);
     free_lists[max_order - 1]->next = nullptr;
     mask_set(max_order - 1);
     tag_set_free(base, max_order - 1);
@@ -585,7 +591,7 @@ struct __buddy_list {
     n += __hdr_offset;
     if ( n == 0 ) n = 1;
     if ( !base ) return { nullptr, 0 };
-    usize needed = (n + Min - 1) & ~(Min - 1);
+    usize needed = (n + static_cast<usize>(Min) - 1) & ~(static_cast<usize>(Min) - 1);
     i64 o = order_for_size(needed);
     if ( o >= max_order ) return { nullptr, 0 };
 
@@ -633,7 +639,7 @@ struct __buddy_list {
     if ( n == 0 ) n = 1;
     if ( !base ) return { nullptr, 0 };
 
-    usize needed = (n + Min - 1) & ~(Min - 1);
+    usize needed = (n + static_cast<usize>(Min) - 1) & ~(static_cast<usize>(Min) - 1);
     i64 o = order_for_size(needed);
     if ( o >= max_order ) return { nullptr, 0 };
 
@@ -773,18 +779,18 @@ struct __buddy_list {
     hdr->flags = __block_free;
 
     for ( i32 r = 0; r < __active_ring; ++r ) {
-      if ( active[original_o][r] == (free_block *)addr ) {
+      if ( active[original_o][r] == __free_block_at(addr) ) {
         active[original_o][r] = nullptr;
         break;
       }
     }
 
-    if ( was_temporal && tcache_push((free_block *)addr, original_o) ) {
+    if ( was_temporal && tcache_push(__free_block_at(addr), original_o) ) {
       block_tags[tag_index(addr)] = __tag_none;
       return { __flag_ok };
     }
 
-    if ( !was_temporal && cold_push((free_block *)addr, original_o) ) {
+    if ( !was_temporal && cold_push(__free_block_at(addr), original_o) ) {
       block_tags[tag_index(addr)] = __tag_none;
       return { __flag_ok };
     }

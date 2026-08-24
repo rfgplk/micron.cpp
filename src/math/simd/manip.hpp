@@ -11,10 +11,9 @@
 #include "../bits/round.hpp"
 #include "_dispatch.hpp"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_ignored("-Wignored-attributes")
 namespace micron
 {
 namespace math
@@ -381,4 +380,4 @@ rint(simd::f512 x) noexcept
 };      // namespace math
 };      // namespace micron
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

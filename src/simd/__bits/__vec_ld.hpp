@@ -18,10 +18,9 @@ namespace micron
 namespace __ml
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wignored-attributes")
 typedef u16 __u16u __attribute__((aligned(1), may_alias));
 typedef u32 __u32u __attribute__((aligned(1), may_alias));
 typedef u64 __u64u __attribute__((aligned(1), may_alias));
@@ -114,7 +113,6 @@ __pin4(__v32 &a, __v32 &b, __v32 &c, __v32 &e) noexcept
 }
 #endif
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __ml
 };      // namespace micron

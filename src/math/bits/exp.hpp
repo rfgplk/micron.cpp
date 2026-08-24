@@ -24,9 +24,8 @@
 #include "round.hpp"
 
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
-#pragma GCC push_options
-#pragma GCC optimize("-fno-unsafe-math-optimizations", "-fno-associative-math", "-fno-reciprocal-math")
-
+__micron_push_options
+__micron_optimize_no_unsafe_math
 namespace micron
 {
 namespace math
@@ -338,4 +337,4 @@ exp_dd_f64_with_special(f64 x, bool *handled) noexcept
 };      // namespace math
 };      // namespace micron
 
-#pragma GCC pop_options
+__micron_pop_options

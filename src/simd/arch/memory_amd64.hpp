@@ -712,7 +712,7 @@ memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) no
   for ( u64 i = 0; i < n; i++ ) {
     const u32 mask = __bits::__block_neq_mask_16(s + i * 16, d + i * 16);
     if ( mask ) {
-      const u64 idx = i * 16 + __builtin_ctz(mask);
+      const u64 idx = i * 16 + static_cast<u64>(__builtin_ctz(static_cast<unsigned int>(mask)));
       return static_cast<i64>(static_cast<unsigned>(s[idx])) - static_cast<i64>(static_cast<unsigned>(d[idx]));
     }
   }
@@ -740,7 +740,7 @@ memcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) no
   for ( u64 i = 0; i < n; i++ ) {
     const u32 mask = __bits::__block_neq_mask_32(s + i * 32, d + i * 32);
     if ( mask ) {
-      const u64 idx = i * 32 + __builtin_ctz(mask);
+      const u64 idx = i * 32 + static_cast<u64>(__builtin_ctz(static_cast<unsigned int>(mask)));
       return static_cast<i64>(static_cast<unsigned>(s[idx])) - static_cast<i64>(static_cast<unsigned>(d[idx]));
     }
   }
@@ -803,7 +803,7 @@ amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) n
   for ( u64 i = 0; i < n; i++ ) {
     const u32 mask = __bits::__block_neq_mask_16(s + i * 16, d + i * 16);
     if ( mask ) {
-      const u64 idx = i * 16 + __builtin_ctz(mask);
+      const u64 idx = i * 16 + static_cast<u64>(__builtin_ctz(static_cast<unsigned int>(mask)));
       return static_cast<i64>(static_cast<unsigned>(s[idx])) - static_cast<i64>(static_cast<unsigned>(d[idx]));
     }
   }
@@ -831,7 +831,7 @@ amemcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) n
   for ( u64 i = 0; i < n; i++ ) {
     const u32 mask = __bits::__block_neq_mask_32(s + i * 32, d + i * 32);
     if ( mask ) {
-      const u64 idx = i * 32 + __builtin_ctz(mask);
+      const u64 idx = i * 32 + static_cast<u64>(__builtin_ctz(static_cast<unsigned int>(mask)));
       return static_cast<i64>(static_cast<unsigned>(s[idx])) - static_cast<i64>(static_cast<unsigned>(d[idx]));
     }
   }
@@ -976,7 +976,7 @@ memrchr128(const T *src, u8 c, const u64 count) noexcept
   for ( u64 i = n; i > 0; i-- ) {
     const u32 m = __bits::__block_eq_mask_16(p + (i - 1) * 16, c);
     if ( m ) {
-      const u32 hi = 31u - __builtin_clz(m);
+      const u32 hi = static_cast<u32>(31 - __builtin_clz(static_cast<unsigned int>(m)));
       return const_cast<T *>(reinterpret_cast<const T *>(p + (i - 1) * 16 + hi));
     }
   }
@@ -1000,7 +1000,7 @@ memrchr256(const T *src, u8 c, const u64 count) noexcept
   for ( u64 i = n; i > 0; i-- ) {
     const u32 m = __bits::__block_eq_mask_32(p + (i - 1) * 32, c);
     if ( m ) {
-      const u32 hi = 31u - __builtin_clz(m);
+      const u32 hi = static_cast<u32>(31 - __builtin_clz(static_cast<unsigned int>(m)));
       return const_cast<T *>(reinterpret_cast<const T *>(p + (i - 1) * 32 + hi));
     }
   }
@@ -1083,7 +1083,7 @@ memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
     if ( m ) {
       u32 mm = m;
       while ( mm ) {
-        const u32 off = __builtin_ctz(mm);
+        const u32 off = static_cast<u32>(__builtin_ctz(static_cast<unsigned int>(mm)));
         const u64 cand = i + off;
         if ( cand >= limit ) return nullptr;
         if ( nbytes == 1 ) return const_cast<T *>(reinterpret_cast<const T *>(h + cand));
@@ -1145,7 +1145,7 @@ memmem256(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
     if ( m ) {
       u32 mm = m;
       while ( mm ) {
-        const u32 off = __builtin_ctz(mm);
+        const u32 off = static_cast<u32>(__builtin_ctz(static_cast<unsigned int>(mm)));
         const u64 cand = i + off;
         if ( cand >= limit ) return nullptr;
         if ( nbytes == 1 ) return const_cast<T *>(reinterpret_cast<const T *>(h + cand));

@@ -315,8 +315,8 @@ public:
                                                                                           : Alloc::auto_size())
                    : (exc<except::library_error>("micron::hstring hstring() wrong iterators"), 0)))
   {
-    micron::memcpy(__mem::memory, __start, __end - __start);
-    __mem::length = __end - __start;
+    micron::memcpy(__mem::memory, __start, static_cast<usize>(__end - __start));
+    __mem::length = static_cast<usize>(__end - __start);
     __mem::memory[__mem::length] = T{ 0 };
   }
 
@@ -325,8 +325,8 @@ public:
                                                                                                : Alloc::auto_size())
                                : (exc<except::library_error>("micron::hstring hstring() wrong iterators"), 0)))
   {
-    micron::memcpy(__mem::memory, __start, __end - __start);
-    __mem::length = __end - __start;
+    micron::memcpy(__mem::memory, __start, static_cast<usize>(__end - __start));
+    __mem::length = static_cast<usize>(__end - __start);
     __mem::memory[__mem::length] = T{ 0 };
   }
 

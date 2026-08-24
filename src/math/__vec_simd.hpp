@@ -28,9 +28,8 @@
 // NOTE: we __must__ disable fast-math here: the Newton step r*(1.5 - h*r*r)
 // and the exact 1/sqrt(x) forms must not be reassociated or rewritten into
 // reciprocal estimates by -Ofast
-#pragma GCC push_options
-#pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
-
+__micron_push_options
+__micron_optimize_no_fast_math
 namespace micron
 {
 namespace math
@@ -534,4 +533,4 @@ __cmp_gt(simd::f128 a, simd::f128 b) noexcept
 };      // namespace math
 };      // namespace micron
 
-#pragma GCC pop_options
+__micron_pop_options

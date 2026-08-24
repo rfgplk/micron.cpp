@@ -53,7 +53,8 @@ __calculate_space_cache(usize sz)
 {
   // x^2 * ln(x * sqrt(x))
   // WARNING: square in double; usize sz*sz wraps at sz >= 2^16 on width-32
-  u64 t = static_cast<u64>((double)sz * (double)sz * micron::math::logf128((double)sz * micron::math::hw::sqrt_sd((double)sz)));
+  u64 t = static_cast<u64>(static_cast<flong>((double)sz * (double)sz)
+                           * micron::math::logf128(static_cast<flong>((double)sz * micron::math::hw::sqrt_sd((double)sz))));
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   u64 pages = static_cast<u64>(t_2);
@@ -80,7 +81,7 @@ __calculate_space_medium(usize sz)
 {
   // new equation: x * ln(x) * 150;  4 MiB at sz=4096, ~64 MiB at sz=32768; hot tier so heavy floor
   flong f_sz = static_cast<flong>(sz);
-  u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * 150.0);
+  u64 t = static_cast<u64>(f_sz * micron::math::logf128(f_sz) * 150.0L);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   u64 pages = static_cast<u64>(t_2);
@@ -95,7 +96,7 @@ __calculate_space_large(usize sz)
   // 2 * x * ln(x)^2; the old medium equation scaled by a factor of 2
   flong f_sz = static_cast<flong>(sz);
   flong lg = micron::math::logf128(f_sz);
-  u64 t = static_cast<u64>(2.0 * f_sz * lg * lg);
+  u64 t = static_cast<u64>(2.0L * f_sz * lg * lg);
   float t_2 = (float)t / __system_pagesize;
   t_2 = micron::math::ceil(t_2);
   u64 pages = static_cast<u64>(t_2);
@@ -123,8 +124,8 @@ inline usize
 __calculate_space_bulk(usize sz)
 {
   // logarithmic taper
-  long double factor = 1.0 + 0.1 * micron::math::logf128(static_cast<double>(sz) / (1024 * 1024 * 1024));
-  if ( factor < 1.0 ) factor = 1.0;      // never shrink
+  long double factor = 1.0L + 0.1L * micron::math::logf128(static_cast<flong>(static_cast<double>(sz) / (1024 * 1024 * 1024)));
+  if ( factor < 1.0L ) factor = 1.0L;      // never shrink
 
   usize t = static_cast<usize>(sz * factor);
 

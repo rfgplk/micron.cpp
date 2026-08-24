@@ -67,7 +67,7 @@ try_parse_int64(const T *p, usize n, i64 &out)
     ++ptr;
   if ( ptr == end ) return false;
   i64 acc = 0;
-  constexpr i64 lim = -0x7FFFFFFFFFFFFFFFuLL - 1;
+  constexpr i64 lim = -9223372036854775807LL - 1;
   constexpr i64 lim_div = lim / 10;
   constexpr i64 lim_mod = -(lim % 10);
   while ( ptr != end ) {
@@ -173,7 +173,6 @@ hex_string_to_int64(const micron::hstring<T> &buf)
 {
   if ( buf.empty() ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
-  i64 result = 0;
   bool neg = false;
   while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {
@@ -182,6 +181,7 @@ hex_string_to_int64(const micron::hstring<T> &buf)
   } else if ( ptr != end && *ptr == '+' )
     ++ptr;
   if ( ptr + 1 < end && *ptr == '0' && (*(ptr + 1) == 'x' || *(ptr + 1) == 'X') ) ptr += 2;
+  i64 result = 0;
   while ( ptr != end ) {
     int dv = __impl::hex_digit_val(*ptr);
     if ( dv < 0 ) break;
@@ -311,7 +311,6 @@ string_to_int_base(const micron::hstring<T> &buf, u32 base)
 {
   if ( buf.empty() || base < 2 || base > 36 ) return 0;
   const T *ptr = buf.begin(), *end = buf.end();
-  i64 result = 0;
   bool neg = false;
   while ( ptr != end && *ptr == ' ' ) ++ptr;
   if ( ptr != end && *ptr == '-' ) {

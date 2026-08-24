@@ -62,7 +62,7 @@ __print_unsigned(T n)
       buf[i - j - 1] = tmp;
     }
   }
-  __write(buf, i);
+  __write(buf, static_cast<usize>(i));
 }
 
 template<typename T>
@@ -88,10 +88,10 @@ __print_ptr(const void *p)
   buf[0] = '0';
   buf[1] = 'x';
   for ( int i = 0; i < static_cast<int>(sizeof(uintptr_t) * 2); ++i ) {
-    char val = (addr >> ((sizeof(uintptr_t) * 2 - i - 1) * 4)) & 0xF;
-    buf[2 + i] = (val < 10) ? ('0' + val) : ('a' + val - 10);
+    char val = static_cast<char>((addr >> ((static_cast<int>(sizeof(uintptr_t) * 2) - i - 1) * 4)) & 0xF);
+    buf[static_cast<usize>(2 + i)] = (val < 10) ? ('0' + val) : ('a' + val - 10);
   }
-  __write(buf, 2 + sizeof(uintptr_t) * 2);
+  __write(buf, static_cast<usize>(2 + sizeof(uintptr_t) * 2));
 }
 
 template<typename T>

@@ -515,15 +515,13 @@ class carray
         __ur_add_scalar(static_cast<T>(v), micron::make_index_sequence<N>{});
       else {
         T *__restrict dst = stack;
-#pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ ) dst[i] += static_cast<T>(v);
+__micron_loop_ivdep        for ( usize i = 0; i < N; i++ ) dst[i] += static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
-#pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ ) dst[i] += src[i];
+__micron_loop_ivdep      for ( usize i = 0; i < bound; i++ ) dst[i] += src[i];
     }
   }
 
@@ -538,15 +536,13 @@ class carray
         __ur_sub_scalar(static_cast<T>(v), micron::make_index_sequence<N>{});
       else {
         T *__restrict dst = stack;
-#pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ ) dst[i] -= static_cast<T>(v);
+__micron_loop_ivdep        for ( usize i = 0; i < N; i++ ) dst[i] -= static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
-#pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ ) dst[i] -= src[i];
+__micron_loop_ivdep      for ( usize i = 0; i < bound; i++ ) dst[i] -= src[i];
     }
   }
 
@@ -561,15 +557,13 @@ class carray
         __ur_mul_scalar(static_cast<T>(v), micron::make_index_sequence<N>{});
       else {
         T *__restrict dst = stack;
-#pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ ) dst[i] *= static_cast<T>(v);
+__micron_loop_ivdep        for ( usize i = 0; i < N; i++ ) dst[i] *= static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
-#pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ ) dst[i] *= src[i];
+__micron_loop_ivdep      for ( usize i = 0; i < bound; i++ ) dst[i] *= src[i];
     }
   }
 
@@ -584,15 +578,13 @@ class carray
         __ur_div_scalar(static_cast<T>(v), micron::make_index_sequence<N>{});
       else {
         T *__restrict dst = stack;
-#pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ ) dst[i] /= static_cast<T>(v);
+__micron_loop_ivdep        for ( usize i = 0; i < N; i++ ) dst[i] /= static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
-#pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ ) dst[i] /= src[i];
+__micron_loop_ivdep      for ( usize i = 0; i < bound; i++ ) dst[i] /= src[i];
     }
   }
 
@@ -606,15 +598,13 @@ class carray
         __ur_mod_scalar(static_cast<T>(v), micron::make_index_sequence<N>{});
       else {
         T *__restrict dst = stack;
-#pragma GCC ivdep
-        for ( usize i = 0; i < N; i++ ) dst[i] %= static_cast<T>(v);
+__micron_loop_ivdep        for ( usize i = 0; i < N; i++ ) dst[i] %= static_cast<T>(v);
       }
     } else {
       const auto *__restrict src = v.data();
       const usize bound = v.size() < N ? v.size() : N;
       T *__restrict dst = stack;
-#pragma GCC ivdep
-      for ( usize i = 0; i < bound; i++ ) dst[i] %= src[i];
+__micron_loop_ivdep      for ( usize i = 0; i < bound; i++ ) dst[i] %= src[i];
     }
   }
 
@@ -626,7 +616,7 @@ class carray
       UR_FN(o, micron::make_index_sequence<N>{});                                                                                          \
     else {                                                                                                                                 \
       T *__restrict dst = stack;                                                                                                           \
-      _Pragma("GCC ivdep") for ( usize i = 0; i < N; i++ ) dst[i] OP o;                                                                    \
+      __micron_loop_ivdep for ( usize i = 0; i < N; i++ ) dst[i] OP o;                                                                    \
     }                                                                                                                                      \
   } while ( 0 )
 
@@ -639,7 +629,7 @@ class carray
     else {                                                                                                                                 \
       T *__restrict dst = stack;                                                                                                           \
       const T *__restrict src = o.stack;                                                                                                   \
-      _Pragma("GCC ivdep") for ( usize i = 0; i < M; i++ ) dst[i] OP src[i];                                                               \
+      __micron_loop_ivdep for ( usize i = 0; i < M; i++ ) dst[i] OP src[i];                                                               \
     }                                                                                                                                      \
   } while ( 0 )
 
@@ -1035,8 +1025,7 @@ public:
     if constexpr ( M <= __unroll_threshold )
       arr.__ur_div_array(src, micron::make_index_sequence<M>{});
     else {
-#pragma GCC ivdep
-      for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
+__micron_loop_ivdep      for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     }
     return arr;
   }
@@ -1052,8 +1041,7 @@ public:
     if constexpr ( M <= __unroll_threshold )
       arr.__ur_mod_array(src, micron::make_index_sequence<M>{});
     else {
-#pragma GCC ivdep
-      for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
+__micron_loop_ivdep      for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     }
     return arr;
   }
@@ -1066,8 +1054,7 @@ public:
   {
     const T *__restrict src = stack;
     T sm = T{};
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) sm += src[i];
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) sm += src[i];
     return sm;
   }
 
@@ -1076,8 +1063,7 @@ public:
   {
     const T *__restrict src = stack;
     T m = src[0];
-#pragma GCC ivdep
-    for ( size_type i = 1; i < N; i++ ) m *= src[i];
+__micron_loop_ivdep    for ( size_type i = 1; i < N; i++ ) m *= src[i];
     return m;
   }
 
@@ -1121,8 +1107,7 @@ public:
       __ur_mod_scalar(o, micron::make_index_sequence<N>{});
     else {
       T *__restrict dst = stack;
-#pragma GCC ivdep
-      for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
+__micron_loop_ivdep      for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
     }
     return *this;
   }
@@ -1167,8 +1152,7 @@ public:
     else {
       T *__restrict dst = stack;
       const T *__restrict src = o.stack;
-#pragma GCC ivdep
-      for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
+__micron_loop_ivdep      for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     }
     return *this;
   }
@@ -1183,8 +1167,7 @@ public:
     else {
       T *__restrict dst = stack;
       const T *__restrict src = o.stack;
-#pragma GCC ivdep
-      for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
+__micron_loop_ivdep      for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     }
     return *this;
   }
@@ -1196,32 +1179,28 @@ public:
   mul(const size_type n)
   {
     T *__restrict dst = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
   }
 
   void
   div(const size_type n)
   {
     T *__restrict dst = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
   }
 
   void
   sub(const size_type n)
   {
     T *__restrict dst = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
   }
 
   void
   add(const size_type n)
   {
     T *__restrict dst = stack;
-#pragma GCC ivdep
-    for ( size_type i = 0; i < N; i++ ) dst[i] += n;
+__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] += n;
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

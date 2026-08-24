@@ -11,8 +11,8 @@
 #include "load.hpp"       // arched
 #include "types.hpp"      // arched
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #include "types/simd_dispatch.hpp"
 
 namespace micron
@@ -104,8 +104,7 @@ concept is_simd_class
 
 };      // namespace simd
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // forwarding aliases in micron:: scope
 

@@ -7,9 +7,8 @@
 
 #include "../namespace.hpp"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 namespace micron
 {
 namespace simd
@@ -559,4 +558,4 @@ maskgather_64_i64(i128 src, long long &ref, i128 vindex, i128 mask)
 };      // namespace simd
 };      // namespace micron
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

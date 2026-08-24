@@ -66,7 +66,7 @@ constexpr static const i32 map_huge_256mb = (28 << map_huge_shift);
 constexpr static const i32 map_huge_512mb = (29 << map_huge_shift);
 constexpr static const i32 map_huge_1gb = (30 << map_huge_shift);
 constexpr static const i32 map_huge_2gb = (31 << map_huge_shift);
-constexpr static const i32 map_huge_16gb = (34u << map_huge_shift);
+constexpr static const i32 map_huge_16gb = (34 << map_huge_shift);
 
 /* flags to `msync'.  */
 constexpr static const i32 ms_async = 1;      /* sync memory asynchronously.  */

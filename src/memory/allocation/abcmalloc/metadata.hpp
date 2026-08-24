@@ -27,9 +27,9 @@ namespace abc
 // shared spec for both alloc systems
 using ret_flag = micron::sentinel_pointer;
 constexpr static const uintptr_t __flag_invalid = 0;
-constexpr static const uintptr_t __flag_failure = -1;
-constexpr static const uintptr_t __flag_out_of_space = -2;
-constexpr static const uintptr_t __flag_tombstoned = -3;
+constexpr static const uintptr_t __flag_failure = static_cast<uintptr_t>(-1);
+constexpr static const uintptr_t __flag_out_of_space = static_cast<uintptr_t>(-2);
+constexpr static const uintptr_t __flag_tombstoned = static_cast<uintptr_t>(-3);
 constexpr static const uintptr_t __flag_ok = 1;
 
 struct block_header {

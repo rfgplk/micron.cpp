@@ -23,9 +23,8 @@
 
 #include "types.hpp"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreturn-type"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wreturn-type")
 // raw arch specific asm clone trampolines
 
 #if defined(__micron_arch_amd64)
@@ -260,8 +259,7 @@ __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
 }
 #endif
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 namespace micron
 {
 
@@ -495,7 +493,7 @@ __fork_clone(int exit_signal)
   // these should be exactly like this
   posix::clone_args clone_args{};
   clone_args.flags = 0;
-  clone_args.exit_signal = exit_signal;      // should be sig_chld
+  clone_args.exit_signal = static_cast<u64>(exit_signal);      // should be sig_chld
   clone_args.stack = 0;
   clone_args.stack_size = 0;
   clone_args.parent_tid = 0;

@@ -21,11 +21,10 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("avx")]] static inline
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,7 +205,7 @@ _mm256_setr_m128d(__m128d lo, __m128d hi) noexcept
 __inline_g __m256
 _mm256_load_ps(const float *p) noexcept
 {
-  return *(const __m256 *)p;
+  return *reinterpret_cast<const __m256 *>(__builtin_assume_aligned(p, 32));
 }
 
 __inline_g __m256
@@ -218,7 +217,7 @@ _mm256_loadu_ps(const float *p) noexcept
 __inline_g __m256d
 _mm256_load_pd(const double *p) noexcept
 {
-  return *(const __m256d *)p;
+  return *reinterpret_cast<const __m256d *>(__builtin_assume_aligned(p, 32));
 }
 
 __inline_g __m256d
@@ -242,7 +241,7 @@ _mm256_loadu_si256(const __m256i_u *p) noexcept
 __inline_g void
 _mm256_store_ps(float *p, __m256 v) noexcept
 {
-  *(__m256 *)p = v;
+  *reinterpret_cast<__m256 *>(__builtin_assume_aligned(p, 32)) = v;
 }
 
 __inline_g void
@@ -254,7 +253,7 @@ _mm256_storeu_ps(float *p, __m256 v) noexcept
 __inline_g void
 _mm256_store_pd(double *p, __m256d v) noexcept
 {
-  *(__m256d *)p = v;
+  *reinterpret_cast<__m256d *>(__builtin_assume_aligned(p, 32)) = v;
 }
 
 __inline_g void
@@ -284,13 +283,21 @@ _mm256_stream_si256(__m256i *p, __m256i v) noexcept
 __inline_g void
 _mm256_stream_pd(double *p, __m256d v) noexcept
 {
+#if defined(__clang__)
+  __builtin_ia32_movntpd256(reinterpret_cast<__v4df *>(__builtin_assume_aligned(p, 32)), (__v4df)v);
+#else
   __builtin_ia32_movntpd256(p, (__v4df)v);
+#endif
 }
 
 __inline_g void
 _mm256_stream_ps(float *p, __m256 v) noexcept
 {
+#if defined(__clang__)
+  __builtin_ia32_movntps256(reinterpret_cast<__v8sf *>(__builtin_assume_aligned(p, 32)), (__v8sf)v);
+#else
   __builtin_ia32_movntps256(p, (__v8sf)v);
+#endif
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -800,8 +807,7 @@ _mm_testnzc_pd(__m128d a, __m128d b) noexcept
 
 #undef __inline_g
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron
