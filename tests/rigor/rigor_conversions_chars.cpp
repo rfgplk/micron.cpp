@@ -127,6 +127,23 @@ main(void)
   }
   end_test_case();
 
+  test_case("decimal character lengths include the sign and cover every u64 decade");
+  {
+    static_assert(micron::decimal_chars_length(static_cast<i64>(0)) == 1);
+    static_assert(micron::decimal_chars_length(static_cast<i64>(-0x7FFFFFFFFFFFFFFFll - 1)) == 20);
+    require_true(micron::decimal_chars_length(static_cast<i64>(9223372036854775807ll)) == 19);
+    require_true(micron::decimal_chars_length(static_cast<i64>(-9223372036854775807ll - 1)) == 20);
+    require_true(micron::decimal_chars_length(static_cast<u64>(0)) == 1);
+    u64 power = 10;
+    for ( usize digits = 1; digits < 20; ++digits ) {
+      require_true(micron::decimal_chars_length(power - 1) == digits);
+      require_true(micron::decimal_chars_length(power) == digits + 1);
+      if ( digits != 19 ) power *= 10;
+    }
+    require_true(micron::decimal_chars_length(static_cast<u64>(-1)) == 20);
+  }
+  end_test_case();
+
   test_case("the sign is emitted for EVERY base, not just base 10");
   {
     char b[96];
