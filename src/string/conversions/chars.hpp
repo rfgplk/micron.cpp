@@ -23,6 +23,59 @@ concept __tc_int = micron::is_integral_v<I> && !micron::is_same_v<micron::remove
 
 constexpr static const usize __tc_int_max = 72;
 
+inline constexpr usize
+decimal_chars_length(u64 value) noexcept
+{
+  if ( value < 10000000000ull ) {
+    if ( value < 100000ull ) {
+      if ( value < 100ull ) {
+        if ( value < 10ull ) return 1;
+        return 2;
+      }
+      if ( value < 10000ull ) {
+        if ( value < 1000ull ) return 3;
+        return 4;
+      }
+      return 5;
+    }
+    if ( value < 10000000ull ) {
+      if ( value < 1000000ull ) return 6;
+      return 7;
+    }
+    if ( value < 1000000000ull ) {
+      if ( value < 100000000ull ) return 8;
+      return 9;
+    }
+    return 10;
+  }
+  if ( value < 1000000000000000ull ) {
+    if ( value < 1000000000000ull ) {
+      if ( value < 100000000000ull ) return 11;
+      return 12;
+    }
+    if ( value < 10000000000000ull ) return 13;
+    if ( value < 100000000000000ull ) return 14;
+    return 15;
+  }
+  if ( value < 100000000000000000ull ) {
+    if ( value < 10000000000000000ull ) return 16;
+    return 17;
+  }
+  if ( value < 10000000000000000000ull ) {
+    if ( value < 1000000000000000000ull ) return 18;
+    return 19;
+  }
+  return 20;
+}
+
+inline constexpr usize
+decimal_chars_length(i64 value) noexcept
+{
+  const bool negative = value < 0;
+  const u64 magnitude = negative ? static_cast<u64>(0) - static_cast<u64>(value) : static_cast<u64>(value);
+  return decimal_chars_length(magnitude) + static_cast<usize>(negative);
+}
+
 template<__tc_int I>
 constexpr usize
 to_chars(char *buf, usize cap, I v, u32 base = 10u, bool upper = false)
