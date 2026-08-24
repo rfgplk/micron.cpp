@@ -116,7 +116,6 @@ struct __tlsf_list {
   __attribute__((always_inline)) static inline void
   mapping_search(usize size, i32 &fi, i32 &si) noexcept
   {
-
     i32 fl = fls64(size);
     i32 shift = fl - __sl_log2;
     size += ((usize)1 << shift) - 1;
@@ -132,7 +131,7 @@ struct __tlsf_list {
     return reinterpret_cast<tlsf_hdr *>(reinterpret_cast<byte *>(b) + (usize)b->bsize);
   }
 
-  void
+  __attribute__((always_inline)) inline void
   fl_insert(tlsf_hdr *block) noexcept
   {
     i32 fi, si;
@@ -150,19 +149,21 @@ struct __tlsf_list {
     sl_bitmap[fi] |= (1u << si);
   }
 
-  void
+  __attribute__((always_inline)) inline void
   fl_remove(tlsf_hdr *block) noexcept
   {
     i32 fi, si;
     mapping_insert((usize)block->bsize, fi, si);
     i32 i = idx(fi, si);
 
-    if ( block->prev_free )
-      block->prev_free->next_free = block->next_free;
+    tlsf_hdr *prev = block->prev_free;
+    tlsf_hdr *next = block->next_free;
+    if ( prev )
+      prev->next_free = next;
     else
-      heads[i] = block->next_free;
+      heads[i] = next;
 
-    if ( block->next_free ) block->next_free->prev_free = block->prev_free;
+    if ( next ) next->prev_free = prev;
 
     if ( !heads[i] ) {
       sl_bitmap[fi] &= ~(1u << si);
@@ -170,7 +171,7 @@ struct __tlsf_list {
     }
   }
 
-  tlsf_hdr *
+  __attribute__((always_inline)) inline tlsf_hdr *
   find_free(usize needed) noexcept
   {
     i32 fi, si;
@@ -187,12 +188,21 @@ struct __tlsf_list {
     }
     si = __builtin_ctz(sl_map);
 
-    tlsf_hdr *block = heads[idx(fi, si)];
-    fl_remove(block);
+    const i32 i = idx(fi, si);
+    tlsf_hdr *block = heads[i];
+    tlsf_hdr *next = block->next_free;
+    heads[i] = next;
+    if ( next ) {
+      next->prev_free = nullptr;
+    } else {
+      const u32 new_sl = sl_bitmap[fi] & ~(1u << si);
+      sl_bitmap[fi] = new_sl;
+      if ( new_sl == 0 ) fl_bitmap &= ~(1u << fi);
+    }
     return block;
   }
 
-  void
+  __attribute__((always_inline)) inline void
   try_split(tlsf_hdr *block, usize needed) noexcept
   {
     usize remain = (usize)block->bsize - needed;
@@ -202,7 +212,6 @@ struct __tlsf_list {
 
     tlsf_hdr *rem = reinterpret_cast<tlsf_hdr *>(reinterpret_cast<byte *>(block) + needed);
     rem->bsize = (u32)remain;
-    rem->flags = __block_free;
     rem->prev_phys = block;
 
     tlsf_hdr *after = next_phys(rem);
@@ -211,16 +220,16 @@ struct __tlsf_list {
     fl_insert(rem);
   }
 
-  void
+  __attribute__((always_inline)) inline void
   coalesce_and_free(tlsf_hdr *block) noexcept
   {
+    bool merged = false;
     // forward merge
     tlsf_hdr *next = next_phys(block);
     if ( next->flags == __block_free ) {
       fl_remove(next);
       block->bsize = (u32)((usize)block->bsize + (usize)next->bsize);
-      tlsf_hdr *after = next_phys(block);
-      after->prev_phys = block;
+      merged = true;
     }
 
     // backward merge
@@ -228,11 +237,11 @@ struct __tlsf_list {
     if ( prev && prev->flags == __block_free ) {
       fl_remove(prev);
       prev->bsize = (u32)((usize)prev->bsize + (usize)block->bsize);
-      tlsf_hdr *after = next_phys(prev);
-      after->prev_phys = prev;
       block = prev;
+      merged = true;
     }
 
+    if ( merged ) next_phys(block)->prev_phys = block;
     fl_insert(block);
   }
 
@@ -387,55 +396,76 @@ struct __tlsf_list {
   __attribute__((always_inline)) static inline usize
   adjusted_block_size(usize user_n) noexcept
   {
-    usize needed = align_up(user_n + __hdr_offset, __block_align);
+    constexpr usize overhead = sizeof(micron::simd::i256) + __hdr_offset;
+    constexpr usize align_mask = __block_align - 1;
+    if ( user_n > micron::numeric_limits<usize>::max() - overhead - align_mask ) return 0;
+    usize needed = (user_n + overhead + align_mask) & ~align_mask;
     return needed < __min_block ? __min_block : needed;
+  }
+
+  __attribute__((always_inline)) inline bool
+  __clear_temporal_class(tlsf_hdr *block, usize size) noexcept
+  {
+    i32 fi, si;
+    mapping_search(size, fi, si);
+    if ( fi < 0 || fi >= fl_count ) return false;
+    const i32 i = idx(fi, si);
+    for ( i32 r = 0; r < __temporal_ring; ++r ) {
+      if ( temporal_active[i][r] == block ) {
+        temporal_active[i][r] = nullptr;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  [[gnu::noinline]] void
+  __clear_temporal(tlsf_hdr *block, usize size) noexcept
+  {
+    if ( __clear_temporal_class(block, size) ) return;
+    if ( size > __min_block ) (void)__clear_temporal_class(block, size - __block_align);
   }
 
   T
   allocate(usize n) noexcept
   {
-    n += sizeof(micron::simd::i256);
-    if ( n == 0 ) n = 1;
     if ( !base ) return { nullptr, 0 };
 
     usize needed = adjusted_block_size(n);
+    if ( needed == 0 ) return { nullptr, 0 };
 
     tlsf_hdr *block = find_free(needed);
     if ( !block ) return { nullptr, 0 };
 
     try_split(block, needed);
     block->flags = __block_alloc;
-    allocated_bytes += (usize)block->bsize;
+    const usize block_size = (usize)block->bsize;
+    allocated_bytes += block_size;
 
-    return { reinterpret_cast<byte *>(block) + __hdr_offset, (usize)block->bsize - __hdr_offset };
+    return { reinterpret_cast<byte *>(block) + __hdr_offset, block_size - __hdr_offset };
   }
 
   T
   temporal_allocate(usize n) noexcept
   {
-    n += sizeof(micron::simd::i256);
-    if ( n == 0 ) n = 1;
     if ( !base ) return { nullptr, 0 };
 
     usize needed = adjusted_block_size(n);
+    if ( needed == 0 ) return { nullptr, 0 };
 
     i32 fi, si;
     mapping_search(needed, fi, si);
     if ( fi >= 0 && fi < fl_count ) {
       i32 i = idx(fi, si);
-      const u8 r = temporal_rotor[i];
-      if ( temporal_active[i][r] ) {
-        tlsf_hdr *blk = temporal_active[i][r];
-        temporal_rotor[i] = static_cast<u8>((r + 1) % __temporal_ring);
-        return { reinterpret_cast<byte *>(blk) + __hdr_offset, (usize)blk->bsize - __hdr_offset };
+      u8 r = temporal_rotor[i] & (__temporal_ring - 1);
+      tlsf_hdr *blk = temporal_active[i][r];
+      if ( !blk ) {
+        r ^= 1u;
+        blk = temporal_active[i][r];
       }
-      for ( i32 j = 1; j < __temporal_ring; ++j ) {
-        const u8 jj = static_cast<u8>((r + j) % __temporal_ring);
-        if ( temporal_active[i][jj] ) {
-          tlsf_hdr *blk = temporal_active[i][jj];
-          temporal_rotor[i] = static_cast<u8>((jj + 1) % __temporal_ring);
-          return { reinterpret_cast<byte *>(blk) + __hdr_offset, (usize)blk->bsize - __hdr_offset };
-        }
+      if ( blk ) {
+        temporal_rotor[i] = r ^ 1u;
+        return { reinterpret_cast<byte *>(blk) + __hdr_offset, (usize)blk->bsize - __hdr_offset };
       }
     }
 
@@ -444,16 +474,17 @@ struct __tlsf_list {
 
     try_split(block, needed);
     block->flags = __block_alloc | __block_temporal;
-    allocated_bytes += (usize)block->bsize;
+    const usize block_size = (usize)block->bsize;
+    allocated_bytes += block_size;
 
     if ( fi >= 0 && fi < fl_count ) {
       i32 i = idx(fi, si);
       const u8 r = temporal_rotor[i];
       temporal_active[i][r] = block;
-      temporal_rotor[i] = static_cast<u8>((r + 1) % __temporal_ring);
+      temporal_rotor[i] = r ^ 1u;
     }
 
-    return { reinterpret_cast<byte *>(block) + __hdr_offset, (usize)block->bsize - __hdr_offset };
+    return { reinterpret_cast<byte *>(block) + __hdr_offset, block_size - __hdr_offset };
   }
 
   T
@@ -520,22 +551,15 @@ struct __tlsf_list {
 
     tlsf_hdr *block = reinterpret_cast<tlsf_hdr *>(ptr - __hdr_offset);
     usize bsz = (usize)block->bsize;
+    const i32 flags = block->flags;
 
-    if ( block->flags == __block_free ) return { __flag_invalid };
+    if ( flags == __block_free ) return { __flag_invalid };
 
     allocated_bytes -= bsz;
-    if ( block->flags & __block_tombstone ) tombstoned_bytes -= bsz;
+    if ( flags & __block_tombstone ) tombstoned_bytes -= bsz;
 
-    if ( block->flags & __block_temporal ) {
-      for ( i32 c = 0; c < __list_count; ++c ) {
-        for ( i32 r = 0; r < __temporal_ring; ++r ) {
-          if ( temporal_active[c][r] == block ) {
-            temporal_active[c][r] = nullptr;
-            goto __temporal_clear_done;
-          }
-        }
-      }
-    __temporal_clear_done:;
+    if ( flags & __block_temporal ) [[unlikely]] {
+      __clear_temporal(block, bsz);
     }
 
     coalesce_and_free(block);

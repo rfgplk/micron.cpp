@@ -1,0 +1,103 @@
+record,allocator,workload,metric,old,new,delta,unit,notes
+metadata,all,environment,cpu,,,,,"Intel i7-5960X Haswell-E; 8C/16T; L1d 32 KiB; L2 256 KiB; shared L3 20 MiB"
+metadata,all,environment,toolchain,,,,,"GCC 16.2.1 20260819; Linux perf 7.1.9-200.fc44.x86_64; measured 2026-08-24"
+metadata,all,environment,build,,,,,"duck --perf --fp --no-ssp --no-lto -i .; -O3; -march=native; CPU 0 pinned"
+metadata,all,environment,counter_method,,,,,"Three warmups then perf stat -r 5; cache and TLB pairs measured separately to avoid multiplexing"
+metadata,all,environment,cycle_definition,,,,,"cycles/op uses perf hardware core cycles divided by logical allocator operations; changes below about 2% are a wash"
+raw,tlsf,roundtrip,cycles,362488435,327144139,-9.75,percent,8000000 operations
+raw,tlsf,roundtrip,cycles_per_op,45.31,40.89,-9.75,cycles,
+raw,tlsf,roundtrip,instructions,854737861,802654834,-6.09,percent,
+raw,tlsf,roundtrip,instructions_per_op,106.84,100.33,-6.09,instructions,
+raw,tlsf,batch_fifo,cycles,233574460,216305241,-7.39,percent,4194304 operations
+raw,tlsf,batch_fifo,cycles_per_op,55.69,51.57,-7.39,cycles,
+raw,tlsf,batch_fifo,instructions,474611852,436772933,-7.97,percent,
+raw,tlsf,batch_fifo,instructions_per_op,113.16,104.13,-7.97,instructions,
+raw,tlsf,fragmented_churn,cycles,279653294,279408917,-0.09,percent,"Cycle-flat; the instruction win is offset by more branch misses"
+raw,tlsf,fragmented_churn,cycles_per_op,69.95,69.89,-0.09,cycles,
+raw,tlsf,fragmented_churn,instructions,305052168,289225136,-5.19,percent,
+raw,tlsf,fragmented_churn,branches,38719504,36600866,-5.47,percent,
+raw,tlsf,fragmented_churn,branch_misses,564775,661683,17.16,percent,
+raw,tlsf,pipeline_1,cycles,365765651,330755731,-9.57,percent,8000000 operations
+raw,tlsf,pipeline_1,cycles_per_op,45.72,41.34,-9.57,cycles,
+raw,tlsf,pipeline_1,instructions,850745723,798662701,-6.12,percent,
+raw,tlsf,pipeline_4,cycles,445168401,332515869,-25.31,percent,"Four independent streams expose ILP after dependency-chain shortening"
+raw,tlsf,pipeline_4,cycles_per_op,55.65,41.56,-25.31,cycles,
+raw,tlsf,pipeline_4,instructions,1017745826,853662786,-16.12,percent,
+raw,tlsf,pipeline_4,branches,,, -23.99,percent,
+raw,buddy,roundtrip,cycles,1259067178,1198381002,-4.82,percent,8000000 operations
+raw,buddy,roundtrip,cycles_per_op,157.38,149.80,-4.82,cycles,
+raw,buddy,roundtrip,instructions,3198312536,2969889768,-7.14,percent,
+raw,buddy,roundtrip,instructions_per_op,399.79,371.24,-7.14,instructions,
+raw,buddy,roundtrip,branch_misses,5730967,2975609,-48.08,percent,
+raw,buddy,batch_fifo,cycles,541279610,508938817,-5.97,percent,4194304 operations
+raw,buddy,batch_fifo,cycles_per_op,129.05,121.34,-5.97,cycles,
+raw,buddy,batch_fifo,instructions,421907726,387485902,-8.16,percent,
+raw,buddy,batch_fifo,branches,,, -12.87,percent,
+raw,buddy,batch_fifo,branch_misses,,, -27.45,percent,
+raw,buddy,adversarial_coalesce,cycles,8952106082,65781045,-99.27,percent,"136.09x lower; arbitrary buddy unlink changed from linear search to O(1)"
+raw,buddy,adversarial_coalesce,cycles_per_op,17074.79,125.47,-99.27,cycles,
+raw,buddy,adversarial_coalesce,instructions,2067422756,51678338,-97.50,percent,40.0x lower
+raw,buddy,adversarial_coalesce,branches,681804963,10430019,-98.47,percent,65.37x lower
+raw,buddy,adversarial_coalesce,branch_misses,,, -79.42,percent,
+raw,buddy,pipeline_4,cycles,3401467018,3406020873,0.13,percent,"Cycle-flat despite less work; translation and cache latency dominate"
+raw,buddy,pipeline_4,cycles_per_op,425.18,425.75,0.13,cycles,
+raw,buddy,pipeline_4,instructions,3531952578,3236288895,-8.37,percent,
+raw,buddy,pipeline_4,branches,,, -7.59,percent,
+raw,buddy,pipeline_4,branch_misses,,, -88.02,percent,
+temporal,tlsf,active_slot_hit,cycles_per_op,,7.15,,cycles,4000000 operations; optimized selector has no compatible old-binary kernel
+temporal,tlsf,active_slot_hit,instructions_per_op,,28.66,,instructions,
+temporal,tlsf,alloc_free_churn,cycles_per_op,,58.60,,cycles,8000000 operations
+temporal,tlsf,alloc_free_churn,instructions_per_op,,135.08,,instructions,
+temporal,buddy,active_slot_hit,cycles_per_op,,5.46,,cycles,4000000 operations; optimized selector has no compatible old-binary kernel
+temporal,buddy,active_slot_hit,instructions_per_op,,22.66,,instructions,
+temporal,buddy,alloc_free_churn,cycles_per_op,,23.34,,cycles,8000000 operations
+temporal,buddy,alloc_free_churn,instructions_per_op,,73.33,,instructions,
+cache,tlsf,working_set_l1,l1_loads,49329000,47138000,-4.44,loads,
+cache,tlsf,working_set_l1,l1_load_misses,44700,41600,-6.94,misses,
+cache,tlsf,working_set_l2,l1_loads,48838000,46754000,-4.27,loads,
+cache,tlsf,working_set_l2,l1_load_misses,9592000,9587000,-0.05,misses,
+cache,tlsf,working_set_llc,l1_loads,51015000,48511000,-4.91,loads,
+cache,tlsf,working_set_llc,l1_load_misses,11414000,11396000,-0.16,misses,
+cache,tlsf,working_set_llc,page_walks_completed,1505000,1462000,-2.86,walks,
+cache,buddy,working_set_l1,l1_loads,66700000,50666000,-24.04,loads,"L1 and L2 working sets gain roughly 15-20% core cycles"
+cache,buddy,working_set_l1,l1_load_misses,601000,551000,-8.32,misses,
+cache,buddy,working_set_l2,l1_loads,66704000,50663000,-24.05,loads,
+cache,buddy,working_set_l2,l1_load_misses,3883000,3924000,1.06,misses,
+cache,buddy,working_set_llc,l1_loads,66832000,50605000,-24.28,loads,
+cache,buddy,working_set_llc,l1_load_misses,6764000,6826000,0.92,misses,
+cache,buddy,working_set_llc,instructions,311634077,287372986,-7.78,percent,
+cache,buddy,working_set_llc,cycles,258569347,261791091,1.25,percent,"Wash/slight loss caused by increased ordinary-page translation work"
+cache,buddy,working_set_llc,stlb_hits,1589661,1075769,-32.33,hits,
+cache,buddy,working_set_llc,page_walks_completed,1525390,3709653,143.19,walks,
+cache,buddy,working_set_llc,page_walk_duration,28169608,41634728,47.80,cycles,"Evaluate huge-page-backed sheets separately"
+stall,buddy,adversarial_coalesce,resource_stalls_any,8474824801,50618824,-99.40,stalls,"Intrusive back-links remove the serialized pointer chase"
+stall,buddy,adversarial_coalesce,reservation_station_stalls,8269216956,23068660,-99.72,stalls,
+stall,tlsf,roundtrip,resource_stalls_any,146356165,122350210,-16.40,stalls,
+codegen,tlsf,allocate,stack_references,6,0,-100.00,references,
+codegen,buddy,allocate,text_size,1630,479,-70.61,bytes,
+codegen,buddy,allocate,stack_references,21,6,-71.43,references,
+codegen,buddy,allocate,static_branch_instructions,51,19,-62.75,instructions,
+codegen,buddy,deallocate_top_level,text_size,851,364,-57.23,bytes,"Merge moved to a 688-byte helper; cold corruption fallback owns its spills"
+codegen,buddy,deallocate_top_level,stack_references,18,2,-88.89,references,
+codegen,buddy,allocator_object,order_size_table,512,0,-100.00,bytes,"Order sizes are computed by shift instead of stored and initialized"
+arena,all,hot_1_to_8,cycles_per_op,33.03,32.22,-2.45,cycles,
+arena,all,hot_32_to_128,cycles_per_op,35.21,32.79,-6.87,cycles,
+arena,all,hot_128_to_512,cycles_per_op,35.60,33.83,-4.97,cycles,
+arena,all,hot_1_to_512_mix,cycles_per_op,35.61,33.79,-5.11,cycles,
+arena,all,interleaved_1_to_4k,cycles_per_op,38.83,38.07,-1.96,cycles,
+arena,all,interleaved_1_to_16k,cycles_per_op,41.92,41.73,-0.45,cycles,
+arena,all,curated_multi_tier,cycles_per_op,44.29,44.02,-0.61,cycles,
+arena,all,serial_10k_allocate,cycles_per_op,128.01,119.87,-6.36,cycles,
+arena,all,serial_10k_bulk_free,cycles_per_op,154.74,142.39,-7.98,cycles,
+arena,all,serial_100k_allocate,cycles_per_op,676.01,655.60,-3.02,cycles,
+arena,all,serial_100k_bulk_free,cycles_per_op,413.21,406.20,-1.70,cycles,
+analysis,buddy,free_list,algorithm,,,,,"Intrusive doubly-linked free nodes make arbitrary buddy removal O(1); singleton-head pop avoids a useless prev-link store"
+analysis,buddy,split_loop,load_store_placement,,,,,"Carry split size in a register; halve each iteration; interleave link and tag construction; commit free_mask once after the loop"
+analysis,buddy,metadata,locality,,,,,"Removed the 64-entry order-size array and its initialization/copy loops; disabled cold-cache paths compile away with if constexpr"
+analysis,tlsf,find_free,load_store_placement,,,,,"Pop the already-classified head directly; avoid mapping_insert and flags stores that the next operation overwrites"
+analysis,tlsf,coalesce,load_store_placement,,,,,"Cache neighbor links and update the following physical back-link once after both merge directions settle"
+analysis,tlsf,temporal,locality,,,,,"Free checks at most two size classes and two slots per class instead of scanning 416 classes x 2 slots"
+analysis,all,cache_invalidation,ownership,,,,,"Raw allocator metadata is arena-private; bitmap and list stores therefore do not induce inter-core invalidations on this path"
+analysis,tlsf,rejected_bitmap_store_elision,tradeoff,,,,,"A conditional store-elision branch reduced stores but lost cycles in roundtrip batch and fragmentation; unconditional same-line bitmap ORs remain"
+analysis,tlsf,rejected_branchless_mapping,tradeoff,,,,,"A one-clz branchless mapping variant increased instructions and cycles; the measured two-clz mapping remains"
+analysis,buddy,remaining_llc_limit,tradeoff,,,,,"Fewer loads and instructions do not improve the random 16 MiB working set because 4 KiB page walks dominate; pipeline interleaving cannot hide that dependency"
