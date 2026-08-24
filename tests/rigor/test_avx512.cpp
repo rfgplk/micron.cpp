@@ -27,9 +27,8 @@ v_eq(T a, T b) noexcept
   return true;
 }
 
-#pragma GCC push_options
-#pragma GCC target("avx512f,avx512bw,avx512dq,avx512vl")
-
+__micron_push_options
+__micron_gcc_target_avx512
 [[gnu::noinline]] static int
 kernel_f32(const float *in)
 {
@@ -79,10 +78,9 @@ kernel_bitwise(const int *in)
   return v_eq(a, a2) ? 1 : 0;
 }
 
-#pragma GCC pop_options
-
-#pragma GCC push_options
-#pragma GCC target("avx512bw,avx512f")
+__micron_pop_options
+__micron_push_options
+__micron_gcc_target_avx512
 
 [[gnu::noinline]] static int
 kernel_bw(const char *in)
@@ -102,8 +100,7 @@ kernel_bw(const char *in)
   return 1;
 }
 
-#pragma GCC pop_options
-
+__micron_pop_options
 int
 main()
 {

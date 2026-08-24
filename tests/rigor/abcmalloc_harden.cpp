@@ -30,7 +30,7 @@ namespace
 
 constexpr byte kPattern = 0xA7;
 
-bool
+[[maybe_unused]] bool
 all_bytes_are(const byte *p, usize n, byte v)
 {
   for ( usize i = 0; i < n; ++i )

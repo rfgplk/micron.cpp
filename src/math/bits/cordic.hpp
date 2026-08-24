@@ -24,9 +24,8 @@
 #include "round.hpp"
 #include "trig.hpp"
 
-#pragma GCC push_options
-#pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
-
+__micron_push_options
+__micron_optimize_no_fast_math
 namespace micron
 {
 namespace math
@@ -650,4 +649,4 @@ acos(F x) noexcept
 };      // namespace math
 };      // namespace micron
 
-#pragma GCC pop_options
+__micron_pop_options

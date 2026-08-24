@@ -122,10 +122,9 @@ __popcountdi2(unsigned long long v) noexcept
 }
 
 #if defined(__SIZEOF_INT128__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
-extern "C" __mc_libgcc_sym __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) unsigned __int128
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wpedantic")
+extern "C" __mc_libgcc_sym __micron_optimize_no_tree_loop_distribute unsigned __int128
 __udivti3(unsigned __int128 n, unsigned __int128 d) noexcept
 {
   if ( d == 0 ) __builtin_trap();
@@ -143,7 +142,7 @@ __udivti3(unsigned __int128 n, unsigned __int128 d) noexcept
   return q;
 }
 
-extern "C" __mc_libgcc_sym __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) unsigned __int128
+extern "C" __mc_libgcc_sym __micron_optimize_no_tree_loop_distribute unsigned __int128
 __umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
 {
   if ( d == 0 ) __builtin_trap();
@@ -156,7 +155,7 @@ __umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
   return r;
 }
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop
 #endif
 
 #undef __mc_libgcc_sym

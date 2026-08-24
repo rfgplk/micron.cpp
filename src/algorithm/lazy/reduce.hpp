@@ -233,9 +233,8 @@ count_of(T __val)
   return __count_of_fn<T>{ __val };
 }
 
-#pragma GCC push_options
-#pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
-
+__micron_push_options
+__micron_optimize_no_fast_math
 namespace __impl
 {
 
@@ -298,8 +297,7 @@ sum_fp_into(V &&__v) noexcept
   }
 }
 
-#pragma GCC pop_options
-
+__micron_pop_options
 namespace __impl
 {
 

@@ -266,7 +266,7 @@ pidfd_send_signal(int pidfd, int sig, void *info, unsigned int flags) -> i32
 uid_t
 this_pid()
 {
-  return posix::getpid();
+  return static_cast<uid_t>(posix::getpid());
 }
 
 };      // namespace micron

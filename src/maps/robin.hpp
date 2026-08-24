@@ -413,7 +413,7 @@ class robin_map: public __immutable_memory_resource<Nd, __maps::storage_allocato
 
     // scalar fallback
 #if defined(__micron_compiler_gcc_compat)
-#pragma GCC unroll 4
+__micron_gcc_unroll_4
 #endif
     while ( ctrl_[index] > plen ) {
       __builtin_prefetch(&ctrl_[(index + 16u) & mask_], 0, 1);
@@ -454,7 +454,7 @@ class robin_map: public __immutable_memory_resource<Nd, __maps::storage_allocato
 #endif
 
 #if defined(__micron_compiler_gcc_compat)
-#pragma GCC unroll 4
+__micron_gcc_unroll_4
 #endif
     while ( ctrl_[index] > plen ) {
       __builtin_prefetch(&ctrl_[(index + 16u) & mask_], 0, 1);

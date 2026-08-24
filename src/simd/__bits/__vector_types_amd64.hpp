@@ -18,11 +18,10 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wpedantic")
 // internal "v" types
 typedef char __v8qi __attribute__((__vector_size__(8)));
 typedef short __v4hi __attribute__((__vector_size__(8)));
@@ -177,8 +176,7 @@ static_assert(sizeof(__v2di) == 16 && sizeof(__v4di) == 32 && sizeof(__v8di) == 
 static_assert(sizeof(__v4sf) == 16 && sizeof(__v8sf) == 32 && sizeof(__v16sf) == 64);
 static_assert(sizeof(__v2df) == 16 && sizeof(__v4df) == 32 && sizeof(__v8df) == 64);
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron

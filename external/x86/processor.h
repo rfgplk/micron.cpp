@@ -161,15 +161,15 @@ cache_sets(void)
 }
 
 inline void
-cache(const char level, cache_t *const __restrict__ r)
+cache_info(const char level, cache_t *const __restrict__ r)
 {
   cstruct_t cs = { .eax = 0, .ebx = 0, .ecx = (unsigned int)level, .edx = 0 };
-  cpuid_c(0x04, level, &cs);
+  cpuid_c(0x04, static_cast<unsigned long>(static_cast<unsigned char>(level)), &cs);
 
-  r->associative_cache = bit(cs.eax, 9);
-  r->self_init = bit(cs.eax, 8);
-  r->level = (char)rbit(cs.eax, 7, 5);
-  r->type = (char)rbit(cs.eax, 4, 0);
+  r->associative_cache = static_cast<unsigned short>(bit(cs.eax, 9));
+  r->self_init = static_cast<unsigned short>(bit(cs.eax, 8));
+  r->level = static_cast<unsigned short>(rbit(cs.eax, 7, 5));
+  r->type = static_cast<unsigned short>(rbit(cs.eax, 4, 0));
   r->associativity = (short unsigned int)rbit(cs.ebx, 31, 22) + 1;
   r->phys_line = (short unsigned int)rbit(cs.ebx, 21, 12) + 1;
   r->coherency = (short unsigned int)rbit(cs.ebx, 11, 0) + 1;
@@ -204,7 +204,7 @@ cores_all(char *__restrict__ total, core_t (*ptr)[256])
   cpuid_c(0x04, 0x00, &cs);
   *total = (char)rbit(cs.eax, 31, 26) + 1;
   while ( 1 ) {
-    unsigned int tmp = *total;
+    unsigned int tmp = static_cast<unsigned int>(static_cast<unsigned char>(*total));
     cpuid_c(0x0B, tmp_c++, &cs);
     char bits = (char)rbit(cs.eax, 4, 0);
     char apic = (char)rbit(cs.edx, 31, 0);

@@ -253,7 +253,7 @@ sigmask(const u64 mask)
 inline constexpr int
 sigword(const int mask)
 {
-  return ((mask - 1) / (8 * sizeof(unsigned long)));
+  return (mask - 1) / static_cast<int>(8 * sizeof(unsigned long));
 }
 
 inline void
@@ -300,7 +300,7 @@ sigorset(const posix::sigset_t &a, const posix::sigset_t &b)
 inline int
 sigismember(const posix::sigset_t &a, int sig)
 {
-  u64 mask = sigmask(sig);
+  u64 mask = sigmask(static_cast<u64>(sig));
   int word = sigword(sig);
   return a.__val[word] & mask ? 1 : 0;
 }
@@ -308,7 +308,7 @@ sigismember(const posix::sigset_t &a, int sig)
 inline void
 sigaddset(posix::sigset_t &a, int sig)
 {
-  u64 mask = sigmask(sig);
+  u64 mask = sigmask(static_cast<u64>(sig));
   int word = sigword(sig);
   a.__val[word] |= mask;
 }
@@ -316,7 +316,7 @@ sigaddset(posix::sigset_t &a, int sig)
 inline void
 sigdelset(posix::sigset_t &a, int sig)
 {
-  u64 mask = sigmask(sig);
+  u64 mask = sigmask(static_cast<u64>(sig));
   int word = sigword(sig);
   a.__val[word] &= ~mask;
 }

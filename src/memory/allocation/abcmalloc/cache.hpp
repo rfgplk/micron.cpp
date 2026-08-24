@@ -31,7 +31,7 @@ struct cache {
   micron::__chunk<byte>
   __heap_grow(const usize sz)
   {
-    return { reinterpret_cast<byte *>(micron::sbrk(sz)), sz };
+    return { reinterpret_cast<byte *>(micron::sbrk(static_cast<intptr_t>(sz))), sz };
   }
 
   void
@@ -59,7 +59,7 @@ struct cache {
   shrink(const max_t sz)
   {
     collect_stats<stat_type::dealloc>();
-    collect_stats<stat_type::total_memory_freed>(sz);
+    collect_stats<stat_type::total_memory_freed>(static_cast<usize>(sz));
     __heap_shrink(sz);
   }
 };

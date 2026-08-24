@@ -95,7 +95,7 @@ get_phys_pages(void)
     _page_size >>= 1;
     sys.totalram >>= 1;
   }
-  return sys.totalram;
+  return static_cast<long int>(sys.totalram);
 }
 
 // this is a wrapper around Linux spec. fcalls providing necessary system info

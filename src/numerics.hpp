@@ -7,6 +7,9 @@
 
 #include "types.hpp"
 
+__micron_diagnostic_push
+__micron_diagnostic_nan
+
 namespace micron
 {
 
@@ -61,8 +64,8 @@ constexpr f64 f64bit = -maximum::f64bit;
 
 constexpr f32 pi = 3.14159265359f;
 constexpr f32 half_pi = 1.5707963267f;
-constexpr f64 pi64 = 3.14159265359f;
-constexpr f64 half_pi64 = 1.5707963267f;
+constexpr f64 pi64 = 3.14159265359;
+constexpr f64 half_pi64 = 1.5707963267;
 
 template<class T> class numeric_limits
 {
@@ -1834,3 +1837,5 @@ template<class T> class numeric_limits<const volatile T>: public numeric_limits<
 };
 
 };      // namespace micron
+
+__micron_diagnostic_pop

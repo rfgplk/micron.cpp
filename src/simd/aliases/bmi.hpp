@@ -18,9 +18,8 @@ namespace simd
 namespace bmi
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
 __inline_g unsigned int
@@ -169,8 +168,7 @@ popcount_u64(unsigned long long v) noexcept
 
 #undef __inline_g
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace bmi
 };      // namespace simd
 };      // namespace micron

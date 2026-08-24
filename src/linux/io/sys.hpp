@@ -1127,9 +1127,8 @@ constexpr u32 in_all_events = 0x00000FFF;
 constexpr u32 in_nonblock = 04000;
 constexpr u32 in_cloexec = 02000000;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wpedantic")
 // TODO: fix ISO c++ pedantry
 struct inotify_event_t {
   i32 wd;
@@ -1139,8 +1138,7 @@ struct inotify_event_t {
   char name[];
 };
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // attrs
 

@@ -22,9 +22,8 @@ abort_state(void)
   micron::sys_exit(__MICRON_ABCMALLOC_CRITICAL_EXIT);
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=noreturn"
-
+__micron_diagnostic_push
+__micron_diagnostic_suggest_noreturn
 bool
 fail_state(void)
 {
@@ -43,11 +42,9 @@ fail_state(void)
   return true;
 }
 
-#pragma GCC diagnostic pop
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=noreturn"
-
+__micron_diagnostic_pop
+__micron_diagnostic_push
+__micron_diagnostic_suggest_noreturn
 inline __attribute__((always_inline)) bool
 handle_double_free([[maybe_unused]] byte *addr)
 {
@@ -71,8 +68,7 @@ handle_double_free(const byte *addr)
   return handle_double_free(const_cast<byte *>(addr));
 }
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 inline __attribute__((always_inline)) auto
 check_constraint(const usize sz) -> bool
 {

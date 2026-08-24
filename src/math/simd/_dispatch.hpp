@@ -15,10 +15,9 @@
 #define __micron_math_packed 1
 #endif
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpedantic")
 namespace micron
 {
 namespace math
@@ -109,4 +108,4 @@ template<typename V> using elem_t = typename elem_of<V>::type;
 };      // namespace math
 };      // namespace micron
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

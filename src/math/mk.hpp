@@ -1179,9 +1179,9 @@ __micron_math_export_fn2(nextafter, manip);
 
 template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline F
-frexp(F x, int *e) noexcept
+frexp(F x, int *exponent) noexcept
 {
-  return mk::manip::frexp<F>(x, e);
+  return mk::manip::frexp<F>(x, exponent);
 }
 
 template<ieee754_floating F>

@@ -34,9 +34,8 @@ prod(const T *first, const T *last) noexcept
 }
 
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
-#pragma GCC push_options
-#pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
-
+__micron_push_options
+__micron_optimize_no_fast_math
 template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline F
 kahan_sum(const F *first, const F *last) noexcept
@@ -71,8 +70,7 @@ neumaier_sum(const F *first, const F *last) noexcept
   return s + c;
 }
 
-#pragma GCC pop_options
-
+__micron_pop_options
 template<ieee754_floating F>
 [[nodiscard, gnu::flatten]] inline constexpr F
 mean(const F *first, const F *last) noexcept

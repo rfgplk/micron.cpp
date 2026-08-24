@@ -19,10 +19,9 @@ namespace simd
 namespace sse
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpedantic")
 // dispatch according to sse class
 #define __inline_sse [[gnu::always_inline, gnu::artificial]] static inline
 #define __inline_sse3 [[gnu::always_inline, gnu::artificial, gnu::target("sse3")]] static inline
@@ -1767,8 +1766,7 @@ decimal_digits_16(char *out, u64 value) noexcept
 #undef __inline_sse41
 #undef __inline_sse42
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace sse
 };      // namespace simd
 };      // namespace micron

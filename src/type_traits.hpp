@@ -672,7 +672,7 @@ template<typename T> struct is_trivially_move_assignable: public __is_trivially_
 };
 
 template<typename T>
-struct is_trivially_destructible: public __and_<__is_destructible_safe<T>, __bool_constant<__has_trivial_destructor(T)>>::type {
+struct is_trivially_destructible: public __and_<__is_destructible_safe<T>, __bool_constant<__micron_builtin_is_trivially_destructible(T)>>::type {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<T>{}),
                 "template argument must be a complete class or an unbounded array");
 };
@@ -830,28 +830,28 @@ public:
   using __type = typename __match::__type;
 };
 
-template<typename T> struct __make_unsigned { using __type = T; };
+template<typename T> struct __mc_make_unsigned { using __type = T; };
 
-template<> struct __make_unsigned<char> { using __type = unsigned char; };
+template<> struct __mc_make_unsigned<char> { using __type = unsigned char; };
 
-template<> struct __make_unsigned<signed char> { using __type = unsigned char; };
+template<> struct __mc_make_unsigned<signed char> { using __type = unsigned char; };
 
-template<> struct __make_unsigned<short> { using __type = unsigned short; };
+template<> struct __mc_make_unsigned<short> { using __type = unsigned short; };
 
-template<> struct __make_unsigned<int> { using __type = unsigned int; };
+template<> struct __mc_make_unsigned<int> { using __type = unsigned int; };
 
-template<> struct __make_unsigned<long> { using __type = unsigned long; };
+template<> struct __mc_make_unsigned<long> { using __type = unsigned long; };
 
-template<> struct __make_unsigned<long long> { using __type = unsigned long long; };
+template<> struct __mc_make_unsigned<long long> { using __type = unsigned long long; };
 
 #if defined(__micron_arch_amd64)
-__extension__ template<> struct __make_unsigned<__int128> { using __type = unsigned __int128; };
+__extension__ template<> struct __mc_make_unsigned<__int128> { using __type = unsigned __int128; };
 #endif
 template<typename T, bool _IsInt = is_integral<T>::value, bool _IsEnum = __is_enum(T)> class __make_unsigned_selector;
 
 template<typename T> class __make_unsigned_selector<T, true, false>
 {
-  using __unsigned_type = typename __make_unsigned<__remove_cv_t<T>>::__type;
+  using __unsigned_type = typename __mc_make_unsigned<__remove_cv_t<T>>::__type;
 
 public:
   using __type = typename __match_cv_qualifiers<T, __unsigned_type>::__type;
@@ -889,11 +889,11 @@ public:
   using __type = typename __match_cv_qualifiers<T, __unsigned_type>::__type;
 };
 
-template<> struct __make_unsigned<wchar_t> { using __type = typename __make_unsigned_selector<wchar_t, false, true>::__type; };
+template<> struct __mc_make_unsigned<wchar_t> { using __type = typename __make_unsigned_selector<wchar_t, false, true>::__type; };
 
-template<> struct __make_unsigned<char16_t> { using __type = typename __make_unsigned_selector<char16_t, false, true>::__type; };
+template<> struct __mc_make_unsigned<char16_t> { using __type = typename __make_unsigned_selector<char16_t, false, true>::__type; };
 
-template<> struct __make_unsigned<char32_t> { using __type = typename __make_unsigned_selector<char32_t, false, true>::__type; };
+template<> struct __mc_make_unsigned<char32_t> { using __type = typename __make_unsigned_selector<char32_t, false, true>::__type; };
 
 template<typename T> struct make_unsigned {
   using type = typename __make_unsigned_selector<T>::__type;
@@ -904,31 +904,31 @@ template<> struct make_unsigned<bool const>;
 template<> struct make_unsigned<bool volatile>;
 template<> struct make_unsigned<bool const volatile>;
 
-template<typename T> struct __make_signed { using __type = T; };
+template<typename T> struct __mc_make_signed { using __type = T; };
 
-template<> struct __make_signed<char> { using __type = signed char; };
+template<> struct __mc_make_signed<char> { using __type = signed char; };
 
-template<> struct __make_signed<unsigned char> { using __type = signed char; };
+template<> struct __mc_make_signed<unsigned char> { using __type = signed char; };
 
-template<> struct __make_signed<unsigned short> { using __type = signed short; };
+template<> struct __mc_make_signed<unsigned short> { using __type = signed short; };
 
-template<> struct __make_signed<unsigned int> { using __type = signed int; };
+template<> struct __mc_make_signed<unsigned int> { using __type = signed int; };
 
-template<> struct __make_signed<unsigned long> { using __type = signed long; };
+template<> struct __mc_make_signed<unsigned long> { using __type = signed long; };
 
-template<> struct __make_signed<unsigned long long> { using __type = signed long long; };
+template<> struct __mc_make_signed<unsigned long long> { using __type = signed long long; };
 
-template<> struct __make_signed<float> { using __type = float; };
+template<> struct __mc_make_signed<float> { using __type = float; };
 
-template<> struct __make_signed<double> { using __type = double; };
+template<> struct __mc_make_signed<double> { using __type = double; };
 #if defined(__micron_arch_amd64)
-__extension__ template<> struct __make_signed<unsigned __int128> { using __type = __int128; };
+__extension__ template<> struct __mc_make_signed<unsigned __int128> { using __type = __int128; };
 #endif
 template<typename T, bool _IsInt = is_integral<T>::value, bool _IsEnum = __is_enum(T)> class __make_signed_selector;
 
 template<typename T> class __make_signed_selector<T, true, false>
 {
-  using __signed_type = typename __make_signed<__remove_cv_t<T>>::__type;
+  using __signed_type = typename __mc_make_signed<__remove_cv_t<T>>::__type;
 
 public:
   using __type = typename __match_cv_qualifiers<T, __signed_type>::__type;
@@ -942,11 +942,11 @@ public:
   using __type = typename __make_signed_selector<__unsigned_type>::__type;
 };
 
-template<> struct __make_signed<wchar_t> { using __type = typename __make_signed_selector<wchar_t, false, true>::__type; };
+template<> struct __mc_make_signed<wchar_t> { using __type = typename __make_signed_selector<wchar_t, false, true>::__type; };
 
-template<> struct __make_signed<char16_t> { using __type = typename __make_signed_selector<char16_t, false, true>::__type; };
+template<> struct __mc_make_signed<char16_t> { using __type = typename __make_signed_selector<char16_t, false, true>::__type; };
 
-template<> struct __make_signed<char32_t> { using __type = typename __make_signed_selector<char32_t, false, true>::__type; };
+template<> struct __mc_make_signed<char32_t> { using __type = typename __make_signed_selector<char32_t, false, true>::__type; };
 
 template<typename T> struct make_signed {
   using type = typename __make_signed_selector<T>::__type;
@@ -1015,9 +1015,8 @@ template<typename T, typename... _Types> struct __strictest_alignment<T, _Types.
       = sizeof(T) > __strictest_alignment<_Types...>::_S_size ? sizeof(T) : __strictest_alignment<_Types...>::_S_size;
 };
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wdeprecated-declarations")
 template<__tt_size_t _Len, typename... _Types>
 struct
 
@@ -1035,8 +1034,7 @@ public:
 };
 
 template<__tt_size_t _Len, typename... _Types> const __tt_size_t aligned_union<_Len, _Types...>::alignment_value;
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 template<typename T> struct decay {
   using type = __decay(T);
 };
@@ -1271,15 +1269,13 @@ template<typename Fnc, typename... _ArgTypes> struct result_of<Fnc(_ArgTypes...)
                                 "micron::invoke_result"
                                 "' instead")));
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wdeprecated-declarations")
 template<__tt_size_t _Len, __tt_size_t _Align = __aligned_storage_default_alignment(_Len)>
 using aligned_storage_t = typename aligned_storage<_Len, _Align>::type;
 
 template<__tt_size_t _Len, typename... _Types> using aligned_union_t = typename aligned_union<_Len, _Types...>::type;
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 template<typename T> using decay_t = typename decay<T>::type;
 
 template<bool C, typename T = void> using enable_if_t = typename enable_if<C, T>::type;
@@ -1447,9 +1443,8 @@ template<typename _Result, typename R> struct __is_invocable_impl<_Result, R, tr
   using __nothrow_conv = true_type;
 };
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wctor-dtor-privacy")
 template<typename _Result, typename R> struct __is_invocable_impl<_Result, R, false, Void_t<typename _Result::type>> {
 private:
   using _Res_t = typename _Result::type;
@@ -1473,8 +1468,7 @@ public:
   using __nothrow_conv = decltype(_S_test<R>(1));
 };
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 template<typename Fn, typename... _ArgTypes> struct __is_invocable: __is_invocable_impl<__invoke_result<Fn, _ArgTypes...>, void>::type {
 };
 
@@ -1525,9 +1519,8 @@ template<typename Fn, typename... Args>
 struct __is_nothrow_invocable: __and_<__is_invocable<Fn, Args...>, __call_is_nothrow_<Fn, Args...>>::type {
 };
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wctor-dtor-privacy")
 struct __nonesuchbase {
 };
 
@@ -1537,8 +1530,7 @@ struct __nonesuch: private __nonesuchbase {
   void operator=(__nonesuch const &) = delete;
 };
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 template<typename Fnc, typename... _ArgTypes> struct invoke_result: public __invoke_result<Fnc, _ArgTypes...> {
   static_assert(micron::__is_complete_or_unbounded(__type_identity<Fnc>{}), "Fnc must be a complete class or an unbounded array");
   static_assert((micron::__is_complete_or_unbounded(__type_identity<_ArgTypes>{}) && ...),

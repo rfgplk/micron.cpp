@@ -460,7 +460,7 @@ class __arena: private cache
     }
     auto &sh = *_arena_tier.__idx[idx].nd->nd;
     if ( sh.try_unmark(micron::__chunk<byte>(addr, sz)) ) {
-      _arena_tier.mark_available(idx);
+      _arena_tier.mark_available(static_cast<u32>(idx));
       __debug_print("__unmark_from_arena(): unmark succeeded, sheet used: ", sh.used());
     } else {
       __debug_print_addr("__unmark_from_arena(): WARNING try_unmark failed for: ", addr);
@@ -792,7 +792,7 @@ class __arena: private cache
     for ( u32 w = 0; w < TierT::__detail_words; ++w ) {
       u64 mask = tier.__space_mask[w];
       while ( mask ) {
-        const u32 bit = __builtin_ctzll(mask);
+        const u32 bit = static_cast<u32>(__builtin_ctzll(mask));
         const u32 pos = (w << 6) | bit;
         if ( pos >= tier.__count ) break;      // shouldn't trip
         auto &sh = *tier.__idx[pos].nd->nd;
@@ -829,7 +829,7 @@ class __arena: private cache
     for ( u32 w = 0; w < TierT::__detail_words; ++w ) {
       u64 mask = tier.__space_mask[w];
       while ( mask ) {
-        const u32 bit = __builtin_ctzll(mask);
+        const u32 bit = static_cast<u32>(__builtin_ctzll(mask));
         const u32 pos = (w << 6) | bit;
         if ( pos >= tier.__count ) break;
         auto &sh = *tier.__idx[pos].nd->nd;
@@ -993,7 +993,7 @@ class __arena: private cache
         __debug_print("__try_reclaim_empty(): sheet fully drained, unlinking and resetting", 0);
         nd->nd->reset();
         tier.unlink_node(nd);
-        tier.unregister(range_idx);
+        tier.unregister(static_cast<u32>(range_idx));
         __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<sheet_t>) + sizeof(sheet_t));
       }
     }
@@ -1034,7 +1034,7 @@ class __arena: private cache
             __debug_print("__tombstone_accounting(): ftotal: ", ft);
             nd->nd->reset();
             tier.unlink_node(nd);
-            tier.unregister(range_idx);
+            tier.unregister(static_cast<u32>(range_idx));
             __unmark_from_arena(reinterpret_cast<byte *>(nd), sizeof(node<typename TierT::sheet_t>) + sizeof(typename TierT::sheet_t));
             return;
           }
@@ -1058,7 +1058,7 @@ class __arena: private cache
         sh.try_tombstone(memory);
       else
         sh.try_tombstone_no_size(addr);
-      tier.mark_available(range_idx);
+      tier.mark_available(static_cast<u32>(range_idx));
       __debug_print("__tier_remove_impl(): force tombstone set", 0);
       __tombstone_accounting(tier, range_idx, nd);
       return true;
@@ -1074,7 +1074,7 @@ class __arena: private cache
         else
           ok = sh.try_unmark_no_size(addr);
         if ( ok ) {
-          tier.mark_available(range_idx);
+          tier.mark_available(static_cast<u32>(range_idx));
           __debug_print("__tier_remove_impl(): unmark succeeded, sheet used: ", sh.used());
           __try_reclaim_empty(tier, range_idx, nd);
           return true;
@@ -1085,7 +1085,7 @@ class __arena: private cache
         else
           ok = sh.try_tombstone_no_size(addr);
         if ( ok ) {
-          tier.mark_available(range_idx);
+          tier.mark_available(static_cast<u32>(range_idx));
           __debug_print("__tier_remove_impl(): tombstone set", 0);
           __tombstone_accounting(tier, range_idx, nd);
           return true;

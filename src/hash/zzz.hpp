@@ -59,7 +59,7 @@ z(const u8 *__restrict data, usize sz, u64 *__restrict out)
 
   while ( ptr < end ) {
     __m256i block;
-    usize remaining = end - ptr;
+    usize remaining = static_cast<usize>(end - ptr);
     if ( remaining >= 32 ) [[unlikely]] {
       block = simd::avx2::loadu_i256(reinterpret_cast<const __m256i *>(ptr));
       ptr += 32;
@@ -106,7 +106,7 @@ z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 
   while ( ptr < end ) {
     __m256i block;
-    usize remaining = end - ptr;
+    usize remaining = static_cast<usize>(end - ptr);
     if ( remaining >= 32 ) [[unlikely]] {
       block = simd::avx2::loadu_i256(reinterpret_cast<const __m256i *>(ptr));
       ptr += 32;
@@ -163,7 +163,7 @@ zz(const u8 *__restrict data, usize sz, u64 *__restrict out)
 
   while ( ptr < end ) {
     __m256i block;
-    usize remaining = end - ptr;
+    usize remaining = static_cast<usize>(end - ptr);
     if ( remaining >= 32 ) {
       block = simd::avx2::loadu_i256(reinterpret_cast<const __m256i *>(ptr));
       ptr += 32;
@@ -244,7 +244,7 @@ zz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 
   while ( ptr < end ) {
     __m256i block;
-    usize remaining = end - ptr;
+    usize remaining = static_cast<usize>(end - ptr);
     if ( remaining >= 32 ) {
       block = simd::avx2::loadu_i256(reinterpret_cast<const __m256i *>(ptr));
       ptr += 32;
@@ -315,7 +315,7 @@ zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 
   while ( ptr < end ) {
     __m256i block;
-    usize remaining = end - ptr;
+    usize remaining = static_cast<usize>(end - ptr);
     if ( remaining >= 32 ) {
       block = simd::avx2::loadu_i256(reinterpret_cast<const __m256i *>(ptr));
       ptr += 32;
@@ -398,7 +398,7 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
 
   while ( ptr < end ) {
     __m256i block;
-    usize remaining = end - ptr;
+    usize remaining = static_cast<usize>(end - ptr);
     if ( remaining >= 32 ) {
       block = simd::avx2::loadu_i256(reinterpret_cast<const __m256i *>(ptr));
       ptr += 32;
@@ -580,7 +580,7 @@ zzzf(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 
   while ( ptr < end ) {
     __m256i block;
-    usize remaining = end - ptr;
+    usize remaining = static_cast<usize>(end - ptr);
     if ( remaining >= 32 ) {
       block = simd::avx2::loadu_i256(reinterpret_cast<const __m256i *>(ptr));
       ptr += 32;
@@ -625,7 +625,7 @@ zzzf(const u8 *__restrict data, usize sz, u64 *__restrict out)
 
   while ( ptr < end ) {
     __m256i block;
-    usize remaining = end - ptr;
+    usize remaining = static_cast<usize>(end - ptr);
     if ( remaining >= 32 ) {
       block = simd::avx2::loadu_i256(reinterpret_cast<const __m256i *>(ptr));
       ptr += 32;

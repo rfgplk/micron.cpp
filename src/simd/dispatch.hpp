@@ -13,10 +13,9 @@
 
 #include "../attributes.hpp"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpedantic")
 namespace micron
 {
 
@@ -105,4 +104,4 @@ __has_avx256(const __simd_flags &flags)
 };      // namespace simd
 };      // namespace micron
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

@@ -20,10 +20,9 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpedantic")
 // NOTE: most of this file (tzcnt/lzcnt/andn/blsr/blsi/blsmsk/mulx) is already pure portable C;
 // gcc lowers it to tzcnt/blsr/mulx on its own when -mbmi/-mbmi2 are on, and to bsf/and/mul when they are not
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
@@ -296,8 +295,7 @@ _mulx_u64(unsigned long long a, unsigned long long b, unsigned long long *hi) no
 
 #undef __inline_g
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron

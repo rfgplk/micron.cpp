@@ -19,11 +19,10 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wpedantic")
 #if defined(__ARM_FP16_FORMAT_IEEE) || defined(__ARM_FP16_FORMAT_ALTERNATIVE) || defined(__micron_arm_fp16)
 using float16_t = __fp16;
 #endif
@@ -173,8 +172,7 @@ static_assert(sizeof(uint8x16x2_t) == 32);
 static_assert(sizeof(float32x4x2_t) == 32);
 static_assert(sizeof(float64x2x2_t) == 32);
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron

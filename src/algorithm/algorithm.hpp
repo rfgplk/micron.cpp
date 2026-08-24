@@ -527,9 +527,8 @@ rotate_right(C &c, usize n) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // sums/fills
 //
-#pragma GCC push_options
-#pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
-
+__micron_push_options
+__micron_optimize_no_fast_math
 namespace __impl
 {
 [[gnu::always_inline]] constexpr void
@@ -602,8 +601,7 @@ sum(const T &src) noexcept
     return __impl::__sum_fp(src, src.size());
 }
 
-#pragma GCC pop_options
-
+__micron_pop_options
 namespace __impl
 {
 template<typename A>

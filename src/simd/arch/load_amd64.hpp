@@ -11,11 +11,10 @@ namespace micron
 namespace simd
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic ignored "-Wpsabi"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_ignored("-Wpsabi")
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // load/aligned loads
 template<is_simd_type B>
@@ -873,7 +872,6 @@ maskgather_pd_i64(B src, double &ref, B vindex, B mask)
   return maskgather_pd_i64<B, scale>(src, &ref, vindex, mask);
 }
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace simd
 };      // namespace micron

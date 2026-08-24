@@ -95,7 +95,7 @@ suspend_until(const posix::sigset_t &mask)
 }
 
 // NOTE: this is helpful for debugging, the func won't be optimized away so you can easily break on it via gdb
-__attribute__((noinline)) __attribute__((used)) __attribute__((externally_visible)) __attribute__((optimize("O0"))) void
+__attribute__((noinline)) __attribute__((used)) __micron_externally_visible __micron_optimize_O0 void
 mark()
 {
   __asm__ __volatile__("" ::: "memory");

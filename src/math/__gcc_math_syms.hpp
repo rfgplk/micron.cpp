@@ -25,10 +25,8 @@
 #include "bits/manip.hpp"
 #include "bits/special.hpp"
 
-#pragma GCC diagnostic push
-// we are deliberately (re)defining functions the compiler knows as builtins
-#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
-
+__micron_diagnostic_push// we are deliberately (re)defining functions the compiler knows as builtins
+__micron_diagnostic_ignored("-Wbuiltin-declaration-mismatch")
 #define __MC_M1(NAME, DBODY, FBODY, LBODY)                                                                                                 \
   extern "C" __attribute__((weak)) double NAME(double x) noexcept { return (DBODY); }                                                      \
   extern "C" __attribute__((weak)) float NAME##f(float x) noexcept { return (FBODY); }                                                     \
@@ -210,8 +208,7 @@ static_assert(micron::math::mkbits::trig_ns::atan2<f64>(-1.0, 0.0) < -1.5707,
 #undef __MC_M1
 #undef __MC_M2
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 // libgcc integer fns
 #include "__gcc_int_syms.hpp"
 

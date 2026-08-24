@@ -21,9 +21,9 @@ template<is_mutex M = mutex> class lock_guard
   void (M::*rptr)();
 
 public:
-  lock_guard(M &m, adopt_lock_t a) : mtx(&m), rptr(m.retrieve()) { };
+  lock_guard(M &m, adopt_lock_t) : mtx(&m), rptr(m.retrieve()) { };
   lock_guard(M &m) : mtx(&m), rptr(m()) { };
-  lock_guard(M *m, adopt_lock_t a) : mtx(m), rptr(m->retrieve()) { };
+  lock_guard(M *m, adopt_lock_t) : mtx(m), rptr(m->retrieve()) { };
   lock_guard(M *m) : mtx(m), rptr(m()) { };
 
   lock_guard(const lock_guard &) = delete;      // a copy would double-unlock the same mutex

@@ -15,9 +15,8 @@
 // f128 / i128 are GCC `__attribute__((vector_size(16)))` types; passing them
 // to `same_as<T, f128>` strips type attributes, which GCC reports under
 // -Wignored-attributes. Suppression is purely cosmetic.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // aarch32 types
 // dispatched via ns
@@ -238,4 +237,4 @@ __expand_mask_u64(uint8_t k) noexcept
 };      // namespace simd
 };      // namespace micron
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

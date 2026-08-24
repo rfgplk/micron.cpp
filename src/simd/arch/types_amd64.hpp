@@ -45,8 +45,8 @@ using d512 = __m512d;
 using i512 = __m512i;
 using h512 = __m512h;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 template<typename T>
 concept is_simd_type = micron::same_as<T, b64> or micron::same_as<T, f128> or micron::same_as<T, d128> or micron::same_as<T, i128>
                        or micron::same_as<T, f256> or micron::same_as<T, d256> or micron::same_as<T, i256> or micron::same_as<T, f512>
@@ -98,6 +98,6 @@ __is_8_wide(void)
   return false;
 }
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop
 };      // namespace simd
 };      // namespace micron

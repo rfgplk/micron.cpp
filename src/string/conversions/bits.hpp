@@ -13,9 +13,8 @@
 #include "../unitypes.hpp"
 
 // must surpress int128 extensions
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wpedantic")
 namespace micron
 {
 namespace __impl
@@ -998,5 +997,5 @@ digit_val(char c, u32 base)
 
 };      // namespace __impl
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop
 };      // namespace micron

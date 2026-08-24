@@ -730,7 +730,7 @@ scwordcmp_safe(const word *__restrict src, const word *__restrict dest) noexcept
 
 #if defined(__micron_freestanding)
 // c-abi
-extern "C" __attribute__((used, optimize("-fno-tree-loop-distribute-patterns"))) inline int
+extern "C" __attribute__((used)) __micron_optimize_no_tree_loop_distribute inline int
 memcmp(const void *a, const void *b, __SIZE_TYPE__ n) noexcept
 {
   return static_cast<int>(micron::__memcmp_bytes(static_cast<const byte *>(a), static_cast<const byte *>(b), static_cast<u64>(n)));

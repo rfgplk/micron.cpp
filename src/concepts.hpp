@@ -631,7 +631,7 @@ concept is_applicative = is_functor<F> && requires {
 template<typename F>
 concept is_monad = is_applicative<F> && requires(F ft) {
   {
-    bind(ft, [](typename F::value_type v) {
+    bind(ft, [](typename F::value_type) {
       return ft; /* same monad, identity */
     })
   };

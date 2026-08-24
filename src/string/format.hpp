@@ -1364,7 +1364,7 @@ micron::fvector<int>
 build_bad_char(const T &pattern)
 {
   micron::fvector<int> bad(256, -1);
-  for ( usize i = 0; i < pattern.size(); ++i ) bad[static_cast<unsigned char>(pattern[i])] = i;
+  for ( usize i = 0; i < pattern.size(); ++i ) bad[static_cast<unsigned char>(pattern[i])] = static_cast<int>(i);
   return bad;
 }
 
@@ -1375,22 +1375,22 @@ build_good_suffix(const T &pattern)
   usize m = pattern.size();
   micron::fvector<int> shift(m + 1, 0);
   micron::fvector<int> border(m + 1, 0);
-  for ( usize k = 0; k <= m; ++k ) shift[k] = m;
-  int i = m, j = m + 1;
-  border[i] = j;
+  for ( usize k = 0; k <= m; ++k ) shift[k] = static_cast<int>(m);
+  int i = static_cast<int>(m), j = static_cast<int>(m + 1);
+  border[static_cast<usize>(i)] = j;
   while ( i > 0 ) {
     while ( j <= static_cast<int>(m) && pattern[i - 1] != pattern[j - 1] ) {
-      if ( shift[j] == static_cast<int>(m) ) shift[j] = j - i;
-      j = border[j];
+      if ( shift[static_cast<usize>(j)] == static_cast<int>(m) ) shift[static_cast<usize>(j)] = j - i;
+      j = border[static_cast<usize>(j)];
     }
     --i;
     --j;
-    border[i] = j;
+    border[static_cast<usize>(i)] = j;
   }
   j = border[0];
   for ( i = 0; i <= static_cast<int>(m); ++i ) {
-    if ( shift[i] == static_cast<int>(m) ) shift[i] = j;
-    if ( i == j ) j = border[j];
+    if ( shift[static_cast<usize>(i)] == static_cast<int>(m) ) shift[static_cast<usize>(i)] = j;
+    if ( i == j ) j = border[static_cast<usize>(j)];
   }
   return shift;
 }
@@ -1407,10 +1407,10 @@ boyer_moore_search(const T &text, const T &pattern)
   auto good = build_good_suffix(pattern);
   usize s = 0;
   while ( s <= n - m ) {
-    int j = m - 1;
+    int j = static_cast<int>(m - 1);
     while ( j >= 0 && pattern[j] == text[s + j] ) --j;
     if ( j < 0 ) {
-      result.inline_push_back(s);
+      result.inline_push_back(static_cast<int>(s));
       s += good[0];
     } else {
       int bc_shift = j - bad[static_cast<unsigned char>(text[s + j])];
@@ -1432,7 +1432,7 @@ bm_find(const char (&text)[N], const char (&pattern)[Pt], usize &found_count)
   for ( usize i = 0; i < Pt - 1; ++i ) bad[static_cast<unsigned char>(pattern[i])] = i;
   micron::carray<int, Pt + 1> border{};
   usize m = Pt - 1;
-  int i = m, j = m + 1;
+  int i = static_cast<int>(m), j = static_cast<int>(m + 1);
   border[i] = j;
   while ( i > 0 ) {
     while ( j <= static_cast<int>(m) && pattern[i - 1] != pattern[j - 1] ) j = border[j];
@@ -2314,7 +2314,7 @@ parse_decimal(const char *&p) noexcept
 {
   u32 val = 0;
   while ( static_cast<u32>(*p - '0') <= 9 ) {
-    val = val * 10 + (*p - '0');
+    val = val * 10 + static_cast<u32>(*p - '0');
     ++p;
   }
   return val;
@@ -2326,7 +2326,7 @@ parse_decimal(const char *&p, const char *end) noexcept
 {
   u32 val = 0;
   while ( p < end && static_cast<u32>(*p - '0') <= 9 ) {
-    val = val * 10 + (*p - '0');
+    val = val * 10 + static_cast<u32>(*p - '0');
     ++p;
   }
   return val;
@@ -2338,7 +2338,7 @@ parse_hex(const char *&p) noexcept
   u32 val = 0;
   int d;
   while ( (d = xdigit_to_val(*p)) >= 0 ) {
-    val = val * 16 + d;
+    val = val * 16 + static_cast<u32>(d);
     ++p;
   }
   return val;
@@ -2351,7 +2351,7 @@ parse_hex(const char *&p, const char *end) noexcept
   u32 val = 0;
   int d;
   while ( p < end && (d = xdigit_to_val(*p)) >= 0 ) {
-    val = val * 16 + d;
+    val = val * 16 + static_cast<u32>(d);
     ++p;
   }
   return val;
@@ -2393,7 +2393,7 @@ parse_octal(const char *&p) noexcept
 {
   u32 val = 0;
   while ( static_cast<u32>(*p - '0') <= 7 ) {
-    val = val * 8 + (*p - '0');
+    val = val * 8 + static_cast<u32>(*p - '0');
     ++p;
   }
   return val;
@@ -2405,7 +2405,7 @@ parse_octal(const char *&p, const char *end) noexcept
 {
   u32 val = 0;
   while ( p < end && static_cast<u32>(*p - '0') <= 7 ) {
-    val = val * 8 + (*p - '0');
+    val = val * 8 + static_cast<u32>(*p - '0');
     ++p;
   }
   return val;
@@ -2414,7 +2414,7 @@ parse_octal(const char *&p, const char *end) noexcept
 constexpr u8
 to_hex_char(u8 nibble) noexcept
 {
-  return nibble < 10 ? '0' + nibble : 'a' + (nibble - 10);
+  return static_cast<u8>(nibble < 10 ? '0' + nibble : 'a' + (nibble - 10));
 }
 
 template<typename R, is_string T>
@@ -2430,11 +2430,11 @@ to_pointer_addr(typename T::iterator start, typename T::iterator end, u32 base =
     u32 digit;
     char ch = *p;
     if ( static_cast<u32>(ch - '0') <= 9 )
-      digit = ch - '0';
+      digit = static_cast<u32>(ch - '0');
     else if ( base > 10 && static_cast<u32>(ch - 'A') <= 5 )
-      digit = ch - 'A' + 10;
+      digit = static_cast<u32>(ch - 'A' + 10);
     else if ( base > 10 && static_cast<u32>(ch - 'a') <= 5 )
-      digit = ch - 'a' + 10;
+      digit = static_cast<u32>(ch - 'a' + 10);
     else
       break;
     if ( digit >= base ) break;
@@ -2457,7 +2457,7 @@ to_long(const T &o)
   } else if ( *p == '+' )
     ++p;
   u64 acc = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + static_cast<u64>(*p++ - '0');
   return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
@@ -2475,7 +2475,7 @@ to_long(const char *buf)
   } else if ( *p == '+' )
     ++p;
   u64 acc = 0;
-  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
+  while ( static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + static_cast<u64>(*p++ - '0');
   return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
@@ -2494,7 +2494,7 @@ to_long(const char *buf, usize len)
   } else if ( p < end && *p == '+' )
     ++p;
   u64 acc = 0;
-  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + (*p++ - '0');
+  while ( p < end && static_cast<u32>(*p - '0') <= 9 ) acc = acc * 10 + static_cast<u64>(*p++ - '0');
   return neg ? static_cast<i64>(0ull - acc) : static_cast<i64>(acc);
 }
 
@@ -3434,7 +3434,7 @@ format(const char *fmt, const Args &...args)
           index = 0;
           num_p = p;
           while ( num_p < colon ) {
-            index = index * 10 + (*num_p - '0');
+            index = index * 10 + static_cast<usize>(*num_p - '0');
             ++num_p;
           }
           has_explicit_index = true;

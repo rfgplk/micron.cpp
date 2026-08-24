@@ -12,9 +12,8 @@ namespace micron
 namespace simd
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 template<typename T>
 concept is_neon_simd_class = requires {
   typename T::bit_width;
@@ -1002,4 +1001,4 @@ unpackhi(T &o, T &b)
 };      // namespace simd
 };      // namespace micron
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

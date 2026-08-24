@@ -22,11 +22,10 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("avx512dq,avx512f")]] static inline
 
 __inline_g __m512i
@@ -67,8 +66,7 @@ _mm512_broadcast_f64x2(__m128d a) noexcept
 
 #undef __inline_g
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron

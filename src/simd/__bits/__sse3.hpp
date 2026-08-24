@@ -21,9 +21,8 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("sse3")]] static inline
 
 __inline_g __m128
@@ -88,8 +87,7 @@ _mm_lddqu_si128(const __m128i *p) noexcept
 
 #undef __inline_g
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron

@@ -62,7 +62,7 @@ __write_unsigned(T n)
       buf[i - j - 1] = tmp;
     }
   }
-  __write(buf, i);
+  __write(buf, static_cast<usize>(i));
 }
 
 template<typename T, typename... Args>

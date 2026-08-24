@@ -91,7 +91,7 @@ strlen256(const char *str) noexcept
     int mask = _mm256_movemask_epi8(_mm256_cmpeq_epi8(chunk, zero));
 
     if ( mask != 0 ) {
-      return (ptr - str) + __builtin_ctz(static_cast<unsigned int>(mask));
+      return static_cast<usize>((ptr - str) + __builtin_ctz(static_cast<unsigned int>(mask)));
     }
     ptr += 32;
   }

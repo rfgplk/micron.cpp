@@ -496,7 +496,7 @@ require_smaller(const A &_a, const B &_b)
 
 template<typename A, typename B, typename Fn, typename... Args>
 void
-require_cmp(const A &_a, const B &_b, Fn &&f, Args &&...args)
+require_cmp(const A &_a, const B &_b, Fn &&f, Args &&...)
 {
   if ( f(_a, _b) == false ) {
     __print_error("\033[34msnowball require() failure:\033[0m expected output was false.\n\r");

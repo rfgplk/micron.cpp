@@ -92,7 +92,7 @@ wait_thread(int tid)
   // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
   micron::__testcancel();
   micron::posix::siginfo_t i;
-  int r = static_cast<int>(micron::waitid(P_PID, tid, i, exited));
+  int r = static_cast<int>(micron::waitid(static_cast<idtype_t>(P_PID), static_cast<posix::id_t>(tid), i, exited));
   micron::__testcancel();
   if ( r < 0 ) {
     if ( r == -10 ) {
@@ -106,7 +106,7 @@ can_wait(int tid)
 {
   // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
   micron::posix::siginfo_t i;
-  micron::waitid(P_PID, tid, i, exited | nowait);
+  micron::waitid(static_cast<idtype_t>(P_PID), static_cast<posix::id_t>(tid), i, exited | nowait);
   if ( i.si_code == posix::cld_exited or i.si_code == posix::cld_dumped or i.si_code == posix::cld_killed ) return true;
   return false;
 }
@@ -187,7 +187,7 @@ inline void
 ssleep(const umax_t s)
 {
   timespec_t r, rmn;
-  r.tv_sec = s;
+  r.tv_sec = static_cast<time64_t>(s);
   r.tv_nsec = 0;
   for ( ;; ) {
     micron::__testcancel();

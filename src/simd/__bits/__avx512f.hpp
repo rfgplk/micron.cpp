@@ -22,11 +22,10 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("avx512f")]] static inline
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -274,19 +273,27 @@ _mm512_storeu_epi64(void *p, __m512i v) noexcept
 __inline_g void
 _mm512_stream_ps(void *p, __m512 v) noexcept
 {
+#if defined(__clang__)
+  __builtin_ia32_movntps512(reinterpret_cast<__v16sf *>(__builtin_assume_aligned(p, 64)), (__v16sf)v);
+#else
   __builtin_ia32_movntps512((float *)p, (__v16sf)v);
+#endif
 }
 
 __inline_g void
 _mm512_stream_pd(void *p, __m512d v) noexcept
 {
+#if defined(__clang__)
+  __builtin_ia32_movntpd512(reinterpret_cast<__v8df *>(__builtin_assume_aligned(p, 64)), (__v8df)v);
+#else
   __builtin_ia32_movntpd512((double *)p, (__v8df)v);
+#endif
 }
 
 __inline_g void
 _mm512_stream_si512(void *p, __m512i v) noexcept
 {
-  __builtin_ia32_movntdq512((__v8di *)p, (__v8di)v);
+  __builtin_ia32_movntdq512(reinterpret_cast<__v8di *>(__builtin_assume_aligned(p, 64)), (__v8di)v);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -794,37 +801,37 @@ _mm512_cmp_pd_mask(__m512d a, __m512d b, int p) noexcept
 __inline_g __m512i
 _mm512_slli_epi32(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_pslldi512_mask((__v16si)a, n, (__v16si)_mm512_setzero_si512(), (__mmask16)-1);
+  return (__m512i)__builtin_ia32_pslldi512_mask((__v16si)a, static_cast<unsigned int>(n), (__v16si)_mm512_setzero_si512(), (__mmask16)-1);
 }
 
 __inline_g __m512i
 _mm512_slli_epi64(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_psllqi512_mask((__v8di)a, n, (__v8di)_mm512_setzero_si512(), (__mmask8)-1);
+  return (__m512i)__builtin_ia32_psllqi512_mask((__v8di)a, static_cast<unsigned int>(n), (__v8di)_mm512_setzero_si512(), (__mmask8)-1);
 }
 
 __inline_g __m512i
 _mm512_srli_epi32(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_psrldi512_mask((__v16si)a, n, (__v16si)_mm512_setzero_si512(), (__mmask16)-1);
+  return (__m512i)__builtin_ia32_psrldi512_mask((__v16si)a, static_cast<unsigned int>(n), (__v16si)_mm512_setzero_si512(), (__mmask16)-1);
 }
 
 __inline_g __m512i
 _mm512_srli_epi64(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_psrlqi512_mask((__v8di)a, n, (__v8di)_mm512_setzero_si512(), (__mmask8)-1);
+  return (__m512i)__builtin_ia32_psrlqi512_mask((__v8di)a, static_cast<unsigned int>(n), (__v8di)_mm512_setzero_si512(), (__mmask8)-1);
 }
 
 __inline_g __m512i
 _mm512_srai_epi32(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_psradi512_mask((__v16si)a, n, (__v16si)_mm512_setzero_si512(), (__mmask16)-1);
+  return (__m512i)__builtin_ia32_psradi512_mask((__v16si)a, static_cast<unsigned int>(n), (__v16si)_mm512_setzero_si512(), (__mmask16)-1);
 }
 
 __inline_g __m512i
 _mm512_srai_epi64(__m512i a, int n) noexcept
 {
-  return (__m512i)__builtin_ia32_psraqi512_mask((__v8di)a, n, (__v8di)_mm512_setzero_si512(), (__mmask8)-1);
+  return (__m512i)__builtin_ia32_psraqi512_mask((__v8di)a, static_cast<unsigned int>(n), (__v8di)_mm512_setzero_si512(), (__mmask8)-1);
 }
 
 __inline_g __m512i
@@ -893,7 +900,7 @@ _mm512_kxor(__mmask16 a, __mmask16 b) noexcept
 __inline_g __mmask16
 _mm512_knot(__mmask16 a) noexcept
 {
-  return ~a;
+  return static_cast<__mmask16>(~static_cast<unsigned int>(a));
 }
 
 __inline_g __mmask16
@@ -923,7 +930,7 @@ _kxor_mask16(__mmask16 a, __mmask16 b) noexcept
 __inline_g __mmask16
 _knot_mask16(__mmask16 a) noexcept
 {
-  return ~a;
+  return static_cast<__mmask16>(~static_cast<unsigned int>(a));
 }
 
 __inline_g __mmask8
@@ -947,7 +954,7 @@ _kxor_mask8(__mmask8 a, __mmask8 b) noexcept
 __inline_g __mmask8
 _knot_mask8(__mmask8 a) noexcept
 {
-  return ~a;
+  return static_cast<__mmask8>(~static_cast<unsigned int>(a));
 }
 
 __inline_g __m512
@@ -1053,8 +1060,7 @@ _mm512_cvtepi64_pd(__m512i a) noexcept
 
 #undef __inline_g
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron

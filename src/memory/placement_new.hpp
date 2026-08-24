@@ -12,9 +12,8 @@
 
 // -Wshadow reports this as "shadowing library function 'operator new'", which is exactly what this
 // header is for
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wshadow")
 template<typename P>
 void *
 operator new(usize size, P *ptr)
@@ -23,4 +22,4 @@ operator new(usize size, P *ptr)
   return ptr;
 }
 
-#pragma GCC diagnostic pop
+__micron_diagnostic_pop

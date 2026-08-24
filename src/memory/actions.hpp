@@ -19,9 +19,9 @@
 
 namespace micron
 {
-template<typename T, typename U> struct __is_same { static constexpr bool value = false; };
+template<typename T, typename U> struct __mc_is_same { static constexpr bool value = false; };
 
-template<typename T> struct __is_same<T, T> { static constexpr bool value = true; };
+template<typename T> struct __mc_is_same<T, T> { static constexpr bool value = true; };
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // allocas

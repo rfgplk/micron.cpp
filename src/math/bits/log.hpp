@@ -22,9 +22,8 @@
 #include "manip.hpp"
 
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
-#pragma GCC push_options
-#pragma GCC optimize("no-fast-math", "no-associative-math", "no-reciprocal-math", "signed-zeros")
-
+__micron_push_options
+__micron_optimize_no_fast_math
 namespace micron
 {
 namespace math
@@ -342,4 +341,4 @@ log_dd_f64_with_special(f64 x, bool *handled) noexcept
 };      // namespace math
 };      // namespace micron
 
-#pragma GCC pop_options
+__micron_pop_options

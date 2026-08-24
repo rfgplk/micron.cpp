@@ -20,7 +20,7 @@ namespace micron
 // TODO: pull this out into plumbing, ugly like this
 
 // cold tier selection for n > __mem_ladder_max
-[[gnu::noinline]] static __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) byte *
+[[gnu::noinline]] static __micron_optimize_no_tree_loop_distribute byte *
 __memcpy_large(byte *restrict d, const byte *restrict s, const u64 n) noexcept
 {
 #if defined(__micron_arch_x86_any)
@@ -463,7 +463,7 @@ mempcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
 
 #if defined(__micron_freestanding)
 // c-abi
-extern "C" __attribute__((used, optimize("-fno-tree-loop-distribute-patterns"))) inline void *
+extern "C" __attribute__((used)) __micron_optimize_no_tree_loop_distribute inline void *
 memcpy(void *__restrict d, const void *__restrict s, __SIZE_TYPE__ n) noexcept
 {
   micron::__memcpy_bytes(static_cast<byte *>(d), static_cast<const byte *>(s), static_cast<u64>(n));

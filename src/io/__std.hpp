@@ -64,9 +64,9 @@ inline bool
 __load_stdfd(void)
 {
   if ( __verify_open() < 0 ) return false;
-  stdin = { stdin_fileno };
-  stdout = { stdout_fileno };
-  stderr = { stderr_fileno };
+  stdin = posix::fd_t{ stdin_fileno };
+  stdout = posix::fd_t{ stdout_fileno };
+  stderr = posix::fd_t{ stderr_fileno };
   __stdout_line_buffered = micron::posix::isatty(stdout_fileno);      // pipe/file -> full buffering
   return true;
 }

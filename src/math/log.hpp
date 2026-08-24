@@ -228,8 +228,8 @@ logistic(F x) noexcept
   if ( x >= F(0) ) {
     return F(1) / (F(1) + log_impl::exp<F>(-x));
   }
-  F e = log_impl::exp<F>(x);
-  return e / (F(1) + e);
+  F exp_value = log_impl::exp<F>(x);
+  return exp_value / (F(1) + exp_value);
 }
 
 template<ieee754_floating F>

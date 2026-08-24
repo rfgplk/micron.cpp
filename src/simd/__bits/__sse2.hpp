@@ -21,11 +21,10 @@ namespace simd
 namespace __bits
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#pragma GCC diagnostic ignored "-Wpsabi"
-#pragma GCC diagnostic ignored "-Wpedantic"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_ignored("-Wpsabi")
+__micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 #define __inline_g_T(...) [[gnu::always_inline, gnu::artificial, gnu::target(__VA_ARGS__)]] static inline
 
@@ -71,7 +70,7 @@ _mm_set_ss(float v) noexcept
 __inline_g __m128
 _mm_load_ps(const float *p) noexcept
 {
-  return *(const __m128 *)p;
+  return *reinterpret_cast<const __m128 *>(__builtin_assume_aligned(p, 16));
 }
 
 __inline_g __m128
@@ -125,7 +124,7 @@ _mm_storeh_pi(__m64 *p, __m128 a) noexcept
 __inline_g void
 _mm_store_ps(float *p, __m128 v) noexcept
 {
-  *(__m128 *)p = v;
+  *reinterpret_cast<__m128 *>(__builtin_assume_aligned(p, 16)) = v;
 }
 
 __inline_g void
@@ -413,7 +412,7 @@ _mm_set_sd(double x) noexcept
 __inline_g __m128d
 _mm_load_pd(const double *p) noexcept
 {
-  return *(const __m128d *)p;
+  return *reinterpret_cast<const __m128d *>(__builtin_assume_aligned(p, 16));
 }
 
 __inline_g __m128d
@@ -473,7 +472,7 @@ _mm_storeh_pd(double *p, __m128d a) noexcept
 __inline_g void
 _mm_store_pd(double *p, __m128d v) noexcept
 {
-  *(__m128d *)p = v;
+  *reinterpret_cast<__m128d *>(__builtin_assume_aligned(p, 16)) = v;
 }
 
 __inline_g void
@@ -826,13 +825,21 @@ _mm_stream_si128(__m128i *p, __m128i v) noexcept
 __inline_g void
 _mm_stream_pd(double *p, __m128d v) noexcept
 {
+#if defined(__clang__)
+  __builtin_ia32_movntpd(reinterpret_cast<__v2df *>(__builtin_assume_aligned(p, 16)), (__v2df)v);
+#else
   __builtin_ia32_movntpd(p, (__v2df)v);
+#endif
 }
 
 __inline_g void
 _mm_stream_ps(float *p, __m128 v) noexcept
 {
+#if defined(__clang__)
+  __builtin_ia32_movntps(reinterpret_cast<__v4sf *>(__builtin_assume_aligned(p, 16)), (__v4sf)v);
+#else
   __builtin_ia32_movntps(p, (__v4sf)v);
+#endif
 }
 
 __inline_g void
@@ -1534,8 +1541,7 @@ _mm_cvtsd_ss(__m128 a, __m128d b) noexcept
 #undef __inline_g
 #undef __inline_g_T
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 };      // namespace __bits
 };      // namespace simd
 };      // namespace micron

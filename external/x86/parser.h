@@ -32,6 +32,12 @@
 
 BEGIN_C_NS
 
+__inline__ unsigned int load_u32(const char *ptr) {
+  unsigned int value;
+  __builtin_memcpy(&value, ptr, sizeof(value));
+  return value;
+}
+
 __inline__ char vendor(const cstruct_t *__restrict__ const ptr) {
   const char intel[] = "GenuineIntel";
   const char amd[] = "AuthenticAMD";
@@ -47,93 +53,93 @@ __inline__ char vendor(const cstruct_t *__restrict__ const ptr) {
   const char VIA[] = "VIA VIA VIA ";
   const char Vortex[] = "Vortex86 SoC";
 
-  unsigned int ebx = *(const unsigned int *)(intel);
-  unsigned int edx = *(const unsigned int *)(intel + 4);
-  unsigned int ecx = *(const unsigned int *)(intel + 8);
+  unsigned int ebx = load_u32(intel);
+  unsigned int edx = load_u32(intel + 4);
+  unsigned int ecx = load_u32(intel + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return GenuineIntel;
 
-  ebx = *(const unsigned int *)(amd);
-  edx = *(const unsigned int *)(amd + 4);
-  ecx = *(const unsigned int *)(amd + 8);
+  ebx = load_u32(amd);
+  edx = load_u32(amd + 4);
+  ecx = load_u32(amd + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return AuthenticAMD;
 
-  ebx = *(const unsigned int *)(centaur);
-  edx = *(const unsigned int *)(centaur + 4);
-  ecx = *(const unsigned int *)(centaur + 8);
+  ebx = load_u32(centaur);
+  edx = load_u32(centaur + 4);
+  ecx = load_u32(centaur + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return CentaurHauls;
 
-  ebx = *(const unsigned int *)(cyrix);
-  edx = *(const unsigned int *)(cyrix + 4);
-  ecx = *(const unsigned int *)(cyrix + 8);
+  ebx = load_u32(cyrix);
+  edx = load_u32(cyrix + 4);
+  ecx = load_u32(cyrix + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return CyrixInstead;
 
-  ebx = *(const unsigned int *)(transmeta_1);
-  edx = *(const unsigned int *)(transmeta_1 + 4);
-  ecx = *(const unsigned int *)(transmeta_1 + 8);
+  ebx = load_u32(transmeta_1);
+  edx = load_u32(transmeta_1 + 4);
+  ecx = load_u32(transmeta_1 + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return TransmetaCPU;
 
-  ebx = *(const unsigned int *)(transmeta_2);
-  edx = *(const unsigned int *)(transmeta_2 + 4);
-  ecx = *(const unsigned int *)(transmeta_2 + 8);
+  ebx = load_u32(transmeta_2);
+  edx = load_u32(transmeta_2 + 4);
+  ecx = load_u32(transmeta_2 + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return GenuineTMx86;
 
-  ebx = *(const unsigned int *)(natsemi);
-  edx = *(const unsigned int *)(natsemi + 4);
-  ecx = *(const unsigned int *)(natsemi + 8);
+  ebx = load_u32(natsemi);
+  edx = load_u32(natsemi + 4);
+  ecx = load_u32(natsemi + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return Geode_by_NSC;
 
-  ebx = *(const unsigned int *)(nexgen);
-  edx = *(const unsigned int *)(nexgen + 4);
-  ecx = *(const unsigned int *)(nexgen + 8);
+  ebx = load_u32(nexgen);
+  edx = load_u32(nexgen + 4);
+  ecx = load_u32(nexgen + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return NexGenDriven;
 
-  ebx = *(const unsigned int *)(rise);
-  edx = *(const unsigned int *)(rise + 4);
-  ecx = *(const unsigned int *)(rise + 8);
+  ebx = load_u32(rise);
+  edx = load_u32(rise + 4);
+  ecx = load_u32(rise + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return RiseRiseRise;
 
-  ebx = *(const unsigned int *)(SiS);
-  edx = *(const unsigned int *)(SiS + 4);
-  ecx = *(const unsigned int *)(SiS + 8);
+  ebx = load_u32(SiS);
+  edx = load_u32(SiS + 4);
+  ecx = load_u32(SiS + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return SiS_SiS_SiS_;
 
-  ebx = *(const unsigned int *)(UMC);
-  edx = *(const unsigned int *)(UMC + 4);
-  ecx = *(const unsigned int *)(UMC + 8);
+  ebx = load_u32(UMC);
+  edx = load_u32(UMC + 4);
+  ecx = load_u32(UMC + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return UMC_UMC_UMC_;
 
-  ebx = *(const unsigned int *)(VIA);
-  edx = *(const unsigned int *)(VIA + 4);
-  ecx = *(const unsigned int *)(VIA + 8);
+  ebx = load_u32(VIA);
+  edx = load_u32(VIA + 4);
+  ecx = load_u32(VIA + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return VIA_VIA_VIA_;
 
-  ebx = *(const unsigned int *)(Vortex);
-  edx = *(const unsigned int *)(Vortex + 4);
-  ecx = *(const unsigned int *)(Vortex + 8);
+  ebx = load_u32(Vortex);
+  edx = load_u32(Vortex + 4);
+  ecx = load_u32(Vortex + 8);
 
   if (ebx == ptr->ebx && edx == ptr->edx && ecx == ptr->ecx)
     return Vortex86_SoC;
@@ -146,10 +152,10 @@ __inline__ void spec(processor_t *__restrict__ const p) {
   cores_all(&p->core_total, &p->core);
 
   for (int j = 0; p->core[j].type != CORE_TYPE_NONE; j++) {
-    topology_set_cpu(j);
+    topology_set_cpu(static_cast<unsigned long>(j));
     char flag = 1;
     for (int i = 0; flag; i++) {
-      cache((char)i, &p->core[j].caches[i]);
+      cache_info((char)i, &p->core[j].caches[i]);
       flag = (i < 5) && (p->core[j].caches[i].type != NO_CACHE);
     }
   }

@@ -18,9 +18,8 @@ namespace simd
 namespace aes
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_aes [[gnu::always_inline, gnu::artificial, gnu::target("aes")]] static inline
 
 __inline_aes __m128i
@@ -62,9 +61,8 @@ keygen_assist(__m128i a) noexcept
 
 #undef __inline_aes
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_pcl [[gnu::always_inline, gnu::artificial, gnu::target("pclmul")]] static inline
 
 template<int IMM>
@@ -76,9 +74,8 @@ clmul_64(__m128i a, __m128i b) noexcept
 
 #undef __inline_pcl
 
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
+__micron_diagnostic_pop
 };      // namespace aes
 };      // namespace simd
 };      // namespace micron

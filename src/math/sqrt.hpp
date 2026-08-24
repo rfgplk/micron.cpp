@@ -32,13 +32,13 @@ cbrt(const f32 x)
 inline f64
 cbrtd(const f64 x)
 {
-  return math::powerf(x, 1 / 3.f);
+  return math::powerf(x, 1.0 / 3.0);
 };
 
 inline flong
 cbrtdl(const flong x)
 {
-  return math::powerflong(x, 1 / 3.f);
+  return math::powerflong(x, 1.0L / 3.0L);
 };
 
 constexpr float

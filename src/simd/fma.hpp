@@ -20,9 +20,8 @@ namespace simd
 namespace fma
 {
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-
+__micron_diagnostic_push
+__micron_diagnostic_ignored("-Wignored-attributes")
 template<is_simd_class T>
 inline typename T::bit_width
 __unwrap(const T &o) noexcept
@@ -141,6 +140,5 @@ fms(T &o, T &b, T &c)
 };      // namespace simd
 };      // namespace micron
 
-#pragma GCC diagnostic pop
-
+__micron_diagnostic_pop
 #endif
