@@ -8,106 +8,282 @@
 #include "../atomic/atomic.hpp"
 #include "../bits/__pause.hpp"
 #include "../memory/actions.hpp"
+#include "../memory/cache.hpp"
 #include "../new.hpp"
+#include "../type_traits.hpp"
 #include "../types.hpp"
 
 namespace micron
 {
 
-template<usize N> struct lambda_queue {
+template<usize N>
+  requires(N > 0 and N <= (static_cast<usize>(-1) / 2 + 1))
+struct lambda_queue {
+  static constexpr usize slot_bytes = 64;
+
   struct node_base_t {
-    virtual void call() = 0;
-    virtual ~node_base_t() = default;
-  };
+    using invoke_t = void (*)(node_base_t *);
+    using finish_t = void (*)(node_base_t *) noexcept;
+    using transfer_t = void (*)(node_base_t *, lambda_queue &);
 
-  template<typename Fn> struct node_t: node_base_t {
-    Fn fn;
+    invoke_t __invoke;
+    finish_t __finish;
+    transfer_t __transfer;
 
-    node_t(Fn &&f) : fn(micron::move(f)) { }
-
-    void
-    call() override
+    constexpr node_base_t(invoke_t invoke, finish_t finish, transfer_t transfer) noexcept
+        : __invoke(invoke), __finish(finish), __transfer(transfer)
     {
-      fn();
+    }
+
+    node_base_t(const node_base_t &) = delete;
+    node_base_t &operator=(const node_base_t &) = delete;
+
+    inline void
+    call()
+    {
+      __invoke(this);
+    }
+
+    ~node_base_t() noexcept
+    {
+      finish_t finish = __finish;
+      __finish = nullptr;
+      if ( finish ) finish(this);
     }
   };
 
-  static constexpr usize slot_bytes = 64;
+private:
+  static constexpr usize __cache_line = cache_line_size();
 
-  u8 slots[N * slot_bytes]{};
-  micron::atomic_ptr<node_base_t *> __q[N]{};
-  micron::atomic_token<usize> head{ 0 };
-  micron::atomic_token<usize> tail{ 0 };
+  enum __slot_state : u8 { __free = 0, __claimed = 1, __ready = 2, __running = 3, __cancelled = 4 };
+
+  struct alignas(__cache_line) __slot {
+    union {
+      node_base_t node;
+    };
+
+    micron::atomic_token<usize> sequence;
+    micron::atomic_token<u8> state;
+    usize ticket;
+    alignas(__cache_line) byte storage[slot_bytes];
+
+    __slot() noexcept : sequence(0), state(__free), ticket(0) { }
+
+    ~__slot() noexcept { }
+  };
+
+  alignas(__cache_line) __slot __slots[N];
+
+  struct alignas(__cache_line) __producer_state {
+    micron::atomic_token<usize> tail;
+  } __producer{ 0 };
+
+  struct alignas(__cache_line) __consumer_state {
+    micron::atomic_token<usize> head;
+  } __consumer{ 0 };
+
+  template<typename Fn>
+  [[gnu::always_inline]] static inline Fn *
+  __callable(__slot &slot) noexcept
+  {
+    return reinterpret_cast<Fn *>(slot.storage);
+  }
+
+  template<typename Fn>
+  static void
+  __invoke_node(node_base_t *node)
+  {
+    __slot &slot = *reinterpret_cast<__slot *>(node);
+    (*__callable<Fn>(slot))();
+  }
+
+  template<typename Fn>
+  static void
+  __finish_node(node_base_t *node) noexcept
+  {
+    __slot &slot = *reinterpret_cast<__slot *>(node);
+    const usize ticket = slot.ticket;
+    __callable<Fn>(slot)->~Fn();
+    slot.sequence.store(ticket + N, memory_order_release);
+    slot.state.store(__free, memory_order_release);
+  }
+
+  template<typename Fn>
+  static void
+  __transfer_node(node_base_t *node, lambda_queue &destination)
+  {
+    __slot &slot = *reinterpret_cast<__slot *>(node);
+    destination.push(micron::move(*__callable<Fn>(slot)));
+  }
+
+  inline void
+  __reset_empty() noexcept
+  {
+    __consumer.head.store(0, memory_order_relaxed);
+    __producer.tail.store(0, memory_order_relaxed);
+    for ( usize i = 0; i < N; ++i ) {
+      __slots[i].state.store(__free, memory_order_relaxed);
+      __slots[i].sequence.store(i, memory_order_relaxed);
+    }
+  }
+
+  inline void
+  __move_from(lambda_queue &source)
+  {
+    while ( node_base_t *task = source.pop() ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+        task->__transfer(task, *this);
+      } catch ( ... ) {
+        task->~node_base_t();
+        throw;
+      }
+#else
+      task->__transfer(task, *this);
+#endif
+      task->~node_base_t();
+    }
+    source.__reset_empty();
+  }
+
+public:
+  lambda_queue()
+  {
+    for ( usize i = 0; i < N; ++i ) {
+      __slots[i].sequence.store(i, memory_order_relaxed);
+      __slots[i].state.store(__free, memory_order_relaxed);
+    }
+  }
+
+  ~lambda_queue() { clear(); }
+
+  lambda_queue(const lambda_queue &) = delete;
+  lambda_queue &operator=(const lambda_queue &) = delete;
+
+  lambda_queue(lambda_queue &&source) : lambda_queue()
+  {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      __move_from(source);
+    } catch ( ... ) {
+      clear();
+      throw;
+    }
+#else
+    __move_from(source);
+#endif
+  }
+
+  lambda_queue &
+  operator=(lambda_queue &&source)
+  {
+    if ( this == micron::addr(source) ) return *this;
+    clear();
+    __move_from(source);
+    return *this;
+  }
 
   template<typename Fn>
   inline void
   push(Fn &&fn)
   {
-    static_assert(sizeof(node_t<micron::decay_t<Fn>>) <= slot_bytes, "lambda_queue: captured callable too large for the 64-byte slot");
-    // claim a unique ring slot (acq_rel: orders the slot publish below w.r.t. other producers)
-    usize idx = tail.fetch_add(1, memory_order_acq_rel) % N;
-    while ( __q[idx].get(memory_order_acquire) != nullptr ) {
-      ::__cpu_pause();
-    }
-    node_base_t *node = new (&slots[idx * slot_bytes]) node_t<micron::decay_t<Fn>>(micron::forward<Fn>(fn));
-    __q[idx].store(node, memory_order_release);
-  }
+    using callable_t = micron::decay_t<Fn>;
+    static_assert(sizeof(callable_t) <= slot_bytes, "lambda_queue: captured callable too large for the 64-byte slot");
+    static_assert(alignof(callable_t) <= __cache_line, "lambda_queue: captured callable is over-aligned for the slot");
 
-  void
-  execute()
-  {
-    node_base_t *task = pop();
-    if ( task != nullptr ) {
-      task->call();
-      task->~node_base_t();      // placement-new'd into slots[]: destruct in place, do NOT delete
+    const usize ticket = __producer.tail.fetch_add(1, memory_order_acq_rel);
+    __slot &slot = __slots[ticket % N];
+    while ( slot.sequence.get(memory_order_acquire) != ticket || slot.state.get(memory_order_acquire) != __free ) ::__cpu_pause();
+
+    slot.ticket = ticket;
+    slot.state.store(__claimed, memory_order_relaxed);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      new (slot.storage) callable_t(micron::forward<Fn>(fn));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      slot.state.store(__cancelled, memory_order_relaxed);
+      slot.sequence.store(ticket + 1, memory_order_release);
+      usize expected = ticket;
+      if ( __consumer.head.compare_exchange_strong(expected, ticket + 1, memory_order_acq_rel, memory_order_relaxed) ) {
+        slot.sequence.store(ticket + N, memory_order_release);
+        slot.state.store(__free, memory_order_release);
+      }
+      throw;
     }
+#endif
+    new (reinterpret_cast<node_base_t *>(micron::addr(slot)))
+        node_base_t(&__invoke_node<callable_t>, &__finish_node<callable_t>, &__transfer_node<callable_t>);
+    slot.state.store(__ready, memory_order_relaxed);
+    slot.sequence.store(ticket + 1, memory_order_release);
   }
 
   inline node_base_t *
   pop()
   {
-    if ( head.get(memory_order_acquire) == tail.get(memory_order_acquire) ) return nullptr;
+    usize ticket = __consumer.head.get(memory_order_relaxed);
+    for ( ;; ) {
+      if ( ticket == __producer.tail.get(memory_order_acquire) ) return nullptr;
+      if ( !__consumer.head.compare_exchange_weak(ticket, ticket + 1, memory_order_acq_rel, memory_order_relaxed) ) continue;
+      __slot &slot = __slots[ticket % N];
+      while ( slot.sequence.get(memory_order_acquire) != ticket + 1 ) ::__cpu_pause();
 
-    usize idx = head.fetch_add(1, memory_order_acquire) % N;
-    // a producer increments tail before publishing __q[idx]; wait (acquire) for the publish
-    node_base_t *task;
-    while ( (task = __q[idx].get(memory_order_acquire)) == nullptr ) {
-      ::__cpu_pause();
+      const u8 state = slot.state.get(memory_order_relaxed);
+      if ( state == __cancelled ) {
+        slot.sequence.store(ticket + N, memory_order_release);
+        slot.state.store(__free, memory_order_release);
+        continue;
+      }
+      slot.state.store(__running, memory_order_relaxed);
+      return reinterpret_cast<node_base_t *>(micron::addr(slot));
     }
-    __q[idx].store(nullptr, memory_order_release);      // free the slot for reuse
-    return task;
   }
 
   inline void
+  execute()
+  {
+    node_base_t *task = pop();
+    if ( task == nullptr ) return;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      task->call();
+    } catch ( ... ) {
+      task->~node_base_t();
+      throw;
+    }
+#else
+    task->call();
+#endif
+    task->~node_base_t();
+  }
+
+  // Quiescent-only: running tasks must finish before clear/destruction.
+  inline void
   clear()
   {
-    for ( usize i = 0; i < N; ++i ) {
-      node_base_t *n = __q[i].get(memory_order_acquire);
-      if ( n != nullptr ) {
-        n->~node_base_t();      // placement-destruct; storage is the slots[] buffer (never `delete`)
-        __q[i].store(nullptr, memory_order_release);
-      }
-    }
-    head.store(0, memory_order_release);
-    tail.store(0, memory_order_release);
+    while ( node_base_t *task = pop() ) task->~node_base_t();
+    __reset_empty();
   }
 
   inline bool
   empty() const
   {
-    return head.get(memory_order_acquire) == tail.get(memory_order_acquire);
+    const usize h = __consumer.head.get(memory_order_acquire);
+    return h == __producer.tail.get(memory_order_acquire);
   }
 
   inline usize
   size() const
   {
-    usize t = tail.get(memory_order_acquire);
-    usize h = head.get(memory_order_acquire);
-    return t - h;
+    const usize h = __consumer.head.get(memory_order_acquire);
+    const usize t = __producer.tail.get(memory_order_acquire);
+    const usize n = t - h;
+    return n < N ? n : N;
   }
 
-  inline usize
-  max_size() const
+  static constexpr usize
+  max_size() noexcept
   {
     return N;
   }

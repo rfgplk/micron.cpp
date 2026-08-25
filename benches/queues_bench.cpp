@@ -32,7 +32,9 @@
 //     move-ctor      container-level move
 //     clear          drain to empty
 
+#if !defined(QUEUE_BENCH_EXTERNAL_PERF)
 #include "../external/bbench/bench.hpp"
+#endif
 
 #include "../src/io/console.hpp"
 #include "../src/io/stdout.hpp"
@@ -41,6 +43,7 @@
 #include "../src/queue/crossbeam.hpp"
 #include "../src/queue/disruptor.hpp"
 #include "../src/queue/iqueue.hpp"
+#include "../src/queue/lambda_queue.hpp"
 #include "../src/queue/queue.hpp"
 #include "../src/queue/spsc_queue.hpp"
 #include "../src/queue/static_mpmc.hpp"
@@ -49,10 +52,46 @@
 namespace
 {
 
+#if !defined(QUEUE_BENCH_EXTERNAL_PERF)
 using c_events = bbench::event_group<bbench::hardware_cycles, bbench::hardware_instructions, bbench::branches, bbench::branch_misses>;
+#endif
 
-constexpr u32 K_MEASUREMENTS = 3;
-constexpr u64 WARMUP_REPS = 1;
+constexpr u32 K_MEASUREMENTS = 7;
+constexpr u64 WARMUP_REPS = 2;
+
+const char *g_impl = nullptr;
+const char *g_case = nullptr;
+const char *g_state = "half";
+u64 g_capacity = 0;
+u64 g_batch = 64;
+u64 g_capture = 16;
+u32 g_cpu = 0;
+u32 g_measurements = K_MEASUREMENTS;
+u64 g_lambda_calls = 0;
+
+bool
+eq(const char *a, const char *b) noexcept
+{
+  while ( *a && *a == *b ) {
+    ++a;
+    ++b;
+  }
+  return *a == *b;
+}
+
+u64
+number(const char *s) noexcept
+{
+  u64 value = 0;
+  while ( *s >= '0' && *s <= '9' ) value = value * 10u + static_cast<u64>(*s++ - '0');
+  return value;
+}
+
+bool
+wants(const char *selected, const char *value) noexcept
+{
+  return selected == nullptr || eq(selected, value);
+}
 
 struct anomaly {
   const char *op;
@@ -83,6 +122,24 @@ val_u64(u64 i) noexcept
 }
 
 static volatile u64 sink_u64 = 0;
+
+[[gnu::always_inline]] inline u64
+bench_ticks() noexcept
+{
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
+  u32 lo, hi;
+  asm volatile("lfence; rdtsc" : "=a"(lo), "=d"(hi));
+  return (static_cast<u64>(hi) << 32) | lo;
+#elif defined(__micron_arch_arm64)
+  u64 value;
+  asm volatile("isb; mrs %0, cntvct_el0" : "=r"(value));
+  return value;
+#else
+  u32 value;
+  asm volatile("isb; mrc p15, 0, %0, c9, c13, 0" : "=r"(value));
+  return value;
+#endif
+}
 
 [[gnu::always_inline]] inline void
 clobber(const void *p) noexcept
@@ -195,11 +252,12 @@ print_col_header()
   h.pad_to(24, 0);
   h.s_lj_at("impl", 42);
   h.s_at("N", 52);
-  h.s_at("cyc/op", 64);
-  h.s_at("IPC", 74);
-  h.s_at("bmiss%", 84);
+  h.s_at("cyc/call", 64);
+  h.s_at("cyc/item", 76);
+  h.s_at("IPC", 86);
+  h.s_at("bmiss%", 96);
   micron::io::println(h.str());
-  micron::io::println("-----------------------------------------------------------------------------------");
+  micron::io::println("------------------------------------------------------------------------------------------------");
 }
 
 [[gnu::cold]] void
@@ -214,10 +272,16 @@ struct row {
   const char *op;
   const char *impl;
   u64 size;
-  f64 cyc_per_op;
+  f64 cyc_per_call;
+  f64 cyc_per_item;
   f64 ipc;
   f64 bmiss_rate;
   bool unstable;
+  f64 mad;
+  f64 relative_mad;
+  f64 acceptance_threshold;
+  u32 sample_count;
+  f64 samples[K_MEASUREMENTS];
 };
 
 [[gnu::cold]] void
@@ -233,7 +297,7 @@ print_row(const row &r)
     micron::io::println(ln.str());
     return;
   }
-  const fmt2 cpo = to_fmt2(r.cyc_per_op);
+  const fmt2 cpo = to_fmt2(r.cyc_per_call);
   const fmt2 ipc = to_fmt2(r.ipc);
   const fmt2 bm = to_fmt2(r.bmiss_rate * 100.0);
   line ln;
@@ -241,9 +305,23 @@ print_row(const row &r)
   ln.s_lj_at(r.impl, 42);
   ln.u_at(r.size, 52);
   ln.f2_at(cpo, 64);
-  ln.f2_at(ipc, 74);
-  ln.f2_at(bm, 84);
+  ln.f2_at(to_fmt2(r.cyc_per_item), 76);
+  ln.f2_at(ipc, 86);
+  ln.f2_at(bm, 96);
   micron::io::println(ln.str());
+
+  micron::io::print("  spread: MAD=");
+  const fmt2 mad = to_fmt2(r.mad);
+  micron::io::print(mad.whole, ".", mad.frac_x100 < 10 ? "0" : "", mad.frac_x100, " cyc/call; relative-MAD=");
+  const fmt2 relative = to_fmt2(r.relative_mad);
+  micron::io::print(relative.whole, ".", relative.frac_x100 < 10 ? "0" : "", relative.frac_x100, "% threshold=");
+  const fmt2 threshold = to_fmt2(r.acceptance_threshold);
+  micron::io::print(threshold.whole, ".", threshold.frac_x100 < 10 ? "0" : "", threshold.frac_x100, "% raw=");
+  for ( u32 i = 0; i < r.sample_count; ++i ) {
+    const fmt2 sample = to_fmt2(r.samples[i]);
+    micron::io::print(i ? "," : "", sample.whole, ".", sample.frac_x100 < 10 ? "0" : "", sample.frac_x100);
+  }
+  micron::io::println("");
 
   if ( r.unstable ) return;
   const char *reason = nullptr;
@@ -251,12 +329,12 @@ print_row(const row &r)
     reason = "bmiss%>5 (predictor stress)";
   else if ( r.ipc > 0 && r.ipc < 0.7 )
     reason = "IPC<0.7 (memory-bound)";
-  else if ( r.cyc_per_op > 1000.0 && !(r.op[0] == 'i' && r.op[1] == 'n' && r.op[2] == 's' && r.op[3] == 'e')
+  else if ( r.cyc_per_call > 1000.0 && !(r.op[0] == 'i' && r.op[1] == 'n' && r.op[2] == 's' && r.op[3] == 'e')
             && !(r.op[0] == 'c' && r.op[1] == 'o' && r.op[2] == 'p') )
     reason = "cyc/op>1000 outside path-copy ops";
 
   if ( reason && g_anomaly_count < 256 ) {
-    g_anomalies[g_anomaly_count++] = anomaly{ r.op, r.impl, r.size, r.cyc_per_op, r.ipc, r.bmiss_rate, reason };
+    g_anomalies[g_anomaly_count++] = anomaly{ r.op, r.impl, r.size, r.cyc_per_call, r.ipc, r.bmiss_rate, reason };
   }
 }
 
@@ -275,24 +353,43 @@ median_f64(f64 *xs, u32 n) noexcept
   return xs[n / 2];
 }
 
-template<typename Setup, typename Kernel>
+template<typename Setup, typename Kernel, typename Validate>
 [[gnu::noinline]] row
-measure(const char *op, const char *impl, u64 size, u64 ops_per_rep, u64 reps_per_meas, Setup &&setup, Kernel &&kernel) noexcept
+measure(const char *op, const char *impl, u64 size, u64 calls_per_rep, u64 items_per_rep, u64 reps_per_meas, Setup &&setup, Kernel &&kernel,
+        Validate &&validate) noexcept
 {
   try {
     for ( u64 i = 0; i < WARMUP_REPS; ++i ) {
       setup();
       kernel();
+      validate();
     }
   } catch ( ... ) {
-    return row{ op, impl, size, 0.0, 0.0, 0.0, true };
+    return row{ op, impl, size, 0.0, 0.0, 0.0, 0.0, true, 0.0, 0.0, 0.0, 0, {} };
   }
 
   f64 cpo_samples[K_MEASUREMENTS];
   f64 ipc_samples[K_MEASUREMENTS];
   f64 bm_samples[K_MEASUREMENTS];
 
-  for ( u32 m = 0; m < K_MEASUREMENTS; ++m ) {
+  for ( u32 m = 0; m < g_measurements; ++m ) {
+#if defined(QUEUE_BENCH_EXTERNAL_PERF)
+    u64 cyc = 0;
+    try {
+      setup();
+      const u64 begin = bench_ticks();
+      for ( u64 i = 0; i < reps_per_meas; ++i ) kernel();
+      const u64 end = bench_ticks();
+      validate();
+      cyc = end - begin;
+    } catch ( ... ) {
+      return row{ op, impl, size, 0.0, 0.0, 0.0, 0.0, true, 0.0, 0.0, 0.0, 0, {} };
+    }
+    const f64 total_calls = static_cast<f64>(reps_per_meas) * static_cast<f64>(calls_per_rep);
+    cpo_samples[m] = total_calls > 0 ? static_cast<f64>(cyc) / total_calls : static_cast<f64>(cyc);
+    ipc_samples[m] = 0.0;
+    bm_samples[m] = 0.0;
+#else
     c_events evs{ bbench::quiet{} };
     evs.open();
     try {
@@ -300,27 +397,49 @@ measure(const char *op, const char *impl, u64 size, u64 ops_per_rep, u64 reps_pe
       evs.begin();
       for ( u64 i = 0; i < reps_per_meas; ++i ) kernel();
       evs.end();
+      validate();
     } catch ( ... ) {
       evs.end();
-      return row{ op, impl, size, 0.0, 0.0, 0.0, true };
+      return row{ op, impl, size, 0.0, 0.0, 0.0, 0.0, true, 0.0, 0.0, 0.0, 0, {} };
     }
     const auto cyc = static_cast<u64>(evs.get<bbench::hardware_cycles>().retrieve());
     const auto ins = static_cast<u64>(evs.get<bbench::hardware_instructions>().retrieve());
     const auto br = static_cast<u64>(evs.get<bbench::branches>().retrieve());
     const auto bm = static_cast<u64>(evs.get<bbench::branch_misses>().retrieve());
-    const f64 total_ops = static_cast<f64>(reps_per_meas) * static_cast<f64>(ops_per_rep);
-    cpo_samples[m] = total_ops > 0 ? static_cast<f64>(cyc) / total_ops : static_cast<f64>(cyc);
+    const f64 total_calls = static_cast<f64>(reps_per_meas) * static_cast<f64>(calls_per_rep);
+    cpo_samples[m] = total_calls > 0 ? static_cast<f64>(cyc) / total_calls : static_cast<f64>(cyc);
     ipc_samples[m] = cyc > 0 ? static_cast<f64>(ins) / static_cast<f64>(cyc) : 0.0;
     bm_samples[m] = br > 0 ? static_cast<f64>(bm) / static_cast<f64>(br) : 0.0;
+#endif
   }
 
-  return row{ op,
+  f64 raw[K_MEASUREMENTS];
+  for ( u32 i = 0; i < g_measurements; ++i ) raw[i] = cpo_samples[i];
+  const f64 call_median = median_f64(cpo_samples, g_measurements);
+  f64 deviations[K_MEASUREMENTS];
+  for ( u32 i = 0; i < g_measurements; ++i ) {
+    const f64 delta = raw[i] - call_median;
+    deviations[i] = delta < 0 ? -delta : delta;
+  }
+  const f64 mad = median_f64(deviations, g_measurements);
+  const f64 relative_mad = call_median > 0 ? 100.0 * mad / call_median : 0.0;
+  const f64 acceptance = 3.0 * relative_mad > 3.0 ? 3.0 * relative_mad : 3.0;
+  const f64 per_item = items_per_rep ? call_median * static_cast<f64>(calls_per_rep) / static_cast<f64>(items_per_rep) : call_median;
+  row result{ op,
               impl,
               size,
-              median_f64(cpo_samples, K_MEASUREMENTS),
-              median_f64(ipc_samples, K_MEASUREMENTS),
-              median_f64(bm_samples, K_MEASUREMENTS),
-              false };
+              call_median,
+              per_item,
+              median_f64(ipc_samples, g_measurements),
+              median_f64(bm_samples, g_measurements),
+              false,
+              mad,
+              relative_mad,
+              acceptance,
+              g_measurements,
+              {} };
+  for ( u32 i = 0; i < g_measurements; ++i ) result.samples[i] = raw[i];
+  return result;
 }
 
 [[gnu::always_inline]] inline u64
@@ -338,126 +457,312 @@ template<typename Q, typename Trait>
 void
 sweep_mutable_queue(const char *impl_tag, u64 N)
 {
-
   Q q;
+  u64 *input = new u64[N ? N : 1];
+  u64 *output = new u64[N ? N : 1];
+  u64 expected_sum = 0;
+  for ( u64 i = 0; i < N; ++i ) {
+    input[i] = val_u64(i);
+    expected_sum += input[i];
+  }
 
-  {
+  if constexpr ( Trait::is_dynamic ) {
+    if ( wants(g_case, "growth") ) {
+      usize before = 0;
+      auto setup = [&] {
+        q = Q{};
+        before = q.max_size();
+      };
+      auto kernel = [&] {
+        for ( usize i = 0; i < N; ++i ) Trait::push(q, input[i]);
+      };
+      auto validate = [&] {
+        if ( q.size() != N || (N > before && q.max_size() <= before) ) throw "dynamic growth validation";
+      };
+      print_row(measure("growth", impl_tag, N, N, N, 1, setup, kernel, validate));
+      if ( g_case != nullptr ) {
+        delete[] output;
+        delete[] input;
+        return;
+      }
+    }
+
+    q.reserve(N);
+    if ( wants(g_case, "compaction") ) {
+      const usize count = N / 2;
+      auto setup = [&] {
+        Trait::clear(q);
+        for ( usize i = 0; i < N; ++i ) Trait::push(q, input[i]);
+        u64 value = 0;
+        for ( usize i = 0; i < count; ++i ) Trait::try_pop(q, value);
+      };
+      auto kernel = [&] {
+        for ( usize i = 0; i < count; ++i ) Trait::push(q, input[i]);
+      };
+      auto validate = [&] {
+        if ( q.size() != N ) throw "dynamic compaction validation";
+      };
+      print_row(measure("compaction", impl_tag, N, count, count, 1, setup, kernel, validate));
+      if ( g_case != nullptr ) {
+        delete[] output;
+        delete[] input;
+        return;
+      }
+    }
+  }
+
+  if ( wants(g_case, "push") ) {
     auto setup = [&] { Trait::clear(q); };
     auto kernel = [&] {
-      for ( u64 i = 0; i < N; ++i ) Trait::push(q, val_u64(i));
-      Trait::clear(q);
+      for ( u64 i = 0; i < N; ++i ) Trait::push(q, input[i]);
       clobber(&q);
     };
-    print_row(measure("push", impl_tag, N, N, reps_for(N), setup, kernel));
+    auto validate = [&] {
+      if ( q.size() != N ) throw "push row did not transfer N items";
+    };
+    print_row(measure("push", impl_tag, N, N, N, 1, setup, kernel, validate));
   }
 
-  {
+  if ( wants(g_case, "pop") ) {
     auto setup = [&] {
       Trait::clear(q);
-      for ( u64 i = 0; i < N; ++i ) Trait::push(q, val_u64(i));
+      for ( u64 i = 0; i < N; ++i ) Trait::push(q, input[i]);
     };
+    u64 acc = 0;
     auto kernel = [&] {
-      u64 acc = 0;
+      acc = 0;
       for ( u64 i = 0; i < N; ++i ) acc += Trait::pop(q);
       sink_u64 += acc;
-
-      for ( u64 i = 0; i < N; ++i ) Trait::push(q, val_u64(i));
     };
-    print_row(measure("pop", impl_tag, N, N, reps_for(N), setup, kernel));
+    auto validate = [&] {
+      if ( !q.empty() || acc != expected_sum ) throw "pop row FIFO/result validation";
+    };
+    print_row(measure("pop", impl_tag, N, N, N, 1, setup, kernel, validate));
   }
 
-  {
+  if ( wants(g_case, "steady") ) {
     auto setup = [&] { Trait::clear(q); };
+    u64 acc = 0;
     auto kernel = [&] {
-      u64 acc = 0;
+      acc = 0;
       for ( u64 i = 0; i < N; ++i ) {
-        Trait::push(q, val_u64(i));
+        Trait::push(q, input[i]);
         acc += Trait::pop(q);
       }
       sink_u64 += acc;
     };
-    print_row(measure("push+pop", impl_tag, N, 2 * N, reps_for(2 * N), setup, kernel));
+    auto validate = [&] {
+      if ( !q.empty() || acc != expected_sum ) throw "steady row result validation";
+    };
+    print_row(measure("push+pop", impl_tag, N, 2 * N, 2 * N, reps_for(2 * N), setup, kernel, validate));
+  }
+
+  if constexpr ( Trait::is_bounded ) {
+    if ( wants(g_case, "mixed") ) {
+      usize groups = N ? (131072u / N) : 1;
+      if ( groups == 0 ) groups = 1;
+      if ( groups > 1024 ) groups = 1024;
+      Q *states = new Q[groups];
+      usize successes = 0;
+      auto setup = [&] {
+        for ( usize g = 0; g < groups; ++g ) {
+          Trait::clear(states[g]);
+          for ( usize i = 0; i < N - 9; ++i ) Trait::push(states[g], input[i]);
+        }
+      };
+      auto kernel = [&] {
+        successes = 0;
+        for ( usize g = 0; g < groups; ++g )
+          for ( usize i = 0; i < 10; ++i ) successes += Trait::push(states[g], input[i]);
+      };
+      auto validate = [&] {
+        if ( successes != groups * 9 ) throw "deterministic 90/10 push validation";
+        for ( usize g = 0; g < groups; ++g )
+          if ( states[g].size() != N ) throw "deterministic 90/10 queue state";
+      };
+      print_row(measure("mixed-90/10", impl_tag, N, groups * 10, groups * 9, 1, setup, kernel, validate));
+      delete[] states;
+    }
+
+    if ( g_case != nullptr && (eq(g_case, "probe-push") || eq(g_case, "probe-pop")) ) {
+      usize occupancy = N / 2;
+      if ( eq(g_state, "empty") )
+        occupancy = 0;
+      else if ( eq(g_state, "one") )
+        occupancy = 1;
+      else if ( eq(g_state, "last") )
+        occupancy = N - 1;
+      else if ( eq(g_state, "full") )
+        occupancy = N;
+      usize groups = N ? (131072u / N) : 1;
+      if ( groups == 0 ) groups = 1;
+      if ( groups > 1024 ) groups = 1024;
+      Q *states = new Q[groups];
+      usize successes = 0;
+      u64 value = 0;
+      auto setup = [&] {
+        for ( usize g = 0; g < groups; ++g ) {
+          Trait::clear(states[g]);
+          for ( usize i = 0; i < occupancy; ++i ) Trait::push(states[g], input[i]);
+        }
+      };
+      const bool pushing = eq(g_case, "probe-push");
+      auto kernel = [&] {
+        successes = 0;
+        if ( pushing ) {
+          for ( usize g = 0; g < groups; ++g ) successes += Trait::push(states[g], input[0]);
+        } else {
+          for ( usize g = 0; g < groups; ++g ) successes += Trait::try_pop(states[g], value);
+        }
+      };
+      const usize expected = pushing ? (occupancy < N ? groups : 0) : (occupancy ? groups : 0);
+      auto validate = [&] {
+        if ( successes != expected ) throw "boundary probe result validation";
+      };
+      print_row(measure(pushing ? "probe-push" : "probe-pop", impl_tag, N, groups, expected, 1, setup, kernel, validate));
+      delete[] states;
+    }
   }
 
   if constexpr ( Trait::has_batch ) {
-    u64 *buf = new u64[N];
-    for ( u64 i = 0; i < N; ++i ) buf[i] = val_u64(i);
-    {
+    const u64 batch = g_batch;
+    const u64 calls = (N + batch - 1) / batch;
+    if ( wants(g_case, "batch-push") ) {
       auto setup = [&] { Trait::clear(q); };
+      usize transferred = 0;
       auto kernel = [&] {
-        Trait::push_batch(q, buf, N);
-        Trait::clear(q);
+        transferred = 0;
+        while ( transferred < N ) {
+          const usize count = (N - transferred) < batch ? (N - transferred) : batch;
+          transferred += Trait::push_batch(q, input + transferred, count);
+        }
         clobber(&q);
       };
-      print_row(measure("push (batch)", impl_tag, N, N, reps_for(N), setup, kernel));
+      auto validate = [&] {
+        if ( transferred != N || q.size() != N ) throw "batch push validation";
+      };
+      print_row(measure("batch-push", impl_tag, N, calls, N, 1, setup, kernel, validate));
     }
-    {
+    if ( wants(g_case, "batch-pop") ) {
       auto setup = [&] {
         Trait::clear(q);
-        Trait::push_batch(q, buf, N);
+        usize made = 0;
+        while ( made < N ) {
+          const usize count = (N - made) < batch ? (N - made) : batch;
+          made += Trait::push_batch(q, input + made, count);
+        }
       };
+      usize consumed = 0;
       auto kernel = [&] {
-        u64 dump[64];
-        u64 consumed = 0;
+        consumed = 0;
         while ( consumed < N ) {
-          u64 want = (N - consumed) < 64 ? (N - consumed) : 64;
-          consumed += Trait::pop_batch(q, dump, want);
+          const usize count = (N - consumed) < batch ? (N - consumed) : batch;
+          consumed += Trait::pop_batch(q, output + consumed, count);
         }
         sink_u64 += consumed;
-
-        Trait::push_batch(q, buf, N);
       };
-      print_row(measure("pop (batch)", impl_tag, N, N, reps_for(N), setup, kernel));
+      auto validate = [&] {
+        if ( consumed != N || !q.empty() ) throw "batch pop count validation";
+        for ( usize i = 0; i < N; ++i )
+          if ( output[i] != input[i] ) throw "batch pop FIFO validation";
+      };
+      print_row(measure("batch-pop", impl_tag, N, calls, N, 1, setup, kernel, validate));
     }
-    delete[] buf;
+    if constexpr ( Trait::is_ring ) {
+      if ( wants(g_case, "batch-wrap") ) {
+        const usize count = batch < N ? batch : N;
+        const usize advance = N - count / 2;
+        usize transferred = 0;
+        auto setup = [&] {
+          Trait::clear(q);
+          for ( usize i = 0; i < advance; ++i ) Trait::push(q, input[i]);
+          u64 value = 0;
+          for ( usize i = 0; i < advance; ++i ) Trait::try_pop(q, value);
+        };
+        auto kernel = [&] { transferred = Trait::push_batch(q, input, count); };
+        auto validate = [&] {
+          if ( transferred != count || Trait::pop_batch(q, output, count) != count ) throw "wrapped batch count validation";
+          for ( usize i = 0; i < count; ++i )
+            if ( output[i] != input[i] ) throw "wrapped batch FIFO validation";
+        };
+        print_row(measure("batch-wrap", impl_tag, N, 1, count, 1, setup, kernel, validate));
+      }
+    }
   }
 
   if constexpr ( Trait::has_iter ) {
-    auto setup = [&] {
-      Trait::clear(q);
-      for ( u64 i = 0; i < N; ++i ) Trait::push(q, val_u64(i));
-    };
-    auto kernel = [&] { sink_u64 += Trait::iterate_sum(q); };
-    print_row(measure("iterate", impl_tag, N, N, reps_for(N), setup, kernel));
+    if ( wants(g_case, "iterate") ) {
+      auto setup = [&] {
+        Trait::clear(q);
+        for ( u64 i = 0; i < N; ++i ) Trait::push(q, input[i]);
+      };
+      u64 sum = 0;
+      auto kernel = [&] {
+        sum = Trait::iterate_sum(q);
+        sink_u64 += sum;
+      };
+      auto validate = [&] {
+        if ( sum != expected_sum || q.size() != N ) throw "iterate validation";
+      };
+      print_row(measure("iterate", impl_tag, N, 1, N, reps_for(N), setup, kernel, validate));
+    }
   }
 
-  {
+  if ( wants(g_case, "clear") ) {
     auto setup = [&] {
       Trait::clear(q);
-      for ( u64 i = 0; i < N; ++i ) Trait::push(q, val_u64(i));
+      for ( u64 i = 0; i < N; ++i ) Trait::push(q, input[i]);
     };
     auto kernel = [&] {
       Trait::clear(q);
       clobber(&q);
     };
-    print_row(measure("clear (cyc/call)", impl_tag, N, 1, reps_for(N), setup, kernel));
+    auto validate = [&] {
+      if ( !q.empty() ) throw "clear validation";
+    };
+    print_row(measure("clear", impl_tag, N, 1, N, 1, setup, kernel, validate));
   }
+
+  delete[] output;
+  delete[] input;
 }
 
 template<typename Q, typename Trait>
 void
 sweep_immutable_queue(const char *impl_tag, u64 N)
 {
+  u64 *input = new u64[N ? N : 1];
+  u64 expected_sum = 0;
+  for ( u64 i = 0; i < N; ++i ) {
+    input[i] = val_u64(i);
+    expected_sum += input[i];
+  }
 
-  {
+  if ( wants(g_case, "push") ) {
     Q base;
     auto setup = [&] { base = Q{}; };
+    Q cur;
     auto kernel = [&] {
-      Q cur = base;
-      for ( u64 i = 0; i < N; ++i ) cur = Trait::push(cur, val_u64(i));
+      cur = base;
+      for ( u64 i = 0; i < N; ++i ) cur = Trait::push(cur, input[i]);
       clobber(&cur);
     };
-    print_row(measure("push (build)", impl_tag, N, N, reps_for(N), setup, kernel));
+    auto validate = [&] {
+      if ( cur.size() != N || (N && (cur.front() != input[0] || cur.last() != input[N - 1])) ) throw "immutable build validation";
+    };
+    print_row(measure("push", impl_tag, N, N, N, 1, setup, kernel, validate));
   }
 
   Q filled;
-  for ( u64 i = 0; i < N; ++i ) filled = Trait::push(filled, val_u64(i));
+  for ( u64 i = 0; i < N; ++i ) filled = Trait::push(filled, input[i]);
 
-  {
+  if ( wants(g_case, "pop") ) {
     auto setup = [] { };
+    u64 acc = 0;
+    Q cur;
     auto kernel = [&] {
-      Q cur = filled;
-      u64 acc = 0;
+      cur = filled;
+      acc = 0;
       for ( u64 i = 0; i < N; ++i ) {
         u64 v;
         cur = Trait::pop(cur, v);
@@ -465,42 +770,73 @@ sweep_immutable_queue(const char *impl_tag, u64 N)
       }
       sink_u64 += acc;
     };
-    print_row(measure("pop (drain)", impl_tag, N, N, reps_for(N), setup, kernel));
+    auto validate = [&] {
+      if ( !cur.empty() || acc != expected_sum ) throw "immutable drain validation";
+    };
+    print_row(measure("pop", impl_tag, N, N, N, 1, setup, kernel, validate));
   }
 
   if constexpr ( Trait::has_iter ) {
-    auto setup = [] { };
-    auto kernel = [&] { sink_u64 += Trait::iterate_sum(filled); };
-    print_row(measure("iterate", impl_tag, N, N, reps_for(N), setup, kernel));
+    if ( wants(g_case, "iterate") ) {
+      auto setup = [] { };
+      u64 sum = 0;
+      auto kernel = [&] {
+        sum = Trait::iterate_sum(filled);
+        sink_u64 += sum;
+      };
+      auto validate = [&] {
+        if ( sum != expected_sum ) throw "immutable traversal validation";
+      };
+      print_row(measure("iterate", impl_tag, N, 1, N, reps_for(N), setup, kernel, validate));
+    }
   }
 
-  {
+  if ( wants(g_case, "copy") ) {
     auto setup = [] { };
+    const void *identity = nullptr;
     auto kernel = [&] {
       Q tmp(filled);
+      identity = tmp.identity();
       clobber(&tmp);
     };
-    print_row(measure("copy-ctor", impl_tag, N, 1, reps_for(1), setup, kernel));
+    auto validate = [&] {
+      if ( identity != filled.identity() ) throw "immutable O(1) copy validation";
+    };
+    print_row(measure("copy-ctor", impl_tag, N, 1, N, reps_for(1), setup, kernel, validate));
   }
+
+  delete[] input;
 }
 
 struct queue_trait_u64 {
   using queue_t = micron::queue<u64>;
+  static constexpr bool is_dynamic = true;
+  static constexpr bool is_bounded = false;
+  static constexpr bool is_ring = false;
   static constexpr bool has_batch = false;
   static constexpr bool has_iter = true;
 
-  static void
+  static bool
   push(queue_t &q, u64 v)
   {
     q.push(micron::move(v));
+    return true;
   }
 
   static u64
   pop(queue_t &q)
   {
-    u64 v = q.front();
+    u64 v = q.last();
     q.pop();
     return v;
+  }
+
+  static bool
+  try_pop(queue_t &q, u64 &v)
+  {
+    if ( q.empty() ) return false;
+    v = pop(q);
+    return true;
   }
 
   static void
@@ -520,21 +856,43 @@ struct queue_trait_u64 {
 
 struct conqueue_trait_u64 {
   using queue_t = micron::conqueue<u64>;
-  static constexpr bool has_batch = false;
+  static constexpr bool is_dynamic = true;
+  static constexpr bool is_bounded = false;
+  static constexpr bool is_ring = false;
+  static constexpr bool has_batch = true;
   static constexpr bool has_iter = true;
 
-  static void
+  static bool
   push(queue_t &q, u64 v)
   {
     q.push(v);
+    return true;
   }
 
   static u64
   pop(queue_t &q)
   {
-    u64 v = q.front();
-    q.pop();
+    u64 v = 0;
+    q.pop(v);
     return v;
+  }
+
+  static bool
+  try_pop(queue_t &q, u64 &v)
+  {
+    return q.pop(v);
+  }
+
+  static usize
+  push_batch(queue_t &q, const u64 *items, usize n)
+  {
+    return q.push_batch(items, n);
+  }
+
+  static usize
+  pop_batch(queue_t &q, u64 *items, usize n)
+  {
+    return q.pop_batch(items, n);
   }
 
   static void
@@ -554,13 +912,22 @@ struct conqueue_trait_u64 {
 
 template<usize Cap> struct spsc_trait_u64 {
   using queue_t = micron::spsc_queue<u64, Cap>;
+  static constexpr bool is_dynamic = false;
+  static constexpr bool is_bounded = true;
+  static constexpr bool is_ring = true;
   static constexpr bool has_batch = true;
   static constexpr bool has_iter = false;
 
-  static void
+  static bool
   push(queue_t &q, u64 v)
   {
-    q.push(v);
+    return q.push(v);
+  }
+
+  static bool
+  try_pop(queue_t &q, u64 &v)
+  {
+    return q.pop(v);
   }
 
   static u64
@@ -592,6 +959,9 @@ template<usize Cap> struct spsc_trait_u64 {
 
 template<usize Cap> struct disruptor_trait_u64 {
   using queue_t = micron::disruptor<u64, Cap>;
+  static constexpr bool is_dynamic = false;
+  static constexpr bool is_bounded = true;
+  static constexpr bool is_ring = true;
   static constexpr bool has_batch = true;
   static constexpr bool has_iter = false;
 
@@ -601,10 +971,16 @@ template<usize Cap> struct disruptor_trait_u64 {
     return queue_t{};
   }
 
-  static void
+  static bool
   push(queue_t &q, u64 v)
   {
-    q.publish(v);
+    return q.publish(v);
+  }
+
+  static bool
+  try_pop(queue_t &q, u64 &v)
+  {
+    return q.consume(v);
   }
 
   static u64
@@ -636,13 +1012,22 @@ template<usize Cap> struct disruptor_trait_u64 {
 
 template<usize Cap> struct static_mpmc_trait_u64 {
   using queue_t = micron::static_mpmc<u64, Cap>;
+  static constexpr bool is_dynamic = false;
+  static constexpr bool is_bounded = true;
+  static constexpr bool is_ring = false;
   static constexpr bool has_batch = false;
   static constexpr bool has_iter = false;
 
-  static void
+  static bool
   push(queue_t &q, u64 v)
   {
-    q.push(v);
+    return q.push(v);
+  }
+
+  static bool
+  try_pop(queue_t &q, u64 &v)
+  {
+    return q.pop(v);
   }
 
   static u64
@@ -662,13 +1047,22 @@ template<usize Cap> struct static_mpmc_trait_u64 {
 
 template<usize Cap> struct crossbeam_trait_u64 {
   using queue_t = micron::crossbeam<u64, Cap>;
+  static constexpr bool is_dynamic = false;
+  static constexpr bool is_bounded = true;
+  static constexpr bool is_ring = false;
   static constexpr bool has_batch = false;
   static constexpr bool has_iter = false;
 
-  static void
+  static bool
   push(queue_t &q, u64 v)
   {
-    q.push(v);
+    return q.push(v);
+  }
+
+  static bool
+  try_pop(queue_t &q, u64 &v)
+  {
+    return q.pop(v);
   }
 
   static u64
@@ -712,46 +1106,224 @@ struct iqueue_trait_u64 {
   }
 };
 
+struct lambda_capture0 {
+  explicit lambda_capture0(u64 = 0) noexcept { }
+
+  void
+  operator()() const noexcept
+  {
+    ++g_lambda_calls;
+  }
+};
+
+struct lambda_capture16 {
+  u64 value;
+  u64 check;
+
+  explicit lambda_capture16(u64 v = 0) noexcept : value(v), check(~v) { }
+
+  void
+  operator()() const noexcept
+  {
+    g_lambda_calls += (check == ~value);
+    sink_u64 += value;
+  }
+};
+
+struct lambda_capture64 {
+  u64 value;
+  byte pad[56];
+
+  explicit lambda_capture64(u64 v = 0) noexcept : value(v), pad{} { }
+
+  void
+  operator()() const noexcept
+  {
+    ++g_lambda_calls;
+    sink_u64 += value + pad[0];
+  }
+};
+
+static_assert(sizeof(lambda_capture0) == 1);
+static_assert(sizeof(lambda_capture16) == 16);
+static_assert(sizeof(lambda_capture64) == 64);
+
+template<usize Cap, typename Task>
+void
+sweep_lambda()
+{
+  using queue_t = micron::lambda_queue<Cap>;
+  queue_t *queue = new queue_t;
+  if ( wants(g_case, "push") ) {
+    auto setup = [&] { queue->clear(); };
+    auto kernel = [&] {
+      for ( usize i = 0; i < Cap; ++i ) queue->push(Task(i));
+    };
+    auto validate = [&] {
+      if ( queue->size() != Cap ) throw "lambda push validation";
+    };
+    print_row(measure("push", "lambda", Cap, Cap, Cap, 1, setup, kernel, validate));
+  }
+  if ( wants(g_case, "execute") ) {
+    auto setup = [&] {
+      queue->clear();
+      g_lambda_calls = 0;
+      for ( usize i = 0; i < Cap; ++i ) queue->push(Task(i));
+    };
+    auto kernel = [&] {
+      for ( usize i = 0; i < Cap; ++i ) queue->execute();
+    };
+    auto validate = [&] {
+      if ( !queue->empty() || g_lambda_calls != Cap ) throw "lambda execute validation";
+    };
+    print_row(measure("execute", "lambda", Cap, Cap, Cap, 1, setup, kernel, validate));
+  }
+  if ( wants(g_case, "pop") ) {
+    auto setup = [&] {
+      queue->clear();
+      for ( usize i = 0; i < Cap; ++i ) queue->push(Task(i));
+    };
+    usize popped = 0;
+    auto kernel = [&] {
+      popped = 0;
+      while ( auto *task = queue->pop() ) {
+        task->~node_base_t();
+        ++popped;
+      }
+    };
+    auto validate = [&] {
+      if ( popped != Cap || !queue->empty() ) throw "lambda pop/destruction validation";
+    };
+    print_row(measure("pop+destroy", "lambda", Cap, Cap, Cap, 1, setup, kernel, validate));
+  }
+  if ( wants(g_case, "clear") ) {
+    auto setup = [&] {
+      queue->clear();
+      for ( usize i = 0; i < Cap; ++i ) queue->push(Task(i));
+    };
+    auto kernel = [&] { queue->clear(); };
+    auto validate = [&] {
+      if ( !queue->empty() ) throw "lambda clear validation";
+    };
+    print_row(measure("clear", "lambda", Cap, 1, Cap, 1, setup, kernel, validate));
+  }
+  delete queue;
+}
+
+template<usize Cap>
+void
+run_capacity()
+{
+  if ( wants(g_impl, "queue") ) {
+    print_header("queue<u64>");
+    sweep_mutable_queue<typename queue_trait_u64::queue_t, queue_trait_u64>("queue", Cap);
+  }
+  if ( wants(g_impl, "conqueue") ) {
+    print_header("conqueue<u64>");
+    sweep_mutable_queue<typename conqueue_trait_u64::queue_t, conqueue_trait_u64>("conqueue", Cap);
+  }
+  if ( wants(g_impl, "spsc") ) {
+    print_header("spsc_queue<u64>");
+    using trait = spsc_trait_u64<Cap>;
+    sweep_mutable_queue<typename trait::queue_t, trait>("spsc", Cap);
+  }
+  if ( wants(g_impl, "disruptor") ) {
+    print_header("disruptor<u64>");
+    using trait = disruptor_trait_u64<Cap>;
+    sweep_mutable_queue<typename trait::queue_t, trait>("disruptor", Cap);
+  }
+  if ( wants(g_impl, "crossbeam") ) {
+    print_header("crossbeam<u64>");
+    using trait = crossbeam_trait_u64<Cap>;
+    sweep_mutable_queue<typename trait::queue_t, trait>("crossbeam", Cap);
+  }
+  if ( wants(g_impl, "static_mpmc") ) {
+    print_header("static_mpmc<u64>");
+    using trait = static_mpmc_trait_u64<Cap>;
+    sweep_mutable_queue<typename trait::queue_t, trait>("static_mpmc", Cap);
+  }
+  if ( wants(g_impl, "immutable") ) {
+    print_header("immutable_queue<u64>");
+    sweep_immutable_queue<typename iqueue_trait_u64::queue_t, iqueue_trait_u64>("immutable", Cap);
+  }
+  if ( wants(g_impl, "lambda") ) {
+    print_header("lambda_queue");
+    if ( g_capture == 0 )
+      sweep_lambda<Cap, lambda_capture0>();
+    else if ( g_capture == 16 )
+      sweep_lambda<Cap, lambda_capture16>();
+    else
+      sweep_lambda<Cap, lambda_capture64>();
+  }
+}
+
+bool
+parse_args(int argc, char **argv) noexcept
+{
+  for ( int i = 1; i < argc; ++i ) {
+    if ( i + 1 == argc ) return false;
+    const char *key = argv[i++];
+    const char *value = argv[i];
+    if ( eq(key, "--impl") )
+      g_impl = eq(value, "all") ? nullptr : value;
+    else if ( eq(key, "--case") )
+      g_case = eq(value, "all") ? nullptr : value;
+    else if ( eq(key, "--state") )
+      g_state = value;
+    else if ( eq(key, "--capacity") )
+      g_capacity = eq(value, "all") ? 0 : number(value);
+    else if ( eq(key, "--batch") )
+      g_batch = number(value);
+    else if ( eq(key, "--capture") )
+      g_capture = number(value);
+    else if ( eq(key, "--cpu") )
+      g_cpu = static_cast<u32>(number(value));
+    else if ( eq(key, "--reps") )
+      g_measurements = static_cast<u32>(number(value));
+    else if ( eq(key, "--payload") ) {
+      if ( number(value) != 8 ) return false;
+    } else
+      return false;
+  }
+  const bool capacity_ok = g_capacity == 0 || g_capacity == 64 || g_capacity == 512 || g_capacity == 4096 || g_capacity == 32768;
+  const bool batch_ok = g_batch == 1 || g_batch == 4 || g_batch == 16 || g_batch == 64 || g_batch == 256;
+  const bool capture_ok = g_capture == 0 || g_capture == 16 || g_capture == 64;
+  const bool state_ok = eq(g_state, "empty") || eq(g_state, "one") || eq(g_state, "half") || eq(g_state, "last") || eq(g_state, "full");
+  return capacity_ok && batch_ok && capture_ok && state_ok && g_measurements > 0 && g_measurements <= K_MEASUREMENTS;
+}
+
 }      // namespace
 
 int
-main(void)
+main(int argc, char **argv)
 {
+  if ( !parse_args(argc, argv) ) {
+    micron::io::println(
+        "usage: queues_bench --impl queue|conqueue|spsc|disruptor|crossbeam|static_mpmc|immutable|lambda|all"
+        " --case "
+        "push|pop|execute|steady|mixed|probe-push|probe-pop|batch-push|batch-pop|batch-wrap|iterate|clear|copy|growth|compaction|all"
+        " --state empty|one|half|last|full --capacity 64|512|4096|32768|all"
+        " --payload 8 --batch 1|4|16|64|256 --capture 0|16|64 --cpu N --reps 1..7");
+    return 1;
+  }
   micron::posix::cpu_set_t set;
   set.cpu_zero();
-  set.cpu_set(0);
+  set.cpu_set(g_cpu);
   micron::posix::sched_setaffinity(0, sizeof(set), set);
 
   micron::io::println("=== micron queues benchmark ===");
+#if defined(QUEUE_BENCH_EXTERNAL_PERF)
+  micron::io::println("timing: TSC; PMU events supplied by the external perf group");
+#else
   micron::io::println("perf events: cycles + instructions + branches + branch-misses");
-  micron::io::println("warmup: ", WARMUP_REPS, " reps; ", K_MEASUREMENTS, " measurements per cell (median)");
+#endif
+  micron::io::println("warmup: ", WARMUP_REPS, " reps; ", g_measurements, " measurements per cell (median); batch=", g_batch,
+                      "; cpu=", g_cpu);
 
-  constexpr u64 SIZES[] = { 64, 256, 1024 };
-
-  print_header("queue<u64>");
-  for ( u64 N : SIZES ) sweep_mutable_queue<typename queue_trait_u64::queue_t, queue_trait_u64>("queue", N);
-
-  print_header("conqueue<u64>");
-  for ( u64 N : SIZES ) sweep_mutable_queue<typename conqueue_trait_u64::queue_t, conqueue_trait_u64>("conqueue", N);
-
-  print_header("spsc_queue<u64, 2048>");
-  using spsc_2k = spsc_trait_u64<2048>;
-  for ( u64 N : SIZES ) sweep_mutable_queue<typename spsc_2k::queue_t, spsc_2k>("spsc-2k", N);
-
-  print_header("disruptor<u64, 2048>");
-  using dis_2k = disruptor_trait_u64<2048>;
-  for ( u64 N : SIZES ) sweep_mutable_queue<typename dis_2k::queue_t, dis_2k>("disruptor", N);
-
-  print_header("crossbeam<u64, 2048>");
-  using xb_2k = crossbeam_trait_u64<2048>;
-  for ( u64 N : SIZES ) sweep_mutable_queue<typename xb_2k::queue_t, xb_2k>("crossbeam", N);
-
-  print_header("static_mpmc<u64, 2048>");
-  using smp_2k = static_mpmc_trait_u64<2048>;
-  for ( u64 N : SIZES ) sweep_mutable_queue<typename smp_2k::queue_t, smp_2k>("static_mpmc", N);
-
-  print_header("immutable_queue<u64>");
-  for ( u64 N : SIZES ) sweep_immutable_queue<typename iqueue_trait_u64::queue_t, iqueue_trait_u64>("iqueue", N);
+  if ( g_capacity == 0 || g_capacity == 64 ) run_capacity<64>();
+  if ( g_capacity == 0 || g_capacity == 512 ) run_capacity<512>();
+  if ( g_capacity == 0 || g_capacity == 4096 ) run_capacity<4096>();
+  if ( g_capacity == 0 || g_capacity == 32768 ) run_capacity<32768>();
 
   micron::io::println("");
   micron::io::println("[anomalies] (rows flagged during run)");

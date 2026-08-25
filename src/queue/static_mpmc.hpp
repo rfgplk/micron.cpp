@@ -22,7 +22,7 @@ namespace micron
 {
 
 template<is_atomic_type T, usize N>
-  requires(N > 0 and (N & (N - 1)) == 0)
+  requires(N > 0 and (N & (N - 1)) == 0 and N <= (static_cast<usize>(-1) / 2 + 1))
 class static_mpmc
 {
   static constexpr usize __cache_line = cache_line_size();
@@ -34,6 +34,7 @@ class static_mpmc
 
   struct alignas(__cache_line) __cell {
     micron::atomic_token<usize> seq;
+    micron::atomic_token<u8> state;
     T v;
   };
 
@@ -48,6 +49,7 @@ public:
   {
     for ( usize i = 0; i < __capacity; ++i ) {
       __cells[i].seq.store(i, memory_order_relaxed);
+      __cells[i].state.store(0, memory_order_relaxed);
       __cells[i].v = T{};
     }
   }
@@ -73,14 +75,18 @@ public:
   inline usize
   size() const noexcept
   {
-    return __tail.get(memory_order_acquire) - __head.get(memory_order_acquire);
+    const usize h = __head.get(memory_order_acquire);
+    const usize t = __tail.get(memory_order_acquire);
+    const usize n = t - h;
+    return n < __capacity ? n : __capacity;
   }
 
   // WARNING: as above
   inline bool
   empty() const noexcept
   {
-    return __tail.get(memory_order_acquire) == __head.get(memory_order_acquire);
+    const usize h = __head.get(memory_order_acquire);
+    return h == __tail.get(memory_order_acquire);
   }
 
   // relaxed probe, to skip a pop that is certain to fail
@@ -100,9 +106,13 @@ public:
       const usize seq = c.seq.get(memory_order_acquire);
       const __diff dif = static_cast<__diff>(seq - pos);
       if ( dif == 0 ) {
+        if constexpr ( __capacity == 1 ) {
+          if ( c.state.get(memory_order_acquire) != 0 ) return false;
+        }
         // a failed weak CAS already refreshes pos, so the loop reloads nothing
         if ( __tail.compare_exchange_weak(pos, pos + 1u, memory_order_relaxed, memory_order_relaxed) ) {
           c.v = val;
+          if constexpr ( __capacity == 1 ) c.state.store(1, memory_order_relaxed);
           c.seq.store(pos + 1u, memory_order_release);      // publishes c.v
           return true;
         }
@@ -128,6 +138,7 @@ public:
       if ( dif == 0 ) {
         if ( __head.compare_exchange_weak(pos, pos + 1u, memory_order_relaxed, memory_order_relaxed) ) {
           out = c.v;
+          if constexpr ( __capacity == 1 ) c.state.store(0, memory_order_release);
           c.seq.store(pos + __capacity, memory_order_release);      // reopens the cell
           return true;
         }
@@ -151,7 +162,7 @@ public:
 
   template<typename Fn>
   inline u32
-  drain(Fn &&fn) noexcept
+  drain(Fn &&fn)
   {
     u32 n = 0;
     T v{};

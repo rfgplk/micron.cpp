@@ -26,6 +26,7 @@
 #endif
 
 // NOTE: this is here so we can avoid directly including pthread.h, since technically it would pull it a lot of libc code we don't need
+#if !defined(_BITS_PTHREADTYPES_COMMON_H)
 #ifndef _BITS_PTHREADTYPES_COMMON_H
 #define _BITS_PTHREADTYPES_COMMON_H 1
 #endif
@@ -122,6 +123,7 @@ union pthread_barrierattr_t {
   int __align;
 };
 typedef union pthread_barrierattr_t pthread_barrierattr_t;
+#endif
 
 extern "C" pid_t pthread_gettid_np (pthread_t __thread_id);
 
@@ -272,4 +274,3 @@ extern "C" int pthread_setcanceltype (int __type, int *__oldtype);
 extern "C" int pthread_cancel (pthread_t __th);
 
 extern "C" void pthread_testcancel (void);
-
