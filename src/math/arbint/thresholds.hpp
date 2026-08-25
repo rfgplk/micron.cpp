@@ -33,7 +33,7 @@
 //  karatsuba    12 .. 28      (haswell 20, skylake 26, zen 16, zen3 20)
 //  toom-3       53 .. 125     (skylake 73, zen 107, zen3 89)
 //  toom-4       93 .. 324     (skylake 208, zen3 130)
-//  FFT        2240 .. 11520   (skylake 6272, zen3 3264)
+//  nussbaumer  180000          (Haswell, AVX2 SoA transform; final 2^20 seam wins by 21.2% mul / 23.4% sqr)
 //  DC_DIV       19 .. 76      (skylake 55)
 //  MU_DIV      855 .. 1899    (skylake 1528)
 
@@ -54,7 +54,7 @@
 #define MICRON_ARBINT_MUL_TOOM4_THRESHOLD 320
 #endif
 #ifndef MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD
-#define MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD 50000
+#define MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD 180000
 #endif
 
 #ifndef MICRON_ARBINT_SQR_COMBA_THRESHOLD
@@ -70,7 +70,7 @@
 #define MICRON_ARBINT_SQR_TOOM4_THRESHOLD 2048
 #endif
 #ifndef MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD
-#define MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD 40000
+#define MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD 180000
 #endif
 
 #ifndef MICRON_ARBINT_DIV_DC_THRESHOLD
@@ -118,8 +118,10 @@
 #ifndef MICRON_ARBINT_MUL_TOOM4_THRESHOLD
 #define MICRON_ARBINT_MUL_TOOM4_THRESHOLD 640
 #endif
+// The direct window has local wins, but its 100k transform jump and capped overlap-add prevent a
+// monotonic crossover.  Keep the pinned tier, but disable automatic selection for feasible shapes.
 #ifndef MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD
-#define MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD 100000
+#define MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD 200000000u
 #endif
 
 #ifndef MICRON_ARBINT_SQR_COMBA_THRESHOLD
@@ -135,7 +137,7 @@
 #define MICRON_ARBINT_SQR_TOOM4_THRESHOLD 4096
 #endif
 #ifndef MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD
-#define MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD 80000
+#define MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD 200000000u
 #endif
 
 #ifndef MICRON_ARBINT_DIV_DC_THRESHOLD
@@ -172,10 +174,20 @@
 #endif
 
 #ifndef MICRON_ARBINT_MUL_TIER_CAP
-#define MICRON_ARBINT_MUL_TIER_CAP 4
+#define MICRON_ARBINT_MUL_TIER_CAP 5
 #endif
 #ifndef MICRON_ARBINT_SQR_TIER_CAP
-#define MICRON_ARBINT_SQR_TIER_CAP 3
+#define MICRON_ARBINT_SQR_TIER_CAP 5
+#endif
+
+#ifndef MICRON_ARBINT_NUSSBAUMER_LEAF_LOG
+#define MICRON_ARBINT_NUSSBAUMER_LEAF_LOG 4
+#endif
+#ifndef MICRON_ARBINT_NUSSBAUMER_MAX_LOG
+#define MICRON_ARBINT_NUSSBAUMER_MAX_LOG 20
+#endif
+#ifndef MICRON_ARBINT_NUSSBAUMER_CACHE_BLOCK_COEFFS
+#define MICRON_ARBINT_NUSSBAUMER_CACHE_BLOCK_COEFFS 8192
 #endif
 
 #ifndef MICRON_ARBINT_DIV_TIER_CAP
@@ -229,6 +241,10 @@ inline constexpr usize sqr_toom3 = MICRON_ARBINT_SQR_TOOM3_THRESHOLD;
 inline constexpr usize sqr_toom4 = MICRON_ARBINT_SQR_TOOM4_THRESHOLD;
 inline constexpr usize sqr_nussbaumer = MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD;
 
+inline constexpr usize nussbaumer_leaf_log = MICRON_ARBINT_NUSSBAUMER_LEAF_LOG;
+inline constexpr usize nussbaumer_max_log = MICRON_ARBINT_NUSSBAUMER_MAX_LOG;
+inline constexpr usize nussbaumer_cache_block_coeffs = MICRON_ARBINT_NUSSBAUMER_CACHE_BLOCK_COEFFS;
+
 inline constexpr usize div_dc = MICRON_ARBINT_DIV_DC_THRESHOLD;
 inline constexpr usize div_mu = MICRON_ARBINT_DIV_MU_THRESHOLD;
 inline constexpr usize inv_newton = MICRON_ARBINT_INV_NEWTON_THRESHOLD;
@@ -254,6 +270,14 @@ static_assert(mul_comba >= 1 && mul_comba <= mul_karatsuba, "arbint: mul thresho
 static_assert(mul_karatsuba <= mul_toom3 && mul_toom3 <= mul_toom4 && mul_toom4 <= mul_nussbaumer, "arbint: mul thresholds must ascend");
 static_assert(sqr_comba >= 1 && sqr_comba <= sqr_karatsuba, "arbint: sqr thresholds must ascend");
 static_assert(sqr_karatsuba <= sqr_toom3 && sqr_toom3 <= sqr_toom4 && sqr_toom4 <= sqr_nussbaumer, "arbint: sqr thresholds must ascend");
+static_assert(nussbaumer_leaf_log >= 1u && nussbaumer_leaf_log <= nussbaumer_max_log,
+              "arbint: MICRON_ARBINT_NUSSBAUMER_LEAF_LOG must be in [1, MAX_LOG]");
+static_assert(nussbaumer_max_log <= 20u, "arbint: one Nussbaumer transform is limited to 2^20 coefficients");
+static_assert(nussbaumer_max_log + 2u < limb_bits,
+              "arbint: Nussbaumer needs at least one base digit below the signed-coefficient guard bits");
+static_assert(nussbaumer_cache_block_coeffs >= (usize{ 1 } << nussbaumer_leaf_log)
+                  && (nussbaumer_cache_block_coeffs & (nussbaumer_cache_block_coeffs - 1u)) == 0u,
+              "arbint: Nussbaumer cache block must be a power of two no smaller than the leaf");
 static_assert(div_dc <= div_mu, "arbint: div thresholds must ascend");
 static_assert(gcd_lehmer <= gcd_dc, "arbint: gcd ladder thresholds must ascend");
 static_assert(gcd_hgcd >= 2, "arbint: hgcd's recursion cutoff must leave room for a step");

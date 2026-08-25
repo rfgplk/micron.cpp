@@ -38,6 +38,7 @@ static mpn::limb_t g_cb[2 * MAX_N];
 static mpn::limb_t g_kr[2 * MAX_N];
 static mpn::limb_t g_tm[2 * MAX_N];
 static mpn::limb_t g_t4[2 * MAX_N];
+static mpn::limb_t g_ns[2 * MAX_N];
 
 static mpn::limb_t g_sc[64 * MAX_N + 8192];
 
@@ -97,9 +98,11 @@ sweep_size(usize idx) noexcept
                             mpn::threshold::mul_karatsuba,
                             mpn::threshold::mul_toom3,
                             mpn::threshold::mul_toom4,
+                            mpn::threshold::mul_nussbaumer,
                             mpn::threshold::sqr_karatsuba,
                             mpn::threshold::sqr_toom3,
                             mpn::threshold::sqr_toom4,
+                            mpn::threshold::sqr_nussbaumer,
                             8u,
                             16u,
                             17u,
@@ -114,13 +117,13 @@ sweep_size(usize idx) noexcept
   return v;
 }
 
-constexpr static usize n_sweep = 48;
+constexpr static usize n_sweep = 54;
 
 int
 main()
 {
   print("=== ARBINT MUL LADDER DIFFERENTIAL ===");
-  print("    tiers built through: toom-3");
+  print("    tiers built through: nussbaumer");
 
   test_case("mul: every tier agrees with the reference at every threshold seam");
   {
@@ -146,7 +149,9 @@ main()
           require_true(same(g_ref, g_tm, an + bn));
 
           mpn::mul_with<mpn::algo::toom4>(g_t4, g_a, an, g_b, bn, g_sc);
+          mpn::mul_with<mpn::algo::nussbaumer>(g_ns, g_a, an, g_b, bn, g_sc);
           require_true(same(g_ref, g_t4, an + bn));
+          require_true(same(g_ref, g_ns, an + bn));
 
           mpn::mul(g_bc, g_a, an, g_b, bn, g_sc);
           require_true(same(g_ref, g_bc, an + bn));
@@ -170,6 +175,7 @@ main()
         mpn::sqr_with<mpn::algo::karatsuba>(g_kr, g_a, n, g_sc);
         mpn::sqr_with<mpn::algo::toom3>(g_tm, g_a, n, g_sc);
         mpn::sqr_with<mpn::algo::toom4>(g_t4, g_a, n, g_sc);
+        mpn::sqr_with<mpn::algo::nussbaumer>(g_ns, g_a, n, g_sc);
 
         require_true(same(g_ref, g_bc, 2u * n));
         require_true(same(g_ref, g_cb, 2u * n));
@@ -177,6 +183,7 @@ main()
 
         require_true(same(g_ref, g_tm, 2u * n));
         require_true(same(g_ref, g_t4, 2u * n));
+        require_true(same(g_ref, g_ns, 2u * n));
 
         mpn::sqr(g_bc, g_a, n, g_sc);
         require_true(same(g_ref, g_bc, 2u * n));
@@ -218,6 +225,7 @@ main()
     using Auto = micron::math::arbuint<>;
     using Base = micron::math::arbuint<0, solver::basecase>;
     using Comb = micron::math::arbuint<0, solver::comba>;
+    using Nuss = micron::math::arbuint<0, solver::nussbaumer>;
 
     prng rng(0x5EEDF00D5EEDF00Dull);
     for ( usize t = 0; t < N_TRIALS; ++t ) {
@@ -226,6 +234,7 @@ main()
       Auto a0, b0;
       Base a1, b1;
       Comb a2, b2;
+      Nuss a3, b3;
       for ( usize i = 0; i < an; ++i ) {
         const u64 w = rng.next();
         a0 <<= 64;
@@ -234,6 +243,8 @@ main()
         a1 += Base(w);
         a2 <<= 64;
         a2 += Comb(w);
+        a3 <<= 64;
+        a3 += Nuss(w);
       }
       for ( usize i = 0; i < bn; ++i ) {
         const u64 w = rng.next();
@@ -243,16 +254,21 @@ main()
         b1 += Base(w);
         b2 <<= 64;
         b2 += Comb(w);
+        b3 <<= 64;
+        b3 += Nuss(w);
       }
       const Auto r0 = a0 * b0;
       const Base r1 = a1 * b1;
       const Comb r2 = a2 * b2;
+      const Nuss r3 = a3 * b3;
 
       require(r0.size(), r1.size());
       require(r0.size(), r2.size());
+      require(r0.size(), r3.size());
       for ( usize i = 0; i < r0.size(); ++i ) {
         require_true(r0.limbs()[i] == r1.limbs()[i]);
         require_true(r0.limbs()[i] == r2.limbs()[i]);
+        require_true(r0.limbs()[i] == r3.limbs()[i]);
       }
     }
   }
@@ -326,6 +342,10 @@ main()
 
     for ( usize n = 3; n <= 64u; ++n )
       if ( mpn::toom3_applies(n, n) ) require_true(mpn::mul_itch_forced(n, n) >= mpn::toom3_itch(n, true));
+
+    for ( usize an = 1u; an <= 64u; ++an )
+      for ( usize bn = 1u; bn <= an; ++bn ) require_true(mpn::mul_itch_forced(an, bn) >= mpn::nussbaumer_itch(an, bn));
+    for ( usize n = 1u; n <= 64u; ++n ) require_true(mpn::sqr_itch_forced(n) >= mpn::sqr_nussbaumer_itch(n));
   }
   end_test_case();
 

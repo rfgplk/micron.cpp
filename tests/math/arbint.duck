@@ -19,6 +19,7 @@ test tests/rigor/math_arbint_div.cpp -o bin/arbint/x64 --timeout 300
 test tests/rigor/math_arbint_kernels.cpp -o bin/arbint/x64 --timeout 300
 test tests/rigor/math_arbint_modular.cpp -o bin/arbint/x64 --timeout 300
 test tests/rigor/math_arbint_gcd.cpp -o bin/arbint/x64 --timeout 300
+test tests/rigor/math_arbint_nussbaumer.cpp -o bin/arbint/x64 --timeout 300
 
 test tests/rigor/math_arbint.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
 test tests/rigor/math_arbint_mul.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
@@ -29,6 +30,7 @@ test tests/rigor/math_arbint_div.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arb
 test tests/rigor/math_arbint_kernels.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
 test tests/rigor/math_arbint_modular.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
 test tests/rigor/math_arbint_gcd.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
+test tests/rigor/math_arbint_nussbaumer.cpp --arm -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm32 --timeout 900
 
 test tests/rigor/math_arbint.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
 test tests/rigor/math_arbint_mul.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
@@ -38,15 +40,19 @@ test tests/rigor/math_arbint_div.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/a
 test tests/rigor/math_arbint_kernels.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
 test tests/rigor/math_arbint_modular.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
 test tests/rigor/math_arbint_gcd.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
+test tests/rigor/math_arbint_nussbaumer.cpp --arm64 -s --def ARBINT_RIGOR_LITE -o bin/arbint/arm64 --timeout 900
 
 test tests/rigor/math_arbint_kernels.cpp --isa base -o bin/arbint/isa_base --timeout 300
 test tests/rigor/math_arbint_kernels.cpp --isa v2 -o bin/arbint/isa_v2 --timeout 300
 test tests/rigor/math_arbint_kernels.cpp --isa v3 -o bin/arbint/isa_v3 --timeout 300
 test tests/rigor/math_arbint_mul.cpp --isa v3 -o bin/arbint/isa_v3 --timeout 300
+test tests/rigor/math_arbint_nussbaumer.cpp --isa base -o bin/arbint/isa_base --timeout 300
+test tests/rigor/math_arbint_nussbaumer.cpp --isa v3 -o bin/arbint/isa_v3 --timeout 300
 test tests/rigor/math_arbint_kernels.cpp --def MICRON_ARBINT_X86_ADX_KERNEL=1 -o bin/arbint/adx --timeout 300
 test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_X86_ADX_KERNEL=1 -o bin/arbint/adx --timeout 300
 test tests/rigor/math_arbint_kernels.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 300
 test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 300
+test tests/rigor/math_arbint_nussbaumer.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 300
 test tests/rigor/math_arbint_div.cpp --def MICRON_ARBINT_NO_ASM=1 -o bin/arbint/noasm --timeout 300
 
 # comba_always      comba runs for every size below the karatsuba entry
@@ -60,8 +66,8 @@ test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD
 test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 -o bin/arbint/karatsuba_always --timeout 300
 test tests/rigor/math_arbint_bounded.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 -o bin/arbint/karatsuba_always --timeout 300
 
-# Toom-3 is capped out of the automatic path, so only a forced build exercises it in the
-# ladder rather than through mul_with<> alone
+# The default multiply Toom-3 and Toom-4 thresholds coincide, so this lowered cell gives the
+# automatic Toom-3 rung a non-empty interval rather than reaching it only through mul_with<>.
 test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_MUL_TOOM3_THRESHOLD=24 --def MICRON_ARBINT_MUL_TIER_CAP=3 -o bin/arbint/toom_always --timeout 300
 test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_MUL_TOOM3_THRESHOLD=24 --def MICRON_ARBINT_MUL_TIER_CAP=3 -o bin/arbint/toom_always --timeout 300
 
@@ -72,6 +78,17 @@ test tests/rigor/math_arbint_bounded.cpp --def MICRON_ARBINT_MUL_TOOM4_THRESHOLD
 test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=32 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=40 --def MICRON_ARBINT_SQR_TIER_CAP=4 -o bin/arbint/sqr_toom_always --timeout 300
 test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=32 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=40 --def MICRON_ARBINT_SQR_TIER_CAP=4 -o bin/arbint/sqr_toom_always --timeout 300
 test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=4000 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=4000 -o bin/arbint/sqr_toom_never --timeout 300
+
+# A small transform ceiling forces long-axis blocking and two-dimensional overlap-add at rigor
+# sizes.  The lowered crossovers exercise automatic dispatch; the dedicated suite also pins the
+# terminal tier directly and canaries its exact scratch recurrence.
+test tests/rigor/math_arbint_nussbaumer.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_MUL_TOOM3_THRESHOLD=8 --def MICRON_ARBINT_MUL_TOOM4_THRESHOLD=12 --def MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD=20 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=8 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=12 --def MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD=20 --def MICRON_ARBINT_MUL_TIER_CAP=5 --def MICRON_ARBINT_SQR_TIER_CAP=5 --def MICRON_ARBINT_NUSSBAUMER_MAX_LOG=6 -o bin/arbint/nuss_forced --timeout 300
+test tests/rigor/math_arbint_mul.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_MUL_TOOM3_THRESHOLD=8 --def MICRON_ARBINT_MUL_TOOM4_THRESHOLD=12 --def MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD=20 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=8 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=12 --def MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD=20 --def MICRON_ARBINT_MUL_TIER_CAP=5 --def MICRON_ARBINT_SQR_TIER_CAP=5 --def MICRON_ARBINT_NUSSBAUMER_MAX_LOG=6 -o bin/arbint/nuss_forced --timeout 300
+test tests/rigor/math_arbint_bounded.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_MUL_TOOM3_THRESHOLD=8 --def MICRON_ARBINT_MUL_TOOM4_THRESHOLD=12 --def MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD=20 --def MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD=2 --def MICRON_ARBINT_SQR_TOOM3_THRESHOLD=8 --def MICRON_ARBINT_SQR_TOOM4_THRESHOLD=12 --def MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD=20 --def MICRON_ARBINT_MUL_TIER_CAP=5 --def MICRON_ARBINT_SQR_TIER_CAP=5 --def MICRON_ARBINT_NUSSBAUMER_MAX_LOG=6 -o bin/arbint/nuss_forced --timeout 300
+test tests/rigor/math_arbint_nussbaumer.cpp --asan --def MICRON_ARBINT_NUSSBAUMER_MAX_LOG=6 -o bin/arbint/nuss_asan --timeout 300
+test tests/rigor/math_arbint_nussbaumer.cpp --ubsan --def MICRON_ARBINT_NUSSBAUMER_MAX_LOG=6 -o bin/arbint/nuss_ubsan --timeout 300
+test tests/rigor/math_arbint_nussbaumer.cpp --arm -s --def ARBINT_RIGOR_LITE --def MICRON_ARBINT_NUSSBAUMER_MAX_LOG=6 -o bin/arbint/nuss_arm32 --timeout 900
+test tests/rigor/math_arbint_nussbaumer.cpp --arm64 -s --def ARBINT_RIGOR_LITE --def MICRON_ARBINT_NUSSBAUMER_MAX_LOG=6 -o bin/arbint/nuss_arm64 --timeout 900
 
 test tests/rigor/math_arbint_div.cpp --def MICRON_ARBINT_DIV_DC_THRESHOLD=6 -o bin/arbint/dc_always --timeout 300
 test tests/rigor/math_arbint.cpp --def MICRON_ARBINT_DIV_DC_THRESHOLD=6 -o bin/arbint/dc_always --timeout 300
@@ -120,3 +137,5 @@ test tests/rigor/math_arbint_modular.cpp --def MICRON_ARBINT_MUL_KARATSUBA_THRES
 build tests/compiletests/arbint.cpp -k -o bin/arbint/free_k
 build tests/compiletests/arbint.cpp -ke -o bin/arbint/free_ke
 build tests/compiletests/arbint.cpp --i386 -k -o bin/arbint/free_i386
+build tests/compiletests/arbint.cpp --clang -k -o bin/arbint/free_clang_k
+build tests/compiletests/arbint.cpp --clang --i386 -k -o bin/arbint/free_clang_i386

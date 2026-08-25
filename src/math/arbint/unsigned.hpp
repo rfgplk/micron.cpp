@@ -44,8 +44,10 @@ private:
 
   template<usize N> using scratch_for = __arb::scratch<bounded ? N : 1u, Alloc, bounded>;
 
+  static constexpr usize mul_cap_itch = bounded ? mpn::mul_solver_cap_itch<Solver>(cap_limbs) : 0u;
+  static constexpr usize sqr_cap_itch = bounded ? mpn::sqr_solver_cap_itch<Solver>(cap_limbs) : 0u;
   static constexpr usize mul_scratch_limbs
-      = bounded ? 2u * cap_limbs + 2u + mpn::mul_itch_forced(cap_limbs, cap_limbs) + mpn::sqr_itch_forced(cap_limbs) : 1u;
+      = bounded ? 2u * cap_limbs + 2u + (mul_cap_itch > sqr_cap_itch ? mul_cap_itch : sqr_cap_itch) : 1u;
 
   static constexpr usize div_scratch_limbs = bounded ? (cap_limbs + 1u) + cap_limbs + mpn::divrem_itch(2u * cap_limbs, cap_limbs) : 1u;
 
@@ -274,7 +276,7 @@ public:
     if ( &o == this ) return __square();
 
     const usize rn = an + bn;
-    const usize itch = an >= bn ? mpn::mul_itch_forced(an, bn) : mpn::mul_itch_forced(bn, an);
+    const usize itch = an >= bn ? mpn::mul_solver_itch<Solver>(an, bn) : mpn::mul_solver_itch<Solver>(bn, an);
     scratch_for<mul_scratch_limbs> sc(rn + itch);
     mpn::limb_t *t = sc.get();
     mpn::limb_t *work = t + rn;
@@ -539,7 +541,7 @@ public:
       return *this;
     }
     const usize rn = 2u * an;
-    scratch_for<mul_scratch_limbs> sc(rn + mpn::sqr_itch_forced(an));
+    scratch_for<mul_scratch_limbs> sc(rn + mpn::sqr_solver_itch<Solver>(an));
     mpn::limb_t *t = sc.get();
     __sqr_into(t, s.limbs(), an, t + rn);
 

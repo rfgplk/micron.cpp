@@ -370,8 +370,12 @@ main()
   micron::io::println("=== arbint operation benchmark ===");
   micron::io::println("limb width: ", static_cast<u64>(mpn::limb_bits), " bits    measurements: ", static_cast<u64>(K_MEASUREMENTS),
                       " (median)    latency samples: >= ", static_cast<u64>(PCTL_FLOOR));
-  micron::io::println("mul ladder tiers built through comba; mul switches to comba at ", static_cast<u64>(mpn::threshold::mul_comba),
-                      " limbs, sqr stays basecase at every size");
+  micron::io::println("mul ladder built through nussbaumer; crossovers karatsuba/toom3/toom4/nussbaumer: ",
+                      static_cast<u64>(mpn::threshold::mul_karatsuba), "/", static_cast<u64>(mpn::threshold::mul_toom3), "/",
+                      static_cast<u64>(mpn::threshold::mul_toom4), "/", static_cast<u64>(mpn::threshold::mul_nussbaumer));
+  micron::io::println("sqr crossovers karatsuba/toom3/toom4/nussbaumer: ", static_cast<u64>(mpn::threshold::sqr_karatsuba), "/",
+                      static_cast<u64>(mpn::threshold::sqr_toom3), "/", static_cast<u64>(mpn::threshold::sqr_toom4), "/",
+                      static_cast<u64>(mpn::threshold::sqr_nussbaumer));
 
   tput_header("arbuint<>, dynamic width");
   for ( usize i = 0; i < N_BITS; ++i ) {

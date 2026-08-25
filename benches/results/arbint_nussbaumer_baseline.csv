@@ -1,0 +1,73 @@
+# arbint pure-Nussbaumer crossover baseline
+# captured 2026-08-25 after SoA coefficient layout, SIMD butterflies/twiddles/fold/transpose,
+# cache-oblivious transforms, signed widening leaves, and bounded-unrolled 4/8/16-coefficient kernels
+# host: Intel i7-5960X (Haswell-E), Linux 7.1.9, GCC 16.2.1, --isa native
+# build: duck build benches/arbint_nussbaumer_bench.cpp --perf --fp --no-ssp --no-lto -i . \
+#          --def ARBINT_BENCH_PERF -o bin/arbint_nuss
+# run: taskset -c 5 ./bin/arbint_nuss/arbint_nussbaumer_bench
+# estimator: median of three perf-event samples after warm-up
+# columns: arch,n,tier,cycles,ipc_milli,branch_miss_ppm
+#
+# The final 64-bit planner seam is 176129 limbs: q=42, N=1048576, recursion
+# 20->10->5->3, scratch=83953792 bytes.  At the rounded 180000-limb threshold Nussbaumer is
+# 21.2% faster for multiply and 23.4% for square; the next measured buckets remain ahead.
+
+amd64,135000,mul_toom4,790042553,1893,3457
+amd64,135000,mul_nussbaumer,478807410,1850,1263
+amd64,135000,sqr_toom4,598727029,2083,2340
+amd64,135000,sqr_nussbaumer,336821644,1898,1303
+amd64,157500,mul_toom4,1017757668,2078,5092
+amd64,157500,mul_nussbaumer,479578713,1851,1277
+amd64,157500,sqr_toom4,755058034,2002,2512
+amd64,157500,sqr_nussbaumer,347518786,1843,1350
+amd64,179999,mul_toom4,1251699201,2136,3999
+amd64,179999,mul_nussbaumer,993329217,1797,1462
+amd64,179999,sqr_toom4,936295707,1934,2354
+amd64,179999,sqr_nussbaumer,726233224,1774,1403
+amd64,180000,mul_toom4,1249146666,2140,3921
+amd64,180000,mul_nussbaumer,984145303,1814,1427
+amd64,180000,sqr_toom4,922808928,1962,2195
+amd64,180000,sqr_nussbaumer,707212516,1822,1362
+amd64,180001,mul_toom4,1248844702,2140,3939
+amd64,180001,mul_nussbaumer,990671725,1802,1471
+amd64,180001,sqr_toom4,924444724,1959,2237
+amd64,180001,sqr_nussbaumer,716710628,1798,1398
+amd64,202500,mul_toom4,1472568943,1992,2722
+amd64,202500,mul_nussbaumer,999018304,1789,1481
+amd64,202500,sqr_toom4,1115154500,2253,1954
+amd64,202500,sqr_nussbaumer,720148855,1791,1398
+amd64,225000,mul_toom4,1667783600,2056,3883
+amd64,225000,mul_nussbaumer,1005980606,1779,1481
+amd64,225000,sqr_toom4,1308862892,2200,2061
+amd64,225000,sqr_nussbaumer,723758742,1784,1427
+
+# 32-bit AVX2 is now locally faster in the top of the direct 2^20-transform window, but that
+# window ends at 163840 limbs and capped tiling cannot produce a monotonic crossover.  Automatic
+# 32-bit selection therefore remains disabled; forced and pinned Nussbaumer paths stay available.
+# build: add --x86 -32 --def ARBINT_NUSSBAUMER_BENCH_SEARCH \
+#             --def ARBINT_NUSSBAUMER_BENCH_NEAR_CAP
+
+i386,60000,mul_toom4,352785733,2063,4592
+i386,60000,mul_nussbaumer,470560639,2063,1043
+i386,60000,sqr_toom4,287241002,2114,3012
+i386,60000,sqr_nussbaumer,318729305,2160,1035
+i386,80000,mul_toom4,553772193,2050,5767
+i386,80000,mul_nussbaumer,483193731,2018,1056
+i386,80000,sqr_toom4,407275895,2103,2953
+i386,80000,sqr_nussbaumer,326680032,2114,1035
+i386,100000,mul_toom4,742953602,2069,5965
+i386,100000,mul_nussbaumer,958182163,2036,1215
+i386,100000,sqr_toom4,554423553,2115,4310
+i386,100000,sqr_nussbaumer,654273971,2115,1139
+i386,120000,mul_toom4,1030430225,2060,4800
+i386,120000,mul_nussbaumer,972120584,2012,1198
+i386,120000,sqr_toom4,738108840,2126,3913
+i386,120000,sqr_nussbaumer,662990619,2091,1137
+i386,140000,mul_toom4,1353219057,2043,4074
+i386,140000,mul_nussbaumer,982931433,1995,1200
+i386,140000,sqr_toom4,953136636,2112,3174
+i386,140000,sqr_nussbaumer,669430032,2074,1139
+i386,160000,mul_toom4,1640964694,2041,5895
+i386,160000,mul_nussbaumer,1005507121,1955,1198
+i386,160000,sqr_toom4,1199331912,2097,3598
+i386,160000,sqr_nussbaumer,673913255,2064,1136
