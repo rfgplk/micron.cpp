@@ -27,12 +27,11 @@ namespace micron
 //
 // bounded multi-producer multi-consumer queue using Vyukov's cell-tag protocol
 // each cell carries a sequence tag that producers and consumers CAS-advance
-template<is_movable_object T, usize N, class Alloc = micron::allocator_serial<>>
-  requires(N > 0)
-class crossbeam: public __mutable_memory_resource_move_only<T, Alloc>
+template<typename T, usize N, class Alloc = micron::allocator_serial<>>
+  requires micron::is_move_constructible_v<T> and (micron::is_move_assignable_v<T> or micron::is_copy_assignable_v<T>)
+           and micron::is_destructible_v<T> and (N > 0 and N <= (static_cast<usize>(-1) / 2 + 1))
+class crossbeam
 {
-  // WARNING: the final n |= n >> 32 is UB! when sizeof(usize) == 4 (arm32),
-  // since shifting a 32-bit value by 32 bits is UB per C++
   constexpr static usize
   __next_pow2(usize n)
   {
@@ -49,27 +48,120 @@ class crossbeam: public __mutable_memory_resource_move_only<T, Alloc>
     return n + 1;
   }
 
-  using __mem = __mutable_memory_resource_move_only<T, Alloc>;
-
   static constexpr u64 __cache_line = cache_line_size();
   static constexpr usize __capacity = __next_pow2(N);
   static constexpr usize __mask = __capacity - 1u;
+  static constexpr usize __cell_align = alignof(T) > __cache_line ? alignof(T) : __cache_line;
+  using __diff = make_signed_t<usize>;
 
-  // cache-line aligned to eliminate false sharing between neighboring cells under MPMC contention
-  struct alignas(__cache_line) padded_seq {
-    micron::atomic_token<usize> v;
+  enum __cell_state : u8 { __free = 0, __ready = 1, __cancelled = 2, __running = 3 };
+
+  struct alignas(__cell_align) __cell {
+    micron::atomic_token<usize> seq;
+    micron::atomic_token<u8> state;
+    alignas(T) byte storage[sizeof(T)];
   };
 
-  static constexpr usize __seq_size = sizeof(micron::atomic_token<usize>);
-  static constexpr usize __seq_pad = (__cache_line > __seq_size) ? (__cache_line - __seq_size) : 0u;
+  static_assert(sizeof(__diff) == sizeof(usize), "crossbeam: tag difference must match counter width");
+  static_assert(__capacity <= (static_cast<usize>(-1) - (__cell_align - 1)) / sizeof(__cell),
+                "crossbeam: cell allocation size is not representable");
 
-  padded_seq *__seqs = nullptr;
+  chunk<byte> __block{ nullptr, 0 };
+  __cell *__cells = nullptr;
 
   alignas(__cache_line) micron::atomic_token<usize> __tail;
-  [[no_unique_address]] __cache_pad<__seq_pad> __pad1;
 
   alignas(__cache_line) micron::atomic_token<usize> __head;
-  [[no_unique_address]] __cache_pad<__seq_pad> __pad2;
+
+  [[gnu::always_inline]] static inline T *
+  __value(__cell &cell) noexcept
+  {
+    return reinterpret_cast<T *>(cell.storage);
+  }
+
+  [[gnu::always_inline]] static inline const T *
+  __value(const __cell &cell) noexcept
+  {
+    return reinterpret_cast<const T *>(cell.storage);
+  }
+
+  static constexpr bool __assign_nothrow
+      = micron::is_move_assignable_v<T> ? micron::is_nothrow_move_assignable_v<T> : micron::is_nothrow_copy_assignable_v<T>;
+
+  [[gnu::always_inline]] static inline void
+  __assign(T &out, T &value) noexcept(__assign_nothrow)
+  {
+    if constexpr ( micron::is_move_assignable_v<T> )
+      out = micron::move(value);
+    else
+      out = value;
+  }
+
+  template<typename... Args>
+  [[gnu::always_inline]] inline bool
+  __emplace(Args &&...args)
+  {
+    usize pos = __tail.get(memory_order_relaxed);
+    unsigned backoff = 1u;
+    for ( ;; ) {
+      __cell &cell = __cells[pos & __mask];
+      const usize seq = cell.seq.get(memory_order_acquire);
+      const __diff dif = static_cast<__diff>(seq - pos);
+      if ( dif == 0 ) {
+        if constexpr ( __capacity == 1 ) {
+          if ( cell.state.get(memory_order_acquire) != __free ) return false;
+        }
+        if ( __tail.compare_exchange_weak(pos, pos + 1u, memory_order_relaxed, memory_order_relaxed) ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+          try {
+#endif
+            new (micron::addr(*__value(cell))) T(micron::forward<Args>(args)...);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+          } catch ( ... ) {
+            cell.state.store(__cancelled, memory_order_relaxed);
+            cell.seq.store(pos + 1u, memory_order_release);
+            throw;
+          }
+#endif
+          cell.state.store(__ready, memory_order_relaxed);
+          cell.seq.store(pos + 1u, memory_order_release);
+          return true;
+        }
+        backoff = __spin_backoff(backoff);
+      } else if ( dif < 0 ) {
+        return false;
+      } else {
+        backoff = __spin_backoff(backoff);
+        pos = __tail.get(memory_order_relaxed);
+      }
+    }
+  }
+
+  [[gnu::always_inline]] inline bool
+  __discard()
+  {
+    usize pos = __head.get(memory_order_relaxed);
+    unsigned backoff = 1u;
+    for ( ;; ) {
+      __cell &cell = __cells[pos & __mask];
+      const usize seq = cell.seq.get(memory_order_acquire);
+      const __diff dif = static_cast<__diff>(seq - (pos + 1u));
+      if ( dif == 0 ) {
+        if ( __head.compare_exchange_weak(pos, pos + 1u, memory_order_relaxed, memory_order_relaxed) ) {
+          if ( cell.state.get(memory_order_relaxed) == __ready ) __value(cell)->~T();
+          cell.state.store(__free, memory_order_release);
+          cell.seq.store(pos + __capacity, memory_order_release);
+          return true;
+        }
+        backoff = __spin_backoff(backoff);
+      } else if ( dif < 0 ) {
+        return false;
+      } else {
+        backoff = __spin_backoff(backoff);
+        pos = __head.get(memory_order_relaxed);
+      }
+    }
+  }
 
 public:
   using category_type = buffer_tag;
@@ -81,28 +173,34 @@ public:
   typedef T *pointer;
   typedef const T *const_pointer;
 
-  crossbeam() : __mem(__capacity), __tail(0), __head(0)
+  crossbeam() : __tail(0), __head(0)
   {
-    __seqs = static_cast<padded_seq *>(::operator new(sizeof(padded_seq) * __capacity, static_cast<std::align_val_t>(alignof(padded_seq))));
+    __block = Alloc::create(sizeof(__cell) * __capacity + __cell_align - 1);
+    const uintptr_t raw = reinterpret_cast<uintptr_t>(__block.ptr);
+    const uintptr_t aligned = (raw + __cell_align - 1) & ~(static_cast<uintptr_t>(__cell_align) - 1);
+    __cells = reinterpret_cast<__cell *>(aligned);
     for ( usize i = 0; i < __capacity; ++i ) {
-      new (&__seqs[i]) padded_seq{};
-      __seqs[i].v.store(i, memory_order_relaxed);
+      new (&__cells[i]) __cell;
+      __cells[i].state.store(__free, memory_order_relaxed);
+      __cells[i].seq.store(i, memory_order_relaxed);
     }
   }
 
   // WARNING: no concurrent producers or consumers may be running
   ~crossbeam()
   {
-    if ( __seqs ) {
+    if ( __cells ) {
       const usize h = __head.get(memory_order_acquire);
       const usize t = __tail.get(memory_order_acquire);
       for ( usize s = h; s != t; ++s ) {
         const usize idx = s & __mask;
-        if ( __seqs[idx].v.get(memory_order_acquire) == s + 1u ) (__mem::memory)[idx].~T();
+        __cell &cell = __cells[idx];
+        if ( cell.seq.get(memory_order_acquire) == s + 1u && cell.state.get(memory_order_relaxed) == __ready ) __value(cell)->~T();
       }
-      for ( usize i = 0; i < __capacity; ++i ) __seqs[i].~padded_seq();
-      ::operator delete(__seqs, static_cast<std::align_val_t>(alignof(padded_seq)));
-      __seqs = nullptr;
+      for ( usize i = 0; i < __capacity; ++i ) __cells[i].~__cell();
+      Alloc::destroy(__block);
+      __block = { nullptr, 0 };
+      __cells = nullptr;
     }
   }
 
@@ -126,130 +224,88 @@ public:
   inline usize
   size() const noexcept
   {
-    // temporal approximation only, impossible to get exact value while writers are running
-    return __tail.get(memory_order_acquire) - __head.get(memory_order_acquire);
+    const usize h = __head.get(memory_order_acquire);
+    const usize t = __tail.get(memory_order_acquire);
+    const usize n = t - h;
+    return n < __capacity ? n : __capacity;
   }
 
   inline bool
   empty() const noexcept
   {
-    return __tail.get(memory_order_acquire) == __head.get(memory_order_acquire);
+    const usize h = __head.get(memory_order_acquire);
+    return h == __tail.get(memory_order_acquire);
   }
 
   __attribute__((always_inline)) inline bool
   push(const T &val)
   {
-    usize tail = __tail.get(memory_order_relaxed);
-    unsigned backoff = 1u;
-    for ( ;; ) {
-      micron::atomic_token<usize> &cell_seq = __seqs[tail & __mask].v;
-      const usize seq = cell_seq.get(memory_order_acquire);
-      const long long dif = static_cast<long long>(seq) - static_cast<long long>(tail);
-      if ( dif == 0 ) {
-        if ( __tail.compare_exchange_weak(tail, tail + 1u, memory_order_relaxed, memory_order_relaxed) ) {
-          const usize idx = tail & __mask;
-          new (micron::addr(__mem::memory[idx])) T{ val };
-          cell_seq.store(tail + 1u, memory_order_release);
-          return true;
-        }
-        backoff = __spin_backoff(backoff);
-        tail = __tail.get(memory_order_relaxed);
-      } else if ( dif < 0 ) {
-        return false;      // full
-      } else {
-        backoff = __spin_backoff(backoff);
-        tail = __tail.get(memory_order_relaxed);
-      }
-    }
+    return __emplace(val);
   }
 
   __attribute__((always_inline)) inline bool
   push(T &&val)
   {
-    usize tail = __tail.get(memory_order_relaxed);
-    unsigned backoff = 1u;
-    for ( ;; ) {
-      micron::atomic_token<usize> &cell_seq = __seqs[tail & __mask].v;
-      const usize seq = cell_seq.get(memory_order_acquire);
-      const long long dif = static_cast<long long>(seq) - static_cast<long long>(tail);
-      if ( dif == 0 ) {
-        if ( __tail.compare_exchange_weak(tail, tail + 1u, memory_order_relaxed, memory_order_relaxed) ) {
-          const usize idx = tail & __mask;
-          new (micron::addr(__mem::memory[idx])) T{ micron::move(val) };
-          cell_seq.store(tail + 1u, memory_order_release);
-          return true;
-        }
-        backoff = __spin_backoff(backoff);
-        tail = __tail.get(memory_order_relaxed);
-      } else if ( dif < 0 ) {
-        return false;
-      } else {
-        backoff = __spin_backoff(backoff);
-        tail = __tail.get(memory_order_relaxed);
-      }
-    }
+    return __emplace(micron::move(val));
   }
 
   // WARNING: only clear if no concurrent writes are occuring
   inline void
-  clear() noexcept
+  clear()
   {
-    T tmp;
-    while ( pop(tmp) );
+    while ( __discard() );
   }
 
   template<typename... Args>
   __attribute__((always_inline)) inline bool
   emplace(Args &&...args)
   {
-    usize tail = __tail.get(memory_order_relaxed);
-    unsigned backoff = 1u;
-    for ( ;; ) {
-      micron::atomic_token<usize> &cell_seq = __seqs[tail & __mask].v;
-      const usize seq = cell_seq.get(memory_order_acquire);
-      const long long dif = static_cast<long long>(seq) - static_cast<long long>(tail);
-      if ( dif == 0 ) {
-        if ( __tail.compare_exchange_weak(tail, tail + 1u, memory_order_relaxed, memory_order_relaxed) ) {
-          const usize idx = tail & __mask;
-          new (micron::addr(__mem::memory[idx])) T{ micron::forward<Args>(args)... };
-          cell_seq.store(tail + 1u, memory_order_release);
-          return true;
-        }
-        backoff = __spin_backoff(backoff);
-        tail = __tail.get(memory_order_relaxed);
-      } else if ( dif < 0 ) {
-        return false;
-      } else {
-        backoff = __spin_backoff(backoff);
-        tail = __tail.get(memory_order_relaxed);
-      }
-    }
+    return __emplace(micron::forward<Args>(args)...);
   }
 
   __attribute__((always_inline)) inline bool
   pop(T &out)
   {
-    usize head = __head.get(memory_order_relaxed);
+    usize pos = __head.get(memory_order_relaxed);
     unsigned backoff = 1u;
     for ( ;; ) {
-      micron::atomic_token<usize> &cell_seq = __seqs[head & __mask].v;
-      const usize seq = cell_seq.get(memory_order_acquire);
-      const long long dif = static_cast<long long>(seq) - static_cast<long long>(head + 1u);
+      __cell &cell = __cells[pos & __mask];
+      const usize seq = cell.seq.get(memory_order_acquire);
+      const __diff dif = static_cast<__diff>(seq - (pos + 1u));
       if ( dif == 0 ) {
-        if ( __head.compare_exchange_weak(head, head + 1u, memory_order_relaxed, memory_order_relaxed) ) {
-          const usize idx = head & __mask;
-          out = micron::move(__mem::memory[idx]);
-          __mem::memory[idx].~T();
-          cell_seq.store(head + __capacity, memory_order_release);
+        if ( __head.compare_exchange_weak(pos, pos + 1u, memory_order_relaxed, memory_order_relaxed) ) {
+          if ( cell.state.get(memory_order_relaxed) == __cancelled ) {
+            cell.state.store(__free, memory_order_release);
+            cell.seq.store(pos + __capacity, memory_order_release);
+            pos = __head.get(memory_order_relaxed);
+            backoff = 1u;
+            continue;
+          }
+          cell.state.store(__running, memory_order_relaxed);
+          T *value = __value(cell);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+          try {
+#endif
+            __assign(out, *value);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+          } catch ( ... ) {
+            value->~T();
+            cell.state.store(__free, memory_order_release);
+            cell.seq.store(pos + __capacity, memory_order_release);
+            throw;
+          }
+#endif
+          value->~T();
+          cell.state.store(__free, memory_order_release);
+          cell.seq.store(pos + __capacity, memory_order_release);
           return true;
         }
         backoff = __spin_backoff(backoff);
-        head = __head.get(memory_order_relaxed);
       } else if ( dif < 0 ) {
         return false;      // empty
       } else {
         backoff = __spin_backoff(backoff);
-        head = __head.get(memory_order_relaxed);
+        pos = __head.get(memory_order_relaxed);
       }
     }
   }

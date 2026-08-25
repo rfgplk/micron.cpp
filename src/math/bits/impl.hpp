@@ -9,6 +9,10 @@
 #include "../../types.hpp"
 #include "../ieee.hpp"
 
+#if defined(__micron_arch_arm32)
+#include "../__asm/hw.hpp"
+#endif
+
 namespace micron
 {
 namespace math
@@ -65,6 +69,10 @@ fma(F a, F b, F c) noexcept
     return F(a * b + c);
 #endif
   }
+#if defined(__micron_arch_arm32)
+  // VFPv3 uses its native non-fused VMLA; VFPv4 keeps fused VFMA semantics
+  return hw::fmadd<F>(a, b, c);
+#else
   // __builtins are ok, compiler splices in place
   if constexpr ( sizeof(F) == sizeof(float) )
     return F(__builtin_fmaf(float(a), float(b), float(c)));
@@ -72,6 +80,7 @@ fma(F a, F b, F c) noexcept
     return F(__builtin_fma(double(a), double(b), double(c)));
   else
     return F(__builtin_fmal(static_cast<long double>(a), static_cast<long double>(b), static_cast<long double>(c)));
+#endif
 }
 
 template<ieee754_floating F, usize N>

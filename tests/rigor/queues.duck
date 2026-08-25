@@ -1,0 +1,60 @@
+# queue correctness, lifetime, exception, and fixed-seed concurrency fuzzing
+#
+#   duck tests/rigor/queues.duck
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# default build: legacy regressions plus the expanded Snowball fuzz suites
+test tests/rigor/queue.cpp                 -o bin/queues/default --timeout 300 -f
+test tests/rigor/conqueue_exhaustive.cpp   -o bin/queues/default --timeout 300 -f
+test tests/rigor/spsc.cpp                  -o bin/queues/default --timeout 300 -f
+test tests/rigor/disruptor.cpp             -o bin/queues/default --timeout 300 -f
+test tests/rigor/crossbeam.cpp             -o bin/queues/default --timeout 300 -f
+test tests/rigor/static_mpmc.cpp            -o bin/queues/default --timeout 300 -f
+test tests/rigor/chase_lev.cpp              -o bin/queues/default --timeout 300 -f
+test tests/rigor/fuzz_queues.cpp            -o bin/queues/default --timeout 300 -f
+test tests/rigor/fuzz_queue_lifetime.cpp    -o bin/queues/default --timeout 300 -f
+test tests/rigor/fuzz_queue_concurrent.cpp  -o bin/queues/default --timeout 300 -f
+test tests/rigor/immutable_queue.cpp        -o bin/queues/default --timeout 300 -f
+test tests/rigor/lambda_queue.cpp           -o bin/queues/default --timeout 300 -f
+test tests/rigor/queue_exceptions.cpp       -o bin/queues/default --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# optimizer and oldest-amd64-ISA cells
+test tests/rigor/fuzz_queues.cpp            -o bin/queues/o2 -O2 --timeout 300 -f
+test tests/rigor/fuzz_queue_lifetime.cpp    -o bin/queues/o2 -O2 --timeout 300 -f
+test tests/rigor/fuzz_queue_concurrent.cpp  -o bin/queues/o2 -O2 --timeout 300 -f
+test tests/rigor/immutable_queue.cpp        -o bin/queues/o2 -O2 --timeout 300 -f
+test tests/rigor/lambda_queue.cpp           -o bin/queues/o2 -O2 --timeout 300 -f
+
+test tests/rigor/fuzz_queues.cpp            -o bin/queues/base --isa base --timeout 300 -f
+test tests/rigor/fuzz_queue_lifetime.cpp    -o bin/queues/base --isa base --timeout 300 -f
+test tests/rigor/fuzz_queue_concurrent.cpp  -o bin/queues/base --isa base --timeout 300 -f
+test tests/rigor/immutable_queue.cpp        -o bin/queues/base --isa base --timeout 300 -f
+test tests/rigor/lambda_queue.cpp           -o bin/queues/base --isa base --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# manual-lifetime and publication paths under sanitizers
+test tests/rigor/fuzz_queues.cpp            -o bin/queues/asan_ubsan --asan --ubsan --timeout 600 -f
+test tests/rigor/fuzz_queue_lifetime.cpp    -o bin/queues/asan_ubsan --asan --ubsan --timeout 600 -f
+test tests/rigor/fuzz_queue_concurrent.cpp  -o bin/queues/asan_ubsan --asan --ubsan --timeout 600 -f
+test tests/rigor/immutable_queue.cpp        -o bin/queues/asan_ubsan --asan --ubsan --timeout 600 -f
+test tests/rigor/lambda_queue.cpp           -o bin/queues/asan_ubsan --asan --ubsan --timeout 600 -f
+test tests/rigor/queue_exceptions.cpp       -o bin/queues/asan_ubsan --asan --ubsan --timeout 600 -f
+
+# Clang owns a complete TSan runtime on the development hosts.
+test tests/rigor/fuzz_queue_concurrent.cpp  -o bin/queues/tsan --clang --tsan --timeout 600 -f
+test tests/rigor/lambda_queue.cpp           -o bin/queues/tsan --clang --tsan --timeout 600 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# pointer-width, weak-memory, and exception-runtime execution cells
+test tests/rigor/fuzz_queues.cpp            -o bin/queues/arm --arm --timeout 600 -f
+test tests/rigor/fuzz_queue_lifetime.cpp    -o bin/queues/arm --arm --timeout 600 -f
+test tests/rigor/immutable_queue.cpp        -o bin/queues/arm --arm --timeout 600 -f
+test tests/rigor/lambda_queue.cpp           -o bin/queues/arm --arm --timeout 600 -f
+
+test tests/rigor/fuzz_queues.cpp            -o bin/queues/arm64 --arm64 --timeout 600 -f
+test tests/rigor/fuzz_queue_lifetime.cpp    -o bin/queues/arm64 --arm64 --timeout 600 -f
+test tests/rigor/immutable_queue.cpp        -o bin/queues/arm64 --arm64 --timeout 600 -f
+test tests/rigor/lambda_queue.cpp           -o bin/queues/arm64 --arm64 --timeout 600 -f
+
+test tests/rigor/queue_exceptions.cpp -o bin/queues/eh -ke --start ./start -i . -i ./src --timeout 300 -f

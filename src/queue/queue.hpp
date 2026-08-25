@@ -19,23 +19,96 @@
 namespace micron
 {
 
-template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+template<typename T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+  requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T> and micron::is_copy_assignable_v<T>
+           and micron::is_destructible_v<T>
 class queue: public __mutable_memory_resource<T, Alloc>
 {
   using __mem = __mutable_memory_resource<T, Alloc>;
-  // index of the oldest live element
   usize head;
 
-  inline void
-  __ensure_tail_space()
+  template<typename I>
+  static constexpr usize
+  __checked_elements(I count)
   {
-    if ( head + __mem::length < __mem::capacity ) return;
-    if ( head > 0 ) {
-      micron::memmove(micron::addressof(__mem::memory[0]), micron::addressof(__mem::memory[head]), __mem::length);
-      head = 0;
+    if ( static_cast<umax_t>(count) > static_cast<umax_t>(static_cast<usize>(-1) / sizeof(T)) ) [[unlikely]]
+      exc<except::library_error>("micron::queue capacity overflow");
+    return static_cast<usize>(count);
+  }
+
+  static constexpr usize
+  __growth_target(usize cap, usize requested) noexcept
+  {
+    const usize limit = static_cast<usize>(-1);
+    if ( cap <= limit / 2 ) {
+      const usize doubled = cap ? cap * 2 : 1;
+      if ( requested < doubled ) requested = doubled;
+    }
+    return requested;
+  }
+
+  inline void
+  __relocate(const usize requested)
+  {
+    __checked_elements(requested);
+    const usize count = __mem::length;
+    chunk<byte> block = Alloc::create(requested * sizeof(T));
+    T *fresh = reinterpret_cast<T *>(block.ptr);
+    const usize fresh_capacity = block.len / sizeof(T);
+
+    if constexpr ( micron::is_trivially_copyable_v<T> ) {
+      if ( count ) micron::memcpy(fresh, micron::addressof(__mem::memory[head]), count);
+    } else {
+      usize made = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( ; made < count; ++made ) {
+          if constexpr ( micron::is_nothrow_move_constructible_v<T> or !micron::is_copy_constructible_v<T> )
+            new (micron::addr(fresh[made])) T(micron::move(__mem::memory[head + made]));
+          else
+            new (micron::addr(fresh[made])) T(__mem::memory[head + made]);
+        }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        __impl_container::destroy(fresh, made);
+        Alloc::destroy(block);
+        throw;
+      }
+#endif
+      if ( count ) __impl_container::destroy(micron::addr(__mem::memory[head]), count);
+    }
+
+    if ( __mem::memory ) Alloc::destroy({ reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T) });
+    __mem::memory = fresh;
+    __mem::capacity = fresh_capacity;
+    __mem::length = count;
+    head = 0;
+  }
+
+  [[gnu::noinline, gnu::cold]] void
+  __make_tail_space()
+  {
+    if ( head ) {
+      if constexpr ( micron::is_trivially_copyable_v<T> ) {
+        micron::memmove(__mem::memory, micron::addressof(__mem::memory[head]), __mem::length);
+        head = 0;
+      } else {
+        __relocate(__mem::capacity);
+      }
       if ( __mem::length < __mem::capacity ) return;
     }
-    reserve(__mem::capacity + 1);
+    const usize max_elements = static_cast<usize>(-1) / sizeof(T);
+    if ( __mem::capacity == max_elements ) [[unlikely]]
+      exc<except::library_error>("micron::queue capacity overflow");
+    __relocate(__growth_target(__mem::capacity, __mem::capacity + 1));
+  }
+
+  [[gnu::always_inline]] inline void
+  __ensure_tail_space()
+  {
+    if ( head + __mem::length == __mem::capacity ) [[unlikely]]
+      __make_tail_space();
   }
 
 public:
@@ -58,15 +131,25 @@ public:
     clear();
   }
 
-  queue(void) : __mem(N), head(0) { }
+  queue(void) : __mem(__checked_elements(N)), head(0) { }
 
   queue(const std::initializer_list<T> &lst) : __mem(lst.size()), head(0)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
+    if constexpr ( !micron::is_trivially_copyable_v<T> ) {
       usize i = 0;
-      for ( T &&value : lst ) {
-        new (micron::addr(__mem::memory[i++])) T(micron::move(value));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( const T &value : lst ) {
+          new (micron::addr(__mem::memory[i])) T(value);
+          ++i;
+        }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        __impl_container::destroy(__mem::memory, i);
+        throw;
       }
+#endif
       __mem::length = lst.size();
     } else {
       usize i = 0;
@@ -77,16 +160,34 @@ public:
     }
   };
 
-  queue(const umax_t n, const T val) : __mem(n), head(0)
+  queue(const umax_t n, const T val) : __mem(__checked_elements(n)), head(0)
 
   {
-    for ( umax_t i = 0; i < n; i++ ) push(val);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( umax_t i = 0; i < n; i++ ) push(val);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      clear();
+      throw;
+    }
+#endif
   }
 
-  queue(const umax_t n) : __mem(n), head(0)
+  queue(const umax_t n) : __mem(__checked_elements(n)), head(0)
 
   {
-    for ( umax_t i = 0; i < n; i++ ) push();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( umax_t i = 0; i < n; i++ ) push();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      clear();
+      throw;
+    }
+#endif
   }
 
   queue(const queue &o) = delete;
@@ -124,7 +225,7 @@ public:
   reserve(const usize n)
   {
     if ( n <= __mem::capacity ) return;
-    __mem::expand(n);
+    __relocate(__checked_elements(n));
   }
 
   inline void
@@ -181,38 +282,38 @@ public:
   inline T *
   begin()
   {
-    return micron::addressof(__mem::memory[head]);
+    return __mem::memory ? __mem::memory + head : nullptr;
   }
 
   inline const T *
   begin() const
   {
-    return micron::addressof(__mem::memory[head]);
+    return __mem::memory ? __mem::memory + head : nullptr;
   }
 
   inline const T *
   cbegin() const
   {
-    return micron::addressof(__mem::memory[head]);
+    return __mem::memory ? __mem::memory + head : nullptr;
   }
 
   // one past
   inline T *
   end()
   {
-    return micron::addressof(__mem::memory[head + __mem::length]);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
   }
 
   inline const T *
   end() const
   {
-    return micron::addressof(__mem::memory[head + __mem::length]);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
   }
 
   inline const T *
   cend() const
   {
-    return micron::addressof(__mem::memory[head + __mem::length]);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
   }
 
   inline queue &
@@ -258,10 +359,8 @@ public:
   pop(void)
   {
     if ( __mem::length == 0 ) return *this;
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
+    if constexpr ( !micron::is_trivially_destructible_v<T> ) {
       (__mem::memory)[head].~T();
-    } else {
-      (__mem::memory)[head] = 0x0;
     }
     head++;
     __mem::length--;

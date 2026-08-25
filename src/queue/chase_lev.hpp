@@ -42,13 +42,15 @@ __next_pow2(usize n) noexcept
   return n + 1;
 }
 
-constexpr u64
-__log2_pow2(u64 n) noexcept
+constexpr usize
+__log2_pow2(usize n) noexcept
 {
-  u64 s = 0;
-  while ( (1ULL << s) < n ) ++s;
+  usize s = 0;
+  while ( (static_cast<usize>(1) << s) < n ) ++s;
   return s;
 }
+
+inline constexpr usize __max_pow2_capacity = static_cast<usize>(-1) / 2 + 1;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // index width
@@ -94,7 +96,7 @@ template<is_atomic_type T> struct steal_result {
 };
 
 template<is_atomic_type T, usize N>
-  requires(N > 0)
+  requires(N > 0 and N <= __cl_impl::__max_pow2_capacity)
 class chase_lev
 {
   static constexpr u64 __cache_line = cache_line_size();
@@ -102,6 +104,7 @@ class chase_lev
   static constexpr __idx __mask = static_cast<__idx>(__cap) - 1;
 
   using __slot = micron::atomic_token<T>;
+  static_assert(__cap <= static_cast<usize>(-1) / sizeof(__slot), "chase_lev: slot allocation size is not representable");
 
   // cache line 0
   alignas(__cache_line) micron::atomic_token<__idx> __bottom;
@@ -114,17 +117,20 @@ class chase_lev
   [[no_unique_address]] __cache_pad<__cache_line - sizeof(__idx)> __pad1;      // keep a neighbour off this line
 
   // must always be inlined; runs significantly worse without (even when taking into account inflated inst pressure)
-  [[gnu::always_inline]] inline T
-  __pop_cold(__idx __b, __idx __t) noexcept
+  [[gnu::always_inline]] inline bool
+  __pop_cold(T &__out, __idx __b, __idx __t) noexcept
   {
-    T __x = __empty;
+    bool __got = false;
     if ( __t == __b ) {
-      __x = __slots[__b & __mask].get(memory_order_relaxed);
+      const T __x = __slots[__b & __mask].get(memory_order_relaxed);
       __idx __e = __t;
-      if ( !__top.compare_exchange_strong(__e, __t + 1, memory_order_seq_cst, memory_order_relaxed) ) __x = __empty;      // a thief took it
+      if ( __top.compare_exchange_strong(__e, __t + 1, memory_order_seq_cst, memory_order_relaxed) ) {
+        __out = __x;
+        __got = true;
+      }
     }
     __bottom.store(__b + 1, memory_order_relaxed);
-    return __x;
+    return __got;
   }
 
   // cold tail
@@ -179,10 +185,12 @@ public:
   inline usize
   size() const noexcept
   {
-    const __idx b = __bottom.get(memory_order_acquire);
     const __idx t = __top.get(memory_order_acquire);
+    const __idx b = __bottom.get(memory_order_acquire);
     const __sidx d = __sdiff(b, t);
-    return d > 0 ? static_cast<usize>(d) : 0u;
+    if ( d <= 0 ) return 0;
+    const usize n = static_cast<usize>(d);
+    return n < __cap ? n : __cap;
   }
 
   inline bool
@@ -206,14 +214,23 @@ public:
   }
 
   // OWNER ONLY (no CAS nor restore)
-  [[gnu::always_inline]] inline T
-  pop_bottom() noexcept
+  [[gnu::always_inline]] inline bool
+  pop_bottom(T &out) noexcept
   {
     const __idx b = __bottom.get(memory_order_relaxed) - 1;
     const __idx t = __cl_impl::__cl_dec_bottom_load_top(__bottom, __top, b);
-    if ( __sdiff(b, t) > 0 ) [[likely]]
-      return __slots[b & __mask].get(memory_order_relaxed);
-    return __pop_cold(b, t);
+    if ( __sdiff(b, t) > 0 ) [[likely]] {
+      out = __slots[b & __mask].get(memory_order_relaxed);
+      return true;
+    }
+    return __pop_cold(out, b, t);
+  }
+
+  [[gnu::always_inline]] inline T
+  pop_bottom() noexcept
+  {
+    T out = __empty;
+    return pop_bottom(out) ? out : __empty;
   }
 
   [[gnu::always_inline]] inline steal_result<T>
@@ -250,109 +267,123 @@ public:
 // doubles instead of failing; default
 
 template<is_atomic_type T, usize InitN>
-  requires(InitN > 0)
+  requires(InitN > 0 and InitN <= __cl_impl::__max_pow2_capacity)
 class chase_lev_grow
 {
   static constexpr u64 __cache_line = cache_line_size();
-  static constexpr u64 __tag_mask = 63ULL;      // low 6 bits of a 64b aligned pointer
+  static constexpr uintptr_t __tag_mask = static_cast<uintptr_t>(63);      // low 6 bits of a 64b aligned pointer
+  static constexpr usize __pointer_bits = sizeof(uintptr_t) * 8u;
 
   using __slot = micron::atomic_token<T>;
+  static constexpr usize __init_cap = __cl_impl::__next_pow2(InitN);
+  static_assert(__init_cap <= (static_cast<usize>(-1) - __cache_line) / sizeof(__slot),
+                "chase_lev_grow: initial allocation size is not representable");
 
   struct __hdr {
-    i64 __cap;
+    usize __cap;
     __hdr *__prev;
   };
 
   [[gnu::always_inline]] static __hdr *
-  __hdr_of(u64 __g) noexcept
+  __hdr_of(uintptr_t __g) noexcept
   {
     return reinterpret_cast<__hdr *>(__g & ~__tag_mask);
   }
 
   [[gnu::always_inline]] static __slot *
-  __slots_of(u64 __g) noexcept
+  __slots_of(uintptr_t __g) noexcept
   {
     return reinterpret_cast<__slot *>((__g & ~__tag_mask) + __cache_line);
   }
 
   [[gnu::always_inline]] static __idx
-  __mask_of(u64 __g) noexcept
+  __mask_of(uintptr_t __g) noexcept
   {
-    return (static_cast<__idx>(1) << (__g & __tag_mask)) - 1;
+    return (static_cast<__idx>(1) << static_cast<usize>(__g & __tag_mask)) - 1;
   }
 
   // returns the tagged base word
-  static u64
-  __make_seg(u64 __shift, __hdr *__prev)
+  static uintptr_t
+  __make_seg(usize __shift, __hdr *__prev)
   {
-    const i64 __cap = static_cast<i64>(1ULL << __shift);
-    void *__raw = ::operator new(__cache_line + sizeof(__slot) * static_cast<usize>(__cap), static_cast<std::align_val_t>(__cache_line));
+    const usize __cap = static_cast<usize>(1) << __shift;
+    void *__raw = ::operator new(__cache_line + sizeof(__slot) * __cap, static_cast<std::align_val_t>(__cache_line));
     __hdr *__h = static_cast<__hdr *>(__raw);
     __h->__cap = __cap;
     __h->__prev = __prev;
     __slot *__s = reinterpret_cast<__slot *>(reinterpret_cast<byte *>(__raw) + __cache_line);
-    for ( i64 __i = 0; __i < __cap; ++__i ) new (&__s[__i]) __slot(T{});
-    return reinterpret_cast<u64>(__raw) | __shift;
+    for ( usize __i = 0; __i < __cap; ++__i ) new (&__s[__i]) __slot(T{});
+    return reinterpret_cast<uintptr_t>(__raw) | static_cast<uintptr_t>(__shift);
   }
 
   static void
   __free_seg(__hdr *__h) noexcept
   {
     __slot *__s = reinterpret_cast<__slot *>(reinterpret_cast<byte *>(__h) + __cache_line);
-    for ( i64 __i = 0; __i < __h->__cap; ++__i ) __s[__i].~__slot();
+    for ( usize __i = 0; __i < __h->__cap; ++__i ) __s[__i].~__slot();
     ::operator delete(static_cast<void *>(__h), static_cast<std::align_val_t>(__cache_line));
   }
 
   alignas(__cache_line) micron::atomic_token<__idx> __bottom;
-  micron::atomic_token<u64> __base;
+  micron::atomic_token<uintptr_t> __base;
+  uintptr_t __owner_base = 0;
+  __idx __owner_mask = 0;
   __idx __top_cache = 0;
   // no padding
 
   alignas(__cache_line) micron::atomic_token<__idx> __top;
   [[no_unique_address]] __cache_pad<__cache_line - sizeof(__idx)> __pad1;      // keep a neighbour off this line
 
-  [[gnu::noinline, gnu::cold]] u64
-  __grow(__idx __b, __idx __t) noexcept
+  [[gnu::noinline, gnu::cold]] uintptr_t
+  __grow(__idx __b, __idx __t, uintptr_t __g)
   {
-    const u64 __g = __base.get(memory_order_relaxed);
     __hdr *__oh = __hdr_of(__g);
-    const u64 __ns = static_cast<u64>(__cl_impl::__log2_pow2(static_cast<u64>(__oh->__cap) * 2ULL));
-    const u64 __ng = __make_seg(__ns, __oh);
+    const usize __old_shift = static_cast<usize>(__g & __tag_mask);
+    if ( __old_shift + 1 >= __pointer_bits ) return 0;
+    const usize __ns = __old_shift + 1;
+    const usize __new_cap = static_cast<usize>(1) << __ns;
+    if ( __new_cap > (static_cast<usize>(-1) - __cache_line) / sizeof(__slot) ) return 0;
+    const uintptr_t __ng = __make_seg(__ns, __oh);
     __slot *__new = __slots_of(__ng);
     __slot *__old = __slots_of(__g);
     const __idx __nm = __mask_of(__ng);
     const __idx __om = __mask_of(__g);
     for ( __idx __i = __t; __sdiff(__b, __i) > 0; ++__i )
       __new[__i & __nm].store(__old[__i & __om].get(memory_order_relaxed), memory_order_relaxed);
+    __owner_base = __ng;
+    __owner_mask = __nm;
     __base.store(__ng, memory_order_release);      // pairs with the thief's acquire load
     return __ng;
   }
 
-  [[gnu::noinline, gnu::cold]] u64
-  __push_full(__idx __b, u64 __g) noexcept
+  [[gnu::noinline, gnu::cold]] uintptr_t
+  __push_full(__idx __b, uintptr_t __g)
   {
     __top_cache = __top.get(memory_order_relaxed);
-    if ( __sdiff(__b, __top_cache) <= static_cast<__sidx>(__mask_of(__g)) ) return __g;      // the cache was just stale
-    return __grow(__b, __top_cache);
+    if ( __sdiff(__b, __top_cache) <= static_cast<__sidx>(__owner_mask) ) return __g;      // the cache was just stale
+    return __grow(__b, __top_cache, __g);
   }
 
-  [[gnu::always_inline]] inline T
-  __pop_cold(__idx __b, __idx __t, u64 __g) noexcept
+  [[gnu::always_inline]] inline bool
+  __pop_cold(T &__out, __idx __b, __idx __t, uintptr_t __g, __idx __mask) noexcept
   {
-    T __x = __empty;
+    bool __got = false;
     if ( __t == __b ) {
-      __x = __slots_of(__g)[__b & __mask_of(__g)].get(memory_order_relaxed);
+      const T __x = __slots_of(__g)[__b & __mask].get(memory_order_relaxed);
       __idx __e = __t;      // STRONG: see the fixed variant
-      if ( !__top.compare_exchange_strong(__e, __t + 1, memory_order_seq_cst, memory_order_relaxed) ) __x = __empty;
+      if ( __top.compare_exchange_strong(__e, __t + 1, memory_order_seq_cst, memory_order_relaxed) ) {
+        __out = __x;
+        __got = true;
+      }
     }
     __bottom.store(__b + 1, memory_order_relaxed);
-    return __x;
+    return __got;
   }
 
   [[gnu::noinline]] steal_result<T>
   __take_top(__idx __t, __idx __b) noexcept
   {
-    const u64 __g = __base.get(memory_order_acquire);      // pairs with __grow's release
+    const uintptr_t __g = __base.get(memory_order_acquire);      // pairs with __grow's release
     const T __x = __slots_of(__g)[__t & __mask_of(__g)].get(memory_order_relaxed);
     __idx __e = __t;
     if ( !__top.compare_exchange_weak(__e, __t + 1, memory_order_seq_cst, memory_order_relaxed) ) [[unlikely]]
@@ -364,7 +395,12 @@ public:
   typedef T value_type;
   static constexpr T __empty = T{};
 
-  chase_lev_grow() : __bottom(0), __base(__make_seg(__cl_impl::__log2_pow2(__cl_impl::__next_pow2(InitN)), nullptr)), __top(0) { }
+  chase_lev_grow() : __bottom(0), __base(0), __top(0)
+  {
+    __owner_base = __make_seg(__cl_impl::__log2_pow2(__cl_impl::__next_pow2(InitN)), nullptr);
+    __owner_mask = __mask_of(__owner_base);
+    __base.store(__owner_base, memory_order_relaxed);
+  }
 
   ~chase_lev_grow()
   {
@@ -390,10 +426,13 @@ public:
   inline usize
   size() const noexcept
   {
-    const __idx b = __bottom.get(memory_order_acquire);
     const __idx t = __top.get(memory_order_acquire);
+    const __idx b = __bottom.get(memory_order_acquire);
     const __sidx d = __sdiff(b, t);
-    return d > 0 ? static_cast<usize>(d) : 0u;
+    if ( d <= 0 ) return 0;
+    const usize cap = static_cast<usize>(__mask_of(__base.get(memory_order_acquire))) + 1u;
+    const usize n = static_cast<usize>(d);
+    return n < cap ? n : cap;
   }
 
   inline bool
@@ -406,24 +445,35 @@ public:
   push_bottom(T x) noexcept
   {
     const __idx b = __bottom.get(memory_order_relaxed);
-    u64 g = __base.get(memory_order_relaxed);      // same line as __bottom
-    if ( __sdiff(b, __top_cache) > static_cast<__sidx>(__mask_of(g)) ) [[unlikely]]
+    uintptr_t g = __owner_base;
+    if ( __sdiff(b, __top_cache) > static_cast<__sidx>(__owner_mask) ) [[unlikely]]
       g = __push_full(b, g);
-    __slots_of(g)[b & __mask_of(g)].store(x, memory_order_relaxed);
+    if ( g == 0 ) return false;
+    __slots_of(g)[b & __owner_mask].store(x, memory_order_relaxed);
     __bottom.store(b + 1, memory_order_release);      // also publishes __grow's copy above
     return true;
   }
 
   // OWNER ONLY
+  [[gnu::always_inline]] inline bool
+  pop_bottom(T &out) noexcept
+  {
+    const __idx b = __bottom.get(memory_order_relaxed) - 1;
+    const uintptr_t g = __owner_base;
+    const __idx mask = __owner_mask;
+    const __idx t = __cl_impl::__cl_dec_bottom_load_top(__bottom, __top, b);
+    if ( __sdiff(b, t) > 0 ) [[likely]] {
+      out = __slots_of(g)[b & mask].get(memory_order_relaxed);
+      return true;
+    }
+    return __pop_cold(out, b, t, g, mask);
+  }
+
   [[gnu::always_inline]] inline T
   pop_bottom() noexcept
   {
-    const __idx b = __bottom.get(memory_order_relaxed) - 1;
-    const u64 g = __base.get(memory_order_relaxed);      // ahead of the barrier: latency hides there
-    const __idx t = __cl_impl::__cl_dec_bottom_load_top(__bottom, __top, b);
-    if ( __sdiff(b, t) > 0 ) [[likely]]
-      return __slots_of(g)[b & __mask_of(g)].get(memory_order_relaxed);
-    return __pop_cold(b, t, g);
+    T out = __empty;
+    return pop_bottom(out) ? out : __empty;
   }
 
   // ANY NON OWNER

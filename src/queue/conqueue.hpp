@@ -22,12 +22,16 @@
 namespace micron
 {
 
-template<is_regular_object T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+template<typename T, usize N = micron::alloc_auto_sz, class Alloc = micron::allocator_serial<>>
+  requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T> and micron::is_copy_assignable_v<T>
+           and micron::is_destructible_v<T>
 class conqueue: public __mutable_memory_resource<T, Alloc>
 {
   mutable micron::fast_mutex __mtx;
   using __mem = __mutable_memory_resource<T, Alloc>;
-  usize needle;
+  usize head;
+
+  using __defer = micron::unique_lock<micron::lock_starts::defer, micron::fast_mutex>;
 
   struct __hold {
     micron::fast_mutex &m;
@@ -40,13 +44,137 @@ class conqueue: public __mutable_memory_resource<T, Alloc>
     __hold &operator=(const __hold &) = delete;
   };
 
+  template<typename I>
+  static constexpr usize
+  __checked_elements(I count)
+  {
+    if ( static_cast<umax_t>(count) > static_cast<umax_t>(static_cast<usize>(-1) / sizeof(T)) ) [[unlikely]]
+      exc<except::library_error>("micron::conqueue capacity overflow");
+    return static_cast<usize>(count);
+  }
+
+  static inline void
+  __lock_ordered(micron::fast_mutex &a, __defer &la, micron::fast_mutex &b, __defer &lb)
+  {
+    const uintptr_t aa = reinterpret_cast<uintptr_t>(micron::addr(a));
+    const uintptr_t bb = reinterpret_cast<uintptr_t>(micron::addr(b));
+    if ( aa == bb ) {
+      la.lock();
+    } else if ( aa < bb ) {
+      la.lock();
+      lb.lock();
+    } else {
+      lb.lock();
+      la.lock();
+    }
+  }
+
+  static constexpr usize
+  __growth_target(usize cap, usize requested) noexcept
+  {
+    const usize limit = static_cast<usize>(-1);
+    if ( cap <= limit / 2 ) {
+      const usize doubled = cap ? cap * 2 : 1;
+      if ( requested < doubled ) requested = doubled;
+    }
+    return requested;
+  }
+
   inline void
   __reserve_unsafe(const usize n)
   {
-    __mem::expand(n);
-    micron::memmove(micron::addressof(__mem::memory[(__mem::capacity - 1) - __mem::length]),
-                    micron::addressof(__mem::memory[needle - __mem::length]), __mem::length);
-    needle = __mem::capacity - 1;
+    if ( n <= __mem::capacity && head == 0 ) return;
+    const usize count = __mem::length;
+    const usize requested = n < count ? count : n;
+    const usize elements = __checked_elements(requested ? requested : 1);
+    chunk<byte> block = Alloc::create(elements * sizeof(T));
+    T *fresh = reinterpret_cast<T *>(block.ptr);
+    const usize fresh_capacity = block.len / sizeof(T);
+
+    if constexpr ( micron::is_trivially_copyable_v<T> ) {
+      if ( count ) micron::memcpy(fresh, micron::addressof(__mem::memory[head]), count);
+    } else {
+      usize made = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( ; made < count; ++made ) {
+          if constexpr ( micron::is_nothrow_move_constructible_v<T> or !micron::is_copy_constructible_v<T> )
+            new (micron::addr(fresh[made])) T(micron::move(__mem::memory[head + made]));
+          else
+            new (micron::addr(fresh[made])) T(__mem::memory[head + made]);
+        }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        __impl_container::destroy(fresh, made);
+        Alloc::destroy(block);
+        throw;
+      }
+#endif
+      if ( count ) __impl_container::destroy(micron::addr(__mem::memory[head]), count);
+    }
+
+    if ( __mem::memory ) Alloc::destroy({ reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T) });
+    __mem::memory = fresh;
+    __mem::capacity = fresh_capacity;
+    __mem::length = count;
+    head = 0;
+  }
+
+  [[gnu::always_inline]] inline void
+  __ensure_one_unsafe()
+  {
+    if ( head + __mem::length < __mem::capacity ) return;
+    if constexpr ( micron::is_trivially_copyable_v<T> ) {
+      if ( head ) {
+        micron::memmove(__mem::memory, micron::addressof(__mem::memory[head]), __mem::length);
+        head = 0;
+        return;
+      }
+    }
+    const usize max_elements = static_cast<usize>(-1) / sizeof(T);
+    if ( __mem::length == __mem::capacity && __mem::capacity == max_elements ) [[unlikely]]
+      exc<except::library_error>("micron::conqueue capacity overflow");
+    const usize wanted = __mem::length < __mem::capacity ? __mem::capacity : __growth_target(__mem::capacity, __mem::capacity + 1);
+    __reserve_unsafe(wanted);
+  }
+
+  inline void
+  __clear_unsafe() noexcept
+  {
+    if ( __mem::length ) __impl_container::destroy(micron::addr(__mem::memory[head]), __mem::length);
+    __mem::length = 0;
+    head = 0;
+  }
+
+  template<typename U>
+  inline void
+  __push_unsafe(U &&val)
+  {
+    __ensure_one_unsafe();
+    if constexpr ( micron::is_trivially_copyable_v<T> )
+      __mem::memory[head + __mem::length] = micron::forward<U>(val);
+    else
+      new (micron::addr(__mem::memory[head + __mem::length])) T(micron::forward<U>(val));
+    ++__mem::length;
+  }
+
+  inline bool
+  __pop_unsafe(T *out)
+  {
+    if ( __mem::length == 0 ) return false;
+    T &v = __mem::memory[head];
+    if ( out ) {
+      if constexpr ( micron::is_move_assignable_v<T> )
+        *out = micron::move(v);
+      else
+        *out = v;
+    }
+    if constexpr ( !micron::is_trivially_destructible_v<T> ) v.~T();
+    ++head;
+    --__mem::length;
+    if ( __mem::length == 0 ) head = 0;
+    return true;
   }
 
 public:
@@ -66,74 +194,137 @@ public:
   ~conqueue()
   {
     if ( __mem::memory == nullptr ) return;
-    clear();
+    __clear_unsafe();
   }
 
-  conqueue() : __mem(N), needle(__mem::capacity - 1) { }
+  conqueue() : __mem(__checked_elements(N)), head(0) { }
 
-  conqueue(const std::initializer_list<T> &lst) : __mem(lst.size()), needle(__mem::capacity - 1)
+  conqueue(const std::initializer_list<T> &lst) : __mem(lst.size()), head(0)
   {
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_copyable_v<T> ) {
-      usize i = __mem::capacity - 1;
-      for ( T &&value : lst ) {
-        new (micron::addr(__mem::memory[i--])) T(micron::move(value));
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( const T &value : lst ) {
+        if constexpr ( micron::is_trivially_copyable_v<T> )
+          __mem::memory[i] = value;
+        else
+          new (micron::addr(__mem::memory[i])) T(value);
+        ++i;
       }
-      __mem::length = lst.size();
-    } else {
-      usize i = __mem::capacity - 1;
-      for ( T value : lst ) {
-        __mem::memory[i--] = value;
-      }
-      __mem::length = lst.size();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __impl_container::destroy(__mem::memory, i);
+      throw;
     }
+#endif
+    __mem::length = i;
   };
 
-  conqueue(const umax_t n, const T val) : __mem(n), needle(__mem::capacity - 1)
+  conqueue(const umax_t n, const T val) : __mem(__checked_elements(n)), head(0)
 
   {
-    for ( umax_t i = 0; i < n; i++ ) push(val);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( umax_t i = 0; i < n; i++ ) __push_unsafe(val);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __clear_unsafe();
+      throw;
+    }
+#endif
   }
 
-  conqueue(const umax_t n) : __mem(n), needle(__mem::capacity - 1)
+  conqueue(const umax_t n) : __mem(__checked_elements(n)), head(0)
 
   {
-    for ( umax_t i = 0; i < n; i++ ) push();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( umax_t i = 0; i < n; i++ ) {
+        if constexpr ( micron::is_trivially_copyable_v<T> )
+          __mem::memory[__mem::length] = T{};
+        else
+          new (micron::addr(__mem::memory[__mem::length])) T{};
+        ++__mem::length;
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __clear_unsafe();
+      throw;
+    }
+#endif
   }
 
-  conqueue(const conqueue &o) : __mem(o.length), needle(o.needle)
-
+  conqueue(const conqueue &o) : __mem(nullptr), head(0)
   {
-    __impl_container::copy(__mem::memory, o.memory, o.length);
+    __hold lock(o.__mtx);
+    if ( o.length ) {
+      __reserve_unsafe(o.length);
+      __impl_container::copy(__mem::memory, micron::addressof(o.memory[o.head]), o.length);
+      __mem::length = o.length;
+    }
+  }
+
+  conqueue(conqueue &&o) : __mem(nullptr), head(0)
+  {
+    __hold lock(o.__mtx);
+    __mem::memory = o.memory;
     __mem::length = o.length;
+    __mem::capacity = o.capacity;
+    head = o.head;
+    o.memory = nullptr;
+    o.length = 0;
+    o.capacity = 0;
+    o.head = 0;
   }
-
-  conqueue(conqueue &&o) : __mem(micron::move(o)), needle(o.needle) { o.needle = 0; }
 
   conqueue &
   operator=(const conqueue &o)
   {
-    __hold __lock(__mtx);
-    if ( __mem::capacity <= o.length ) __reserve_unsafe(o.length + 1);
-    __impl_container::copy(__mem::memory, o.memory, o.length);
+    if ( this == micron::addr(o) ) return *this;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
+
+    chunk<byte> block = Alloc::create((o.length ? o.length : 1) * sizeof(T));
+    T *fresh = reinterpret_cast<T *>(block.ptr);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      if ( o.length ) __impl_container::copy(fresh, micron::addressof(o.memory[o.head]), o.length);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      Alloc::destroy(block);
+      throw;
+    }
+#endif
+
+    __clear_unsafe();
+    if ( __mem::memory ) Alloc::destroy({ reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T) });
+    __mem::memory = fresh;
+    __mem::capacity = block.len / sizeof(T);
     __mem::length = o.length;
-    needle = o.needle;
+    head = 0;
     return *this;
   }
 
   conqueue &
   operator=(conqueue &&o)
   {
-    if ( this == &o ) return *this;
-    __hold __lock(__mtx);
-    if ( __mem::memory ) {
-      if constexpr ( micron::is_class_v<T> ) {
-        for ( usize i = needle - __mem::length + 1; i <= needle; i++ ) (__mem::memory)[i].~T();
-      }
-      __mem::free();
-    }
-    __mem::operator=(micron::move(o));
-    needle = o.needle;
-    o.needle = 0;
+    if ( this == micron::addr(o) ) return *this;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
+    __clear_unsafe();
+    if ( __mem::memory ) __mem::free();
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
+    head = o.head;
+    o.memory = nullptr;
+    o.length = 0;
+    o.capacity = 0;
+    o.head = 0;
     return *this;
   }
 
@@ -141,30 +332,27 @@ public:
   clear()
   {
     __hold __lock(__mtx);
-    if ( !__mem::length ) return;
-    if constexpr ( micron::is_class_v<T> ) {
-      for ( usize i = needle - __mem::length + 1; i <= needle; i++ ) (__mem::memory)[i].~T();
-    }
-    micron::zero((byte *)micron::voidify(&(__mem::memory)[0]), __mem::capacity * (sizeof(T) / sizeof(byte)));
-    __mem::length = 0;
-    needle = __mem::capacity - 1;
+    __clear_unsafe();
   }
 
   inline void
   reserve(const usize n)
   {
     __hold __lock(__mtx);
+    if ( n <= __mem::capacity ) return;
     __reserve_unsafe(n);
   }
 
   inline void
   swap(conqueue &o)
   {
-    __hold __lock(__mtx);
+    if ( this == micron::addr(o) ) return;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
     micron::swap(__mem::memory, o.memory);
     micron::swap(__mem::length, o.length);
     micron::swap(__mem::capacity, o.capacity);
-    micron::swap(needle, o.needle);
+    micron::swap(head, o.head);
   }
 
   inline bool
@@ -188,53 +376,54 @@ public:
     return __mem::capacity;
   }
 
+  // Raw references and iterators outlive the internal lock. They are quiescent-only.
   inline T &
   last()
   {
     __hold __lock(__mtx);
-    return __mem::memory[needle];
+    return __mem::memory[head];
   }
 
   inline const T &
   last() const
   {
     __hold __lock(__mtx);
-    return __mem::memory[needle];
+    return __mem::memory[head];
   }
 
   inline T &
   front()
   {
     __hold __lock(__mtx);
-    return __mem::memory[needle - __mem::length + 1];
+    return __mem::memory[head + __mem::length - 1];
   }
 
   inline const T &
   front() const
   {
     __hold __lock(__mtx);
-    return __mem::memory[needle - __mem::length + 1];
+    return __mem::memory[head + __mem::length - 1];
   }
 
   inline T *
   begin()
   {
     __hold __lock(__mtx);
-    return micron::addressof(__mem::memory[needle - __mem::length + 1]);
+    return __mem::memory ? __mem::memory + head : nullptr;
   }
 
   inline const T *
   begin() const
   {
     __hold __lock(__mtx);
-    return micron::addressof(__mem::memory[needle - __mem::length + 1]);
+    return __mem::memory ? __mem::memory + head : nullptr;
   }
 
   inline const T *
   cbegin() const
   {
     __hold __lock(__mtx);
-    return micron::addressof(__mem::memory[needle - __mem::length + 1]);
+    return __mem::memory ? __mem::memory + head : nullptr;
   }
 
   // one past
@@ -242,34 +431,33 @@ public:
   end()
   {
     __hold __lock(__mtx);
-    return micron::addressof(__mem::memory[needle + 1]);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
   }
 
   inline const T *
   end() const
   {
     __hold __lock(__mtx);
-    return micron::addressof(__mem::memory[needle + 1]);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
   }
 
   inline const T *
   cend() const
   {
     __hold __lock(__mtx);
-    return micron::addressof(__mem::memory[needle + 1]);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
   }
 
   inline conqueue &
   push(void)
   {
     __hold __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      __reserve_unsafe(__mem::capacity + 1);
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (micron::addr(__mem::memory[needle - __mem::length++])) T{};
-    } else {
-      __mem::memory[needle - __mem::length++] = T{};
-    }
+    __ensure_one_unsafe();
+    if constexpr ( micron::is_trivially_copyable_v<T> )
+      __mem::memory[head + __mem::length] = T{};
+    else
+      new (micron::addr(__mem::memory[head + __mem::length])) T{};
+    ++__mem::length;
     return *this;
   }
 
@@ -277,13 +465,7 @@ public:
   push(T &&val)
   {
     __hold __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      __reserve_unsafe(__mem::capacity + 1);
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (micron::addr(__mem::memory[needle - __mem::length++])) T{ micron::move(val) };
-    } else {
-      __mem::memory[needle - __mem::length++] = micron::move(val);
-    }
+    __push_unsafe(micron::move(val));
     return *this;
   }
 
@@ -291,29 +473,83 @@ public:
   push(const T &val)
   {
     __hold __lock(__mtx);
-    if ( needle == 0 or (__mem::length + 1) >= __mem::capacity or (needle - (__mem::length + 1)) == 0 )
-      __reserve_unsafe(__mem::capacity + 1);
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_constructible_v<T> ) {
-      new (micron::addr(__mem::memory[needle - __mem::length++])) T{ val };
-    } else {
-      __mem::memory[needle - __mem::length++] = val;
-    }
+    __push_unsafe(val);
     return *this;
+  }
+
+  inline usize
+  push_batch(const T *items, usize count)
+  {
+    __hold __lock(__mtx);
+    if ( count == 0 ) return 0;
+    if ( count > static_cast<usize>(-1) - __mem::length ) [[unlikely]]
+      exc<except::library_error>("micron::conqueue capacity overflow");
+    const usize needed = __mem::length + count;
+    if ( head + needed > __mem::capacity ) {
+      if constexpr ( micron::is_trivially_copyable_v<T> ) {
+        if ( needed <= __mem::capacity ) {
+          micron::memmove(__mem::memory, micron::addressof(__mem::memory[head]), __mem::length);
+          head = 0;
+        } else {
+          __reserve_unsafe(__growth_target(__mem::capacity, needed));
+        }
+      } else {
+        __reserve_unsafe(needed <= __mem::capacity ? __mem::capacity : __growth_target(__mem::capacity, needed));
+      }
+    }
+    if constexpr ( micron::is_trivially_copyable_v<T> ) {
+      micron::memcpy(micron::addressof(__mem::memory[head + __mem::length]), items, count);
+      __mem::length += count;
+      return count;
+    } else {
+      usize pushed = 0;
+      for ( ; pushed < count; ++pushed ) {
+        new (micron::addr(__mem::memory[head + __mem::length])) T(items[pushed]);
+        ++__mem::length;
+      }
+      return pushed;
+    }
+  }
+
+  inline usize
+  pop_batch(T *items, usize count)
+  {
+    __hold __lock(__mtx);
+    const usize n = count < __mem::length ? count : __mem::length;
+    usize popped = 0;
+    for ( ; popped < n; ++popped ) __pop_unsafe(micron::addressof(items[popped]));
+    return popped;
+  }
+
+  template<typename Fn>
+  inline void
+  for_each_locked(Fn &&fn)
+  {
+    __hold __lock(__mtx);
+    for ( usize i = 0; i < __mem::length; ++i ) fn(__mem::memory[head + i]);
+  }
+
+  template<typename Fn>
+  inline void
+  for_each_locked(Fn &&fn) const
+  {
+    __hold __lock(__mtx);
+    for ( usize i = 0; i < __mem::length; ++i ) fn(static_cast<const T &>(__mem::memory[head + i]));
   }
 
   inline conqueue &
   pop(void)
   {
     __hold __lock(__mtx);
-    if ( __mem::length == 0 or needle == 0 ) return *this;
-    if constexpr ( micron::is_class_v<T> or !micron::is_trivially_destructible_v<T> ) {
-      (__mem::memory)[needle].~T();
-    } else {
-      (__mem::memory)[needle] = 0x0;
-    }
-    needle--;
-    __mem::length--;
+    __pop_unsafe(nullptr);
     return *this;
+  }
+
+  inline bool
+  pop(T &out)
+  {
+    __hold __lock(__mtx);
+    return __pop_unsafe(micron::addressof(out));
   }
 };
 };      // namespace micron

@@ -25,7 +25,7 @@ namespace micron
 // ref Hood & Melville, "Real-Time Queue Operations in Pure LISP" (1981)
 
 template<typename T>
-  requires micron::is_movable_object<T>
+  requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T> and micron::is_destructible_v<T>
 class immutable_queue
 {
   // 64-bit:
@@ -44,22 +44,26 @@ class immutable_queue
   static inline __node *
   __make_node(Tf &&v, __node *nxt)
   {
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
-    if constexpr ( micron::is_trivially_copyable_v<T> )
-      n->value = static_cast<Tf &&>(v);
-    else
-      new (micron::addr(n->value)) T(static_cast<Tf &&>(v));
-
-    n->next = nxt;
-    n->refs = 1;
-    return n;
+    void *raw = nullptr;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      raw = ::operator new(sizeof(__node), static_cast<std::align_val_t>(alignof(__node)));
+      return new (raw) __node{ nxt, 1, T(static_cast<Tf &&>(v)) };
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      if ( raw ) ::operator delete(raw, static_cast<std::align_val_t>(alignof(__node)));
+      __release(nxt);
+      throw;
+    }
+#endif
   }
 
   static inline void
   __dealloc_node(__node *n)
   {
-    if constexpr ( !micron::is_trivially_destructible_v<T> ) n->value.~T();
-    abc::dealloc(reinterpret_cast<byte *>(n));
+    n->~__node();
+    ::operator delete(n, static_cast<std::align_val_t>(alignof(__node)));
   }
 
   static inline __attribute__((always_inline)) __node *
@@ -125,6 +129,56 @@ class immutable_queue
     __release(s.rp);
   }
 
+  struct __node_owner {
+    __node *value;
+
+    explicit __node_owner(__node *n = nullptr) noexcept : value(n) { }
+
+    ~__node_owner() { __release(value); }
+
+    __node *
+    take() noexcept
+    {
+      __node *result = value;
+      value = nullptr;
+      return result;
+    }
+  };
+
+  struct __rot_owner {
+    __rot value;
+    bool active;
+
+    explicit __rot_owner(const __rot &s) noexcept : value(s), active(true) { }
+
+    ~__rot_owner()
+    {
+      if ( active ) __release_rot(value);
+    }
+
+    void
+    reset() noexcept
+    {
+      if ( active ) __release_rot(value);
+      active = false;
+    }
+
+    __rot
+    take() noexcept
+    {
+      active = false;
+      return value;
+    }
+
+    __node *
+    take_rp() noexcept
+    {
+      __node *result = value.rp;
+      value.rp = nullptr;
+      return result;
+    }
+  };
+
   // advance rotation by one step
   // ..exec(Reversing(ok, x::f, f', y::r, r'))  = Reversing(ok+1, f, x::f', r, y::r')
   // ..exec(Reversing(ok, [],    f', [y],  r'))  = Appending(ok, f', y::r')
@@ -138,19 +192,25 @@ class immutable_queue
     switch ( s.phase ) {
     case __reversing:
       if ( s.f ) [[likely]] {
-        return { __reversing,         s.ok + 1,
-                 __retain(s.f->next), __make_node(s.f->value, __retain(s.fp)),
-                 __retain(s.r->next), __make_node(s.r->value, __retain(s.rp)) };
+        __node_owner f(__retain(s.f->next));
+        __node_owner fp(__make_node(s.f->value, __retain(s.fp)));
+        __node_owner r(__retain(s.r->next));
+        __node_owner rp(__make_node(s.r->value, __retain(s.rp)));
+        return { __reversing, s.ok + 1, f.take(), fp.take(), r.take(), rp.take() };
       } else {
         //  front exhausted; rear has exactly one element left
-        return { __appending, s.ok, nullptr, __retain(s.fp), nullptr, __make_node(s.r->value, __retain(s.rp)) };
+        __node_owner fp(__retain(s.fp));
+        __node_owner rp(__make_node(s.r->value, __retain(s.rp)));
+        return { __appending, s.ok, nullptr, fp.take(), nullptr, rp.take() };
       }
 
     case __appending:
       if ( s.ok == 0 ) [[unlikely]] {
         return { __done, 0, nullptr, nullptr, nullptr, __retain(s.rp) };
       } else {
-        return { __appending, s.ok - 1, nullptr, __retain(s.fp->next), nullptr, __make_node(s.fp->value, __retain(s.rp)) };
+        __node_owner fp(__retain(s.fp->next));
+        __node_owner rp(__make_node(s.fp->value, __retain(s.rp)));
+        return { __appending, s.ok - 1, nullptr, fp.take(), nullptr, rp.take() };
       }
 
     default: {
@@ -192,39 +252,40 @@ class immutable_queue
 
   // NOTE: takes ownership
   static immutable_queue
-  __exec_twice(__node *f, usize fl, __node *r, usize rl, __rot state)
+  __exec_twice(__node *f, usize fl, __node *r, usize rl, __rot state, __node *mid, usize ml)
   {
-    __rot s1 = __exec(state);
-    __release_rot(state);
-    __rot s2 = __exec(s1);
-    __release_rot(s1);
+    __node_owner owned_f(f), owned_r(r), owned_mid(mid);
+    __rot_owner owned_state(state);
+    __rot_owner s1(__exec(owned_state.value));
+    owned_state.reset();
+    __rot_owner s2(__exec(s1.value));
+    s1.reset();
 
-    if ( s2.phase == __done ) [[unlikely]] {
+    if ( s2.value.phase == __done ) [[unlikely]] {
       //  rotation complete: rp is the new front list
       //  transfer ownership of rp out of s2
-      __node *new_f = s2.rp;
-      __release(f);      // old front replaced
-      return immutable_queue(new_f, fl, r, rl, __idle_rot());
+      __node *new_f = s2.take_rp();
+      return immutable_queue(new_f, fl, owned_r.take(), rl, __idle_rot(), nullptr, 0);
     }
 
-    return immutable_queue(f, fl, r, rl, s2);
+    return immutable_queue(owned_f.take(), fl, owned_r.take(), rl, s2.take(), owned_mid.take(), ml);
   }
 
   // maintain |r| <= |f| invariant
   // init rotation if violated
   // NOTE: takes ownership
   static immutable_queue
-  __check(__node *f, usize fl, __node *r, usize rl, __rot state)
+  __check(__node *f, usize fl, __node *r, usize rl, __rot state, __node *mid, usize ml)
   {
     if ( rl <= fl ) [[likely]] {
-      return __exec_twice(f, fl, r, rl, state);
+      return __exec_twice(f, fl, r, rl, state, mid, ml);
     } else {
       //  invariant violated: begin rotation
       //  Reversing(0, f, nil, r, nil)
       __rot new_state = { __reversing, 0, __retain(f), nullptr, __retain(r), nullptr };
       __release_rot(state);
-      __release(r);      // rear now only referenced by rotation state
-      return __exec_twice(f, fl + rl, nullptr, 0, new_state);
+      __release(mid);      // rotations cannot overlap; normally null
+      return __exec_twice(f, fl + rl, nullptr, 0, new_state, r, rl);
     }
   }
 
@@ -233,10 +294,14 @@ class immutable_queue
   __node *__rear;
   usize __r_len;
   __rot __state;
+  __node *__rotation_rear;
+  usize __rotation_rear_len;
 
   // private constructor for internal copies
-  immutable_queue(__node *f, usize fl, __node *r, usize rl, const __rot &s)
-      : __front(f), __f_len(fl), __rear(r), __r_len(rl), __state(s) { }
+  immutable_queue(__node *f, usize fl, __node *r, usize rl, const __rot &s, __node *mid, usize ml)
+      : __front(f), __f_len(fl), __rear(r), __r_len(rl), __state(s), __rotation_rear(mid), __rotation_rear_len(ml)
+  {
+  }
 
 public:
   using category_type = buffer_tag;
@@ -254,13 +319,18 @@ public:
     __release(__front);
     __release(__rear);
     __release_rot(__state);
+    __release(__rotation_rear);
   }
 
-  immutable_queue(void) : __front(nullptr), __f_len(0), __rear(nullptr), __r_len(0), __state(__idle_rot()) { }
+  immutable_queue(void)
+      : __front(nullptr), __f_len(0), __rear(nullptr), __r_len(0), __state(__idle_rot()), __rotation_rear(nullptr), __rotation_rear_len(0)
+  {
+  }
 
   //  O(1) copy
   immutable_queue(const immutable_queue &o)
-      : __front(__retain(o.__front)), __f_len(o.__f_len), __rear(__retain(o.__rear)), __r_len(o.__r_len), __state(o.__state)
+      : __front(__retain(o.__front)), __f_len(o.__f_len), __rear(__retain(o.__rear)), __r_len(o.__r_len), __state(o.__state),
+        __rotation_rear(__retain(o.__rotation_rear)), __rotation_rear_len(o.__rotation_rear_len)
   {
     __retain_rot(__state);
   }
@@ -273,25 +343,31 @@ public:
       __release(__front);
       __release(__rear);
       __release_rot(__state);
+      __release(__rotation_rear);
       __front = __retain(o.__front);
       __f_len = o.__f_len;
       __rear = __retain(o.__rear);
       __r_len = o.__r_len;
       __state = o.__state;
       __retain_rot(__state);
+      __rotation_rear = __retain(o.__rotation_rear);
+      __rotation_rear_len = o.__rotation_rear_len;
     }
     return *this;
   }
 
   //  O(1) move
   immutable_queue(immutable_queue &&o) noexcept
-      : __front(o.__front), __f_len(o.__f_len), __rear(o.__rear), __r_len(o.__r_len), __state(o.__state)
+      : __front(o.__front), __f_len(o.__f_len), __rear(o.__rear), __r_len(o.__r_len), __state(o.__state),
+        __rotation_rear(o.__rotation_rear), __rotation_rear_len(o.__rotation_rear_len)
   {
     o.__front = nullptr;
     o.__f_len = 0;
     o.__rear = nullptr;
     o.__r_len = 0;
     o.__state = __idle_rot();
+    o.__rotation_rear = nullptr;
+    o.__rotation_rear_len = 0;
   }
 
   immutable_queue &
@@ -301,16 +377,21 @@ public:
       __release(__front);
       __release(__rear);
       __release_rot(__state);
+      __release(__rotation_rear);
       __front = o.__front;
       __f_len = o.__f_len;
       __rear = o.__rear;
       __r_len = o.__r_len;
       __state = o.__state;
+      __rotation_rear = o.__rotation_rear;
+      __rotation_rear_len = o.__rotation_rear_len;
       o.__front = nullptr;
       o.__f_len = 0;
       o.__rear = nullptr;
       o.__r_len = 0;
       o.__state = __idle_rot();
+      o.__rotation_rear = nullptr;
+      o.__rotation_rear_len = 0;
     }
     return *this;
   }
@@ -322,7 +403,7 @@ public:
     __node *nr = __make_node(v, __retain(__rear));
     __rot s = __state;
     __retain_rot(s);
-    return __check(__retain(__front), __f_len, nr, __r_len + 1, s);
+    return __check(__retain(__front), __f_len, nr, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len);
   }
 
   immutable_queue
@@ -331,7 +412,7 @@ public:
     __node *nr = __make_node(micron::move(v), __retain(__rear));
     __rot s = __state;
     __retain_rot(s);
-    return __check(__retain(__front), __f_len, nr, __r_len + 1, s);
+    return __check(__retain(__front), __f_len, nr, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len);
   }
 
   template<typename... Args>
@@ -339,14 +420,25 @@ public:
   emplace(Args &&...args) const
   {
     //  construct T in-place, then cons onto rear
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
-    new (micron::addr(n->value)) T(micron::forward<Args>(args)...);
-    n->next = __retain(__rear);
-    n->refs = 1;
+    void *raw = nullptr;
+    __node *n = nullptr;
+    __node *next = __retain(__rear);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      raw = ::operator new(sizeof(__node), static_cast<std::align_val_t>(alignof(__node)));
+      n = new (raw) __node{ next, 1, T(micron::forward<Args>(args)...) };
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      if ( raw ) ::operator delete(raw, static_cast<std::align_val_t>(alignof(__node)));
+      __release(next);
+      throw;
+    }
+#endif
 
     __rot s = __state;
     __retain_rot(s);
-    return __check(__retain(__front), __f_len, n, __r_len + 1, s);
+    return __check(__retain(__front), __f_len, n, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len);
   }
 
   // O(1)
@@ -357,7 +449,7 @@ public:
       return immutable_queue();
 
     __rot ns = __invalidate(__state);
-    return __check(__retain(__front->next), __f_len - 1, __retain(__rear), __r_len, ns);
+    return __check(__retain(__front->next), __f_len - 1, __retain(__rear), __r_len, ns, __retain(__rotation_rear), __rotation_rear_len);
   }
 
   const T &
@@ -379,6 +471,7 @@ public:
   {
     if ( __rear ) [[likely]]
       return __rear->value;
+    if ( __rotation_rear ) return __rotation_rear->value;
     //  rear empty: walk front to tail
     const __node *n = __front;
     while ( n->next ) n = n->next;
@@ -391,17 +484,24 @@ public:
     if ( idx >= size() ) [[unlikely]]
       exc<except::library_error>("micron::immutable_queue at(): index out of range");
 
-    if ( idx < __f_len ) {
+    const usize visible_front = __f_len - __rotation_rear_len;
+    if ( idx < visible_front ) {
       const __node *n = __front;
       for ( usize i = 0; i < idx; ++i ) n = n->next;
       return n->value;
     }
 
-    //  index falls in the rear list (reversed order)
-    //  logical index within rear: idx - __f_len
-    //  rear list position (from head): __r_len - 1 - (idx - __f_len)
-    usize rear_pos = __r_len - 1 - (idx - __f_len);
-    const __node *n = __rear;
+    idx -= visible_front;
+    const __node *n;
+    usize rear_pos;
+    if ( idx < __rotation_rear_len ) {
+      rear_pos = __rotation_rear_len - idx - 1;
+      n = __rotation_rear;
+    } else {
+      idx -= __rotation_rear_len;
+      rear_pos = __r_len - idx - 1;
+      n = __rear;
+    }
     for ( usize i = 0; i < rear_pos; ++i ) n = n->next;
     return n->value;
   }
@@ -433,7 +533,7 @@ public:
   bool
   operator==(const immutable_queue &o) const
   {
-    if ( __front == o.__front && __rear == o.__rear ) [[unlikely]]
+    if ( __front == o.__front && __rear == o.__rear && __rotation_rear == o.__rotation_rear && size() == o.size() ) [[unlikely]]
       return true;
     if ( size() != o.size() ) return false;
     auto a = begin(), ae = end();
@@ -456,7 +556,17 @@ public:
   {
     if ( !__front ) [[unlikely]]
       return *this;
-    return pop().push(fn(__front->value));
+    immutable_queue result;
+    bool first = true;
+    for_each([&](const T &value) {
+      if ( first ) {
+        result = result.push(fn(value));
+        first = false;
+      } else {
+        result = result.push(value);
+      }
+    });
+    return result;
   }
 
   template<typename Fn>
@@ -469,62 +579,124 @@ public:
       cur = cur->next;
     }
 
-    if ( !__rear ) return;
-
-    constexpr usize __stack_cap = 128;
-    if ( __r_len <= __stack_cap ) {
-      const __node *stack[__stack_cap];
-      usize depth = 0;
-      cur = __rear;
-      while ( cur ) {
-        stack[depth++] = cur;
-        cur = cur->next;
-      }
-      while ( depth > 0 ) fn(static_cast<const T &>(stack[--depth]->value));
-    } else {
-      //  heap fallback for very large rear lists
-      auto *buf = reinterpret_cast<const __node **>(abc::alloc(__r_len * sizeof(const __node *)));
-      usize depth = 0;
-      cur = __rear;
-      while ( cur ) {
-        buf[depth++] = cur;
-        cur = cur->next;
-      }
-      while ( depth > 0 ) fn(static_cast<const T &>(buf[--depth]->value));
-      abc::dealloc(reinterpret_cast<byte *>(buf));
+    const usize count = __rotation_rear_len + __r_len;
+    if ( count == 0 ) return;
+    auto *buf = static_cast<const __node **>(::operator new(count * sizeof(const __node *)));
+    usize base = 0;
+    cur = __rotation_rear;
+    for ( usize i = 0; i < __rotation_rear_len; ++i, cur = cur->next ) buf[base + __rotation_rear_len - i - 1] = cur;
+    base += __rotation_rear_len;
+    cur = __rear;
+    for ( usize i = 0; i < __r_len; ++i, cur = cur->next ) buf[base + __r_len - i - 1] = cur;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( usize i = 0; i < count; ++i ) fn(static_cast<const T &>(buf[i]->value));
+    } catch ( ... ) {
+      ::operator delete(buf);
+      throw;
     }
+#else
+    for ( usize i = 0; i < count; ++i ) fn(static_cast<const T &>(buf[i]->value));
+#endif
+    ::operator delete(buf);
   }
 
   class const_iterator
   {
-    static constexpr usize __max_depth = 128;
-    const __node *__cur;                     // current node in front phase
-    const __node *__stack[__max_depth];      // rear nodes collected in reverse
-    usize __rear_top;                        // next index to read (counts down)
+    struct __backing {
+      mutable u32 refs;
+      usize count;
+      const __node *nodes[1];
+    };
 
-    void
-    __load_rear(const __node *rear)
+    const __node *__cur;
+    __backing *__back;
+    usize __index;
+
+    static __backing *
+    __make_back(const __node *mid, usize ml, const __node *rear, usize rl)
     {
-      usize depth = 0;
-      const __node *n = rear;
-      while ( n && depth < __max_depth ) [[likely]] {
-        __stack[depth++] = n;
-        n = n->next;
-      }
-      __rear_top = depth;      // will decrement to access in FIFO order
+      const usize count = ml + rl;
+      if ( count == 0 ) return nullptr;
+      const usize bytes = sizeof(__backing) + (count - 1) * sizeof(const __node *);
+      auto *back = static_cast<__backing *>(::operator new(bytes));
+      back->refs = 1;
+      back->count = count;
+      const __node *node = mid;
+      for ( usize i = 0; i < ml; ++i, node = node->next ) back->nodes[ml - i - 1] = node;
+      node = rear;
+      for ( usize i = 0; i < rl; ++i, node = node->next ) back->nodes[ml + rl - i - 1] = node;
+      return back;
+    }
+
+    static __backing *
+    __retain_back(__backing *back) noexcept
+    {
+      if ( back ) ++back->refs;
+      return back;
+    }
+
+    static void
+    __release_back(__backing *back) noexcept
+    {
+      if ( back && --back->refs == 0 ) ::operator delete(back);
+    }
+
+    const __node *
+    __node_at() const noexcept
+    {
+      if ( __cur ) return __cur;
+      return __back && __index < __back->count ? __back->nodes[__index] : nullptr;
     }
 
   public:
-    const_iterator() : __cur(nullptr), __rear_top(0) { }
+    const_iterator() : __cur(nullptr), __back(nullptr), __index(0) { }
 
-    explicit const_iterator(const __node *front, const __node *rear) : __cur(front), __rear_top(0) { __load_rear(rear); }
+    explicit const_iterator(const __node *front, const __node *mid, usize ml, const __node *rear, usize rl)
+        : __cur(front), __back(__make_back(mid, ml, rear, rl)), __index(0)
+    {
+    }
+
+    const_iterator(const const_iterator &o) : __cur(o.__cur), __back(__retain_back(o.__back)), __index(o.__index) { }
+
+    const_iterator(const_iterator &&o) noexcept : __cur(o.__cur), __back(o.__back), __index(o.__index)
+    {
+      o.__cur = nullptr;
+      o.__back = nullptr;
+      o.__index = 0;
+    }
+
+    ~const_iterator() { __release_back(__back); }
+
+    const_iterator &
+    operator=(const const_iterator &o)
+    {
+      if ( this == micron::addr(o) ) return *this;
+      __release_back(__back);
+      __cur = o.__cur;
+      __back = __retain_back(o.__back);
+      __index = o.__index;
+      return *this;
+    }
+
+    const_iterator &
+    operator=(const_iterator &&o) noexcept
+    {
+      if ( this == micron::addr(o) ) return *this;
+      __release_back(__back);
+      __cur = o.__cur;
+      __back = o.__back;
+      __index = o.__index;
+      o.__cur = nullptr;
+      o.__back = nullptr;
+      o.__index = 0;
+      return *this;
+    }
 
     bool
     operator==(const const_iterator &o) const
     {
-      if ( __cur != o.__cur ) return false;
-      if ( __cur ) return true;      // both in front phase, same node
-      return __rear_top == o.__rear_top;
+      return __node_at() == o.__node_at();
     }
 
     bool
@@ -536,8 +708,7 @@ public:
     const T &
     value(void) const
     {
-      if ( __cur ) return __cur->value;
-      return __stack[__rear_top - 1]->value;
+      return __node_at()->value;
     }
 
     const T &
@@ -549,8 +720,7 @@ public:
     const T *
     operator->(void) const
     {
-      if ( __cur ) return micron::addressof(__cur->value);
-      return micron::addressof(__stack[__rear_top - 1]->value);
+      return micron::addressof(__node_at()->value);
     }
 
     const_iterator &
@@ -558,9 +728,8 @@ public:
     {
       if ( __cur ) {
         __cur = __cur->next;
-      } else if ( __rear_top > 0 ) {
-        --__rear_top;
-      }
+      } else if ( __back && __index < __back->count )
+        ++__index;
       return *this;
     }
 
@@ -580,7 +749,7 @@ public:
   {
     if ( empty() ) [[unlikely]]
       return const_iterator();
-    return const_iterator(__front, __rear);
+    return const_iterator(__front, __rotation_rear, __rotation_rear_len, __rear, __r_len);
   }
 
   const_iterator
