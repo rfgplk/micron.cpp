@@ -50,75 +50,128 @@ namespace __impl_smoothing
 //  y_hat     smoothed values
 //  q_t_g     (Q^T y) projected back to n-vector
 
-template<ieee754_floating F> struct reinsch_workspace {
-  vector<F> h;
-  vector<F> r_diag, r_d1;
-  vector<F> m_diag, m_d1, m_d2;
-  vector<F> rhs0;
-  vector<F> c_diag, c_d1, c_d2;
-  vector<F> gamma;
-  vector<F> z_diag, z_d1, z_d2;
-  vector<F> y_hat;
-  vector<F> q_t_g;
+template<ieee754_floating F> struct workspace_array {
+  F *ptr{ nullptr };
+  usize length{ 0 };
+
+  [[nodiscard, gnu::always_inline]] F *
+  data() noexcept
+  {
+    return ptr;
+  }
+
+  [[nodiscard, gnu::always_inline]] const F *
+  data() const noexcept
+  {
+    return ptr;
+  }
+
+  [[nodiscard, gnu::always_inline]] F &
+  operator[](usize i) noexcept
+  {
+    return ptr[i];
+  }
+
+  [[nodiscard, gnu::always_inline]] const F &
+  operator[](usize i) const noexcept
+  {
+    return ptr[i];
+  }
 };
+
+template<ieee754_floating F> struct reinsch_workspace {
+  vector<F> storage;
+  workspace_array<F> h, inv_h, inv_w;
+  workspace_array<F> r_diag, r_d1;
+  workspace_array<F> m_diag, m_d1, m_d2;
+  workspace_array<F> rhs0;
+  workspace_array<F> c_diag, c_d1, c_d2;
+  workspace_array<F> gamma;
+  workspace_array<F> z_diag, z_d1, z_d2;
+  workspace_array<F> y_hat;
+  workspace_array<F> q_t_g;
+};
+
+template<ieee754_floating F>
+inline void
+reinsch_update_rhs(reinsch_workspace<F> &ws, const F *__restrict__ ys, usize n) noexcept
+{
+  for ( usize i = 0; i + 2 < n; ++i ) {
+    const F qi = ws.inv_h[i];
+    const F qi1 = ws.inv_h[i + 1];
+    ws.rhs0[i] = qi * ys[i] - (qi + qi1) * ys[i + 1] + qi1 * ys[i + 2];
+  }
+}
 
 template<ieee754_floating F>
 inline void
 reinsch_precompute(reinsch_workspace<F> &ws, const F *__restrict__ xs, const F *__restrict__ ys, const F *w, bool uniform_w,
                    usize n) noexcept
 {
-  ws.h.reserve(n - 1);
-  ws.h.set_size(0);
-  for ( usize i = 0; i + 1 < n; ++i ) ws.h.emplace_back(xs[i + 1] - xs[i]);
-
   const usize m = n - 2;
-  auto fill_zero = [&](vector<F> &v, usize sz) {
-    v.reserve(sz);
-    v.set_size(0);
-    for ( usize i = 0; i < sz; ++i ) v.emplace_back(F(0));
+  const usize m1 = m ? m - 1 : 0;
+  const usize m2 = m > 1 ? m - 2 : 0;
+  const usize total = (n - 1) * 2 + n + m * 6 + m1 * 4 + m2 * 3 + n * 2;
+  ws.storage = vector<F>(total, F(0));
+  ws.storage.set_size(total);
+  usize offset = 0;
+  auto bind = [&](workspace_array<F> &array, usize size) {
+    array.ptr = ws.storage.data() + offset;
+    array.length = size;
+    offset += size;
   };
-  fill_zero(ws.r_diag, m);
-  fill_zero(ws.r_d1, m == 0 ? 0 : m - 1);
-  fill_zero(ws.m_diag, m);
-  fill_zero(ws.m_d1, m == 0 ? 0 : m - 1);
-  fill_zero(ws.m_d2, m < 2 ? 0 : m - 2);
-  fill_zero(ws.rhs0, m);
-  fill_zero(ws.c_diag, m);
-  fill_zero(ws.c_d1, m == 0 ? 0 : m - 1);
-  fill_zero(ws.c_d2, m < 2 ? 0 : m - 2);
-  fill_zero(ws.gamma, m);
-  fill_zero(ws.z_diag, m);
-  fill_zero(ws.z_d1, m == 0 ? 0 : m - 1);
-  fill_zero(ws.z_d2, m < 2 ? 0 : m - 2);
-  fill_zero(ws.y_hat, n);
-  fill_zero(ws.q_t_g, n);
+  bind(ws.h, n - 1);
+  bind(ws.inv_h, n - 1);
+  bind(ws.inv_w, n);
+  bind(ws.r_diag, m);
+  bind(ws.r_d1, m1);
+  bind(ws.m_diag, m);
+  bind(ws.m_d1, m1);
+  bind(ws.m_d2, m2);
+  bind(ws.rhs0, m);
+  bind(ws.c_diag, m);
+  bind(ws.c_d1, m1);
+  bind(ws.c_d2, m2);
+  bind(ws.gamma, m);
+  bind(ws.z_diag, m);
+  bind(ws.z_d1, m1);
+  bind(ws.z_d2, m2);
+  bind(ws.y_hat, n);
+  bind(ws.q_t_g, n);
+
+  for ( usize i = 0; i + 1 < n; ++i ) {
+    ws.h[i] = xs[i + 1] - xs[i];
+    ws.inv_h[i] = F(1) / ws.h[i];
+  }
+  for ( usize i = 0; i < n; ++i ) ws.inv_w[i] = uniform_w ? F(1) : F(1) / w[i];
 
   const F third = F(1) / F(3);
   const F sixth = F(1) / F(6);
-  auto invw = [&](usize k) -> F { return uniform_w ? F(1) : (F(1) / w[k]); };
 
   const F *__restrict__ h = ws.h.data();
+  const F *__restrict__ inv_h = ws.inv_h.data();
+  const F *__restrict__ inv_w = ws.inv_w.data();
   for ( usize i = 0; i + 2 < n; ++i ) {
     const F hi = h[i];
     const F hi1 = h[i + 1];
-    const F qi = F(1) / hi;
-    const F qi1 = F(1) / hi1;
+    const F qi = inv_h[i];
+    const F qi1 = inv_h[i + 1];
     const F qm = qi + qi1;
 
     ws.r_diag[i] = (hi + hi1) * third;
-    ws.m_diag[i] = qi * qi * invw(i) + qm * qm * invw(i + 1) + qi1 * qi1 * invw(i + 2);
+    ws.m_diag[i] = qi * qi * inv_w[i] + qm * qm * inv_w[i + 1] + qi1 * qi1 * inv_w[i + 2];
 
     if ( i + 3 < n ) {
       ws.r_d1[i] = hi1 * sixth;
       const F qj = qi1;
-      const F qjm = qi1 + F(1) / h[i + 2];
-      ws.m_d1[i] = -qm * qj * invw(i + 1) + qj * (-qjm) * invw(i + 2);
+      const F qjm = qi1 + inv_h[i + 2];
+      ws.m_d1[i] = -qm * qj * inv_w[i + 1] - qj * qjm * inv_w[i + 2];
     }
     if ( i + 4 < n ) {
-      ws.m_d2[i] = qi1 * (F(1) / h[i + 2]) * invw(i + 2);
+      ws.m_d2[i] = qi1 * inv_h[i + 2] * inv_w[i + 2];
     }
-    ws.rhs0[i] = qi * ys[i] - qm * ys[i + 1] + qi1 * ys[i + 2];
   }
+  reinsch_update_rhs<F>(ws, ys, n);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,54 +179,73 @@ reinsch_precompute(reinsch_workspace<F> &ws, const F *__restrict__ xs, const F *
 
 template<ieee754_floating F>
 [[nodiscard]] inline bool
-reinsch_solve_one_lambda(reinsch_workspace<F> &ws, const F *__restrict__ xs, const F *__restrict__ ys, const F *w, bool uniform_w, usize n,
-                         F lambda, bool need_trace, F *out_rss, F *out_tr) noexcept
+reinsch_factor_lambda(reinsch_workspace<F> &ws, usize n, F lambda) noexcept
 {
   const usize m = n - 2;
-
   for ( usize i = 0; i < m; ++i ) ws.c_diag[i] = ws.r_diag[i] + lambda * ws.m_diag[i];
-  if ( m >= 2 ) {
-    for ( usize i = 0; i + 1 < m; ++i ) ws.c_d1[i] = ws.r_d1[i] + lambda * ws.m_d1[i];
-  }
-  if ( m >= 3 ) {
-    for ( usize i = 0; i + 2 < m; ++i ) ws.c_d2[i] = lambda * ws.m_d2[i];
-  }
+  for ( usize i = 0; i + 1 < m; ++i ) ws.c_d1[i] = ws.r_d1[i] + lambda * ws.m_d1[i];
+  for ( usize i = 0; i + 2 < m; ++i ) ws.c_d2[i] = lambda * ws.m_d2[i];
+  return linalg::pent_spd_factor<F>(ws.c_d2.data(), ws.c_d1.data(), ws.c_diag.data(), m);
+}
 
-  if ( !linalg::pent_spd_factor<F>(ws.c_d2.data(), ws.c_d1.data(), ws.c_diag.data(), m) ) return false;
-
+template<ieee754_floating F>
+inline void
+reinsch_apply_factored(reinsch_workspace<F> &ws, const F *__restrict__ ys, usize n, F lambda, F *out_rss) noexcept
+{
+  const usize m = n - 2;
   for ( usize i = 0; i < m; ++i ) ws.gamma[i] = ws.rhs0[i];
   linalg::pent_spd_solve_factored<F>(ws.c_d2.data(), ws.c_d1.data(), ws.c_diag.data(), ws.gamma.data(), m);
 
-  const F *__restrict__ h = ws.h.data();
+  for ( usize k = 0; k < n; ++k ) ws.q_t_g[k] = F(0);
+  for ( usize i = 0; i < m; ++i ) {
+    const F value = ws.gamma[i];
+    const F qi = ws.inv_h[i];
+    const F qi1 = ws.inv_h[i + 1];
+    ws.q_t_g[i] = math::fma<F>(value, qi, ws.q_t_g[i]);
+    ws.q_t_g[i + 1] = math::fma<F>(-value, qi + qi1, ws.q_t_g[i + 1]);
+    ws.q_t_g[i + 2] = math::fma<F>(value, qi1, ws.q_t_g[i + 2]);
+  }
+  F rss = F(0);
   for ( usize k = 0; k < n; ++k ) {
-    F qty = F(0);
-    if ( k >= 2 && k - 2 < m ) qty += ws.gamma[k - 2] * (F(1) / h[k - 1]);
-    if ( k >= 1 && k - 1 < m ) qty += ws.gamma[k - 1] * (-(F(1) / h[k - 1] + F(1) / h[k]));
-    if ( k < m ) qty += ws.gamma[k] * (F(1) / h[k]);
-    ws.q_t_g[k] = qty;
-    const F invw = uniform_w ? F(1) : (F(1) / w[k]);
-    ws.y_hat[k] = ys[k] - lambda * invw * qty;
+    const F correction = lambda * ws.inv_w[k] * ws.q_t_g[k];
+    ws.y_hat[k] = ys[k] - correction;
+    rss = math::fma<F>(correction, correction, rss);
   }
+  if ( out_rss ) *out_rss = rss;
+}
 
-  F ssr = F(0);
-  for ( usize k = 0; k < n; ++k ) {
-    const F r = ys[k] - ws.y_hat[k];
-    ssr += r * r;
+template<ieee754_floating F>
+[[nodiscard]] inline F
+reinsch_trace_inverse_m(reinsch_workspace<F> &ws, usize n) noexcept
+{
+  const usize m = n - 2;
+  linalg::pent_spd_takahashi<F>(ws.c_d2.data(), ws.c_d1.data(), ws.c_diag.data(), m, ws.z_diag.data(), ws.z_d1.data(), ws.z_d2.data());
+  F t0 = F(0), t1 = F(0), t2 = F(0), t3 = F(0);
+  usize i = 0;
+  for ( ; i + 4 <= m; i += 4 ) {
+    t0 = math::fma<F>(ws.z_diag[i], ws.m_diag[i], t0);
+    t1 = math::fma<F>(ws.z_diag[i + 1], ws.m_diag[i + 1], t1);
+    t2 = math::fma<F>(ws.z_diag[i + 2], ws.m_diag[i + 2], t2);
+    t3 = math::fma<F>(ws.z_diag[i + 3], ws.m_diag[i + 3], t3);
   }
-  if ( out_rss ) *out_rss = ssr;
+  for ( ; i < m; ++i ) t0 = math::fma<F>(ws.z_diag[i], ws.m_diag[i], t0);
+  F trace = (t0 + t1) + (t2 + t3);
+  for ( usize j = 0; j + 1 < m; ++j ) trace += F(2) * ws.z_d1[j] * ws.m_d1[j];
+  for ( usize j = 0; j + 2 < m; ++j ) trace += F(2) * ws.z_d2[j] * ws.m_d2[j];
+  return trace;
+}
 
-  if ( need_trace ) {
-    linalg::pent_spd_takahashi<F>(ws.c_d2.data(), ws.c_d1.data(), ws.c_diag.data(), m, ws.z_diag.data(), ws.z_d1.data(), ws.z_d2.data());
-    F t = F(0);
-    for ( usize i = 0; i < m; ++i ) t += ws.z_diag[i] * ws.m_diag[i];
-    if ( m >= 2 ) {
-      for ( usize i = 0; i + 1 < m; ++i ) t += F(2) * ws.z_d1[i] * ws.m_d1[i];
-    }
-    if ( m >= 3 ) {
-      for ( usize i = 0; i + 2 < m; ++i ) t += F(2) * ws.z_d2[i] * ws.m_d2[i];
-    }
-    if ( out_tr ) *out_tr = t;
-  }
+template<ieee754_floating F>
+[[nodiscard]] inline bool
+reinsch_solve_one_lambda(reinsch_workspace<F> &ws, const F *__restrict__ xs, const F *__restrict__ ys, const F *w, bool uniform_w, usize n,
+                         F lambda, bool need_trace, F *out_rss, F *out_tr) noexcept
+{
+  (void)xs;
+  (void)w;
+  (void)uniform_w;
+  if ( !reinsch_factor_lambda<F>(ws, n, lambda) ) return false;
+  reinsch_apply_factored<F>(ws, ys, n, lambda, out_rss);
+  if ( need_trace && out_tr ) *out_tr = reinsch_trace_inverse_m<F>(ws, n);
   return true;
 }
 
@@ -370,14 +442,12 @@ make_adaptive_knots(raw_slice<const F> xs, raw_slice<const F> ys, F max_abs_err,
     F worst = F(0);
     usize worst_i = 0;
     bool found = false;
+    usize active_pos = 0;
     for ( usize i = 0; i < n; ++i ) {
-      bool present = false;
-      for ( usize j = 0; j < active.size(); ++j )
-        if ( active[j] == i ) {
-          present = true;
-          break;
-        }
-      if ( present ) continue;
+      if ( active_pos < active.size() && active[active_pos] == i ) {
+        ++active_pos;
+        continue;
+      }
       const F y_pred = evaluate<F>(result, xs[i]);
       const F err = (ys[i] >= y_pred) ? (ys[i] - y_pred) : (y_pred - ys[i]);
       if ( err > worst ) {

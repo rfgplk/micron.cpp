@@ -12,6 +12,7 @@
 #include "../bits/impl.hpp"
 #include "../ieee.hpp"
 #include "bits/impl.hpp"
+#include "bits/kernels.hpp"
 #include "concepts.hpp"
 #include "tags.hpp"
 
@@ -103,38 +104,53 @@ evaluate(const linear_1d<F> &s, const F *__restrict__ xq, F *__restrict__ out, u
     return;
   }
 
-  usize idx = s.last_hit <= ns - 2 ? s.last_hit : 0;
-  for ( usize i = 0; i < n; ++i ) {
-    const F x = xq[i];
+  const F left_slope = (ys[1] - ys[0]) / (xs[1] - xs[0]);
+  const F right_slope = (ys[ns - 1] - ys[ns - 2]) / (xs[ns - 1] - xs[ns - 2]);
+  usize query = 0;
+  while ( query < n && xq[query] <= xs[0] ) {
+    const F x = xq[query];
     if ( x <= xs[0] ) {
       if ( s.mode == extrap::error_value ) {
-        out[i] = F(0);
+        out[query] = F(0);
       } else if ( s.mode == extrap::clamp_to_endpoints ) {
-        out[i] = ys[0];
+        out[query] = ys[0];
       } else {
-        const F slope = (ys[1] - ys[0]) / (xs[1] - xs[0]);
-        out[i] = math::fma<F>(slope, x - xs[0], ys[0]);
+        out[query] = math::fma<F>(left_slope, x - xs[0], ys[0]);
       }
-      continue;
     }
+    ++query;
+  }
+
+  usize idx = 0;
+  if ( query < n && xq[query] < xs[ns - 1] ) idx = __impl_splines_bits::locate_segment<F>(xs, ns, xq[query], idx);
+  while ( query < n && xq[query] < xs[ns - 1] ) {
+    while ( idx + 1 < ns - 1 && xq[query] > xs[idx + 1] ) ++idx;
+    const usize begin = query;
+    while ( query < n && xq[query] < xs[ns - 1] && xq[query] <= xs[idx + 1] ) ++query;
+    const F slope = (ys[idx + 1] - ys[idx]) / (xs[idx + 1] - xs[idx]);
+    __spline_arch::linear_batch(xs[idx], ys[idx], slope, xq + begin, out + begin, query - begin);
+  }
+  while ( query < n ) {
+    const F x = xq[query];
     if ( x >= xs[ns - 1] ) {
       if ( s.mode == extrap::error_value ) {
-        out[i] = F(0);
+        out[query] = F(0);
       } else if ( s.mode == extrap::clamp_to_endpoints ) {
-        out[i] = ys[ns - 1];
+        out[query] = ys[ns - 1];
       } else {
-        const F slope = (ys[ns - 1] - ys[ns - 2]) / (xs[ns - 1] - xs[ns - 2]);
-        out[i] = math::fma<F>(slope, x - xs[ns - 1], ys[ns - 1]);
+        out[query] = math::fma<F>(right_slope, x - xs[ns - 1], ys[ns - 1]);
       }
-      continue;
     }
-    while ( idx + 1 < ns - 1 && x > xs[idx + 1] ) ++idx;
-    __builtin_prefetch(&xs[idx + 2]);
-    __builtin_prefetch(&ys[idx + 2]);
-    const F t = (x - xs[idx]) / (xs[idx + 1] - xs[idx]);
-    out[i] = math::fma<F>(t, ys[idx + 1] - ys[idx], ys[idx]);
+    ++query;
   }
-  s.last_hit = idx;
+  if ( n != 0 ) {
+    if ( xq[n - 1] <= xs[0] )
+      s.last_hit = 0;
+    else if ( xq[n - 1] >= xs[ns - 1] )
+      s.last_hit = ns - 2;
+    else
+      s.last_hit = idx;
+  }
 }
 
 };      // namespace splines

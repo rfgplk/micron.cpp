@@ -31,6 +31,37 @@ strictly_increasing(const F *__restrict__ x, usize n) noexcept
 }
 
 template<ieee754_floating F>
+[[gnu::always_inline]] inline void
+binary_advance(F knot, F query, usize candidate, usize &index) noexcept
+{
+#if defined(__OPTIMIZE__) && defined(__micron_arch_amd64)
+  if constexpr ( sizeof(F) == 8 ) {
+#if defined(__micron_x86_avx)
+    asm volatile("vucomisd %[knot], %[query]\n\t"
+#else
+    asm volatile("ucomisd %[knot], %[query]\n\t"
+#endif
+                 "cmovae %[candidate], %[index]"
+                 : [index] "+&r"(index)
+                 : [candidate] "r"(candidate), [knot] "x"(knot), [query] "x"(query)
+                 : "cc");
+  } else {
+#if defined(__micron_x86_avx)
+    asm volatile("vucomiss %[knot], %[query]\n\t"
+#else
+    asm volatile("ucomiss %[knot], %[query]\n\t"
+#endif
+                 "cmovae %[candidate], %[index]"
+                 : [index] "+&r"(index)
+                 : [candidate] "r"(candidate), [knot] "x"(knot), [query] "x"(query)
+                 : "cc");
+  }
+#else
+  if ( knot <= query ) index = candidate;
+#endif
+}
+
+template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline usize
 locate_segment(const F *__restrict__ xs, usize n, F x, usize &last) noexcept
 {
@@ -55,14 +86,32 @@ locate_segment(const F *__restrict__ xs, usize n, F x, usize &last) noexcept
     return i + 1;
   }
 
+#if defined(__OPTIMIZE__) && defined(__micron_arch_amd64)
+  usize lo = 0;
+  usize step = micron::bit_floor(last_seg);
+  if ( step != 0 && last_seg == (step << 1) - 1 ) {
+    for ( ; step != 0; step >>= 1 ) {
+      const usize candidate = lo + step;
+      binary_advance<F>(xs[candidate], x, candidate, lo);
+    }
+  } else {
+    for ( ; step != 0; step >>= 1 ) {
+      const usize unbounded = lo + step;
+      const usize candidate = unbounded < last_seg ? unbounded : last_seg;
+      binary_advance<F>(xs[candidate], x, candidate, lo);
+    }
+  }
+#else
   usize lo = 0;
   usize hi = n - 1;
   while ( hi - lo > 1 ) {
     const usize mid = lo + ((hi - lo) >> 1);
-    const bool right = xs[mid] <= x;
-    lo = right ? mid : lo;
-    hi = right ? hi : mid;
+    if ( xs[mid] <= x )
+      lo = mid;
+    else
+      hi = mid;
   }
+#endif
   last = lo;
   return lo;
 }
@@ -201,9 +250,10 @@ template<ieee754_floating F>
 is_sorted_nondecreasing(const F *__restrict__ x, usize n, usize probe = 8) noexcept
 {
   (void)probe;
-  if ( n < 2 ) return true;
+  if ( n == 0 ) return true;
+  if ( !(x[0] == x[0]) ) return false;
   for ( usize i = 1; i < n; ++i )
-    if ( x[i] < x[i - 1] ) return false;
+    if ( !(x[i] >= x[i - 1]) ) return false;
   return true;
 }
 

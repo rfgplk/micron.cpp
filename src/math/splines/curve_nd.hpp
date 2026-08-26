@@ -17,6 +17,7 @@
 #include "../linalg/banded.hpp"
 #include "../quants/vec.hpp"
 #include "bits/impl.hpp"
+#include "bits/kernels.hpp"
 #include "concepts.hpp"
 #include "cubic_1d.hpp"
 #include "tags.hpp"
@@ -179,32 +180,31 @@ inline bool
 build_cubic_curve_segments(const F *ts, const vec<F, D> *pts, usize n, bc_kind bc, const vec<F, D> &left_slope,
                            const vec<F, D> &right_slope, curve_seg<F, D> *seg_out) noexcept
 {
-
-  vector<F> M(n, F(0));
-  M.set_size(n);
-  vector<F> ys(n, F(0));
-  ys.set_size(n);
-  vector<poly_coeffs<F, 3>> seg_axis(n - 1, poly_coeffs<F, 3>{});
-  seg_axis.set_size(n - 1);
-
-  for ( usize i = 0; i + 1 < n; ++i ) {
-    for ( usize d = 0; d < D; ++d ) {
-      seg_out[i].a.data[d] = F(0);
-      seg_out[i].b.data[d] = F(0);
-      seg_out[i].c.data[d] = F(0);
-      seg_out[i].d.data[d] = F(0);
-    }
-  }
-
+  __impl_cubic_1d::cubic_system_factor<F> factor;
+  if ( !__impl_cubic_1d::factor_cubic_system<F>(ts, n, bc, factor) ) return false;
+  vector<F> workspace(D * n * 2, F(0));
+  workspace.set_size(D * n * 2);
+  F *values = workspace.data();
+  F *moments = workspace.data() + D * n;
   for ( usize d = 0; d < D; ++d ) {
-    for ( usize i = 0; i < n; ++i ) ys[i] = pts[i].data[d];
-    if ( !__impl_cubic_1d::solve_cubic_M<F>(ts, ys.data(), n, bc, left_slope.data[d], right_slope.data[d], M.data()) ) return false;
-    __impl_splines_bits::build_cubic_segments<F>(ts, ys.data(), M.data(), seg_axis.data(), n);
-    for ( usize i = 0; i + 1 < n; ++i ) {
-      seg_out[i].a.data[d] = seg_axis[i].data[0];
-      seg_out[i].b.data[d] = seg_axis[i].data[1];
-      seg_out[i].c.data[d] = seg_axis[i].data[2];
-      seg_out[i].d.data[d] = seg_axis[i].data[3];
+    F *axis_values = values + d * n;
+    F *axis_moments = moments + d * n;
+    for ( usize i = 0; i < n; ++i ) axis_values[i] = pts[i].data[d];
+    __impl_cubic_1d::solve_cubic_factored<F>(factor, ts, axis_values, n, left_slope.data[d], right_slope.data[d], axis_moments);
+  }
+  const F sixth = F(1) / F(6);
+  for ( usize i = 0; i + 1 < n; ++i ) {
+    const F h = ts[i + 1] - ts[i];
+    const F inv_h = F(1) / h;
+    for ( usize d = 0; d < D; ++d ) {
+      const F *axis_values = values + d * n;
+      const F *axis_moments = moments + d * n;
+      const F m0 = axis_moments[i];
+      const F m1 = axis_moments[i + 1];
+      seg_out[i].a.data[d] = axis_values[i];
+      seg_out[i].b.data[d] = (axis_values[i + 1] - axis_values[i]) * inv_h - h * (F(2) * m0 + m1) * sixth;
+      seg_out[i].c.data[d] = F(0.5) * m0;
+      seg_out[i].d.data[d] = (m1 - m0) * inv_h * sixth;
     }
   }
   return true;
@@ -286,11 +286,7 @@ evaluate(const cubic_curve_nd<F, D> &c, F t) noexcept
   const F u = t - ts[i];
   const auto &p = seg[i];
   vec<F, D> r{};
-  for ( usize d = 0; d < D; ++d ) {
-    F v = math::fma<F>(p.d.data[d], u, p.c.data[d]);
-    v = math::fma<F>(v, u, p.b.data[d]);
-    r.data[d] = math::fma<F>(v, u, p.a.data[d]);
-  }
+  __spline_arch::curve_horner(p.a.data, p.b.data, p.c.data, p.d.data, u, r.data, D);
   return r;
 }
 
@@ -376,11 +372,7 @@ evaluate(const regular_cubic_curve_nd<F, D> &c, F t) noexcept
   const F u = t - (c.t0 + c.dt * F(i));
   const auto &p = seg[i];
   vec<F, D> r{};
-  for ( usize d = 0; d < D; ++d ) {
-    F v = math::fma<F>(p.d.data[d], u, p.c.data[d]);
-    v = math::fma<F>(v, u, p.b.data[d]);
-    r.data[d] = math::fma<F>(v, u, p.a.data[d]);
-  }
+  __spline_arch::curve_horner(p.a.data, p.b.data, p.c.data, p.d.data, u, r.data, D);
   return r;
 }
 

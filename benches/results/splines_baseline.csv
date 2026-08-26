@@ -1,0 +1,60 @@
+# micron spline construction and evaluation baseline
+# captured: 2026-08-26
+# host: Intel Core i7-5960X (Haswell-E), amd64, --isa native
+# caches: 32 KiB L1D/core, 256 KiB L2/core, 20 MiB shared L3
+# toolchain: GCC 16.2.1 20260819; Linux 7.1.9-200.fc44.x86_64
+# build: duck build benches/splines_bench.cpp -i . --perf --fp --no-ssp --no-lto -o bin/splines-bench-final -f
+# run: taskset -c 2 bin/splines-bench-final/splines_bench
+# estimator: median of 9 core-event and 9 cache-event samples
+group,operation,cycles_per_op,instructions_per_op,ipc,branches_per_op,branch_miss_percent,l1d_loads_per_op,l1d_miss_percent,llc_misses_per_op,dtlb_misses_per_op
+scalar_random,constant nearest,123.852,136.368,1.101,30.916,2.756,19.922,0.534,0.000,0.000
+scalar_random,nearest,114.971,102.551,0.892,24.402,3.334,19.930,0.504,0.000,0.000
+scalar_random,linear,90.580,107.539,1.187,23.911,1.476,20.929,0.465,0.000,0.000
+scalar_random,quadratic,91.993,116.881,1.271,25.028,1.320,20.908,0.642,0.000,0.000
+scalar_random,cubic not-a-knot,86.556,96.535,1.115,20.914,1.636,20.928,0.614,0.000,0.000
+scalar_random,PCHIP,86.372,96.535,1.118,20.914,1.640,20.928,0.626,0.000,0.000
+scalar_random,Akima,86.308,96.535,1.118,20.914,1.641,20.928,0.619,0.000,0.000
+scalar_random,Makima,86.348,96.535,1.118,20.914,1.638,20.927,0.638,0.000,0.000
+scalar_random,cardinal,86.992,96.535,1.110,20.914,1.664,20.927,0.621,0.000,0.000
+scalar_random,Steffen,87.094,96.535,1.108,20.914,1.645,20.927,0.643,0.000,0.000
+scalar_random,quintic Hermite,95.913,117.880,1.229,26.028,1.287,29.918,0.505,0.000,0.000
+scalar_random,piecewise power,98.446,137.891,1.401,30.038,1.114,28.919,0.463,0.000,0.000
+scalar_random,periodic cubic,95.889,132.052,1.377,28.914,2.157,20.928,0.642,0.000,0.000
+scalar_random,B-spline degree 1,109.319,154.226,1.411,29.934,1.145,32.882,0.185,0.000,0.000
+scalar_random,B-spline degree 2,139.610,179.231,1.284,30.931,1.132,37.882,0.192,0.000,0.000
+scalar_random,B-spline degree 3,158.511,201.127,1.269,34.917,1.005,38.870,0.197,0.000,0.000
+scalar_random,B-spline degree 5,288.360,432.085,1.498,63.914,0.548,87.869,0.106,0.000,0.000
+sorted_batch,L1 1K cubic legacy scalar,10.247,34.443,3.361,9.357,0.011,7.259,0.301,0.000,0.000
+sorted_batch,L1 1K cubic SIMD batch,9.693,33.651,3.472,8.392,0.035,5.519,0.489,0.000,0.000
+sorted_batch,L1 1K cubic streaming stores,13.116,48.091,3.667,11.140,0.018,8.924,0.320,0.000,0.000
+sorted_batch,L1 1K linear SIMD batch,8.679,32.168,3.706,8.394,0.024,5.028,0.145,0.000,0.000
+sorted_batch,L2 16K cubic legacy scalar,8.199,31.132,3.797,8.056,0.197,7.012,3.716,0.000,0.000
+sorted_batch,L2 16K cubic SIMD batch,4.290,13.431,3.131,3.681,0.011,2.548,15.155,0.000,0.000
+sorted_batch,L2 16K cubic streaming stores,4.485,14.310,3.191,3.743,0.006,2.878,9.055,0.000,0.000
+sorted_batch,L2 16K linear SIMD batch,4.009,12.635,3.152,3.681,0.006,2.517,15.124,0.000,0.000
+sorted_batch,memory 1M cubic legacy scalar,7.864,30.915,3.931,7.971,0.004,6.996,3.588,0.000,0.000
+sorted_batch,memory 1M cubic SIMD batch,5.734,11.961,2.086,3.287,0.023,2.375,20.676,0.000,0.000
+sorted_batch,memory 1M cubic streaming stores,4.701,11.790,2.508,3.288,0.022,2.381,11.843,0.000,0.000
+sorted_batch,memory 1M linear SIMD batch,5.775,11.210,1.941,3.287,0.018,2.374,20.658,0.000,0.000
+curve_tensor,cubic curve D=6,105.540,126.870,1.202,23.027,1.444,31.878,7.912,0.000,0.000
+curve_tensor,regular cubic curve D=6,15.342,28.505,1.858,6.001,0.006,4.959,45.148,0.000,0.000
+curve_tensor,packed cubic curve D=6,107.503,127.878,1.190,23.027,1.461,32.910,5.291,0.000,0.000
+curve_tensor,B-spline curve D=6,200.026,286.233,1.431,41.881,2.669,70.092,0.310,0.000,0.000
+curve_tensor,NURBS curve D=6,201.401,294.093,1.460,47.405,1.787,66.844,0.463,0.000,0.000
+curve_tensor,Bezier degree 7 D=6,129.691,376.003,2.899,68.001,0.001,51.001,0.134,0.000,0.000
+curve_tensor,rational Bezier degree 7 D=6,237.173,590.002,2.488,64.001,0.001,110.001,0.080,0.000,0.000
+curve_tensor,tensor B-spline surface 4x4,314.139,409.343,1.303,70.280,5.225,97.652,0.409,0.000,0.000
+curve_tensor,tensor NURBS surface 4x4,339.745,455.343,1.340,74.280,4.798,103.651,0.401,0.000,0.000
+curve_tensor,tensor B-spline volume 4x4x4,535.203,796.677,1.489,139.914,4.343,164.470,0.368,0.000,0.000
+construction,cubic construction,89.747,81.206,0.905,10.424,0.115,20.563,6.035,0.000,0.000
+construction,cubic curve D=6 shared solve,321.164,265.339,0.826,13.921,0.263,84.964,27.792,0.000,0.000
+construction,B-spline interpolation,205.883,468.840,2.277,88.847,0.054,64.970,2.095,0.000,0.000
+construction,B-spline curve D=6 shared LU,352.893,698.820,1.980,106.188,0.052,125.714,6.421,0.000,0.000
+construction,smoothing lambda=.02,241.407,186.266,0.772,18.759,0.152,63.412,15.173,0.000,0.000
+construction,smoothing curve D=6 shared factors,772.778,640.336,0.829,47.026,0.192,231.514,22.753,0.000,0.000
+construction,LSQ B-spline 4K->64,1107.434,488.751,0.441,88.681,3.411,73.354,0.679,0.000,0.000
+construction,knot insertion degree 3,12.022,35.764,2.975,7.621,0.001,5.969,0.442,0.000,0.000
+helpers,arc sample legacy reintegration,886194.631,365250.662,0.412,78491.446,2.073,61555.092,2.487,0.000,0.000
+helpers,arc sample cumulative table,3140.051,1609.265,0.512,325.298,1.772,367.114,4.767,0.000,0.000
+helpers,B-curve derivative legacy materialize,14010.750,20133.422,1.437,3486.859,0.117,3292.469,3.710,0.000,0.000
+helpers,B-curve derivative direct basis,784.436,952.211,1.214,134.987,0.655,233.291,0.222,0.000,0.000

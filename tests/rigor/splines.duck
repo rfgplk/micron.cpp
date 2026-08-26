@@ -1,0 +1,33 @@
+# math::splines legacy compatibility and additive-family rigor
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# native correctness and fixed-seed oracles
+test tests/rigor/math_splines_1d.cpp             -o bin/splines/native --timeout 180 -f
+test tests/rigor/math_splines_bspline.cpp        -o bin/splines/native --timeout 180 -f
+test tests/rigor/math_splines_curve.cpp          -o bin/splines/native --timeout 180 -f
+test tests/rigor/math_splines_smoothing.cpp      -o bin/splines/native --timeout 180 -f
+test tests/rigor/math_splines_piecewise_ext.cpp  -o bin/splines/native --timeout 180 -f
+test tests/rigor/math_splines_rational.cpp       -o bin/splines/native --timeout 180 -f
+test tests/rigor/math_splines_tensor.cpp         -o bin/splines/native --timeout 180 -f
+test tests/rigor/math_splines_extensions_fuzz.cpp -o bin/splines/native --timeout 180 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# portable x86 and compiler cells
+test tests/rigor/math_splines_extensions_fuzz.cpp -o bin/splines/o2 -O2 --timeout 180 -f
+test tests/rigor/math_splines_extensions_fuzz.cpp --clang -o bin/splines/clang -O2 --timeout 180 -f
+test tests/rigor/math_splines_extensions_fuzz.cpp -o bin/splines/base --isa base --timeout 180 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# sanitizer cells
+test tests/rigor/math_splines_extensions_fuzz.cpp -o bin/splines/asan --asan -O1 --timeout 300 -f
+test tests/rigor/math_splines_extensions_fuzz.cpp -o bin/splines/ubsan --ubsan -O1 --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# ABI and portable SIMD compile gates
+compile tests/compiletests/math_splines_abi.cpp --x86 --isa base -O2 --raw-obj -o bin/splines/abi-base -f
+compile tests/compiletests/math_splines_abi.cpp --i386 -O2 --raw-obj -o bin/splines/abi-i386 -f
+compile tests/compiletests/math_splines_abi.cpp --arm -O2 --raw-obj -o bin/splines/abi-arm32 -f
+compile tests/compiletests/math_splines_abi.cpp --arm64 -O2 --raw-obj -o bin/splines/abi-arm64 -f
+compile tests/rigor/math_splines_extensions_fuzz.cpp --i386 -O2 --raw-obj -o bin/splines/i386 -f
+test tests/rigor/math_splines_extensions_fuzz.cpp --arm -s -O2 -o bin/splines/arm32 --timeout 300 -f
+test tests/rigor/math_splines_extensions_fuzz.cpp --arm64 -s -O2 -o bin/splines/arm64 --timeout 300 -f

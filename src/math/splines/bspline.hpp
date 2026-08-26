@@ -17,6 +17,7 @@
 #include "../ieee.hpp"
 #include "../linalg/banded.hpp"
 #include "bits/impl.hpp"
+#include "bits/kernels.hpp"
 #include "concepts.hpp"
 #include "tags.hpp"
 
@@ -91,10 +92,66 @@ make_uniform_clamped_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept
 namespace __impl_bspline
 {
 
+template<u32 Degree, ieee754_floating F>
+[[gnu::always_inline]] inline void
+bspline_basis_fixed(const F *__restrict__ u, usize k, F x, F *__restrict__ B) noexcept
+{
+  F left[Degree + 1];
+  F right[Degree + 1];
+  B[0] = F(1);
+  for ( u32 j = 1; j <= Degree; ++j ) {
+    left[j] = x - u[k + 1 - j];
+    right[j] = u[k + j] - x;
+    F saved = F(0);
+    for ( u32 r = 0; r < j; ++r ) {
+      const F denom = right[r + 1] + left[j - r];
+      const F temp = denom > F(0) ? B[r] / denom : F(0);
+      B[r] = math::fma<F>(right[r + 1], temp, saved);
+      saved = left[j - r] * temp;
+    }
+    B[j] = saved;
+  }
+}
+
+template<u32 Degree, ieee754_floating F>
+[[gnu::always_inline]] inline void
+bspline_basis_fixed_prepared(const F *__restrict__ u, usize k, F x, const F *__restrict__ inverse, F *__restrict__ B) noexcept
+{
+  F left[Degree + 1];
+  F right[Degree + 1];
+  usize inverse_index = 0;
+  B[0] = F(1);
+  for ( u32 j = 1; j <= Degree; ++j ) {
+    left[j] = x - u[k + 1 - j];
+    right[j] = u[k + j] - x;
+    F saved = F(0);
+    for ( u32 r = 0; r < j; ++r ) {
+      const F temp = B[r] * inverse[inverse_index++];
+      B[r] = math::fma<F>(right[r + 1], temp, saved);
+      saved = left[j - r] * temp;
+    }
+    B[j] = saved;
+  }
+}
+
 template<ieee754_floating F>
 [[gnu::always_inline]] inline void
 bspline_basis(const F *__restrict__ u, usize k, u32 p, F x, F *__restrict__ B) noexcept
 {
+  switch ( p ) {
+  case 1:
+    return bspline_basis_fixed<1, F>(u, k, x, B);
+  case 2:
+    return bspline_basis_fixed<2, F>(u, k, x, B);
+  case 3:
+    return bspline_basis_fixed<3, F>(u, k, x, B);
+  case 4:
+    return bspline_basis_fixed<4, F>(u, k, x, B);
+  case 5:
+    return bspline_basis_fixed<5, F>(u, k, x, B);
+  default:
+    break;
+  }
   F left[bspline_max_degree + 1];
   F right[bspline_max_degree + 1];
   B[0] = F(1);
@@ -111,6 +168,85 @@ bspline_basis(const F *__restrict__ u, usize k, u32 p, F x, F *__restrict__ B) n
     }
     B[j] = saved;
   }
+}
+
+template<ieee754_floating F>
+[[gnu::always_inline]] inline void
+bspline_basis_prepared(const F *__restrict__ u, usize k, u32 p, F x, const F *__restrict__ inverse, F *__restrict__ B) noexcept
+{
+  switch ( p ) {
+  case 1:
+    return bspline_basis_fixed_prepared<1, F>(u, k, x, inverse, B);
+  case 2:
+    return bspline_basis_fixed_prepared<2, F>(u, k, x, inverse, B);
+  case 3:
+    return bspline_basis_fixed_prepared<3, F>(u, k, x, inverse, B);
+  case 4:
+    return bspline_basis_fixed_prepared<4, F>(u, k, x, inverse, B);
+  case 5:
+    return bspline_basis_fixed_prepared<5, F>(u, k, x, inverse, B);
+  default:
+    break;
+  }
+  F left[bspline_max_degree + 1];
+  F right[bspline_max_degree + 1];
+  usize inverse_index = 0;
+  B[0] = F(1);
+  for ( u32 j = 1; j <= p; ++j ) {
+    left[j] = x - u[k + 1 - j];
+    right[j] = u[k + j] - x;
+    F saved = F(0);
+    for ( u32 r = 0; r < j; ++r ) {
+      const F temp = B[r] * inverse[inverse_index++];
+      B[r] = math::fma<F>(right[r + 1], temp, saved);
+      saved = left[j - r] * temp;
+    }
+    B[j] = saved;
+  }
+}
+
+[[nodiscard, gnu::always_inline]] inline constexpr usize
+basis_inverse_width(u32 degree) noexcept
+{
+  return usize(degree) * usize(degree + 1) / 2;
+}
+
+template<ieee754_floating F>
+inline void
+prepare_basis_inverse(const F *__restrict__ knots, usize n_ctrl, u32 degree, vector<F> &out) noexcept
+{
+  out.set_size(0);
+  if ( degree == 0 || n_ctrl <= degree ) return;
+  const usize width = basis_inverse_width(degree);
+  out = vector<F>((n_ctrl - degree) * width, F(0));
+  out.set_size((n_ctrl - degree) * width);
+  usize index = 0;
+  for ( usize span = degree; span < n_ctrl; ++span )
+    for ( u32 j = 1; j <= degree; ++j )
+      for ( u32 r = 0; r < j; ++r ) {
+        out[index++] = knots[span + r + 1] - knots[span + r + 1 - j];
+      }
+  __spline_arch::positive_reciprocal_in_place(out.data(), out.size());
+}
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline const F *
+basis_inverse_for(const vector<F> &inverse, usize span, u32 degree) noexcept
+{
+  return inverse.data() + (span - degree) * basis_inverse_width(degree);
+}
+
+template<ieee754_floating F>
+[[gnu::always_inline]] inline void
+bspline_basis_cached(const F *__restrict__ knots, usize n_ctrl, usize span, u32 degree, F x, const vector<F> &inverse,
+                     F *__restrict__ basis) noexcept
+{
+  const usize expected = (n_ctrl - degree) * basis_inverse_width(degree);
+  if ( inverse.size() == expected ) {
+    bspline_basis_prepared<F>(knots, span, degree, x, basis_inverse_for<F>(inverse, span, degree), basis);
+    return;
+  }
+  bspline_basis<F>(knots, span, degree, x, basis);
 }
 
 template<ieee754_floating F>
@@ -132,16 +268,55 @@ bspline_span(const F *u, usize n_ctrl, u32 degree, F x, usize &last) noexcept
       return last;
     }
   }
+#if defined(__OPTIMIZE__) && defined(__micron_arch_amd64)
+  if ( n_ctrl >= 32 ) {
+    usize lo = degree;
+    const usize max_delta = n_ctrl - 1 - degree;
+    usize step = micron::bit_floor(max_delta);
+    if ( step != 0 && max_delta == (step << 1) - 1 ) {
+      for ( ; step != 0; step >>= 1 ) {
+        const usize candidate = lo + step;
+        __impl_splines_bits::binary_advance<F>(u[candidate], x, candidate, lo);
+      }
+    } else {
+      for ( ; step != 0; step >>= 1 ) {
+        const usize unbounded = lo + step;
+        const usize candidate = unbounded < n_ctrl ? unbounded : n_ctrl - 1;
+        __impl_splines_bits::binary_advance<F>(u[candidate], x, candidate, lo);
+      }
+    }
+    last = lo;
+    return lo;
+  }
+#endif
   usize lo = degree;
   usize hi = n_ctrl;
   while ( hi - lo > 1 ) {
     const usize mid = lo + ((hi - lo) >> 1);
-    const bool right = u[mid] <= x;
-    lo = right ? mid : lo;
-    hi = right ? hi : mid;
+    if ( u[mid] <= x )
+      lo = mid;
+    else
+      hi = mid;
   }
   last = lo;
   return lo;
+}
+
+template<u32 Degree, ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline F
+deboor_fixed(const F *__restrict__ knots, const F *__restrict__ ctrl, usize span, F x) noexcept
+{
+  F d[Degree + 1];
+  for ( u32 j = 0; j <= Degree; ++j ) d[j] = ctrl[span - Degree + j];
+  for ( u32 r = 1; r <= Degree; ++r ) {
+    for ( u32 j = Degree; j >= r; --j ) {
+      const F lo = knots[span + j - Degree];
+      const F denom = knots[span + 1 + j - r] - lo;
+      const F alpha = denom > F(0) ? (x - lo) / denom : F(0);
+      d[j] = math::fma<F>(alpha, d[j] - d[j - 1], d[j - 1]);
+    }
+  }
+  return d[Degree];
 }
 
 };      // namespace __impl_bspline
@@ -161,6 +336,21 @@ evaluate(const bspline<F> &s, F x) noexcept
   if ( x < u[p] ) x = u[p];
   if ( x > u[n_ctrl] ) x = u[n_ctrl];
   const usize k = __impl_bspline::bspline_span<F>(u, n_ctrl, p, x, s.last_hit);
+
+  switch ( p ) {
+  case 1:
+    return __impl_bspline::deboor_fixed<1, F>(u, P, k, x);
+  case 2:
+    return __impl_bspline::deboor_fixed<2, F>(u, P, k, x);
+  case 3:
+    return __impl_bspline::deboor_fixed<3, F>(u, P, k, x);
+  case 4:
+    return __impl_bspline::deboor_fixed<4, F>(u, P, k, x);
+  case 5:
+    return __impl_bspline::deboor_fixed<5, F>(u, P, k, x);
+  default:
+    break;
+  }
 
   F d[bspline_max_degree + 1];
   for ( u32 j = 0; j <= p; ++j ) d[j] = P[k - p + j];

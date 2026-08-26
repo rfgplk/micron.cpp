@@ -87,7 +87,29 @@ template<ieee754_floating F>
 inline void
 evaluate(const nearest_1d<F> &s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
 {
-  for ( usize i = 0; i < n; ++i ) out[i] = evaluate<F>(s, xq[i]);
+  if ( !__impl_splines_bits::is_sorted_nondecreasing<F>(xq, n) || s.xs.size() < 2 ) {
+    for ( usize i = 0; i < n; ++i ) out[i] = evaluate<F>(s, xq[i]);
+    return;
+  }
+  const usize ns = s.xs.size();
+  const F *xs = s.xs.data();
+  const F *ys = s.ys.data();
+  usize segment = 0;
+  for ( usize i = 0; i < n; ++i ) {
+    const F x = xq[i];
+    if ( x <= xs[0] ) {
+      out[i] = s.mode == extrap::error_value ? F(0) : ys[0];
+      continue;
+    }
+    if ( x >= xs[ns - 1] ) {
+      out[i] = s.mode == extrap::error_value ? F(0) : ys[ns - 1];
+      segment = ns - 2;
+      continue;
+    }
+    while ( segment + 1 < ns - 1 && x > xs[segment + 1] ) ++segment;
+    out[i] = ((x + x) < (xs[segment] + xs[segment + 1])) ? ys[segment] : ys[segment + 1];
+  }
+  if ( n ) s.last_hit = segment;
 }
 
 };      // namespace splines
