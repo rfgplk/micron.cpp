@@ -111,44 +111,42 @@ normal_ziggurat(Rng &g, F mu = F(0), F sigma = F(1)) noexcept
   const u64 *__restrict__ kt = mkbits::ziggurat.k;
   const f64 R = mkbits::ziggurat_tables::R;
 
-  u64 u = g.next();
-  i64 hz = i64(u >> 11);      // 53-bit signed magnitude
-  if ( u & 1ULL ) hz = -hz;
+  u64 u = rng::__impl::next64(g);
+  i64 hz = i64(u >> 11);
+  const i64 sign = -i64(u & 1ULL);
+  hz = (hz ^ sign) - sign;
   u64 iz = (u >> 1) & 0xFFULL;
   u64 ahz = u64(hz < 0 ? -hz : hz);
 
   if ( ahz < kt[iz] ) [[likely]]
     return F(mu + sigma * F(f64(hz) * wt[iz]));
 
-  // slow path: tail (iz == 0) or wedge rejection
   for ( ;; ) {
     f64 x = f64(hz) * wt[iz];
     if ( iz == 0 ) {
-      // exponential-tail fallback for the base strip
       f64 xt;
       f64 yt;
       do {
-        f64 u1 = (g.next() >> 11) * (1.0 / 9007199254740992.0);
-        f64 u2 = (g.next() >> 11) * (1.0 / 9007199254740992.0);
-        if ( u1 <= 0.0 ) u1 = 1e-300;
-        if ( u2 <= 0.0 ) u2 = 1e-300;
+        const u64 r1 = ((rng::__impl::next64(g) >> 12) << 1) | 1ULL;
+        const u64 r2 = ((rng::__impl::next64(g) >> 12) << 1) | 1ULL;
+        const f64 u1 = r1 * 0x1.0p-53;
+        const f64 u2 = r2 * 0x1.0p-53;
         xt = -math::mkbits::log_ns::log_f64(u1) / R;
         yt = -math::mkbits::log_ns::log_f64(u2);
       } while ( yt + yt < xt * xt );
       f64 v = (hz > 0) ? (R + xt) : -(R + xt);
       return F(mu + sigma * F(v));
     }
-    // wedge
-    f64 u1 = (g.next() >> 11) * (1.0 / 9007199254740992.0);
+    const f64 u1 = (rng::__impl::next64(g) >> 11) * 0x1.0p-53;
     f64 fy = ft[iz] + u1 * (ft[iz - 1] - ft[iz]);
     f64 ax = x < 0 ? -x : x;
     f64 phi_x = math::mkbits::exp_ns::exp_f64(-ax * ax * 0.5);
     if ( fy < phi_x ) return F(mu + sigma * F(x));
 
-    // rejected
-    u = g.next();
+    u = rng::__impl::next64(g);
     hz = i64(u >> 11);
-    if ( u & 1ULL ) hz = -hz;
+    const i64 retry_sign = -i64(u & 1ULL);
+    hz = (hz ^ retry_sign) - retry_sign;
     iz = (u >> 1) & 0xFFULL;
     ahz = u64(hz < 0 ? -hz : hz);
     if ( ahz < kt[iz] ) return F(mu + sigma * F(f64(hz) * wt[iz]));

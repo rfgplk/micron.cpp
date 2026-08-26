@@ -36,7 +36,7 @@ rdseed64(u64 &out) noexcept
 seed_from_hw() noexcept
 {
   u64 a = 0, b = 0, c = 0, d = 0;
-  const bool got = rdrand64(a) && rdrand64(b) && rdrand64(c) && rdrand64(d);
+  const bool got = rdrand64(a) && rdrand64(b) && rdrand64(c) && rdrand64(d) && ((a | b | c | d) != 0);
   if ( !got ) {
     micron::timespec_t __ts{};
     (void)micron::clock_gettime(micron::clock_monotonic, __ts);
@@ -44,7 +44,7 @@ seed_from_hw() noexcept
     micron::timespec_t __rt{};
     (void)micron::clock_gettime(micron::clock_realtime, __rt);
     mix ^= (static_cast<u64>(__rt.tv_sec) << 20) ^ static_cast<u64>(__rt.tv_nsec);
-    mix ^= reinterpret_cast<u64>(&__ts);      // ASLR contributes a few bits too
+    mix ^= static_cast<u64>(reinterpret_cast<uintptr_t>(&__ts));
     if constexpr ( __asm_op::rdtsc64_available ) mix ^= __asm_op::rdtsc64();
     splitmix64 sm{ mix ^ 0xa5a5a5a5a5a5a5a5ULL };
     a = sm.next();

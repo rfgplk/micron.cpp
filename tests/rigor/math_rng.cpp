@@ -131,7 +131,7 @@ main()
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // normal
-  test_case("normal (Marsaglia polar) — mean ≈ 0, var ≈ 1");
+  test_case("normal (default Ziggurat) — mean ≈ 0, var ≈ 1");
   {
     auto g = rng::xoshiro256ss::from_seed(11);
     int N = 50000;

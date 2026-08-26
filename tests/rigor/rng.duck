@@ -1,0 +1,34 @@
+# math::rng engine and distribution rigor
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# native throughput configuration
+test tests/rigor/math_rng_engines.cpp       -o bin/rng/native --timeout 180 -f
+test tests/rigor/math_rng_distributions.cpp -o bin/rng/native --timeout 180 -f
+test tests/rigor/math_rng.cpp               -o bin/rng/native --timeout 180 -f
+test tests/rigor/math_dist.cpp              -o bin/rng/native --timeout 180 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# IEEE-honest and x86-64-v1 cells
+test tests/rigor/math_rng_engines.cpp       -o bin/rng/o2 -O2 --timeout 180 -f
+test tests/rigor/math_rng_distributions.cpp -o bin/rng/o2 -O2 --timeout 180 -f
+test tests/rigor/math_rng_engines.cpp       --clang -o bin/rng/clang -O2 --timeout 180 -f
+test tests/rigor/math_rng_distributions.cpp --clang -o bin/rng/clang -O2 --timeout 180 -f
+test tests/rigor/math_rng_engines.cpp       -o bin/rng/base --isa base --timeout 180 -f
+test tests/rigor/math_rng_distributions.cpp -o bin/rng/base --isa base --timeout 180 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# sanitizer cells
+test tests/rigor/math_rng_engines.cpp       -o bin/rng/asan --asan --timeout 300 -f
+test tests/rigor/math_rng_distributions.cpp -o bin/rng/asan --asan --timeout 300 -f
+test tests/rigor/math_rng_engines.cpp       -o bin/rng/ubsan --ubsan --timeout 300 -f
+test tests/rigor/math_rng_distributions.cpp -o bin/rng/ubsan --ubsan --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# portable scalar/NEON implementations under qemu
+# i386 is compile-only: no hosted multilib or qemu-i386 is required.
+compile tests/rigor/math_rng_engines.cpp --i386 --raw-obj -o bin/rng/i386 -f
+compile tests/rigor/math_rng_distributions.cpp --i386 --raw-obj -o bin/rng/i386 -f
+test tests/rigor/math_rng_engines.cpp --arm -s -o bin/rng/arm32 --timeout 300 -f
+test tests/rigor/math_rng_distributions.cpp --arm -s -o bin/rng/arm32 --timeout 300 -f
+test tests/rigor/math_rng_engines.cpp --arm64 -s -o bin/rng/arm64 --timeout 300 -f
+test tests/rigor/math_rng_distributions.cpp --arm64 -s -o bin/rng/arm64 --timeout 300 -f

@@ -207,10 +207,14 @@ main()
   {
     f64 alpha[3] = { 1.0, 1.0, 1.0 };
     dirichlet_dist<f64> d(alpha, 3);
+    dirichlet_dist<f64, 3> fixed(alpha);
     f64 out[3] = { 0 };
     d(g, out);
     require_true(near(out[0] + out[1] + out[2], 1.0, 1e-12));
     require_true(out[0] > 0 && out[1] > 0 && out[2] > 0);
+    fixed(g, out);
+    require_true(near(out[0] + out[1] + out[2], 1.0, 1e-12));
+    require_true(fixed.size() == 3);
   }
   end_test_case();
 

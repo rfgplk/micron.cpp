@@ -52,6 +52,8 @@ template<ieee754_floating F>
 __gammap(F a, F x) noexcept
 {
   if ( x <= F(0) || a <= F(0) ) return F(0);
+  constexpr F tolerance = sizeof(F) == 4 ? F(2e-6) : F(2e-15);
+  constexpr F tiny = sizeof(F) == 4 ? F(1e-30) : F(1e-300);
   const F log_pre = a * mk::log_ns::log<F>(x) - x - lgamma<F>(a);
   if ( x < a + F(1) ) {
     // series
@@ -62,12 +64,11 @@ __gammap(F a, F x) noexcept
       ap = ap + F(1);
       del = del * x / ap;
       sum = sum + del;
-      if ( mk::manip::fabs<F>(del) < mk::manip::fabs<F>(sum) * F(1e-15) ) break;
+      if ( mk::manip::fabs<F>(del) < mk::manip::fabs<F>(sum) * tolerance ) break;
     }
     return sum * mk::exp_ns::exp<F>(log_pre);
   }
   // continued fraction (Lentz)
-  constexpr F tiny = F(1e-300);
   F b = x + F(1) - a;
   F c = F(1) / tiny;
   F d = F(1) / b;
@@ -82,7 +83,7 @@ __gammap(F a, F x) noexcept
     d = F(1) / d;
     const F del = d * c;
     h = h * del;
-    if ( mk::manip::fabs<F>(del - F(1)) < F(1e-15) ) break;
+    if ( mk::manip::fabs<F>(del - F(1)) < tolerance ) break;
   }
   return F(1) - h * mk::exp_ns::exp<F>(log_pre);
 }
@@ -105,7 +106,8 @@ __betainc(F a, F b, F x) noexcept
   const F as = swap ? b : a;
   const F bs = swap ? a : b;
   const F log_pre = as * mk::log_ns::log<F>(xs) + bs * mk::log_ns::log<F>(F(1) - xs) - lbeta<F>(as, bs);
-  constexpr F tiny = F(1e-300);
+  constexpr F tolerance = sizeof(F) == 4 ? F(2e-6) : F(2e-15);
+  constexpr F tiny = sizeof(F) == 4 ? F(1e-30) : F(1e-300);
   F qab = as + bs;
   F qap = as + F(1);
   F qam = as - F(1);
@@ -131,7 +133,7 @@ __betainc(F a, F b, F x) noexcept
     d = F(1) / d;
     const F del = d * c;
     h = h * del;
-    if ( mk::manip::fabs<F>(del - F(1)) < F(1e-15) ) break;
+    if ( mk::manip::fabs<F>(del - F(1)) < tolerance ) break;
   }
   const F r = mk::exp_ns::exp<F>(log_pre) * h / as;
   return swap ? F(1) - r : r;
@@ -178,15 +180,96 @@ norm_cdf(F x) noexcept
 
 };      // namespace __impl
 
+template<typename I = i64> class poisson_dist
+{
+  dist::__impl::__poisson_cache __cache;
+  f64 __cdf[32];
+  f64 __mass31;
+  bool __table;
+
+  template<rng_concept Rng>
+  [[nodiscard, gnu::always_inline]] I
+  __table_draw(Rng &g) const noexcept
+  {
+    const f64 u = dist::uniform_real<f64>(g);
+    I k = I(u > __cdf[0]) + I(u > __cdf[1]) + I(u > __cdf[2]) + I(u > __cdf[3]) + I(u > __cdf[4]) + I(u > __cdf[5]) + I(u > __cdf[6])
+          + I(u > __cdf[7]) + I(u > __cdf[8]) + I(u > __cdf[9]) + I(u > __cdf[10]) + I(u > __cdf[11]) + I(u > __cdf[12]) + I(u > __cdf[13])
+          + I(u > __cdf[14]) + I(u > __cdf[15]) + I(u > __cdf[16]) + I(u > __cdf[17]) + I(u > __cdf[18]) + I(u > __cdf[19])
+          + I(u > __cdf[20]) + I(u > __cdf[21]) + I(u > __cdf[22]) + I(u > __cdf[23]) + I(u > __cdf[24]) + I(u > __cdf[25])
+          + I(u > __cdf[26]) + I(u > __cdf[27]) + I(u > __cdf[28]) + I(u > __cdf[29]) + I(u > __cdf[30]) + I(u > __cdf[31]);
+    if ( k != I(32) ) return k;
+
+    f64 mass = __mass31;
+    f64 cumulative = __cdf[31];
+    k = I(31);
+    do {
+      ++k;
+      mass *= __cache.lambda / f64(k);
+      cumulative += mass;
+    } while ( u > cumulative );
+    return k;
+  }
+
+public:
+  using value_type = I;
+
+  constexpr explicit poisson_dist(f64 lambda) noexcept : __cache(lambda), __cdf{}, __mass31(0.0), __table(__cache.valid && __cache.small)
+  {
+    if ( !__table ) return;
+    f64 mass = __cache.cutoff;
+    f64 cumulative = mass;
+    for ( usize k = 0; k < 32; ++k ) {
+      __cdf[k] = cumulative;
+      if ( k != 31 ) {
+        mass *= __cache.lambda / f64(k + 1);
+        cumulative += mass;
+      }
+    }
+    __mass31 = mass;
+  }
+
+  template<rng_concept Rng>
+  [[nodiscard]] I
+  operator()(Rng &g) const noexcept
+  {
+    return __table ? __table_draw(g) : dist::__impl::__poisson_cached<I>(g, __cache);
+  }
+
+  [[nodiscard]] constexpr f64
+  mean() const noexcept
+  {
+    return __cache.valid ? __cache.lambda : 0.0;
+  }
+
+  [[nodiscard]] constexpr f64
+  variance() const noexcept
+  {
+    return mean();
+  }
+};
+
 template<ieee754_floating F = f64> class __gammadist
 {
   F __alpha;
   F __theta;
+  F __d;
+  F __c;
+  F __inv_alpha;
+  F __log_norm;
+  bool __boost;
 
 public:
   using value_type = F;
 
-  constexpr __gammadist(F shape, F scale = F(1)) noexcept : __alpha(shape), __theta(scale) { }
+  constexpr __gammadist() noexcept : __gammadist(F(1), F(1)) { }
+
+  constexpr __gammadist(F shape, F scale = F(1)) noexcept
+      : __alpha(shape), __theta(scale), __d((shape < F(1) ? shape + F(1) : shape) - F(1) / F(3)),
+        __c(__d > F(0) ? F(1) / mk::pow_ns::sqrt<F>(F(9) * __d) : F(0)), __inv_alpha(shape > F(0) ? F(1) / shape : F(0)),
+        __log_norm(shape > F(0) && scale > F(0) ? shape * mk::log_ns::log<F>(scale) + __impl::lgamma<F>(shape) : F(0)),
+        __boost(shape < F(1))
+  {
+  }
 
   [[nodiscard]] constexpr F
   shape() const noexcept
@@ -204,42 +287,45 @@ public:
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
-    if ( __alpha < F(1) ) {
-      __gammadist<F> g1(__alpha + F(1), __theta);
-      const F x = g1(g);
-      F u;
-      do {
-        u = dist::uniform_real<F>(g);
-      } while ( u <= F(0) );
-      return x * mk::pow_ns::pow<F>(u, F(1) / __alpha);
-    }
-    const F d = __alpha - F(1) / F(3);
-    const F c = F(1) / mk::pow_ns::sqrt<F>(F(9) * d);
+    if ( !math::ieee::is_finite(__alpha) || !math::ieee::is_finite(__theta) || !(__alpha > F(0)) || !(__theta > F(0)) )
+      return math::ieee::qnan_v<F>();
     for ( ;; ) {
       F x, v;
       do {
         x = dist::normal<F>(g);
-        v = F(1) + c * x;
+        v = F(1) + __c * x;
       } while ( v <= F(0) );
       v = v * v * v;
-      F u = dist::uniform_real<F>(g);
-      if ( u < F(1) - F(0.0331) * (x * x) * (x * x) ) return __theta * d * v;
-      if ( mk::log_ns::log<F>(u) < F(0.5) * x * x + d * (F(1) - v + mk::log_ns::log<F>(v)) ) return __theta * d * v;
+      const F x2 = x * x;
+      const F u = dist::uniform_open_real<F>(g);
+      if ( u < F(1) - F(0.0331) * x2 * x2 || mk::log_ns::log<F>(u) < F(0.5) * x2 + __d * (F(1) - v + mk::log_ns::log<F>(v)) ) {
+        F sample = __theta * __d * v;
+        if ( __boost ) sample *= mk::pow_ns::pow<F>(dist::uniform_open_real<F>(g), __inv_alpha);
+        return sample;
+      }
     }
   }
 
   [[nodiscard]] constexpr F
   pdf(F x) const noexcept
   {
-    if ( x <= F(0) ) return F(0);
-    const F log_p
-        = (__alpha - F(1)) * mk::log_ns::log<F>(x) - x / __theta - __alpha * mk::log_ns::log<F>(__theta) - __impl::lgamma<F>(__alpha);
+    if ( !math::ieee::is_finite(__alpha) || !math::ieee::is_finite(__theta) || !(__alpha > F(0)) || !(__theta > F(0)) )
+      return math::ieee::qnan_v<F>();
+    if ( x < F(0) ) return F(0);
+    if ( x == F(0) ) {
+      if ( __alpha < F(1) ) return math::ieee::inf_v<F>(0);
+      if ( __alpha == F(1) ) return F(1) / __theta;
+      return F(0);
+    }
+    const F log_p = (__alpha - F(1)) * mk::log_ns::log<F>(x) - x / __theta - __log_norm;
     return mk::exp_ns::exp<F>(log_p);
   }
 
   [[nodiscard]] constexpr F
   cdf(F x) const noexcept
   {
+    if ( !math::ieee::is_finite(__alpha) || !math::ieee::is_finite(__theta) || !(__alpha > F(0)) || !(__theta > F(0)) )
+      return math::ieee::qnan_v<F>();
     if ( x <= F(0) ) return F(0);
     return __impl::__gammap<F>(__alpha, x / __theta);
   }
@@ -260,35 +346,55 @@ public:
 template<ieee754_floating F = f64> class __betadist
 {
   F __alpha, __beta;
+  F __log_beta;
+  __gammadist<F> __ga;
+  __gammadist<F> __gb;
 
 public:
   using value_type = F;
 
-  constexpr __betadist(F alpha, F beta) noexcept : __alpha(alpha), __beta(beta) { }
+  constexpr __betadist(F alpha, F beta) noexcept
+      : __alpha(alpha), __beta(beta), __log_beta(alpha > F(0) && beta > F(0) ? __impl::lbeta<F>(alpha, beta) : F(0)), __ga(alpha, F(1)),
+        __gb(beta, F(1))
+  {
+  }
 
   template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
-    __gammadist<F> ga(__alpha, F(1));
-    __gammadist<F> gb(__beta, F(1));
-    const F x = ga(g);
-    const F y = gb(g);
+    if ( !math::ieee::is_finite(__alpha) || !math::ieee::is_finite(__beta) || !(__alpha > F(0)) || !(__beta > F(0)) )
+      return math::ieee::qnan_v<F>();
+    const F x = __ga(g);
+    const F y = __gb(g);
     return x / (x + y);
   }
 
   [[nodiscard]] constexpr F
   pdf(F x) const noexcept
   {
-    if ( x <= F(0) || x >= F(1) ) return F(0);
-    const F log_p
-        = (__alpha - F(1)) * mk::log_ns::log<F>(x) + (__beta - F(1)) * mk::log_ns::log<F>(F(1) - x) - __impl::lbeta<F>(__alpha, __beta);
+    if ( !math::ieee::is_finite(__alpha) || !math::ieee::is_finite(__beta) || !(__alpha > F(0)) || !(__beta > F(0)) )
+      return math::ieee::qnan_v<F>();
+    if ( x < F(0) || x > F(1) ) return F(0);
+    if ( x == F(0) ) {
+      if ( __alpha < F(1) ) return math::ieee::inf_v<F>(0);
+      if ( __alpha == F(1) ) return __beta;
+      return F(0);
+    }
+    if ( x == F(1) ) {
+      if ( __beta < F(1) ) return math::ieee::inf_v<F>(0);
+      if ( __beta == F(1) ) return __alpha;
+      return F(0);
+    }
+    const F log_p = (__alpha - F(1)) * mk::log_ns::log<F>(x) + (__beta - F(1)) * mk::log_ns::log<F>(F(1) - x) - __log_beta;
     return mk::exp_ns::exp<F>(log_p);
   }
 
   [[nodiscard]] constexpr F
   cdf(F x) const noexcept
   {
+    if ( !math::ieee::is_finite(__alpha) || !math::ieee::is_finite(__beta) || !(__alpha > F(0)) || !(__beta > F(0)) )
+      return math::ieee::qnan_v<F>();
     return __impl::__betainc<F>(__alpha, __beta, x);
   }
 
@@ -309,18 +415,18 @@ public:
 template<ieee754_floating F = f64> class chi2_dist
 {
   F __kf;
+  __gammadist<F> __gamma;
 
 public:
   using value_type = F;
 
-  constexpr explicit chi2_dist(F k) noexcept : __kf(k) { }
+  constexpr explicit chi2_dist(F k) noexcept : __kf(k), __gamma(k / F(2), F(2)) { }
 
   template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
-    __gammadist<F> gd(__kf / F(2), F(2));
-    return gd(g);
+    return __gamma(g);
   }
 
   [[nodiscard]] constexpr F
@@ -355,20 +461,22 @@ public:
 template<ieee754_floating F = f64> class student_t_dist
 {
   F __nu;
+  F __inv_nu;
+  chi2_dist<F> __chi;
 
 public:
   using value_type = F;
 
-  constexpr explicit student_t_dist(F nu) noexcept : __nu(nu) { }
+  constexpr explicit student_t_dist(F nu) noexcept : __nu(nu), __inv_nu(nu > F(0) ? F(1) / nu : F(0)), __chi(nu) { }
 
   template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
+    if ( __nu <= F(0) ) return math::ieee::qnan_v<F>();
     const F z = dist::normal<F>(g);
-    chi2_dist<F> ch(__nu);
-    const F y = ch(g);
-    return z / mk::pow_ns::sqrt<F>(y / __nu);
+    const F y = __chi(g);
+    return z / mk::pow_ns::sqrt<F>(y * __inv_nu);
   }
 
   [[nodiscard]] constexpr F
@@ -398,27 +506,32 @@ public:
   variance() const noexcept
   {
     if ( __nu > F(2) ) return __nu / (__nu - F(2));
-    return math::ieee::inf_v<F>(0);
+    if ( __nu > F(1) ) return math::ieee::inf_v<F>(0);
+    return math::ieee::qnan_v<F>();
   }
 };
 
 template<ieee754_floating F = f64> class f_dist
 {
   F __d1, __d2;
+  F __inv_d1, __inv_d2;
+  chi2_dist<F> __c1, __c2;
 
 public:
   using value_type = F;
 
-  constexpr f_dist(F d1, F d2) noexcept : __d1(d1), __d2(d2) { }
+  constexpr f_dist(F d1, F d2) noexcept
+      : __d1(d1), __d2(d2), __inv_d1(d1 > F(0) ? F(1) / d1 : F(0)), __inv_d2(d2 > F(0) ? F(1) / d2 : F(0)), __c1(d1), __c2(d2)
+  {
+  }
 
   template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
-    chi2_dist<F> c1(__d1);
-    chi2_dist<F> c2(__d2);
-    const F u1 = c1(g) / __d1;
-    const F u2 = c2(g) / __d2;
+    if ( __d1 <= F(0) || __d2 <= F(0) ) return math::ieee::qnan_v<F>();
+    const F u1 = __c1(g) * __inv_d1;
+    const F u2 = __c2(g) * __inv_d2;
     return u1 / u2;
   }
 
@@ -514,21 +627,19 @@ public:
 template<ieee754_floating F = f64> class weibull_dist
 {
   F __lambdaf, __kf;
+  F __inv_k;
 
 public:
   using value_type = F;
 
-  constexpr weibull_dist(F lambda, F k) noexcept : __lambdaf(lambda), __kf(k) { }
+  constexpr weibull_dist(F lambda, F k) noexcept : __lambdaf(lambda), __kf(k), __inv_k(k > F(0) ? F(1) / k : F(0)) { }
 
   template<rng_concept Rng>
   [[nodiscard]] F
   operator()(Rng &g) const noexcept
   {
-    F u;
-    do {
-      u = dist::uniform_real<F>(g);
-    } while ( u <= F(0) );
-    return __lambdaf * mk::pow_ns::pow<F>(-mk::log_ns::log<F>(F(1) - u), F(1) / __kf);
+    if ( __lambdaf <= F(0) || __kf <= F(0) ) return math::ieee::qnan_v<F>();
+    return __lambdaf * mk::pow_ns::pow<F>(-mk::log_ns::log<F>(dist::uniform_open_real<F>(g)), __inv_k);
   }
 
   [[nodiscard]] constexpr F
@@ -552,20 +663,20 @@ public:
   {
     if ( p <= F(0) ) return F(0);
     if ( p >= F(1) ) return math::ieee::inf_v<F>(0);
-    return __lambdaf * mk::pow_ns::pow<F>(-mk::log_ns::log<F>(F(1) - p), F(1) / __kf);
+    return __lambdaf * mk::pow_ns::pow<F>(-mk::log_ns::log<F>(F(1) - p), __inv_k);
   }
 
   [[nodiscard]] constexpr F
   mean() const noexcept
   {
-    return __lambdaf * __impl::tgamma<F>(F(1) + F(1) / __kf);
+    return __lambdaf * __impl::tgamma<F>(F(1) + __inv_k);
   }
 
   [[nodiscard]] constexpr F
   variance() const noexcept
   {
-    const F m = __impl::tgamma<F>(F(1) + F(1) / __kf);
-    const F s = __impl::tgamma<F>(F(1) + F(2) / __kf);
+    const F m = __impl::tgamma<F>(F(1) + __inv_k);
+    const F s = __impl::tgamma<F>(F(1) + F(2) * __inv_k);
     return __lambdaf * __lambdaf * (s - m * m);
   }
 };
@@ -584,7 +695,8 @@ public:
   operator()(Rng &g) const noexcept
   {
     constexpr F pi = F(3.141592653589793);
-    return __x0 + __gamma * mk::trig::tan<F>(pi * (dist::uniform_real<F>(g) - F(0.5)));
+    if ( __gamma <= F(0) ) return __gamma == F(0) ? __x0 : math::ieee::qnan_v<F>();
+    return __x0 + __gamma * mk::trig::tan<F>(pi * (dist::uniform_open_real<F>(g) - F(0.5)));
   }
 
   [[nodiscard]] constexpr F
@@ -625,11 +737,16 @@ public:
 template<typename I = i64, ieee754_floating F = f64> class geometric_dist
 {
   F __p;
+  F __inv_log_q;
+  bool __half;
 
 public:
   using value_type = I;
 
-  constexpr explicit geometric_dist(F p) noexcept : __p(p) { }
+  constexpr explicit geometric_dist(F p) noexcept
+      : __p(p), __inv_log_q(p > F(0) && p < F(1) ? F(1) / mk::log_ns::log1p<F>(-p) : F(0)), __half(p == F(0.5))
+  {
+  }
 
   template<rng_concept Rng>
   [[nodiscard]] I
@@ -637,11 +754,15 @@ public:
   {
     if ( __p >= F(1) ) return I(0);
     if ( __p <= F(0) ) return numeric_limits<I>::max();
-    F u;
-    do {
-      u = dist::uniform_real<F>(g);
-    } while ( u <= F(0) );
-    return I(mk::round_ns::floor<F>(mk::log_ns::log<F>(u) / mk::log_ns::log1p<F>(-__p)));
+    if ( __half ) {
+      I count = 0;
+      for ( ;; ) {
+        const u64 bits = rng::__impl::next64(g);
+        if ( bits != 0 ) return count + I(__builtin_ctzll(bits));
+        count += I(64);
+      }
+    }
+    return I(mk::round_ns::floor<F>(mk::log_ns::log<F>(dist::uniform_open_real<F>(g)) * __inv_log_q));
   }
 
   [[nodiscard]] constexpr F
@@ -675,46 +796,190 @@ template<typename I = i64, ieee754_floating F = f64> class binomial_dist
 {
   I __n;
   F __p;
+  I __m;
+  F __r, __q, __odds, __nr, __npq, __b, __a, __c, __alpha, __vr, __urvr, __qn;
+  F __cdf[16];
+  bool __flip;
+  bool __inversion;
+  bool __direct;
+  bool __half;
+
+  template<rng_concept Rng>
+  [[nodiscard]] I
+  __direct_draw(Rng &g) const noexcept
+  {
+    const F u = dist::uniform_real<F>(g);
+    return I(u > __cdf[0]) + I(u > __cdf[1]) + I(u > __cdf[2]) + I(u > __cdf[3]) + I(u > __cdf[4]) + I(u > __cdf[5]) + I(u > __cdf[6])
+           + I(u > __cdf[7]) + I(u > __cdf[8]) + I(u > __cdf[9]) + I(u > __cdf[10]) + I(u > __cdf[11]) + I(u > __cdf[12]) + I(u > __cdf[13])
+           + I(u > __cdf[14]) + I(u > __cdf[15]);
+  }
+
+  template<rng_concept Rng>
+  [[nodiscard]] I
+  __half_draw(Rng &g) const noexcept
+  {
+    I hits = 0;
+    I left = __n;
+    while ( left >= I(64) ) {
+      hits += I(__builtin_popcountll(rng::__impl::next64(g)));
+      left -= I(64);
+    }
+    if ( left != I(0) ) {
+      const u32 bits = u32(left);
+      const u64 mask = ~u64(0) >> (64u - bits);
+      hits += I(__builtin_popcountll(rng::__impl::next64(g) & mask));
+    }
+    return hits;
+  }
+
+  [[nodiscard]] static constexpr F
+  __fc(I k) noexcept
+  {
+    constexpr F table[10]
+        = { F(0.08106146679532726), F(0.04134069595540929), F(0.02767792568499834), F(0.02079067210382509),  F(0.01664469118982119),
+            F(0.01387612882307075), F(0.01189670994589177), F(0.01041126526197209), F(0.009255462182712733), F(0.008330563433362871) };
+    if ( k < I(10) ) return table[usize(k)];
+    const F inv = F(1) / F(k + I(1));
+    const F inv2 = inv * inv;
+    return (F(1) / F(12) - (F(1) / F(360) - (F(1) / F(1260)) * inv2) * inv2) * inv;
+  }
+
+  template<rng_concept Rng>
+  [[nodiscard]] I
+  __invert(Rng &g) const noexcept
+  {
+    const F ratio = __r / __q;
+    const F scaled = F(__n + I(1)) * ratio;
+    F u = dist::uniform_real<F>(g);
+    F mass = __qn;
+    I x = 0;
+    while ( u > mass && x < __n ) {
+      u -= mass;
+      ++x;
+      mass *= scaled / F(x) - ratio;
+    }
+    return x;
+  }
+
+  template<rng_concept Rng>
+  [[nodiscard]] I
+  __btrd(Rng &g) const noexcept
+  {
+    for ( ;; ) {
+      F u;
+      F v = dist::uniform_open_real<F>(g);
+      if ( v <= __urvr ) {
+        u = v / __vr - F(0.43);
+        return I(mk::round_ns::floor<F>((F(2) * __a / (F(0.5) - mk::manip::fabs<F>(u)) + __b) * u + __c));
+      }
+
+      if ( v >= __vr ) {
+        u = dist::uniform_open_real<F>(g) - F(0.5);
+      } else {
+        u = v / __vr - F(0.93);
+        u = (u < F(0) ? F(-0.5) : F(0.5)) - u;
+        v = dist::uniform_open_real<F>(g) * __vr;
+      }
+
+      const F us = F(0.5) - mk::manip::fabs<F>(u);
+      const I k = I(mk::round_ns::floor<F>((F(2) * __a / us + __b) * u + __c));
+      if ( k < I(0) || k > __n ) continue;
+      v *= __alpha / (__a / (us * us) + __b);
+      const I delta_i = k > __m ? k - __m : __m - k;
+      const F delta = F(delta_i);
+      if ( delta_i <= I(15) ) {
+        F f = F(1);
+        if ( __m < k ) {
+          I i = __m;
+          do {
+            ++i;
+            f *= __nr / F(i) - __odds;
+          } while ( i != k );
+        } else if ( __m > k ) {
+          I i = k;
+          do {
+            ++i;
+            v *= __nr / F(i) - __odds;
+          } while ( i != __m );
+        }
+        if ( v <= f ) return k;
+        continue;
+      }
+
+      const F log_v = mk::log_ns::log<F>(v);
+      const F rho = (delta / __npq) * (((delta / F(3) + F(0.625)) * delta + F(1) / F(6)) / __npq + F(0.5));
+      const F t = -delta * delta / (F(2) * __npq);
+      if ( log_v < t - rho ) return k;
+      if ( log_v > t + rho ) continue;
+
+      const I nm_i = __n - __m + I(1);
+      const I nk_i = __n - k + I(1);
+      const F nm = F(nm_i);
+      const F nk = F(nk_i);
+      const F h = (F(__m) + F(0.5)) * mk::log_ns::log<F>(F(__m + I(1)) / (__odds * nm)) + __fc(__m) + __fc(__n - __m);
+      const F bound = h + F(__n + I(1)) * mk::log_ns::log<F>(nm / nk) + (F(k) + F(0.5)) * mk::log_ns::log<F>(nk * __odds / (F(k) + F(1)))
+                      - __fc(k) - __fc(__n - k);
+      if ( log_v <= bound ) return k;
+    }
+  }
 
 public:
   using value_type = I;
 
-  constexpr binomial_dist(I n, F p) noexcept : __n(n), __p(p) { }
+  constexpr binomial_dist(I n, F p) noexcept
+      : __n(n), __p(p), __m(0), __r(p > F(0.5) ? F(1) - p : p), __q(F(1) - __r), __odds(0), __nr(0), __npq(0), __b(0), __a(0), __c(0),
+        __alpha(0), __vr(0), __urvr(0), __qn(0), __cdf{}, __flip(p > F(0.5)), __inversion(n <= I(0) || __r <= F(0) || F(n) * __r < F(10)),
+        __direct(n > I(0) && n <= I(16)), __half(p == F(0.5))
+  {
+    if ( n <= I(0) || !math::ieee::is_finite(__r) || !(__r > F(0)) || !(__r < F(1)) ) return;
+    __odds = __r / __q;
+    __m = I(F(n + I(1)) * __r);
+    if ( __direct ) {
+      F mass = mk::exp_ns::exp<F>(F(n) * mk::log_ns::log1p<F>(-__r));
+      F cumulative = mass;
+      for ( usize i = 0; i < 16; ++i ) {
+        if ( I(i) >= n ) {
+          __cdf[i] = F(1);
+          continue;
+        }
+        __cdf[i] = cumulative;
+        mass *= F(n - I(i)) * __odds / F(i + 1);
+        cumulative += mass;
+      }
+      return;
+    }
+    if ( __inversion ) {
+      __qn = mk::exp_ns::exp<F>(F(n) * mk::log_ns::log1p<F>(-__r));
+      return;
+    }
+    __nr = F(n + I(1)) * __odds;
+    __npq = F(n) * __r * __q;
+    const F root = mk::pow_ns::sqrt<F>(__npq);
+    __b = F(1.15) + F(2.53) * root;
+    __a = F(-0.0873) + F(0.0248) * __b + F(0.01) * __r;
+    __c = F(n) * __r + F(0.5);
+    __alpha = (F(2.83) + F(5.1) / __b) * root;
+    __vr = F(0.92) - F(4.2) / __b;
+    __urvr = F(0.86) * __vr;
+  }
 
   template<rng_concept Rng>
   [[nodiscard]] I
   operator()(Rng &g) const noexcept
   {
-    if ( __n <= I(0) || __p <= F(0) ) return I(0);
+    if ( __n <= I(0) || !math::ieee::is_finite(__p) || !(__p > F(0)) ) return I(0);
     if ( __p >= F(1) ) return __n;
-    const bool flip = __p > F(0.5);
-    const F q = flip ? F(1) - __p : __p;
-    const F np = F(__n) * q;
-    if ( np > F(30) ) {
-      // normal approx
-      const F z = dist::normal<F>(g);
-      F v = np + mk::pow_ns::sqrt<F>(np * (F(1) - q)) * z + F(0.5);
-      if ( v < F(0) ) v = F(0);
-      if ( v > F(__n) ) v = F(__n);
-      const I k = I(v);
-      return flip ? __n - k : k;
-    }
-    const F u = dist::uniform_real<F>(g);
-    F r = mk::pow_ns::pow<F>(F(1) - q, F(__n));
-    F sum = r;
-    I k = 0;
-    while ( u > sum && k < __n ) {
-      ++k;
-      r = r * (q / (F(1) - q)) * F(__n - k + 1) / F(k);
-      sum = sum + r;
-    }
-    return flip ? __n - k : k;
+    if ( __half ) return __half_draw(g);
+    const I k = __direct ? __direct_draw(g) : (__inversion ? __invert(g) : __btrd(g));
+    return __flip ? __n - k : k;
   }
 
   [[nodiscard]] constexpr F
   pmf(I k) const noexcept
   {
     if ( k < I(0) || k > __n ) return F(0);
+    if ( __p <= F(0) ) return k == I(0) ? F(1) : F(0);
+    if ( __p >= F(1) ) return k == __n ? F(1) : F(0);
     const F log_pmf = __impl::lgamma<F>(F(__n + I(1))) - __impl::lgamma<F>(F(k + I(1))) - __impl::lgamma<F>(F(__n - k + I(1)))
                       + F(k) * mk::log_ns::log<F>(__p) + F(__n - k) * mk::log_ns::log1p<F>(-__p);
     return mk::exp_ns::exp<F>(log_pmf);
@@ -725,6 +990,8 @@ public:
   {
     if ( k < I(0) ) return F(0);
     if ( k >= __n ) return F(1);
+    if ( __p <= F(0) ) return F(1);
+    if ( __p >= F(1) ) return F(0);
     return __impl::__betainc<F>(F(__n - k), F(k + I(1)), F(1) - __p);
   }
 
@@ -745,18 +1012,20 @@ template<typename I = i64, ieee754_floating F = f64> class negative_binomial_dis
 {
   F __r;
   F __p;
+  __gammadist<F> __gamma;
 
 public:
   using value_type = I;
 
-  constexpr negative_binomial_dist(F r, F p) noexcept : __r(r), __p(p) { }
+  constexpr negative_binomial_dist(F r, F p) noexcept : __r(r), __p(p), __gamma(r, p > F(0) ? (F(1) - p) / p : F(0)) { }
 
   template<rng_concept Rng>
   [[nodiscard]] I
   operator()(Rng &g) const noexcept
   {
-    __gammadist<F> gd(__r, (F(1) - __p) / __p);
-    const F lam = gd(g);
+    if ( __r <= F(0) || __p <= F(0) || __p > F(1) ) return I(0);
+    if ( __p == F(1) ) return I(0);
+    const F lam = __gamma(g);
     return dist::poisson<I>(g, f64(lam));
   }
 
@@ -789,7 +1058,62 @@ public:
   }
 };
 
-template<ieee754_floating F = f64, usize K = 0> class dirichlet_dist
+template<ieee754_floating F = f64, usize K = 0> class dirichlet_dist;
+
+template<ieee754_floating F, usize K> class dirichlet_dist
+{
+  static_assert(K != 0);
+
+  F __alpha[K];
+  __gammadist<F> __gamma[K];
+  F __log_norm;
+
+public:
+  using value_type = F;
+
+  constexpr explicit dirichlet_dist(const F *alpha, usize = K) noexcept : __alpha{}, __gamma{}, __log_norm(0)
+  {
+    F sum = F(0);
+    for ( usize i = 0; i < K; ++i ) {
+      __alpha[i] = alpha[i];
+      __gamma[i] = __gammadist<F>(alpha[i], F(1));
+      __log_norm -= __impl::lgamma<F>(alpha[i]);
+      sum += alpha[i];
+    }
+    __log_norm += __impl::lgamma<F>(sum);
+  }
+
+  template<rng_concept Rng>
+  inline void
+  operator()(Rng &g, F *__restrict__ out) const noexcept
+  {
+    F sum = F(0);
+    for ( usize i = 0; i < K; ++i ) {
+      out[i] = __gamma[i](g);
+      sum += out[i];
+    }
+    if ( sum > F(0) ) {
+      const F inv = F(1) / sum;
+      for ( usize i = 0; i < K; ++i ) out[i] *= inv;
+    }
+  }
+
+  [[nodiscard]] inline F
+  pdf(const F *x) const noexcept
+  {
+    F log_p = __log_norm;
+    for ( usize i = 0; i < K; ++i ) log_p += (__alpha[i] - F(1)) * mk::log_ns::log<F>(x[i]);
+    return mk::exp_ns::exp<F>(log_p);
+  }
+
+  [[nodiscard]] static constexpr usize
+  size() noexcept
+  {
+    return K;
+  }
+};
+
+template<ieee754_floating F> class dirichlet_dist<F, 0>
 {
   const F *__alpha;      // pointer to K-element parameter vector
   usize __kf;
