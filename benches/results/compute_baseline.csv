@@ -1,0 +1,31 @@
+# micron::math::compute baseline
+# captured: 2026-08-26
+# host: Intel Core i7-5960X (Haswell-E), amd64
+# toolchain: GCC 16.2.1 20260819; Linux 7.1.9-200.fc44.x86_64
+# build native: duck build benches/compute_bench.cpp --perf --fp --no-ssp --no-lto -i . -o bin/compute-bench-native -f
+# build base: duck build benches/compute_bench.cpp --perf --fp --no-ssp --no-lto --isa base -i . -o bin/compute-bench-base -f
+# run: taskset -c 0 <binary>
+# estimator: minimum of 7 samples after 2 warmups
+isa,workload,items,value,unit
+native,finalize linear DAG,256,1558.77,ns_per_item
+native,session arena setup,3,2048.13,ns_per_item
+native,inline no-op dispatch,256,43.30,ns_per_item
+native,parallel independent nodes,128,2205.02,ns_per_item
+native,read-only alias view,1,554.07,ns_per_item
+native,persistent state reuse,128,4.53,ns_per_item
+native,zero-copy session handoff,128,5.49,ns_per_item
+native,chain arena allocations,1,3,count
+native,chain arena peak bytes,1,3072,bytes
+native,parallel arena allocations,1,128,count
+native,parallel arena peak bytes,1,131072,bytes
+base,finalize linear DAG,256,2119.41,ns_per_item
+base,session arena setup,3,2116.92,ns_per_item
+base,inline no-op dispatch,256,41.18,ns_per_item
+base,parallel independent nodes,128,3304.54,ns_per_item
+base,read-only alias view,1,550.60,ns_per_item
+base,persistent state reuse,128,4.81,ns_per_item
+base,zero-copy session handoff,128,6.03,ns_per_item
+base,chain arena allocations,1,3,count
+base,chain arena peak bytes,1,3072,bytes
+base,parallel arena allocations,1,128,count
+base,parallel arena peak bytes,1,131072,bytes

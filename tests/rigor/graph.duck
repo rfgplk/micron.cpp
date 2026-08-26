@@ -1,0 +1,25 @@
+# micron::math::graph
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# native and IEEE-honest optimization cells
+test tests/rigor/graph.cpp -o bin/graph/default --timeout 300 -f
+test tests/rigor/graph.cpp -o bin/graph/o2 -O2 --timeout 300 -f
+test tests/rigor/graph_storage.cpp -o bin/graph/storage -O2 --timeout 300 -f
+test tests/rigor/graph_advanced.cpp -o bin/graph/advanced -O2 --timeout 300 -f
+test tests/rigor/graph_matching.cpp -o bin/graph/matching -O2 --timeout 300 -f
+test tests/rigor/graph_planarity.cpp -o bin/graph/planarity -O2 --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# x86-64 SSE2 floor exercises the scalar bitset dispatch
+test tests/rigor/graph.cpp -o bin/graph/base --isa base -O2 --timeout 300 -f
+test tests/rigor/graph_storage.cpp -o bin/graph/storage-base --isa base -O2 --timeout 300 -f
+test tests/rigor/graph_advanced.cpp -o bin/graph/advanced-base --isa base -O2 --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# descriptor/tombstone and matrix indexing checks
+test tests/rigor/graph.cpp -o bin/graph/asan --asan --timeout 600 -f
+test tests/rigor/graph.cpp -o bin/graph/ubsan --ubsan --timeout 600 -f
+test tests/rigor/graph_storage.cpp -o bin/graph/storage-asan --asan --timeout 600 -f
+test tests/rigor/graph_advanced.cpp -o bin/graph/advanced-ubsan --ubsan --timeout 600 -f
+test tests/rigor/graph_matching.cpp -o bin/graph/matching-asan --asan --timeout 600 -f
+test tests/rigor/graph_planarity.cpp -o bin/graph/planarity-ubsan --ubsan --timeout 600 -f

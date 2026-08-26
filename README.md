@@ -244,6 +244,8 @@ All headers live under `src/` and may be included directly. Each top-level modul
 - **`math/arbint/`** -- arbitrary precision integer support and associated utilities
 - **`math/linalg/`** -- linear algebra (decompositions, polynomials, Householder, pseudoinverse, Schur)
 - **`math/matrix/`** -- fixed- and dynamic-shape matrices with packed and viewed forms
+- **`math/graph/`** -- packed/stable adjacency, edge-list, CSR, dense and bit graphs; conversions, certificates, and serial algorithms
+- **`math/compute.hpp`** -- opt-in static-shape computation DAG with reusable storage, tensor aliases, persistent state and zero-copy sharing
 - **`math/quants/`** -- vectors, tensors, quaternions and dynamic vector quantities
 - **`math/quaternions/`** -- quaternion algebra, Euler conversions, rotations, kinematics, interpolation
 - **`math/integrate/`** -- numerical integration (quadrature, Romberg, Simpson, Gauss, Monte Carlo, derivatives)
@@ -266,6 +268,7 @@ These modules build under both the hosted (`pthread`) and the freestanding backe
 
 ###### OS and I/O
 - **`io/`** -- high-level I/O: files, filesystems (incl. concurrent), paths, pipes, streams, formatting, console, serial, stdin/stdout/stderr, FTW, real-path resolution, **flash (io_uring-native file I/O)**
+- **`io/graph.hpp`** -- opt-in edge-list, adjacency-list, Matrix Market, DIMACS, and versioned binary graph I/O
 - **`io/posix/`** -- POSIX I/O wrappers (block, dir, file, terminal, volatile, iosys)
 - **`io/term/`** -- ANSI terminal helpers
 - **`io/uxin/`** -- input-device layer (event devices, key mapping, polling, virtual devices, Wayland reader)

@@ -1,0 +1,83 @@
+# micron::math graph baseline
+# captured: 2026-08-26
+# host: Intel Core i7-5960X (Haswell-E), amd64
+# toolchain: GCC 16.2.1 20260819; Linux 7.1.9-200.fc44.x86_64
+# build native: duck build benches/graph_bench.cpp --perf --fp --no-ssp --no-lto -i . -o bin/bench-graph-native
+# build base: duck build benches/graph_bench.cpp --perf --fp --no-ssp --no-lto --isa base -i . -o bin/bench-graph-base
+# run: taskset -c 0 <binary>
+# estimator: minimum of 7 samples after 2 warmups
+isa,workload,items,ns_per_item
+native,construct packed adjacency,12288,2010.70
+native,construct edge list,1536,1733.85
+native,construct dense adjacency,768,3860.96
+native,construct bit adjacency,768,4409.10
+native,freeze packed to CSR,12288,24.19
+native,find packed adjacency,12288,10.69
+native,find edge list,1536,465.35
+native,find CSR,12288,4.42
+native,find dense adjacency,768,1.57
+native,find bit adjacency,768,1.51
+native,iterate packed edges,12288,1.95
+native,iterate edge-list edges,1536,1.91
+native,iterate CSR edges,12288,0.22
+native,iterate dense edges,768,32.61
+native,iterate bit edges,768,604.65
+native,erase/restore packed,4096,56.77
+native,erase/restore edge list,512,1178.07
+native,erase/restore dense,256,3.08
+native,erase/restore bit,256,13.58
+native,BFS,4096,61.72
+native,BFS/CSR,4096,12.57
+native,DFS,4096,74.65
+native,connected components,4096,60.50
+native,Dijkstra,4096,55.31
+native,PageRank/20 iterations,81920,11.06
+native,common neighbors,1,49.63
+native,dense adjacency conversion,65536,0.09
+native,Hopcroft-Karp,4096,73.44
+native,Dinic,256,84.71
+native,Johnson signed APSP,9216,24.14
+native,Floyd-Warshall signed APSP,9216,79.35
+native,Yen 16 shortest paths,16,148674.67
+native,Gomory-Hu,31,13845.91
+native,min-cost max-flow,80,121.86
+native,weighted blossom,64,8296.39
+native,planarity + rotation,1022,4175.53
+native,SIMD common-neighbor kernel,4096,0.40
+base,construct packed adjacency,12288,2009.63
+base,construct edge list,1536,1707.05
+base,construct dense adjacency,768,3896.83
+base,construct bit adjacency,768,6710.65
+base,freeze packed to CSR,12288,23.17
+base,find packed adjacency,12288,10.69
+base,find edge list,1536,469.36
+base,find CSR,12288,4.67
+base,find dense adjacency,768,1.48
+base,find bit adjacency,768,1.80
+base,iterate packed edges,12288,1.26
+base,iterate edge-list edges,1536,1.25
+base,iterate CSR edges,12288,0.25
+base,iterate dense edges,768,31.51
+base,iterate bit edges,768,634.19
+base,erase/restore packed,4096,54.95
+base,erase/restore edge list,512,1208.50
+base,erase/restore dense,256,3.11
+base,erase/restore bit,256,15.07
+base,BFS,4096,66.19
+base,BFS/CSR,4096,11.51
+base,DFS,4096,94.04
+base,connected components,4096,59.93
+base,Dijkstra,4096,56.45
+base,PageRank/20 iterations,81920,11.97
+base,common neighbors,1,45.52
+base,dense adjacency conversion,65536,0.09
+base,Hopcroft-Karp,4096,74.79
+base,Dinic,256,86.15
+base,Johnson signed APSP,9216,26.72
+base,Floyd-Warshall signed APSP,9216,85.05
+base,Yen 16 shortest paths,16,141261.79
+base,Gomory-Hu,31,12546.15
+base,min-cost max-flow,80,125.82
+base,weighted blossom,64,8255.77
+base,planarity + rotation,1022,4193.61
+base,SIMD common-neighbor kernel,4096,2.77

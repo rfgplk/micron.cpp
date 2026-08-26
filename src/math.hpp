@@ -21,6 +21,7 @@
 #include "math/dd64.hpp"
 #include "math/dispatch.hpp"
 #include "math/generic.hpp"
+#include "math/graph.hpp"
 #include "math/ieee.hpp"
 #include "math/linalg.hpp"
 #include "math/log.hpp"

@@ -3223,6 +3223,12 @@ struct __fmt_out {
   hstring<schar> &__o;
   const fmt_spec &__spec;
 
+  [[nodiscard]] char
+  mode() const noexcept
+  {
+    return __spec.type;
+  }
+
   void
   raw(const char *p, usize n)
   {

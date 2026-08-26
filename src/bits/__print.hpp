@@ -154,6 +154,10 @@ concept __bitfield_like = requires {
   requires micron::is_same_v<typename __U<T>::category_type, micron::bitfield_tag>;
 };
 
+// a type with an authored semantic renderer
+template<typename T>
+concept __semantic = requires { typename __U<T>::micron_printable_tag; };
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%
 // fallbacks
 
@@ -199,6 +203,7 @@ concept __opaque_tagged = requires { typename __U<T>::category_type; }
 
 enum class kind : u8 {
   none = 0,
+  semantic,
   node_chain,
   kv_visit,
   set_visit,
@@ -225,8 +230,7 @@ enum class kind : u8 {
 
 // must be a concept, not an if constexpr
 template<typename U>
-concept __numeric_tagged = requires { typename U::category_type; }
-                           && micron::is_same_v<typename U::category_type, micron::numeric_tag>;
+concept __numeric_tagged = requires { typename U::category_type; } && micron::is_same_v<typename U::category_type, micron::numeric_tag>;
 
 template<typename T>
 constexpr kind
@@ -240,6 +244,9 @@ classify(void)
   // types that are a number but expose an indexable interface over their storage
   else if constexpr ( __numeric_tagged<U> )
     return kind::none;
+
+  else if constexpr ( __semantic<U> )
+    return kind::semantic;
 
   // node chains
   else if constexpr ( __node_chain<U> )
@@ -374,7 +381,10 @@ render(Out &o, const T &x)
   using U = micron::remove_cvref_t<T>;
   constexpr micron::__print::kind K = micron::__print::kind_of_v<U>;
 
-  if constexpr ( K == kind::node_chain ) {
+  if constexpr ( K == kind::semantic ) {
+    x.__micron_print(o);
+
+  } else if constexpr ( K == kind::node_chain ) {
     o.raw("{ ", 2);
     bool first = true;
     for ( auto *p = x.ibegin(); p != nullptr; p = p->next ) {

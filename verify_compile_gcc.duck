@@ -315,6 +315,26 @@ compile tests/rigor/abcmalloc_harden.cpp --arm64 -Ofast --def MICRON_ABC_ZERO_ON
 compile tests/rigor/abcmalloc_harden.cpp --x86 --isa base -O2 --def MICRON_ABC_REDZONE=true -o bin/compiletests/abc_harden_rz_base
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# graph
+compile tests/compiletests/graph.cpp --x86 --isa base -O0 --raw-obj -o bin/compiletests/graph_base_O0
+compile tests/compiletests/graph.cpp --x86 -Ofast --raw-obj -o bin/compiletests/graph_native_Ofast
+compile tests/compiletests/graph.cpp --i386 -O2 --raw-obj -o bin/compiletests/graph_i386_O2
+compile tests/compiletests/graph.cpp --arm -O2 --raw-obj -o bin/compiletests/graph_arm32_O2
+compile tests/compiletests/graph.cpp --arm64 -O2 --raw-obj -o bin/compiletests/graph_arm64_O2
+compile tests/compiletests/graph.cpp --x86 --isa base -O2 --raw-obj -k -o bin/compiletests/graph_base_O2_k
+compile tests/compiletests/graph.cpp --x86 --isa base -O2 --raw-obj -ke -o bin/compiletests/graph_base_O2_ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# opt-in compute DAG and thread-pool adapter
+compile tests/compiletests/compute.cpp --x86 --isa base -O0 --raw-obj -o bin/compiletests/compute_base_O0
+compile tests/compiletests/compute.cpp --x86 -Ofast --raw-obj -o bin/compiletests/compute_native_Ofast
+compile tests/compiletests/compute.cpp --i386 -O2 --raw-obj -o bin/compiletests/compute_i386_O2
+compile tests/compiletests/compute.cpp --arm -O2 --raw-obj -o bin/compiletests/compute_arm32_O2
+compile tests/compiletests/compute.cpp --arm64 -O2 --raw-obj -o bin/compiletests/compute_arm64_O2
+compile tests/compiletests/compute.cpp --x86 --isa base -O2 --raw-obj -k -o bin/compiletests/compute_base_O2_k
+compile tests/compiletests/compute.cpp --x86 --isa base -O2 --raw-obj -ke -o bin/compiletests/compute_base_O2_ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # the crt path override
 build tests/compiletests/containers.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests/amd64_k_startdir
 build tests/compiletests/containers.cpp --x86 -Ofast -ke --start ./start -i . -i ./src -o bin/compiletests/amd64_ke_startdir

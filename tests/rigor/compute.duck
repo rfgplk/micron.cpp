@@ -1,0 +1,7 @@
+# micron::math::compute
+
+test tests/rigor/compute.cpp -o bin/compute/default -O0 --no-lto --timeout 120 -f
+test tests/rigor/compute.cpp -o bin/compute/o2 -O2 --no-lto --timeout 120 -f
+test tests/rigor/compute.cpp -o bin/compute/base --isa base -O2 --no-lto --timeout 120 -f
+test tests/rigor/compute.cpp -o bin/compute/asan --asan --no-lto --timeout 300 -f
+test tests/rigor/compute.cpp -o bin/compute/ubsan --ubsan --no-lto --timeout 300 -f

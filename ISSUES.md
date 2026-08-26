@@ -116,6 +116,10 @@ run
 
 ## Algorithms
 
+- **Several graph names are still delegated conveniences.**
+  `boykov_kolmogorov` calls Dinic; `king_ordering` and `sloan_ordering` call reverse Cuthill-McKee;
+  `minimum_degree_ordering` calls smallest-last. The community-family implementations remain the existing
+  simplified variants
 - **Map and tree `any_of` / `find` / `find_if` / `contains_if` never early-exit.**
 - **`fp::nub_by` and `fp::unique(c, eq)` are O(n^2)**
 - **`search` / `find_end` fall back to an O(nm) skip scan for a pattern wider than

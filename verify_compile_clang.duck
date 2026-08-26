@@ -297,6 +297,26 @@ compile --clang tests/rigor/abcmalloc_harden.cpp --arm64 -Ofast --def MICRON_ABC
 compile --clang tests/rigor/abcmalloc_harden.cpp --x86 --isa base -O2 --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_base
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# graph
+compile --clang tests/compiletests/graph.cpp --x86 --isa base -O0 --raw-obj -i . -o bin/compiletests-clang/graph_base_O0
+compile --clang tests/compiletests/graph.cpp --x86 -Ofast --raw-obj -i . -o bin/compiletests-clang/graph_native_Ofast
+compile --clang tests/compiletests/graph.cpp --i386 -O2 --raw-obj -i . -o bin/compiletests-clang/graph_i386_O2
+compile --clang tests/compiletests/graph.cpp --arm -O2 --raw-obj -i . -o bin/compiletests-clang/graph_arm32_O2
+compile --clang tests/compiletests/graph.cpp --arm64 -O2 --raw-obj -i . -o bin/compiletests-clang/graph_arm64_O2
+compile --clang tests/compiletests/graph.cpp --x86 --isa base -O2 --raw-obj -k -i . -o bin/compiletests-clang/graph_base_O2_k
+compile --clang tests/compiletests/graph.cpp --x86 --isa base -O2 --raw-obj -ke -i . -o bin/compiletests-clang/graph_base_O2_ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# opt-in compute DAG and thread-pool adapter
+compile --clang tests/compiletests/compute.cpp --x86 --isa base -O0 --raw-obj -i . -o bin/compiletests-clang/compute_base_O0
+compile --clang tests/compiletests/compute.cpp --x86 -Ofast --raw-obj -i . -o bin/compiletests-clang/compute_native_Ofast
+compile --clang tests/compiletests/compute.cpp --i386 -O2 --raw-obj -i . -o bin/compiletests-clang/compute_i386_O2
+compile --clang tests/compiletests/compute.cpp --arm -O2 --raw-obj -i . -o bin/compiletests-clang/compute_arm32_O2
+compile --clang tests/compiletests/compute.cpp --arm64 -O2 --raw-obj -i . -o bin/compiletests-clang/compute_arm64_O2
+compile --clang tests/compiletests/compute.cpp --x86 --isa base -O2 --raw-obj -k -i . -o bin/compiletests-clang/compute_base_O2_k
+compile --clang tests/compiletests/compute.cpp --x86 --isa base -O2 --raw-obj -ke -i . -o bin/compiletests-clang/compute_base_O2_ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # the crt path override
 build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_startdir
 build --clang tests/compiletests/containers.cpp --x86 -Ofast -ke --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_ke_startdir
