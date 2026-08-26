@@ -48,6 +48,12 @@ template<ieee754_floating F> struct SO2 {
   }
 
   [[nodiscard, gnu::always_inline]] static constexpr SO2
+  between(const SO2 &a, const SO2 &b) noexcept
+  {
+    return SO2{ b.theta - a.theta };
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr SO2
   exp_map(F omega) noexcept
   {
     return SO2{ omega };
@@ -62,8 +68,8 @@ template<ieee754_floating F> struct SO2 {
   [[nodiscard, gnu::flatten]] static constexpr mat<F, 2, 2>
   to_matrix(const SO2 &g) noexcept
   {
-    const F c = math::cos<F>(g.theta);
-    const F s = math::sin<F>(g.theta);
+    F s, c;
+    math::sincos<F>(g.theta, s, c);
     mat<F, 2, 2> r{};
     r.data[0] = c;
     r.data[1] = -s;
@@ -81,9 +87,27 @@ template<ieee754_floating F> struct SO2 {
   [[nodiscard, gnu::flatten]] static constexpr vec<F, 2>
   rotate(const SO2 &g, const vec<F, 2> &v) noexcept
   {
-    const F c = math::cos<F>(g.theta);
-    const F s = math::sin<F>(g.theta);
+    F s, c;
+    math::sincos<F>(g.theta, s, c);
     return vec<F, 2>{ c * v.data[0] - s * v.data[1], s * v.data[0] + c * v.data[1] };
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 2>
+  inverse_rotate(const SO2 &g, const vec<F, 2> &v) noexcept
+  {
+    return rotate(inverse(g), v);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 2>
+  act(const SO2 &g, const vec<F, 2> &v) noexcept
+  {
+    return rotate(g, v);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr SO2
+  interpolate(const SO2 &a, const SO2 &b, F t) noexcept
+  {
+    return SO2{ a.theta + (b.theta - a.theta) * t };
   }
 
   [[nodiscard, gnu::always_inline]] static constexpr F

@@ -102,6 +102,13 @@ struct euclidean {
     return linalg::ops::norm(q - p);
   }
 
+  [[nodiscard, gnu::always_inline]] static constexpr F
+  squared_distance(const vec<F, N> &p, const vec<F, N> &q) noexcept
+  {
+    const auto d = q - p;
+    return linalg::ops::dot(d, d);
+  }
+
   [[nodiscard, gnu::always_inline]] static constexpr vec<F, N>
   parallel_transport(const vec<F, N> &, const vec<F, N> &, const vec<F, N> &v) noexcept
   {

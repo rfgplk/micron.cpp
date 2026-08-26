@@ -20,6 +20,7 @@
 #include "embedded/torus.hpp"
 
 #include "lie/algebra.hpp"
+#include "lie/batch.hpp"
 #include "lie/se2.hpp"
 #include "lie/se3.hpp"
 #include "lie/se_n.hpp"

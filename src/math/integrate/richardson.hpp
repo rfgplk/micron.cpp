@@ -29,31 +29,31 @@ extrapolate(Fn step, F h0, F ratio, usize order, usize max_levels, F tol, usize 
 {
   constexpr usize cap = 16;
   if ( max_levels > cap ) max_levels = cap;
-  F A[cap][cap]{};
+  F previous[cap]{};
+  F current[cap]{};
 
   F h = h0;
-  A[0][0] = step(h);
-  F best = A[0][0];
+  previous[0] = step(h);
+  F best = previous[0];
 
   for ( usize i = 1; i < max_levels; ++i ) {
     h = h / ratio;
-    A[i][0] = step(h);
-    F factor = ratio;
-    for ( usize p = 0; p < order; ++p ) factor *= ratio;
+    current[0] = step(h);
     F denom_pow = F(1);
     for ( usize p = 0; p < order; ++p ) denom_pow *= ratio;
     for ( usize j = 1; j <= i; ++j ) {
-      A[i][j] = A[i][j - 1] + (A[i][j - 1] - A[i - 1][j - 1]) / (denom_pow - F(1));
+      current[j] = current[j - 1] + (current[j - 1] - previous[j - 1]) / (denom_pow - F(1));
       F next_pow = denom_pow;
       for ( usize p = 0; p < order; ++p ) next_pow *= ratio;
       denom_pow = next_pow;
     }
     const F prev = best;
-    best = A[i][i];
+    best = current[i];
     if ( i >= 2 && mk::manip::fabs<F>(best - prev) < tol ) {
       if ( n_levels_out ) *n_levels_out = i + 1;
       return best;
     }
+    for ( usize j = 0; j <= i; ++j ) previous[j] = current[j];
   }
   if ( n_levels_out ) *n_levels_out = max_levels;
   return best;

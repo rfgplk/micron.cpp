@@ -1,0 +1,45 @@
+section,metric,value,notes
+setup,date,2026-08-26,
+setup,cpu,Intel Core i7-5960X,Haswell-E
+setup,pinned_cpu,2,SMT sibling CPU 10 idle
+setup,warmups,5,
+setup,samples,9,median reported
+setup,counter_collection,separate non-multiplexed groups,100% running time
+setup,native_flags,--perf --fp --no-ssp --no-lto -i .,
+setup,portable_flags,--perf --fp --no-ssp --no-lto -i . --x86 --isa base,
+throughput,trapezoid_f32_2048,0.173 cycles/sample,scalar 2.942 cycles/sample; 17.0x
+throughput,trapezoid_f64_2048,0.289 cycles/sample,scalar 2.942 cycles/sample; 10.2x
+throughput,trapezoid_f32_262144,7.9x,memory traffic visible
+throughput,trapezoid_f64_262144,4.0x,memory traffic visible
+throughput,gradient_native_f32_2048,2.86x,
+throughput,gradient_native_f64_2048,6.23x,
+throughput,gradient_base_f32_2048,2.01x,
+throughput,gradient_base_f64_2048,4.10x,
+throughput,cumulative_trapezoid_native_f32,2.80x,prefix recurrence is limiting dependency
+throughput,cumulative_trapezoid_native_f64,1.62x,prefix recurrence is limiting dependency
+throughput,cumulative_trapezoid_base_f64,approximately 1.0x,in-register scan retained for f32 and native f64 gains
+throughput,clenshaw_curtis_f32_order64,0.622 cycles/node,precomputed batch reduction
+throughput,clenshaw_curtis_f64_order64,0.824 cycles/node,precomputed batch reduction
+throughput,gaussian_rule_order16_setup,17000--41000 cycles,reusable setup operation
+throughput,gaussian_rule_apply,about 2.0 cycles/node,
+topdown,front_end_bound,3.14%,Haswell weighted f32 kernel
+topdown,bad_speculation,2.68%,Haswell weighted f32 kernel
+topdown,retiring,49.27%,Haswell weighted f32 kernel
+topdown,back_end_bound,44.92%,Haswell weighted f32 kernel
+topdown,reservation_station_stalls,9.58% of cycles,
+topdown,rob_stalls,below 0.005% of cycles,
+topdown,store_buffer_stalls,below 0.005% of cycles,
+topdown,l1d_pending_stalls,0.28% of cycles,
+topdown,l2_pending_stalls,2.03% of cycles,
+topdown,annotated_hot_sequence,85.9% of samples,unrolled load/FMA sequence and loop comparison
+topdown,remaining_limit,load/FMA back-end throughput,not instruction delivery or branch prediction
+llvm_mca,haswell_weighted_f32_16,4.0 cycles,
+llvm_mca,cortex_a15_weighted_f32_16,6.0 cycles,
+llvm_mca,neoverse_n1_weighted_f32_16,5.3 cycles,
+codegen,native_x86,AVX2/FMA,
+codegen,x86_64_base,SSE2 only,
+codegen,armv7,NEON,
+codegen,aarch64,NEON,
+codegen,simd_leaf_spills,none,8-byte static stack report for audited leaf wrappers
+stack,fixed_state_ode_driver,80--336 bytes,stage arrays in caller workspace
+stack,runtime_state_ode_driver,144--224 bytes,stage arrays in caller workspace

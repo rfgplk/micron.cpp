@@ -31,22 +31,54 @@ namespace manifolds
 namespace __spd_impl
 {
 
-template<ieee754_floating F, usize N, typename Apply>
-[[nodiscard]] inline mat<F, N, N>
-sym_func(const mat<F, N, N> &P, Apply apply) noexcept
+template<ieee754_floating F, usize N> struct sym_pair_result {
+  mat<F, N, N> first;
+  mat<F, N, N> second;
+};
+
+template<ieee754_floating F, usize N>
+[[nodiscard, gnu::noinline]] inline linalg::decomp::eigen_sym_result<F, N>
+eigensystem(const mat<F, N, N> &P) noexcept
 {
-  auto er = linalg::decomp::eigen_sym<F, N>(P);
-  vec<F, N> fl{};
-  for ( usize i = 0; i < N; ++i ) fl.data[i] = apply(er.values.data[i]);
+  return linalg::decomp::eigen_sym<F, N>(P);
+}
+
+template<ieee754_floating F, usize N>
+[[nodiscard, gnu::noinline]] inline mat<F, N, N>
+reconstruct(const linalg::decomp::eigen_sym_result<F, N> &er, const vec<F, N> &values) noexcept
+{
   mat<F, N, N> M{};
   for ( usize r = 0; r < N; ++r ) {
     for ( usize c = 0; c < N; ++c ) {
       F acc = F(0);
-      for ( usize k = 0; k < N; ++k ) acc += er.vectors.data[r * N + k] * fl.data[k] * er.vectors.data[c * N + k];
+      for ( usize k = 0; k < N; ++k ) acc += er.vectors.data[r * N + k] * values.data[k] * er.vectors.data[c * N + k];
       M.data[r * N + c] = acc;
     }
   }
   return M;
+}
+
+template<ieee754_floating F, usize N, typename Apply>
+[[nodiscard]] inline mat<F, N, N>
+sym_func(const mat<F, N, N> &P, Apply apply) noexcept
+{
+  auto er = eigensystem<F, N>(P);
+  vec<F, N> fl{};
+  for ( usize i = 0; i < N; ++i ) fl.data[i] = apply(er.values.data[i]);
+  return reconstruct<F, N>(er, fl);
+}
+
+template<ieee754_floating F, usize N, typename ApplyFirst, typename ApplySecond>
+[[nodiscard]] inline sym_pair_result<F, N>
+sym_func_pair(const mat<F, N, N> &P, ApplyFirst apply_first, ApplySecond apply_second) noexcept
+{
+  auto er = eigensystem<F, N>(P);
+  vec<F, N> fa{}, fb{};
+  for ( usize i = 0; i < N; ++i ) {
+    fa.data[i] = apply_first(er.values.data[i]);
+    fb.data[i] = apply_second(er.values.data[i]);
+  }
+  return sym_pair_result<F, N>{ reconstruct<F, N>(er, fa), reconstruct<F, N>(er, fb) };
 }
 
 template<ieee754_floating F, usize N>
@@ -54,8 +86,14 @@ template<ieee754_floating F, usize N>
 symmetrize(const mat<F, N, N> &A) noexcept
 {
   mat<F, N, N> S{};
-  for ( usize r = 0; r < N; ++r )
-    for ( usize c = 0; c < N; ++c ) S.data[r * N + c] = F(0.5) * (A.data[r * N + c] + A.data[c * N + r]);
+  for ( usize r = 0; r < N; ++r ) {
+    S.data[r * N + r] = F(0.5) * (A.data[r * N + r] + A.data[r * N + r]);
+    for ( usize c = r + 1; c < N; ++c ) {
+      const F v = F(0.5) * (A.data[r * N + c] + A.data[c * N + r]);
+      S.data[r * N + c] = v;
+      S.data[c * N + r] = v;
+    }
+  }
   return S;
 }
 
@@ -66,6 +104,15 @@ frobenius_norm(const mat<F, N, N> &A) noexcept
   F s = F(0);
   for ( usize i = 0; i < N * N; ++i ) s = math::fma<F>(A.data[i], A.data[i], s);
   return math::fsqrt(s);
+}
+
+template<ieee754_floating F, usize N>
+[[nodiscard, gnu::flatten]] inline constexpr F
+frobenius_squared(const mat<F, N, N> &A) noexcept
+{
+  F s = F(0);
+  for ( usize i = 0; i < N * N; ++i ) s = math::fma<F>(A.data[i], A.data[i], s);
+  return s;
 }
 
 };      // namespace __spd_impl
@@ -87,6 +134,20 @@ struct spd {
   {
     const F eps = math::default_eps<F>();
     return __spd_impl::sym_func<F, N>(P, [eps](F x) noexcept { return F(1) / math::fsqrt(x > eps ? x : eps); });
+  }
+
+  struct sqrt_pair {
+    mat<F, N, N> root;
+    mat<F, N, N> inverse_root;
+  };
+
+  [[nodiscard]] static sqrt_pair
+  sqrt_pair_pd(const mat<F, N, N> &P) noexcept
+  {
+    const F eps = math::default_eps<F>();
+    auto pair = __spd_impl::sym_func_pair<F, N>(
+        P, [](F x) noexcept { return math::fsqrt(x); }, [eps](F x) noexcept { return F(1) / math::fsqrt(x > eps ? x : eps); });
+    return sqrt_pair{ pair.first, pair.second };
   }
 
   [[nodiscard]] static mat<F, N, N>
@@ -121,12 +182,11 @@ struct spd {
       for ( usize i = 0; i < N * N; ++i ) sum.data[i] = LP.data[i] + S.data[i];
       return linalg::matfunc::expm<F, N>(sum).X;
     } else {
-      auto P_half = sqrt_pd(P);
-      auto P_neg_half = inv_sqrt_pd(P);
+      auto roots = sqrt_pair_pd(P);
       auto Vs = __spd_impl::symmetrize<F, N>(V);
-      auto inner = linalg::ops::gemm(linalg::ops::gemm(P_neg_half, Vs), P_neg_half);
+      auto inner = linalg::ops::gemm(linalg::ops::gemm(roots.inverse_root, Vs), roots.inverse_root);
       auto E = linalg::matfunc::expm<F, N>(inner).X;
-      return linalg::ops::gemm(linalg::ops::gemm(P_half, E), P_half);
+      return linalg::ops::gemm(linalg::ops::gemm(roots.root, E), roots.root);
     }
   }
 
@@ -141,11 +201,10 @@ struct spd {
       for ( usize i = 0; i < N * N; ++i ) r.data[i] = LQ.data[i] - LP.data[i];
       return r;
     } else {
-      auto P_half = sqrt_pd(P);
-      auto P_neg_half = inv_sqrt_pd(P);
-      auto inner = linalg::ops::gemm(linalg::ops::gemm(P_neg_half, Q), P_neg_half);
+      auto roots = sqrt_pair_pd(P);
+      auto inner = linalg::ops::gemm(linalg::ops::gemm(roots.inverse_root, Q), roots.inverse_root);
       auto L = linalg::matfunc::logm<F, N>(inner).X;
-      return linalg::ops::gemm(linalg::ops::gemm(P_half, L), P_half);
+      return linalg::ops::gemm(linalg::ops::gemm(roots.root, L), roots.root);
     }
   }
 
@@ -164,6 +223,24 @@ struct spd {
       auto inner = linalg::ops::gemm(linalg::ops::gemm(P_neg_half, Q), P_neg_half);
       auto L = linalg::matfunc::logm<F, N>(inner).X;
       return __spd_impl::frobenius_norm<F, N>(L);
+    }
+  }
+
+  template<metric_tag Metric = affine_invariant_metric>
+  [[nodiscard]] static F
+  squared_distance(const mat<F, N, N> &P, const mat<F, N, N> &Q) noexcept
+  {
+    if constexpr ( micron::is_same_v<Metric, log_euclidean_metric> ) {
+      auto LP = linalg::matfunc::logm<F, N>(P).X;
+      auto LQ = linalg::matfunc::logm<F, N>(Q).X;
+      mat<F, N, N> diff{};
+      for ( usize i = 0; i < N * N; ++i ) diff.data[i] = LP.data[i] - LQ.data[i];
+      return __spd_impl::frobenius_squared<F, N>(diff);
+    } else {
+      auto P_neg_half = inv_sqrt_pd(P);
+      auto inner = linalg::ops::gemm(linalg::ops::gemm(P_neg_half, Q), P_neg_half);
+      auto L = linalg::matfunc::logm<F, N>(inner).X;
+      return __spd_impl::frobenius_squared<F, N>(L);
     }
   }
 

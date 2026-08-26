@@ -6,10 +6,14 @@
 #pragma once
 
 #include "concepts.hpp"
+#include "cubature.hpp"
 #include "dblquad.hpp"
 #include "derive.hpp"
 #include "gauss.hpp"
+#include "gaussian.hpp"
+#include "newton_cotes.hpp"
 #include "nquad.hpp"
+#include "ode.hpp"
 #include "quad.hpp"
 #include "richardson.hpp"
 #include "romberg.hpp"
@@ -17,3 +21,4 @@
 #include "simpson.hpp"
 #include "tplquad.hpp"
 #include "trapezoid.hpp"
+#include "weighted.hpp"

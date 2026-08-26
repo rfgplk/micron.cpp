@@ -161,6 +161,27 @@ template<ieee754_floating F> struct SE3 {
     return SE3{ SO3<F>::identity(), vec<F, 3>{ F(0), F(0), F(0) } };
   }
 
+  [[nodiscard, gnu::always_inline]] static constexpr SE3
+  from_rt(const SO3<F> &rotation, const vec<F, 3> &translation) noexcept
+  {
+    return SE3{ rotation, translation };
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr SE3
+  from_quat_translation(const quat<F> &rotation, const vec<F, 3> &translation) noexcept
+  {
+    return SE3{ SO3<F>::from_quat(rotation), translation };
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr SE3
+  from_matrix(const mat<F, 4, 4> &T) noexcept
+  {
+    mat<F, 3, 3> R3{};
+    for ( usize r = 0; r < 3; ++r )
+      for ( usize c = 0; c < 3; ++c ) R3.data[r * 3 + c] = T.data[r * 4 + c];
+    return SE3{ SO3<F>::from_matrix(R3), vec<F, 3>{ T.data[3], T.data[7], T.data[11] } };
+  }
+
   [[nodiscard, gnu::flatten]] static constexpr SE3
   compose(const SE3 &a, const SE3 &b) noexcept
   {
@@ -173,6 +194,19 @@ template<ieee754_floating F> struct SE3 {
     const auto Rinv = SO3<F>::inverse(g.R);
     const auto tinv = SO3<F>::rotate(Rinv, vec<F, 3>{ -g.t.data[0], -g.t.data[1], -g.t.data[2] });
     return SE3{ Rinv, tinv };
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr SE3
+  between(const SE3 &a, const SE3 &b) noexcept
+  {
+    const auto Rinv = SO3<F>::inverse(a.R);
+    return SE3{ SO3<F>::compose(Rinv, b.R), SO3<F>::rotate(Rinv, b.t - a.t) };
+  }
+
+  [[nodiscard, gnu::always_inline]] static SE3
+  normalized(const SE3 &g) noexcept
+  {
+    return SE3{ SO3<F>::normalized(g.R), g.t };
   }
 
   [[nodiscard, gnu::flatten]] static constexpr SE3
@@ -276,6 +310,30 @@ template<ieee754_floating F> struct SE3 {
     return M;
   }
 
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 3>
+  act(const SE3 &g, const vec<F, 3> &point) noexcept
+  {
+    return SO3<F>::rotate(g.R, point) + g.t;
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 3>
+  act_vector(const SE3 &g, const vec<F, 3> &direction) noexcept
+  {
+    return SO3<F>::rotate(g.R, direction);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 3>
+  inverse_act(const SE3 &g, const vec<F, 3> &point) noexcept
+  {
+    return SO3<F>::inverse_rotate(g.R, point - g.t);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 3>
+  inverse_act_vector(const SE3 &g, const vec<F, 3> &direction) noexcept
+  {
+    return SO3<F>::inverse_rotate(g.R, direction);
+  }
+
   [[nodiscard, gnu::flatten]] static constexpr mat<F, 6, 6>
   adjoint(const SE3 &g) noexcept
   {
@@ -302,6 +360,75 @@ template<ieee754_floating F> struct SE3 {
         Ad.data[(r + 3) * 6 + (c + 3)] = R3.data[r * 3 + c];
       }
     return Ad;
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr mat<F, 6, 6>
+  coadjoint(const SE3 &g) noexcept
+  {
+    const auto R3 = SO3<F>::to_matrix(g.R);
+    const F tx = g.t.data[0], ty = g.t.data[1], tz = g.t.data[2];
+    F tr[9];
+    tr[0] = -tz * R3.data[3] + ty * R3.data[6];
+    tr[1] = -tz * R3.data[4] + ty * R3.data[7];
+    tr[2] = -tz * R3.data[5] + ty * R3.data[8];
+    tr[3] = tz * R3.data[0] - tx * R3.data[6];
+    tr[4] = tz * R3.data[1] - tx * R3.data[7];
+    tr[5] = tz * R3.data[2] - tx * R3.data[8];
+    tr[6] = -ty * R3.data[0] + tx * R3.data[3];
+    tr[7] = -ty * R3.data[1] + tx * R3.data[4];
+    tr[8] = -ty * R3.data[2] + tx * R3.data[5];
+    mat<F, 6, 6> Ad = mat<F, 6, 6>::zero();
+    for ( usize r = 0; r < 3; ++r )
+      for ( usize c = 0; c < 3; ++c ) {
+        Ad.data[r * 6 + c] = R3.data[r * 3 + c];
+        Ad.data[(r + 3) * 6 + c] = tr[r * 3 + c];
+        Ad.data[(r + 3) * 6 + (c + 3)] = R3.data[r * 3 + c];
+      }
+    return Ad;
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr vec<F, 6>
+  adjoint_apply(const SE3 &g, const vec<F, 6> &xi) noexcept
+  {
+    const vec<F, 3> v{ xi.data[0], xi.data[1], xi.data[2] };
+    const vec<F, 3> w{ xi.data[3], xi.data[4], xi.data[5] };
+    const auto Rv = SO3<F>::rotate(g.R, v);
+    const auto Rw = SO3<F>::rotate(g.R, w);
+    const auto top = Rv + linalg::ops::cross(g.t, Rw);
+    return vec<F, 6>{ top.data[0], top.data[1], top.data[2], Rw.data[0], Rw.data[1], Rw.data[2] };
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr vec<F, 6>
+  coadjoint_apply(const SE3 &g, const vec<F, 6> &wrench) noexcept
+  {
+    const vec<F, 3> force{ wrench.data[0], wrench.data[1], wrench.data[2] };
+    const vec<F, 3> torque{ wrench.data[3], wrench.data[4], wrench.data[5] };
+    const auto Rf = SO3<F>::rotate(g.R, force);
+    const auto Rt = SO3<F>::rotate(g.R, torque);
+    const auto bottom = linalg::ops::cross(g.t, Rf) + Rt;
+    return vec<F, 6>{ Rf.data[0], Rf.data[1], Rf.data[2], bottom.data[0], bottom.data[1], bottom.data[2] };
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr F
+  squared_distance(const SE3 &a, const SE3 &b) noexcept
+  {
+    const auto xi = log_map(between(a, b));
+    F s = F(0);
+    for ( usize i = 0; i < 6; ++i ) s = math::fma<F>(xi.data[i], xi.data[i], s);
+    return s;
+  }
+
+  [[nodiscard, gnu::always_inline]] static F
+  distance(const SE3 &a, const SE3 &b) noexcept
+  {
+    return math::fsqrt(squared_distance(a, b));
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr SE3
+  interpolate(const SE3 &a, const SE3 &b, F t) noexcept
+  {
+    const auto delta = log_map(between(a, b));
+    return compose(a, exp_map(delta * t));
   }
 };
 

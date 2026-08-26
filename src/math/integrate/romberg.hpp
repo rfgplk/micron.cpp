@@ -29,11 +29,12 @@ romberg(Fn f, F a, F b, F tol, usize max_levels = 12) noexcept
   if ( a == b ) return F(0);
   constexpr usize cap = 16;
   if ( max_levels > cap ) max_levels = cap;
-  F R[cap][cap]{};
+  F previous[cap]{};
+  F current[cap]{};
 
   F h = b - a;
-  R[0][0] = F(0.5) * h * (f(a) + f(b));
-  F best = R[0][0];
+  previous[0] = F(0.5) * h * (f(a) + f(b));
+  F best = previous[0];
 
   for ( usize k = 1; k < max_levels; ++k ) {
     const F h_new = h / F(2);
@@ -43,18 +44,19 @@ romberg(Fn f, F a, F b, F tol, usize max_levels = 12) noexcept
       const F x = math::fma<F>(F(2 * i - 1), h_new, a);
       sum += f(x);
     }
-    R[k][0] = F(0.5) * R[k - 1][0] + h_new * sum;
+    current[0] = F(0.5) * previous[0] + h_new * sum;
 
     F denom = F(4);
     for ( usize j = 1; j <= k; ++j ) {
-      R[k][j] = R[k][j - 1] + (R[k][j - 1] - R[k - 1][j - 1]) / (denom - F(1));
+      current[j] = current[j - 1] + (current[j - 1] - previous[j - 1]) / (denom - F(1));
       denom *= F(4);
     }
 
     const F prev = best;
-    best = R[k][k];
+    best = current[k];
     if ( k >= 2 && mk::manip::fabs<F>(best - prev) < tol ) return best;
     h = h_new;
+    for ( usize j = 0; j <= k; ++j ) previous[j] = current[j];
   }
   return best;
 }

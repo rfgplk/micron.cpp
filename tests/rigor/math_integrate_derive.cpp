@@ -176,6 +176,39 @@ main()
   }
   end_test_case();
 
+  test_case("SoA batched gradient, Jacobian, and Hessian");
+  {
+    const f64 x[3] = { 1.0, 2.0, 3.0 };
+    integrate::derive::derivative_batch_workspace<3, f64, 19> scalar_workspace{};
+    auto scalar_batch = [](const f64 *const *p, f64 *out, usize count) noexcept {
+      for ( usize i = 0; i < count; ++i ) out[i] = p[0][i] * p[1][i] + p[2][i] * p[2][i];
+    };
+    const auto g = integrate::derive::gradient_batch<3, f64>(scalar_batch, x, 1e-4, scalar_workspace);
+    const auto H = integrate::derive::hessian_batch<3, f64>(scalar_batch, x, 1e-3, scalar_workspace);
+    require_true(near(g.data[0], 2.0, 1e-8));
+    require_true(near(g.data[1], 1.0, 1e-8));
+    require_true(near(g.data[2], 6.0, 1e-8));
+    require_true(near(H.data[1], 1.0, 1e-8));
+    require_true(near(H.data[3], 1.0, 1e-8));
+    require_true(near(H.data[8], 2.0, 1e-8));
+
+    integrate::derive::jacobian_batch_workspace<3, 2, f64, 6> vector_workspace{};
+    auto vector_batch = [](const f64 *const *p, f64 *const *out, usize count) noexcept {
+      for ( usize i = 0; i < count; ++i ) {
+        out[0][i] = p[0][i] + p[1][i] * p[2][i];
+        out[1][i] = p[0][i] * p[0][i] - p[2][i];
+      }
+    };
+    const auto J = integrate::derive::jacobian_batch<3, 2, f64>(vector_batch, x, 1e-4, vector_workspace);
+    require_true(near(J.data[0], 1.0, 1e-8));
+    require_true(near(J.data[1], 3.0, 1e-8));
+    require_true(near(J.data[2], 2.0, 1e-8));
+    require_true(near(J.data[3], 2.0, 1e-8));
+    require_true(near(J.data[4], 0.0, 1e-8));
+    require_true(near(J.data[5], -1.0, 1e-8));
+  }
+  end_test_case();
+
   print("=== integrate derive ok ===");
   return 1;
 }

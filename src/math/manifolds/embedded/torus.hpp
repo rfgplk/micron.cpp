@@ -33,7 +33,9 @@ struct torus {
   [[nodiscard, gnu::flatten]] static F
   canonical(F angle) noexcept
   {
-    return math::atan2<F>(math::sin<F>(angle), math::cos<F>(angle));
+    F s, c;
+    math::sincos<F>(angle, s, c);
+    return math::atan2<F>(s, c);
   }
 
   [[nodiscard, gnu::flatten]] static vec<F, N>
@@ -94,6 +96,13 @@ struct torus {
   distance(const vec<F, N> &p, const vec<F, N> &q) noexcept
   {
     return linalg::ops::norm(log_map(p, q));
+  }
+
+  [[nodiscard, gnu::always_inline]] static F
+  squared_distance(const vec<F, N> &p, const vec<F, N> &q) noexcept
+  {
+    const auto v = log_map(p, q);
+    return linalg::ops::dot(v, v);
   }
 
   [[nodiscard, gnu::always_inline]] static constexpr vec<F, N>

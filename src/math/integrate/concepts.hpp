@@ -27,6 +27,15 @@ concept callable_real_d = requires(Fn fn, const F (&x)[D]) {
   { fn(x) } -> micron::convertible_to<F>;
 };
 
+template<typename Fn, typename F>
+concept callable_real_batch = requires(Fn fn, const F *x, F *y, usize count) { fn(x, y, count); };
+
+template<typename Fn, typename F>
+concept callable_real_batch_d = requires(Fn fn, const F *const *x, F *y, usize count) { fn(x, y, count); };
+
+template<typename Fn, typename F>
+concept callable_vector_batch_d = requires(Fn fn, const F *const *x, F *const *y, usize count) { fn(x, y, count); };
+
 };      // namespace integrate
 };      // namespace math
 };      // namespace micron

@@ -62,8 +62,8 @@ struct sphere {
       for ( usize i = 0; i < N; ++i ) r.data[i] = p.data[i] + v.data[i];
       return linalg::ops::normalize(r);
     }
-    const F c = math::cos<F>(theta);
-    const F s = math::sin<F>(theta);
+    F s, c;
+    math::sincos<F>(theta, s, c);
     const F k = s / theta;
     vec<F, N> r{};
     for ( usize i = 0; i < N; ++i ) r.data[i] = c * p.data[i] + k * v.data[i];
@@ -113,6 +113,13 @@ struct sphere {
     if ( dot_pq > F(1) ) dot_pq = F(1);
     if ( dot_pq < F(-1) ) dot_pq = F(-1);
     return math::acos<F>(dot_pq);
+  }
+
+  [[nodiscard, gnu::always_inline]] static F
+  squared_distance(const vec<F, N> &p, const vec<F, N> &q) noexcept
+  {
+    const F d = distance(p, q);
+    return d * d;
   }
 
   [[nodiscard, gnu::always_inline]] static constexpr F

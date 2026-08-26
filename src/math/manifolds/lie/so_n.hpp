@@ -49,6 +49,12 @@ struct SOn {
     return SOn{ linalg::ops::transpose(g.R) };
   }
 
+  [[nodiscard, gnu::always_inline]] static constexpr SOn
+  between(const SOn &a, const SOn &b) noexcept
+  {
+    return compose(inverse(a), b);
+  }
+
   [[nodiscard]] static SOn
   exp_map(const mat<F, N, N> &X) noexcept
   {
@@ -77,6 +83,39 @@ struct SOn {
   rotate(const SOn &g, const vec<F, N> &v) noexcept
   {
     return linalg::ops::gemv(g.R, v);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, N>
+  inverse_rotate(const SOn &g, const vec<F, N> &v) noexcept
+  {
+    return rotate(inverse(g), v);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, N>
+  act(const SOn &g, const vec<F, N> &v) noexcept
+  {
+    return rotate(g, v);
+  }
+
+  [[nodiscard]] static F
+  squared_distance(const SOn &a, const SOn &b) noexcept
+  {
+    const auto X = log_map(between(a, b));
+    F s = F(0);
+    for ( usize i = 0; i < N * N; ++i ) s = math::fma<F>(X.data[i], X.data[i], s);
+    return s;
+  }
+
+  [[nodiscard, gnu::always_inline]] static F
+  distance(const SOn &a, const SOn &b) noexcept
+  {
+    return math::fsqrt(squared_distance(a, b));
+  }
+
+  [[nodiscard]] static SOn
+  interpolate(const SOn &a, const SOn &b, F t) noexcept
+  {
+    return compose(a, exp_map(log_map(between(a, b)) * t));
   }
 };
 

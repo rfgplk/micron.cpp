@@ -81,8 +81,14 @@ struct stiefel {
     auto A = __stiefel_impl::xt_v<F, N, P>(X, V);
     // S = (A + Aᵀ) / 2
     mat<F, P, P> S{};
-    for ( usize i = 0; i < P; ++i )
-      for ( usize j = 0; j < P; ++j ) S.data[i * P + j] = F(0.5) * (A.data[i * P + j] + A.data[j * P + i]);
+    for ( usize i = 0; i < P; ++i ) {
+      S.data[i * P + i] = F(0.5) * (A.data[i * P + i] + A.data[i * P + i]);
+      for ( usize j = i + 1; j < P; ++j ) {
+        const F v = F(0.5) * (A.data[i * P + j] + A.data[j * P + i]);
+        S.data[i * P + j] = v;
+        S.data[j * P + i] = v;
+      }
+    }
     auto XS = linalg::ops::gemm(X, S);
     mat<F, N, P> R{};
     for ( usize i = 0; i < N * P; ++i ) R.data[i] = V.data[i] - XS.data[i];
@@ -187,12 +193,18 @@ struct stiefel {
   [[nodiscard]] static F
   distance(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
   {
+    return math::fsqrt(squared_distance(X, Y));
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr F
+  squared_distance(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
+  {
     F s = F(0);
     for ( usize i = 0; i < N * P; ++i ) {
       const F d = X.data[i] - Y.data[i];
       s = math::fma<F>(d, d, s);
     }
-    return math::fsqrt(s);
+    return s;
   }
 
   [[nodiscard, gnu::always_inline]] static mat<F, N, P>

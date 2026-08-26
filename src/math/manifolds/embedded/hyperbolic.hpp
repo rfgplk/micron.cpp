@@ -105,6 +105,13 @@ struct hyperbolic {
     return math::acosh<F>(-mpq);
   }
 
+  [[nodiscard, gnu::always_inline]] static F
+  squared_distance(const vec<F, ambient> &p, const vec<F, ambient> &q) noexcept
+  {
+    const F d = distance(p, q);
+    return d * d;
+  }
+
   [[nodiscard, gnu::always_inline]] static constexpr F
   inner(const vec<F, ambient> &, const vec<F, ambient> &u, const vec<F, ambient> &v) noexcept
   {

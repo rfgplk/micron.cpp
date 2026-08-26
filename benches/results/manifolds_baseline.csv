@@ -1,0 +1,69 @@
+# micron manifold throughput baseline
+# captured: 2026-08-25
+# host: Intel Core i7-5960X (Haswell-E), amd64, --isa native
+# toolchain: GCC 16.2.1 20260819; Linux 7.1.9-200.fc44.x86_64
+# build: duck build benches/manifolds_bench.cpp --perf --fp --no-ssp --no-lto -i . -o bin/manifold_bench_final
+# run: taskset -c 2 ./bin/manifold_bench_final/manifolds_bench
+# estimator: median of 7 perf-event samples; N=256 L1-resident elements
+# same-session headline deltas: SO3 rotate f32 ~56.0 -> 9.85 cycles/op; SE3 between f32 42.24 -> 24.41
+# same-session headline deltas: adjoint+gemv -> adjoint_apply f32 108.81 -> 32.90 cycles/op
+# same-session headline deltas: scalar -> SoA f32 rotate 11.20 -> 1.37 and transform 13.35 -> 1.70 cycles/point
+# same-session headline deltas: SPD exp f32 ~6371 -> 3316.51; SPD log f64 ~14967 -> 10923.95 cycles/op
+# llvm-mca Haswell: 4-point AoS rotation is port-5 shuffle-bound at 15 cycles/block
+# llvm-mca Haswell: compiler-unrolled 16-point AVX2 SoA rotation is balanced at 18 cycles/block (1.125 cycles/point)
+# llvm-mca Neoverse-N1: compiler-unrolled 8-point NEON SoA rotation models at 28 cycles/block (3.5 cycles/point)
+group,operation,type,cycles_per_op,instructions_per_op,ipc,l1d_loads_per_op,l1d_miss_percent
+SO3 algebraic,compose,f32,7.51,12.39,1.65,1.50,0.00
+SO3 algebraic,compose,f64,15.28,20.52,1.34,2.75,0.00
+SO3 algebraic,inverse,f32,4.43,6.39,1.44,0.88,0.00
+SO3 algebraic,inverse,f64,9.92,10.52,1.06,1.75,0.00
+SO3 algebraic,rotate,f32,9.85,23.52,2.39,7.00,0.00
+SO3 algebraic,rotate,f64,8.30,20.52,2.47,5.00,0.00
+SO3 algebraic,to_matrix,f32,27.18,48.02,1.77,5.00,0.00
+SO3 algebraic,to_matrix,f64,52.42,49.02,0.94,6.00,0.00
+SO3 maps,exp_map,f32,68.55,132.09,1.93,31.93,0.00
+SO3 maps,exp_map,f64,283.47,106.02,0.37,23.93,0.00
+SO3 maps,log_map,f32,69.45,122.74,1.77,25.18,0.00
+SO3 maps,log_map,f64,96.84,107.26,1.11,19.24,0.00
+SE3 algebraic,compose,f32,24.24,61.02,2.52,16.00,0.00
+SE3 algebraic,compose,f64,46.38,59.02,1.27,13.00,0.00
+SE3 algebraic,inverse,f32,22.03,42.02,1.91,14.00,0.00
+SE3 algebraic,inverse,f64,23.63,39.02,1.65,14.00,0.00
+SE3 algebraic,to_matrix,f32,30.58,53.02,1.73,11.00,0.00
+SE3 algebraic,to_matrix,f64,25.20,51.40,2.04,9.00,0.00
+SE3 algebraic,adjoint,f32,77.88,110.03,1.41,18.00,0.00
+SE3 algebraic,adjoint,f64,187.45,270.04,1.44,44.00,0.00
+SE3 fused,between legacy,f32,42.24,85.02,2.01,23.00,0.00
+SE3 fused,between,f32,24.41,60.02,2.46,15.00,0.00
+SE3 fused,between legacy,f64,49.20,77.02,1.57,19.00,0.00
+SE3 fused,between,f64,27.05,56.02,2.07,14.00,0.00
+SE3 fused,adjoint+gemv,f32,108.81,206.02,1.89,32.00,0.00
+SE3 fused,adjoint_apply,f32,32.90,60.02,1.82,13.00,0.00
+SE3 fused,adjoint+gemv,f64,212.11,228.02,1.07,47.00,0.00
+SE3 fused,adjoint_apply,f64,31.55,60.02,1.90,13.00,0.00
+SE3 maps,exp_map,f32,130.87,185.21,1.42,31.08,0.00
+SE3 maps,exp_map,f64,132.12,175.21,1.33,36.08,0.00
+SE3 maps,log_map,f32,159.38,159.29,1.00,24.21,0.00
+SE3 maps,log_map,f64,548.48,153.31,0.28,24.21,0.00
+AoS batch,rotate scalar loop,f32,8.43,19.78,2.35,5.01,0.00
+AoS batch,rotate_many,f32,5.61,11.03,1.97,1.02,0.00
+AoS batch,rotate scalar loop,f64,6.09,14.79,2.43,2.01,0.00
+AoS batch,rotate_many,f64,6.09,11.03,1.81,1.02,0.00
+AoS batch,transform scalar loop,f32,11.63,25.54,2.20,5.02,0.00
+AoS batch,transform_many,f32,6.14,11.80,1.92,1.53,0.00
+AoS batch,transform scalar loop,f64,22.55,22.04,0.98,3.02,0.00
+AoS batch,transform_many,f64,6.64,11.80,1.78,1.53,0.00
+SoA batch,rotate scalar loop,f32,11.20,23.53,2.10,5.01,0.00
+SoA batch,rotate_many_soa,f32,1.37,3.22,2.36,0.39,0.00
+SoA batch,rotate scalar loop,f64,10.16,20.04,1.97,3.01,0.00
+SoA batch,rotate_many_soa,f64,2.76,6.41,2.32,0.77,0.00
+SoA batch,transform scalar loop,f32,13.35,28.04,2.10,5.02,0.00
+SoA batch,transform_many_soa,f32,1.70,3.61,2.13,0.53,0.00
+SoA batch,transform scalar loop,f64,13.47,24.05,1.78,3.02,0.00
+SoA batch,transform_many_soa,f64,3.38,7.17,2.12,1.03,0.00
+embedded,sphere exp,f32,74.92,143.00,1.91,36.46,0.00
+embedded,sphere exp,f64,91.37,142.75,1.56,39.46,0.00
+embedded,SPD exp,f32,3316.51,2176.68,0.66,397.46,0.00
+embedded,SPD exp,f64,4327.91,1912.20,0.44,476.65,0.00
+embedded,SPD log,f32,13243.41,4375.34,0.33,829.66,0.00
+embedded,SPD log,f64,10923.95,4906.41,0.45,1107.04,0.00

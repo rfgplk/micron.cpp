@@ -39,6 +39,12 @@ struct SEn {
   }
 
   [[nodiscard, gnu::always_inline]] static constexpr SEn
+  from_matrix(const mat<F, H, H> &T) noexcept
+  {
+    return SEn{ T };
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr SEn
   compose(const SEn &a, const SEn &b) noexcept
   {
     return SEn{ linalg::ops::gemm(a.T, b.T) };
@@ -59,6 +65,12 @@ struct SEn {
     return SEn{ Tinv };
   }
 
+  [[nodiscard, gnu::always_inline]] static SEn
+  between(const SEn &a, const SEn &b) noexcept
+  {
+    return compose(inverse(a), b);
+  }
+
   [[nodiscard]] static SEn
   exp_map(const mat<F, H, H> &Xi) noexcept
   {
@@ -75,6 +87,42 @@ struct SEn {
   to_matrix(const SEn &g) noexcept
   {
     return g.T;
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr vec<F, N>
+  act(const SEn &g, const vec<F, N> &point) noexcept
+  {
+    vec<F, N> out{};
+    for ( usize r = 0; r < N; ++r ) {
+      F acc = g.T.data[r * H + N];
+      for ( usize c = 0; c < N; ++c ) acc = math::fma<F>(g.T.data[r * H + c], point.data[c], acc);
+      out.data[r] = acc;
+    }
+    return out;
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr vec<F, N>
+  act_vector(const SEn &g, const vec<F, N> &direction) noexcept
+  {
+    vec<F, N> out{};
+    for ( usize r = 0; r < N; ++r ) {
+      F acc = F(0);
+      for ( usize c = 0; c < N; ++c ) acc = math::fma<F>(g.T.data[r * H + c], direction.data[c], acc);
+      out.data[r] = acc;
+    }
+    return out;
+  }
+
+  [[nodiscard, gnu::always_inline]] static vec<F, N>
+  inverse_act(const SEn &g, const vec<F, N> &point) noexcept
+  {
+    return act(inverse(g), point);
+  }
+
+  [[nodiscard]] static SEn
+  interpolate(const SEn &a, const SEn &b, F t) noexcept
+  {
+    return compose(a, exp_map(log_map(between(a, b)) * t));
   }
 };
 

@@ -353,6 +353,24 @@ main()
   }
   end_test_case();
 
+  test_case("SE2: matrix, action, relative transform, and adjoint helpers");
+  {
+    const auto a = SE2<f64>::exp_map(vec<f64, 3>{ 0.3, -0.4, 0.2 });
+    const auto b = SE2<f64>::exp_map(vec<f64, 3>{ -0.2, 0.5, -0.6 });
+    const auto ar = SE2<f64>::from_matrix(SE2<f64>::to_matrix(a));
+    require_true(near(ar.R.theta, a.R.theta, 1e-10));
+    require_true(near_v(ar.t, a.t, 1e-10));
+    const vec<f64, 2> p{ 0.7, -1.2 };
+    require_true(near_v(SE2<f64>::inverse_act(a, SE2<f64>::act(a, p)), p, 1e-10));
+    const auto rel = SE2<f64>::between(a, b);
+    const auto recovered = SE2<f64>::compose(a, rel);
+    require_true(near(recovered.R.theta, b.R.theta, 1e-10));
+    require_true(near_v(recovered.t, b.t, 1e-10));
+    const vec<f64, 3> xi{ 0.4, -0.8, 0.3 };
+    require_true(near_v(SE2<f64>::adjoint_apply(a, xi), linalg::ops::gemv(SE2<f64>::adjoint(a), xi), 1e-10));
+  }
+  end_test_case();
+
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // SE3
   test_case("SE3: identity");
@@ -428,6 +446,51 @@ main()
     require_true(near(T.data[3 * 4 + 1], 0.0));
     require_true(near(T.data[3 * 4 + 2], 0.0));
     require_true(near(T.data[3 * 4 + 3], 1.0));
+  }
+  end_test_case();
+
+  test_case("SE3: matrix and point-action helpers round-trip");
+  {
+    const auto g = SE3<f64>::exp_map(vec<f64, 6>{ 0.5, -0.2, 0.7, 0.3, -0.4, 0.2 });
+    const auto recovered = SE3<f64>::from_matrix(SE3<f64>::to_matrix(g));
+    require_true(near_q(recovered.R.q, g.R.q, 1e-10));
+    require_true(near_v(recovered.t, g.t, 1e-10));
+    const vec<f64, 3> p{ 1.2, -2.1, 0.4 };
+    require_true(near_v(SE3<f64>::inverse_act(g, SE3<f64>::act(g, p)), p, 1e-10));
+    require_true(near_v(SE3<f64>::act_vector(g, p), SO3<f64>::rotate(g.R, p), 1e-12));
+  }
+  end_test_case();
+
+  test_case("SE3: fused relative transform and adjoint actions match matrix forms");
+  {
+    const auto a = SE3<f64>::exp_map(vec<f64, 6>{ 0.2, -0.5, 0.1, 0.3, 0.2, -0.4 });
+    const auto b = SE3<f64>::exp_map(vec<f64, 6>{ -0.6, 0.4, 0.9, -0.2, 0.5, 0.1 });
+    const auto rel = SE3<f64>::between(a, b);
+    const auto recovered = SE3<f64>::compose(a, rel);
+    require_true(near_q(recovered.R.q, b.R.q, 1e-9));
+    require_true(near_v(recovered.t, b.t, 1e-9));
+    const vec<f64, 6> xi{ 0.4, -0.8, 0.2, 0.7, 0.1, -0.3 };
+    const auto direct_ad = SE3<f64>::adjoint_apply(a, xi);
+    const auto matrix_ad = linalg::ops::gemv(SE3<f64>::adjoint(a), xi);
+    require_true(near_v(direct_ad, matrix_ad, 1e-10));
+    const auto direct_coad = SE3<f64>::coadjoint_apply(a, xi);
+    const auto matrix_coad = linalg::ops::gemv(SE3<f64>::coadjoint(a), xi);
+    require_true(near_v(direct_coad, matrix_coad, 1e-10));
+  }
+  end_test_case();
+
+  test_case("SO3/SE3 interpolation reaches both endpoints");
+  {
+    const auto Ra = SO3<f64>::exp_map(vec<f64, 3>{ 0.2, -0.1, 0.4 });
+    const auto Rb = SO3<f64>::exp_map(vec<f64, 3>{ -0.3, 0.5, 0.2 });
+    require_true(near_q(SO3<f64>::interpolate(Ra, Rb, 0.0).q, Ra.q, 1e-10));
+    require_true(near_q(SO3<f64>::interpolate(Ra, Rb, 1.0).q, Rb.q, 1e-9));
+    const SE3<f64> a{ Ra, vec<f64, 3>{ 0.3, -0.2, 0.5 } };
+    const SE3<f64> b{ Rb, vec<f64, 3>{ -0.1, 0.7, 0.4 } };
+    const auto i0 = SE3<f64>::interpolate(a, b, 0.0);
+    const auto i1 = SE3<f64>::interpolate(a, b, 1.0);
+    require_true(near_q(i0.R.q, a.R.q, 1e-10) && near_v(i0.t, a.t, 1e-10));
+    require_true(near_q(i1.R.q, b.R.q, 1e-9) && near_v(i1.t, b.t, 1e-9));
   }
   end_test_case();
 

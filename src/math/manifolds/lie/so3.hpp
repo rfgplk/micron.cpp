@@ -22,6 +22,7 @@
 #include "../../quaternions/rotations.hpp"
 #include "../tags.hpp"
 #include "../tangent.hpp"
+#include "so3_kernels.hpp"
 
 namespace micron
 {
@@ -91,6 +92,12 @@ template<ieee754_floating F> struct SO3 {
     return SO3{ qq };
   }
 
+  [[nodiscard, gnu::always_inline]] static SO3
+  from_quat_normalized(const quat<F> &qq) noexcept
+  {
+    return SO3{ linalg::ops::normalize<F>(qq) };
+  }
+
   [[nodiscard, gnu::always_inline]] static constexpr SO3
   compose(const SO3 &a, const SO3 &b) noexcept
   {
@@ -101,6 +108,18 @@ template<ieee754_floating F> struct SO3 {
   inverse(const SO3 &g) noexcept
   {
     return SO3{ linalg::ops::conjugate<F>(g.q) };
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr SO3
+  between(const SO3 &a, const SO3 &b) noexcept
+  {
+    return compose(inverse(a), b);
+  }
+
+  [[nodiscard, gnu::always_inline]] static SO3
+  normalized(const SO3 &g) noexcept
+  {
+    return SO3{ linalg::ops::normalize<F>(g.q) };
   }
 
   [[nodiscard, gnu::flatten]] static constexpr SO3
@@ -161,7 +180,53 @@ template<ieee754_floating F> struct SO3 {
   [[nodiscard, gnu::always_inline]] static constexpr vec<F, 3>
   rotate(const SO3 &g, const vec<F, 3> &v) noexcept
   {
+    if !consteval {
+#if defined(__micron_so3_rotate_f32_kernel)
+      if constexpr ( micron::same_as<F, f32> ) return __so3_arch::rotate(g.q, v);
+#endif
+#if defined(__micron_so3_rotate_f64_kernel)
+      if constexpr ( micron::same_as<F, f64> ) return __so3_arch::rotate(g.q, v);
+#endif
+    }
     return linalg::ops::rotate<F>(g.q, v);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 3>
+  inverse_rotate(const SO3 &g, const vec<F, 3> &v) noexcept
+  {
+    return rotate(inverse(g), v);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 3>
+  act(const SO3 &g, const vec<F, 3> &v) noexcept
+  {
+    return rotate(g, v);
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr F
+  squared_distance(const SO3 &a, const SO3 &b) noexcept
+  {
+    const auto omega = log_map(between(a, b));
+    return math::fma<F>(omega.data[0], omega.data[0], math::fma<F>(omega.data[1], omega.data[1], omega.data[2] * omega.data[2]));
+  }
+
+  [[nodiscard, gnu::always_inline]] static F
+  distance(const SO3 &a, const SO3 &b) noexcept
+  {
+    return math::fsqrt(squared_distance(a, b));
+  }
+
+  [[nodiscard, gnu::always_inline]] static F
+  angle(const SO3 &a, const SO3 &b) noexcept
+  {
+    return distance(a, b);
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr SO3
+  interpolate(const SO3 &a, const SO3 &b, F t) noexcept
+  {
+    const auto delta = log_map(between(a, b));
+    return compose(a, exp_map(delta * t));
   }
 
   [[nodiscard, gnu::always_inline]] static constexpr mat<F, 3, 3>

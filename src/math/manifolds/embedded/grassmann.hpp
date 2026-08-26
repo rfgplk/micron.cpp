@@ -69,8 +69,7 @@ struct grassmann {
     auto sv = linalg::decomp::svd<F, N, P>(V);
     F cs[P], sn[P];
     for ( usize i = 0; i < P; ++i ) {
-      cs[i] = math::cos<F>(sv.S.data[i]);
-      sn[i] = math::sin<F>(sv.S.data[i]);
+      math::sincos<F>(sv.S.data[i], sn[i], cs[i]);
     }
     auto XVv = linalg::ops::gemm(X, sv.V);
     mat<F, N, P> XVcos{};
@@ -133,10 +132,16 @@ struct grassmann {
   [[nodiscard, gnu::flatten]] static F
   distance(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
   {
+    return math::fsqrt(squared_distance(X, Y));
+  }
+
+  [[nodiscard, gnu::flatten]] static F
+  squared_distance(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
+  {
     auto a = principal_angles(X, Y);
     F s = F(0);
     for ( usize i = 0; i < P; ++i ) s = math::fma<F>(a.data[i], a.data[i], s);
-    return math::fsqrt(s);
+    return s;
   }
 
   [[nodiscard, gnu::flatten]] static F

@@ -6,7 +6,7 @@
 #pragma once
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Gauss-Legendre nodes and weights for orders 5, 8, 16, 32
+// Gauss-Legendre nodes and weights for orders 5, 8, 16, 32, 64
 
 #include "../../../../types.hpp"
 #include "../../../ieee.hpp"
@@ -23,7 +23,8 @@ namespace gl
 {
 
 template<ieee754_floating F, usize Order> struct gl_table {
-  static_assert(Order == 5 or Order == 8 or Order == 16 or Order == 32, "Gauss-Legendre table only available for orders 5, 8, 16, 32");
+  static_assert(Order == 5 or Order == 8 or Order == 16 or Order == 32 or Order == 64,
+                "Gauss-Legendre table only available for orders 5, 8, 16, 32, 64");
 };
 
 template<ieee754_floating F> struct gl_table<F, 5> {
@@ -93,3 +94,5 @@ template<ieee754_floating F> struct gl_table<F, 32> {
 };      // namespace integrate
 };      // namespace math
 };      // namespace micron
+
+#include "generated_tables.hpp"

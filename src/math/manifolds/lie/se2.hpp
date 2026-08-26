@@ -38,6 +38,19 @@ template<ieee754_floating F> struct SE2 {
     return SE2{ SO2<F>::identity(), vec<F, 2>{ F(0), F(0) } };
   }
 
+  [[nodiscard, gnu::always_inline]] static constexpr SE2
+  from_rt(const SO2<F> &rotation, const vec<F, 2> &translation) noexcept
+  {
+    return SE2{ rotation, translation };
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr SE2
+  from_matrix(const mat<F, 3, 3> &T) noexcept
+  {
+    const mat<F, 2, 2> R2{ T.data[0], T.data[1], T.data[3], T.data[4] };
+    return SE2{ SO2<F>::from_matrix(R2), vec<F, 2>{ T.data[2], T.data[5] } };
+  }
+
   [[nodiscard, gnu::flatten]] static constexpr SE2
   compose(const SE2 &a, const SE2 &b) noexcept
   {
@@ -54,6 +67,13 @@ template<ieee754_floating F> struct SE2 {
   }
 
   [[nodiscard, gnu::flatten]] static constexpr SE2
+  between(const SE2 &a, const SE2 &b) noexcept
+  {
+    const auto Rinv = SO2<F>::inverse(a.R);
+    return SE2{ SO2<F>::compose(Rinv, b.R), SO2<F>::rotate(Rinv, b.t - a.t) };
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr SE2
   exp_map(const vec<F, 3> &xi) noexcept
   {
     const F vx = xi.data[0], vy = xi.data[1], omega = xi.data[2];
@@ -63,8 +83,8 @@ template<ieee754_floating F> struct SE2 {
       a = F(1) - omega * omega / F(6);
       b = omega * F(0.5) - omega * omega * omega / F(24);
     } else {
-      const F s = math::sin<F>(omega);
-      const F c = math::cos<F>(omega);
+      F s, c;
+      math::sincos<F>(omega, s, c);
       a = s / omega;
       b = (F(1) - c) / omega;
     }
@@ -84,8 +104,8 @@ template<ieee754_floating F> struct SE2 {
       a = F(1) - omega * omega / F(6);
       b = omega * F(0.5) - omega * omega * omega / F(24);
     } else {
-      const F s = math::sin<F>(omega);
-      const F c = math::cos<F>(omega);
+      F s, c;
+      math::sincos<F>(omega, s, c);
       a = s / omega;
       b = (F(1) - c) / omega;
     }
@@ -111,6 +131,51 @@ template<ieee754_floating F> struct SE2 {
     M.data[7] = F(0);
     M.data[8] = F(1);
     return M;
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 2>
+  act(const SE2 &g, const vec<F, 2> &point) noexcept
+  {
+    return SO2<F>::rotate(g.R, point) + g.t;
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 2>
+  act_vector(const SE2 &g, const vec<F, 2> &direction) noexcept
+  {
+    return SO2<F>::rotate(g.R, direction);
+  }
+
+  [[nodiscard, gnu::always_inline]] static constexpr vec<F, 2>
+  inverse_act(const SE2 &g, const vec<F, 2> &point) noexcept
+  {
+    return SO2<F>::inverse_rotate(g.R, point - g.t);
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr mat<F, 3, 3>
+  adjoint(const SE2 &g) noexcept
+  {
+    const auto R2 = SO2<F>::to_matrix(g.R);
+    return mat<F, 3, 3>{ R2.data[0], R2.data[1], g.t.data[1], R2.data[2], R2.data[3], -g.t.data[0], F(0), F(0), F(1) };
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr vec<F, 3>
+  adjoint_apply(const SE2 &g, const vec<F, 3> &xi) noexcept
+  {
+    const auto v = SO2<F>::rotate(g.R, vec<F, 2>{ xi.data[0], xi.data[1] });
+    return vec<F, 3>{ v.data[0] + g.t.data[1] * xi.data[2], v.data[1] - g.t.data[0] * xi.data[2], xi.data[2] };
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr vec<F, 3>
+  coadjoint_apply(const SE2 &g, const vec<F, 3> &wrench) noexcept
+  {
+    const auto force = SO2<F>::rotate(g.R, vec<F, 2>{ wrench.data[0], wrench.data[1] });
+    return vec<F, 3>{ force.data[0], force.data[1], wrench.data[2] + g.t.data[0] * force.data[1] - g.t.data[1] * force.data[0] };
+  }
+
+  [[nodiscard, gnu::flatten]] static constexpr SE2
+  interpolate(const SE2 &a, const SE2 &b, F t) noexcept
+  {
+    return compose(a, exp_map(log_map(between(a, b)) * t));
   }
 };
 
