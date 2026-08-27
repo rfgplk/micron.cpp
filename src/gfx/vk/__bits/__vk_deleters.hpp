@@ -10,6 +10,7 @@
 #pragma once
 
 #include "../vulkan.hpp"
+#include "__vk_host_alloc.hpp"      // host_allocation_callbacks(), the deleters' default allocator
 
 namespace micron
 {
@@ -18,8 +19,9 @@ namespace gfx
 namespace vk
 {
 
+
 struct instance_deleter {
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkInstance h) const noexcept
@@ -29,7 +31,7 @@ struct instance_deleter {
 };
 
 struct device_deleter {
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkDevice h) const noexcept
@@ -40,7 +42,7 @@ struct device_deleter {
 
 struct device_memory_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkDeviceMemory h) const noexcept
@@ -51,7 +53,7 @@ struct device_memory_deleter {
 
 struct fence_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkFence h) const noexcept
@@ -62,7 +64,7 @@ struct fence_deleter {
 
 struct semaphore_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkSemaphore h) const noexcept
@@ -73,7 +75,7 @@ struct semaphore_deleter {
 
 struct event_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkEvent h) const noexcept
@@ -84,7 +86,7 @@ struct event_deleter {
 
 struct query_pool_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkQueryPool h) const noexcept
@@ -95,7 +97,7 @@ struct query_pool_deleter {
 
 struct buffer_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkBuffer h) const noexcept
@@ -106,7 +108,7 @@ struct buffer_deleter {
 
 struct buffer_view_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkBufferView h) const noexcept
@@ -117,7 +119,7 @@ struct buffer_view_deleter {
 
 struct image_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkImage h) const noexcept
@@ -128,7 +130,7 @@ struct image_deleter {
 
 struct image_view_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkImageView h) const noexcept
@@ -139,7 +141,7 @@ struct image_view_deleter {
 
 struct shader_module_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkShaderModule h) const noexcept
@@ -150,7 +152,7 @@ struct shader_module_deleter {
 
 struct pipeline_cache_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkPipelineCache h) const noexcept
@@ -161,7 +163,7 @@ struct pipeline_cache_deleter {
 
 struct pipeline_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkPipeline h) const noexcept
@@ -172,7 +174,7 @@ struct pipeline_deleter {
 
 struct pipeline_layout_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkPipelineLayout h) const noexcept
@@ -183,7 +185,7 @@ struct pipeline_layout_deleter {
 
 struct sampler_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkSampler h) const noexcept
@@ -194,7 +196,7 @@ struct sampler_deleter {
 
 struct descriptor_set_layout_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkDescriptorSetLayout h) const noexcept
@@ -205,7 +207,7 @@ struct descriptor_set_layout_deleter {
 
 struct descriptor_pool_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkDescriptorPool h) const noexcept
@@ -227,7 +229,7 @@ struct descriptor_set_deleter {
 
 struct framebuffer_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkFramebuffer h) const noexcept
@@ -238,7 +240,7 @@ struct framebuffer_deleter {
 
 struct render_pass_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkRenderPass h) const noexcept
@@ -249,7 +251,7 @@ struct render_pass_deleter {
 
 struct command_pool_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkCommandPool h) const noexcept
@@ -271,7 +273,7 @@ struct command_buffer_deleter {
 
 struct sampler_ycbcr_conversion_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkSamplerYcbcrConversion h) const noexcept
@@ -282,7 +284,7 @@ struct sampler_ycbcr_conversion_deleter {
 
 struct descriptor_update_template_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkDescriptorUpdateTemplate h) const noexcept
@@ -293,7 +295,7 @@ struct descriptor_update_template_deleter {
 
 struct private_data_slot_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkPrivateDataSlot h) const noexcept
@@ -304,7 +306,7 @@ struct private_data_slot_deleter {
 
 struct surface_k_h_r_deleter {
   VkInstance parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkSurfaceKHR h) const noexcept
@@ -315,7 +317,7 @@ struct surface_k_h_r_deleter {
 
 struct swapchain_k_h_r_deleter {
   VkDevice parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkSwapchainKHR h) const noexcept
@@ -326,7 +328,7 @@ struct swapchain_k_h_r_deleter {
 
 struct debug_utils_messenger_e_x_t_deleter {
   VkInstance parent = nullptr;
-  const VkAllocationCallbacks *alloc = nullptr;
+  const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 
   void
   operator()(VkDebugUtilsMessengerEXT h) const noexcept

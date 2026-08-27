@@ -1,0 +1,29 @@
+# micron::gfx::vk -- the host allocation callbacks.
+#
+# no GPU, no display and no -vk on any row: allocator.hpp reaches vulkan.hpp only for the record
+# declarations, and every vk* entry point there is an inline nullptr global that nothing here calls.
+#
+# the two axes that matter are the stats macro (the counters are gated) and pointer width (the block
+# header sits at fixed byte offsets below the user pointer, and usize is 4 bytes on i386/armv7).
+
+test tests/rigor/vk_allocator.cpp -o bin/vk/default --timeout 120 -f
+test tests/rigor/vk_allocator.cpp -o bin/vk/stats --def MICRON_VK_HOST_STATS --timeout 120 -f
+test tests/rigor/vk_allocator.cpp -o bin/vk/o0 -O0 --no-lto --def MICRON_VK_HOST_STATS --timeout 120 -f
+test tests/rigor/vk_allocator.cpp -o bin/vk/o2 -O2 --no-lto --timeout 120 -f
+test tests/rigor/vk_allocator.cpp -o bin/vk/base --isa base -O2 --def MICRON_VK_HOST_STATS --timeout 120 -f
+test tests/rigor/vk_allocator.cpp -o bin/vk/clang --clang -O2 --def MICRON_VK_HOST_STATS --timeout 120 -f
+
+# the whole file is hand-rolled arithmetic behind a user pointer; asan's redzones are what catch a
+# header store that underflows past the block, which no assertion in the test itself can see.
+test tests/rigor/vk_allocator.cpp -o bin/vk/asan --asan --no-lto --def MICRON_VK_HOST_STATS --timeout 300 -f
+test tests/rigor/vk_allocator.cpp -o bin/vk/ubsan --ubsan --no-lto --def MICRON_VK_HOST_STATS --timeout 300 -f
+
+# 32-bit is where the fixed header offsets stop matching sizeof(usize)
+test tests/rigor/vk_allocator.cpp --i386 -o bin/vk/i386 --def MICRON_VK_HOST_STATS --timeout 300 -f
+test tests/rigor/vk_allocator.cpp --arm -o bin/vk/arm32 --def MICRON_VK_HOST_STATS --timeout 300 -f
+test tests/rigor/vk_allocator.cpp --arm64 -o bin/vk/arm64 --def MICRON_VK_HOST_STATS --timeout 300 -f
+
+# the link cliff: this one must stay allocator.hpp-free to mean anything
+test tests/rigor/vk_deleter_link.cpp -o bin/vk/link --timeout 120 -f
+test tests/rigor/vk_deleter_link.cpp --i386 -o bin/vk/link_i386 --timeout 300 -f
+test tests/rigor/vk_deleter_link.cpp --arm -o bin/vk/link_arm32 --timeout 300 -f
