@@ -315,6 +315,32 @@ compile tests/rigor/abcmalloc_harden.cpp --arm64 -Ofast --def MICRON_ABC_ZERO_ON
 compile tests/rigor/abcmalloc_harden.cpp --x86 --isa base -O2 --def MICRON_ABC_REDZONE=true -o bin/compiletests/abc_harden_rz_base
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# vk host allocator
+# the tests/compiletests/ sweep above already carries vk_headers.cpp with the counters OFF; these
+# rows are the ON column. the block header keeps one layout either way, so what is actually under
+# test here is the gated code, not a second ABI.
+compile tests/compiletests/vk_headers.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_stats_x86
+compile tests/compiletests/vk_headers.cpp --i386 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_stats_i386
+compile tests/compiletests/vk_headers.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_stats_arm32
+compile tests/compiletests/vk_headers.cpp --arm64 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_stats_arm64
+compile tests/compiletests/vk_headers.cpp --x86 --isa base -O2 --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_stats_base
+compile tests/rigor/vk_allocator.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_alloc_stats_x86
+compile tests/rigor/vk_allocator.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_alloc_stats_arm32
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# allocator modes
+# the directory sweep above covers the disabled/default ABI on every target.
+compile tests/compiletests/allocator_types.cpp --x86 --isa base -O2 --raw-obj --def MICRON_ALLOCATOR_STATS --def MICRON_ABC_STATS -o bin/compiletests/allocator_stats_x86
+compile tests/compiletests/allocator_types.cpp --i386 -O2 --raw-obj --def MICRON_ALLOCATOR_STATS --def MICRON_ABC_STATS -o bin/compiletests/allocator_stats_i386
+compile tests/compiletests/allocator_types.cpp --arm -O2 --raw-obj --def MICRON_ALLOCATOR_STATS --def MICRON_ABC_STATS -o bin/compiletests/allocator_stats_arm32
+compile tests/compiletests/allocator_types.cpp --arm64 -O2 --raw-obj --def MICRON_ALLOCATOR_STATS --def MICRON_ABC_STATS -o bin/compiletests/allocator_stats_arm64
+compile tests/compiletests/allocator_stats_codegen.cpp --x86 --isa base -O2 --raw-obj --def MICRON_ALLOCATOR_STATS -o bin/compiletests/allocator_stats_codegen_x86
+compile tests/compiletests/allocator_types.cpp --x86 --isa base -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests/allocator_persistent_x86
+compile tests/compiletests/allocator_types.cpp --i386 -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests/allocator_persistent_i386
+compile tests/compiletests/allocator_types.cpp --arm -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests/allocator_persistent_arm32
+compile tests/compiletests/allocator_types.cpp --arm64 -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests/allocator_persistent_arm64
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # graph
 compile tests/compiletests/graph.cpp --x86 --isa base -O0 --raw-obj -o bin/compiletests/graph_base_O0
 compile tests/compiletests/graph.cpp --x86 -Ofast --raw-obj -o bin/compiletests/graph_native_Ofast

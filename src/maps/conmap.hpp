@@ -55,12 +55,15 @@ class conmap
 
   public:
     __attribute__((always_inline)) explicit __guard(spin_lock &lock) : __lock(micron::addressof(lock)) { __lock->lock(); }
+
     __guard(const __guard &) = delete;
     __guard &operator=(const __guard &) = delete;
+
     __attribute__((always_inline)) ~__guard() { __lock->unlock(); }
   };
 
   __stripe *__stripes_buf = nullptr;
+  chunk<byte> __stripes_block{ nullptr, 0 };
   usize __per_stripe_cap = 0;
 
   static usize
@@ -85,8 +88,9 @@ public:
   {
     if ( !__stripes_buf ) return;
     for ( usize i = 0; i < Stripes; ++i ) __stripes_buf[i].~__stripe();
-    ::operator delete(__stripes_buf, static_cast<std::align_val_t>(__cache_line));
+    __allocator_destroy<Alloc, __cache_line>(__stripes_block);
     __stripes_buf = nullptr;
+    __stripes_block = { nullptr, 0 };
   }
 
   conmap(const conmap &) = delete;
@@ -94,20 +98,20 @@ public:
 
   explicit conmap(usize total_capacity = Stripes * 64u)
   {
-    if constexpr ( Stripes > static_cast<usize>(-1) / sizeof(__stripe) )
-      exc<except::library_error>("conmap: stripe allocation overflow");
+    if constexpr ( Stripes > static_cast<usize>(-1) / sizeof(__stripe) ) exc<except::library_error>("conmap: stripe allocation overflow");
     __per_stripe_cap = total_capacity / Stripes;
     if ( __per_stripe_cap < 16 ) __per_stripe_cap = 16;
-    __stripes_buf = static_cast<__stripe *>(
-        ::operator new(sizeof(__stripe) * Stripes, static_cast<std::align_val_t>(__cache_line)));
+    __stripes_block = __allocator_create<Alloc, __cache_line>(sizeof(__stripe) * Stripes);
+    __stripes_buf = reinterpret_cast<__stripe *>(__stripes_block.ptr);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     usize built = 0;
     try {
       for ( ; built < Stripes; ++built ) new (&__stripes_buf[built]) __stripe(__per_stripe_cap);
     } catch ( ... ) {
       while ( built ) __stripes_buf[--built].~__stripe();
-      ::operator delete(__stripes_buf, static_cast<std::align_val_t>(__cache_line));
+      __allocator_destroy<Alloc, __cache_line>(__stripes_block);
       __stripes_buf = nullptr;
+      __stripes_block = { nullptr, 0 };
       throw;
     }
 #else
@@ -119,9 +123,10 @@ public:
 
   // NOT safe to move/move-assign/swap concurrently with any other access to
   // either map
-  conmap(conmap &&o) noexcept : __stripes_buf(o.__stripes_buf), __per_stripe_cap(o.__per_stripe_cap)
+  conmap(conmap &&o) noexcept : __stripes_buf(o.__stripes_buf), __stripes_block(o.__stripes_block), __per_stripe_cap(o.__per_stripe_cap)
   {
     o.__stripes_buf = nullptr;
+    o.__stripes_block = { nullptr, 0 };
     o.__per_stripe_cap = 0;
   }
 
@@ -131,11 +136,13 @@ public:
     if ( this == &o ) return *this;
     if ( __stripes_buf ) {
       for ( usize i = 0; i < Stripes; ++i ) __stripes_buf[i].~__stripe();
-      ::operator delete(__stripes_buf, static_cast<std::align_val_t>(__cache_line));
+      __allocator_destroy<Alloc, __cache_line>(__stripes_block);
     }
     __stripes_buf = o.__stripes_buf;
+    __stripes_block = o.__stripes_block;
     __per_stripe_cap = o.__per_stripe_cap;
     o.__stripes_buf = nullptr;
+    o.__stripes_block = { nullptr, 0 };
     o.__per_stripe_cap = 0;
     return *this;
   }
@@ -302,7 +309,7 @@ public:
   {
     if ( !__stripes_buf ) return false;
     const __stripe &s = __stripes_buf[__sid(kh)];
-    __guard __g(s.lock);        // s.lock is mutable
+    __guard __g(s.lock);                      // s.lock is mutable
     const V *p = s.map.find_hash(kh, k);      // const overload: a const conmap does not mutate
     bool ok = (p != nullptr);
     if ( ok ) out = *p;

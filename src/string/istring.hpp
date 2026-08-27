@@ -237,7 +237,7 @@ public:
   chunk<byte>
   operator*()
   {
-    return { reinterpret_cast<byte *>(__mem::memory), __mem::capacity };
+    return __mem::data();
   }
 
   inline bool
@@ -822,7 +822,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline istring
   operator^(const R &rhs) const
   {
@@ -836,7 +836,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline istring
   operator^=(const R &rhs) const
   {
@@ -844,7 +844,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline istring
   operator&(const R &rhs) const
   {
@@ -858,7 +858,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline istring
   operator&=(const R &rhs) const
   {
@@ -866,7 +866,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline istring
   operator|(const R &rhs) const
   {
@@ -880,7 +880,7 @@ public:
   };
 
   template<typename R>
-  requires requires(const R &__r) { __as_key(__r); }
+    requires requires(const R &__r) { __as_key(__r); }
   inline istring
   operator|=(const R &rhs) const
   {

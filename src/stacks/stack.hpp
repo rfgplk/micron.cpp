@@ -31,7 +31,8 @@ class stack: public __mutable_memory_resource<T, Alloc>
   inline void
   __ensure_one()
   {
-    if ( __mem::length >= __mem::capacity ) reserve(__mem::capacity ? __mem::capacity * 2 : (N ? N : 1));
+    if ( __mem::length >= __mem::capacity )
+      reserve(__mem::recommended_capacity(__mem::capacity, allocation_add_or_throw(__mem::length, 1)));
   }
 
   static inline umax_t

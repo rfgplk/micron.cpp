@@ -6,14 +6,15 @@
 #pragma once
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// allocator_small
+// allocator_exact
 //
-// use for strings and other small buffers where page-sized minimum grants waste memory
+// use when the granted allocation should track the requested byte count instead of reserving geometric slack;
+// default policy has no minimum, one-byte granularity, 1x growth, and 16-byte default alignment
 
 namespace micron
 {
 
-template<is_policy P = small_allocation_policy> class allocator_small: public __abc_policy_allocator<P, 16>
+template<is_policy P = exact_allocation_policy> class allocator_exact: public __abc_policy_allocator<P, 16>
 {
 };
 

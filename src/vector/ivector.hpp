@@ -295,7 +295,7 @@ public:
   chunk<byte>
   operator*(void) const
   {
-    return { reinterpret_cast<byte *>(__mem::memory), __mem::capacity };
+    return __mem::data();
   }
 
   const_pointer

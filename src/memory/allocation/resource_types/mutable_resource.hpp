@@ -5,225 +5,196 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../core_resource.hpp"
-
 #include "../__allocators.hpp"
-
-// NOTE: these functions should handle all of the allocating/deallocating logic
+#include "../core_resource.hpp"
 
 namespace micron
 {
-// universal mutable memory object, allows copying & moving.
-template<typename T, typename Alloc = allocator_serial<>>
-  requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
-struct __mutable_memory_resource: public __core_memory_resource<T> {
-  typename __core_memory_resource<T>::size_type length;
 
-  ~__mutable_memory_resource()
+template<typename T, typename Alloc> struct __owned_memory_resource: public __core_memory_resource<T> {
+  using __core = __core_memory_resource<T>;
+  using typename __core::size_type;
+
+  size_type length;
+
+private:
+  static void
+  __destroy_range(T *memory, usize count) noexcept
   {
-    if ( __core_memory_resource<T>::alive() ) {
-      Alloc::destroy(__core_memory_resource<T>::operator*());
-      length = 0;
-      __core_memory_resource<T>::capacity = 0;
-      __core_memory_resource<T>::memory = nullptr;
+    if constexpr ( !micron::is_trivially_destructible_v<T> ) {
+      for ( usize i = 0; i < count; ++i ) memory[i].~T();
     }
   }
 
-  __mutable_memory_resource(nullptr_t) : __core_memory_resource<T>(), length(0) { }
-
-  __mutable_memory_resource(void)
-      : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
+  void
+  __release_raw() noexcept
   {
-  }
-
-  __mutable_memory_resource(usize n_elements)
-      : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0) { };
-
-  __mutable_memory_resource(const __mutable_memory_resource &o) : __core_memory_resource<T>(o), length(o.length) { }
-
-  __mutable_memory_resource(__mutable_memory_resource &&o) : __core_memory_resource<T>(micron::move(o)), length(o.length) { o.length = 0; }
-
-  __mutable_memory_resource(__chunk<byte> &&o) : __core_memory_resource<T>(micron::move(o)), length(0) { o = nullptr; }
-
-  __mutable_memory_resource &
-  operator=(const __mutable_memory_resource &o)
-  {
-    __core_memory_resource<T>::operator=(o);
-    length = o.length;
-    return *this;
-  }
-
-  __mutable_memory_resource &
-  operator=(__mutable_memory_resource &&o)
-  {
-    __core_memory_resource<T>::operator=(micron::move(o));
-    length = o.length;
-    o.length = 0;
-    return *this;
-  }
-
-  __mutable_memory_resource &
-  swap(__mutable_memory_resource &o) noexcept
-  {
-    micron::swap(__core_memory_resource<T>::capacity, o.capacity);
-    micron::swap(__core_memory_resource<T>::memory, o.memory);
-    micron::swap(length, o.length);
-    return *this;
-  }
-
-  inline bool
-  is_zero() const
-  {
-    return !__core_memory_resource<T>::alive();
-  }
-
-  // start funcs
-  // n_el and capacity are both element counts
-  inline bool
-  has_space(const usize n_el) const
-  {
-    return (n_el + length) <= __core_memory_resource<T>::capacity;
-  }
-
-  inline chunk<byte>
-  data() const
-  {
-    return __core_memory_resource<T>::operator*();
+    if ( __core::memory ) __allocator_destroy<Alloc, alignof(T)>(__core::operator*());
+    __core::memory = nullptr;
+    __core::capacity = 0;
   }
 
   void
-  free(void)
+  __relocate_to(usize elements)
   {
-    if ( __core_memory_resource<T>::alive() ) {
-      Alloc::destroy(__core_memory_resource<T>::operator*());
-      __core_memory_resource<T>::memory = nullptr;
-      __core_memory_resource<T>::capacity = 0;
-      length = 0;
-    }
-  }
+    const usize bytes = allocation_multiply_or_throw(elements, sizeof(T));
+    const usize retained = length < elements ? length : elements;
 
-  // deletes and reallocs, number of elements
-  void
-  realloc(usize len)
-  {
-    if ( len == 0 ) [[unlikely]]
+    if constexpr ( micron::is_trivially_copyable_v<T> ) {
+      chunk<byte> next = __allocator_resize_bytes<Alloc, alignof(T)>(__core::operator*(), bytes,
+                                                                     allocation_multiply_or_throw(retained, sizeof(T)));
+      __core::memory = reinterpret_cast<T *>(next.ptr);
+      __core::capacity = next.len / sizeof(T);
+      length = retained;
       return;
-    if ( __core_memory_resource<T>::alive() ) Alloc::destroy(__core_memory_resource<T>::operator*());
-    __core_memory_resource<T>::accept(Alloc::create(len * sizeof(T)));
-  }
-
-  // expands memory, usize is number of elements
-  void
-  expand(usize len)
-  {
-    if ( len == 0 ) [[unlikely]]
-      return;
-    // NOTE: grow destroys memory
-    __core_memory_resource<T>::accept(Alloc::grow(__core_memory_resource<T>::operator*(), len * sizeof(T)));
-  }
-};
-
-// necessarily allow copyable types
-template<typename T, typename Alloc = allocator_serial<>>
-  requires(micron::is_move_constructible_v<T>)      // and (!micron::is_copy_constructible_v<T>))
-struct __mutable_memory_resource_move_only: public __core_memory_resource<T> {
-  typename __core_memory_resource<T>::size_type length;
-
-  ~__mutable_memory_resource_move_only()
-  {
-    if ( __core_memory_resource<T>::alive() ) {
-      Alloc::destroy(__core_memory_resource<T>::operator*());
-      length = 0;
-      __core_memory_resource<T>::capacity = 0;
-      __core_memory_resource<T>::memory = nullptr;
     }
+
+    chunk<byte> next = __allocator_create<Alloc, alignof(T)>(bytes);
+    T *destination = reinterpret_cast<T *>(next.ptr);
+    usize constructed = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( ; constructed < retained; ++constructed ) {
+        if constexpr ( micron::is_nothrow_move_constructible_v<T> || !micron::is_copy_constructible_v<T> )
+          micron::construct_at(destination + constructed, micron::move(__core::memory[constructed]));
+        else
+          micron::construct_at(destination + constructed, __core::memory[constructed]);
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __destroy_range(destination, constructed);
+      __allocator_destroy<Alloc, alignof(T)>(next);
+      throw;
+    }
+#endif
+
+    __destroy_range(__core::memory, length);
+    __release_raw();
+    __core::memory = destination;
+    __core::capacity = next.len / sizeof(T);
+    length = retained;
   }
 
-  __mutable_memory_resource_move_only()
-      : __core_memory_resource<T>(Alloc::create((Alloc::auto_size() >= sizeof(T) ? Alloc::auto_size() : sizeof(T)))), length(0)
+public:
+  ~__owned_memory_resource() { __release_raw(); }
+
+  __owned_memory_resource(nullptr_t) noexcept : __core(), length(0) { }
+
+  __owned_memory_resource() : __core(), length(0)
   {
+    const usize bytes = Alloc::auto_size() < sizeof(T) ? sizeof(T) : Alloc::auto_size();
+    chunk<byte> memory = __allocator_create<Alloc, alignof(T)>(bytes);
+    __core::accept(micron::move(memory));
   }
 
-  __mutable_memory_resource_move_only(nullptr_t) : __core_memory_resource<T>(), length(0) { }
-
-  explicit __mutable_memory_resource_move_only(usize n_elements)
-      : __core_memory_resource<T>(Alloc::create(n_elements * (sizeof(T) / sizeof(byte)))), length(0)
+  explicit __owned_memory_resource(usize elements) : __core(), length(0)
   {
+    chunk<byte> memory = __allocator_create<Alloc, alignof(T)>(allocation_multiply_or_throw(elements, sizeof(T)));
+    __core::accept(micron::move(memory));
   }
 
-  __mutable_memory_resource_move_only(__mutable_memory_resource_move_only &&o) noexcept
-      : __core_memory_resource<T>(micron::move(o)), length(o.length)
+  explicit __owned_memory_resource(chunk<byte> &&memory) : __core(micron::move(memory)), length(0) { }
+
+  __owned_memory_resource(const __owned_memory_resource &) = delete;
+  __owned_memory_resource &operator=(const __owned_memory_resource &) = delete;
+
+  __owned_memory_resource(__owned_memory_resource &&other) noexcept : __core(micron::move(other)), length(other.length)
   {
-    o.length = 0;
+    other.length = 0;
   }
 
-  __mutable_memory_resource_move_only &
-  operator=(__mutable_memory_resource_move_only &&o) noexcept
+  __owned_memory_resource &
+  operator=(__owned_memory_resource &&other) noexcept
   {
-    __core_memory_resource<T>::operator=(micron::move(o));
-    length = o.length;
-    o.length = 0;
+    if ( this == micron::addressof(other) ) return *this;
+    __destroy_range(__core::memory, length);
+    __release_raw();
+    __core::operator=(micron::move(other));
+    length = other.length;
+    other.length = 0;
     return *this;
   }
 
-  // Delete copy constructor and copy assignment
-  __mutable_memory_resource_move_only(const __mutable_memory_resource_move_only &) = delete;
-  __mutable_memory_resource_move_only &operator=(const __mutable_memory_resource_move_only &) = delete;
-
-  __mutable_memory_resource_move_only &
-  swap(__mutable_memory_resource_move_only &o) noexcept
+  __owned_memory_resource &
+  swap(__owned_memory_resource &other) noexcept
   {
-    micron::swap(__core_memory_resource<T>::capacity, o.capacity);
-    micron::swap(__core_memory_resource<T>::memory, o.memory);
-    micron::swap(length, o.length);
+    micron::swap(__core::capacity, other.capacity);
+    micron::swap(__core::memory, other.memory);
+    micron::swap(length, other.length);
     return *this;
   }
 
   [[nodiscard]] bool
-  is_zero() const
+  is_zero() const noexcept
   {
-    return !__core_memory_resource<T>::alive();
+    return !__core::alive();
   }
 
   [[nodiscard]] bool
-  has_space(const usize n_el) const
+  has_space(usize elements) const noexcept
   {
-    return (n_el + length) <= __core_memory_resource<T>::capacity;
+    return length <= __core::capacity && elements <= __core::capacity - length;
   }
 
   [[nodiscard]] chunk<byte>
-  data() const
+  data() const noexcept
   {
-    return __core_memory_resource<T>::operator*();
+    return __core::operator*();
   }
 
   void
-  free()
+  free() noexcept
   {
-    if ( __core_memory_resource<T>::alive() ) {
-      Alloc::destroy(__core_memory_resource<T>::operator*());
-      __core_memory_resource<T>::memory = nullptr;
-      __core_memory_resource<T>::capacity = 0;
-      length = 0;
-    }
+    __release_raw();
+    length = 0;
   }
 
   void
-  realloc(usize len)
+  realloc(usize elements)
   {
-    if ( len == 0 ) [[unlikely]]
-      return;
-    if ( __core_memory_resource<T>::alive() ) Alloc::destroy(__core_memory_resource<T>::operator*());
-    __core_memory_resource<T>::accept(Alloc::create(len * (sizeof(T) / sizeof(byte))));
+    if ( elements == __core::capacity ) return;
+    __relocate_to(elements);
   }
 
   void
-  expand(usize len)
+  expand(usize elements)
   {
-    if ( len == 0 ) [[unlikely]]
-      return;
-    __core_memory_resource<T>::accept(Alloc::grow(__core_memory_resource<T>::operator*(), len * (sizeof(T) / sizeof(byte))));
+    if ( elements <= __core::capacity ) return;
+    __relocate_to(elements);
   }
+
+  [[nodiscard]] static usize
+  recommended_capacity(usize current, usize minimum)
+  {
+    const usize current_bytes = allocation_multiply_or_throw(current, sizeof(T));
+    const usize minimum_bytes = allocation_multiply_or_throw(minimum, sizeof(T));
+    const usize recommended = __allocator_recommend<Alloc>(current_bytes, minimum_bytes);
+    if ( recommended == __allocation_max ) exc<except::length_error>("allocator: growth recommendation overflow");
+    return recommended / sizeof(T) + (recommended % sizeof(T) != 0);
+  }
+};
+
+template<typename T, typename Alloc = allocator_serial<>>
+  requires micron::is_copy_constructible_v<T> and micron::is_move_constructible_v<T>
+struct __mutable_memory_resource: public __owned_memory_resource<T, Alloc> {
+  using __base = __owned_memory_resource<T, Alloc>;
+  using __base::__base;
+  __mutable_memory_resource(__mutable_memory_resource &&) noexcept = default;
+  __mutable_memory_resource &operator=(__mutable_memory_resource &&) noexcept = default;
+  __mutable_memory_resource(const __mutable_memory_resource &) = delete;
+  __mutable_memory_resource &operator=(const __mutable_memory_resource &) = delete;
+};
+
+template<typename T, typename Alloc = allocator_serial<>>
+  requires micron::is_move_constructible_v<T>
+struct __mutable_memory_resource_move_only: public __owned_memory_resource<T, Alloc> {
+  using __base = __owned_memory_resource<T, Alloc>;
+  using __base::__base;
+  __mutable_memory_resource_move_only(__mutable_memory_resource_move_only &&) noexcept = default;
+  __mutable_memory_resource_move_only &operator=(__mutable_memory_resource_move_only &&) noexcept = default;
+  __mutable_memory_resource_move_only(const __mutable_memory_resource_move_only &) = delete;
+  __mutable_memory_resource_move_only &operator=(const __mutable_memory_resource_move_only &) = delete;
 };
 
 };      // namespace micron

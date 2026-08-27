@@ -60,12 +60,24 @@ class quake_heap
     node *parent;
     u32 height;
     u32 fpos;
+    usize allocation_len;
   };
 
   struct entry {
     T value;
     node *high;
+    usize allocation_len;
   };
+
+  struct __pool_link {
+    __pool_link *next;
+    usize allocation_len;
+  };
+
+  static_assert(sizeof(node) >= sizeof(__pool_link));
+  static_assert(sizeof(entry) >= sizeof(__pool_link));
+  static_assert(alignof(node) >= alignof(__pool_link));
+  static_assert(alignof(entry) >= alignof(__pool_link));
 
   struct __nokeys {
   };
@@ -80,25 +92,28 @@ class quake_heap
   u32 levels;                                 // number of occupied count slots (max height + 1)
   Compare comp;
 
-  node *__node_pool;
-  entry *__entry_pool;
+  __pool_link *__node_pool;
+  __pool_link *__entry_pool;
 
   [[gnu::always_inline]] inline node *
   __acquire_node()
   {
     if ( __node_pool ) {
-      node *n = __node_pool;
-      __node_pool = *reinterpret_cast<node **>(n);
-      return n;
+      __pool_link *slot = __node_pool;
+      __node_pool = slot->next;
+      const usize allocation_len = slot->allocation_len;
+      return new (static_cast<void *>(slot)) node{ nullptr, nullptr, nullptr, nullptr, 0, 0, allocation_len };
     }
-    return static_cast<node *>(::operator new(sizeof(node)));
+    chunk<byte> storage = __allocator_create<Alloc, alignof(node)>(sizeof(node));
+    return new (static_cast<void *>(storage.ptr)) node{ nullptr, nullptr, nullptr, nullptr, 0, 0, storage.len };
   }
 
   [[gnu::always_inline]] inline void
   __recycle_node(node *n) noexcept
   {
-    *reinterpret_cast<node **>(n) = __node_pool;
-    __node_pool = n;
+    const usize allocation_len = n->allocation_len;
+    n->~node();
+    __node_pool = new (static_cast<void *>(n)) __pool_link{ __node_pool, allocation_len };
   }
 
   template<typename... A>
@@ -107,34 +122,49 @@ class quake_heap
   {
     entry *e;
     if ( __entry_pool ) {
-      e = __entry_pool;
-      __entry_pool = *reinterpret_cast<entry **>(e);
+      __pool_link *slot = __entry_pool;
+      __entry_pool = slot->next;
+      e = reinterpret_cast<entry *>(slot);
     } else {
-      e = static_cast<entry *>(::operator new(sizeof(entry)));
+      chunk<byte> storage = __allocator_create<Alloc, alignof(entry)>(sizeof(entry));
+      e = reinterpret_cast<entry *>(storage.ptr);
+      new (static_cast<void *>(e)) __pool_link{ nullptr, storage.len };
     }
-    new (static_cast<void *>(e)) entry{ T(micron::forward<A>(a)...), nullptr };
+    const usize allocation_len = reinterpret_cast<__pool_link *>(e)->allocation_len;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      new (static_cast<void *>(e)) entry{ T(micron::forward<A>(a)...), nullptr, allocation_len };
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __allocator_destroy<Alloc, alignof(entry)>({ reinterpret_cast<byte *>(e), allocation_len });
+      throw;
+    }
+#endif
     return e;
   }
 
   [[gnu::always_inline]] inline void
   __recycle_entry(entry *e) noexcept
   {
+    const usize allocation_len = e->allocation_len;
     e->~entry();
-    *reinterpret_cast<entry **>(e) = __entry_pool;
-    __entry_pool = e;
+    __entry_pool = new (static_cast<void *>(e)) __pool_link{ __entry_pool, allocation_len };
   }
 
   inline void
   __drain_pools() noexcept
   {
     while ( __node_pool ) {
-      node *nx = *reinterpret_cast<node **>(__node_pool);
-      ::operator delete(static_cast<void *>(__node_pool));
+      __pool_link *nx = __node_pool->next;
+      const usize allocation_len = __node_pool->allocation_len;
+      __allocator_destroy<Alloc, alignof(node)>({ reinterpret_cast<byte *>(__node_pool), allocation_len });
       __node_pool = nx;
     }
     while ( __entry_pool ) {
-      entry *nx = *reinterpret_cast<entry **>(__entry_pool);
-      ::operator delete(static_cast<void *>(__entry_pool));
+      __pool_link *nx = __entry_pool->next;
+      const usize allocation_len = __entry_pool->allocation_len;
+      __allocator_destroy<Alloc, alignof(entry)>({ reinterpret_cast<byte *>(__entry_pool), allocation_len });
       __entry_pool = nx;
     }
   }

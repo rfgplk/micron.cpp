@@ -78,8 +78,7 @@ template<typename K, typename V> struct hopscotch_node {
 
   hopscotch_node(const hopscotch_node &o) : key(o.key), value(o.value) { }
 
-  hopscotch_node(hopscotch_node &&o) noexcept(micron::is_nothrow_move_constructible_v<V>)
-      : key(o.key), value(micron::move(o.value))
+  hopscotch_node(hopscotch_node &&o) noexcept(micron::is_nothrow_move_constructible_v<V>) : key(o.key), value(micron::move(o.value))
   {
     o.key = 0;
   }
@@ -146,9 +145,10 @@ template<typename K, typename V> struct hopscotch_node {
 // and compares entries by that 64-bit hash; two DISTINCT keys that hash to the same value
 // are therefore treated as the SAME entry (the second insert overwrites / is dropped; a lookup returns the first key's value)
 // this is by design
-template<typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, V>> class hopscotch_map
+template<typename K, typename V, usize MH = 32, typename Nd = hopscotch_node<K, V>, class Alloc = micron::allocator_serial<>>
+class hopscotch_map
 {
-  using __storage_alloc = __maps::storage_allocator<micron::allocator_serial<>, Nd>;
+  using __storage_alloc = __maps::storage_allocator<Alloc, Nd>;
   using __entries_t = micron::fvector<Nd, __storage_alloc>;
 
   __entries_t entries;

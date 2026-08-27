@@ -24,10 +24,17 @@ template<typename T, class Alloc = micron::allocator_serial<>> class fibonacci_h
     node *right;
     usize degree;
     bool mark;
+    usize allocation_len;
 
-    node(const T &v) : value(v), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) { }
+    node(const T &v, usize len)
+        : value(v), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false), allocation_len(len)
+    {
+    }
 
-    node(T &&v) noexcept : value(micron::move(v)), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) { }
+    node(T &&v, usize len)
+        : value(micron::move(v)), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false), allocation_len(len)
+    {
+    }
   };
 
   node *min_root;
@@ -45,7 +52,26 @@ template<typename T, class Alloc = micron::allocator_serial<>> class fibonacci_h
         c = next;
       } while ( c != n->child );
     }
-    delete n;
+    const usize allocation_len = n->allocation_len;
+    n->~node();
+    __allocator_destroy<Alloc, alignof(node)>({ reinterpret_cast<byte *>(n), allocation_len });
+  }
+
+  template<typename U>
+  static node *
+  __make_node(U &&value)
+  {
+    chunk<byte> storage = __allocator_create<Alloc, alignof(node)>(sizeof(node));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      return new (static_cast<void *>(storage.ptr)) node(micron::forward<U>(value), storage.len);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __allocator_destroy<Alloc, alignof(node)>(storage);
+      throw;
+    }
+#endif
   }
 
   void
@@ -186,7 +212,7 @@ public:
   void
   insert(T &&v)
   {
-    node *n = new node(micron::move(v));
+    node *n = __make_node(micron::move(v));
     if ( !min_root ) {
       min_root = n;
     } else {
@@ -253,7 +279,9 @@ public:
     }
 
     T v = micron::move(z->value);
-    delete z;
+    const usize allocation_len = z->allocation_len;
+    z->~node();
+    __allocator_destroy<Alloc, alignof(node)>({ reinterpret_cast<byte *>(z), allocation_len });
     total_nodes--;
     return v;
   }

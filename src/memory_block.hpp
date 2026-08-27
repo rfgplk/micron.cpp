@@ -34,16 +34,16 @@ public:
   using const_iterator = const byte *;
   using size_type = size_t;
 
-  ~memory_block()
-  {
-    if ( !memory.zero() ) this->destroy(memory);
-  }
+  ~memory_block() { __allocator_destroy<Alloc, 64>(memory); }
 
   memory_block() = delete;
 
-  explicit memory_block(size_t n) : memory(this->create(n)) { }
+  explicit memory_block(size_t n) : memory(__allocator_create<Alloc, 64>(n)) { }
 
-  memory_block(const memory_block &o) : Alloc(), memory(this->create(o.size())) { micron::memcpy(memory.ptr, o.memory.ptr, o.size()); }
+  memory_block(const memory_block &o) : Alloc(), memory(__allocator_create<Alloc, 64>(o.size()))
+  {
+    micron::memcpy(memory.ptr, o.memory.ptr, o.size());
+  }
 
   explicit memory_block(chunk<byte> &&m) : memory(micron::move(m)) { }
 
@@ -58,8 +58,11 @@ public:
   {
     if ( this != o.addr() ) {
       if ( memory.len != o.size() ) {
-        this->destroy(memory);
-        memory = this->create(o.size());
+        chunk<byte> next = __allocator_create<Alloc, 64>(o.size());
+        micron::memcpy(next.ptr, o.memory.ptr, o.size());
+        __allocator_destroy<Alloc, 64>(memory);
+        memory = next;
+        return *this;
       }
       micron::memcpy(memory.ptr, o.memory.ptr, o.size());
     }
@@ -70,7 +73,7 @@ public:
   operator=(memory_block &&o) noexcept
   {
     if ( this != o.addr() ) {
-      this->destroy(memory);
+      __allocator_destroy<Alloc, 64>(memory);
       Alloc::operator=(micron::move(o));
       memory = micron::move(o.memory);
       o.memory.ptr = nullptr;
@@ -90,17 +93,15 @@ public:
   resize(size_t n)
   {
     if ( n <= memory.len ) return;
-    chunk<byte> tmp = micron::move(memory);
-    memory = this->create(n);
-    micron::memcpy(memory.ptr, tmp.ptr, tmp.len);
-    this->destroy(tmp);
+    memory = __allocator_resize_bytes<Alloc, 64>(memory, n, memory.len);
   }
 
   void
   recreate(size_t n)
   {
-    this->destroy(memory);
-    memory = this->create(n);
+    chunk<byte> next = __allocator_create<Alloc, 64>(n);
+    __allocator_destroy<Alloc, 64>(memory);
+    memory = next;
   }
 
   byte &

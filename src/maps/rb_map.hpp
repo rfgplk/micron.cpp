@@ -68,7 +68,7 @@ class rb_map
     }
   };
 
-  using __tree_t = rb_tree<__tree_entry>;
+  using __tree_t = rb_tree<__tree_entry, default_less<__tree_entry>, Alloc>;
 
   struct __bin_t {
     i32 list_head;       // -1 = empty when tree == nullptr; ignored otherwise
@@ -95,25 +95,33 @@ class rb_map
   static T *
   __alloc_array(usize count)
   {
-    if ( count > static_cast<usize>(-1) / sizeof(T) ) exc<except::library_error>("rb_map: allocation overflow");
-    if constexpr ( alignof(T) <= 32 )
-      return static_cast<T *>(::operator new(sizeof(T) * count));
-    else
-      return static_cast<T *>(::operator new(sizeof(T) * count, static_cast<std::align_val_t>(alignof(T))));
+    return __allocator_allocate_array<Alloc, T>(count);
   }
 
   template<typename T>
   static void
   __free_array(T *ptr) noexcept
   {
-    if ( !ptr ) return;
-    if constexpr ( alignof(T) <= 32 )
-      ::operator delete(ptr);
-    else
-      ::operator delete(ptr, static_cast<std::align_val_t>(alignof(T)));
+    __allocator_deallocate_array<Alloc>(ptr);
   }
 
-  struct __raw_bins_tag { };
+  static __tree_t *
+  __make_tree()
+  {
+    __tree_t *memory = __allocator_allocate_array<Alloc, __tree_t>(1);
+    return new (static_cast<void *>(memory)) __tree_t();
+  }
+
+  static void
+  __free_tree(__tree_t *tree) noexcept
+  {
+    if ( !tree ) return;
+    tree->~__tree_t();
+    __allocator_deallocate_array<Alloc>(tree);
+  }
+
+  struct __raw_bins_tag {
+  };
 
   rb_map(__raw_bins_tag, usize count) { __alloc_bins(count); }
 
@@ -281,23 +289,23 @@ class rb_map
   {
     __bin_t &b = __bins[bin_idx];
     if ( b.tree ) return;
-    auto *t = new __tree_t();
+    auto *t = __make_tree();
 
     i32 cur = b.list_head;
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
-    while ( cur != -1 ) {
-      i32 nxt = __next[cur];
-      if constexpr ( micron::is_copy_constructible_v<K> )
-        t->insert(__tree_entry(__hashes[cur], __keys[cur], __values[cur]));
-      else
-        t->insert(__tree_entry(__hashes[cur], micron::move(__keys[cur]), micron::move(__values[cur])));
-      cur = nxt;
-    }
+      while ( cur != -1 ) {
+        i32 nxt = __next[cur];
+        if constexpr ( micron::is_copy_constructible_v<K> )
+          t->insert(__tree_entry(__hashes[cur], __keys[cur], __values[cur]));
+        else
+          t->insert(__tree_entry(__hashes[cur], micron::move(__keys[cur]), micron::move(__values[cur])));
+        cur = nxt;
+      }
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
-      delete t;
+      __free_tree(t);
       throw;
     }
 #endif
@@ -340,15 +348,14 @@ class rb_map
       ++b.chain_len;
       ++__n_soa;
     }
-    delete t;
+    __free_tree(t);
   }
 
   bool
   __resize_if_needed()
   {
     if ( __total < __load_limit(__n_bins) ) return false;
-    if ( __n_bins > static_cast<usize>(numeric_limits<i32>::max()) / 2u )
-      exc<except::library_error>("rb_map: bin index capacity overflow");
+    if ( __n_bins > static_cast<usize>(numeric_limits<i32>::max()) / 2u ) exc<except::library_error>("rb_map: bin index capacity overflow");
     __rehash(__n_bins * 2);
     return true;
   }
@@ -413,7 +420,7 @@ class rb_map
         for ( usize j = 0; j < w; ++j ) snap[j].~__tree_entry();
         __free_array(snap);
         for ( usize i = 0; i < __n_bins; ++i )
-          if ( __bins[i].tree ) delete __bins[i].tree;
+          if ( __bins[i].tree ) __free_tree(__bins[i].tree);
         __free_array(__bins);
         __bins = nullptr;
         __n_bins = 0;
@@ -432,7 +439,7 @@ class rb_map
       }
 #endif
       for ( usize i = 0; i < __n_bins; ++i )
-        if ( __bins[i].tree ) delete __bins[i].tree;
+        if ( __bins[i].tree ) __free_tree(__bins[i].tree);
       __free_array(__bins);
       __bins = nullptr;
     }
@@ -491,7 +498,7 @@ class rb_map
   {
     if ( __bins ) {
       for ( usize i = 0; i < __n_bins; ++i )
-        if ( __bins[i].tree ) delete __bins[i].tree;
+        if ( __bins[i].tree ) __free_tree(__bins[i].tree);
       __free_array(__bins);
       __bins = nullptr;
     }
@@ -524,9 +531,9 @@ class rb_map
     if ( !__bins ) return nullptr;
     __bin_t &bin = __bins[__bin_of(h)];
     if ( bin.tree ) {
-      __tree_entry *entry = bin.tree->find_by(
-          [h, &key](const __tree_entry &data) { return h != data.hash ? h < data.hash : key < data.key; },
-          [h, &key](const __tree_entry &data) { return data.hash != h ? data.hash < h : data.key < key; });
+      __tree_entry *entry
+          = bin.tree->find_by([h, &key](const __tree_entry &data) { return h != data.hash ? h < data.hash : key < data.key; },
+                              [h, &key](const __tree_entry &data) { return data.hash != h ? data.hash < h : data.key < key; });
       return entry ? micron::addressof(entry->value) : nullptr;
     }
     for ( i32 i = bin.list_head; i != -1; i = __next[i] )
@@ -555,8 +562,7 @@ class rb_map
 
     if ( !bin.tree && bin.chain_len + 1u >= __treeify_threshold && __n_bins >= __min_treeify_cap ) __treeify(bin_index);
     if ( bin.tree ) {
-      __tree_entry &inserted =
-          bin.tree->insert(__tree_entry(h, K(micron::forward<KK>(key)), V(micron::forward<VV>(value))));
+      __tree_entry &inserted = bin.tree->insert(__tree_entry(h, K(micron::forward<KK>(key)), V(micron::forward<VV>(value))));
       ++__total;
       return { true, micron::addressof(inserted.value) };
     }
@@ -594,10 +600,7 @@ public:
 
   ~rb_map() { __free_all(); }
 
-  rb_map()
-  {
-    __alloc_bins(__min_bins);
-  }
+  rb_map() { __alloc_bins(__min_bins); }
 
   explicit rb_map(usize cap) { __alloc_bins(__round_pow2(cap)); }
 

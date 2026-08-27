@@ -401,6 +401,7 @@ private:
 
   __mem __slab;
   bucket_head *buckets_;
+  chunk<byte> __bucket_block{ nullptr, 0 };
   usize n_buckets_;
   usize mask_;
   usize total_size_;
@@ -502,10 +503,8 @@ private:
   grow_slab()
   {
     usize old_cap = __slab.capacity;
-    i16 grow = Alloc::get_grow();
-    usize scale = grow < 2 ? 2u : static_cast<usize>(grow);
-    if ( old_cap > static_cast<usize>(-1) / scale ) exc<except::library_error>("btree_map: slab capacity overflow");
-    usize requested = old_cap == 0 ? __min_buckets : old_cap * scale;
+    if ( old_cap == static_cast<usize>(-1) ) exc<except::library_error>("btree_map: slab capacity overflow");
+    usize requested = __slab.recommended_capacity(old_cap, old_cap == 0 ? __min_buckets : old_cap + 1);
     if ( requested > static_cast<usize>(-1) / sizeof(node_slot) ) exc<except::library_error>("btree_map: slab byte-size overflow");
     if ( requested > static_cast<usize>(static_cast<node_idx>(-2)) ) exc<except::library_error>("btree_map: node index capacity overflow");
 
@@ -640,7 +639,7 @@ private:
         reinterpret_cast<internal_node *>(__slab.memory[i].raw)->~internal_node();
     }
 
-    chunk<byte> old_chunk{ reinterpret_cast<byte *>(__slab.memory), old_cap * sizeof(node_slot) };
+    chunk<byte> old_chunk = __slab.data();
     __slab.memory = next.memory;
     __slab.capacity = next.capacity;
     __slab.length = live_slots;
@@ -701,7 +700,8 @@ private:
   {
     if ( n > static_cast<usize>(-1) / sizeof(bucket_head) || n > static_cast<usize>(-1) / __leaf_fanout )
       exc<except::library_error>("btree_map: bucket capacity overflow");
-    buckets_ = new bucket_head[n];
+    __bucket_block = __allocator_create<Alloc, alignof(bucket_head)>(n * sizeof(bucket_head));
+    buckets_ = reinterpret_cast<bucket_head *>(__bucket_block.ptr);
     for ( usize i = 0; i < n; ++i ) {
       buckets_[i].root = __k_empty;
       buckets_[i].size = 0;
@@ -711,8 +711,9 @@ private:
   void
   free_buckets() noexcept
   {
-    delete[] buckets_;
+    __allocator_destroy<Alloc, alignof(bucket_head)>(__bucket_block);
     buckets_ = nullptr;
+    __bucket_block = { nullptr, 0 };
   }
 
   void
@@ -1507,7 +1508,9 @@ private:
       return;
     }
 
-    bucket_head *new_buckets = new bucket_head[new_n_buckets];
+    chunk<byte> new_bucket_block
+        = __allocator_create<Alloc, alignof(bucket_head)>(allocation_multiply_or_throw(new_n_buckets, sizeof(bucket_head)));
+    bucket_head *new_buckets = reinterpret_cast<bucket_head *>(new_bucket_block.ptr);
     for ( usize i = 0; i < new_n_buckets; ++i ) {
       new_buckets[i].root = __k_empty;
       new_buckets[i].size = 0;
@@ -1524,8 +1527,9 @@ private:
     node_idx old_head = leaf_list_head_;
     leaf_list_head_ = __k_empty;
 
-    delete[] buckets_;
+    __allocator_destroy<Alloc, alignof(bucket_head)>(__bucket_block);
     buckets_ = new_buckets;
+    __bucket_block = new_bucket_block;
     n_buckets_ = new_n_buckets;
     mask_ = new_n_buckets - 1;
     total_size_ = 0;
@@ -1742,10 +1746,11 @@ public:
   btree_map(const btree_map &) = delete;
 
   btree_map(btree_map &&o) noexcept
-      : __slab(micron::move(o.__slab)), buckets_(o.buckets_), n_buckets_(o.n_buckets_), mask_(o.mask_), total_size_(o.total_size_),
-        __fhead(o.__fhead), leaf_list_head_(o.leaf_list_head_), __rehashing(o.__rehashing)
+      : __slab(micron::move(o.__slab)), buckets_(o.buckets_), __bucket_block(o.__bucket_block), n_buckets_(o.n_buckets_), mask_(o.mask_),
+        total_size_(o.total_size_), __fhead(o.__fhead), leaf_list_head_(o.leaf_list_head_), __rehashing(o.__rehashing)
   {
     o.buckets_ = nullptr;
+    o.__bucket_block = { nullptr, 0 };
     o.n_buckets_ = 0;
     o.mask_ = 0;
     o.total_size_ = 0;
@@ -1767,6 +1772,7 @@ public:
     __slab.free();
     __slab = micron::move(o.__slab);
     buckets_ = o.buckets_;
+    __bucket_block = o.__bucket_block;
     n_buckets_ = o.n_buckets_;
     mask_ = o.mask_;
     total_size_ = o.total_size_;
@@ -1774,6 +1780,7 @@ public:
     leaf_list_head_ = o.leaf_list_head_;
     __rehashing = o.__rehashing;
     o.buckets_ = nullptr;
+    o.__bucket_block = { nullptr, 0 };
     o.n_buckets_ = 0;
     o.mask_ = 0;
     o.total_size_ = 0;
@@ -1861,6 +1868,7 @@ public:
       buckets_ = o.buckets_;
       o.buckets_ = t;
     }
+    micron::swap(__bucket_block, o.__bucket_block);
     {
       usize t = n_buckets_;
       n_buckets_ = o.n_buckets_;

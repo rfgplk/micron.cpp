@@ -9,6 +9,9 @@
 
 #include "../../../types.hpp"
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// low-level allocator adapters
+
 namespace micron
 {
 
@@ -22,6 +25,12 @@ template<typename T> struct abc_allocator {
     return abc::__abc_allocator<byte>::calloc(sz);
   }
 
+  static auto
+  allocate_aligned(usize sz, usize alignment) -> __chunk<byte>
+  {
+    return abc::__abc_allocator<byte>::allocate_aligned(sz, alignment);
+  }
+
   static void
   deallocate(T *ptr, usize sz)
   {
@@ -30,10 +39,22 @@ template<typename T> struct abc_allocator {
     return abc::__abc_allocator<byte>::dealloc(ptr, sz);
   }
 
+  static void
+  dealloc(T *ptr)
+  {
+    abc::__abc_allocator<byte>::dealloc(ptr);
+  }
+
+  static void
+  dealloc_aligned(T *ptr, usize alignment)
+  {
+    abc::__abc_allocator<byte>::dealloc_aligned(ptr, alignment);
+  }
+
   static T *
   brk_allocate(usize sz)
   {
-    return abc::__abc_allocator<byte>::calloc(sz);
+    return reinterpret_cast<T *>(abc::__abc_allocator<byte>::calloc(sz).ptr);
   }
 
   static void
@@ -91,32 +112,35 @@ template<typename T> struct abc_allocator {
 // default allocator, use malloc/free
 template<typename T> class stl_allocator
 {
+public:
   constexpr stl_allocator() = default;
   constexpr stl_allocator(const stl_allocator &) = default;
   constexpr stl_allocator(stl_allocator &&) = default;
 
-  T *
+  static T *
   allocate(usize cnt)
   {
+    if ( cnt > static_cast<usize>(-1) / sizeof(T) ) [[unlikely]]
+      exc<except::memory_error>("stl_allocator: size overflow");
     const auto ptr = micron::__alloc(sizeof(T) * cnt);
-    if ( !ptr ) exc<except::memory_error>();
-    return static_cast<T *>(ptr);
+    if ( !ptr ) exc<except::memory_error>("stl_allocator: allocation failed");
+    return reinterpret_cast<T *>(ptr);
   }
 
-  void
-  deallocate(T *ptr, usize cnt)
+  static void
+  deallocate(T *ptr, usize)
   {
     micron::__free(ptr);
   }
 
   friend bool
-  operator==(const stl_allocator<T> &a, const stl_allocator<T> &b)
+  operator==(const stl_allocator<T> &, const stl_allocator<T> &) noexcept
   {
     return true;
   }
 
   friend bool
-  operator!=(const stl_allocator<T> &a, const stl_allocator<T> &b)
+  operator!=(const stl_allocator<T> &, const stl_allocator<T> &) noexcept
   {
     return false;
   }

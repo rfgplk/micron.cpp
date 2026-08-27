@@ -50,6 +50,8 @@ class heap_swiss_map
 
   u8 *__ctrl = nullptr;
   __hs_entry *__entries = nullptr;
+  chunk<byte> __ctrl_block{ nullptr, 0 };
+  chunk<byte> __entry_block{ nullptr, 0 };
   usize __n_slots = 0;
   usize __cap_mask = 0;
   usize __size = 0;
@@ -153,7 +155,8 @@ class heap_swiss_map
   {
     if ( n_slots > static_cast<usize>(-1) - __group || n_slots > static_cast<usize>(-1) / sizeof(__hs_entry) )
       exc<except::library_error>("heap_swiss_map: capacity overflow");
-    u8 *ctrl = new u8[n_slots + __group];
+    chunk<byte> ctrl_block = __allocator_create<Alloc, alignof(u8)>(n_slots + __group);
+    u8 *ctrl = reinterpret_cast<u8 *>(ctrl_block.ptr);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
@@ -161,12 +164,14 @@ class heap_swiss_map
       micron::memset(ctrl, __empty, n_slots + __group);
       __ctrl = ctrl;
       __entries = reinterpret_cast<__hs_entry *>(blk.ptr);
+      __ctrl_block = ctrl_block;
+      __entry_block = blk;
       __n_slots = n_slots;
       __cap_mask = n_slots - 1u;
       __growth_left = n_slots * __load_num / __load_denom;
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
-      delete[] ctrl;
+      __allocator_destroy<Alloc, alignof(u8)>(ctrl_block);
       throw;
     }
 #endif
@@ -188,13 +193,14 @@ class heap_swiss_map
   __free_storage() noexcept
   {
     if ( __ctrl ) {
-      delete[] __ctrl;
+      __allocator_destroy<Alloc, alignof(u8)>(__ctrl_block);
       __ctrl = nullptr;
+      __ctrl_block = { nullptr, 0 };
     }
     if ( __entries ) {
-      chunk<byte> ch{ reinterpret_cast<byte *>(__entries), __n_slots * sizeof(__hs_entry) };
-      __storage_alloc::destroy(ch);
+      __storage_alloc::destroy(__entry_block);
       __entries = nullptr;
+      __entry_block = { nullptr, 0 };
     }
   }
 
@@ -262,8 +268,7 @@ class heap_swiss_map
         u8 c = __ctrl[i];
         if ( c == __empty || c == __deleted ) continue;
         hash64_t kh = hash<hash64_t>(__entries[i].key);
-        next.__probe_insert(micron::move(__entries[i].key), micron::move(__entries[i].value), __h2(kh),
-                            __h1(kh) & next.__cap_mask);
+        next.__probe_insert(micron::move(__entries[i].key), micron::move(__entries[i].value), __h2(kh), __h1(kh) & next.__cap_mask);
       }
     }
     swap(next);
@@ -345,11 +350,13 @@ public:
   }
 
   heap_swiss_map(heap_swiss_map &&o) noexcept
-      : __ctrl(o.__ctrl), __entries(o.__entries), __n_slots(o.__n_slots), __cap_mask(o.__cap_mask), __size(o.__size),
-        __growth_left(o.__growth_left)
+      : __ctrl(o.__ctrl), __entries(o.__entries), __ctrl_block(o.__ctrl_block), __entry_block(o.__entry_block), __n_slots(o.__n_slots),
+        __cap_mask(o.__cap_mask), __size(o.__size), __growth_left(o.__growth_left)
   {
     o.__ctrl = nullptr;
     o.__entries = nullptr;
+    o.__ctrl_block = { nullptr, 0 };
+    o.__entry_block = { nullptr, 0 };
     o.__n_slots = 0;
     o.__cap_mask = 0;
     o.__size = 0;
@@ -373,12 +380,16 @@ public:
     __free_storage();
     __ctrl = o.__ctrl;
     __entries = o.__entries;
+    __ctrl_block = o.__ctrl_block;
+    __entry_block = o.__entry_block;
     __n_slots = o.__n_slots;
     __cap_mask = o.__cap_mask;
     __size = o.__size;
     __growth_left = o.__growth_left;
     o.__ctrl = nullptr;
     o.__entries = nullptr;
+    o.__ctrl_block = { nullptr, 0 };
+    o.__entry_block = { nullptr, 0 };
     o.__n_slots = 0;
     o.__cap_mask = 0;
     o.__size = 0;
@@ -553,6 +564,8 @@ public:
   {
     micron::swap(__ctrl, o.__ctrl);
     micron::swap(__entries, o.__entries);
+    micron::swap(__ctrl_block, o.__ctrl_block);
+    micron::swap(__entry_block, o.__entry_block);
     micron::swap(__n_slots, o.__n_slots);
     micron::swap(__cap_mask, o.__cap_mask);
     micron::swap(__size, o.__size);

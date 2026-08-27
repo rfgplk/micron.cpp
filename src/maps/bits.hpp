@@ -5,9 +5,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../allocator.hpp"
+#include "../except.hpp"
 #include "../memory/actions.hpp"
 #include "../memory/new.hpp"
-#include "../except.hpp"
 #include "../tags.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
@@ -28,43 +29,48 @@ template<class Alloc, typename T> struct storage_allocator {
   static chunk<byte>
   create(usize bytes)
   {
-    if constexpr ( alignof(T) <= 32 ) {
-      return Alloc::create(bytes);
-    } else {
-      byte *ptr = static_cast<byte *>(::operator new(bytes, static_cast<std::align_val_t>(alignof(T))));
-      return { ptr, bytes };
-    }
+    return __allocator_create<Alloc, alignof(T)>(bytes);
+  }
+
+  static chunk<byte>
+  create(usize bytes, usize alignment)
+  {
+    return __allocator_create<Alloc>(bytes, alignment < alignof(T) ? alignof(T) : alignment);
   }
 
   static chunk<byte>
   grow(chunk<byte> memory, usize bytes)
   {
-    if constexpr ( alignof(T) <= 32 ) {
-      return Alloc::grow(memory, bytes);
-    } else {
-      chunk<byte> next = create(bytes);
-      if constexpr ( micron::is_trivially_copyable_v<T> ) {
-        const usize copied = memory.len < next.len ? memory.len : next.len;
-        micron::memcpy(next.ptr, memory.ptr, copied);
-      } else {
-        destroy(next);
-        exc<except::library_error>("maps: raw growth of over-aligned non-trivial storage is not supported");
-      }
-      destroy(memory);
-      return next;
-    }
+    const usize target = recommend(memory.len, bytes);
+    if ( target == __allocation_max ) exc<except::length_error>("maps: storage growth overflow");
+    return resize(memory, target, memory.len, alignof(T));
+  }
+
+  static chunk<byte>
+  resize(chunk<byte> memory, usize bytes, usize preserve_bytes, usize alignment)
+  {
+    return __allocator_resize_bytes<Alloc>(memory, bytes, preserve_bytes, alignment < alignof(T) ? alignof(T) : alignment);
   }
 
   static void
   destroy(const chunk<byte> memory) noexcept
   {
-    if constexpr ( alignof(T) <= 32 )
-      Alloc::destroy(memory);
-    else if ( memory.ptr )
-      ::operator delete(memory.ptr, static_cast<std::align_val_t>(alignof(T)));
+    __allocator_destroy<Alloc, alignof(T)>(memory);
   }
 
-  static i16
+  static void
+  destroy(const chunk<byte> memory, usize alignment) noexcept
+  {
+    __allocator_destroy<Alloc>(memory, alignment < alignof(T) ? alignof(T) : alignment);
+  }
+
+  static constexpr usize
+  recommend(usize current, usize minimum) noexcept
+  {
+    return __allocator_recommend<Alloc>(current, minimum);
+  }
+
+  static auto
   get_grow()
   {
     return Alloc::get_grow();
@@ -73,4 +79,4 @@ template<class Alloc, typename T> struct storage_allocator {
 
 };      // namespace __maps
 
-};
+};      // namespace micron

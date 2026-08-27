@@ -235,7 +235,7 @@ All headers live under `src/` and may be included directly. Each top-level modul
 ###### Memory
 - **`memory/`** -- allocation, addressing, lifetime, and pointer machinery; the home of micron's memory stack
 - **`memory/cmemory/`** -- vectorized `memcpy`/`memmove`/`memset`/`memcmp`/`memchr` routines
-- **`memory/allocation/`** -- allocators, memory resources, kernel-side allocation, and the `abcmalloc` general-purpose allocator
+- **[`memory/allocation/`](src/memory/allocation/README.md)** -- allocators, explicit arenas, memory resources, kernel-side allocation, and the `abcmalloc` general-purpose allocator
 - **`memory/pointers/`** -- smart-pointer family (`unique`, `shared`, `weak`, `atomic`, `hazard`, `sentinel`, `global`, `thread`, `void`)
 
 ###### Numerics and compute

@@ -1,0 +1,21 @@
+# allocator latency baseline -- benches/allocator_types_bench.cpp
+# captured 2026-08-27
+# host: Intel i7-5960X (Haswell-E), CPU 6 pinned, Linux 7.1.9-200.fc44.x86_64
+# compiler: GCC 16.2.1, native ISA
+# build: duck build benches/allocator_types_bench.cpp -i . --perf --fp --no-ssp --no-lto -o bin/allocator-bench -f
+# run: taskset -c 6 ./bin/allocator-bench/allocator_types_bench
+# estimator: per-row median of 3 whole-process samples after one discarded process warmup;
+# each PMU row is itself the median of 5 samples after 2 warmups
+
+fast  arena-bump-al16  cycles/op=9.45
+fast  arena-mark-rewind  cycles/op=11.31
+fast  temporal-alias  cycles/op=19.83
+strict  secure  cycles/op=4452.74
+strict  guarded  cycles/op=905.33
+strict  immutable  cycles/op=852.84
+strict  fixed  cycles/op=850.41
+fragmentation  abcmalloc-mixed-1-2048  overhead-percent=5.13
+shared  1-thread  ns/op=14.21
+shared  2-thread  ns/op=14.04
+shared  4-thread  ns/op=15.63
+shared  8-thread  ns/op=14.97

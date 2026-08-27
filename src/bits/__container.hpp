@@ -110,23 +110,22 @@ protected:
     return static_cast<const Derived *>(this);
   }
 
-  [[gnu::always_inline]] static inline constexpr usize
-  __grow_cap(usize cap) noexcept
-  {
-    return __impl::grow(cap);
-  }
-
   // must be noinline
   [[gnu::noinline, gnu::cold]] void
   __grow_one(void)
   {
-    __vself()->__core_reserve(__grow_cap(__vself()->capacity));
+    Derived *s = __vself();
+    if ( s->capacity == static_cast<usize>(-1) ) exc<except::length_error>("container: capacity overflow");
+    s->__core_reserve(s->recommended_capacity(s->capacity, s->capacity + 1));
   }
 
   [[gnu::noinline, gnu::cold]] void
   __grow_for(usize extra)
   {
-    __vself()->__core_reserve(__grow_cap(__vself()->capacity + extra));
+    Derived *s = __vself();
+    if ( extra > static_cast<usize>(-1) - s->length ) exc<except::length_error>("container: size overflow");
+    const usize minimum = s->length + extra;
+    s->__core_reserve(s->recommended_capacity(s->capacity, minimum));
   }
 
   template<typename U>

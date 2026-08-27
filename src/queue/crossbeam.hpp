@@ -175,10 +175,8 @@ public:
 
   crossbeam() : __tail(0), __head(0)
   {
-    __block = Alloc::create(sizeof(__cell) * __capacity + __cell_align - 1);
-    const uintptr_t raw = reinterpret_cast<uintptr_t>(__block.ptr);
-    const uintptr_t aligned = (raw + __cell_align - 1) & ~(static_cast<uintptr_t>(__cell_align) - 1);
-    __cells = reinterpret_cast<__cell *>(aligned);
+    __block = __allocator_create<Alloc, __cell_align>(allocation_multiply_or_throw(sizeof(__cell), __capacity));
+    __cells = reinterpret_cast<__cell *>(__block.ptr);
     for ( usize i = 0; i < __capacity; ++i ) {
       new (&__cells[i]) __cell;
       __cells[i].state.store(__free, memory_order_relaxed);
@@ -198,7 +196,7 @@ public:
         if ( cell.seq.get(memory_order_acquire) == s + 1u && cell.state.get(memory_order_relaxed) == __ready ) __value(cell)->~T();
       }
       for ( usize i = 0; i < __capacity; ++i ) __cells[i].~__cell();
-      Alloc::destroy(__block);
+      __allocator_destroy<Alloc, __cell_align>(__block);
       __block = { nullptr, 0 };
       __cells = nullptr;
     }

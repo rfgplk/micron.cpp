@@ -324,3 +324,29 @@ build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --direct --start
 # Keep the ARM64 CRT override cell focused on startup plumbing; the C ABI shim
 # does not pull the full allocator/math surface into this one targeted row.
 build --clang tests/memory/free/cabi_shims_freestanding.cpp --arm64 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/arm64_k_startdir
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# vk host allocator
+# the tests/compiletests/ sweep above already carries vk_headers.cpp with the counters OFF; these
+# rows are the ON column. the block header keeps one layout either way, so what is actually under
+# test here is the gated code, not a second ABI.
+compile --clang tests/compiletests/vk_headers.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_x86
+compile --clang tests/compiletests/vk_headers.cpp --i386 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_i386
+compile --clang tests/compiletests/vk_headers.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_arm32
+compile --clang tests/compiletests/vk_headers.cpp --arm64 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_arm64
+compile --clang tests/compiletests/vk_headers.cpp --x86 --isa base -O2 --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_base
+compile --clang tests/rigor/vk_allocator.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_alloc_stats_x86
+compile --clang tests/rigor/vk_allocator.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_alloc_stats_arm32
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# allocator modes
+# the directory sweep above covers the disabled/default ABI on every target.
+compile --clang tests/compiletests/allocator_types.cpp --x86 --isa base -O2 --raw-obj --def MICRON_ALLOCATOR_STATS --def MICRON_ABC_STATS -o bin/compiletests-clang/allocator_stats_x86
+compile --clang tests/compiletests/allocator_types.cpp --i386 -O2 --raw-obj --def MICRON_ALLOCATOR_STATS --def MICRON_ABC_STATS -o bin/compiletests-clang/allocator_stats_i386
+compile --clang tests/compiletests/allocator_types.cpp --arm -O2 --raw-obj --def MICRON_ALLOCATOR_STATS --def MICRON_ABC_STATS -o bin/compiletests-clang/allocator_stats_arm32
+compile --clang tests/compiletests/allocator_types.cpp --arm64 -O2 --raw-obj --def MICRON_ALLOCATOR_STATS --def MICRON_ABC_STATS -o bin/compiletests-clang/allocator_stats_arm64
+compile --clang tests/compiletests/allocator_stats_codegen.cpp --x86 --isa base -O2 --raw-obj --def MICRON_ALLOCATOR_STATS -o bin/compiletests-clang/allocator_stats_codegen_x86
+compile --clang tests/compiletests/allocator_types.cpp --x86 --isa base -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests-clang/allocator_persistent_x86
+compile --clang tests/compiletests/allocator_types.cpp --i386 -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests-clang/allocator_persistent_i386
+compile --clang tests/compiletests/allocator_types.cpp --arm -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests-clang/allocator_persistent_arm32
+compile --clang tests/compiletests/allocator_types.cpp --arm64 -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests-clang/allocator_persistent_arm64

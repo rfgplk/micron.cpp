@@ -37,15 +37,11 @@ template<typename T> struct __core_memory_resource {
   T *memory;      // capacity implied due to byte / sizeof(T)
   usize capacity;
 
-  ~__core_memory_resource()
-  {
-    memory = nullptr;
-    capacity = 0;
-  };
+  ~__core_memory_resource() = default;
 
   __core_memory_resource(void) : memory(nullptr), capacity(0) { }
 
-  __core_memory_resource(const __core_memory_resource &o) : memory(o.memory), capacity(o.capacity) { }
+  __core_memory_resource(const __core_memory_resource &) = delete;
 
   __core_memory_resource(__core_memory_resource &&o) noexcept : memory(o.memory), capacity(o.capacity)
   {
@@ -53,9 +49,7 @@ template<typename T> struct __core_memory_resource {
     o.capacity = 0;
   };
 
-  template<typename C> __core_memory_resource(__core_memory_resource<C> &&o) : memory(o.memory), capacity(o.capacity) { };
-
-  explicit __core_memory_resource(chunk<byte> &&b)
+  explicit __core_memory_resource(chunk<byte> &&b) : memory(nullptr), capacity(0)
   {
     auto addr = reinterpret_cast<uintptr_t>(b.ptr);
     if ( addr % alignof(T) != 0 ) {
@@ -66,16 +60,10 @@ template<typename T> struct __core_memory_resource {
     b = nullptr;
   }
 
-  __core_memory_resource &
-  operator=(const __core_memory_resource &o)
-  {
-    memory = o.memory;
-    capacity = o.capacity;
-    return *this;
-  }
+  __core_memory_resource &operator=(const __core_memory_resource &) = delete;
 
   __core_memory_resource &
-  operator=(__core_memory_resource &&o)
+  operator=(__core_memory_resource &&o) noexcept
   {
     memory = o.memory;
     capacity = o.capacity;
@@ -92,15 +80,7 @@ template<typename T> struct __core_memory_resource {
 
   // converts a chunk to a memory_resource
   // this is important since a raw chunk is simply a mapping that the allocator returns
-  void
-  accept(const chunk<byte> &o)
-  {
-    auto addr = reinterpret_cast<uintptr_t>(o.ptr);
-    if ( addr % alignof(T) != 0 ) exc<except::memory_error_core_unaligned>("__core_memory_resource, address isn't aligned");
-
-    memory = reinterpret_cast<T *>(o.ptr);
-    capacity = o.len / sizeof(T);
-  }
+  void accept(const chunk<byte> &) = delete;
 
   void
   accept(chunk<byte> &&o)
@@ -143,7 +123,7 @@ template<typename T> struct __core_memory_resource {
 
   // converts a memory resource to a chunk
 
-  inline const chunk<byte>
+  inline chunk<byte>
   operator*() const
   {
     return { reinterpret_cast<byte *>(memory), capacity * sizeof(T) };

@@ -36,23 +36,12 @@ class queue: public __mutable_memory_resource<T, Alloc>
     return static_cast<usize>(count);
   }
 
-  static constexpr usize
-  __growth_target(usize cap, usize requested) noexcept
-  {
-    const usize limit = static_cast<usize>(-1);
-    if ( cap <= limit / 2 ) {
-      const usize doubled = cap ? cap * 2 : 1;
-      if ( requested < doubled ) requested = doubled;
-    }
-    return requested;
-  }
-
   inline void
   __relocate(const usize requested)
   {
     __checked_elements(requested);
     const usize count = __mem::length;
-    chunk<byte> block = Alloc::create(requested * sizeof(T));
+    chunk<byte> block = __allocator_create<Alloc, alignof(T)>(allocation_multiply_or_throw(requested, sizeof(T)));
     T *fresh = reinterpret_cast<T *>(block.ptr);
     const usize fresh_capacity = block.len / sizeof(T);
 
@@ -72,14 +61,14 @@ class queue: public __mutable_memory_resource<T, Alloc>
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         __impl_container::destroy(fresh, made);
-        Alloc::destroy(block);
+        __allocator_destroy<Alloc, alignof(T)>(block);
         throw;
       }
 #endif
       if ( count ) __impl_container::destroy(micron::addr(__mem::memory[head]), count);
     }
 
-    if ( __mem::memory ) Alloc::destroy({ reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T) });
+    if ( __mem::memory ) __allocator_destroy<Alloc, alignof(T)>(__mem::data());
     __mem::memory = fresh;
     __mem::capacity = fresh_capacity;
     __mem::length = count;
@@ -101,13 +90,13 @@ class queue: public __mutable_memory_resource<T, Alloc>
     const usize max_elements = static_cast<usize>(-1) / sizeof(T);
     if ( __mem::capacity == max_elements ) [[unlikely]]
       exc<except::library_error>("micron::queue capacity overflow");
-    __relocate(__growth_target(__mem::capacity, __mem::capacity + 1));
+    __relocate(__mem::recommended_capacity(__mem::capacity, __mem::capacity + 1));
   }
 
   [[gnu::always_inline]] inline void
   __ensure_tail_space()
   {
-    if ( head + __mem::length == __mem::capacity ) [[unlikely]]
+    if ( head <= __mem::capacity && __mem::length == __mem::capacity - head ) [[unlikely]]
       __make_tail_space();
   }
 

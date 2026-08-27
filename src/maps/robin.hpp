@@ -192,6 +192,7 @@ class robin_map: public __immutable_memory_resource<Nd, __maps::storage_allocato
   using __mem = __immutable_memory_resource<Nd, __maps::storage_allocator<Alloc, Nd>>;
 
   u8 *ctrl_ = nullptr;
+  chunk<byte> ctrl_block_{ nullptr, 0 };
   usize n_slots_ = 0;
   usize mask_ = 0;
 
@@ -291,15 +292,17 @@ class robin_map: public __immutable_memory_resource<Nd, __maps::storage_allocato
   void
   alloc_ctrl(usize n_slots)
   {
-    ctrl_ = new u8[n_slots];
+    ctrl_block_ = __allocator_create<Alloc, alignof(u8)>(n_slots);
+    ctrl_ = reinterpret_cast<u8 *>(ctrl_block_.ptr);
     micron::memset(ctrl_, 0u, n_slots);
   }
 
   void
   free_ctrl() noexcept
   {
-    delete[] ctrl_;
+    __allocator_destroy<Alloc, alignof(u8)>(ctrl_block_);
     ctrl_ = nullptr;
+    ctrl_block_ = { nullptr, 0 };
   }
 
   __attribute__((always_inline)) void
@@ -413,9 +416,10 @@ class robin_map: public __immutable_memory_resource<Nd, __maps::storage_allocato
 
     // scalar fallback
 #if defined(__micron_compiler_gcc_compat)
-__micron_gcc_unroll_4
+    __micron_gcc_unroll_4
 #endif
-    while ( ctrl_[index] > plen ) {
+        while ( ctrl_[index] > plen )
+    {
       __builtin_prefetch(&ctrl_[(index + 16u) & mask_], 0, 1);
       __builtin_prefetch(node_ptr((index + 4u) & mask_), 0, 0);
 
@@ -454,9 +458,10 @@ __micron_gcc_unroll_4
 #endif
 
 #if defined(__micron_compiler_gcc_compat)
-__micron_gcc_unroll_4
+    __micron_gcc_unroll_4
 #endif
-    while ( ctrl_[index] > plen ) {
+        while ( ctrl_[index] > plen )
+    {
       __builtin_prefetch(&ctrl_[(index + 16u) & mask_], 0, 1);
       __builtin_prefetch(node_ptr((index + 4u) & mask_), 0, 0);
 
@@ -593,8 +598,7 @@ public:
   // dest always first
   ~robin_map()
   {
-    if ( !__mem::memory ) return;
-    clear();
+    if ( __mem::memory ) clear();
     free_ctrl();
   }
 
@@ -607,9 +611,11 @@ public:
 
   robin_map(const robin_map &) = delete;
 
-  robin_map(robin_map &&o) noexcept : __mem(micron::move(o)), ctrl_(o.ctrl_), n_slots_(o.n_slots_), mask_(o.mask_)
+  robin_map(robin_map &&o) noexcept
+      : __mem(micron::move(o)), ctrl_(o.ctrl_), ctrl_block_(o.ctrl_block_), n_slots_(o.n_slots_), mask_(o.mask_)
   {
     o.ctrl_ = nullptr;
+    o.ctrl_block_ = { nullptr, 0 };
     o.n_slots_ = 0u;
     o.mask_ = 0u;
   }
@@ -625,16 +631,13 @@ public:
       __mem::free();
     }
     free_ctrl();
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
+    __mem::operator=(micron::move(o));
     ctrl_ = o.ctrl_;
+    ctrl_block_ = o.ctrl_block_;
     n_slots_ = o.n_slots_;
     mask_ = o.mask_;
-    o.memory = nullptr;
-    o.length = 0u;
-    o.capacity = 0u;
     o.ctrl_ = nullptr;
+    o.ctrl_block_ = { nullptr, 0 };
     o.n_slots_ = 0u;
     o.mask_ = 0u;
     return *this;
@@ -673,6 +676,7 @@ public:
     micron::swap(__mem::length, o.length);
     micron::swap(__mem::capacity, o.capacity);
     micron::swap(ctrl_, o.ctrl_);
+    micron::swap(ctrl_block_, o.ctrl_block_);
     micron::swap(n_slots_, o.n_slots_);
     micron::swap(mask_, o.mask_);
   }

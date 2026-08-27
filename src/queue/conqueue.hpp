@@ -69,17 +69,6 @@ class conqueue: public __mutable_memory_resource<T, Alloc>
     }
   }
 
-  static constexpr usize
-  __growth_target(usize cap, usize requested) noexcept
-  {
-    const usize limit = static_cast<usize>(-1);
-    if ( cap <= limit / 2 ) {
-      const usize doubled = cap ? cap * 2 : 1;
-      if ( requested < doubled ) requested = doubled;
-    }
-    return requested;
-  }
-
   inline void
   __reserve_unsafe(const usize n)
   {
@@ -87,7 +76,7 @@ class conqueue: public __mutable_memory_resource<T, Alloc>
     const usize count = __mem::length;
     const usize requested = n < count ? count : n;
     const usize elements = __checked_elements(requested ? requested : 1);
-    chunk<byte> block = Alloc::create(elements * sizeof(T));
+    chunk<byte> block = __allocator_create<Alloc, alignof(T)>(allocation_multiply_or_throw(elements, sizeof(T)));
     T *fresh = reinterpret_cast<T *>(block.ptr);
     const usize fresh_capacity = block.len / sizeof(T);
 
@@ -107,14 +96,14 @@ class conqueue: public __mutable_memory_resource<T, Alloc>
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         __impl_container::destroy(fresh, made);
-        Alloc::destroy(block);
+        __allocator_destroy<Alloc, alignof(T)>(block);
         throw;
       }
 #endif
       if ( count ) __impl_container::destroy(micron::addr(__mem::memory[head]), count);
     }
 
-    if ( __mem::memory ) Alloc::destroy({ reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T) });
+    if ( __mem::memory ) __allocator_destroy<Alloc, alignof(T)>(__mem::data());
     __mem::memory = fresh;
     __mem::capacity = fresh_capacity;
     __mem::length = count;
@@ -124,7 +113,7 @@ class conqueue: public __mutable_memory_resource<T, Alloc>
   [[gnu::always_inline]] inline void
   __ensure_one_unsafe()
   {
-    if ( head + __mem::length < __mem::capacity ) return;
+    if ( head <= __mem::capacity && __mem::length < __mem::capacity - head ) return;
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
       if ( head ) {
         micron::memmove(__mem::memory, micron::addressof(__mem::memory[head]), __mem::length);
@@ -135,7 +124,8 @@ class conqueue: public __mutable_memory_resource<T, Alloc>
     const usize max_elements = static_cast<usize>(-1) / sizeof(T);
     if ( __mem::length == __mem::capacity && __mem::capacity == max_elements ) [[unlikely]]
       exc<except::library_error>("micron::conqueue capacity overflow");
-    const usize wanted = __mem::length < __mem::capacity ? __mem::capacity : __growth_target(__mem::capacity, __mem::capacity + 1);
+    const usize wanted
+        = __mem::length < __mem::capacity ? __mem::capacity : __mem::recommended_capacity(__mem::capacity, __mem::capacity + 1);
     __reserve_unsafe(wanted);
   }
 
@@ -270,13 +260,8 @@ public:
   conqueue(conqueue &&o) : __mem(nullptr), head(0)
   {
     __hold lock(o.__mtx);
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
+    __mem::operator=(micron::move(o));
     head = o.head;
-    o.memory = nullptr;
-    o.length = 0;
-    o.capacity = 0;
     o.head = 0;
   }
 
@@ -287,7 +272,8 @@ public:
     __defer la(__mtx), lb(o.__mtx);
     __lock_ordered(__mtx, la, o.__mtx, lb);
 
-    chunk<byte> block = Alloc::create((o.length ? o.length : 1) * sizeof(T));
+    chunk<byte> block
+        = __allocator_create<Alloc, alignof(T)>(allocation_multiply_or_throw(o.length ? o.length : 1, sizeof(T)));
     T *fresh = reinterpret_cast<T *>(block.ptr);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
@@ -295,13 +281,13 @@ public:
       if ( o.length ) __impl_container::copy(fresh, micron::addressof(o.memory[o.head]), o.length);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
-      Alloc::destroy(block);
+      __allocator_destroy<Alloc, alignof(T)>(block);
       throw;
     }
 #endif
 
     __clear_unsafe();
-    if ( __mem::memory ) Alloc::destroy({ reinterpret_cast<byte *>(__mem::memory), __mem::capacity * sizeof(T) });
+    if ( __mem::memory ) __allocator_destroy<Alloc, alignof(T)>(__mem::data());
     __mem::memory = fresh;
     __mem::capacity = block.len / sizeof(T);
     __mem::length = o.length;
@@ -317,13 +303,8 @@ public:
     __lock_ordered(__mtx, la, o.__mtx, lb);
     __clear_unsafe();
     if ( __mem::memory ) __mem::free();
-    __mem::memory = o.memory;
-    __mem::length = o.length;
-    __mem::capacity = o.capacity;
+    __mem::operator=(micron::move(o));
     head = o.head;
-    o.memory = nullptr;
-    o.length = 0;
-    o.capacity = 0;
     o.head = 0;
     return *this;
   }
@@ -485,16 +466,16 @@ public:
     if ( count > static_cast<usize>(-1) - __mem::length ) [[unlikely]]
       exc<except::library_error>("micron::conqueue capacity overflow");
     const usize needed = __mem::length + count;
-    if ( head + needed > __mem::capacity ) {
+    if ( head > __mem::capacity || needed > __mem::capacity - head ) {
       if constexpr ( micron::is_trivially_copyable_v<T> ) {
         if ( needed <= __mem::capacity ) {
           micron::memmove(__mem::memory, micron::addressof(__mem::memory[head]), __mem::length);
           head = 0;
         } else {
-          __reserve_unsafe(__growth_target(__mem::capacity, needed));
+          __reserve_unsafe(__mem::recommended_capacity(__mem::capacity, needed));
         }
       } else {
-        __reserve_unsafe(needed <= __mem::capacity ? __mem::capacity : __growth_target(__mem::capacity, needed));
+        __reserve_unsafe(needed <= __mem::capacity ? __mem::capacity : __mem::recommended_capacity(__mem::capacity, needed));
       }
     }
     if constexpr ( micron::is_trivially_copyable_v<T> ) {

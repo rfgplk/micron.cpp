@@ -99,7 +99,9 @@ template<usize B, usize Al = 64, class Alloc = allocator_serial<>> class node_ar
   grow()
   {
     const usize old = mem_.capacity;
-    mem_.expand(old == 0 ? 16u : old);
+    const usize minimum = old == static_cast<usize>(-1) ? old : old + 1;
+    if ( minimum == old ) exc<except::length_error>("node_arena: capacity overflow");
+    mem_.expand(mem_.recommended_capacity(old, minimum));
   }
 
 public:
@@ -164,7 +166,7 @@ public:
   void
   reserve(usize n_slots)
   {
-    if ( mem_.capacity < n_slots ) mem_.expand(n_slots - mem_.capacity);
+    if ( mem_.capacity < n_slots ) mem_.expand(n_slots);
   }
 
   // high-water slot count (reset()/rebuild-friendly arenas never deallocate, so this is

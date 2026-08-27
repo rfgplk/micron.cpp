@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../allocator.hpp"
 #include "../except.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/new.hpp"
@@ -175,7 +176,7 @@ template<typename T> struct default_less {
   }
 };
 
-template<typename T, typename Less = default_less<T>>
+template<typename T, typename Less = default_less<T>, class Alloc = allocator_serial<>>
   requires micron::is_copy_constructible_v<T> && micron::is_move_constructible_v<T>
 class rb_tree
 {
@@ -192,13 +193,25 @@ private:
   static node *
   make_node(Args &&...args)
   {
-    return new node(T(micron::forward<Args>(args)...));
+    node *memory = __allocator_allocate_array<Alloc, node>(1);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      return new (static_cast<void *>(memory)) node(T(micron::forward<Args>(args)...));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __allocator_deallocate_array<Alloc>(memory);
+      throw;
+    }
+#endif
   }
 
   static void
   destroy_node(node *p)
   {
-    delete p;
+    if ( !p ) return;
+    p->~node();
+    __allocator_deallocate_array<Alloc>(p);
   }
 
   static node *
@@ -399,12 +412,23 @@ private:
   clone_subtree(node *src, node *parent)
   {
     if ( !src ) return nullptr;
-    node *n = new node(src->data);
+    node *n = make_node(src->data);
     n->color = src->color;
     n->parent = parent;
     n->kind = src->kind;
-    n->left = clone_subtree(src->left, n);
-    n->right = clone_subtree(src->right, n);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      n->left = clone_subtree(src->left, n);
+      n->right = clone_subtree(src->right, n);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      destroy_subtree(n->left);
+      destroy_subtree(n->right);
+      destroy_node(n);
+      throw;
+    }
+#endif
     return n;
   }
 

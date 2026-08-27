@@ -65,6 +65,12 @@ class vector: public __mutable_memory_resource<T, Alloc>,
     reserve(n);
   }
 
+  [[gnu::always_inline]] inline void
+  __grow_reserve(usize minimum)
+  {
+    reserve(__mem::recommended_capacity(__mem::capacity, minimum));
+  }
+
   using __chk::__cap_range_check;
   using __chk::__capacity_check;
   using __chk::__empty_check;
@@ -375,7 +381,7 @@ public:
   append(const vector<F, Alloc, Sf2> &o)
   {
     if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
+    if ( !__mem::has_space(o.length) ) __grow_reserve(allocation_add_or_throw(__mem::length, o.length));
     __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     return *this;
@@ -387,7 +393,7 @@ public:
   weld(vector<F, Alloc, Sf2> &&o)
   {
     if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
+    if ( !__mem::has_space(o.length) ) __grow_reserve(allocation_add_or_throw(__mem::length, o.length));
     __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     o.length = 0;
@@ -607,7 +613,7 @@ public:
       for ( size_type i = 0; i < cnt; ++i ) push_back(val);
       return begin();
     }
-    if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::grow(__mem::capacity + cnt));
+    if ( !__mem::has_space(cnt) ) __grow_reserve(allocation_add_or_throw(__mem::length, cnt));
     if constexpr ( Sf == true ) {
       if ( n >= __mem::length ) [[unlikely]]
         __chk::template __fail<except::library_error>("micron::vector insert(): out of allocated memory range.");
@@ -625,7 +631,7 @@ public:
       push_back(val);
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     if constexpr ( Sf == true ) {
       if ( n >= __mem::length ) [[unlikely]]
         __chk::template __fail<except::library_error>("micron::vector insert(): out of allocated memory range.");
@@ -643,7 +649,7 @@ public:
       emplace_back(micron::move(val));
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     if constexpr ( Sf == true ) {
       if ( n >= __mem::length ) [[unlikely]]
         __chk::template __fail<except::library_error>("micron::vector insert(): out of allocated memory range.");
@@ -667,7 +673,7 @@ public:
         __chk::template __fail<except::library_error>("micron::vector insert(): iterator out of range.");
     }
     const size_type p = static_cast<size_type>(it - __mem::memory);
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     __impl_container::open_gap(__mem::memory, __mem::length, p, 1);
     __impl_container::fill_gap(__mem::memory, __mem::length, p, 1,
                                [&](size_type i) { new (micron::addr(__mem::memory[i])) T(micron::move(val)); });
@@ -687,7 +693,7 @@ public:
         __chk::template __fail<except::library_error>("micron::vector insert(): iterator out of range.");
     }
     const size_type p = static_cast<size_type>(it - __mem::memory);
-    if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::grow(__mem::capacity + cnt));
+    if ( !__mem::has_space(cnt) ) __grow_reserve(allocation_add_or_throw(__mem::length, cnt));
     __impl_container::open_gap(__mem::memory, __mem::length, p, cnt);
     __impl_container::fill_gap_copy(__mem::memory, __mem::length, p, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
@@ -706,7 +712,7 @@ public:
         __chk::template __fail<except::library_error>("micron::vector insert(): iterator out of range.");
     }
     const size_type p = static_cast<size_type>(it - __mem::memory);
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     __impl_container::open_gap(__mem::memory, __mem::length, p, 1);
     __impl_container::fill_gap_copy(__mem::memory, __mem::length, p, 1, val);      // rollback-safe gap fill
     __mem::length++;
@@ -728,7 +734,7 @@ public:
         __chk::template __fail<except::library_error>("micron::vector insert(): iterator out of range.");
     }
     const size_type p = static_cast<size_type>(it - __mem::memory);
-    if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::grow(__mem::capacity + cnt));
+    if ( !__mem::has_space(cnt) ) __grow_reserve(allocation_add_or_throw(__mem::length, cnt));
     __impl_container::open_gap(__mem::memory, __mem::length, p, cnt);
     InputIt q = first;
     __impl_container::fill_gap(__mem::memory, __mem::length, p, cnt, [&](size_type idx) {
@@ -756,7 +762,7 @@ public:
       push_back(micron::move(val));
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
 
     size_type pos = 0;
     for ( ; pos < __mem::length; ++pos )
@@ -981,6 +987,12 @@ class vector<T, Alloc, Sf>: public __mutable_memory_resource_move_only<T, Alloc>
   __core_reserve(usize n)
   {
     reserve(n);
+  }
+
+  [[gnu::always_inline]] inline void
+  __grow_reserve(usize minimum)
+  {
+    reserve(__mem::recommended_capacity(__mem::capacity, minimum));
   }
 
   using __chk::__cap_range_check;
@@ -1251,7 +1263,7 @@ public:
   {
 
     if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) reserve(__mem::capacity + o.max_size());
+    if ( !__mem::has_space(o.length) ) __grow_reserve(allocation_add_or_throw(__mem::length, o.length));
     __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     o.length = 0;
@@ -1467,7 +1479,7 @@ public:
       emplace_back(micron::move(val));
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     if constexpr ( Sf == true ) {
       if ( n >= __mem::length ) [[unlikely]]
         __chk::template __fail<except::library_error>("micron::vector insert(): out of allocated memory range.");
@@ -1492,7 +1504,7 @@ public:
     }
     if ( __mem::length >= __mem::capacity ) {
       size_type dif = static_cast<size_type>(it - __mem::memory);
-      reserve(__impl::grow(__mem::capacity));
+      __grow_reserve(allocation_add_or_throw(__mem::length, 1));
       it = __mem::memory + dif;
     }
     if constexpr ( Sf == true ) {
@@ -1533,7 +1545,7 @@ public:
       push_back(micron::move(val));
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     size_type pos = 0;
     for ( ; pos < __mem::length; ++pos )
       if ( __mem::memory[pos] > val ) break;

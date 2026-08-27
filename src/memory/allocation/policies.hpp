@@ -5,51 +5,42 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../concepts.hpp"
-#include "../../memory/memory.hpp"
-#include "../../type_traits.hpp"
 #include "../../types.hpp"
-#include "__internal.hpp"
 #include "kmemory.hpp"
-
-#include "../../linux/sys/sysinfo.hpp"
 
 namespace micron
 {
-// NOTE: pooling has been removed
-// TODO: remove shareable/concurrent unless a need for them arises
 
-// determine how memory will be allocated, whenever a container requests more
-// mem follow this policy
-struct serial_allocation_policy {
-  static constexpr bool concurrent = false;          // used in concurrent structures
-  static constexpr f32 on_grow = 3.0f;               // by how much memory grows on each realloc (& how)
-  static constexpr u32 granularity = page_size;      // minimum amount of memory alloc'd
-  static constexpr u32 shareable = 0;                // can be shared between owners
+template<usize MinimumBytes, usize Granularity, usize GrowthNumerator, usize GrowthDenominator> struct allocation_policy {
+  static_assert(Granularity != 0, "allocation_policy: granularity must be non-zero");
+  static_assert(GrowthDenominator != 0, "allocation_policy: growth denominator must be non-zero");
+  static_assert(GrowthNumerator >= GrowthDenominator, "allocation_policy: growth ratio must be at least one");
+
+  static constexpr bool concurrent = false;
+  static constexpr bool shareable = false;
+  static constexpr usize minimum_bytes = MinimumBytes;
+  static constexpr usize granularity = Granularity;
+  static constexpr usize growth_numerator = GrowthNumerator;
+  static constexpr usize growth_denominator = GrowthDenominator;
+
+  // Kept for source compatibility. Integer fields above are canonical.
+  static constexpr f32 on_grow = static_cast<f32>(GrowthNumerator) / static_cast<f32>(GrowthDenominator);
 };
 
-// for short-living, sub-page allocations (string keys, small buffers)
-struct small_allocation_policy {
-  static constexpr bool concurrent = false;      // used in concurrent structures
-  static constexpr f32 on_grow = 2.0f;           // by how much memory grows on each realloc (& how)
-  static constexpr u32 granularity = 512;        // minimum amount of memory alloc'd
-  static constexpr u32 shareable = 0;            // can be shared between owners
+struct serial_allocation_policy: allocation_policy<page_size, page_size, 3, 1> {
 };
 
-struct constrained_allocation_policy {
-  static constexpr bool concurrent = false;      // used in concurrent structures
-  static constexpr f32 on_grow = 1.5f;           // by how much memory grows on each realloc (& how)
-  static constexpr u32 granularity = 256;        // minimum amount of memory alloc'd
-  static constexpr u32 shareable = 1;            // can be shared between owners
+struct small_allocation_policy: allocation_policy<512, 512, 2, 1> {
 };
 
-// NOTE: legacy/deprecated
-
-// for huge pages
-struct huge_allocation_policy {
-  static constexpr bool concurrent = false;                // used in concurrent structures
-  static constexpr f32 on_grow = 4.0f;                     // by how much memory grows on each realloc (& how)
-  static constexpr u32 granularity = large_page_size;      // minimum amount of memory alloc'd
-  static constexpr u32 shareable = 0;                      // can be shared between owners
+struct constrained_allocation_policy: allocation_policy<256, 256, 3, 2> {
+  static constexpr bool shareable = true;
 };
+
+struct huge_allocation_policy: allocation_policy<large_page_size, large_page_size, 4, 1> {
+};
+
+struct exact_allocation_policy: allocation_policy<0, 1, 1, 1> {
+};
+
 };      // namespace micron

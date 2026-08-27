@@ -70,7 +70,8 @@ class constack: public __mutable_memory_resource<T, Alloc>
   inline void
   __ensure_one_unsafe()
   {
-    if ( __mem::length >= __mem::capacity ) __reserve_unsafe(__mem::capacity ? __mem::capacity * 2 : (N ? N : 1));
+    if ( __mem::length >= __mem::capacity )
+      __reserve_unsafe(__mem::recommended_capacity(__mem::capacity, allocation_add_or_throw(__mem::length, 1)));
   }
 
   inline void

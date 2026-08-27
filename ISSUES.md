@@ -43,6 +43,8 @@ run
 - **`--tsan` / `--asan` cannot compile ANY TU that reaches `src/thread/thread.hpp`** — 26
 - **`duck` rejects a multi-token flag string passed as one argv entry**
 - certain heavy abc tests need `vm.overcommit_memory=0|1` otherwise they'll fail at RUNTIME with `critical_error` (mmap refused)
+- micron splits static and main-thread thread_local destruction into two phases in __run_exit_sequence, where [basic.start.term] interleaves them by
+  construction order.
 
 ## Bugs / Limitations you should know
 - **`external/bbench` can only be built against the working tree with `-i .`.**

@@ -30,15 +30,6 @@
 namespace micron
 {
 
-namespace __impl
-{
-inline constexpr usize
-fgrow(usize cap)
-{
-  return micron::__impl::grow(cap);
-}
-};      // namespace __impl
-
 template<is_regular_object T, class Alloc = micron::allocator_serial<>, bool Sf = true>
 class fvector: public __mutable_memory_resource<T, Alloc>, public __vector_core<fvector<T, Alloc, Sf>, T>
 {
@@ -50,6 +41,12 @@ class fvector: public __mutable_memory_resource<T, Alloc>, public __vector_core<
   __core_reserve(usize n)
   {
     reserve(n);
+  }
+
+  [[gnu::always_inline]] inline void
+  __grow_reserve(usize minimum)
+  {
+    reserve(__mem::recommended_capacity(__mem::capacity, minimum));
   }
 
 public:
@@ -287,7 +284,7 @@ public:
   append(const fvector<F, Alloc, Sf2> &o)
   {
     if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) reserve(__mem::length + o.length);
+    if ( !__mem::has_space(o.length) ) __grow_reserve(allocation_add_or_throw(__mem::length, o.length));
     __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     return *this;
@@ -299,7 +296,7 @@ public:
   weld(fvector<F, Alloc, Sf2> &&o)
   {
     if ( o.empty() ) return *this;
-    if ( !__mem::has_space(o.length) ) reserve(__mem::length + o.length);
+    if ( !__mem::has_space(o.length) ) __grow_reserve(allocation_add_or_throw(__mem::length, o.length));
     __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
     __mem::length += o.length;
     o.length = 0;
@@ -520,7 +517,7 @@ public:
       for ( size_type i = 0; i < cnt; ++i ) push_back(val);
       return begin();
     }
-    if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity + cnt));
+    if ( !__mem::has_space(cnt) ) __grow_reserve(allocation_add_or_throw(__mem::length, cnt));
     __impl_container::open_gap(__mem::memory, __mem::length, n, cnt);
     __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
@@ -534,7 +531,7 @@ public:
       push_back(val);
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
     __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, 1, val);      // rollback-safe gap fill
     __mem::length++;
@@ -548,7 +545,7 @@ public:
       emplace_back(micron::move(val));
       return begin();
     }
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
     __impl_container::fill_gap(__mem::memory, __mem::length, n, 1, [&](size_type i) { new (addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
@@ -563,7 +560,7 @@ public:
       return begin();
     }
     const size_type p = static_cast<size_type>(it - __mem::memory);
-    if ( __mem::length + cnt > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity + cnt));
+    if ( !__mem::has_space(cnt) ) __grow_reserve(allocation_add_or_throw(__mem::length, cnt));
     __impl_container::open_gap(__mem::memory, __mem::length, p, cnt);
     __impl_container::fill_gap_copy(__mem::memory, __mem::length, p, cnt, val);      // rollback-safe gap fill
     __mem::length += cnt;
@@ -578,7 +575,7 @@ public:
       return begin();
     }
     const size_type p = static_cast<size_type>(it - __mem::memory);
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     __impl_container::open_gap(__mem::memory, __mem::length, p, 1);
     __impl_container::fill_gap(__mem::memory, __mem::length, p, 1, [&](size_type i) { new (addr(__mem::memory[i])) T(micron::move(val)); });
     __mem::length++;
@@ -593,7 +590,7 @@ public:
       return begin();
     }
     const size_type p = static_cast<size_type>(it - __mem::memory);
-    if ( __mem::length + 1 > __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
     __impl_container::open_gap(__mem::memory, __mem::length, p, 1);
     __impl_container::fill_gap_copy(__mem::memory, __mem::length, p, 1, val);      // rollback-safe gap fill
     __mem::length++;
@@ -616,7 +613,7 @@ public:
       push_back(micron::move(val));
       return begin();
     }
-    if ( __mem::length + 1 >= __mem::capacity ) reserve(__impl::fgrow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __grow_reserve(allocation_add_or_throw(__mem::length, 1));
 
     size_type pos = 0;
     for ( ; pos < __mem::length; ++pos )

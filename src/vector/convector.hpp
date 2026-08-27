@@ -75,6 +75,12 @@ class convector: public __mutable_memory_resource<T, Alloc>,
     __unlocked_reserve(n);
   }
 
+  [[gnu::always_inline]] inline void
+  __unlocked_grow(usize minimum)
+  {
+    __unlocked_reserve(__mem::recommended_capacity(__mem::capacity, minimum));
+  }
+
   mutable micron::fast_mutex __mtx;
 
   // all convector instantiations are mutual friends so two-object ops may lock the other object's mutex even across differing element types
@@ -704,7 +710,7 @@ public:
     __hold2 __lock(__mtx, o.__mtx);
     const size_type on = o.length;
     if ( on == 0 ) return *this;
-    if ( !__mem::has_space(on) ) __unlocked_reserve(__mem::length + on);
+    if ( !__mem::has_space(on) ) __unlocked_grow(allocation_add_or_throw(__mem::length, on));
     __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), on);
     __mem::length += on;
     return *this;
@@ -719,7 +725,7 @@ public:
     __hold2 __lock(__mtx, o.__mtx);
     const size_type on = o.length;
     if ( on == 0 ) return *this;
-    if ( !__mem::has_space(on) ) __unlocked_reserve(__mem::length + on);
+    if ( !__mem::has_space(on) ) __unlocked_grow(allocation_add_or_throw(__mem::length, on));
     __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), on);
     __mem::length += on;
     o.length = 0;
@@ -800,7 +806,7 @@ public:
     if ( __mem::length < __mem::capacity ) {
       new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(t));
     } else {
-      __unlocked_reserve(__impl::grow(__mem::capacity));
+      __unlocked_grow(allocation_add_or_throw(__mem::length, 1));
       new (micron::addr(__mem::memory[__mem::length++])) T(micron::move(t));
     }
   }
@@ -839,7 +845,7 @@ public:
       for ( size_type i = 0; i < cnt; ++i ) __unlocked_push_back(val);
       return __mem::memory;
     }
-    if ( __mem::length + cnt > __mem::capacity ) __unlocked_reserve(__impl::grow(__mem::capacity + cnt));
+    if ( !__mem::has_space(cnt) ) __unlocked_grow(allocation_add_or_throw(__mem::length, cnt));
     __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
     __impl_container::open_gap(__mem::memory, __mem::length, n, cnt);
     __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, cnt, val);      // rollback-safe gap fill
@@ -855,7 +861,7 @@ public:
       __unlocked_push_back(val);
       return __mem::memory;
     }
-    if ( __mem::length + 1 > __mem::capacity ) __unlocked_reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __unlocked_grow(allocation_add_or_throw(__mem::length, 1));
     __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
     __impl_container::fill_gap_copy(__mem::memory, __mem::length, n, 1, val);      // rollback-safe gap fill
@@ -871,7 +877,7 @@ public:
       __unlocked_emplace_back(micron::move(val));
       return __mem::memory;
     }
-    if ( __mem::length + 1 > __mem::capacity ) __unlocked_reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __unlocked_grow(allocation_add_or_throw(__mem::length, 1));
     __safety_check<&convector::__index_check, except::library_error>("micron::convector insert(): out of allocated memory range.", n);
     __impl_container::open_gap(__mem::memory, __mem::length, n, 1);
     __impl_container::fill_gap(__mem::memory, __mem::length, n, 1,
@@ -890,7 +896,7 @@ public:
     }
     if ( __mem::length >= __mem::capacity ) {
       size_type dif = static_cast<size_type>(it - __mem::memory);
-      __unlocked_reserve(__impl::grow(__mem::capacity));
+      __unlocked_grow(allocation_add_or_throw(__mem::length, 1));
       it = __mem::memory + dif;
     }
     if constexpr ( Sf == true ) {
@@ -913,9 +919,9 @@ public:
       for ( size_type i = 0; i < cnt; ++i ) __unlocked_push_back(val);
       return __mem::memory;
     }
-    if ( __mem::length + cnt > __mem::capacity ) {
+    if ( !__mem::has_space(cnt) ) {
       size_type dif = static_cast<size_type>(it - __mem::memory);
-      __unlocked_reserve(__impl::grow(__mem::capacity + cnt));
+      __unlocked_grow(allocation_add_or_throw(__mem::length, cnt));
       it = __mem::memory + dif;
     }
     if constexpr ( Sf == true ) {
@@ -939,7 +945,7 @@ public:
     }
     if ( __mem::length >= __mem::capacity ) {
       size_type dif = static_cast<size_type>(it - __mem::memory);
-      __unlocked_reserve(__impl::grow(__mem::capacity));
+      __unlocked_grow(allocation_add_or_throw(__mem::length, 1));
       it = __mem::memory + dif;
     }
     if constexpr ( Sf == true ) {
@@ -975,7 +981,7 @@ public:
       __unlocked_push_back(micron::move(val));
       return __mem::memory;
     }
-    if ( __mem::length + 1 > __mem::capacity ) __unlocked_reserve(__impl::grow(__mem::capacity));
+    if ( !__mem::has_space(1) ) __unlocked_grow(allocation_add_or_throw(__mem::length, 1));
 
     size_type pos = 0;
     for ( ; pos < __mem::length; ++pos )
