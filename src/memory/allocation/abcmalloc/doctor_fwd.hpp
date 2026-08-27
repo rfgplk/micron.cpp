@@ -37,6 +37,7 @@ void record_alloc(byte *ptr, usize req_size) noexcept;            // arena::push
 void record_free(byte *ptr, usize len) noexcept;                  // arena::pop entry (len==0 when size unknown)
 void record_tombstone(byte *ptr, usize len) noexcept;             // arena::ts_pop entry
 void record_remote_free(byte *ptr, usize len) noexcept;           // __route_dealloc cross-thread branch
+void mark_chunk_alloc(byte *ptr) noexcept;                        // balloc/fetch: caller owns the whole chunk, not just req_size
 void record_realloc(byte *ptr, usize new_req_size) noexcept;      // arena::resize in-place reuse (refresh req_size + slack canary)
 
 bool on_double_free(byte *ptr, const char *file, int line) noexcept;                       // handle_double_free

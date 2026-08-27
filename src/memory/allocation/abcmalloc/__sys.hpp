@@ -33,13 +33,7 @@ namespace micron
 inline bool
 __validate_mmap_addr(addr_t *ptr)
 {
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::out_of_memory) ) return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::overflow) ) return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::invalid_arg) ) return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::file_exists) ) return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::permissions) ) return false;
-  if ( reinterpret_cast<uintptr_t>(ptr) == -static_cast<uintptr_t>(error::try_again) ) return false;
-  return true;
+  return !micron::mmap_failed(ptr);
 }
 
 // base allocator which all others inherit from
@@ -68,7 +62,7 @@ struct sys_allocator {
   static void
   dealloc(T *mem, usize len)
   {      // deallocate at location N
-    if ( mem == nullptr ) exc<except::critical_error>("sys_allocator::dealloc(): nullptr was provided");
+    if ( mem == nullptr ) return;
     if ( micron::munmap(reinterpret_cast<addr_t *>(mem), len) == -1 )
       exc<except::critical_error>("sys_allocator::dealloc(): munmap() failed");
     mem = nullptr;

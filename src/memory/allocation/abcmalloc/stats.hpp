@@ -21,12 +21,15 @@
 
 #pragma once
 
+#include "../../../atomic/atomic.hpp"
+
 namespace abc
 {
 
 #include "config.hpp"
 
 struct stats_t {
+  bool enabled;
   u64 alloc_requests;
   u64 dealloc_requests;
   u64 total_memory_req;             // how much was requested
@@ -47,30 +50,88 @@ enum class stat_type : int {
   __end
 };
 
-static stats_t stat = {};
+#if defined(MICRON_ABC_STATS)
+struct __stats_storage {
+  micron::atomic_token<usize> alloc_requests{ 0 };
+  micron::atomic_token<usize> dealloc_requests{ 0 };
+  micron::atomic_token<usize> total_memory_req{ 0 };
+  micron::atomic_token<usize> total_memory_throughput{ 0 };
+  micron::atomic_token<usize> total_memory_freed{ 0 };
+  micron::atomic_token<usize> current_memory_usage{ 0 };
+  micron::atomic_token<usize> current_page_usage{ 0 };
+};
+
+inline __stats_storage __stats{};
+
+[[gnu::always_inline]] inline void
+__subtract_current_memory(usize n) noexcept
+{
+  usize observed = __stats.current_memory_usage.get(micron::memory_order_relaxed);
+  for ( ;; ) {
+    const usize next = n > observed ? 0 : observed - n;
+    if ( __stats.current_memory_usage.compare_exchange_weak(observed, next, micron::memory_order_relaxed, micron::memory_order_relaxed) )
+      return;
+  }
+}
+#endif
 
 template<stat_type S>
 inline __attribute__((always_inline)) void
 collect_stats(usize n = 0)
 {
-  if constexpr ( __default_collect_stats ) {
-    if constexpr ( S == stat_type::alloc ) {
-      stat.alloc_requests++;
-    } else if constexpr ( S == stat_type::dealloc ) {
-      stat.dealloc_requests++;
-    } else if constexpr ( S == stat_type::total_memory_req ) {
-      stat.total_memory_req += n;
-    } else if constexpr ( S == stat_type::total_memory_throughput ) {
-      stat.total_memory_throughput += n;
-    } else if constexpr ( S == stat_type::total_memory_freed ) {
-      stat.total_memory_freed += n;
-    }
+#if defined(MICRON_ABC_STATS)
+  if constexpr ( S == stat_type::alloc ) {
+    __stats.alloc_requests.fetch_add(1, micron::memory_order_relaxed);
+  } else if constexpr ( S == stat_type::dealloc ) {
+    __stats.dealloc_requests.fetch_add(1, micron::memory_order_relaxed);
+  } else if constexpr ( S == stat_type::total_memory_req ) {
+    __stats.total_memory_req.fetch_add(n, micron::memory_order_relaxed);
+  } else if constexpr ( S == stat_type::total_memory_throughput ) {
+    __stats.total_memory_throughput.fetch_add(n, micron::memory_order_relaxed);
+    __stats.current_memory_usage.fetch_add(n, micron::memory_order_relaxed);
+  } else if constexpr ( S == stat_type::total_memory_freed ) {
+    __stats.total_memory_freed.fetch_add(n, micron::memory_order_relaxed);
+    __subtract_current_memory(n);
   }
+#else
+  (void)n;
+#endif
 }
 
-inline __attribute__((always_inline)) auto &
+[[nodiscard]] inline stats_t
 get_stats(void)
 {
-  return stat;
+#if defined(MICRON_ABC_STATS)
+  return { true,
+           __stats.alloc_requests.get(micron::memory_order_relaxed),
+           __stats.dealloc_requests.get(micron::memory_order_relaxed),
+           __stats.total_memory_req.get(micron::memory_order_relaxed),
+           __stats.total_memory_throughput.get(micron::memory_order_relaxed),
+           __stats.total_memory_freed.get(micron::memory_order_relaxed),
+           __stats.current_memory_usage.get(micron::memory_order_relaxed),
+           __stats.current_page_usage.get(micron::memory_order_relaxed) };
+#else
+  return { false, 0, 0, 0, 0, 0, 0, 0 };
+#endif
+}
+
+[[nodiscard]] inline stats_t
+stats(void)
+{
+  return get_stats();
+}
+
+inline void
+reset_stats(void) noexcept
+{
+#if defined(MICRON_ABC_STATS)
+  __stats.alloc_requests.store(0, micron::memory_order_relaxed);
+  __stats.dealloc_requests.store(0, micron::memory_order_relaxed);
+  __stats.total_memory_req.store(0, micron::memory_order_relaxed);
+  __stats.total_memory_throughput.store(0, micron::memory_order_relaxed);
+  __stats.total_memory_freed.store(0, micron::memory_order_relaxed);
+  __stats.current_memory_usage.store(0, micron::memory_order_relaxed);
+  __stats.current_page_usage.store(0, micron::memory_order_relaxed);
+#endif
 }
 };      // namespace abc

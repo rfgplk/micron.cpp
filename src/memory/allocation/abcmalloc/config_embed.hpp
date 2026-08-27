@@ -32,7 +32,11 @@ constexpr static const usize __system_pagesize = micron::page_size;      // 4096
 
 // once an allocation occurs its address is NEVER freed back to the OS nor regranted to a different allocation (even on explicit free()) and
 // the sheet it lives on is NEVER unmapped
+#if defined(MICRON_ABC_PERSISTENT)
+constexpr static const bool __default_persistent_mode = true;
+#else
 constexpr static const bool __default_persistent_mode = false;
+#endif
 
 // shifts defined like this so we can easily pull them up in code
 constexpr static const usize __class_arena_internal = 1024;
@@ -222,7 +226,11 @@ constexpr static const bool __default_full_on_free = false;
 constexpr static const bool __default_sanitize = false;
 constexpr static const byte __default_sanitize_with_on_alloc = 0xcc;
 
+#if defined(MICRON_ABC_STATS)
+constexpr static const bool __default_collect_stats = true;
+#else
 constexpr static const bool __default_collect_stats = false;
+#endif
 
 // abort on double free
 constexpr static const byte __default_double_free_action = 2;

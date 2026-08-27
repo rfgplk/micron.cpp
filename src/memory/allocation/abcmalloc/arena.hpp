@@ -1443,6 +1443,18 @@ class __arena: private cache
     }
   }
 
+  [[gnu::always_inline]] inline usize
+  __stats_release_size(byte *p, usize fallback) const noexcept
+  {
+#if defined(MICRON_ABC_STATS)
+    const usize actual = __size_of_alloc(reinterpret_cast<addr_t *>(p));
+    return actual ? actual : fallback;
+#else
+    (void)p;
+    return fallback;
+#endif
+  }
+
 public:
   // MPSC multithreading code
   // the if constexprs will allow the compiler to instantly eliminate this for st workloads
@@ -1473,9 +1485,10 @@ public:
     if constexpr ( __default_enforce_provenance ) {
       if ( !__free_admit<false>(p, sz) ) return;
     }
+    const usize released = __stats_release_size(p, sz);
     __free_scrub(p, sz);
     collect_stats<stat_type::dealloc>();
-    collect_stats<stat_type::total_memory_freed>(sz);
+    collect_stats<stat_type::total_memory_freed>(released);
     const bool ok = sz ? __vmap_remove({ p, sz }) : __vmap_remove_at(p);
     ABC_DOCTOR(if ( !ok ) doctor::on_free_result(p, ok, __FILE__, __LINE__);)
     (void)ok;
@@ -1663,7 +1676,7 @@ public:
         __debug_print("push(): allocated bytes: ", memory.len);
         zero_on_alloc(memory.ptr, memory.len);
         sanitize_on_alloc(memory.ptr, memory.len);
-        collect_stats<stat_type::total_memory_throughput>(memory.len);
+        collect_stats<stat_type::total_memory_throughput>(__stats_release_size(memory.ptr, memory.len));
         ABC_DOCTOR(doctor::record_alloc(memory.ptr, sz);)
         return memory;
       }
@@ -1762,7 +1775,7 @@ public:
         __debug_print("launder(): allocated bytes: ", memory.len);
         zero_on_alloc(memory.ptr, memory.len);
         sanitize_on_alloc(memory.ptr, memory.len);
-        collect_stats<stat_type::total_memory_throughput>(memory.len);
+        collect_stats<stat_type::total_memory_throughput>(__stats_release_size(memory.ptr, memory.len));
         ABC_DOCTOR(doctor::record_alloc(memory.ptr, sz);)
         return memory;
       }
@@ -1813,8 +1826,9 @@ public:
     if ( mem.zero() ) return true;
     if ( !__free_admit<false>(mem.ptr, mem.len) ) [[unlikely]]
       return false;
+    const usize released = __stats_release_size(mem.ptr, mem.len);
     collect_stats<stat_type::dealloc>();
-    collect_stats<stat_type::total_memory_freed>(mem.len);
+    collect_stats<stat_type::total_memory_freed>(released);
     __free_scrub(mem.ptr, mem.len);
     bool ok = __vmap_remove(mem);
     // record the free only after it succeeds
@@ -1830,7 +1844,9 @@ public:
     if ( mem == nullptr ) return true;
     if ( !__free_admit<false>(mem, 0) ) [[unlikely]]
       return false;
+    const usize released = __stats_release_size(mem, 0);
     collect_stats<stat_type::dealloc>();
+    collect_stats<stat_type::total_memory_freed>(released);
     __free_scrub(mem, 0);
     bool ok = __vmap_remove_at(mem);
     ABC_DOCTOR(if ( ok ) doctor::record_free(mem, 0); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
@@ -1873,7 +1889,9 @@ public:
     if ( !mem ) return false;
     if ( !__free_admit<true>(mem, len) ) [[unlikely]]
       return false;
-    collect_stats<stat_type::total_memory_freed>(len);
+    const usize released = __stats_release_size(mem, len);
+    collect_stats<stat_type::dealloc>();
+    collect_stats<stat_type::total_memory_freed>(released);
     __free_scrub(mem, len);
     bool ok = __vmap_remove({ mem, len });
     ABC_DOCTOR(if ( ok ) doctor::record_free(mem, len); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
@@ -1887,8 +1905,9 @@ public:
     if ( mem.zero() ) return false;
     if ( !__free_admit<false>(mem.ptr, mem.len) ) [[unlikely]]
       return false;
+    const usize released = __stats_release_size(mem.ptr, mem.len);
     collect_stats<stat_type::dealloc>();
-    collect_stats<stat_type::total_memory_freed>(mem.len);
+    collect_stats<stat_type::total_memory_freed>(released);
     __free_scrub(mem.ptr, mem.len);
     bool ok = __vmap_tombstone(mem);
     ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem.ptr, mem.len); else doctor::on_free_result(mem.ptr, false, __FILE__, __LINE__);)
@@ -1902,7 +1921,9 @@ public:
     if ( !mem ) return false;
     if ( !__free_admit<false>(mem, 0) ) [[unlikely]]
       return false;
+    const usize released = __stats_release_size(mem, 0);
     collect_stats<stat_type::dealloc>();
+    collect_stats<stat_type::total_memory_freed>(released);
     __free_scrub(mem, 0);
     bool ok = __vmap_tombstone_at(mem);
     ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem, 0); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
@@ -1916,7 +1937,9 @@ public:
     if ( !mem ) return false;
     if ( !__free_admit<true>(mem, len) ) [[unlikely]]
       return false;
-    collect_stats<stat_type::total_memory_freed>(len);
+    const usize released = __stats_release_size(mem, len);
+    collect_stats<stat_type::dealloc>();
+    collect_stats<stat_type::total_memory_freed>(released);
     __free_scrub(mem, len);
     bool ok = __vmap_tombstone({ mem, len });
     ABC_DOCTOR(if ( ok ) doctor::record_tombstone(mem, len); else doctor::on_free_result(mem, false, __FILE__, __LINE__);)
@@ -2021,7 +2044,7 @@ public:
   }
 
   byte *
-  resize(byte *ptr, usize new_sz)
+  resize(byte *ptr, usize new_sz, usize preserve_sz)
   {
     if ( __is_cached(ptr) ) [[unlikely]]
       return nullptr;
@@ -2045,10 +2068,17 @@ public:
     if ( __is_sentinel_chunk(fresh) ) [[unlikely]]
       return nullptr;
 
-    const usize copy_size = (old_size < new_sz) ? old_size : new_sz;
+    usize copy_size = old_size < new_sz ? old_size : new_sz;
+    if ( copy_size > preserve_sz ) copy_size = preserve_sz;
     micron::memcpy(fresh.ptr, ptr, copy_size);
     (void)pop(ptr);
     return fresh.ptr;
+  }
+
+  byte *
+  resize(byte *ptr, usize new_sz)
+  {
+    return resize(ptr, new_sz, micron::numeric_limits<usize>::max());
   }
 
   static inline bool

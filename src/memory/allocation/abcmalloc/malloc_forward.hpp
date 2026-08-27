@@ -62,7 +62,7 @@ void freeze(byte *ptr);
 void which(void);
 
 void borrow();
-__attribute__((malloc, alloc_size(1))) byte *launder(usize size);
+byte *launder(usize size);
 template<typename T> usize query_size(T *ptr);
 
 __attribute__((malloc, alloc_size(1))) void *malloc(usize size);

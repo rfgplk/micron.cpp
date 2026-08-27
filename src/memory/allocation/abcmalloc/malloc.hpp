@@ -23,6 +23,7 @@
 #include "../../../type_traits.hpp"
 #include "../../../types.hpp"
 #include "arena.hpp"
+#include "external.hpp"
 #include "tapi.hpp"
 
 #include "../../../except.hpp"
@@ -40,6 +41,7 @@ __is_sentinel(const byte *ptr) noexcept
 bool
 is_present(addr_t *ptr)
 {
+  if ( external_is_present(reinterpret_cast<byte *>(ptr)) ) return true;
   // routes via __query_arena so queries across thread arenas resolve correctly
   return __query_arena(ptr)->present(ptr);
 }
@@ -62,13 +64,14 @@ is_present(T *ptr)
 bool
 within(const addr_t *ptr)
 {
+  if ( external_within(reinterpret_cast<const byte *>(ptr)) ) return true;
   return __query_arena(ptr)->has_provenance(const_cast<addr_t *>(ptr));
 }
 
 bool
 within(addr_t *ptr)
 {
-  return __query_arena(ptr)->has_provenance(ptr);
+  return within(static_cast<const addr_t *>(ptr));
 }
 
 bool
@@ -103,15 +106,12 @@ mark_at(byte *ptr, usize size)
   if ( !ptr or size == 0 ) [[unlikely]]
     return nullptr;
 
-  // verify the region isn't already tracked
-  if ( __current_arena()->has_provenance(reinterpret_cast<addr_t *>(ptr)) ) [[unlikely]] {
+  if ( __query_arena(ptr)->has_provenance(reinterpret_cast<addr_t *>(ptr)) || !register_external(ptr, size) ) [[unlikely]] {
     ABC_DOCTOR(if ( doctor::on_bad_free(ptr, size, "mark_at(): region already tracked by allocator", __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_mark>("mark_at(): region already tracked by allocator");
     return nullptr;
   }
 
-  // NOTE: the allocator does not mmap on behalf of mark_at
-  (void)size;
   return ptr;
 }
 
@@ -121,13 +121,13 @@ unmark_at(byte *ptr, usize size)
   if ( !ptr or size == 0 ) [[unlikely]]
     return nullptr;
 
-  if ( !__current_arena()->has_provenance(reinterpret_cast<addr_t *>(ptr)) ) [[unlikely]] {
+  if ( !external_is_present(ptr) ) [[unlikely]] {
     ABC_DOCTOR(if ( doctor::on_bad_free(ptr, size, "unmark_at(): region not tracked by allocator", __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_unmark_untracked>("unmark_at(): region not tracked by allocator, cannot unmark");
     return nullptr;
   }
 
-  if ( !__current_arena()->pop(ptr, size) ) [[unlikely]] {
+  if ( !unregister_external(ptr, size) ) [[unlikely]] {
     ABC_DOCTOR(if ( doctor::on_bad_free(ptr, size, "unmark_at(): failed to unmark region", __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_unmark_failed>("unmark_at(): failed to unmark region");
     return nullptr;
@@ -145,6 +145,7 @@ balloc(usize size)      // allocates memory, returns entire memory chunk
   micron::__chunk<byte> mem = __current_arena()->push(size);
   if ( __is_sentinel(mem.ptr) ) [[unlikely]]
     return { nullptr, 0 };
+  ABC_DOCTOR(doctor::mark_chunk_alloc(mem.ptr);)      // caller owns mem.len, not just `size`
   return mem;
 }
 
@@ -157,6 +158,7 @@ fetch(usize size)
   micron::__chunk<byte> mem = __current_arena()->push(size);
   if ( __is_sentinel(mem.ptr) ) [[unlikely]]
     return { nullptr, 0 };
+  ABC_DOCTOR(doctor::mark_chunk_alloc(mem.ptr);)      // caller owns mem.len, not just `size`
   return mem;
 }
 
@@ -282,15 +284,31 @@ dealloc(T *__ptr, usize len)
 }
 
 void
-freeze(byte *ptr)
+freeze_sheet(byte *ptr)
 {
   if ( !ptr ) [[unlikely]]
     return;
 
   if ( !__query_arena(ptr)->freeze(ptr) ) [[unlikely]] {
-    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, 0, "freeze(): pointer not recognised by allocator", __FILE__, __LINE__) ) return;)
-    micron::exc<micron::except::memory_error_abc_freeze>("freeze(): failed to make region read-only, pointer not recognised by allocator");
+    ABC_DOCTOR(if ( doctor::on_bad_free(ptr, 0, "freeze_sheet(): pointer not recognised by allocator", __FILE__, __LINE__) ) return;)
+    micron::exc<micron::except::memory_error_abc_freeze>(
+        "freeze_sheet(): failed to make allocator sheet read-only, pointer not recognised by allocator");
   }
+}
+
+template<typename T>
+  requires(!micron::same_as<T, byte>)
+void
+freeze_sheet(T *__ptr)
+{
+  byte *ptr = reinterpret_cast<byte *>(__ptr);
+  freeze_sheet(ptr);
+}
+
+void
+freeze(byte *ptr)
+{
+  freeze_sheet(ptr);
 }
 
 template<typename T>
@@ -298,8 +316,7 @@ template<typename T>
 void
 freeze(T *__ptr)
 {
-  byte *ptr = reinterpret_cast<byte *>(__ptr);
-  freeze(ptr);
+  freeze_sheet(__ptr);
 }
 
 void
@@ -328,18 +345,168 @@ which(void)
   __debug_print("which(): arena metadata remaining: ", tot_meta_avail);
 }
 
-__attribute__((malloc, alloc_size(1))) byte *
-launder(usize size)
+micron::__chunk<byte>
+launder_chunk(usize size)
 {
   if ( size == 0 ) [[unlikely]]
-    return nullptr;
+    return { nullptr, 0 };
 
   micron::__chunk<byte> mem = __current_arena()->launder(size);
   if ( __is_sentinel(mem.ptr) ) [[unlikely]] {
     micron::exc<micron::except::memory_error_abc_launder>("launder(): temporal allocation failed, out of memory");
-    return nullptr;
+    return { nullptr, 0 };
   }
-  return mem.ptr;
+  return mem;
+}
+
+byte *
+launder(usize size)
+{
+  return launder_chunk(size).ptr;
+}
+
+inline constexpr usize native_block_alignment = __default_redzone ? 16 : __hdr_offset;
+
+struct __aligned_prefix {
+  byte *raw;
+};
+
+[[nodiscard]] micron::__chunk<byte>
+aligned_balloc(usize alignment, usize size)
+{
+  if ( alignment == 0 || (alignment & (alignment - 1)) != 0 || size == 0 ) return { nullptr, 0 };
+  if ( alignment <= native_block_alignment ) return balloc(size);
+
+  usize overhead;
+  usize total;
+  if ( check_add_overflow(alignment - 1, sizeof(__aligned_prefix), overhead) || check_add_overflow(size, overhead, total) )
+    return { nullptr, 0 };
+  micron::__chunk<byte> raw = balloc(total);
+  if ( raw.ptr == nullptr ) return { nullptr, 0 };
+  const uintptr_t first = reinterpret_cast<uintptr_t>(raw.ptr) + sizeof(__aligned_prefix);
+  const uintptr_t aligned = (first + alignment - 1) & ~(static_cast<uintptr_t>(alignment) - 1);
+  auto *prefix = reinterpret_cast<__aligned_prefix *>(aligned - sizeof(__aligned_prefix));
+  prefix->raw = raw.ptr;
+  const usize displacement = static_cast<usize>(aligned - reinterpret_cast<uintptr_t>(raw.ptr));
+  return { reinterpret_cast<byte *>(aligned), raw.len - displacement };
+}
+
+[[nodiscard]] micron::__chunk<byte>
+aligned_launder(usize alignment, usize size)
+{
+  if ( alignment == 0 || (alignment & (alignment - 1)) != 0 || size == 0 ) return { nullptr, 0 };
+  if ( alignment <= native_block_alignment ) return launder_chunk(size);
+
+  usize overhead;
+  usize total;
+  if ( check_add_overflow(alignment - 1, sizeof(__aligned_prefix), overhead) || check_add_overflow(size, overhead, total) )
+    return { nullptr, 0 };
+  micron::__chunk<byte> raw = launder_chunk(total);
+  if ( raw.ptr == nullptr ) return { nullptr, 0 };
+  const uintptr_t first = reinterpret_cast<uintptr_t>(raw.ptr) + sizeof(__aligned_prefix);
+  const uintptr_t aligned = (first + alignment - 1) & ~(static_cast<uintptr_t>(alignment) - 1);
+  auto *prefix = reinterpret_cast<__aligned_prefix *>(aligned - sizeof(__aligned_prefix));
+  prefix->raw = raw.ptr;
+  const usize displacement = static_cast<usize>(aligned - reinterpret_cast<uintptr_t>(raw.ptr));
+  return { reinterpret_cast<byte *>(aligned), raw.len - displacement };
+}
+
+inline void
+aligned_dealloc(byte *ptr, usize alignment)
+{
+  if ( ptr == nullptr ) return;
+  if ( alignment <= native_block_alignment ) {
+    dealloc(ptr);
+    return;
+  }
+  auto *prefix = reinterpret_cast<__aligned_prefix *>(ptr - sizeof(__aligned_prefix));
+  dealloc(prefix->raw);
+}
+
+inline void
+aligned_dealloc(micron::__chunk<byte> memory, usize alignment)
+{
+  aligned_dealloc(memory.ptr, alignment);
+}
+
+inline void
+aligned_retire(byte *ptr, usize alignment)
+{
+  if ( ptr == nullptr ) return;
+  if ( alignment <= native_block_alignment ) {
+    retire(ptr);
+    return;
+  }
+  auto *prefix = reinterpret_cast<__aligned_prefix *>(ptr - sizeof(__aligned_prefix));
+  retire(prefix->raw);
+}
+
+inline void
+aligned_retire(micron::__chunk<byte> memory, usize alignment)
+{
+  aligned_retire(memory.ptr, alignment);
+}
+
+[[nodiscard]] micron::__chunk<byte>
+resize_chunk(micron::__chunk<byte> old, usize size, usize preserve_bytes)
+{
+  if ( old.ptr == nullptr ) return balloc(size);
+  if ( size == 0 ) {
+    dealloc(old.ptr);
+    return { nullptr, 0 };
+  }
+  byte *ptr = __query_arena(old.ptr)->resize(old.ptr, size, preserve_bytes);
+  if ( ptr == nullptr ) return { nullptr, 0 };
+  return { ptr, __query_arena(ptr)->__size_of_alloc(reinterpret_cast<addr_t *>(ptr)) };
+}
+
+[[nodiscard]] micron::__chunk<byte>
+aligned_resize(micron::__chunk<byte> old, usize size, usize preserve_bytes, usize alignment)
+{
+  if ( old.ptr == nullptr ) return aligned_balloc(alignment, size);
+  if ( size == 0 ) {
+    aligned_dealloc(old, alignment);
+    return { nullptr, 0 };
+  }
+  if ( alignment <= native_block_alignment ) return resize_chunk(old, size, preserve_bytes);
+
+  micron::__chunk<byte> next = aligned_balloc(alignment, size);
+  if ( next.ptr == nullptr ) return { nullptr, 0 };
+  usize copied = old.len < next.len ? old.len : next.len;
+  if ( copied > preserve_bytes ) copied = preserve_bytes;
+  if ( copied ) micron::memcpy(next.ptr, old.ptr, copied);
+  aligned_dealloc(old, alignment);
+  return next;
+}
+
+[[nodiscard]] inline micron::__chunk<byte>
+balloc(usize size, usize alignment)
+{
+  return aligned_balloc(alignment, size);
+}
+
+[[nodiscard]] inline micron::__chunk<byte>
+launder_chunk(usize size, usize alignment)
+{
+  return aligned_launder(alignment, size);
+}
+
+inline void
+dealloc(micron::__chunk<byte> memory, usize alignment)
+{
+  aligned_dealloc(memory, alignment);
+}
+
+inline void
+retire(micron::__chunk<byte> memory, usize alignment)
+{
+  aligned_retire(memory, alignment);
+}
+
+inline void
+retire(byte *ptr, usize alignment)
+{
+  aligned_retire(ptr, alignment);
 }
 
 template<typename T>
@@ -349,7 +516,8 @@ query_size(T *ptr)
   if ( !ptr ) [[unlikely]]
     return 0;
 
-  return __query_arena(ptr)->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+  const usize external = external_query_size(reinterpret_cast<const byte *>(ptr));
+  return external ? external : __query_arena(ptr)->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
 }
 
 // leave these as void*
@@ -445,26 +613,7 @@ aligned_alloc(usize alignment, usize size)
   if ( size == 0 ) [[unlikely]]
     return nullptr;
 
-  if ( alignment <= __hdr_offset ) return reinterpret_cast<void *>(abc::alloc(size));
-
-  usize overhead = alignment + sizeof(void *);
-  usize total;
-  if ( check_add_overflow(size, overhead, total) ) [[unlikely]]
-    return nullptr;
-
-  byte *raw = abc::alloc(total);
-  if ( !raw ) [[unlikely]]
-    return nullptr;
-
-  // find the first aligned address at least sizeof(void*) bytes past raw
-  uintptr_t raw_addr = reinterpret_cast<uintptr_t>(raw) + sizeof(void *);
-  uintptr_t aligned_addr = (raw_addr + alignment - 1) & ~(alignment - 1);
-  byte *aligned = reinterpret_cast<byte *>(aligned_addr);
-
-  // stash the original pointer immediately before the aligned return
-  *reinterpret_cast<byte **>(aligned - sizeof(void *)) = raw;
-
-  return reinterpret_cast<void *>(aligned);
+  return reinterpret_cast<void *>(aligned_balloc(alignment, size).ptr);
 }
 
 void
@@ -473,8 +622,14 @@ aligned_free(void *ptr)
   if ( !ptr ) [[unlikely]]
     return;
 
+  byte *aligned = reinterpret_cast<byte *>(ptr);
+  if ( is_present(aligned) ) {
+    abc::dealloc(aligned);
+    return;
+  }
+
   // recover the original raw pointer stashed before the aligned address
-  byte *raw = *reinterpret_cast<byte **>(reinterpret_cast<byte *>(ptr) - sizeof(void *));
+  byte *raw = reinterpret_cast<__aligned_prefix *>(aligned - sizeof(__aligned_prefix))->raw;
 
   // sanity: if the stashed pointer equals the aligned pointer, this was abnormal allocation shouldn't happen through the aligned_alloc path
   // reroute to regular dealloc
@@ -494,6 +649,12 @@ aligned_free(void *ptr)
   }
 
   abc::dealloc(raw);
+}
+
+void
+aligned_free(void *ptr, usize alignment)
+{
+  aligned_dealloc(reinterpret_cast<byte *>(ptr), alignment);
 }
 
 };      // namespace abc
