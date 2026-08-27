@@ -962,7 +962,9 @@ def write_structure_types(reg: Registry) -> str:
 
 
 def write_deleters(reg: Registry) -> str:
-    out = [LICENSE_HEADER, "#pragma once", "", '#include "../vulkan.hpp"', ""]
+    # the deleters default alloc to host_allocation_callbacks(), so its definition has to be visible
+    out = [LICENSE_HEADER, "#pragma once", "", '#include "../vulkan.hpp"',
+           '#include "__vk_host_alloc.hpp"', ""]
     out.append("namespace micron { namespace gfx { namespace vk {")
     out.append("")
 
@@ -1026,7 +1028,7 @@ def _emit_simple_deleter(out: list[str], handle_t: str, parent_t: str, destroy_c
     name = to_deleter_name(handle_t)
     out.append(f"struct {name} {{")
     out.append(f"  {parent_t} parent = nullptr;")
-    out.append(f"  const VkAllocationCallbacks *alloc = nullptr;")
+    out.append(f"  const VkAllocationCallbacks *alloc = host_allocation_callbacks();")
     out.append(f"  void operator()({handle_t} h) const noexcept")
     out.append(f"  {{")
     out.append(f"    if ( h && parent && {destroy_cmd} ) {destroy_cmd}(parent, h, alloc);")
@@ -1051,7 +1053,7 @@ def _emit_pool_deleter(out: list[str], handle_t: str, parent_t: str, pool_t: str
 def _emit_orphan_deleter(out: list[str], handle_t: str, destroy_cmd: str) -> None:
     name = to_deleter_name(handle_t)
     out.append(f"struct {name} {{")
-    out.append(f"  const VkAllocationCallbacks *alloc = nullptr;")
+    out.append(f"  const VkAllocationCallbacks *alloc = host_allocation_callbacks();")
     out.append(f"  void operator()({handle_t} h) const noexcept")
     out.append(f"  {{")
     out.append(f"    if ( h && {destroy_cmd} ) {destroy_cmd}(h, alloc);")
