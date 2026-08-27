@@ -80,12 +80,23 @@ __owner_alive(i32 tid) noexcept
   return micron::syscall(SYS_tgkill, pid, tid, 0) == 0;
 }
 
+// the initial thread is the one whose tid == pid; it only ever "exits" at process teardown
+[[gnu::cold]] static inline bool
+__is_initial_thread(void) noexcept
+{
+  return __this_tid() == static_cast<i32>(micron::syscall(SYS_getpid));
+}
+
 // runs on the exiting thread (via thread_kernel) and returns its arena slot to the pool
 static void
 __release_tls_arena(void) noexcept
 {
   __arena *a = __tls_arena;
   if ( !a ) return;
+  if ( __is_initial_thread() ) {
+    a->__maybe_drain();
+    return;
+  }
   const i32 tid = __this_tid();
   for ( u32 i = 0; i < __max_arenas; ++i ) {
     if ( __arena_pool[i] == a ) {

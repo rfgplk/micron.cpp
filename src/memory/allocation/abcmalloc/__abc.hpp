@@ -73,6 +73,29 @@ struct __abc_allocator {
 #endif
   };
 
+  static auto
+  allocate_aligned(usize n, usize alignment) -> micron::__chunk<byte>
+  {
+#if defined(__micron_sanitizer_owns_heap)
+    usize overhead;
+    usize total;
+    if ( check_add_overflow(alignment - 1, sizeof(byte *), overhead) || check_add_overflow(n, overhead, total) )
+      micron::exc<micron::except::critical_error>("abc_allocator::allocate_aligned(): size overflow");
+    byte *raw = reinterpret_cast<byte *>(::malloc(total));
+    if ( raw == nullptr ) micron::exc<micron::except::critical_error>("abc_allocator::allocate_aligned(): sanitizer malloc failed");
+    const uintptr_t first = reinterpret_cast<uintptr_t>(raw) + sizeof(byte *);
+    const uintptr_t aligned = (first + alignment - 1) & ~(static_cast<uintptr_t>(alignment) - 1);
+    byte *result = reinterpret_cast<byte *>(aligned);
+    *reinterpret_cast<byte **>(result - sizeof(byte *)) = raw;
+    return { result, n };
+#else
+    micron::__chunk<byte> memory = abc::aligned_balloc(alignment, n);
+    if ( memory.ptr == nullptr )
+      micron::exc<micron::except::critical_error>("abc_allocator::allocate_aligned(): arena failed to satisfy request");
+    return memory;
+#endif
+  }
+
   static void
   dealloc(T *mem, usize len)
   {      // deallocate at location N
@@ -84,6 +107,30 @@ struct __abc_allocator {
     abc::dealloc(mem, len);
 #endif
     mem = nullptr;
+  }
+
+  static void
+  dealloc(T *mem)
+  {
+    if ( mem == nullptr ) return;
+#if defined(__micron_sanitizer_owns_heap)
+    ::free(mem);
+#else
+    abc::dealloc(mem);
+#endif
+  }
+
+  static void
+  dealloc_aligned(T *mem, usize alignment)
+  {
+    if ( mem == nullptr ) return;
+#if defined(__micron_sanitizer_owns_heap)
+    (void)alignment;
+    byte *raw = *reinterpret_cast<byte **>(reinterpret_cast<byte *>(mem) - sizeof(byte *));
+    ::free(raw);
+#else
+    abc::aligned_dealloc(reinterpret_cast<byte *>(mem), alignment);
+#endif
   }
 };
 

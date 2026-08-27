@@ -436,15 +436,21 @@ enum class __rec_state : u8 {
   quarantined = 4,      // rescue quarantined (leaked deliberately)
 };
 
+// __rec::flags bits
+inline constexpr u8 __rec_flag_chunk = 0x1u;             // handed out by a chunk-returning API (caller owns blk_size bytes)
+inline constexpr u8 __rec_flag_pre_exe_init = 0x2u;      // recorded before the executable's own .init_array ran
+
 struct __rec {
   uintptr_t key;          // user pointer; 0 == empty slot
   usize req_size;         // requested size at alloc time
+  usize blk_size;         // granted block size at alloc time (>= req_size); 0 if it could not be read
   u64 alloc_op;           // op# of the allocation
   u64 free_op;            // op# of the (first) free, 0 if live
   const void *owner;      // __arena* owning the granule at alloc time
   i32 alloc_tid;          // kernel tid that allocated
   i32 free_tid;           // kernel tid that (first) freed
   __rec_state state;
+  u8 flags;
   u32 hdr_shadow;
   usize free_len;
   void *alloc_bt[__doctor_bt_depth];
@@ -707,15 +713,28 @@ __state_name(__rec_state s) noexcept
 // buddy block orders start at 0, which collides with hdr_shadow's "0 == not captured" sentinel
 inline constexpr u32 __hdr_shadow_buddy_captured = 0x80000000u;
 
+// ELF init runs dependencies first and the executable LAST, so anything recorded before this flag flips came from a DSO's .init_array or
+// the runtime bootstrap
+inline bool __exe_init_done = false;
+
+[[maybe_unused]] __attribute__((constructor(101))) static void
+__doctor_mark_exe_init(void) noexcept
+{
+  __exe_init_done = true;
+}
+
 inline void
 __doctor_arm_canaries(byte *ptr, usize req, const void *owner, __rec &s) noexcept
 {
   s.hdr_shadow = 0;
+  s.blk_size = 0;
+  __arena *o = static_cast<__arena *>(const_cast<void *>(owner));
+  if ( !o || o != __tls_arena ) return;      // foreign / cross-arena: nothing here is safe to read
+  const int kind = o->__doctor_tier_kind(reinterpret_cast<addr_t *>(ptr));
+  const usize real = o->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+  // record it unconditionally
+  s.blk_size = real;
   if constexpr ( __default_doctor_canary ) {
-    __arena *o = static_cast<__arena *>(const_cast<void *>(owner));
-    if ( !o || o != __tls_arena ) return;
-    const int kind = o->__doctor_tier_kind(reinterpret_cast<addr_t *>(ptr));
-    const usize real = o->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
     if ( kind == 1 ) {      // TLSF: bsize (u32) at user - __hdr_offset
       u32 bs = 0;
       __builtin_memcpy(&bs, ptr - __hdr_offset, sizeof(bs));
@@ -757,11 +776,23 @@ record_alloc(byte *ptr, usize req_size) noexcept
   s->alloc_tid = __gettid();
   s->free_tid = 0;
   s->free_len = 0;
+  s->flags = __exe_init_done ? 0u : __rec_flag_pre_exe_init;
   s->owner = static_cast<const void *>(__owner_of(ptr));
   s->state = __rec_state::live;
   __doctor_arm_canaries(ptr, req_size, s->owner, *s);
   __capture_backtrace(s->alloc_bt, __doctor_bt_depth);
   __dr.__push_event(0, s->key, req_size, s->alloc_op, s->alloc_tid);
+}
+
+inline void
+mark_chunk_alloc(byte *ptr) noexcept
+{
+  if ( !ptr ) return;
+  __reentry re;
+  if ( !re ) return;
+  __scoped_lock g;
+  __rec *s = __dr.__find(reinterpret_cast<uintptr_t>(ptr));
+  if ( s && s->state == __rec_state::live ) s->flags |= __rec_flag_chunk;
 }
 
 inline void
@@ -998,6 +1029,7 @@ leaks(void)
   __banner("leaks: live tracked pointers (classified by tier)\n");
   __arena *const self = __tls_arena;
   usize shown = 0, total_bytes = 0;
+  usize pre_cnt = 0, pre_bytes = 0;      // recorded before the executable's own init: DSO / bootstrap
   // classes: 0 unresolved/internal, 1 TLSF, 2 buddy, 3 cross-thread (owned by another arena)
   usize cls_cnt[4] = { 0, 0, 0, 0 };
   usize cls_bytes[4] = { 0, 0, 0, 0 };
@@ -1008,6 +1040,10 @@ leaks(void)
       if ( s.state != __rec_state::live ) continue;
       ++shown;
       total_bytes += s.req_size;
+      if ( s.flags & __rec_flag_pre_exe_init ) {
+        ++pre_cnt;
+        pre_bytes += s.req_size;
+      }
       byte *u = reinterpret_cast<byte *>(s.key);
       int cls = 0;
       __arena *o = __va_contains(u) ? __owner_of(u) : nullptr;
@@ -1050,6 +1086,14 @@ leaks(void)
       __d_u(cls_max[c]);
       __d(" B)\n");
     }
+  if ( pre_cnt ) {
+    __d("    of which ");
+    __d_u(pre_cnt);
+    __d(" blocks, ");
+    __d_u(pre_bytes);
+    __d(" B allocated before this executable's init (DSO .init_array / runtime bootstrap).\n");
+    __d("    Those are owned by a lifetime that outlives this report -- not a micron leak.\n");
+  }
 }
 
 // dump process-wide doctor counters
@@ -1359,7 +1403,10 @@ __forensics(const void *p, bool bt) noexcept
     return;
   }
   if ( q != cur ) {
-    __d("  block        (cross-thread: owned by another arena; not inspected to avoid racing the owner)\n");
+    if ( !cur )
+      __d("  block        (calling thread holds no arena -- post-teardown or pre-claim; not inspected)\n");
+    else
+      __d("  block        (cross-thread: owned by another arena; not inspected to avoid racing the owner)\n");
     return;
   }
   usize sz = 0;
@@ -1610,8 +1657,7 @@ struct __sweep_ctx {
   }
 };
 
-// the full all-arenas metadata + arena-health sweep
-inline void
+inline usize
 __sweep_all_locked(const char *cause, bool verbose) noexcept
 {
   __sweep_ctx ctx;
@@ -1687,7 +1733,8 @@ __sweep_all_locked(const char *cause, bool verbose) noexcept
             }
           }
           if constexpr ( !ABC_EFF_REDZONE ) {
-            if ( hdr_struct_ok && hdr_shadow_ok && sz > r.req_size ) {
+            // skip chunk-API blocks: [req_size, blk_size) is the caller's to write
+            if ( hdr_struct_ok && hdr_shadow_ok && sz > r.req_size && !(r.flags & __rec_flag_chunk) ) {
               for ( usize k = r.req_size; k < sz; ++k )
                 if ( u[k] != __default_doctor_canary_byte ) {
                   ctx.note("live record: slack canary clobbered (right buffer overflow past requested size)", u);
@@ -1732,12 +1779,13 @@ __sweep_all_locked(const char *cause, bool verbose) noexcept
   }
   __d_nl();
   (void)verbose;
+  return ctx.anomalies + ctx.repairs;
 }
 
 inline void
 __run_sweep_locked(const char *cause) noexcept
 {
-  __sweep_all_locked(cause, false);
+  (void)__sweep_all_locked(cause, false);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2198,8 +2246,12 @@ check_free_size(byte *ptr, usize claimed, const char *file, int line) noexcept
   __scoped_lock g;
   __rec *s = __dr.__find(reinterpret_cast<uintptr_t>(ptr));
   const usize req = s ? s->req_size : 0;
-  usize real = 0;
-  if ( __va_contains(ptr) ) {
+  // the granted block size, recorded at alloc time. Chunk-returning APIs hand the caller mem.len
+  // (>= the request), so req alone can never validate their free; and reading the size back off the
+  // arena works only on the owning thread AND only while that thread still holds one -- which is
+  // false during process teardown and false for any legitimate cross-thread free.
+  usize real = s ? s->blk_size : 0;
+  if ( !real && __va_contains(ptr) ) {
     __arena *o = __owner_of(ptr);
     if ( !o ) o = __tls_arena;
     // only read __size_of_alloc on our own arena; another thread's arena is racing us
@@ -2246,19 +2298,20 @@ check_free_size(byte *ptr, usize claimed, const char *file, int line) noexcept
   return safe;            // fail_result==2: proceed with the clamped-safe size so the scrub cannot overrun
 }
 
-inline void
+// 0 == clean. Non-zero is anomalies + repairs from this sweep.
+inline usize
 fsck(void)
 {
   __reentry re;
-  if ( !re ) return;
+  if ( !re ) return 0;      // nested: nothing swept, nothing to report
   __scoped_lock g;
-  __sweep_all_locked("manual fsck", true);
+  return __sweep_all_locked("manual fsck", true);
 }
 
-inline void
+inline usize
 audit(void)
 {
-  fsck();
+  return fsck();
 }
 
 inline bool
@@ -2284,18 +2337,35 @@ __selftest_crash_safe(void) noexcept
   }
 }
 
-struct __leak_reporter {
-  ~__leak_reporter() noexcept
-  {
-    if constexpr ( __default_doctor_leak_report_at_exit ) {
-      __banner("process-exit leak report (live set includes allocator-internal blocks)\n");
-      leaks();
-      stats();
-    }
-  }
-};
+// the live set at the moment of the call; safe to invoke by hand at any point
+inline void
+leak_report(void)
+{
+  __banner("leak report (live set includes allocator-internal blocks)\n");
+  leaks();
+  stats();
+}
 
-inline __leak_reporter __leak_reporter_instance{};
+inline micron::atomic_token<u32> __leak_reported{ 0 };
+
+// A .fini_array entry, NOT a static destructor. glibc registers _dl_fini first, so it runs last, and
+// _dl_fini walks the executable's .fini_array after every __cxa_atexit handler -- so this sees the
+// blocks that ordinary static destructors free, which an inline-object destructor in the executable
+// could not (its registration is the most recent, so LIFO fires it first). Freestanding matches:
+// __drain_atexit_table() drains the atexit table and only then walks __fini_array_* in reverse.
+// What still cannot be seen is DSO teardown, which _dl_fini reaches after us -- hence the pre-exe
+// bucket in leaks(), and the note below.
+[[maybe_unused]] __attribute__((destructor(101))) static void
+__doctor_leak_report_fini(void) noexcept
+{
+  if constexpr ( __default_doctor_leak_report_at_exit ) {
+    u32 expect = 0;      // one report per process, however many TUs pulled this header in
+    if ( !__leak_reported.compare_exchange_strong(expect, 1, micron::memory_order_acq_rel, micron::memory_order_acquire) ) return;
+    __banner("process-exit leak report (runs before DSO teardown; a nonzero floor can be structural)\n");
+    leaks();
+    stats();
+  }
+}
 
 };      // namespace doctor
 };      // namespace abc
