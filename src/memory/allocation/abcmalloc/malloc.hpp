@@ -369,7 +369,39 @@ inline constexpr usize native_block_alignment = __default_redzone ? 16 : __hdr_o
 
 struct __aligned_prefix {
   byte *raw;
+  uintptr_t guard;
 };
+
+// NOTE: no secret key
+[[gnu::always_inline]] inline uintptr_t
+__aligned_guard(const byte *aligned, const byte *raw) noexcept
+{
+  return reinterpret_cast<uintptr_t>(aligned) ^ reinterpret_cast<uintptr_t>(raw);
+}
+
+[[gnu::always_inline]] inline bool
+__aligned_prefix_readable(const byte *ptr) noexcept
+{
+  return __owner_of(ptr - sizeof(__aligned_prefix)) != nullptr;
+}
+
+[[nodiscard, gnu::noinline, gnu::cold]] inline byte *
+__aligned_verify(byte *raw) noexcept
+{
+  return is_present(raw) ? raw : nullptr;
+}
+
+[[nodiscard, gnu::always_inline]] inline byte *
+__aligned_base_of(byte *ptr) noexcept
+{
+  if ( !__aligned_prefix_readable(ptr) ) [[unlikely]]
+    return nullptr;
+  const __aligned_prefix *prefix = reinterpret_cast<const __aligned_prefix *>(ptr - sizeof(__aligned_prefix));
+  byte *const raw = prefix->raw;
+  if ( raw >= ptr || prefix->guard != __aligned_guard(ptr, raw) ) [[likely]]
+    return nullptr;
+  return __aligned_verify(raw);
+}
 
 [[nodiscard]] micron::__chunk<byte>
 aligned_balloc(usize alignment, usize size)
@@ -387,6 +419,7 @@ aligned_balloc(usize alignment, usize size)
   const uintptr_t aligned = (first + alignment - 1) & ~(static_cast<uintptr_t>(alignment) - 1);
   auto *prefix = reinterpret_cast<__aligned_prefix *>(aligned - sizeof(__aligned_prefix));
   prefix->raw = raw.ptr;
+  prefix->guard = __aligned_guard(reinterpret_cast<const byte *>(aligned), raw.ptr);
   const usize displacement = static_cast<usize>(aligned - reinterpret_cast<uintptr_t>(raw.ptr));
   return { reinterpret_cast<byte *>(aligned), raw.len - displacement };
 }
@@ -407,6 +440,7 @@ aligned_launder(usize alignment, usize size)
   const uintptr_t aligned = (first + alignment - 1) & ~(static_cast<uintptr_t>(alignment) - 1);
   auto *prefix = reinterpret_cast<__aligned_prefix *>(aligned - sizeof(__aligned_prefix));
   prefix->raw = raw.ptr;
+  prefix->guard = __aligned_guard(reinterpret_cast<const byte *>(aligned), raw.ptr);
   const usize displacement = static_cast<usize>(aligned - reinterpret_cast<uintptr_t>(raw.ptr));
   return { reinterpret_cast<byte *>(aligned), raw.len - displacement };
 }
@@ -591,6 +625,22 @@ realloc(void *ptr, usize size)      // reallocates memory
   }
 
   byte *const old = reinterpret_cast<byte *>(ptr);
+
+  // WARNING: C spec requires realloc() to accept a posix_memalign() pointer;
+  // alignment is not preserved
+  if ( byte *const raw = __aligned_base_of(old) ) [[unlikely]] {
+    const usize block = query_size(raw);
+    const usize displacement = static_cast<usize>(old - raw);
+    const usize usable = block > displacement ? block - displacement : 0;
+    byte *const next = abc::alloc(size);
+    if ( next == nullptr ) [[unlikely]]
+      return nullptr;
+    const usize kept = usable < size ? usable : size;
+    if ( kept != 0 ) micron::memcpy(next, old, kept);
+    abc::dealloc(raw);
+    return reinterpret_cast<void *>(next);
+  }
+
   const usize old_size = query_size(old);
   micron::__chunk<byte> result = resize_chunk({ old, old_size }, size, old_size);
   if ( !result.ptr ) [[unlikely]] {
@@ -608,14 +658,17 @@ free(void *ptr)      // frees memory, prefer abc::dealloc always
 {
   if ( !ptr ) [[unlikely]]
     return;
-  abc::dealloc(reinterpret_cast<byte *>(ptr));
+  byte *const p = reinterpret_cast<byte *>(ptr);
+  if ( byte *const raw = __aligned_base_of(p) ) [[unlikely]] {
+    abc::dealloc(raw);
+    return;
+  }
+  abc::dealloc(p);
 }
 
 // C11 aligned_alloc
 
-// WARNING: when alignment > __hdr_offset (32), the returned pointer differs from the allocator's block start. abc::free / abc::dealloc will
-// NOT work: you __MUST__ use abc::aligned_free for these pointers. when alignment <= __hdr_offset, the pointer is identical to a normal
-// allocation and abc::free works normally.
+// NOTE: when alignment > __hdr_offset (32) the returned pointer differs from the allocator's block start
 
 void *
 aligned_alloc(usize alignment, usize size)
@@ -646,27 +699,15 @@ aligned_free(void *ptr)
     return;
   }
 
-  // recover the original raw pointer stashed before the aligned address
-  byte *raw = reinterpret_cast<__aligned_prefix *>(aligned - sizeof(__aligned_prefix))->raw;
-
-  // sanity: if the stashed pointer equals the aligned pointer, this was abnormal allocation shouldn't happen through the aligned_alloc path
-  // reroute to regular dealloc
-  if ( raw == reinterpret_cast<byte *>(ptr) ) [[unlikely]] {
-    abc::dealloc(reinterpret_cast<byte *>(ptr));
+  if ( byte *const raw = __aligned_base_of(aligned) ) {
+    abc::dealloc(raw);
     return;
   }
 
-  uintptr_t raw_addr = reinterpret_cast<uintptr_t>(raw);
-  uintptr_t aligned_addr = reinterpret_cast<uintptr_t>(ptr);
-  if ( raw_addr >= aligned_addr ) [[unlikely]] {
-    ABC_DOCTOR(if ( doctor::on_bad_free(reinterpret_cast<byte *>(ptr), 0, "aligned_free(): not an aligned_alloc pointer (bad stashed raw)",
-                                        __FILE__, __LINE__) ) return;)
-    micron::exc<micron::except::memory_error_abc_aligned_free_bad>(
-        "aligned_free(): stashed raw pointer is invalid, this pointer was not allocated by aligned_alloc");
-    return;
-  }
-
-  abc::dealloc(raw);
+  ABC_DOCTOR(
+      if ( doctor::on_bad_free(aligned, 0, "aligned_free(): not an aligned_alloc pointer (no valid prefix)", __FILE__, __LINE__) ) return;)
+  micron::exc<micron::except::memory_error_abc_aligned_free_bad>(
+      "aligned_free(): stashed raw pointer is invalid, this pointer was not allocated by aligned_alloc");
 }
 
 void

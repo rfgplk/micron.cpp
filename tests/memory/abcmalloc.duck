@@ -4,6 +4,7 @@ test tests/rigor/abcmalloc.cpp -o bin/abc/x64 --timeout 300
 test tests/rigor/abcmalloc_realloc.cpp -o bin/abc/x64 --timeout 300
 test tests/rigor/abcmalloc_cross_sized.cpp -o bin/abc/x64 --timeout 300
 test tests/rigor/abcmalloc_core_allocators.cpp -o bin/abc/x64 --timeout 300
+test tests/rigor/abcmalloc_c_aligned.cpp -o bin/abc/x64 --timeout 300
 test tests/rigor/allocator_advanced.cpp -o bin/abc/x64 --timeout 300
 test tests/rigor/allocator_advanced.cpp --def MICRON_ABC_STATS -o bin/abc/stats --timeout 300
 test tests/rigor/allocator_advanced.cpp --def MICRON_ABC_PERSISTENT -o bin/abc/persistent --timeout 300
@@ -11,9 +12,11 @@ test tests/rigor/abcmalloc_persistent.cpp --def MICRON_ABC_PERSISTENT -o bin/abc
 test tests/rigor/abcmalloc_huge_boundary.cpp --arm -s -o bin/abc/arm32 --timeout 300
 test tests/rigor/abcmalloc_sizes.cpp --arm -s -o bin/abc/arm32 --timeout 300
 test tests/rigor/abcmalloc_core_allocators.cpp --arm -s -o bin/abc/arm32 --timeout 300
+test tests/rigor/abcmalloc_c_aligned.cpp --arm -s -o bin/abc/arm32 --timeout 300
 test tests/rigor/abcmalloc_huge_boundary.cpp --arm64 -s -o bin/abc/arm64 --timeout 300
 test tests/rigor/abcmalloc_sizes.cpp --arm64 -s -o bin/abc/arm64 --timeout 300
 test tests/rigor/abcmalloc_core_allocators.cpp --arm64 -s -o bin/abc/arm64 --timeout 300
+test tests/rigor/abcmalloc_c_aligned.cpp --arm64 -s -o bin/abc/arm64 --timeout 300
 test tests/rigor/abcmalloc_concurrent.cpp --arm64 -s -o bin/abc/arm64 --timeout 300
 
 # hardening

@@ -107,7 +107,10 @@ __do_alloc(usize size, usize align)
 [[gnu::always_inline]] inline void
 __do_free(void *ptr, usize align)
 {
-  if ( align <= 32 ) {
+  // WARNING: the bound is native_block_alignment, NOT a literal 32 -- under
+  // MICRON_ABC_REDZONE it is 16, so a 32-aligned new took the prefix path while
+  // this took the raw one and the block start was never released
+  if ( align <= abc::native_block_alignment ) {
     micron::__free(ptr);      // alignment fits in the abc header offset, raw alloc was used
   } else {
     abc::aligned_free(ptr);
