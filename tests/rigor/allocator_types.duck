@@ -1,0 +1,20 @@
+# allocator traits, static allocator family, explicit arenas, and advanced abcmalloc adapters
+test tests/rigor/allocator_types.cpp -o bin/allocator/x64 --timeout 300
+test tests/rigor/allocator_cross_thread_resize.cpp -o bin/allocator/x64 --timeout 300
+test tests/rigor/allocator_cross_thread_resize.cpp -k -o bin/allocator/freestanding --timeout 300
+test tests/rigor/allocator_cross_thread_resize.cpp -k --def ABCMALLOC_DOCTOR_HELP -o bin/allocator/doctor --timeout 300
+test tests/rigor/allocator_types.cpp --def MICRON_ALLOCATOR_STATS -o bin/allocator/stats --timeout 300
+test tests/rigor/allocator_traits.cpp -o bin/allocator/x64 --timeout 300
+test tests/rigor/arena_resource.cpp -o bin/allocator/x64 --timeout 300
+test tests/rigor/arena_resource.cpp --def MICRON_ALLOCATOR_STATS -o bin/allocator/stats --timeout 300
+test tests/rigor/allocator_advanced.cpp -o bin/allocator/x64 --timeout 300
+test tests/rigor/allocator_advanced.cpp --def MICRON_ABC_STATS -o bin/allocator/abc_stats --timeout 300
+test tests/rigor/allocator_advanced.cpp --def MICRON_ABC_PERSISTENT -o bin/allocator/persistent --timeout 300
+
+# sanitizer-owned heap coverage; deliberate protection faults are compiled out by the tests
+test tests/rigor/allocator_types.cpp --asan -o bin/allocator/asan --timeout 300
+test tests/rigor/arena_resource.cpp --asan -o bin/allocator/asan --timeout 300
+test tests/rigor/allocator_advanced.cpp --asan -o bin/allocator/asan --timeout 300
+test tests/rigor/allocator_types.cpp --ubsan -o bin/allocator/ubsan --timeout 300
+test tests/rigor/arena_resource.cpp --ubsan -o bin/allocator/ubsan --timeout 300
+test tests/rigor/allocator_advanced.cpp --ubsan -o bin/allocator/ubsan --timeout 300

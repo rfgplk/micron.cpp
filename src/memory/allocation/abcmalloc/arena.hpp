@@ -49,6 +49,8 @@
 namespace abc
 {
 
+inline constexpr usize __remote_tombstone_size = micron::numeric_limits<usize>::max();
+
 // precomputed weights
 // weight(shift) = round(2^((63 - shift) * alpha)),  alpha = 0.33
 constexpr static f64 __prealloc_alpha = 0.33;
@@ -1482,6 +1484,10 @@ public:
   void
   __remote_release(byte *p, usize sz) noexcept
   {
+    if ( sz == __remote_tombstone_size ) {
+      (void)ts_pop(p);
+      return;
+    }
     if constexpr ( __default_enforce_provenance ) {
       if ( !__free_admit<false>(p, sz) ) return;
     }
@@ -2139,6 +2145,13 @@ public:
 
     __debug_print_addr("__size_of_alloc(): WARNING addr not found in any bucket: ", addr);
     return 0;
+  }
+
+  usize
+  __shared_size_of_alloc(addr_t *addr)
+  {
+    auto guard = __struct_guard();
+    return __size_of_alloc(addr);
   }
 
 #if defined(ABCMALLOC_DOCTOR_HELP)

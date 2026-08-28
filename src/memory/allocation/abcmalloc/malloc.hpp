@@ -182,7 +182,7 @@ retire(byte *ptr)
   if ( !ptr ) [[unlikely]]
     return;
 
-  if ( !__query_arena(ptr)->ts_pop(ptr) ) [[unlikely]] {
+  if ( !__route_retire(ptr) ) [[unlikely]] {
     ABC_DOCTOR(if ( doctor::on_bad_free(ptr, 0, "retire(): tombstone free failed, pointer not allocated by this arena", __FILE__,
                                         __LINE__) ) return;)
     micron::exc<micron::except::memory_error_abc_retire>(
@@ -455,7 +455,18 @@ resize_chunk(micron::__chunk<byte> old, usize size, usize preserve_bytes)
     dealloc(old.ptr);
     return { nullptr, 0 };
   }
-  byte *ptr = __query_arena(old.ptr)->resize(old.ptr, size, preserve_bytes);
+  __arena *const owner = __query_arena(old.ptr);
+  if constexpr ( __default_multithread_safe ) {
+    if ( owner != __current_arena() ) {
+      micron::__chunk<byte> next = balloc(size);
+      if ( next.ptr == nullptr ) return { nullptr, 0 };
+      const usize retained = micron::min(preserve_bytes, old.len, next.len);
+      if ( retained != 0 ) micron::memcpy(next.ptr, old.ptr, retained);
+      dealloc(old.ptr, old.len);
+      return next;
+    }
+  }
+  byte *ptr = owner->resize(old.ptr, size, preserve_bytes);
   if ( ptr == nullptr ) return { nullptr, 0 };
   return { ptr, __query_arena(ptr)->__size_of_alloc(reinterpret_cast<addr_t *>(ptr)) };
 }
@@ -517,7 +528,12 @@ query_size(T *ptr)
     return 0;
 
   const usize external = external_query_size(reinterpret_cast<const byte *>(ptr));
-  return external ? external : __query_arena(ptr)->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+  if ( external ) return external;
+  __arena *const owner = __query_arena(ptr);
+  if constexpr ( __default_multithread_safe ) {
+    if ( owner != __current_arena() ) return owner->__shared_size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+  }
+  return owner->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
 }
 
 // leave these as void*
@@ -574,15 +590,17 @@ realloc(void *ptr, usize size)      // reallocates memory
     return nullptr;
   }
 
-  byte *result = __current_arena()->resize(reinterpret_cast<byte *>(ptr), size);
-  if ( !result ) [[unlikely]] {
+  byte *const old = reinterpret_cast<byte *>(ptr);
+  const usize old_size = query_size(old);
+  micron::__chunk<byte> result = resize_chunk({ old, old_size }, size, old_size);
+  if ( !result.ptr ) [[unlikely]] {
     // rescue: report, then signal failure the C-standard way (return nullptr, original block untouched)
     ABC_DOCTOR(if ( doctor::on_bad_free(reinterpret_cast<byte *>(ptr), size, "realloc(): pointer not recognised or allocation OOM",
                                         __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_realloc_unknown>("realloc(): resize failed (pointer not recognised or allocation OOM)");
     return nullptr;
   }
-  return reinterpret_cast<void *>(result);
+  return reinterpret_cast<void *>(result.ptr);
 }
 
 void
