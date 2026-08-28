@@ -50,24 +50,31 @@ calloc(usize num, usize size) noexcept      // alloc's zero'd out memory, prefer
 extern "C" void *
 realloc(void *ptr, usize size) noexcept      // reallocates memory
 {
-  // NOTE: this always gets the full size of the allocated memory, not what was requested
-  usize old_size = abc::query_size(reinterpret_cast<addr_t *>(ptr));
+  if ( !ptr ) return reinterpret_cast<void *>(abc::alloc(size));
   if ( size == 0 ) {
-    abc::dealloc(reinterpret_cast<byte *>(ptr));
+    abc::free(ptr);
     return nullptr;
   }
 
-  if ( !ptr ) {
-    return reinterpret_cast<void *>(abc::alloc(size));
-  }
+  // NOTE: this always gets the full size of the allocated memory, not what was
+  // requested;
+  // for posix_memalign() the block starts before ptr
+  byte *const old = reinterpret_cast<byte *>(ptr);
+  byte *const base = abc::__aligned_base_of(old);
+  const usize block = abc::query_size(reinterpret_cast<addr_t *>(base != nullptr ? base : old));
+  const usize displacement = base != nullptr ? static_cast<usize>(old - base) : 0u;
+  const usize old_size = block > displacement ? block - displacement : 0u;
 
   byte *new_block = abc::alloc(size);
   if ( !new_block ) return nullptr;      // allocation failed
 
-  usize copy_size = old_size < size ? old_size : size;
-  micron::memcpy(new_block, reinterpret_cast<byte *>(ptr), copy_size);
+  const usize copy_size = old_size < size ? old_size : size;
+  if ( copy_size != 0 ) micron::memcpy(new_block, old, copy_size);
 
-  abc::dealloc(reinterpret_cast<byte *>(ptr));
+  if ( base != nullptr )
+    abc::dealloc(base);
+  else
+    abc::dealloc(old);
 
   return new_block;
 }
@@ -75,9 +82,57 @@ realloc(void *ptr, usize size) noexcept      // reallocates memory
 extern "C" void
 free(void *ptr) noexcept      // frees memory, prefer abc::dealloc always
 {
-  abc::dealloc(reinterpret_cast<byte *>(ptr));
+  abc::free(ptr);
 }
 
-extern "C" void *aligned_alloc(usize alignment, usize size) noexcept;
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// POSIX ALIGNED FUNCTIONS
+//
+// WARNING: ITS ABSOLUTELY CRITICAL that we declare all aligned_* posix compliant fns;
+// posix_memalign/memalign/valloc/pvalloc; if any external lib/code calls those fns they
+// will INTERPOSE LIBCs malloc and handing back those ptrs to us on a regular free()
+//
+// NOTE: abc::aligned_balloc is used rather than abc::aligned_alloc
+
+extern "C" void *
+aligned_alloc(usize alignment, usize size) noexcept
+{
+  return reinterpret_cast<void *>(abc::aligned_balloc(alignment, size).ptr);
+}
+
+extern "C" int
+posix_memalign(void **out, usize alignment, usize size) noexcept
+{
+  if ( out == nullptr ) return 22;      // EINVAL
+  // POSIX: alignment is a power of two AND a multiple of sizeof(void *)
+  if ( alignment < sizeof(void *) || (alignment & (alignment - 1)) != 0 ) return 22;
+  if ( size == 0 ) {
+    *out = nullptr;
+    return 0;
+  }
+  void *mem = reinterpret_cast<void *>(abc::aligned_balloc(alignment, size).ptr);
+  if ( mem == nullptr ) return 12;      // ENOMEM
+  *out = mem;
+  return 0;
+}
+
+extern "C" void *
+memalign(usize alignment, usize size) noexcept
+{
+  return reinterpret_cast<void *>(abc::aligned_balloc(alignment, size).ptr);
+}
+
+extern "C" void *
+valloc(usize size) noexcept
+{
+  return reinterpret_cast<void *>(abc::aligned_balloc(abc::__system_pagesize, size).ptr);
+}
+
+extern "C" void *
+pvalloc(usize size) noexcept
+{
+  const usize rounded = (size + abc::__system_pagesize - 1) & ~(abc::__system_pagesize - 1);
+  return reinterpret_cast<void *>(abc::aligned_balloc(abc::__system_pagesize, rounded).ptr);
+}
 
 #endif
