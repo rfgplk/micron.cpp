@@ -234,6 +234,19 @@ __route_dealloc(byte *p, usize sz) noexcept
   return true;
 }
 
+[[gnu::always_inline]] static inline bool
+__route_retire(byte *p) noexcept
+{
+  __arena *me = __current_arena();
+  if constexpr ( !__default_multithread_safe ) return me->ts_pop(p);
+  __arena *owner = __owner_of(p);
+  if ( !owner || owner == me ) [[likely]]
+    return me->ts_pop(p);
+  ABC_DOCTOR(doctor::record_remote_tombstone(p);)
+  (void)owner->__remote_push(p, __remote_tombstone_size);
+  return true;
+}
+
 [[gnu::always_inline]] static inline __arena *
 __query_arena(const void *p) noexcept
 {

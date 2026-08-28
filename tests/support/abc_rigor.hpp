@@ -6,7 +6,8 @@
 #pragma once
 
 // Shared rigor kit for the abc allocator stress / soak suites
-// (abcmalloc_concurrent.cpp, abcmalloc_soak.cpp, abcmalloc_soak_mt.cpp).
+// (abcmalloc_concurrent.cpp, abcmalloc_soak.cpp, abcmalloc_soak_mt.cpp,
+// abcmalloc_soak_mt_realloc.cpp).
 //
 // It packages the proven bit-flip detection scheme from abcmalloc_stress.cpp
 // (a *location-independent* per-byte fingerprint keyed on (idx, gen, off) so

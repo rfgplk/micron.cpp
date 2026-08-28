@@ -12,7 +12,8 @@
 // them. Each thread owns its own slot tables, RNG stream, and pinned cohort, so
 // the only shared subsystem under test is the allocator itself. This isolates
 // *endurance under concurrency* (cross-thread free is covered separately by
-// abcmalloc_concurrent.cpp's donation test).
+// abcmalloc_concurrent.cpp's donation test; repeated cross-arena realloc lives
+// in abcmalloc_soak_mt_realloc.cpp).
 //
 // Build:  duck build tests/rigor/abcmalloc_soak_mt.cpp ; run bin/abcmalloc_soak_mt
 // Tune :  -D SOAK_OPS=<n>      total ops across all threads (default 1e9)

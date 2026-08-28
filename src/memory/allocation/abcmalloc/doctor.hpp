@@ -864,6 +864,17 @@ record_remote_free(byte *ptr, usize len) noexcept
   __mark_free_locked(ptr, __rec_state::freed, len);
 }
 
+inline void
+record_remote_tombstone(byte *ptr) noexcept
+{
+  if ( !ptr ) return;
+  __reentry re;
+  if ( !re ) return;
+  __dr.remote_free_events.fetch_add(1, micron::memory_order_relaxed);
+  __scoped_lock g;
+  __mark_free_locked(ptr, __rec_state::tombstoned, 0);
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%
 // query / reporting API
 

@@ -1,5 +1,8 @@
 # allocator traits, static allocator family, explicit arenas, and advanced abcmalloc adapters
 test tests/rigor/allocator_types.cpp -o bin/allocator/x64 --timeout 300
+test tests/rigor/allocator_cross_thread_resize.cpp -o bin/allocator/x64 --timeout 300
+test tests/rigor/allocator_cross_thread_resize.cpp -k -o bin/allocator/freestanding --timeout 300
+test tests/rigor/allocator_cross_thread_resize.cpp -k --def ABCMALLOC_DOCTOR_HELP -o bin/allocator/doctor --timeout 300
 test tests/rigor/allocator_types.cpp --def MICRON_ALLOCATOR_STATS -o bin/allocator/stats --timeout 300
 test tests/rigor/allocator_traits.cpp -o bin/allocator/x64 --timeout 300
 test tests/rigor/arena_resource.cpp -o bin/allocator/x64 --timeout 300
