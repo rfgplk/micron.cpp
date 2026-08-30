@@ -34,7 +34,7 @@ template<typename T> struct __core_memory_resource {
   using value_type = T;
   using size_type = usize;
 
-  T *memory;      // capacity implied due to byte / sizeof(T)
+  T *memory;
   usize capacity;
 
   ~__core_memory_resource() = default;

@@ -62,6 +62,12 @@ public:
     return page_size;
   }
 
+  [[nodiscard]] static usize
+  allocation_extent(usize bytes, usize)
+  {
+    return __capacity(bytes);
+  }
+
   [[nodiscard]] static chunk<byte>
   create(usize bytes, usize alignment)
   {

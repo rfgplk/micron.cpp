@@ -94,6 +94,12 @@ public:
     return P::minimum_bytes != 0 ? P::minimum_bytes : P::granularity;
   }
 
+  [[nodiscard]] static usize
+  allocation_extent(usize bytes, usize)
+  {
+    return __allocation_policy_capacity<P>(bytes);
+  }
+
   [[nodiscard]] static chunk<byte>
   create(usize bytes, usize alignment)
   {

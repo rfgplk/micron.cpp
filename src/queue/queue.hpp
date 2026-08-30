@@ -42,8 +42,8 @@ class queue: public __mutable_memory_resource<T, Alloc>
     __checked_elements(requested);
     const usize count = __mem::length;
     chunk<byte> block = __allocator_create<Alloc, alignof(T)>(allocation_multiply_or_throw(requested, sizeof(T)));
-    T *fresh = reinterpret_cast<T *>(block.ptr);
-    const usize fresh_capacity = block.len / sizeof(T);
+    __mem replacement(micron::move(block));
+    T *fresh = replacement.memory;
 
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
       if ( count ) micron::memcpy(fresh, micron::addressof(__mem::memory[head]), count);
@@ -61,16 +61,13 @@ class queue: public __mutable_memory_resource<T, Alloc>
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         __impl_container::destroy(fresh, made);
-        __allocator_destroy<Alloc, alignof(T)>(block);
         throw;
       }
 #endif
       if ( count ) __impl_container::destroy(micron::addr(__mem::memory[head]), count);
     }
 
-    if ( __mem::memory ) __allocator_destroy<Alloc, alignof(T)>(__mem::data());
-    __mem::memory = fresh;
-    __mem::capacity = fresh_capacity;
+    __mem::swap(replacement);
     __mem::length = count;
     head = 0;
   }

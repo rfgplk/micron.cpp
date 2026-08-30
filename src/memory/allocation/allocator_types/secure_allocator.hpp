@@ -32,10 +32,17 @@ public:
     return page_size;
   }
 
+  [[nodiscard]] static usize
+  allocation_extent(usize bytes, usize)
+  {
+    return allocation_round_up_or_throw(__allocation_policy_capacity<P>(bytes), page_size);
+  }
+
   [[nodiscard]] static chunk<byte>
   create(usize bytes, usize alignment)
   {
     const usize capacity = allocation_round_up_or_throw(__allocation_policy_capacity<P>(bytes), page_size);
+    if ( capacity == 0 ) return { nullptr, 0 };
     chunk<byte> memory = __map_create_aligned(capacity, alignment);
     addr_t *address = reinterpret_cast<addr_t *>(memory.ptr);
     if ( micron::mlock(address, memory.len) != 0 ) {

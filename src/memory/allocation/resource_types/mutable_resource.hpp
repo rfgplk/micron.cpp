@@ -18,6 +18,43 @@ template<typename T, typename Alloc> struct __owned_memory_resource: public __co
   size_type length;
 
 private:
+  [[nodiscard]] static chunk<byte>
+  __allocation(T *memory, usize capacity) noexcept
+  {
+    if ( memory == nullptr ) return { nullptr, 0 };
+    const usize usable_bytes = capacity * sizeof(T);
+    return { reinterpret_cast<byte *>(memory), __allocator_extent<Alloc, alignof(T)>(usable_bytes) };
+  }
+
+  [[nodiscard]] static bool
+  __extent_matches(chunk<byte> memory, usize required_bytes = 0) noexcept
+  {
+    if ( memory.ptr == nullptr ) return memory.len == 0 && required_bytes == 0;
+    if ( memory.len < required_bytes || memory.len == 0 ) return false;
+    if ( (reinterpret_cast<uintptr_t>(memory.ptr) & (alignof(T) - 1)) != 0 ) return false;
+    const usize usable_bytes = (memory.len / sizeof(T)) * sizeof(T);
+    return __allocator_extent<Alloc, alignof(T)>(usable_bytes) == memory.len;
+  }
+
+  [[nodiscard]] static chunk<byte>
+  __create_checked(usize bytes)
+  {
+    chunk<byte> memory = __allocator_create<Alloc, alignof(T)>(bytes);
+    if ( !__extent_matches(memory, bytes) ) {
+      __allocator_destroy<Alloc, alignof(T)>(memory);
+      exc<except::memory_error>("allocator: allocation extent cannot be reconstructed from element capacity");
+    }
+    return memory;
+  }
+
+  [[nodiscard]] static chunk<byte> &&
+  __adopt_checked(chunk<byte> &memory)
+  {
+    if ( !__extent_matches(memory) )
+      exc<except::memory_error>("allocator: adopted allocation extent cannot be reconstructed from element capacity");
+    return micron::move(memory);
+  }
+
   static void
   __destroy_range(T *memory, usize count) noexcept
   {
@@ -29,7 +66,7 @@ private:
   void
   __release_raw() noexcept
   {
-    if ( __core::memory ) __allocator_destroy<Alloc, alignof(T)>(__core::operator*());
+    if ( __core::memory ) __allocator_destroy<Alloc, alignof(T)>(__allocation(__core::memory, __core::capacity));
     __core::memory = nullptr;
     __core::capacity = 0;
   }
@@ -41,15 +78,22 @@ private:
     const usize retained = length < elements ? length : elements;
 
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
-      chunk<byte> next = __allocator_resize_bytes<Alloc, alignof(T)>(__core::operator*(), bytes,
+      chunk<byte> next = __allocator_resize_bytes<Alloc, alignof(T)>(__allocation(__core::memory, __core::capacity), bytes,
                                                                      allocation_multiply_or_throw(retained, sizeof(T)));
       __core::memory = reinterpret_cast<T *>(next.ptr);
       __core::capacity = next.len / sizeof(T);
       length = retained;
+      if ( !__extent_matches(next, bytes) ) {
+        __allocator_destroy<Alloc, alignof(T)>(next);
+        __core::memory = nullptr;
+        __core::capacity = 0;
+        length = 0;
+        exc<except::memory_error>("allocator: resized extent cannot be reconstructed from element capacity");
+      }
       return;
     }
 
-    chunk<byte> next = __allocator_create<Alloc, alignof(T)>(bytes);
+    chunk<byte> next = __create_checked(bytes);
     T *destination = reinterpret_cast<T *>(next.ptr);
     usize constructed = 0;
 #if !defined(__micron_freestanding) || defined(__micron_eh)
@@ -83,21 +127,28 @@ public:
 
   __owned_memory_resource() : __core(), length(0)
   {
-    const usize bytes = Alloc::auto_size() < sizeof(T) ? sizeof(T) : Alloc::auto_size();
-    chunk<byte> memory = __allocator_create<Alloc, alignof(T)>(bytes);
+    const usize minimum = Alloc::auto_size() < sizeof(T) ? sizeof(T) : Alloc::auto_size();
+    const usize bytes = allocation_round_up_or_throw(minimum, sizeof(T));
+    chunk<byte> memory = __create_checked(bytes);
     __core::accept(micron::move(memory));
   }
 
-  explicit __owned_memory_resource(usize elements) : __core(), length(0)
+  explicit __owned_memory_resource(usize elements) : __core(__create_checked(allocation_multiply_or_throw(elements, sizeof(T)))), length(0)
   {
-    chunk<byte> memory = __allocator_create<Alloc, alignof(T)>(allocation_multiply_or_throw(elements, sizeof(T)));
-    __core::accept(micron::move(memory));
   }
 
-  explicit __owned_memory_resource(chunk<byte> &&memory) : __core(micron::move(memory)), length(0) { }
+  explicit __owned_memory_resource(chunk<byte> &&memory) : __core(__adopt_checked(memory)), length(0) { }
 
   __owned_memory_resource(const __owned_memory_resource &) = delete;
   __owned_memory_resource &operator=(const __owned_memory_resource &) = delete;
+
+  void accept(const chunk<byte> &) = delete;
+
+  void
+  accept(chunk<byte> &&memory)
+  {
+    __core::accept(__adopt_checked(memory));
+  }
 
   __owned_memory_resource(__owned_memory_resource &&other) noexcept : __core(micron::move(other)), length(other.length)
   {
@@ -140,7 +191,19 @@ public:
   [[nodiscard]] chunk<byte>
   data() const noexcept
   {
-    return __core::operator*();
+    return __allocation(__core::memory, __core::capacity);
+  }
+
+  [[nodiscard]] chunk<byte>
+  operator*() const noexcept
+  {
+    return data();
+  }
+
+  [[nodiscard]] chunk<byte>
+  operator*() noexcept
+  {
+    return data();
   }
 
   void

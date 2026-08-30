@@ -38,6 +38,12 @@ template<class Alloc, typename T> struct storage_allocator {
     return __allocator_create<Alloc>(bytes, alignment < alignof(T) ? alignof(T) : alignment);
   }
 
+  [[nodiscard]] static usize
+  allocation_extent(usize bytes, usize alignment)
+  {
+    return allocator_traits<Alloc>::allocation_extent(bytes, alignment < alignof(T) ? alignof(T) : alignment);
+  }
+
   static chunk<byte>
   grow(chunk<byte> memory, usize bytes)
   {

@@ -1,6 +1,11 @@
 # Allocation
 
-Include `<micron/allocator.hpp>` for the allocator family, `allocator_traits`, and arena resources. Allocators expose byte chunks; container boundaries perform checked element-to-byte arithmetic. `allocator_traits<A>` normalizes the canonical `allocate`/`resize`/`deallocate` surface and the legacy `create`/`grow`/`destroy` surface.
+Include `<micron/allocator.hpp>` for the allocator family, `allocator_traits`, and arena resources. Allocators expose byte chunks;
+container boundaries perform checked element-to-byte arithmetic. `allocator_traits<A>` normalizes the canonical
+`allocate`/`resize`/`deallocate` surface and the legacy `create`/`grow`/`destroy` surface. An allocator that reports more usable bytes than
+requested must expose `allocation_extent(bytes, alignment)`: it reapplies the allocator's monotonic, idempotent sizing rule without
+allocating. Owned resources use that rule to recover the exact byte chunk from element capacity without storing another word in every
+container.
 
 The ordinary abcmalloc-backed allocators (`allocator_serial`, `allocator_small`, `allocator_constrained`, and `allocator_exact`) use abcmalloc's native block alignment directly through 32 bytes in a normal build. Larger alignments carry one pointer-sized recovery prefix. `MICRON_ALLOCATOR_CHECKS` adds adapter postcondition checks for trusted built-ins; custom allocators are checked without the macro.
 

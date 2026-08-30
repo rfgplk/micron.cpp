@@ -123,6 +123,7 @@ template<is_policy P>
 [[nodiscard]] inline usize
 __allocation_policy_capacity(usize bytes)
 {
+  if ( bytes == 0 ) return 0;
   const usize requested = bytes < P::minimum_bytes ? P::minimum_bytes : bytes;
   return allocation_round_up_or_throw(requested, P::granularity);
 }
@@ -400,6 +401,27 @@ private:
   }
 
 public:
+  [[nodiscard]] static usize
+  allocation_extent(usize bytes, usize alignment)
+  {
+    allocation_validate_alignment(alignment);
+    if ( bytes == 0 ) return 0;
+    if constexpr ( requires { Alloc::allocation_extent(bytes, alignment); } )
+      return Alloc::allocation_extent(bytes, alignment);
+    else if constexpr ( requires { Alloc::allocation_extent(bytes); } )
+      return Alloc::allocation_extent(bytes);
+    else
+      return bytes;
+  }
+
+  template<usize Alignment>
+  [[nodiscard]] static usize
+  allocation_extent(usize bytes)
+  {
+    static_assert(allocation_is_power_of_two(Alignment), "allocator: alignment must be a non-zero power of two");
+    return allocation_extent(bytes, Alignment);
+  }
+
   template<usize Alignment>
   [[nodiscard, gnu::always_inline]] static inline chunk<byte>
   allocate(usize bytes)
@@ -583,6 +605,13 @@ template<class Alloc>
 __allocator_recommend(usize current, usize minimum) noexcept
 {
   return allocator_traits<Alloc>::recommend(current, minimum);
+}
+
+template<class Alloc, usize Alignment>
+[[nodiscard]] inline usize
+__allocator_extent(usize bytes)
+{
+  return allocator_traits<Alloc>::template allocation_extent<Alignment>(bytes);
 }
 
 struct __allocator_array_header {

@@ -159,6 +159,14 @@ struct alignas(256) over_aligned {
   u64 value;
 };
 
+struct oversized_entry {
+  byte symlink[micron::page_size + 1];
+};
+
+struct odd_entry {
+  byte bytes[37];
+};
+
 struct self_referential {
   self_referential *self;
   int value;
@@ -256,6 +264,15 @@ allocator_route(Fn fn)
   }
   sb::require(alloc::outstanding(), i64{ 0 });
 }
+
+template<typename Alloc>
+void
+require_empty_allocation()
+{
+  micron::chunk<byte> memory = Alloc::create(0);
+  sb::require(memory.ptr, static_cast<byte *>(nullptr));
+  sb::require(memory.len, usize{ 0 });
+}
 }      // namespace
 
 int
@@ -283,6 +300,7 @@ main()
   sb::test_case("policy capacity, exact capacity, alignment, and null destruction");
   {
     using policy = micron::allocation_policy<32, 16, 3, 2>;
+    sb::require(micron::__allocation_policy_capacity<policy>(0), usize{ 0 });
     sb::require(micron::__allocation_policy_capacity<policy>(33), usize{ 48 });
     sb::require(micron::__allocation_policy_recommend<policy>(32, 33), usize{ 48 });
 
@@ -297,6 +315,16 @@ main()
     sb::require(reinterpret_cast<uintptr_t>(serial.ptr) & 63u, uintptr_t{ 0 });
     serial.ptr[serial.len - 1] = 0xa5;
     micron::allocator_serial<>::destroy(serial);
+
+    require_empty_allocation<micron::allocator_serial<>>();
+    require_empty_allocation<micron::allocator_small<>>();
+    require_empty_allocation<micron::allocator_constrained<>>();
+    require_empty_allocation<micron::allocator_exact<>>();
+    require_empty_allocation<micron::map_allocator<>>();
+    require_empty_allocation<micron::allocator_huge<>>();
+    require_empty_allocation<micron::allocator_secure<>>();
+    require_empty_allocation<micron::allocator_guarded<>>();
+    require_empty_allocation<micron::allocator_immutable>();
 
     bool invalid_alignment = false;
     try {
@@ -314,6 +342,59 @@ main()
     micron::allocator_huge<>::destroy({ nullptr, 0 });
     micron::allocator_secure<>::destroy({ nullptr, 0 });
     micron::allocator_guarded<>::destroy({ nullptr, 0 });
+  }
+  sb::end_test_case();
+
+  sb::test_case("resources reconstruct allocator bytes independently of element capacity");
+  {
+    static_assert(sizeof(oversized_entry) > micron::page_size);
+
+    using exact_map = micron::map_allocator<micron::exact_allocation_policy>;
+    using oversized_resource = micron::__mutable_memory_resource<oversized_entry, exact_map>;
+    static_assert(sizeof(oversized_resource) == sizeof(oversized_entry *) + sizeof(usize) * 2);
+
+    micron::chunk<byte> raw = exact_map::create(micron::page_size);
+    bool rejected_partial_element = false;
+    try {
+      oversized_resource invalid(micron::move(raw));
+    } catch ( const micron::except::memory_error & ) {
+      rejected_partial_element = true;
+    }
+    sb::require_true(rejected_partial_element);
+    sb::require_true(raw.ptr != nullptr);
+    exact_map::destroy(raw);
+
+    oversized_resource memory(1);
+    sb::require(memory.capacity, usize{ 1 });
+    sb::require_true(memory.memory != nullptr);
+    sb::require(memory.data().len, exact_map::allocation_extent(sizeof(oversized_entry), alignof(oversized_entry)));
+
+    using identity_alloc = mtest::tracking_allocator<75>;
+    using odd_resource = micron::__mutable_memory_resource<odd_entry, identity_alloc>;
+    identity_alloc::reset();
+    {
+      odd_resource odd;
+      sb::require(odd.data().len % sizeof(odd_entry), usize{ 0 });
+      sb::require(odd.capacity * sizeof(odd_entry), odd.data().len);
+    }
+    sb::require(identity_alloc::outstanding(), i64{ 0 });
+
+    micron::vector<oversized_entry> directory;
+    const usize directory_bytes = (*directory).len;
+    sb::require_true(directory_bytes >= sizeof(oversized_entry));
+    sb::require(directory.max_size(), usize{ 1 });
+
+    micron::vector<oversized_entry> entries(directory);
+    sb::require_true(entries.empty());
+    sb::require(entries.data(), static_cast<oversized_entry *>(nullptr));
+    sb::require((*entries).len, usize{ 0 });
+
+    micron::vector<oversized_entry> populated(2);
+    const usize populated_bytes = (*populated).len;
+    sb::require_true(populated_bytes >= sizeof(oversized_entry) * 2);
+    directory.swap(populated);
+    sb::require((*directory).len, populated_bytes);
+    sb::require((*populated).len, directory_bytes);
   }
   sb::end_test_case();
 

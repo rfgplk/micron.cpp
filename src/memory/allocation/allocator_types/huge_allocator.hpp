@@ -27,6 +27,7 @@ template<i32 HugePageFlag = map_huge_2mb, is_policy P = huge_allocation_policy> 
   static usize
   __capacity(usize bytes)
   {
+    if ( bytes == 0 ) return 0;
     usize requested = __allocation_policy_capacity<P>(bytes);
     if ( requested < __huge_size() ) requested = __huge_size();
     return allocation_round_up_or_throw(requested, __huge_size());
@@ -42,12 +43,19 @@ public:
     return __huge_size();
   }
 
+  [[nodiscard]] static usize
+  allocation_extent(usize bytes, usize)
+  {
+    return __capacity(bytes);
+  }
+
   [[nodiscard]] static chunk<byte>
   create(usize bytes, usize alignment)
   {
     allocation_validate_alignment(alignment);
     if ( alignment > __huge_size() ) exc<except::invalid_argument>("allocator_huge: alignment exceeds the selected huge-page size");
     const usize capacity = __capacity(bytes);
+    if ( capacity == 0 ) return { nullptr, 0 };
     addr_t *memory
         = micron::mmap(nullptr, capacity, prot_read | prot_write, map_private | map_anonymous | map_hugetlb | HugePageFlag, -1, 0);
     if ( micron::mmap_failed(memory) ) exc<except::memory_error>("allocator_huge: strict huge-page mapping failed");

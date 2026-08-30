@@ -785,6 +785,12 @@ public:
     return 16;
   }
 
+  [[nodiscard]] static constexpr usize
+  allocation_extent(usize bytes, usize) noexcept
+  {
+    return bytes;
+  }
+
   template<usize Alignment>
   [[nodiscard]] static chunk<byte>
   create(usize bytes)
