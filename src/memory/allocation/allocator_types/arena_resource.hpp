@@ -535,15 +535,15 @@ public:
     if ( block_bytes == 0 ) exc<except::invalid_argument>("arena_resource: owned block size must be non-zero");
   }
 
-  explicit arena_resource(chunk<byte> external, arena_overflow overflow = arena_overflow::fail, usize block_bytes = page_size)
-      : __block_bytes(block_bytes), __overflow(overflow)
+  explicit arena_resource(chunk<byte> external, arena_overflow a_overflow = arena_overflow::fail, usize block_bytes = page_size)
+      : __block_bytes(block_bytes), __overflow(a_overflow)
   {
     if ( block_bytes == 0 ) exc<except::invalid_argument>("arena_resource: owned block size must be non-zero");
     __init_external(external);
   }
 
-  arena_resource(byte *external, usize bytes, arena_overflow overflow = arena_overflow::fail, usize block_bytes = page_size)
-      : arena_resource(chunk<byte>{ external, bytes }, overflow, block_bytes)
+  arena_resource(byte *external, usize bytes, arena_overflow a_overflow = arena_overflow::fail, usize block_bytes = page_size)
+      : arena_resource(chunk<byte>{ external, bytes }, a_overflow, block_bytes)
   {
   }
 
