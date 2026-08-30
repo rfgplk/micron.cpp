@@ -29,6 +29,7 @@ public:
   create(usize n)
   {
     n = to_page(n);
+    if ( n == 0 ) return { nullptr, 0 };
     return { sys_allocator<byte>::alloc(n), n };
   }
 

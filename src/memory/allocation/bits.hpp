@@ -14,7 +14,7 @@ template<u32 G>
 inline constexpr usize
 to_granularity(usize n)
 {
-  if ( n == 0 ) return G;
+  if ( n == 0 ) return 0;
   if ( n % G != 0 ) n += G - (n % G);
   return n;
 }

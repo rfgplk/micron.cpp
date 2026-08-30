@@ -30,6 +30,7 @@ public:
   create(usize n)
   {
     n = to_granularity<P::granularity>(n);
+    if ( n == 0 ) return { nullptr, 0 };
     return allocate(n);      // create the block, the handler is responsible for calling destroy
   }
 
