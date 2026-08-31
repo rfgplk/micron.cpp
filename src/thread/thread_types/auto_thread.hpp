@@ -35,13 +35,36 @@ namespace micron
 {
 // auto_thread
 // unlike a regular thread, this one auto cleans up after itself (similar to a std::jthread)
-//
-// WARNING: this thread automatically allocates it's stack on the parent process stack, the normal stack limit on linux
-// is 8MB, while auto_thread_stack_size is 262kB, meaning spawning ~32 threads WILL segfault
-// the advantage is that this is MUCH faster (no mmap)
+// the worker stack is mapped separately so parallel auto_threads do not exhaust the parent stack
 template<usize Stack_Size = auto_thread_stack_size> class auto_thread
 {
   using thread_type = thread_tag;
+
+  struct __launch_rollback {
+    addr_t *&stack;
+    atomic_token<bool> &alive;
+    bool armed = true;
+
+    ~__launch_rollback()
+    {
+      if ( !armed ) return;
+      micron::try_unmap(stack, Stack_Size);
+      stack = nullptr;
+      alive.store(false, micron::memory_order_release);
+    }
+
+    void
+    commit() noexcept
+    {
+      armed = false;
+    }
+  };
+
+  addr_t *
+  __stack_base() noexcept
+  {
+    return fstack;
+  }
 
   void
   thread_handler()
@@ -56,27 +79,28 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
   {
     thread_handler();
     parent_pid = micron::posix::getpid();
+    // NOTE: auto_thread used to allocate it's stack on the parent stack, this was technically correct but caused issues with
+    // valgrind/debugging PLUS it also caused massive issues with stack overflowing; so we've now swapped it back to a more standard mmapped
+    // approach; this is more robust but slower
+    if ( fstack != nullptr ) micron::exc<except::thread_error>("micron auto_thread: stack is already allocated");
+    fstack = micron::addrmap(Stack_Size);
+    if ( fstack == nullptr || micron::mmap_failed(fstack) ) {
+      fstack = nullptr;
+      micron::exc<except::thread_error>("micron auto_thread: failed to allocate stack");
+    }
+    __launch_rollback rollback{ fstack, payload.alive };
     // WARNING: alive must be set to true before invoking the kernel, else we risk a race (rare but happens)
     payload.alive.store(true, micron::memory_order_seq_cst);
     __link_launch<Stack_Size, &__thread_kernel<micron::decay_t<F>, micron::decay_t<Args>...>>(
-        pid, __ctid, __tls, __pth, &payload, micron::real_addr(fstack), f, micron::forward<Args>(args)...);
+        pid, __ctid, __tls, __pth, &payload, __stack_base(), f, micron::forward<Args>(args)...);
+    rollback.commit();
   }
 
   void
   __release(void)
   {
-    // WARNING: HEISENBUG; since auto_thread is the only class which stack allocs its own stack (on the parent stack)
-    // if it happened to be page-aligned, guard_stack() mprotect'd its first page to PROT_NONE as a low guard
-    // and ___NOTHING___ restored it. czero'ing the whole array wrote through that guard page -> SIGSEGV (~1/page-size of placements),
-    // and even ____WITHOUT____ the czero the leftover PROT_NONE page would fault later when this object's storage is reused
-    {
-      constexpr usize guard = __micron_page_size_default;
-      if constexpr ( Stack_Size > guard ) {
-        if ( (reinterpret_cast<uintptr_t>(fstack) & (guard - 1)) == 0 )
-          micron::mprotect(reinterpret_cast<addr_t *>(fstack), guard, micron::prot_read | micron::prot_write);
-      }
-    }
-    micron::czero<Stack_Size>(fstack);
+    micron::try_unmap(fstack, Stack_Size);
+    fstack = nullptr;
     // free this thread's from-scratch TLS block (the spawner owns it; safe now the thread is reaped)
     micron::__tls_release_frame(__tls);
     __tls = micron::__tls_frame{};
@@ -110,12 +134,11 @@ template<usize Stack_Size = auto_thread_stack_size> class auto_thread
   }
 
   pid_t parent_pid;
-  pid_t pid;                                // kernel tid (freestanding; 0 = none/joined)
-  int __ctid = 0;                           // CHILD_CLEARTID join futex word (freestanding; address stable for the object's life)
-  micron::__tls_frame __tls{};              // per-thread TLS block (freestanding; freed on release)
-  unsigned long __pth = 0;                  // pthread_t handle (hosted backend)
-  alignas(16) byte fstack[Stack_Size];      // must be 16 byte aligned, stack will be stack allocated and survive for the
-                                            // duration of this class
+  pid_t pid;                        // kernel tid (freestanding; 0 = none/joined)
+  int __ctid = 0;                   // CHILD_CLEARTID join futex word (freestanding; address stable for the object's life)
+  micron::__tls_frame __tls{};      // per-thread TLS block (freestanding; freed on release)
+  unsigned long __pth = 0;          // pthread_t handle (hosted backend)
+  addr_t *fstack = nullptr;         // separately mapped; released only after the child is reaped
   __thread_payload payload;
 
 public:
@@ -129,7 +152,7 @@ public:
   auto_thread(const auto_thread &o) = delete;
   auto_thread(void) = delete;
   auto_thread &operator=(const auto_thread &) = delete;
-  // can't move, stack is local
+  // the live child holds pointers into this control block
   auto_thread(auto_thread &&) = delete;
   auto_thread &operator=(auto_thread &&) = delete;
 
@@ -137,7 +160,6 @@ public:
     requires(micron::is_invocable_v<micron::decay_t<Fn>, micron::decay_t<Args> &...>)
   auto_thread(Fn &&fn, Args &&...args) : parent_pid(micron::posix::getpid()), pid(0), payload{}
   {
-    micron::czero<Stack_Size>(fstack);
     __impl_makethread(micron::forward<Fn>(fn), micron::forward<Args>(args)...);
   }
 
@@ -288,7 +310,7 @@ public:
   byte *
   stack()
   {
-    return &fstack[0];
+    return reinterpret_cast<byte *>(fstack);
   }
 
   void

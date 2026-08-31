@@ -16,7 +16,7 @@
 //      a destructor running against a stack the joiner already unmapped -- which is exactly what a
 //      premature stack release would produce, and which a ctor/dtor balance alone would not show.
 //   2. RESOURCE recycling. micron::thread mmaps its own stack and unmaps it on release;
-//      auto_thread carries its stack inline; group_thread adopts one. Thousands of cycles of each
+//      auto_thread maps its stack; group_thread adopts one. Thousands of cycles of each
 //      must return the process to the same descriptor watermark and to BOUNDED resident growth --
 //      not to zero, because abc's sheets are sticky by design and __global_threadpool is never
 //      joined (both documented in ISSUES.md).

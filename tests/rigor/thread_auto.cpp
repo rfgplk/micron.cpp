@@ -44,8 +44,10 @@ main(int, char **)
   test_case("non-copyable / non-movable (compile-time contract)");
   {
     static_assert(!micron::is_copy_constructible_v<auto_thread<>>, "auto_thread must not be copyable");
-    static_assert(!micron::is_move_constructible_v<auto_thread<>>, "auto_thread must not be movable (stack is local)");
+    static_assert(!micron::is_move_constructible_v<auto_thread<>>,
+                  "auto_thread must not be movable while its control block is address-bound");
     static_assert(!micron::is_move_assignable_v<auto_thread<>>, "auto_thread must not be move-assignable");
+    static_assert(sizeof(auto_thread<>) < auto_thread_stack_size, "auto_thread must not embed its worker stack");
     require(true);
   }
   end_test_case();

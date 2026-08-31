@@ -33,9 +33,18 @@ enum class align_val_t : usize { };
 #endif
 #if !defined(__micron_sanitizer_owns_heap)
 
+// A hosted allocator interposer must see the matching replaceable new/delete pair. When the
+// standard backend is libc, inlining only delete turns Valgrind's new allocation into a direct
+// free and defeats that pairing. The abc-native path keeps its normal optimizer visibility.
+#if !defined(__micron_abcmalloc_std_backend)
+#define __MICRON_ALLOC_INTERPOSE __attribute__((noinline))
+#else
+#define __MICRON_ALLOC_INTERPOSE
+#endif
+
 // §17.6.3 — scalar new/delete
 
-[[nodiscard]] void *
+[[nodiscard]] __MICRON_ALLOC_INTERPOSE void *
 operator new(usize size)
 {
   ALLOC_MESSAGE("new(", size, ")");
@@ -46,7 +55,7 @@ operator new(usize size)
   micron::exc<micron::except::memory_error_new_scalar>("micron::operator new(): micron::__alloc failed");
 }
 
-[[nodiscard]] void *
+[[nodiscard]] __MICRON_ALLOC_INTERPOSE void *
 operator new[](usize size)
 {
   ALLOC_MESSAGE("new[](", size, ")");
@@ -57,21 +66,21 @@ operator new[](usize size)
   micron::exc<micron::except::memory_error_new_array>("micron::operator new[](): micron::__alloc failed");
 }
 
-void
+__MICRON_ALLOC_INTERPOSE void
 operator delete(void *ptr) noexcept
 {
   ALLOC_MESSAGE("delete(", ptr, ")");
   micron::__free(ptr);
 }
 
-void
+__MICRON_ALLOC_INTERPOSE void
 operator delete[](void *ptr) noexcept
 {
   ALLOC_MESSAGE("delete[](", ptr, ")");
   micron::__free(ptr);
 }
 
-void
+__MICRON_ALLOC_INTERPOSE void
 operator delete(void *ptr, usize size) noexcept
 {
   (void)size;
@@ -79,7 +88,7 @@ operator delete(void *ptr, usize size) noexcept
   micron::__free(ptr);
 }
 
-void
+__MICRON_ALLOC_INTERPOSE void
 operator delete[](void *ptr, usize size) noexcept
 {
   (void)size;
@@ -101,12 +110,17 @@ namespace __aligned_new
 __do_alloc(usize size, usize align)
 {
   const usize padded = (size + align - 1) & ~(align - 1);
+#if defined(__micron_abcmalloc_std_backend)
   return abc::aligned_alloc(align, padded ? padded : align);
+#else
+  return ::aligned_alloc(align, padded ? padded : align);
+#endif
 }
 
 [[gnu::always_inline]] inline void
 __do_free(void *ptr, usize align)
 {
+#if defined(__micron_abcmalloc_std_backend)
   // WARNING: the bound is native_block_alignment, NOT a literal 32 -- under
   // MICRON_ABC_REDZONE it is 16, so a 32-aligned new took the prefix path while
   // this took the raw one and the block start was never released
@@ -115,11 +129,15 @@ __do_free(void *ptr, usize align)
   } else {
     abc::aligned_free(ptr);
   }
+#else
+  (void)align;
+  micron::__free(ptr);
+#endif
 }
 };      // namespace __aligned_new
 };      // namespace micron
 
-[[nodiscard]] void *
+[[nodiscard]] __MICRON_ALLOC_INTERPOSE void *
 operator new(usize size, std::align_val_t al)
 {
   ALLOC_MESSAGE("new(", size, ", align=", static_cast<usize>(al), ")");
@@ -127,7 +145,7 @@ operator new(usize size, std::align_val_t al)
   micron::exc<micron::except::memory_error_new_scalar_aligned>("micron::operator new(align): aligned_alloc failed");
 }
 
-[[nodiscard]] void *
+[[nodiscard]] __MICRON_ALLOC_INTERPOSE void *
 operator new[](usize size, std::align_val_t al)
 {
   ALLOC_MESSAGE("new[](", size, ", align=", static_cast<usize>(al), ")");
@@ -135,21 +153,21 @@ operator new[](usize size, std::align_val_t al)
   micron::exc<micron::except::memory_error_new_array_aligned>("micron::operator new[](align): aligned_alloc failed");
 }
 
-void
+__MICRON_ALLOC_INTERPOSE void
 operator delete(void *ptr, std::align_val_t al) noexcept
 {
   ALLOC_MESSAGE("delete(", ptr, ", align=", static_cast<usize>(al), ")");
   micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
 }
 
-void
+__MICRON_ALLOC_INTERPOSE void
 operator delete[](void *ptr, std::align_val_t al) noexcept
 {
   ALLOC_MESSAGE("delete[](", ptr, ", align=", static_cast<usize>(al), ")");
   micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
 }
 
-void
+__MICRON_ALLOC_INTERPOSE void
 operator delete(void *ptr, usize size, std::align_val_t al) noexcept
 {
   (void)size;
@@ -157,7 +175,7 @@ operator delete(void *ptr, usize size, std::align_val_t al) noexcept
   micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
 }
 
-void
+__MICRON_ALLOC_INTERPOSE void
 operator delete[](void *ptr, usize size, std::align_val_t al) noexcept
 {
   (void)size;
@@ -165,6 +183,7 @@ operator delete[](void *ptr, usize size, std::align_val_t al) noexcept
   micron::__aligned_new::__do_free(ptr, static_cast<usize>(al));
 }
 
+#undef __MICRON_ALLOC_INTERPOSE
 #endif      // !__micron_sanitizer_owns_heap
 
 namespace micron

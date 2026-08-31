@@ -27,6 +27,8 @@
 namespace
 {
 
+static_assert(sizeof(micron::auto_thread<>) < micron::auto_thread_stack_size, "auto_thread must not embed its worker stack");
+
 micron::atomic_token<u64> g_n{ 0 };
 
 void

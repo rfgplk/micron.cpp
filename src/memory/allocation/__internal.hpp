@@ -8,12 +8,12 @@
 #include "../../cmalloc.hpp"
 #include "../../types.hpp"
 
-#if !defined(MICRON_ABCMALLOC_STD) || defined(__micron_sanitizer_owns_heap)
+#if !defined(__micron_abcmalloc_std_backend)
 /*permitted*/ #include<cstdlib>
 #endif
 namespace micron
 {
-#if defined(MICRON_ABCMALLOC_STD) && !defined(__micron_sanitizer_owns_heap)
+#if defined(__micron_abcmalloc_std_backend)
 inline __attribute__((always_inline)) byte *
 __alloc(usize sz)
 {

@@ -250,14 +250,19 @@ __worker_kernel(__worker_payload *payload)
 // hosted backend
 #if !defined(__micron_freestanding)
 template<auto KFn, typename... Args> struct __pth_box {
-  void *args[sizeof...(Args)];
+  micron::tuple<Args...> args;
+
+  template<typename... U>
+    requires(sizeof...(U) == sizeof...(Args))
+  explicit __pth_box(U &&...values) : args(micron::forward<U>(values)...)
+  {
+  }
 
   static void *
   trampoline(void *p)
   {
     auto *self = static_cast<__pth_box *>(p);
     __invoke(self, micron::make_index_sequence<sizeof...(Args)>{});
-    __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
     delete self;
     return nullptr;
   }
@@ -265,7 +270,6 @@ template<auto KFn, typename... Args> struct __pth_box {
   static void
   destroy(__pth_box *self)
   {
-    __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
     delete self;
   }
 
@@ -274,14 +278,7 @@ private:
   static void
   __invoke(__pth_box *self, micron::index_sequence<I...>)
   {
-    KFn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
-  }
-
-  template<usize... I>
-  static void
-  __cleanup([[maybe_unused]] __pth_box *self, micron::index_sequence<I...>)
-  {
-    (delete static_cast<Args *>(self->args[I]), ...);
+    KFn(static_cast<Args &&>(micron::get<I>(self->args))...);
   }
 };
 #endif
@@ -345,16 +342,28 @@ __link_launch([[maybe_unused]] pid_t &tid, [[maybe_unused]] int &ctid, [[maybe_u
   tid = t;
 #else
   using box_t = __pth_box<KFn, P *, micron::decay_t<KArgs>...>;
-  auto *box = new box_t{ { reinterpret_cast<void *>(new P *(payload)),
-                           reinterpret_cast<void *>(new micron::decay_t<KArgs>(static_cast<KArgs &&>(kargs)))... } };
+  auto *box = new box_t(payload, static_cast<KArgs &&>(kargs)...);
   pthread_attr_t attr;
-  pthread_attr_init(&attr);
+  int err = pthread_attr_init(&attr);
+  if ( err != 0 ) {
+    box_t::destroy(box);
+    micron::exc<except::thread_error>("micron thread::__link_launch(): failed to initialize pthread attributes");
+  }
   auto reg = micthread::guard_stack(fstack, static_cast<usize>(Stack_Size));
-  pthread_attr_setstack(&attr, reg.low, reg.usable);
+  err = pthread_attr_setstack(&attr, reg.low, reg.usable);
+  if ( err != 0 ) {
+    pthread_attr_destroy(&attr);
+    if ( reg.low != reinterpret_cast<addr_t *>(fstack) )
+      micron::mprotect(reinterpret_cast<addr_t *>(fstack), __micron_page_size_default, micron::prot_read | micron::prot_write);
+    box_t::destroy(box);
+    micron::exc<except::thread_error>("micron thread::__link_launch(): invalid pthread stack");
+  }
   pthread_t th{};
-  int err = pthread_create(&th, &attr, &box_t::trampoline, box);
+  err = pthread_create(&th, &attr, &box_t::trampoline, box);
   pthread_attr_destroy(&attr);
   if ( err != 0 ) {
+    if ( reg.low != reinterpret_cast<addr_t *>(fstack) )
+      micron::mprotect(reinterpret_cast<addr_t *>(fstack), __micron_page_size_default, micron::prot_read | micron::prot_write);
     box_t::destroy(box);
     micron::exc<except::thread_error>("micron thread::__link_launch(): thread failed to spawn");
   }
