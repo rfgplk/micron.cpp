@@ -7,6 +7,7 @@
 
 #include "../bits/__arch.hpp"
 #include "../linux/sys/time.hpp"
+#include "../memory/addr.hpp"
 #include "../types.hpp"
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

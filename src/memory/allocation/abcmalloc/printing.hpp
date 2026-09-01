@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../../../memory/addr.hpp"
 #include "../../../syscall.hpp"
 #include "../../../type_traits.hpp"
 #include "../../../types.hpp"
