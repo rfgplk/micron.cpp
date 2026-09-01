@@ -241,12 +241,7 @@ template<typename T, typename F> struct pair {
   {
   }
 
-  constexpr pair(T &&x, F &&y)
-    requires(!micron::is_reference_v<T> && !micron::is_reference_v<F>)
-      : a(micron::move(x)), b(micron::move(y))
-  {
-  }
-
+  // NOTE: no non-template pair(T &&, F &&); redundant + forces ambiguity under clang (BUT NOT GCC)
   constexpr pair(const T &x, const F &y) : a(x), b(y) { }
 
   template<typename K, typename L>
