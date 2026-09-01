@@ -311,7 +311,7 @@ class chase_lev_grow
     __hdr *__h = static_cast<__hdr *>(__raw);
     __h->__cap = __cap;
     __h->__prev = __prev;
-    __slot *__s = reinterpret_cast<__slot *>(reinterpret_cast<byte *>(__raw) + __cache_line);
+    __slot *__s = micron::ptr_cast<__slot *>(reinterpret_cast<byte *>(__raw) + __cache_line);
     for ( usize __i = 0; __i < __cap; ++__i ) new (&__s[__i]) __slot(T{});
     return reinterpret_cast<uintptr_t>(__raw) | static_cast<uintptr_t>(__shift);
   }
@@ -319,7 +319,7 @@ class chase_lev_grow
   static void
   __free_seg(__hdr *__h) noexcept
   {
-    __slot *__s = reinterpret_cast<__slot *>(reinterpret_cast<byte *>(__h) + __cache_line);
+    __slot *__s = micron::ptr_cast<__slot *>(reinterpret_cast<byte *>(__h) + __cache_line);
     for ( usize __i = 0; __i < __h->__cap; ++__i ) __s[__i].~__slot();
     ::operator delete(static_cast<void *>(__h), static_cast<std::align_val_t>(__cache_line));
   }

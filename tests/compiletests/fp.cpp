@@ -91,12 +91,12 @@ main()
   auto h = micron::head(v);
   auto lt = micron::last(v);
   auto at = micron::at(v, 2);
-  auto ff = micron::find_first(v, [](int x) { return x > 4; });
+  auto found = micron::find_first(v, [](int x) { return x > 4; });
   auto fl = micron::find_last(v, [](int x) { return x > 4; });
   if ( h.is_first() ) acc += h.cast<int>();
   if ( lt.is_first() ) acc += lt.cast<int>();
   if ( at.is_first() ) acc += at.cast<int>();
-  if ( ff.is_first() ) acc += ff.cast<int>();
+  if ( found.is_first() ) acc += found.cast<int>();
   if ( fl.is_first() ) acc += fl.cast<int>();
   auto tl = micron::tail(v);
   auto in = micron::init(v);

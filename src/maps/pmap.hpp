@@ -125,13 +125,13 @@ class pmap
   static inline __attribute__((always_inline)) uintptr_t *
   __children_of(__internal *in) noexcept
   {
-    return reinterpret_cast<uintptr_t *>(reinterpret_cast<byte *>(in) + sizeof(__internal));
+    return micron::ptr_cast<uintptr_t *>(reinterpret_cast<byte *>(in) + sizeof(__internal));
   }
 
   static inline __attribute__((always_inline)) const uintptr_t *
   __children_of(const __internal *in) noexcept
   {
-    return reinterpret_cast<const uintptr_t *>(reinterpret_cast<const byte *>(in) + sizeof(__internal));
+    return micron::ptr_cast<const uintptr_t *>(reinterpret_cast<const byte *>(in) + sizeof(__internal));
   }
 
   static inline __attribute__((always_inline)) bool

@@ -852,7 +852,7 @@ public:
 #else
       max_t __m = micron::syscall(SYS_mmap, nullptr, sizeof(__data), 0x3, 0x22, -1, 0);
 #endif
-      if ( micron::syscall_failed(__m) ) return;
+      if ( micron::syscall_failed(static_cast<long>(__m)) ) return;
       data_ = reinterpret_cast<__data *>(__m);
       micron::memset(data_, 0, sizeof(__data));
     }

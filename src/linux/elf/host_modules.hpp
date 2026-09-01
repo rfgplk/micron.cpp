@@ -146,7 +146,7 @@ __build_host_dyn(host_module_t &m)
   const u8 b3 = probe[3];
   if ( b3 != mag3 ) return;
 
-  const nehdr_t *eh = reinterpret_cast<const nehdr_t *>(m.base);
+  const nehdr_t *eh = micron::ptr_cast<const nehdr_t *>(m.base);
   if ( eh->ident[ei_class] != native_traits::ident_class ) return;
   // WARNING: a class check alone is not enough; amd64 and an aarch64 object are both ELFCLASS64 with the same header layout
   if ( expected_machine != 0 && eh->machine != expected_machine ) return;
@@ -243,7 +243,7 @@ init_host_modules()
 
   i32 fd = posix::open("/proc/self/maps", posix::o_rdonly);
   if ( fd < 0 ) {
-    micron::munmap(reinterpret_cast<addr_t *>(buf), host_scratch_size);
+    micron::munmap(micron::ptr_cast<addr_t *>(buf), host_scratch_size);
     return;
   }
   usize total = 0;
@@ -295,7 +295,7 @@ init_host_modules()
     m.path = ln.path;
   }
 
-  micron::munmap(reinterpret_cast<addr_t *>(buf), host_scratch_size);
+  micron::munmap(micron::ptr_cast<addr_t *>(buf), host_scratch_size);
 
   for ( usize k = 0; k < __host_module_count; ++k ) {
     __build_host_dyn(__host_modules[k]);

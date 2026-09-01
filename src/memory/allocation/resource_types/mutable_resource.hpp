@@ -80,7 +80,7 @@ private:
     if constexpr ( micron::is_trivially_copyable_v<T> ) {
       chunk<byte> next = __allocator_resize_bytes<Alloc, alignof(T)>(__allocation(__core::memory, __core::capacity), bytes,
                                                                      allocation_multiply_or_throw(retained, sizeof(T)));
-      __core::memory = reinterpret_cast<T *>(next.ptr);
+      __core::memory = micron::ptr_cast<T *>(next.ptr);
       __core::capacity = next.len / sizeof(T);
       length = retained;
       if ( !__extent_matches(next, bytes) ) {
@@ -94,7 +94,7 @@ private:
     }
 
     chunk<byte> next = __create_checked(bytes);
-    T *destination = reinterpret_cast<T *>(next.ptr);
+    T *destination = micron::ptr_cast<T *>(next.ptr);
     usize constructed = 0;
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     try {

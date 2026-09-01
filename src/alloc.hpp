@@ -14,7 +14,7 @@ template<typename T = void>
 T *
 alloc(size_t sz)
 {
-  return reinterpret_cast<T *>(micron::__alloc(sz));
+  return micron::ptr_cast<T *>(micron::__alloc(sz));
 }
 
 template<typename T = void>

@@ -106,7 +106,7 @@ __dirent64_validate(const void *buf, usize pos, usize nread, const __linux_kerne
 {
   constexpr usize hdr = __builtin_offsetof(__linux_kernel_dirent64, d_name);
   if ( pos >= nread || pos + hdr > nread ) return 0;
-  out = reinterpret_cast<const __linux_kernel_dirent64 *>(static_cast<const char *>(buf) + pos);
+  out = micron::ptr_cast<const __linux_kernel_dirent64 *>(static_cast<const char *>(buf) + pos);
   const u16 reclen = out->d_reclen;
   if ( reclen <= hdr ) return 0;
   if ( (reclen % alignof(__linux_kernel_dirent64)) != 0 ) return 0;

@@ -126,21 +126,21 @@ template<typename O, typename P>
 constexpr O *
 real_addr_as(P &p) noexcept
 {
-  return reinterpret_cast<O *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+  return micron::ptr_cast<O *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
 }
 
 template<typename P>
 constexpr P *
 addressof(P &p) noexcept
 {
-  return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+  return __builtin_addressof(p);
 }
 
 template<typename P>
 constexpr P *
 addr_of(P &p) noexcept
 {
-  return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+  return __builtin_addressof(p);
 }
 
 template<typename P>
@@ -148,7 +148,7 @@ template<typename P>
 constexpr P *
 addr(P &p) noexcept
 {
-  return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+  return __builtin_addressof(p);
 }
 
 template<typename P>
@@ -156,14 +156,14 @@ template<typename P>
 constexpr P *
 addr(P &p) noexcept
 {
-  return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+  return __builtin_addressof(p);
 }
 
 template<typename P>
 constexpr P *
 addr(P &&p) noexcept
 {
-  return reinterpret_cast<P *>(&const_cast<byte &>(reinterpret_cast<const volatile byte &>(p)));
+  return __builtin_addressof(p);
 }
 
 template<typename T>

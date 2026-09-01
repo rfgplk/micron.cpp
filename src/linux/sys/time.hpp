@@ -189,7 +189,9 @@ clock(void)
 {
   timespec_t tm;
   if ( clock_gettime(clock_process_cputime_id, tm) != 0 ) return -1;
-  return (tm.tv_sec * clocks_per_sec + tm.tv_nsec / (1000000000 / clocks_per_sec));
+  // clock_t is width-32 on a width-32 target, so this wraps at ~36 min of cpu time -- the same
+  // contract every libc has here; the cast says the narrowing is meant
+  return static_cast<clock_t>(tm.tv_sec * clocks_per_sec + tm.tv_nsec / (1000000000 / clocks_per_sec));
 }
 
 time64_t

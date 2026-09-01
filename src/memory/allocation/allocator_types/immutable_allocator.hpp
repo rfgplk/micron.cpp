@@ -45,7 +45,7 @@ public:
     if ( bytes == 0 ) return { nullptr, 0 };
     chunk<byte> mapping = __map_create_aligned(__mapping_len(bytes), alignment);
     if ( !abc::register_external(mapping.ptr, mapping.len, abc::external_provenance::immutable) ) {
-      micron::munmap(reinterpret_cast<addr_t *>(mapping.ptr), mapping.len);
+      micron::munmap(micron::ptr_cast<addr_t *>(mapping.ptr), mapping.len);
       exc<except::memory_error>("allocator_immutable: provenance registration failed");
     }
     return { mapping.ptr, bytes };
@@ -83,7 +83,7 @@ public:
     if ( !allocation_checked_round_up(memory.len, page_size, mapping_len) ) return false;
     if ( abc::external_query_provenance(memory.ptr) != abc::external_provenance::immutable ) return false;
     if ( abc::external_query_size(memory.ptr) != mapping_len ) return false;
-    return micron::mprotect(reinterpret_cast<addr_t *>(memory.ptr), mapping_len, prot_read) == 0;
+    return micron::mprotect(micron::ptr_cast<addr_t *>(memory.ptr), mapping_len, prot_read) == 0;
   }
 
   [[nodiscard]] static bool
@@ -99,7 +99,7 @@ public:
     usize mapping_len;
     if ( !allocation_checked_round_up(memory.len, page_size, mapping_len) ) return;
     (void)abc::unregister_external(memory.ptr, mapping_len);
-    micron::munmap(reinterpret_cast<addr_t *>(memory.ptr), mapping_len);
+    micron::munmap(micron::ptr_cast<addr_t *>(memory.ptr), mapping_len);
   }
 
   static void

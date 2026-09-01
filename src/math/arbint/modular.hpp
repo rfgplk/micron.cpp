@@ -213,17 +213,17 @@ public:
   }
 
   [[nodiscard]] constexpr U
-  pow(const U &a, const U &e) const
+  pow(const U &a, const U &ex) const
   {
-    return __powm_into(a, e.limbs(), e.size());
+    return __powm_into(a, ex.limbs(), ex.size());
   }
 
   [[nodiscard]] constexpr U
-  pow(const U &a, u64 e) const
+  pow(const U &a, u64 ex) const
   {
     mpn::limb_t buf[(sizeof(u64) + sizeof(mpn::limb_t) - 1u) / sizeof(mpn::limb_t)] = {};
     constexpr usize take = sizeof(buf) / sizeof(buf[0]);
-    u64 v = e;
+    u64 v = ex;
     for ( usize i = 0; i < take; ++i ) {
       buf[i] = static_cast<mpn::limb_t>(v);
       v = (mpn::limb_bits >= 64u) ? 0u : (v >> (mpn::limb_bits & 63u));
@@ -412,17 +412,17 @@ public:
   }
 
   [[nodiscard]] constexpr U
-  pow(const U &a, const U &e) const
+  pow(const U &a, const U &ex) const
   {
-    return __powm_into(a, e.limbs(), e.size());
+    return __powm_into(a, ex.limbs(), ex.size());
   }
 
   [[nodiscard]] constexpr U
-  pow(const U &a, u64 e) const
+  pow(const U &a, u64 ex) const
   {
     mpn::limb_t buf[(sizeof(u64) + sizeof(mpn::limb_t) - 1u) / sizeof(mpn::limb_t)] = {};
     constexpr usize take = sizeof(buf) / sizeof(buf[0]);
-    u64 v = e;
+    u64 v = ex;
     for ( usize i = 0; i < take; ++i ) {
       buf[i] = static_cast<mpn::limb_t>(v);
       v = (mpn::limb_bits >= 64u) ? 0u : (v >> (mpn::limb_bits & 63u));
@@ -559,7 +559,7 @@ sqrmod(const arbuint<B, S, A> &a, const arbuint<B, S, A> &m)
 // base^exp mod m via the sliding window
 template<usize B, arb_solver S, class A>
 [[nodiscard]] inline constexpr arbuint<B, S, A>
-powmod(const arbuint<B, S, A> &a, const arbuint<B, S, A> &e, const arbuint<B, S, A> &m)
+powmod(const arbuint<B, S, A> &a, const arbuint<B, S, A> &ex, const arbuint<B, S, A> &m)
 {
   using U = arbuint<B, S, A>;
   using sizes = __arb::mod_sizes<U>;
@@ -567,14 +567,14 @@ powmod(const arbuint<B, S, A> &a, const arbuint<B, S, A> &e, const arbuint<B, S,
   if ( n == 0 ) micron::exc<micron::except::domain_error>("micron::math::powmod modulus is zero");
 
   const usize an = a.size();
-  const usize en = e.size();
-  const usize ebits = mpn::bitlen(e.limbs(), en);
+  const usize en = ex.size();
+  const usize ebits = mpn::bitlen(ex.limbs(), en);
 
   __arb::scratch<U::bounded ? sizes::powm : 1u, A, U::bounded> sc(n + mpn::powm_itch(n, an != 0 ? an : 1u, ebits));
   mpn::limb_t *const out = sc.get();
   mpn::limb_t *const work = out + n;
 
-  mpn::powm(out, a.limbs(), an, e.limbs(), en, m.limbs(), n, work);
+  mpn::powm(out, a.limbs(), an, ex.limbs(), en, m.limbs(), n, work);
   U r;
   r.__assign_limbs(out, n);
   return r;
@@ -582,20 +582,20 @@ powmod(const arbuint<B, S, A> &a, const arbuint<B, S, A> &e, const arbuint<B, S,
 
 template<usize B, arb_solver S, class A>
 [[nodiscard]] inline constexpr arbuint<B, S, A>
-powmod(const arbuint<B, S, A> &a, u64 e, const arbuint<B, S, A> &m)
+powmod(const arbuint<B, S, A> &a, u64 ex, const arbuint<B, S, A> &m)
 {
-  return powmod(a, arbuint<B, S, A>(e), m);
+  return powmod(a, arbuint<B, S, A>(ex), m);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // signed
 template<usize B, arb_solver S, class A>
 [[nodiscard]] inline constexpr arbint<B, S, A>
-powmod(const arbint<B, S, A> &a, const arbint<B, S, A> &e, const arbint<B, S, A> &m)
+powmod(const arbint<B, S, A> &a, const arbint<B, S, A> &ex, const arbint<B, S, A> &m)
 {
   using SI = arbint<B, S, A>;
   using U = arbuint<B, S, A>;
-  if ( e.sign() < 0 ) micron::exc<micron::except::domain_error>("micron::math::powmod negative exponent");
+  if ( ex.sign() < 0 ) micron::exc<micron::except::domain_error>("micron::math::powmod negative exponent");
 
   const U mm = abs(m).magnitude();
   U base = abs(a).magnitude();
@@ -604,7 +604,7 @@ powmod(const arbint<B, S, A> &a, const arbint<B, S, A> &e, const arbint<B, S, A>
   base %= mm;
   if ( a.sign() < 0 && !base.is_zero() ) base = mm - base;
 
-  return SI(powmod(base, abs(e).magnitude(), mm), false);
+  return SI(powmod(base, abs(ex).magnitude(), mm), false);
 }
 
 };      // namespace math

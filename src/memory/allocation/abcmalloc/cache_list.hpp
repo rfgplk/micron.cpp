@@ -128,7 +128,7 @@ struct __tlsf_list {
   __attribute__((always_inline)) inline tlsf_hdr *
   next_phys(tlsf_hdr *b) const noexcept
   {
-    return reinterpret_cast<tlsf_hdr *>(reinterpret_cast<byte *>(b) + (usize)b->bsize);
+    return micron::ptr_cast<tlsf_hdr *>(reinterpret_cast<byte *>(b) + (usize)b->bsize);
   }
 
   __attribute__((always_inline)) inline void
@@ -210,7 +210,7 @@ struct __tlsf_list {
 
     block->bsize = (u32)needed;
 
-    tlsf_hdr *rem = reinterpret_cast<tlsf_hdr *>(reinterpret_cast<byte *>(block) + needed);
+    tlsf_hdr *rem = micron::ptr_cast<tlsf_hdr *>(reinterpret_cast<byte *>(block) + needed);
     rem->bsize = (u32)remain;
     rem->prev_phys = block;
 
@@ -286,21 +286,21 @@ struct __tlsf_list {
 
       __impl_zero_arrays();
 
-      tlsf_hdr *ss = reinterpret_cast<tlsf_hdr *>(base);
+      tlsf_hdr *ss = micron::ptr_cast<tlsf_hdr *>(base);
       ss->bsize = (u32)__block_align;
       ss->flags = __block_alloc;
       ss->prev_phys = nullptr;
       ss->next_free = nullptr;
       ss->prev_free = nullptr;
 
-      tlsf_hdr *es = reinterpret_cast<tlsf_hdr *>(base + __block_align + total);
+      tlsf_hdr *es = micron::ptr_cast<tlsf_hdr *>(base + __block_align + total);
       es->bsize = (u32)__block_align;
       es->flags = __block_alloc;
       es->prev_phys = nullptr;
       es->next_free = nullptr;
       es->prev_free = nullptr;
 
-      tlsf_hdr *blk = reinterpret_cast<tlsf_hdr *>(base + __block_align);
+      tlsf_hdr *blk = micron::ptr_cast<tlsf_hdr *>(base + __block_align);
       blk->bsize = (u32)total;
       blk->flags = __block_free;
       blk->prev_phys = ss;
@@ -512,7 +512,7 @@ struct __tlsf_list {
   ret_flag
   tombstone(byte *ptr) noexcept
   {
-    tlsf_hdr *hdr = reinterpret_cast<tlsf_hdr *>(ptr - __hdr_offset);
+    tlsf_hdr *hdr = micron::ptr_cast<tlsf_hdr *>(ptr - __hdr_offset);
     if ( !(hdr->flags & __block_alloc) ) return { __flag_invalid };
 
     usize bsz = (usize)hdr->bsize;
@@ -533,7 +533,7 @@ struct __tlsf_list {
   bool
   is_tombstoned(byte *ptr) const noexcept
   {
-    const tlsf_hdr *hdr = reinterpret_cast<const tlsf_hdr *>(ptr - __hdr_offset);
+    const tlsf_hdr *hdr = micron::ptr_cast<const tlsf_hdr *>(ptr - __hdr_offset);
     return (hdr->flags & __block_tombstone) != 0;
   }
 
@@ -549,7 +549,7 @@ struct __tlsf_list {
   {
     if ( !ptr || !base ) return __flag_failure;
 
-    tlsf_hdr *block = reinterpret_cast<tlsf_hdr *>(ptr - __hdr_offset);
+    tlsf_hdr *block = micron::ptr_cast<tlsf_hdr *>(ptr - __hdr_offset);
     usize bsz = (usize)block->bsize;
     const i32 flags = block->flags;
 
@@ -627,7 +627,7 @@ struct __tlsf_list {
     byte *data_hi = base + __block_align + total;
     byte *blk = ptr - __hdr_offset;
     if ( blk < data_lo || blk >= data_hi ) return 0;
-    const tlsf_hdr *hdr = reinterpret_cast<const tlsf_hdr *>(blk);
+    const tlsf_hdr *hdr = micron::ptr_cast<const tlsf_hdr *>(blk);
     return (usize)hdr->bsize;
   }
 
@@ -639,7 +639,7 @@ struct __tlsf_list {
     byte *data_hi = base + __block_align + total;
     byte *blk = ptr - __hdr_offset;
     if ( blk < data_lo || blk >= data_hi ) return false;
-    const tlsf_hdr *hdr = reinterpret_cast<const tlsf_hdr *>(blk);
+    const tlsf_hdr *hdr = micron::ptr_cast<const tlsf_hdr *>(blk);
 
     return hdr->flags != __block_free;
   }

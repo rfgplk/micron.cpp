@@ -163,7 +163,7 @@ struct uprocess_t {
     umax_t k = 0;
     umax_t t = 0;
     // stored as null term strings, so we're iterating according to what we read
-    for ( umax_t i = 0; i < str.size(); ++i ) {
+    for ( usize i = 0; i < str.size(); ++i ) {
       if ( str[i] == 0x0 ) {
         t = i;
         argv.emplace_back(str.begin() + k, str.begin() + t);
@@ -176,7 +176,7 @@ struct uprocess_t {
     k = 0;
     t = 0;
     io::open_file("/proc/self/environ") >> str;
-    for ( umax_t i = 0; i < str.size(); ++i ) {
+    for ( usize i = 0; i < str.size(); ++i ) {
       if ( str[i] == 0x0 ) {
         t = i;
         envp.emplace_back(str.begin() + k, str.begin() + t);

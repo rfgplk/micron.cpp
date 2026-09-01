@@ -283,25 +283,25 @@ private:
     K *
     key_ptr() noexcept
     {
-      return reinterpret_cast<K *>(key_raw);
+      return micron::ptr_cast<K *>(key_raw);
     }
 
     V *
     value_ptr() noexcept
     {
-      return reinterpret_cast<V *>(value_raw);
+      return micron::ptr_cast<V *>(value_raw);
     }
 
     const K *
     key_ptr() const noexcept
     {
-      return reinterpret_cast<const K *>(key_raw);
+      return micron::ptr_cast<const K *>(key_raw);
     }
 
     const V *
     value_ptr() const noexcept
     {
-      return reinterpret_cast<const V *>(value_raw);
+      return micron::ptr_cast<const V *>(value_raw);
     }
   };
 
@@ -451,7 +451,7 @@ private:
   __attribute__((always_inline)) internal_node &
   inode(node_idx i) noexcept
   {
-    return *reinterpret_cast<internal_node *>(slot_raw(i));
+    return *micron::ptr_cast<internal_node *>(slot_raw(i));
   }
 
   __attribute__((always_inline)) const internal_node &
@@ -463,13 +463,13 @@ private:
   __attribute__((always_inline)) leaf_node &
   lnode(node_idx i) noexcept
   {
-    return *reinterpret_cast<leaf_node *>(slot_raw(i));
+    return *micron::ptr_cast<leaf_node *>(slot_raw(i));
   }
 
   __attribute__((always_inline)) const leaf_node &
   lnode(node_idx i) const noexcept
   {
-    return *reinterpret_cast<const leaf_node *>(slot_raw(i));
+    return *micron::ptr_cast<const leaf_node *>(slot_raw(i));
   }
 
   static usize
@@ -524,7 +524,7 @@ private:
         }
 
         if ( source_slot.raw[1] != 0 ) {
-          leaf_node &source = *reinterpret_cast<leaf_node *>(source_slot.raw);
+          leaf_node &source = *micron::ptr_cast<leaf_node *>(source_slot.raw);
           leaf_node *target = new (target_slot.raw) leaf_node();
           target->next_leaf = source.next_leaf;
           target->prev_leaf = source.prev_leaf;
@@ -572,7 +572,7 @@ private:
             }
           }
         } else {
-          internal_node &source = *reinterpret_cast<internal_node *>(source_slot.raw);
+          internal_node &source = *micron::ptr_cast<internal_node *>(source_slot.raw);
           internal_node *target = new (target_slot.raw) internal_node();
           target->nkeys = source.nkeys;
           for ( u8 i = 0; i < source.nkeys; ++i ) target->pivots[i] = source.pivots[i];
@@ -623,9 +623,9 @@ private:
       for ( usize i = 0; i < completed; ++i ) {
         if ( next.memory[i].raw[0] == __k_fsentinel ) continue;
         if ( next.memory[i].raw[1] != 0 )
-          reinterpret_cast<leaf_node *>(next.memory[i].raw)->~leaf_node();
+          micron::ptr_cast<leaf_node *>(next.memory[i].raw)->~leaf_node();
         else
-          reinterpret_cast<internal_node *>(next.memory[i].raw)->~internal_node();
+          micron::ptr_cast<internal_node *>(next.memory[i].raw)->~internal_node();
       }
       throw;
     }
@@ -634,9 +634,9 @@ private:
     for ( usize i = 0; i < live_slots; ++i ) {
       if ( __slab.memory[i].raw[0] == __k_fsentinel ) continue;
       if ( __slab.memory[i].raw[1] != 0 )
-        reinterpret_cast<leaf_node *>(__slab.memory[i].raw)->~leaf_node();
+        micron::ptr_cast<leaf_node *>(__slab.memory[i].raw)->~leaf_node();
       else
-        reinterpret_cast<internal_node *>(__slab.memory[i].raw)->~internal_node();
+        micron::ptr_cast<internal_node *>(__slab.memory[i].raw)->~internal_node();
     }
 
     chunk<byte> old_chunk = __slab.data();
@@ -654,7 +654,7 @@ private:
   {
     if ( __fhead != __k_empty ) {
       node_idx i = __fhead;
-      free_slot_hdr *h = reinterpret_cast<free_slot_hdr *>(slot_raw(i));
+      free_slot_hdr *h = micron::ptr_cast<free_slot_hdr *>(slot_raw(i));
       __fhead = h->next_free;
       return i;
     }
@@ -701,7 +701,7 @@ private:
     if ( n > static_cast<usize>(-1) / sizeof(bucket_head) || n > static_cast<usize>(-1) / __leaf_fanout )
       exc<except::library_error>("btree_map: bucket capacity overflow");
     __bucket_block = __allocator_create<Alloc, alignof(bucket_head)>(n * sizeof(bucket_head));
-    buckets_ = reinterpret_cast<bucket_head *>(__bucket_block.ptr);
+    buckets_ = micron::ptr_cast<bucket_head *>(__bucket_block.ptr);
     for ( usize i = 0; i < n; ++i ) {
       buckets_[i].root = __k_empty;
       buckets_[i].size = 0;
@@ -1510,7 +1510,7 @@ private:
 
     chunk<byte> new_bucket_block
         = __allocator_create<Alloc, alignof(bucket_head)>(allocation_multiply_or_throw(new_n_buckets, sizeof(bucket_head)));
-    bucket_head *new_buckets = reinterpret_cast<bucket_head *>(new_bucket_block.ptr);
+    bucket_head *new_buckets = micron::ptr_cast<bucket_head *>(new_bucket_block.ptr);
     for ( usize i = 0; i < new_n_buckets; ++i ) {
       new_buckets[i].root = __k_empty;
       new_buckets[i].size = 0;

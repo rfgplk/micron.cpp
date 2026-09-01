@@ -643,10 +643,10 @@ iamax_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
   // 2 independent chains, 8 floats per outer iter.
   float32x4_t vmax0 = simd::neon::abs(simd::neon::load_f32(x + 0));
   float32x4_t vmax1 = simd::neon::abs(simd::neon::load_f32(x + 4));
-  uint32x4_t vidx0 = (uint32x4_t){ 0u, 1u, 2u, 3u };
-  uint32x4_t vidx1 = (uint32x4_t){ 4u, 5u, 6u, 7u };
-  uint32x4_t vcand0 = (uint32x4_t){ 8u, 9u, 10u, 11u };
-  uint32x4_t vcand1 = (uint32x4_t){ 12u, 13u, 14u, 15u };
+  uint32x4_t vidx0 = { 0u, 1u, 2u, 3u };
+  uint32x4_t vidx1 = { 4u, 5u, 6u, 7u };
+  uint32x4_t vcand0 = { 8u, 9u, 10u, 11u };
+  uint32x4_t vcand1 = { 12u, 13u, 14u, 15u };
   const uint32x4_t step8 = simd::neon::splat_u32(8);
   const uint32x4_t step4 = simd::neon::splat_u32(4);
   usize i = 8;
@@ -723,10 +723,10 @@ iamax_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
   // 2 independent chains, 4 doubles per outer iter.
   float64x2_t vmax0 = simd::neon::abs(simd::neon::load_f64(x + 0));
   float64x2_t vmax1 = simd::neon::abs(simd::neon::load_f64(x + 2));
-  uint64x2_t vidx0 = (uint64x2_t){ 0ULL, 1ULL };
-  uint64x2_t vidx1 = (uint64x2_t){ 2ULL, 3ULL };
-  uint64x2_t vcand0 = (uint64x2_t){ 4ULL, 5ULL };
-  uint64x2_t vcand1 = (uint64x2_t){ 6ULL, 7ULL };
+  uint64x2_t vidx0 = { 0ULL, 1ULL };
+  uint64x2_t vidx1 = { 2ULL, 3ULL };
+  uint64x2_t vcand0 = { 4ULL, 5ULL };
+  uint64x2_t vcand1 = { 6ULL, 7ULL };
   const uint64x2_t step4 = simd::neon::splat_u64(4);
   const uint64x2_t step2 = simd::neon::splat_u64(2);
   usize i = 4;

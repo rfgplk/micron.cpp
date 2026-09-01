@@ -186,7 +186,13 @@ __drop_ref(fiber *f) noexcept
 // a coroutine frame must satisfy the ABI's strictest alignment, not just 16
 // gcc freely places an over aligned local at a frame offset computed as if the frame base were
 // __BIGGEST_ALIGNMENT__-aligned
-inline constexpr usize __frame_align = __BIGGEST_ALIGNMENT__ < 16 ? usize{ 16 } : usize{ __BIGGEST_ALIGNMENT__ };
+// max(__BIGGEST_ALIGNMENT__, 16), selected by the preprocessor: on a target where the two coincide
+// a ?: here reads as a condition with identical branches
+#if __BIGGEST_ALIGNMENT__ < 16
+inline constexpr usize __frame_align = usize{ 16 };
+#else
+inline constexpr usize __frame_align = usize{ __BIGGEST_ALIGNMENT__ };
+#endif
 inline constexpr usize __frame_hdr = __frame_align;
 
 [[gnu::always_inline]] inline usize
@@ -201,8 +207,8 @@ __frame_alloc_heap(usize need) noexcept
 {
   byte *raw = static_cast<byte *>(::operator new(need + __frame_align));
   byte *h = reinterpret_cast<byte *>((reinterpret_cast<usize>(raw + __frame_hdr) + (__frame_align - 1)) & ~(__frame_align - 1));
-  *reinterpret_cast<fiber **>(h - __frame_hdr) = nullptr;
-  *reinterpret_cast<byte **>(h - __frame_hdr + sizeof(void *)) = raw;
+  *micron::ptr_cast<fiber **>(h - __frame_hdr) = nullptr;
+  *micron::ptr_cast<byte **>(h - __frame_hdr + sizeof(void *)) = raw;
   return h;
 }
 
@@ -217,7 +223,7 @@ __frame_alloc(usize n) noexcept
   if ( next > f->region.frame_limit ) [[unlikely]]
     return __frame_alloc_heap(need);
   f->frame_sp = next;
-  *reinterpret_cast<fiber **>(h) = f;
+  *micron::ptr_cast<fiber **>(h) = f;
   f->refs.fetch_add(1, micron::memory_order_relaxed);
   return h + __frame_hdr;
 }
@@ -227,9 +233,9 @@ __frame_free(void *p, usize n) noexcept
 {
   if ( p == nullptr ) return;
   byte *h = reinterpret_cast<byte *>(p) - __frame_hdr;
-  fiber *owner = *reinterpret_cast<fiber **>(h);
+  fiber *owner = *micron::ptr_cast<fiber **>(h);
   if ( owner == nullptr ) {
-    ::operator delete(static_cast<void *>(*reinterpret_cast<byte **>(h + sizeof(void *))));
+    ::operator delete(static_cast<void *>(*micron::ptr_cast<byte **>(h + sizeof(void *))));
     return;
   }
   if ( owner == __current_fiber && h + __frame_hdr + __frame_round(n) == owner->frame_sp ) owner->frame_sp = h;

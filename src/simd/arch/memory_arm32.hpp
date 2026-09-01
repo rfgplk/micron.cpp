@@ -25,8 +25,8 @@ __neon_sfence(void) noexcept
 __attribute__((always_inline)) static inline bool
 __neon_v7_all_eq(uint8x16_t ceq) noexcept
 {
-  const uint64x2_t v64 = vreinterpretq_u64_u8(ceq);
-  return (vgetq_lane_u64(v64, 0) & vgetq_lane_u64(v64, 1)) == ~static_cast<u64>(0);
+  const uint64x2_t ceq64 = vreinterpretq_u64_u8(ceq);
+  return (vgetq_lane_u64(ceq64, 0) & vgetq_lane_u64(ceq64, 1)) == ~static_cast<u64>(0);
 }
 
 template<typename T>

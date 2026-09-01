@@ -80,9 +80,9 @@ template<ieee754_floating F>
 unit_from_u64(u64 value) noexcept
 {
   if constexpr ( sizeof(F) == 8 )
-    return F((value >> 11) * (1.0 / 9007199254740992.0));
+    return F(static_cast<double>(value >> 11) * (1.0 / 9007199254740992.0));
   else
-    return F((value >> 40) * (1.0f / 16777216.0f));
+    return F(static_cast<float>(value >> 40) * (1.0f / 16777216.0f));
 }
 
 [[nodiscard]] inline constexpr u32

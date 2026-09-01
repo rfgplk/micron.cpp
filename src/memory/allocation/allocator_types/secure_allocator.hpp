@@ -44,7 +44,7 @@ public:
     const usize capacity = allocation_round_up_or_throw(__allocation_policy_capacity<P>(bytes), page_size);
     if ( capacity == 0 ) return { nullptr, 0 };
     chunk<byte> memory = __map_create_aligned(capacity, alignment);
-    addr_t *address = reinterpret_cast<addr_t *>(memory.ptr);
+    addr_t *address = micron::ptr_cast<addr_t *>(memory.ptr);
     if ( micron::mlock(address, memory.len) != 0 ) {
       micron::munmap(address, memory.len);
       exc<except::memory_error>("allocator_secure: mlock failed");
@@ -94,8 +94,8 @@ public:
     if ( memory.ptr == nullptr ) return;
     (void)abc::unregister_external(memory.ptr, memory.len);
     __allocation_secure_zero(memory.ptr, memory.len);
-    micron::munlock(reinterpret_cast<addr_t *>(memory.ptr), memory.len);
-    micron::munmap(reinterpret_cast<addr_t *>(memory.ptr), memory.len);
+    micron::munlock(micron::ptr_cast<addr_t *>(memory.ptr), memory.len);
+    micron::munmap(micron::ptr_cast<addr_t *>(memory.ptr), memory.len);
   }
 
   static void

@@ -244,7 +244,9 @@ struct sigaction_t {
 
 // start funcs
 
-inline constexpr u64
+// returns a sigset_t word, so it is typed as one -- the shift is already reduced modulo the word
+// width, which is 32 bits on a width-32 target
+inline constexpr unsigned long int
 sigmask(const u64 mask)
 {
   return (1UL << (((mask)-1) % (8 * sizeof(unsigned long))));
@@ -300,7 +302,7 @@ sigorset(const posix::sigset_t &a, const posix::sigset_t &b)
 inline int
 sigismember(const posix::sigset_t &a, int sig)
 {
-  u64 mask = sigmask(static_cast<u64>(sig));
+  unsigned long int mask = sigmask(static_cast<u64>(sig));
   int word = sigword(sig);
   return a.__val[word] & mask ? 1 : 0;
 }
@@ -308,7 +310,7 @@ sigismember(const posix::sigset_t &a, int sig)
 inline void
 sigaddset(posix::sigset_t &a, int sig)
 {
-  u64 mask = sigmask(static_cast<u64>(sig));
+  unsigned long int mask = sigmask(static_cast<u64>(sig));
   int word = sigword(sig);
   a.__val[word] |= mask;
 }
@@ -316,7 +318,7 @@ sigaddset(posix::sigset_t &a, int sig)
 inline void
 sigdelset(posix::sigset_t &a, int sig)
 {
-  u64 mask = sigmask(static_cast<u64>(sig));
+  unsigned long int mask = sigmask(static_cast<u64>(sig));
   int word = sigword(sig);
   a.__val[word] &= ~mask;
 }

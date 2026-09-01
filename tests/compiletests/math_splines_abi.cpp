@@ -17,12 +17,17 @@ static_assert(static_cast<u32>(extrap::error_value) == 2);
 static_assert(static_cast<u32>(build_status::ok) == 0);
 static_assert(static_cast<u32>(build_status::invalid_argument) == 7);
 
+// offsetof on a non-standard-layout type is conditionally-supported, and supported here; the whole
+// point of this file is that these offsets are what Meridionalis compiles against
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
 static_assert(__builtin_offsetof(cubic_spline_1d<f64>, xs) == 0);
 static_assert(__builtin_offsetof(cubic_spline_1d<f64>, seg) == sizeof(vector<f64>));
 static_assert(__builtin_offsetof(cubic_spline_1d<f64>, last_hit) == 2 * sizeof(vector<f64>));
 static_assert(__builtin_offsetof(cubic_curve_nd<f64, 6>, ts) == 0);
 static_assert(__builtin_offsetof(cubic_curve_nd<f64, 6>, seg) == sizeof(vector<f64>));
 static_assert(__builtin_offsetof(cubic_curve_nd<f64, 6>, last_hit) == 2 * sizeof(vector<f64>));
+#pragma GCC diagnostic pop
 
 static_assert(sizeof(curve_seg<f32, 2>) == 64 && alignof(curve_seg<f32, 2>) == 16);
 static_assert(sizeof(curve_seg<f64, 2>) == 64 && alignof(curve_seg<f64, 2>) == 16);
@@ -49,11 +54,13 @@ using make_curve_f64_6_t = cubic_curve_nd<f64, 6> (*)(raw_slice<const f64>, cons
                                                       build_info<f64> *) noexcept;
 using locate_f64_t = usize (*)(const f64 *, usize, f64, usize &) noexcept;
 
-static_assert(static_cast<make_cubic_f64_t>(&make_cubic<f64>) != nullptr);
-static_assert(static_cast<eval_cubic_f64_t>(&evaluate<f64>) != nullptr);
-static_assert(static_cast<eval_cubic_batch_f64_t>(&evaluate<f64>) != nullptr);
-static_assert(static_cast<make_curve_f64_6_t>(&make_cubic_curve<f64, 6>) != nullptr);
-static_assert(static_cast<locate_f64_t>(&__impl_splines_bits::locate_segment<f64>) != nullptr);
+// binding each pointer is the assertion: it only compiles if the overload resolves to exactly that
+// signature. a != nullptr on the result adds nothing -- the address of a function is never null
+constexpr make_cubic_f64_t __abi_make_cubic = &make_cubic<f64>;
+constexpr eval_cubic_f64_t __abi_evaluate = &evaluate<f64>;
+constexpr eval_cubic_batch_f64_t __abi_evaluate_batch = &evaluate<f64>;
+constexpr make_curve_f64_6_t __abi_make_cubic_curve = &make_cubic_curve<f64, 6>;
+constexpr locate_f64_t __abi_locate_segment = &__impl_splines_bits::locate_segment<f64>;
 
 int
 main()

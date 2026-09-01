@@ -106,7 +106,7 @@ public:
     micron::coro::io::__wave_drain_cancel(__wv, __nodes, __staged * wave_sqes, __rid);
     if ( !micron::coro::io::__wave_settle(__wv) ) return;      // resumed frame never reported; leak, do not corrupt
     __reclaim_slots();
-    if ( __slab != nullptr ) micron::munmap(reinterpret_cast<addr_t *>(__slab), __slab_sz);
+    if ( __slab != nullptr ) micron::munmap(micron::ptr_cast<addr_t *>(__slab), __slab_sz);
   }
 
   [[nodiscard]] static bool

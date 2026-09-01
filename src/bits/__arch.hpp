@@ -276,6 +276,12 @@ inline constexpr unsigned __micron_width = __wordsize;
 
 #endif
 
+// the width ladders in algorithm/memory.hpp and array/carray.hpp read this unconditionally, so a
+// non-x86 target needs the name to exist rather than be taken as an undefined 0
+#if !defined(__micron_x86_simd_width)
+#define __micron_x86_simd_width 0
+#endif
+
 #if defined(__micron_arch_arm_any)
 
 #if defined(__ARM_NEON) || defined(__ARM_NEON__)

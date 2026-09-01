@@ -625,7 +625,7 @@ __allocator_allocate_array(usize count)
 {
   const usize bytes = allocation_multiply_or_throw(count, sizeof(T));
   if constexpr ( allocator_traits<Alloc>::template has_unsized_deallocate<alignof(T)> ) {
-    return reinterpret_cast<T *>(__allocator_create<Alloc, alignof(T)>(bytes).ptr);
+    return micron::ptr_cast<T *>(__allocator_create<Alloc, alignof(T)>(bytes).ptr);
   }
 
   constexpr usize alignment = alignof(T) < alignof(__allocator_array_header) ? alignof(__allocator_array_header) : alignof(T);
@@ -634,7 +634,7 @@ __allocator_allocate_array(usize count)
   const uintptr_t first = reinterpret_cast<uintptr_t>(storage.ptr) + sizeof(__allocator_array_header);
   const uintptr_t aligned = (first + alignment - 1) & ~(static_cast<uintptr_t>(alignment) - 1);
   T *result = reinterpret_cast<T *>(aligned);
-  auto *header = reinterpret_cast<__allocator_array_header *>(reinterpret_cast<byte *>(result) - sizeof(__allocator_array_header));
+  auto *header = micron::ptr_cast<__allocator_array_header *>(reinterpret_cast<byte *>(result) - sizeof(__allocator_array_header));
   new (static_cast<void *>(header)) __allocator_array_header{ storage, alignment };
   return result;
 }
@@ -666,7 +666,7 @@ __allocator_deallocate_array(T *memory) noexcept
     allocator_traits<Alloc>::template deallocate<alignof(T)>(reinterpret_cast<byte *>(memory));
     return;
   }
-  auto *header = reinterpret_cast<__allocator_array_header *>(reinterpret_cast<byte *>(memory) - sizeof(__allocator_array_header));
+  auto *header = micron::ptr_cast<__allocator_array_header *>(reinterpret_cast<byte *>(memory) - sizeof(__allocator_array_header));
   __allocator_destroy<Alloc>(header->storage, header->alignment);
 }
 

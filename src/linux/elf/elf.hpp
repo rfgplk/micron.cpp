@@ -30,7 +30,7 @@ class handle_t
   {
     const dyn_info_t &d = __mod.dyn;
     if ( !d.symtab || !d.strtab || d.symcount == 0 ) return;
-    __syms.reserve(d.symcount);
+    __syms.reserve(static_cast<usize>(d.symcount));
     for ( xword i = 0; i < d.symcount; ++i ) {
       const nsym_t &s = d.symtab[i];
       symbol_info_t row;

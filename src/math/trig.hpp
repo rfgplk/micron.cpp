@@ -314,9 +314,9 @@ fmod(_Float16 x, _Float16 y) noexcept
 }
 
 inline _Float16
-frexp(_Float16 x, int *e) noexcept
+frexp(_Float16 x, int *ex) noexcept
 {
-  return _Float16(mkbits::manip::frexp<f32>(f32(x), e));
+  return _Float16(mkbits::manip::frexp<f32>(f32(x), ex));
 }
 
 constexpr _Float16
@@ -438,9 +438,9 @@ fmod(_Float128 x, _Float128 y) noexcept
 }
 
 inline _Float128
-frexp(_Float128 x, int *e) noexcept
+frexp(_Float128 x, int *ex) noexcept
 {
-  return _Float128(mkbits::manip::frexp<f64>(f64(x), e));
+  return _Float128(mkbits::manip::frexp<f64>(f64(x), ex));
 }
 
 constexpr _Float128

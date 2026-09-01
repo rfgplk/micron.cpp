@@ -182,7 +182,7 @@ struct __buddy_list {
   __attribute__((always_inline)) inline block_header *
   hdr_of(byte *block_start, i32 o) const noexcept
   {
-    return reinterpret_cast<block_header *>(block_start + order_size(o) - __hdr_offset);
+    return micron::ptr_cast<block_header *>(block_start + order_size(o) - __hdr_offset);
   }
 
   __attribute__((always_inline)) inline const block_header *
@@ -473,8 +473,9 @@ struct __buddy_list {
     } else {
 
       tags_external = false;
-      usize approx_tags = (usable + Min) / (Min + 1);
-      usize tag_area = (approx_tags + Min - 1) & ~(usize)(Min - 1);
+      constexpr usize min_sz = static_cast<usize>(Min);
+      usize approx_tags = (usable + min_sz) / (min_sz + 1);
+      usize tag_area = (approx_tags + min_sz - 1) & ~(min_sz - 1);
       if ( tag_area >= usable ) {
         base = nullptr;
         total = 0;

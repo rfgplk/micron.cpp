@@ -95,7 +95,7 @@ public:
   {
     if ( memory.ptr ) {
       (void)abc::unregister_external(memory.ptr, memory.len);
-      micron::munmap(reinterpret_cast<addr_t *>(memory.ptr), memory.len);
+      micron::munmap(micron::ptr_cast<addr_t *>(memory.ptr), memory.len);
     }
   }
 

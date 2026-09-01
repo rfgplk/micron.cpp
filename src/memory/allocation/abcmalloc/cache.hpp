@@ -37,7 +37,7 @@ struct cache {
   void
   __heap_shrink(const max_t sz)
   {
-    micron::sbrk((-1) * sz);
+    micron::sbrk(static_cast<intptr_t>((-1) * sz));
   }
 
   micron::__chunk<byte>

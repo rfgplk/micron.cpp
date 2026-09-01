@@ -49,7 +49,7 @@ is_present(addr_t *ptr)
 bool
 is_present(byte *ptr)
 {
-  return is_present(reinterpret_cast<addr_t *>(ptr));
+  return is_present(micron::ptr_cast<addr_t *>(ptr));
 }
 
 template<typename T>
@@ -77,7 +77,7 @@ within(addr_t *ptr)
 bool
 within(byte *ptr)
 {
-  return within(reinterpret_cast<addr_t *>(ptr));
+  return within(micron::ptr_cast<addr_t *>(ptr));
 }
 
 void
@@ -106,7 +106,7 @@ mark_at(byte *ptr, usize size)
   if ( !ptr or size == 0 ) [[unlikely]]
     return nullptr;
 
-  if ( __query_arena(ptr)->has_provenance(reinterpret_cast<addr_t *>(ptr)) || !register_external(ptr, size) ) [[unlikely]] {
+  if ( __query_arena(ptr)->has_provenance(micron::ptr_cast<addr_t *>(ptr)) || !register_external(ptr, size) ) [[unlikely]] {
     ABC_DOCTOR(if ( doctor::on_bad_free(ptr, size, "mark_at(): region already tracked by allocator", __FILE__, __LINE__) ) return nullptr;)
     micron::exc<micron::except::memory_error_abc_mark>("mark_at(): region already tracked by allocator");
     return nullptr;
@@ -396,7 +396,7 @@ __aligned_base_of(byte *ptr) noexcept
 {
   if ( !__aligned_prefix_readable(ptr) ) [[unlikely]]
     return nullptr;
-  const __aligned_prefix *prefix = reinterpret_cast<const __aligned_prefix *>(ptr - sizeof(__aligned_prefix));
+  const __aligned_prefix *prefix = micron::ptr_cast<const __aligned_prefix *>(ptr - sizeof(__aligned_prefix));
   byte *const raw = prefix->raw;
   if ( raw >= ptr || prefix->guard != __aligned_guard(ptr, raw) ) [[likely]]
     return nullptr;
@@ -453,7 +453,7 @@ aligned_dealloc(byte *ptr, usize alignment)
     dealloc(ptr);
     return;
   }
-  auto *prefix = reinterpret_cast<__aligned_prefix *>(ptr - sizeof(__aligned_prefix));
+  auto *prefix = micron::ptr_cast<__aligned_prefix *>(ptr - sizeof(__aligned_prefix));
   dealloc(prefix->raw);
 }
 
@@ -471,7 +471,7 @@ aligned_retire(byte *ptr, usize alignment)
     retire(ptr);
     return;
   }
-  auto *prefix = reinterpret_cast<__aligned_prefix *>(ptr - sizeof(__aligned_prefix));
+  auto *prefix = micron::ptr_cast<__aligned_prefix *>(ptr - sizeof(__aligned_prefix));
   retire(prefix->raw);
 }
 
@@ -502,7 +502,7 @@ resize_chunk(micron::__chunk<byte> old, usize size, usize preserve_bytes)
   }
   byte *ptr = owner->resize(old.ptr, size, preserve_bytes);
   if ( ptr == nullptr ) return { nullptr, 0 };
-  return { ptr, __query_arena(ptr)->__size_of_alloc(reinterpret_cast<addr_t *>(ptr)) };
+  return { ptr, __query_arena(ptr)->__size_of_alloc(micron::ptr_cast<addr_t *>(ptr)) };
 }
 
 [[nodiscard]] micron::__chunk<byte>
@@ -565,9 +565,9 @@ query_size(T *ptr)
   if ( external ) return external;
   __arena *const owner = __query_arena(ptr);
   if constexpr ( __default_multithread_safe ) {
-    if ( owner != __current_arena() ) return owner->__shared_size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+    if ( owner != __current_arena() ) return owner->__shared_size_of_alloc(micron::ptr_cast<addr_t *>(ptr));
   }
-  return owner->__size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+  return owner->__size_of_alloc(micron::ptr_cast<addr_t *>(ptr));
 }
 
 // leave these as void*

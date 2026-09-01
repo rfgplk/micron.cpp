@@ -61,7 +61,7 @@ realloc(void *ptr, usize size) noexcept      // reallocates memory
   // for posix_memalign() the block starts before ptr
   byte *const old = reinterpret_cast<byte *>(ptr);
   byte *const base = abc::__aligned_base_of(old);
-  const usize block = abc::query_size(reinterpret_cast<addr_t *>(base != nullptr ? base : old));
+  const usize block = abc::query_size(micron::ptr_cast<addr_t *>(base != nullptr ? base : old));
   const usize displacement = base != nullptr ? static_cast<usize>(old - base) : 0u;
   const usize old_size = block > displacement ? block - displacement : 0u;
 

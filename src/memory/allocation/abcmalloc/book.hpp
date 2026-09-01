@@ -272,13 +272,13 @@ public:
   addr_t *
   addr() const
   {
-    return reinterpret_cast<addr_t *>(__kernel_memory.ptr);
+    return micron::ptr_cast<addr_t *>(__kernel_memory.ptr);
   }
 
   addr_t *
   addr_end() const
   {
-    return reinterpret_cast<addr_t *>(__kernel_memory.ptr + __kernel_memory.len - __guard_offset);
+    return micron::ptr_cast<addr_t *>(__kernel_memory.ptr + __kernel_memory.len - __guard_offset);
   }
 
   bool
@@ -535,13 +535,13 @@ public:
   addr_t *
   addr() const
   {
-    return reinterpret_cast<addr_t *>(__kernel_memory.ptr);
+    return micron::ptr_cast<addr_t *>(__kernel_memory.ptr);
   }
 
   addr_t *
   addr_end() const
   {
-    return reinterpret_cast<addr_t *>(__kernel_memory.ptr + __kernel_memory.len - __guard_offset);
+    return micron::ptr_cast<addr_t *>(__kernel_memory.ptr + __kernel_memory.len - __guard_offset);
   }
 
   bool

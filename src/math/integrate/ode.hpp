@@ -359,9 +359,9 @@ locate_bracket(F start, F end, F before, F after, Evaluate evaluate) noexcept
       const F time = a;
       a = b;
       b = time;
-      const F value = fa;
+      const F fval = fa;
       fa = fb;
-      fb = value;
+      fb = fval;
     }
     if ( mk::manip::fabs<F>(b - a) <= tolerance ) break;
   }

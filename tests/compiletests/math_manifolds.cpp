@@ -78,5 +78,5 @@ touch_manifolds() noexcept
 int
 main()
 {
-  return static_cast<int>(touch_manifolds<f32>() + touch_manifolds<f64>());
+  return static_cast<int>(static_cast<f64>(touch_manifolds<f32>()) + touch_manifolds<f64>());
 }

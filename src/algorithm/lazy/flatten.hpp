@@ -74,7 +74,7 @@ public:
   T *
   get() noexcept
   {
-    return reinterpret_cast<T *>(__b);
+    return micron::ptr_cast<T *>(__b);
   }
 
   const T *

@@ -111,7 +111,7 @@ __typeset_dispatch(byte *restrict d, const T in, const u64 cnt) noexcept
     __builtin_memcpy(&w, &in, 8);
     return __memset_words(d, w, cnt * sizeof(T));
   } else {
-    T *tp = reinterpret_cast<T *>(d);
+    T *tp = micron::ptr_cast<T *>(d);
     for ( u64 i = 0; i < cnt; i++ ) tp[i] = in;
     return d;
   }

@@ -380,7 +380,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   read(void) -> fduration_t
   {
     time_t sec = time_end.tv_sec - time_begin.tv_sec;
-    long nsec = time_end.tv_nsec - time_begin.tv_nsec;
+    long nsec = static_cast<long>(time_end.tv_nsec - time_begin.tv_nsec);
     __impl::normalise(sec, nsec);
     return __impl::delta_to_unit<U>(sec, nsec);
   }
@@ -390,7 +390,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   read(const timespec_t &a, const timespec_t &b) -> fduration_t
   {
     time_t sec = a.tv_sec - b.tv_sec;
-    long nsec = a.tv_nsec - b.tv_nsec;
+    long nsec = static_cast<long>(a.tv_nsec - b.tv_nsec);
     __impl::normalise(sec, nsec);
     return __impl::delta_to_unit<U>(sec, nsec);
   }
@@ -734,7 +734,7 @@ inline fduration_t
 elapsed(const timespec_t &begin, const timespec_t &end) noexcept
 {
   time_t sec = end.tv_sec - begin.tv_sec;
-  long nsec = end.tv_nsec - begin.tv_nsec;
+  long nsec = static_cast<long>(end.tv_nsec - begin.tv_nsec);
   __impl::normalise(sec, nsec);
   return __impl::delta_to_unit<U>(sec, nsec);
 }

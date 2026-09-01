@@ -216,11 +216,11 @@ template<typename F>
 inline i64
 memcmp_8b(const F *src, const F *dest) noexcept
 {
-  const u64 *a = reinterpret_cast<const u64 *>(src);
-  const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] ) return 0;
   const byte *sa = reinterpret_cast<const byte *>(src);
   const byte *da = reinterpret_cast<const byte *>(dest);
+  bool eq = true;
+  for ( int i = 0; i < 8; i += 8 ) eq &= __cmp_word(sa + i) == __cmp_word(da + i);
+  if ( eq ) return 0;
   for ( int i = 0; i < 8; i++ )
     if ( sa[i] != da[i] ) return &sa[i] - &da[i];
   return 0;
@@ -230,11 +230,11 @@ template<typename F>
 inline i64
 memcmp_16b(const F *src, const F *dest) noexcept
 {
-  const u64 *a = reinterpret_cast<const u64 *>(src);
-  const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] ) return 0;
   const byte *sa = reinterpret_cast<const byte *>(src);
   const byte *da = reinterpret_cast<const byte *>(dest);
+  bool eq = true;
+  for ( int i = 0; i < 16; i += 8 ) eq &= __cmp_word(sa + i) == __cmp_word(da + i);
+  if ( eq ) return 0;
   for ( int i = 0; i < 16; i++ )
     if ( sa[i] != da[i] ) return &sa[i] - &da[i];
   return 0;
@@ -244,11 +244,11 @@ template<typename F>
 inline i64
 memcmp_32b(const F *src, const F *dest) noexcept
 {
-  const u64 *a = reinterpret_cast<const u64 *>(src);
-  const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] ) return 0;
   const byte *sa = reinterpret_cast<const byte *>(src);
   const byte *da = reinterpret_cast<const byte *>(dest);
+  bool eq = true;
+  for ( int i = 0; i < 32; i += 8 ) eq &= __cmp_word(sa + i) == __cmp_word(da + i);
+  if ( eq ) return 0;
   for ( int i = 0; i < 32; i++ )
     if ( sa[i] != da[i] ) return &sa[i] - &da[i];
   return 0;
@@ -258,12 +258,11 @@ template<typename F>
 inline i64
 memcmp_64b(const F *src, const F *dest) noexcept
 {
-  const u64 *a = reinterpret_cast<const u64 *>(src);
-  const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] && a[4] == b[4] && a[5] == b[5] && a[6] == b[6] && a[7] == b[7] )
-    return 0;
   const byte *sa = reinterpret_cast<const byte *>(src);
   const byte *da = reinterpret_cast<const byte *>(dest);
+  bool eq = true;
+  for ( int i = 0; i < 64; i += 8 ) eq &= __cmp_word(sa + i) == __cmp_word(da + i);
+  if ( eq ) return 0;
   for ( int i = 0; i < 64; i++ )
     if ( sa[i] != da[i] ) return &sa[i] - &da[i];
   return 0;
@@ -414,11 +413,11 @@ rcbcmp(const byte &src, const byte &dest) noexcept
 };
 
 inline i64
+// NOTE: src/dest are caller pointers with no alignment guarantee, so the 8-byte reads go through
+// __cmp_word above -- a *(const u64 *) here faults on a strict-alignment target
 bytecmp_8b(const byte *src, const byte *dest) noexcept
 {
-  const u64 a = *reinterpret_cast<const u64 *>(src);
-  const u64 b = *reinterpret_cast<const u64 *>(dest);
-  if ( a == b ) return 0;
+  if ( __cmp_word(src) == __cmp_word(dest) ) return 0;
   for ( int i = 0; i < 8; i++ )
     if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
@@ -433,9 +432,9 @@ bcmp_8b(const byte *src, const byte *dest) noexcept
 inline i64
 bytecmp_16b(const byte *src, const byte *dest) noexcept
 {
-  const u64 *a = reinterpret_cast<const u64 *>(src);
-  const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] ) return 0;
+  bool eq = true;
+  for ( int i = 0; i < 16; i += 8 ) eq &= __cmp_word(src + i) == __cmp_word(dest + i);
+  if ( eq ) return 0;
   for ( int i = 0; i < 16; i++ )
     if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
@@ -450,9 +449,9 @@ bcmp_16b(const byte *src, const byte *dest) noexcept
 inline i64
 bytecmp_32b(const byte *src, const byte *dest) noexcept
 {
-  const u64 *a = reinterpret_cast<const u64 *>(src);
-  const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] ) return 0;
+  bool eq = true;
+  for ( int i = 0; i < 32; i += 8 ) eq &= __cmp_word(src + i) == __cmp_word(dest + i);
+  if ( eq ) return 0;
   for ( int i = 0; i < 32; i++ )
     if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;
@@ -467,10 +466,9 @@ bcmp_32b(const byte *src, const byte *dest) noexcept
 inline i64
 bytecmp_64b(const byte *src, const byte *dest) noexcept
 {
-  const u64 *a = reinterpret_cast<const u64 *>(src);
-  const u64 *b = reinterpret_cast<const u64 *>(dest);
-  if ( a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3] && a[4] == b[4] && a[5] == b[5] && a[6] == b[6] && a[7] == b[7] )
-    return 0;
+  bool eq = true;
+  for ( int i = 0; i < 64; i += 8 ) eq &= __cmp_word(src + i) == __cmp_word(dest + i);
+  if ( eq ) return 0;
   for ( int i = 0; i < 64; i++ )
     if ( src[i] != dest[i] ) return &src[i] - &dest[i];
   return 0;

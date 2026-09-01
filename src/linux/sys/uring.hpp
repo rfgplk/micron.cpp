@@ -1681,7 +1681,7 @@ struct ring {
       }
     }
     __sqes_len = (static_cast<usize>(p.sq_entries) * sizeof(sqe)) << __sqe_shift;
-    sqes = reinterpret_cast<sqe *>(
+    sqes = micron::ptr_cast<sqe *>(
         micron::mmap(nullptr, __sqes_len, prot_read | prot_write, map_shared | map_populate, fd, static_cast<posix::off_t>(off_sqes)));
     if ( __map_failed(sqes) ) {
       int __e = static_cast<int>(reinterpret_cast<i64>(sqes));
@@ -1745,8 +1745,8 @@ struct ring {
   shutdown() noexcept
   {
     if ( sqes != nullptr ) micron::munmap(reinterpret_cast<addr_t *>(sqes), __sqes_len);
-    if ( __cq_ptr != nullptr && __cq_ptr != __sq_ptr ) micron::munmap(reinterpret_cast<addr_t *>(__cq_ptr), __cq_len);
-    if ( __sq_ptr != nullptr ) micron::munmap(reinterpret_cast<addr_t *>(__sq_ptr), __sq_len);
+    if ( __cq_ptr != nullptr && __cq_ptr != __sq_ptr ) micron::munmap(micron::ptr_cast<addr_t *>(__cq_ptr), __cq_len);
+    if ( __sq_ptr != nullptr ) micron::munmap(micron::ptr_cast<addr_t *>(__sq_ptr), __sq_len);
     sqes = nullptr;
     __sq_ptr = nullptr;
     __cq_ptr = nullptr;
@@ -2288,8 +2288,8 @@ struct ring {
     if ( sqes != nullptr ) micron::munmap(reinterpret_cast<addr_t *>(sqes), __sqes_len);
     sqes = nullptr;
     __sqes_len = 0;
-    if ( __cq_ptr != nullptr && __cq_ptr != __sq_ptr ) micron::munmap(reinterpret_cast<addr_t *>(__cq_ptr), __cq_len);
-    if ( __sq_ptr != nullptr ) micron::munmap(reinterpret_cast<addr_t *>(__sq_ptr), __sq_len);
+    if ( __cq_ptr != nullptr && __cq_ptr != __sq_ptr ) micron::munmap(micron::ptr_cast<addr_t *>(__cq_ptr), __cq_len);
+    if ( __sq_ptr != nullptr ) micron::munmap(micron::ptr_cast<addr_t *>(__sq_ptr), __sq_len);
     __sq_ptr = nullptr;
     __cq_ptr = nullptr;
     __sq_entries = p.sq_entries;
@@ -2319,7 +2319,7 @@ struct ring {
       }
     }
     __sqes_len = (static_cast<usize>(p.sq_entries) * sizeof(sqe)) << __sqe_shift;
-    sqes = reinterpret_cast<sqe *>(
+    sqes = micron::ptr_cast<sqe *>(
         micron::mmap(nullptr, __sqes_len, prot_read | prot_write, map_shared | map_populate, fd, static_cast<posix::off_t>(off_sqes)));
     if ( __map_failed(sqes) ) {
       int __e = static_cast<int>(reinterpret_cast<i64>(sqes));
@@ -2348,18 +2348,18 @@ private:
   void
   __wire(const params &p) noexcept
   {
-    sq_head = reinterpret_cast<u32 *>(__sq_ptr + p.sq_off.head);
-    sq_tail = reinterpret_cast<u32 *>(__sq_ptr + p.sq_off.tail);
-    sq_mask = reinterpret_cast<u32 *>(__sq_ptr + p.sq_off.ring_mask);
-    sq_flags = reinterpret_cast<u32 *>(__sq_ptr + p.sq_off.flags);
-    sq_dropped = reinterpret_cast<u32 *>(__sq_ptr + p.sq_off.dropped);
-    sq_array = (p.flags & setup_no_sqarray) != 0 ? nullptr : reinterpret_cast<u32 *>(__sq_ptr + p.sq_off.array);
-    cq_head = reinterpret_cast<u32 *>(__cq_ptr + p.cq_off.head);
-    cq_tail = reinterpret_cast<u32 *>(__cq_ptr + p.cq_off.tail);
-    cq_mask = reinterpret_cast<u32 *>(__cq_ptr + p.cq_off.ring_mask);
-    cq_overflow = reinterpret_cast<u32 *>(__cq_ptr + p.cq_off.overflow);
-    cq_flags = p.cq_off.flags != 0 ? reinterpret_cast<u32 *>(__cq_ptr + p.cq_off.flags) : nullptr;
-    cqes = reinterpret_cast<cqe *>(__cq_ptr + p.cq_off.cqes);
+    sq_head = micron::ptr_cast<u32 *>(__sq_ptr + p.sq_off.head);
+    sq_tail = micron::ptr_cast<u32 *>(__sq_ptr + p.sq_off.tail);
+    sq_mask = micron::ptr_cast<u32 *>(__sq_ptr + p.sq_off.ring_mask);
+    sq_flags = micron::ptr_cast<u32 *>(__sq_ptr + p.sq_off.flags);
+    sq_dropped = micron::ptr_cast<u32 *>(__sq_ptr + p.sq_off.dropped);
+    sq_array = (p.flags & setup_no_sqarray) != 0 ? nullptr : micron::ptr_cast<u32 *>(__sq_ptr + p.sq_off.array);
+    cq_head = micron::ptr_cast<u32 *>(__cq_ptr + p.cq_off.head);
+    cq_tail = micron::ptr_cast<u32 *>(__cq_ptr + p.cq_off.tail);
+    cq_mask = micron::ptr_cast<u32 *>(__cq_ptr + p.cq_off.ring_mask);
+    cq_overflow = micron::ptr_cast<u32 *>(__cq_ptr + p.cq_off.overflow);
+    cq_flags = p.cq_off.flags != 0 ? micron::ptr_cast<u32 *>(__cq_ptr + p.cq_off.flags) : nullptr;
+    cqes = micron::ptr_cast<cqe *>(__cq_ptr + p.cq_off.cqes);
   }
 
   long

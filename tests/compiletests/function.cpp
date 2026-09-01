@@ -246,8 +246,8 @@ instantiate_combinators(void)
   auto p = mc::pure<int>(7);
   r += p(1);
 
-  mc::function<mc::function<int(int)>(int)> ff = [](int a) { return mc::function<int(int)>{ [a](int x) { return a * x; } }; };
-  auto s = mc::ap(ff, g);
+  mc::function<mc::function<int(int)>(int)> nested = [](int a) { return mc::function<int(int)>{ [a](int x) { return a * x; } }; };
+  auto s = mc::ap(nested, g);
   r += s(2);
 
   r += mc::compose_ltr(g, g)(1);

@@ -9,7 +9,7 @@
 
 namespace mcx = micron::math::compute;
 
-enum class dtype : u8 { byte = 0 };
+enum class dtype : u8 { byte_v = 0 };
 
 struct operation {
 };

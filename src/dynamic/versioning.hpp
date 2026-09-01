@@ -26,10 +26,10 @@ verneed_name(const dyn_info_t &d, half vidx) noexcept
 
   const u8 *vn = reinterpret_cast<const u8 *>(d.verneed);
   for ( usize guard = 0; guard < ver_chain_max; ++guard ) {
-    const verneed_t *n = reinterpret_cast<const verneed_t *>(vn);
+    const verneed_t *n = micron::ptr_cast<const verneed_t *>(vn);
     const u8 *va = vn + n->aux;
     for ( half k = 0; k < n->cnt && k < ver_chain_max; ++k ) {
-      const vernaux_t *a = reinterpret_cast<const vernaux_t *>(va);
+      const vernaux_t *a = micron::ptr_cast<const vernaux_t *>(va);
       if ( elf_ver_ndx(a->other) == vidx ) return d.strtab + a->name;
       if ( a->next == 0 ) break;
       va += a->next;
@@ -47,9 +47,9 @@ verdef_name(const dyn_info_t &d, half vidx) noexcept
 
   const u8 *vd = reinterpret_cast<const u8 *>(d.verdef);
   for ( usize guard = 0; guard < ver_chain_max; ++guard ) {
-    const verdef_t *v = reinterpret_cast<const verdef_t *>(vd);
+    const verdef_t *v = micron::ptr_cast<const verdef_t *>(vd);
     if ( elf_ver_ndx(v->ndx) == vidx && v->cnt != 0 && v->aux != 0 ) {
-      const verdaux_t *a = reinterpret_cast<const verdaux_t *>(vd + v->aux);
+      const verdaux_t *a = micron::ptr_cast<const verdaux_t *>(vd + v->aux);
       return d.strtab + a->name;
     }
     if ( v->next == 0 ) break;

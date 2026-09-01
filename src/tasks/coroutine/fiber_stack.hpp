@@ -97,10 +97,10 @@ __carve_region(__region &out, u32 cls) noexcept
     byte *run = reinterpret_cast<byte *>(abc::__va_carve_reserved(total));
     if ( run != nullptr ) {
       __region_geometry(out, run, total, stack_bytes, cls, true);
-      if ( abc::__va_commit(reinterpret_cast<addr_t *>(out.frame_base), out.frame_bytes) != nullptr
-           && abc::__va_commit(reinterpret_cast<addr_t *>(out.stack_base), out.stack_bytes) != nullptr ) [[likely]]
+      if ( abc::__va_commit(micron::ptr_cast<addr_t *>(out.frame_base), out.frame_bytes) != nullptr
+           && abc::__va_commit(micron::ptr_cast<addr_t *>(out.stack_base), out.stack_bytes) != nullptr ) [[likely]]
         return true;
-      abc::__va_release(reinterpret_cast<addr_t *>(run), total);      // commit failed: hand the run back
+      abc::__va_release(micron::ptr_cast<addr_t *>(run), total);      // commit failed: hand the run back
     }
   }
 
@@ -111,8 +111,8 @@ __carve_region(__region &out, u32 cls) noexcept
     return false;
   }
   __region_geometry(out, run, total, stack_bytes, cls, false);
-  (void)micron::mprotect(reinterpret_cast<addr_t *>(out.run), page, micron::prot_none);
-  (void)micron::mprotect(reinterpret_cast<addr_t *>(out.mid_guard), page, micron::prot_none);
+  (void)micron::mprotect(micron::ptr_cast<addr_t *>(out.run), page, micron::prot_none);
+  (void)micron::mprotect(micron::ptr_cast<addr_t *>(out.mid_guard), page, micron::prot_none);
   return true;
 }
 
@@ -122,7 +122,7 @@ __release_region(const __region &reg) noexcept
 {
   if ( reg.run == nullptr ) return;
   if ( reg.from_va )
-    abc::__va_release(reinterpret_cast<addr_t *>(reg.run), reg.total);
+    abc::__va_release(micron::ptr_cast<addr_t *>(reg.run), reg.total);
   else
     micron::try_unmap(reg.run, reg.total);
 }
@@ -131,7 +131,7 @@ __release_region(const __region &reg) noexcept
 __decommit_region(const __region &reg) noexcept
 {
   if ( reg.frame_base != nullptr && reg.stack_top > reg.frame_base )
-    (void)micron::madvise(reinterpret_cast<addr_t *>(reg.frame_base), static_cast<usize>(reg.stack_top - reg.frame_base),
+    (void)micron::madvise(micron::ptr_cast<addr_t *>(reg.frame_base), static_cast<usize>(reg.stack_top - reg.frame_base),
                           /*MADV_DONTNEED*/ 4);
 }
 

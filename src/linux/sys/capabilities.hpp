@@ -181,21 +181,21 @@ cap_set_securebits(unsigned long bits)
 inline u64
 cap_bset_read_all()
 {
-  u64 mask = 0;
+  u64 bits = 0;
   for ( u32 i = 0; i <= cap_last_cap; ++i ) {
-    if ( cap_bset_read(i) > 0 ) mask |= u64(1) << i;
+    if ( cap_bset_read(i) > 0 ) bits |= u64(1) << i;
   }
-  return mask;
+  return bits;
 }
 
 inline u64
 cap_ambient_read_all()
 {
-  u64 mask = 0;
+  u64 bits = 0;
   for ( u32 i = 0; i <= cap_last_cap; ++i ) {
-    if ( cap_ambient_is_set(i) > 0 ) mask |= u64(1) << i;
+    if ( cap_ambient_is_set(i) > 0 ) bits |= u64(1) << i;
   }
-  return mask;
+  return bits;
 }
 
 inline void

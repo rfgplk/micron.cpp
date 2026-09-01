@@ -138,14 +138,14 @@ __zbyterev64(__m256_neon a)
 __attribute__((always_inline)) static inline __m256_neon
 __zload(const u8 *p)
 {
-  return { vld1q_u64(reinterpret_cast<const u64 *>(p)), vld1q_u64(reinterpret_cast<const u64 *>(p + 16)) };
+  return { vreinterpretq_u64_u8(vld1q_u8(p)), vreinterpretq_u64_u8(vld1q_u8(p + 16)) };
 }
 
 __attribute__((always_inline)) static inline void
 __zstore(u8 *p, __m256_neon v)
 {
-  vst1q_u64(reinterpret_cast<u64 *>(p), v.lo);
-  vst1q_u64(reinterpret_cast<u64 *>(p + 16), v.hi);
+  vst1q_u8(p, vreinterpretq_u8_u64(v.lo));
+  vst1q_u8(p + 16, vreinterpretq_u8_u64(v.hi));
 }
 
 // matches _mm256_slli_epi64 with imm8 N

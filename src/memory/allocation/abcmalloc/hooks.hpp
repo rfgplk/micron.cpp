@@ -48,6 +48,15 @@ __saturate_pages_to_bytes(u64 pages) noexcept
   return static_cast<usize>(pages * ps);
 }
 
+// same contract as the pages variant above, for a count that is already in bytes: a byte count wider
+// than usize can never be mapped on this target, so clamp rather than let the narrowing wrap
+inline usize
+__saturate_bytes(u64 bytes) noexcept
+{
+  const u64 max_usize = static_cast<u64>(micron::numeric_limits<usize>::max());
+  return bytes > max_usize ? static_cast<usize>(max_usize) : static_cast<usize>(bytes);
+}
+
 inline usize
 __calculate_space_cache(usize sz)
 {
@@ -157,7 +166,7 @@ __calculate_space_saturated(usize sz)
 void *
 __get_kernel_memory(u64 sz)
 {
-  return micron::sys_allocator<byte>::alloc(sz);
+  return micron::sys_allocator<byte>::alloc(static_cast<usize>(sz));
 }
 
 template<typename T>
@@ -168,7 +177,7 @@ __get_kernel_chunk(u64 sz)
     const usize rounded = (static_cast<usize>(sz) + __sheet_align_mask) & ~__sheet_align_mask;
     return { reinterpret_cast<byte *>(p), rounded };
   }
-  return { micron::sys_allocator<byte>::alloc(sz), static_cast<usize>(sz) };
+  return { micron::sys_allocator<byte>::alloc(static_cast<usize>(sz)), static_cast<usize>(sz) };
 }
 
 template<typename T>
@@ -176,7 +185,7 @@ inline void
 __release_kernel_chunk(const T &mem)
 {
   if ( __va_contains(mem.ptr) ) {
-    __va_release(reinterpret_cast<addr_t *>(mem.ptr), mem.len);
+    __va_release(micron::ptr_cast<addr_t *>(mem.ptr), mem.len);
     return;
   }
   micron::sys_allocator<byte>::dealloc(mem.ptr, mem.len);

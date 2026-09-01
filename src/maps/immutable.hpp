@@ -115,7 +115,7 @@ class immutable_map
   static inline __node *
   __make_node(Kf &&k, Vf &&v, __node *l, __node *r, bool rd)
   {
-    auto *n = reinterpret_cast<__node *>(__alloc_node());
+    auto *n = micron::ptr_cast<__node *>(__alloc_node());
     if ( !n ) [[unlikely]] {      // abc::alloc returns nullptr on OOM (it does NOT throw)
       __release(l);
       __release(r);

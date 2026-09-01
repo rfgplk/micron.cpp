@@ -47,18 +47,19 @@ walk_relocs(const image &img, const section_row &sec)
     reloc_row r{};
     r.has_addend = rela;
     if ( img.is64() ) {
-      const u64 info = rela ? rd<u64>(raw.ptr, __builtin_offsetof(rela_t, info), img.hdr.data)
-                            : rd<u64>(raw.ptr, __builtin_offsetof(rel_t, info), img.hdr.data);
-      r.offset = rela ? rd<u64>(raw.ptr, __builtin_offsetof(rela_t, offset), img.hdr.data)
-                      : rd<u64>(raw.ptr, __builtin_offsetof(rel_t, offset), img.hdr.data);
+      // rela only appends addend, so offset/info sit at the same place in both records
+      static_assert(__builtin_offsetof(rela_t, info) == __builtin_offsetof(rel_t, info));
+      static_assert(__builtin_offsetof(rela_t, offset) == __builtin_offsetof(rel_t, offset));
+      const u64 info = rd<u64>(raw.ptr, __builtin_offsetof(rel_t, info), img.hdr.data);
+      r.offset = rd<u64>(raw.ptr, __builtin_offsetof(rel_t, offset), img.hdr.data);
       r.sym = elf64_r_sym(info);
       r.type = elf64_r_type(info);
       if ( rela ) r.addend = static_cast<i64>(rd<u64>(raw.ptr, __builtin_offsetof(rela_t, addend), img.hdr.data));
     } else {
-      const u32 info = rela ? rd<u32>(raw.ptr, __builtin_offsetof(rela32_t, info), img.hdr.data)
-                            : rd<u32>(raw.ptr, __builtin_offsetof(rel32_t, info), img.hdr.data);
-      r.offset = rela ? rd<u32>(raw.ptr, __builtin_offsetof(rela32_t, offset), img.hdr.data)
-                      : rd<u32>(raw.ptr, __builtin_offsetof(rel32_t, offset), img.hdr.data);
+      static_assert(__builtin_offsetof(rela32_t, info) == __builtin_offsetof(rel32_t, info));
+      static_assert(__builtin_offsetof(rela32_t, offset) == __builtin_offsetof(rel32_t, offset));
+      const u32 info = rd<u32>(raw.ptr, __builtin_offsetof(rel32_t, info), img.hdr.data);
+      r.offset = rd<u32>(raw.ptr, __builtin_offsetof(rel32_t, offset), img.hdr.data);
       r.sym = elf32_r_sym(info);
       r.type = elf32_r_type(info);
       if ( rela ) r.addend = static_cast<i64>(static_cast<i32>(rd<u32>(raw.ptr, __builtin_offsetof(rela32_t, addend), img.hdr.data)));

@@ -86,14 +86,14 @@ private:
   [[gnu::always_inline]] static inline Fn *
   __callable(__slot &slot) noexcept
   {
-    return reinterpret_cast<Fn *>(slot.storage);
+    return micron::ptr_cast<Fn *>(slot.storage);
   }
 
   template<typename Fn>
   static void
   __invoke_node(node_base_t *node)
   {
-    __slot &slot = *reinterpret_cast<__slot *>(node);
+    __slot &slot = *micron::ptr_cast<__slot *>(node);
     (*__callable<Fn>(slot))();
   }
 
@@ -101,7 +101,7 @@ private:
   static void
   __finish_node(node_base_t *node) noexcept
   {
-    __slot &slot = *reinterpret_cast<__slot *>(node);
+    __slot &slot = *micron::ptr_cast<__slot *>(node);
     const usize ticket = slot.ticket;
     __callable<Fn>(slot)->~Fn();
     slot.sequence.store(ticket + N, memory_order_release);
@@ -112,7 +112,7 @@ private:
   static void
   __transfer_node(node_base_t *node, lambda_queue &destination)
   {
-    __slot &slot = *reinterpret_cast<__slot *>(node);
+    __slot &slot = *micron::ptr_cast<__slot *>(node);
     destination.push(micron::move(*__callable<Fn>(slot)));
   }
 

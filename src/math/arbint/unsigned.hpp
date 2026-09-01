@@ -768,15 +768,15 @@ sqr(const arbuint<B, S, A> &a)
 
 template<usize B, arb_solver S, class A>
 [[nodiscard]] inline constexpr arbuint<B, S, A>
-pow(const arbuint<B, S, A> &a, u64 e)
+pow(const arbuint<B, S, A> &a, u64 ex)
 {
-  if ( e == 0 ) return arbuint<B, S, A>::one();
+  if ( ex == 0 ) return arbuint<B, S, A>::one();
   arbuint<B, S, A> base(a);
   arbuint<B, S, A> acc = arbuint<B, S, A>::one();
-  while ( e != 0 ) {
-    if ( (e & 1u) != 0 ) acc *= base;
-    e >>= 1;
-    if ( e != 0 ) base *= base;
+  while ( ex != 0 ) {
+    if ( (ex & 1u) != 0 ) acc *= base;
+    ex >>= 1;
+    if ( ex != 0 ) base *= base;
   }
   return acc;
 }

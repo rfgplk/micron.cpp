@@ -124,7 +124,7 @@ public:
       exc<except::memory_error>("stl_allocator: size overflow");
     const auto ptr = micron::__alloc(sizeof(T) * cnt);
     if ( !ptr ) exc<except::memory_error>("stl_allocator: allocation failed");
-    return reinterpret_cast<T *>(ptr);
+    return micron::ptr_cast<T *>(ptr);
   }
 
   static void

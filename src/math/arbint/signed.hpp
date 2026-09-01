@@ -544,10 +544,10 @@ sqr(const arbint<B, S, A> &a)
 
 template<usize B, arb_solver S, class A>
 [[nodiscard]] inline constexpr arbint<B, S, A>
-pow(const arbint<B, S, A> &a, u64 e)
+pow(const arbint<B, S, A> &a, u64 ex)
 {
-  const bool sign = a.negative() && (e & 1u) != 0;
-  return arbint<B, S, A>(pow(a.magnitude(), e), sign);
+  const bool sign = a.negative() && (ex & 1u) != 0;
+  return arbint<B, S, A>(pow(a.magnitude(), ex), sign);
 }
 
 template<usize B, arb_solver S, class A>

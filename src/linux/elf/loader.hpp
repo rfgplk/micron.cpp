@@ -132,7 +132,7 @@ struct module_t {
   {
     if ( tls_modid ) tls_unregister(tls_modid);
     if ( load_base && load_span ) {
-      micron::munmap(reinterpret_cast<addr_t *>(load_base), load_span);
+      micron::munmap(micron::ptr_cast<addr_t *>(load_base), load_span);
       invalidate_host_modules();
     }
     load_base = nullptr;
@@ -181,7 +181,7 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const ndyn_t *dyn) noexcept
   for ( const ndyn_t *d = dyn; d->tag != dt_null; ++d ) {
     switch ( d->tag ) {
     case dt_symtab:
-      out.symtab = reinterpret_cast<const nsym_t *>(base + d->un.ptr);
+      out.symtab = micron::ptr_cast<const nsym_t *>(base + d->un.ptr);
       break;
     case dt_syment:
       out.syment = d->un.val;
@@ -194,16 +194,16 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const ndyn_t *dyn) noexcept
         out.needed_truncated = true;
       break;
     case dt_hash:
-      out.hash = reinterpret_cast<const word *>(base + d->un.ptr);
+      out.hash = micron::ptr_cast<const word *>(base + d->un.ptr);
       break;
     case dt_gnu_hash:
-      out.gnu_hash = reinterpret_cast<const word *>(base + d->un.ptr);
+      out.gnu_hash = micron::ptr_cast<const word *>(base + d->un.ptr);
       break;
     case dt_rela:
-      out.rela = reinterpret_cast<const nrela_t *>(base + d->un.ptr);
+      out.rela = micron::ptr_cast<const nrela_t *>(base + d->un.ptr);
       break;
     case dt_rel:
-      out.rel = reinterpret_cast<const nrel_t *>(base + d->un.ptr);
+      out.rel = micron::ptr_cast<const nrel_t *>(base + d->un.ptr);
       break;
     case dt_relsz:
       out.relsz = d->un.val;
@@ -215,7 +215,7 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const ndyn_t *dyn) noexcept
       out.rel_count = d->un.val;
       break;
     case dt_pltgot:
-      out.pltgot = reinterpret_cast<naddr_t *>(base + d->un.ptr);
+      out.pltgot = micron::ptr_cast<naddr_t *>(base + d->un.ptr);
       break;
     case dt_relasz:
       out.relasz = d->un.val;
@@ -227,7 +227,7 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const ndyn_t *dyn) noexcept
       out.rela_count = d->un.val;
       break;
     case dt_relr:
-      out.relr = reinterpret_cast<const nword_t *>(base + d->un.ptr);
+      out.relr = micron::ptr_cast<const nword_t *>(base + d->un.ptr);
       break;
     case dt_relrsz:
       out.relrsz = d->un.val;
@@ -248,34 +248,34 @@ __build_dyn_info(dyn_info_t &out, u8 *base, const ndyn_t *dyn) noexcept
       out.fini = reinterpret_cast<void (*)()>(base + d->un.ptr);
       break;
     case dt_init_array:
-      out.init_array = reinterpret_cast<void (*const *)()>(base + d->un.ptr);
+      out.init_array = micron::ptr_cast<void (*const *)()>(base + d->un.ptr);
       break;
     case dt_init_arraysz:
       out.init_arraysz = d->un.val;
       break;
     case dt_fini_array:
-      out.fini_array = reinterpret_cast<void (*const *)()>(base + d->un.ptr);
+      out.fini_array = micron::ptr_cast<void (*const *)()>(base + d->un.ptr);
       break;
     case dt_fini_arraysz:
       out.fini_arraysz = d->un.val;
       break;
     case dt_preinit_array:
-      out.preinit_array = reinterpret_cast<void (*const *)()>(base + d->un.ptr);
+      out.preinit_array = micron::ptr_cast<void (*const *)()>(base + d->un.ptr);
       break;
     case dt_preinit_arraysz:
       out.preinit_arraysz = d->un.val;
       break;
     case dt_versym:
-      out.versym = reinterpret_cast<const half *>(base + d->un.ptr);
+      out.versym = micron::ptr_cast<const half *>(base + d->un.ptr);
       break;
     case dt_verdef:
-      out.verdef = reinterpret_cast<const verdef_t *>(base + d->un.ptr);
+      out.verdef = micron::ptr_cast<const verdef_t *>(base + d->un.ptr);
       break;
     case dt_verdefnum:
       out.verdefnum = static_cast<word>(d->un.val);
       break;
     case dt_verneed:
-      out.verneed = reinterpret_cast<const verneed_t *>(base + d->un.ptr);
+      out.verneed = micron::ptr_cast<const verneed_t *>(base + d->un.ptr);
       break;
     case dt_verneednum:
       out.verneednum = static_cast<word>(d->un.val);
@@ -371,11 +371,11 @@ __apply_plt_table(module_t &m, reloc_mode_t mode, resolve_fn resolve = nullptr, 
 {
   if ( !m.dyn.jmprel || m.dyn.pltrelsz == 0 ) return true;
   if ( m.dyn.pltrel == dt_rela )
-    return __apply_reloc_table(m, reinterpret_cast<const nrela_t *>(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
+    return __apply_reloc_table(m, reinterpret_cast<const nrela_t *>(m.dyn.jmprel), static_cast<usize>(m.dyn.pltrelsz), mode, resolve, user);
   if ( m.dyn.pltrel == dt_rel )
-    return __apply_reloc_table(m, reinterpret_cast<const nrel_t *>(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
+    return __apply_reloc_table(m, reinterpret_cast<const nrel_t *>(m.dyn.jmprel), static_cast<usize>(m.dyn.pltrelsz), mode, resolve, user);
   if constexpr ( arch_uses_rel )
-    return __apply_reloc_table(m, reinterpret_cast<const nrel_t *>(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
+    return __apply_reloc_table(m, reinterpret_cast<const nrel_t *>(m.dyn.jmprel), static_cast<usize>(m.dyn.pltrelsz), mode, resolve, user);
   else
     return __apply_reloc_table(m, reinterpret_cast<const nrela_t *>(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
 }
@@ -384,8 +384,8 @@ inline bool
 __apply_all_relocs(module_t &m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)
 {
   if ( mode == reloc_mode_t::defer ) return true;
-  if ( !__apply_reloc_table(m, m.dyn.rela, m.dyn.relasz, mode, resolve, user) ) return false;
-  if ( !__apply_reloc_table(m, m.dyn.rel, m.dyn.relsz, mode, resolve, user) ) return false;
+  if ( !__apply_reloc_table(m, m.dyn.rela, static_cast<usize>(m.dyn.relasz), mode, resolve, user) ) return false;
+  if ( !__apply_reloc_table(m, m.dyn.rel, static_cast<usize>(m.dyn.relsz), mode, resolve, user) ) return false;
   return __apply_plt_table(m, mode, resolve, user);
 }
 
@@ -397,7 +397,7 @@ __apply_relr(module_t &m) noexcept
 
   if ( !m.dyn.relr || m.dyn.relrsz == 0 ) return;
   const uintptr_t l_addr = reinterpret_cast<uintptr_t>(m.load_base);
-  const usize n = m.dyn.relrsz / sizeof(rw);
+  const usize n = static_cast<usize>(m.dyn.relrsz / sizeof(rw));
   uintptr_t *where = nullptr;
   for ( usize k = 0; k < n; ++k ) {
     rw entry = m.dyn.relr[k];
@@ -418,14 +418,14 @@ __run_initializers(module_t &m) noexcept
 {
   // DT_PREINIT_ARRAY is legal exclusively in actual executables
   if ( m.dyn.preinit_array && m.dyn.preinit_arraysz ) {
-    const usize n = m.dyn.preinit_arraysz / sizeof(void *);
+    const usize n = static_cast<usize>(m.dyn.preinit_arraysz / sizeof(void *));
     for ( usize i = 0; i < n; ++i ) {
       if ( m.dyn.preinit_array[i] ) m.dyn.preinit_array[i]();
     }
   }
   if ( m.dyn.init ) m.dyn.init();
   if ( m.dyn.init_array && m.dyn.init_arraysz ) {
-    const usize n = m.dyn.init_arraysz / sizeof(void *);
+    const usize n = static_cast<usize>(m.dyn.init_arraysz / sizeof(void *));
     for ( usize i = 0; i < n; ++i ) {
       if ( m.dyn.init_array[i] ) m.dyn.init_array[i]();
     }
@@ -436,7 +436,7 @@ inline void
 __run_finalizers(module_t &m) noexcept
 {
   if ( m.dyn.fini_array && m.dyn.fini_arraysz ) {
-    usize n = m.dyn.fini_arraysz / sizeof(void *);
+    usize n = static_cast<usize>(m.dyn.fini_arraysz / sizeof(void *));
     while ( n-- ) {
       if ( m.dyn.fini_array[n] ) m.dyn.fini_array[n]();
     }
@@ -462,7 +462,7 @@ inline void
 __apply_relro_now(module_t &m) noexcept
 {
   if ( !m.relro_len || !m.load_base ) return;
-  micron::mprotect(reinterpret_cast<addr_t *>(m.load_base + m.relro_start), m.relro_len, prot_read);
+  micron::mprotect(micron::ptr_cast<addr_t *>(m.load_base + m.relro_start), m.relro_len, prot_read);
 }
 
 inline void
@@ -472,7 +472,7 @@ __apply_relro(const u8 *base, const nphdr_t *phdrs, half phnum) noexcept
     if ( phdrs[i].type != pt_gnu_relro ) continue;
     const usize start = __page_floor(phdrs[i].vaddr);
     const usize end = __page_ceil(phdrs[i].vaddr + phdrs[i].memsz);
-    micron::mprotect(const_cast<addr_t *>(reinterpret_cast<const addr_t *>(base + start)), end - start, prot_read);
+    micron::mprotect(const_cast<addr_t *>(micron::ptr_cast<const addr_t *>(base + start)), end - start, prot_read);
   }
 }
 
@@ -576,7 +576,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
 
     if constexpr ( native_class == fmt_class::elf32 ) {
       if ( (fstart & 0xfffu) != 0 ) {
-        micron::munmap(reinterpret_cast<addr_t *>(base), span);
+        micron::munmap(micron::ptr_cast<addr_t *>(base), span);
         posix::close(fd);
         exc<except::library_error>("elf: PT_LOAD file offset is not a multiple of 4096 (mmap2 cannot express it)");
       }
@@ -587,7 +587,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     const i32 prot = __prot_from_phdr(phdrs[i].flags);
 
     if ( ((phdrs[i].vaddr - phdrs[i].offset) & (__runtime_page_size() - 1)) != 0 ) {
-      micron::munmap(reinterpret_cast<addr_t *>(base), span);
+      micron::munmap(micron::ptr_cast<addr_t *>(base), span);
       posix::close(fd);
       exc<except::library_error>("elf: PT_LOAD vaddr/offset not page-congruent (rebuild with max-page-size)");
     }
@@ -596,17 +596,17 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
       const usize file_end = __page_ceil(phdrs[i].filesz + segoff);
       const usize mem_end = __page_ceil(phdrs[i].memsz + segoff);
       u8 *got = reinterpret_cast<u8 *>(
-          micron::mmap(reinterpret_cast<addr_t *>(target), file_end, prot_read | prot_write, map_private | map_fixed, fd, fstart));
+          micron::mmap(micron::ptr_cast<addr_t *>(target), file_end, prot_read | prot_write, map_private | map_fixed, fd, fstart));
       if ( mmap_failed(got) ) {
-        micron::munmap(reinterpret_cast<addr_t *>(base), span);
+        micron::munmap(micron::ptr_cast<addr_t *>(base), span);
         posix::close(fd);
         exc<except::library_error>("elf: segment mmap failed");
       }
       if ( mem_end > file_end ) {
-        u8 *bgot = reinterpret_cast<u8 *>(micron::mmap(reinterpret_cast<addr_t *>(target + file_end), mem_end - file_end,
+        u8 *bgot = reinterpret_cast<u8 *>(micron::mmap(micron::ptr_cast<addr_t *>(target + file_end), mem_end - file_end,
                                                        prot_read | prot_write, map_private | map_anonymous | map_fixed, -1, 0));
         if ( mmap_failed(bgot) ) {
-          micron::munmap(reinterpret_cast<addr_t *>(base), span);
+          micron::munmap(micron::ptr_cast<addr_t *>(base), span);
           posix::close(fd);
           exc<except::library_error>("elf: bss tail mmap failed");
         }
@@ -616,12 +616,12 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
       if ( bss_end > bss_start ) {
         micron::memset(target + bss_start, byte{ 0 }, bss_end - bss_start);
       }
-      micron::mprotect(reinterpret_cast<addr_t *>(target), mem_end, prot);
+      micron::mprotect(micron::ptr_cast<addr_t *>(target), mem_end, prot);
     } else {
       u8 *got = reinterpret_cast<u8 *>(
-          micron::mmap(reinterpret_cast<addr_t *>(target), vend - vstart, prot, map_private | map_anonymous | map_fixed, -1, 0));
+          micron::mmap(micron::ptr_cast<addr_t *>(target), vend - vstart, prot, map_private | map_anonymous | map_fixed, -1, 0));
       if ( mmap_failed(got) ) {
-        micron::munmap(reinterpret_cast<addr_t *>(base), span);
+        micron::munmap(micron::ptr_cast<addr_t *>(base), span);
         posix::close(fd);
         exc<except::library_error>("elf: bss mmap failed");
       }
@@ -636,7 +636,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
   for ( usize i = 0; path[i] && m.path.size() + 1 < m.path.max_size(); ++i ) m.path += path[i];
   m.path.null_term();
 
-  const ndyn_t *dyn = reinterpret_cast<const ndyn_t *>(m.load_base + dyn_ph->vaddr);
+  const ndyn_t *dyn = micron::ptr_cast<const ndyn_t *>(m.load_base + dyn_ph->vaddr);
   __build_dyn_info(m.dyn, m.load_base, dyn);
 
   if ( tls_ph ) {
@@ -651,7 +651,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
     for ( half i = 0; i < eh.phnum; ++i ) {
       if ( phdrs[i].type != pt_load ) continue;
       if ( eh.phoff >= phdrs[i].offset && ph_end <= phdrs[i].offset + phdrs[i].filesz ) {
-        m.phdrs = reinterpret_cast<const nphdr_t *>(m.load_base + phdrs[i].vaddr + (eh.phoff - phdrs[i].offset));
+        m.phdrs = micron::ptr_cast<const nphdr_t *>(m.load_base + phdrs[i].vaddr + (eh.phoff - phdrs[i].offset));
         m.phnum = eh.phnum;
         break;
       }
@@ -666,7 +666,7 @@ __load_module_from_path(const char *path, const load_opts_t &opts = {})
 
   if ( !__apply_all_relocs(m, opts.reloc, opts.resolve, opts.resolve_user) ) {
     __loaded_modules = m.next;      // unlink the partially-relocated module before unwinding
-    micron::munmap(reinterpret_cast<addr_t *>(base), span);
+    micron::munmap(micron::ptr_cast<addr_t *>(base), span);
     exc<except::library_error>("elf: unsupported relocation (static TLS / TLSDESC / COPY) — refusing to load module with corrupt TLS");
   }
 

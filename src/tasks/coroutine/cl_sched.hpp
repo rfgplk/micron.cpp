@@ -924,7 +924,7 @@ sync_wait(task<T> &&root)
     return;
   } else {
     alignas(T) unsigned char storage[sizeof(T)];
-    T *slot = reinterpret_cast<T *>(storage);
+    T *slot = micron::ptr_cast<T *>(storage);
     __sync_bridge bridge = [](task<T> __r, T *__s) -> __sync_bridge {
       // NOTE: the co_await is split out of the placement-new to avoid a GCC ICE (co_await inside a new-expr)
       // i investigated this _thoroughly_, the placement-new bug is completely unrelated to our code (all paths have been audited and are

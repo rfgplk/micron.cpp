@@ -83,7 +83,7 @@ __tls_capture_from_proc_auxv() noexcept
   if ( fd < 0 ) return false;
   usize total = 0;
   for ( ;; ) {
-    long n = micron::posix::read(fd, reinterpret_cast<char *>(buf) + total, sizeof(buf) - total);
+    max_t n = micron::posix::read(fd, reinterpret_cast<char *>(buf) + total, sizeof(buf) - total);
     if ( n <= 0 ) break;
     total += static_cast<usize>(n);
     if ( total >= sizeof(buf) ) break;
@@ -262,7 +262,7 @@ __tls_free_frame(const __tls_frame &f) noexcept
   // leave the registry before the pages go away, so no assign() walk can write into them
   __attach_frame_unregister(f.base);
 #endif
-  micron::munmap(reinterpret_cast<addr_t *>(f.base), f.size);
+  micron::munmap(micron::ptr_cast<addr_t *>(f.base), f.size);
 }
 
 #if defined(__micron_attach_capable)

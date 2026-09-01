@@ -42,7 +42,7 @@ truffle_build(const charreach &cls) noexcept
 inline usize
 truffle_find_first(const char *p, usize n, const truffle_masks &t) noexcept
 {
-  alignas(16) u8 pow2[16] = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
+  [[maybe_unused]] alignas(16) u8 pow2[16] = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
   usize i = 0;
 
 #if defined(__micron_x86_avx2)

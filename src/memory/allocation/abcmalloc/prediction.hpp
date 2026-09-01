@@ -86,7 +86,7 @@ public:
   {
     if ( __builtin_expect(running_div == 0, 0) ) return align_to_page(n);
 
-    const usize mean_alloc = running_sum / running_div;
+    const usize mean_alloc = static_cast<usize>(running_sum / running_div);
 
     if ( mean_alloc == 0 || n > mean_alloc * 3 || of_class(n) != of_class(mean_alloc) ) {
       return align_to_page(n);

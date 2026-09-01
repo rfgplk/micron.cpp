@@ -1000,7 +1000,7 @@ public:
   {
     if constexpr ( micron::is_same_v<F, __vf> ) vst1q_f32(reinterpret_cast<float *>(arr), value);
     if constexpr ( __is_8_wide<F>() || __is_16_wide<F>() || __is_32_wide<F>() || __is_64_wide<F>() )
-      vst1q_s32(reinterpret_cast<int32_t *>(arr), value);
+      vst1q_s32(micron::ptr_cast<int32_t *>(arr), value);
   }
 
   inline void

@@ -130,7 +130,7 @@ guard_stack(T *region, usize size) noexcept
   usize usable = size;
   // mprotect needs a page-aligned addr; if the region isn't aligned (e.g. an in-object stack), skip
   if ( size > guard && micron::mprotect(reinterpret_cast<addr_t *>(region), guard, micron::prot_none) == 0 ) {
-    base = reinterpret_cast<addr_t *>(reinterpret_cast<char *>(region) + guard);
+    base = micron::ptr_cast<addr_t *>(reinterpret_cast<char *>(region) + guard);
     usable = size - guard;
   }
   return { base, usable };

@@ -25,6 +25,10 @@
 
 #include "arena.hpp"
 #include "external.hpp"
+// malloc.hpp includes us ahead of doctor.hpp, so name the dependency ourselves rather than rely on order
+#if defined(ABCMALLOC_DOCTOR_HELP)
+#include "doctor.hpp"
+#endif
 #include "sheet_header.hpp"
 #include "tapi.hpp"
 #include "va_reserve.hpp"
@@ -322,7 +326,11 @@ build(void)
   d.overflow_head = &__overflow_head;
   d.external_pages = &__external_pages;
   d.external_count = &__external_count;
+#if defined(ABCMALLOC_DOCTOR_HELP)
+  d.doctor_state = &doctor::__dr;      // flags() advertises abc_f_doctor; a null here would be a lie
+#else
   d.doctor_state = nullptr;
+#endif
 
   d.va_reservation_size = __va_reservation_size;
   d.num_blocks = __num_blocks;
@@ -366,6 +374,9 @@ build(void)
   d.off_buddy_cold_count = static_cast<u32>(__builtin_offsetof(buddy_book, cold_count));
   d.buddy_orders = 64;
   d.buddy_tag_none = buddy_book::__tag_none;
+  // unlike every other off_buddy_* above, __log2_min varies with the book's Min parameter rather than
+  // its Mx, so this one value covers the medium tier alone -- per tier, read tiers[i].min_shift
+  d.buddy_min_shift = static_cast<u32>(buddy_book::__log2_min);
 
   d.off_tlsf_base = static_cast<u32>(__builtin_offsetof(tlsf_book, base));
   d.off_tlsf_total = static_cast<u32>(__builtin_offsetof(tlsf_book, total));
@@ -424,7 +435,28 @@ static_assert(__ins::__self.tiers[3].class_size < __ins::__self.tiers[4].class_s
 static_assert((1ull << __ins::__self.tiers[2].min_shift) == __ins::__self.tiers[2].class_size);
 static_assert((1ull << __ins::__self.tiers[4].min_shift) == __ins::__self.tiers[4].class_size);
 static_assert(__ins::__self.tiers[2].min_shift != __ins::__self.tiers[4].min_shift);
-static_assert(__ins::__self.tiers[0].off_count != __ins::__self.tiers[3].off_count);
-static_assert(__ins::__self.tiers[0].off_idx == __ins::__self.tiers[3].off_idx);
+
+// the reader walks tier_base + off_idx as __range[max_sheets] and reads __count immediately after it;
+// that is the one relation it cannot get wrong. checking it per tier also proves the single published
+// sizeof_range describes all six, and that no offset truncated into its u32 field
+//
+// NOTE: deliberately NOT an inequality between two tiers. config_embed gives every tier 64 sheets, so
+// tiers[0].off_count == tiers[3].off_count there is correct, not a defect
+constexpr bool
+__ins_tiers_consistent(void)
+{
+  const auto &d = __ins::__self;
+  for ( u32 i = 0; i < abc_n_tiers; ++i ) {
+    if ( d.tiers[i].off_idx != d.tiers[0].off_idx ) return false;
+    if ( d.tiers[i].off_count
+         != static_cast<u64>(d.tiers[i].off_idx) + static_cast<u64>(d.tiers[i].max_sheets) * d.sizeof_range )
+      return false;
+  }
+  return true;
+}
+
+static_assert(__ins_tiers_consistent(), "the tier table's offsets must agree with its geometry");
+// buddy_min_shift describes the medium instantiation only; a per tier reader wants tiers[i].min_shift
+static_assert(__ins::__self.buddy_min_shift == __ins::__self.tiers[2].min_shift);
 
 };      // namespace abc

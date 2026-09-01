@@ -55,7 +55,7 @@ template<typename T> struct __core_memory_resource {
     if ( addr % alignof(T) != 0 ) {
       exc<except::memory_error_core_unaligned>("__core_memory_resource, address isn't aligned");
     }
-    memory = reinterpret_cast<T *>(b.ptr);
+    memory = micron::ptr_cast<T *>(b.ptr);
     capacity = b.len / sizeof(T);
     b = nullptr;
   }
@@ -88,7 +88,7 @@ template<typename T> struct __core_memory_resource {
     auto addr = reinterpret_cast<uintptr_t>(o.ptr);
     if ( addr % alignof(T) != 0 ) exc<except::memory_error_core_unaligned>("__core_memory_resource, address isn't aligned");
 
-    memory = reinterpret_cast<T *>(o.ptr);
+    memory = micron::ptr_cast<T *>(o.ptr);
     capacity = o.len / sizeof(T);
     o = nullptr;
   }

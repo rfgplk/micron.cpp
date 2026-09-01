@@ -320,7 +320,7 @@ __io_pb_init(__wring &__wr) noexcept
   if ( __st == 1u ) return 0;
   if ( __st == 2u ) return -95;      // EOPNOTSUPP: refused earlier
   const usize __rb = static_cast<usize>(__io_pb_entries) * sizeof(micron::uring::buf);
-  auto *__br = reinterpret_cast<micron::uring::buf_ring *>(
+  auto *__br = micron::ptr_cast<micron::uring::buf_ring *>(
       micron::mmap(nullptr, __rb, micron::prot_read | micron::prot_write, micron::map_private | micron::map_anonymous, -1, 0));
   if ( micron::mmap_failed(reinterpret_cast<addr_t *>(__br)) ) {
     __wr.__pb.__state.store(2u, micron::memory_order_release);
@@ -329,7 +329,7 @@ __io_pb_init(__wring &__wr) noexcept
   byte *__ar
       = reinterpret_cast<byte *>(micron::mmap(nullptr, static_cast<usize>(__io_pb_entries) * __io_pb_sz,
                                               micron::prot_read | micron::prot_write, micron::map_private | micron::map_anonymous, -1, 0));
-  if ( micron::mmap_failed(reinterpret_cast<addr_t *>(__ar)) ) {
+  if ( micron::mmap_failed(micron::ptr_cast<addr_t *>(__ar)) ) {
     micron::munmap(reinterpret_cast<addr_t *>(__br), __rb);
     __wr.__pb.__state.store(2u, micron::memory_order_release);
     return -95;
@@ -340,7 +340,7 @@ __io_pb_init(__wring &__wr) noexcept
   __reg.bgid = __io_pb_bgid;
   if ( __wr.__r.register_pbuf_ring(__reg) < 0 ) {
     micron::munmap(reinterpret_cast<addr_t *>(__br), __rb);
-    micron::munmap(reinterpret_cast<addr_t *>(__ar), static_cast<usize>(__io_pb_entries) * __io_pb_sz);
+    micron::munmap(micron::ptr_cast<addr_t *>(__ar), static_cast<usize>(__io_pb_entries) * __io_pb_sz);
     __wr.__pb.__state.store(2u, micron::memory_order_release);
     return -95;
   }
@@ -400,7 +400,7 @@ __io_pb_shutdown(__wring &__wr) noexcept      // owner thread, before the ring f
   __io_unlock(__wr.__pb.__lk);
   (void)__wr.__r.unregister_pbuf_ring(__io_pb_bgid);
   micron::munmap(reinterpret_cast<addr_t *>(__wr.__pb.__br), static_cast<usize>(__io_pb_entries) * sizeof(micron::uring::buf));
-  micron::munmap(reinterpret_cast<addr_t *>(__wr.__pb.__arena), static_cast<usize>(__io_pb_entries) * __io_pb_sz);
+  micron::munmap(micron::ptr_cast<addr_t *>(__wr.__pb.__arena), static_cast<usize>(__io_pb_entries) * __io_pb_sz);
   __wr.__pb.__br = nullptr;
   __wr.__pb.__arena = nullptr;
   __wr.__pb.__tail_shadow = 0;
@@ -856,7 +856,7 @@ __io_fixed_shutdown() noexcept
 {
   if ( __io_fixed.__ready.get(micron::memory_order_acquire) == 0 ) return;
   __io_fixed.__ready.store(0, micron::memory_order_release);
-  micron::munmap(reinterpret_cast<addr_t *>(__io_fixed.__base), __io_fixed_slots * __io_fixed_sz);
+  micron::munmap(micron::ptr_cast<addr_t *>(__io_fixed.__base), __io_fixed_slots * __io_fixed_sz);
   __io_fixed.__base = nullptr;
   __io_fixed.__map.store(0, micron::memory_order_relaxed);
 }

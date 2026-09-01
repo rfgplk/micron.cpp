@@ -10,6 +10,7 @@
 #include "../syscall.hpp"
 #include "../types.hpp"
 
+#include "addr.hpp"
 #include "mmap_bits.hpp"
 
 namespace micron
@@ -146,7 +147,7 @@ sbrk(intptr_t increment)
   if ( increment == 0 ) [[likely]]
     return __program_break;
 
-  brk(reinterpret_cast<addr_t *>(reinterpret_cast<char *>(__program_break) + increment));
+  brk(micron::ptr_cast<addr_t *>(reinterpret_cast<char *>(__program_break) + increment));
   return __program_break;
 }
 
@@ -193,7 +194,7 @@ template<typename T>
 inline auto
 try_unmap(T *addr, usize sz)
 {
-  if ( addr != nullptr ) return munmap(reinterpret_cast<addr_t *>(addr), sz);
+  if ( addr != nullptr ) return munmap(micron::ptr_cast<addr_t *>(addr), sz);
   return 1;
 }
 

@@ -26,5 +26,5 @@ main()
   float f = micron::math::hw::sqrt_ss(4.0f);
   f += micron::math::fsqrt(2.0f);
 
-  return static_cast<int>(d + f) & 0x7f;
+  return static_cast<int>(d + static_cast<double>(f)) & 0x7f;
 }

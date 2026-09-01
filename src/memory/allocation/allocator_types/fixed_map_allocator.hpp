@@ -45,7 +45,7 @@ public:
     usize mapping_len;
     if ( !allocation_checked_round_up(memory.len, page_size, mapping_len) ) return;
     (void)abc::unregister_external(memory.ptr, mapping_len);
-    micron::munmap(reinterpret_cast<addr_t *>(memory.ptr), mapping_len);
+    micron::munmap(micron::ptr_cast<addr_t *>(memory.ptr), mapping_len);
   }
 };
 

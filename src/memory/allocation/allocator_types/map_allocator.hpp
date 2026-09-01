@@ -89,7 +89,7 @@ public:
     const usize overlap = micron::min(old.len, capacity);
 
     if ( alignment <= page_size && preserve_bytes >= overlap ) {
-      addr_t *result = micron::mremap(reinterpret_cast<addr_t *>(old.ptr), old.len, capacity, mremap_maymove);
+      addr_t *result = micron::mremap(micron::ptr_cast<addr_t *>(old.ptr), old.len, capacity, mremap_maymove);
       if ( !micron::mmap_failed(result) ) return { reinterpret_cast<byte *>(result), capacity };
     }
 
@@ -112,7 +112,7 @@ public:
   destroy(chunk<byte> memory, usize) noexcept
   {
     if ( memory.ptr == nullptr ) return;
-    micron::munmap(reinterpret_cast<addr_t *>(memory.ptr), memory.len);
+    micron::munmap(micron::ptr_cast<addr_t *>(memory.ptr), memory.len);
   }
 
   static void

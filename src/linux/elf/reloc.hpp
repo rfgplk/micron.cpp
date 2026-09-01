@@ -104,9 +104,9 @@ inline i64
 __implicit_addend(const u8 *p) noexcept
 {
   if constexpr ( native_class == fmt_class::elf32 )
-    return static_cast<i64>(static_cast<i32>(*reinterpret_cast<const u32 *>(p)));
+    return static_cast<i64>(static_cast<i32>(*micron::ptr_cast<const u32 *>(p)));
   else
-    return static_cast<i64>(*reinterpret_cast<const u64 *>(p));
+    return static_cast<i64>(*micron::ptr_cast<const u64 *>(p));
 }
 
 inline void *
@@ -329,12 +329,12 @@ apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept
   case r_arm_none:
     return reloc_result::applied;
   case r_arm_relative:
-    *reinterpret_cast<u32 *>(p) = b + static_cast<u32>(a);
+    *micron::ptr_cast<u32 *>(p) = b + static_cast<u32>(a);
     return reloc_result::applied;
   case r_arm_irelative: {
     using ifn = u32 (*)();
     ifn fn = reinterpret_cast<ifn>(static_cast<uintptr_t>(b + static_cast<u32>(a)));
-    *reinterpret_cast<u32 *>(p) = fn();
+    *micron::ptr_cast<u32 *>(p) = fn();
     return reloc_result::applied;
   }
   case r_arm_glob_dat:
@@ -342,7 +342,7 @@ apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept
     bool weak = false;
     void *s = __resolve_for(ctx, si, weak);
     if ( !s ) return weak ? reloc_result::skipped_weak : reloc_result::unresolved;
-    *reinterpret_cast<u32 *>(p) = static_cast<u32>(reinterpret_cast<uintptr_t>(s));
+    *micron::ptr_cast<u32 *>(p) = static_cast<u32>(reinterpret_cast<uintptr_t>(s));
     return reloc_result::applied;
   }
   case r_arm_abs32:
@@ -350,7 +350,7 @@ apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept
     bool weak = false;
     void *s = __resolve_for(ctx, si, weak);
     if ( !s ) return weak ? reloc_result::skipped_weak : reloc_result::unresolved;
-    *reinterpret_cast<u32 *>(p) = static_cast<u32>(reinterpret_cast<uintptr_t>(s)) + static_cast<u32>(a);
+    *micron::ptr_cast<u32 *>(p) = static_cast<u32>(reinterpret_cast<uintptr_t>(s)) + static_cast<u32>(a);
     return reloc_result::applied;
   }
   case r_arm_rel32: {
@@ -358,14 +358,14 @@ apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept
     void *s = __resolve_for(ctx, si, weak);
     if ( !s ) return weak ? reloc_result::skipped_weak : reloc_result::unresolved;
     const u32 sv = static_cast<u32>(reinterpret_cast<uintptr_t>(s));
-    *reinterpret_cast<u32 *>(p) = sv + static_cast<u32>(a) - static_cast<u32>(reinterpret_cast<uintptr_t>(p));
+    *micron::ptr_cast<u32 *>(p) = sv + static_cast<u32>(a) - static_cast<u32>(reinterpret_cast<uintptr_t>(p));
     return reloc_result::applied;
   }
   case r_arm_tls_dtpmod32:
-    *reinterpret_cast<u32 *>(p) = static_cast<u32>(ctx.tls_modid);
+    *micron::ptr_cast<u32 *>(p) = static_cast<u32>(ctx.tls_modid);
     return reloc_result::applied;
   case r_arm_tls_dtpoff32:
-    *reinterpret_cast<u32 *>(p) = static_cast<u32>(ctx.d->symtab[si].value) + static_cast<u32>(a);
+    *micron::ptr_cast<u32 *>(p) = static_cast<u32>(ctx.d->symtab[si].value) + static_cast<u32>(a);
     return reloc_result::applied;
   case r_arm_tls_tpoff32:
   case r_arm_tls_ie32:

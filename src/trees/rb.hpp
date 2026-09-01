@@ -972,9 +972,9 @@ public:
 
   template<class Acc, class NodeFn>
   Acc
-  cata(const Acc &empty, NodeFn node) const
+  cata(const Acc &empty, NodeFn node_fn) const
   {
-    return __cata_rec(root_, empty, node);
+    return __cata_rec(root_, empty, node_fn);
   }
 
   template<traversal_order O = traversal_order::inorder, class Fn>

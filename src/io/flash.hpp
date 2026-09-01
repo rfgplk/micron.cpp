@@ -139,7 +139,7 @@ class engine
   void
   __free_pool() noexcept
   {
-    if ( __pool != nullptr ) micron::munmap(reinterpret_cast<addr_t *>(__pool), __pool_len);
+    if ( __pool != nullptr ) micron::munmap(micron::ptr_cast<addr_t *>(__pool), __pool_len);
     __pool = nullptr;
     __pool_len = 0;
   }

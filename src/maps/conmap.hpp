@@ -102,7 +102,7 @@ public:
     __per_stripe_cap = total_capacity / Stripes;
     if ( __per_stripe_cap < 16 ) __per_stripe_cap = 16;
     __stripes_block = __allocator_create<Alloc, __cache_line>(sizeof(__stripe) * Stripes);
-    __stripes_buf = reinterpret_cast<__stripe *>(__stripes_block.ptr);
+    __stripes_buf = micron::ptr_cast<__stripe *>(__stripes_block.ptr);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     usize built = 0;
     try {

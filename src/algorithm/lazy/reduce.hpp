@@ -561,7 +561,7 @@ geomean_into(V &&__v)
     __prod *= static_cast<R>(__x);
     ++__n;
   });
-  return math::powerflong(__prod, static_cast<R>(R(1) / static_cast<R>(__n)));
+  return static_cast<R>(math::powerflong(__prod, static_cast<R>(R(1) / static_cast<R>(__n))));
 }
 
 template<typename R, typename V>

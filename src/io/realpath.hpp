@@ -97,7 +97,7 @@ realpath(const char *__restrict path, char *__restrict resolved_path)
 #else
   max_t __m = micron::syscall(SYS_mmap, nullptr, posix::path_max, prot_read | prot_write, map_private | map_anonymous, -1, 0);
 #endif
-  if ( micron::syscall_failed(__m) ) return nullptr;
+  if ( micron::syscall_failed(static_cast<long>(__m)) ) return nullptr;
   char *buf = reinterpret_cast<char *>(__m);
   if ( !realpath_into(path, buf, posix::path_max) ) {
     micron::syscall(SYS_munmap, buf, posix::path_max);

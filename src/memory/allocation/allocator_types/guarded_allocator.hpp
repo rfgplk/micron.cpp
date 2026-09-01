@@ -53,8 +53,8 @@ public:
     addr_t *base = micron::mmap(nullptr, mapping_len, prot_none, map_private | map_anonymous, -1, 0);
     if ( micron::mmap_failed(base) ) exc<except::memory_error>("allocator_guarded: mmap failed");
 
-    addr_t *data = reinterpret_cast<addr_t *>(reinterpret_cast<byte *>(base) + page_size);
-    addr_t *trailing = reinterpret_cast<addr_t *>(reinterpret_cast<byte *>(data) + data_len);
+    addr_t *data = micron::ptr_cast<addr_t *>(reinterpret_cast<byte *>(base) + page_size);
+    addr_t *trailing = micron::ptr_cast<addr_t *>(reinterpret_cast<byte *>(data) + data_len);
     if ( micron::mprotect(data, data_len, prot_read | prot_write) != 0 ) {
       micron::munmap(base, mapping_len);
       exc<except::memory_error>("allocator_guarded: mprotect failed");

@@ -191,7 +191,7 @@ class hopscotch_map
           continue;      // Skip empty slots
         }
 
-        usize entry_home = __hop_impl::mix(entries[check_pos].key) & __bmask;
+        usize entry_home = static_cast<usize>(__hop_impl::mix(entries[check_pos].key) & __bmask);
         usize dist_to_empty = (current_empty >= entry_home) ? (current_empty - entry_home) : (size - entry_home + current_empty);
 
         if ( dist_to_empty <= MH ) {
@@ -266,7 +266,7 @@ class hopscotch_map
     if ( __bmask == 0 ) {
       return false;
     }
-    usize home = __hop_impl::mix(hsh) & __bmask;
+    usize home = static_cast<usize>(__hop_impl::mix(hsh) & __bmask);
 
     for ( usize i = 0; i <= MH; ++i ) {
       usize probe = (home + i) & __bmask;
@@ -310,7 +310,7 @@ class hopscotch_map
     if ( hsh == 0 ) exc<except::library_error>("Invalid hash value (0)");
     if ( __bmask == 0 ) exc<except::library_error>("Hopscotch map not initialized");
 
-    usize home = __hop_impl::mix(hsh) & __bmask;
+    usize home = static_cast<usize>(__hop_impl::mix(hsh) & __bmask);
     for ( usize i = 0; i <= MH; ++i ) {
       usize probe = (home + i) & __bmask;
       if ( entries[probe].key == hsh ) return micron::addressof(entries[probe].value);
@@ -572,7 +572,7 @@ public:
       return nullptr;
     }
 
-    usize home = __hop_impl::mix(hsh) & __bmask;
+    usize home = static_cast<usize>(__hop_impl::mix(hsh) & __bmask);
 
     // unrolled 4x probe
     __builtin_prefetch(&entries[home], 0, 1);

@@ -163,7 +163,7 @@ class heap_swiss_map
       chunk<byte> blk = __storage_alloc::create(n_slots * sizeof(__hs_entry));
       micron::memset(ctrl, __empty, n_slots + __group);
       __ctrl = ctrl;
-      __entries = reinterpret_cast<__hs_entry *>(blk.ptr);
+      __entries = micron::ptr_cast<__hs_entry *>(blk.ptr);
       __ctrl_block = ctrl_block;
       __entry_block = blk;
       __n_slots = n_slots;

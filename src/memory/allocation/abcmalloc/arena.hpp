@@ -458,7 +458,7 @@ class __arena: private cache
   __unmark_from_arena(byte *addr, usize sz)
   {
     __debug_print_addr("__unmark_from_arena(): searching for ", addr);
-    i32 idx = _arena_tier.find_range(reinterpret_cast<addr_t *>(addr));
+    i32 idx = _arena_tier.find_range(micron::ptr_cast<addr_t *>(addr));
     if ( idx < 0 ) [[unlikely]] {
       __debug_print_addr("__unmark_from_arena(): WARNING address not found: ", addr);
       return;
@@ -1173,7 +1173,7 @@ class __arena: private cache
   {
     if constexpr ( __default_redzone ) {
       i32 idx;
-      if ( (idx = _precise.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) {
+      if ( (idx = _precise.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) {
         if ( !verify_redzone(m.ptr, m.len) ) [[unlikely]] {
           __debug_print_addr("__vmap_remove(): redzone corruption detected at: ", m.ptr);
           return fail_state();
@@ -1181,7 +1181,7 @@ class __arena: private cache
         micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
         return __cache_push_or_remove(_precise, idx, adj);
       }
-      if ( (idx = _small.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) {
+      if ( (idx = _small.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) {
         if ( !verify_redzone(m.ptr, m.len) ) [[unlikely]] {
           __debug_print_addr("__vmap_remove(): redzone corruption detected at: ", m.ptr);
           return fail_state();
@@ -1189,13 +1189,13 @@ class __arena: private cache
         micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
         return __cache_push_or_remove(_small, idx, adj);
       }
-      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_medium, idx, m);
-      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_large, idx, m);
-      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_huge, idx, m);
+      if ( (idx = _medium.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_medium, idx, m);
+      if ( (idx = _large.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_large, idx, m);
+      if ( (idx = _huge.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) return __cache_push_or_remove(_huge, idx, m);
       __debug_print_addr("__vmap_remove(): WARNING address not found in any tier: ", m.ptr);
       return false;
     }
-    addr_t *p = reinterpret_cast<addr_t *>(m.ptr);
+    addr_t *p = micron::ptr_cast<addr_t *>(m.ptr);
     i32 idx;
     if ( (idx = _precise.find_range(p)) >= 0 ) [[likely]]
       return __cache_push_or_remove(_precise, idx, m);
@@ -1212,27 +1212,27 @@ class __arena: private cache
   {
     if constexpr ( __default_redzone ) {
       i32 idx;
-      if ( (idx = _precise.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) {
+      if ( (idx = _precise.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) {
         if ( !verify_redzone_leading(addr) ) [[unlikely]] {
           __debug_print_addr("__vmap_remove_at(): leading redzone corrupted at: ", addr);
           return fail_state();
         }
         return __tier_remove_at(_precise, idx, addr - __default_redzone_size);
       }
-      if ( (idx = _small.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) {
+      if ( (idx = _small.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) {
         if ( !verify_redzone_leading(addr) ) [[unlikely]] {
           __debug_print_addr("__vmap_remove_at(): leading redzone corrupted at: ", addr);
           return fail_state();
         }
         return __tier_remove_at(_small, idx, addr - __default_redzone_size);
       }
-      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_medium, idx, addr);
-      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_large, idx, addr);
-      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_huge, idx, addr);
+      if ( (idx = _medium.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_medium, idx, addr);
+      if ( (idx = _large.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_large, idx, addr);
+      if ( (idx = _huge.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) return __tier_remove_at(_huge, idx, addr);
       __debug_print_addr("__vmap_remove_at(): WARNING address not found in any tier: ", addr);
       return false;
     }
-    addr_t *p = reinterpret_cast<addr_t *>(addr);
+    addr_t *p = micron::ptr_cast<addr_t *>(addr);
     i32 idx;
     if ( (idx = _precise.find_range(p)) >= 0 ) [[likely]]
       return __tier_remove_at(_precise, idx, addr);
@@ -1250,7 +1250,7 @@ class __arena: private cache
     // NOTE: always tombstones regardless of __default_tombstone
     if constexpr ( __default_redzone ) {
       i32 idx;
-      if ( (idx = _precise.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) {
+      if ( (idx = _precise.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) {
         if ( !verify_redzone(m.ptr, m.len) ) [[unlikely]] {
           __debug_print_addr("__vmap_tombstone(): redzone corruption detected at: ", m.ptr);
           return fail_state();
@@ -1258,7 +1258,7 @@ class __arena: private cache
         micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
         return __tier_tombstone(_precise, idx, adj);
       }
-      if ( (idx = _small.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) {
+      if ( (idx = _small.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) {
         if ( !verify_redzone(m.ptr, m.len) ) [[unlikely]] {
           __debug_print_addr("__vmap_tombstone(): redzone corruption detected at: ", m.ptr);
           return fail_state();
@@ -1266,13 +1266,13 @@ class __arena: private cache
         micron::__chunk<byte> adj = { m.ptr - __default_redzone_size, m.len + 2 * __default_redzone_size };
         return __tier_tombstone(_small, idx, adj);
       }
-      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_medium, idx, m);
-      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_large, idx, m);
-      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_huge, idx, m);
+      if ( (idx = _medium.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_medium, idx, m);
+      if ( (idx = _large.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_large, idx, m);
+      if ( (idx = _huge.find_range(micron::ptr_cast<addr_t *>(m.ptr))) >= 0 ) return __tier_tombstone(_huge, idx, m);
       __debug_print_addr("__vmap_tombstone(): WARNING address not found in any tier: ", m.ptr);
       return false;
     }
-    addr_t *p = reinterpret_cast<addr_t *>(m.ptr);
+    addr_t *p = micron::ptr_cast<addr_t *>(m.ptr);
     i32 idx;
     if ( (idx = _precise.find_range(p)) >= 0 ) [[likely]]
       return __tier_tombstone(_precise, idx, m);
@@ -1290,27 +1290,27 @@ class __arena: private cache
     // NOTE: always tombstones regardless of __default_tombstone
     if constexpr ( __default_redzone ) {
       i32 idx;
-      if ( (idx = _precise.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) {
+      if ( (idx = _precise.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) {
         if ( !verify_redzone_leading(addr) ) [[unlikely]] {
           __debug_print_addr("__vmap_tombstone_at(): leading redzone corrupted at: ", addr);
           return fail_state();
         }
         return __tier_tombstone_at(_precise, idx, addr - __default_redzone_size);
       }
-      if ( (idx = _small.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) {
+      if ( (idx = _small.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) {
         if ( !verify_redzone_leading(addr) ) [[unlikely]] {
           __debug_print_addr("__vmap_tombstone_at(): leading redzone corrupted at: ", addr);
           return fail_state();
         }
         return __tier_tombstone_at(_small, idx, addr - __default_redzone_size);
       }
-      if ( (idx = _medium.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_medium, idx, addr);
-      if ( (idx = _large.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_large, idx, addr);
-      if ( (idx = _huge.find_range(reinterpret_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_huge, idx, addr);
+      if ( (idx = _medium.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_medium, idx, addr);
+      if ( (idx = _large.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_large, idx, addr);
+      if ( (idx = _huge.find_range(micron::ptr_cast<addr_t *>(addr))) >= 0 ) return __tier_tombstone_at(_huge, idx, addr);
       __debug_print_addr("__vmap_tombstone_at(): WARNING address not found in any tier: ", addr);
       return false;
     }
-    bool ok = __dispatch_addr(reinterpret_cast<addr_t *>(addr), [&](auto &tier, i32 idx) { return __tier_tombstone_at(tier, idx, addr); });
+    bool ok = __dispatch_addr(micron::ptr_cast<addr_t *>(addr), [&](auto &tier, i32 idx) { return __tier_tombstone_at(tier, idx, addr); });
     if ( !ok ) [[unlikely]]
       __debug_print_addr("__vmap_tombstone_at(): WARNING address not found in any tier: ", addr);
     return ok;
@@ -1363,7 +1363,7 @@ class __arena: private cache
   __vmap_freeze(const micron::__chunk<byte> &memory)
   {
     auto __g = __struct_guard();
-    return __dispatch_addr(reinterpret_cast<addr_t *>(memory.ptr), [&](auto &tier, i32 idx) {
+    return __dispatch_addr(micron::ptr_cast<addr_t *>(memory.ptr), [&](auto &tier, i32 idx) {
       __debug_print_addr("__vmap_freeze(): freezing sheet containing addr: ", memory.ptr);
       // drop any cached blocks belonging to this sheet
       tier.__cache.invalidate_range(reinterpret_cast<const byte *>(tier.__idx[idx].lo), reinterpret_cast<const byte *>(tier.__idx[idx].hi));
@@ -1377,7 +1377,7 @@ class __arena: private cache
   __vmap_freeze_at(byte *addr)
   {
     auto __g = __struct_guard();
-    return __dispatch_addr(reinterpret_cast<addr_t *>(addr), [&](auto &tier, i32 idx) {
+    return __dispatch_addr(micron::ptr_cast<addr_t *>(addr), [&](auto &tier, i32 idx) {
       __debug_print_addr("__vmap_freeze_at(): freezing sheet containing: ", addr);
       tier.__cache.invalidate_range(reinterpret_cast<const byte *>(tier.__idx[idx].lo), reinterpret_cast<const byte *>(tier.__idx[idx].hi));
       bool ok = tier.__idx[idx].nd->nd->freeze();
@@ -1402,7 +1402,7 @@ class __arena: private cache
   __block_ptr_of(byte *user) const
   {
     if constexpr ( __default_redzone ) {
-      addr_t *a = reinterpret_cast<addr_t *>(user);
+      addr_t *a = micron::ptr_cast<addr_t *>(user);
       if ( _precise.find_range(a) >= 0 or _small.find_range(a) >= 0 ) return user - __default_redzone_size;
     }
     return user;
@@ -1435,7 +1435,7 @@ class __arena: private cache
   __free_scrub([[maybe_unused]] byte *p, [[maybe_unused]] usize len)
   {
     if constexpr ( __default_zero_on_free or ABC_EFF_POISON_ON_FREE or __default_full_on_free ) {
-      const usize real = __size_of_alloc(reinterpret_cast<addr_t *>(p));
+      const usize real = __size_of_alloc(micron::ptr_cast<addr_t *>(p));
       if ( real == 0 ) [[unlikely]]
         return;      // not ours: never write through it
       // a block parked in the tier free-cache may already have been handed back out
@@ -1474,7 +1474,7 @@ public:
       if ( __remote_free.push(p, sz) ) [[likely]]
         return true;
       // ring full (owner not draining)
-      __remote_ovf_node *nd = reinterpret_cast<__remote_ovf_node *>(p);
+      __remote_ovf_node *nd = micron::ptr_cast<__remote_ovf_node *>(p);
       nd->sz = sz;
       __remote_ovf_node *head = __remote_ovf.get(micron::memory_order_relaxed);
       do {
@@ -1623,8 +1623,8 @@ public:
     __init_tlsf<__class_precise>(_precise, __default_cache_size_factor * __class_precise);
 
     if constexpr ( __default_eager_hot_tiers or !__default_lazy_construct ) {
-      u64 share_small = __prealloc_share<__class_small>(prealloc_size);
-      u64 share_medium = __prealloc_share<__class_medium>(prealloc_size);
+      usize share_small = __saturate_bytes(__prealloc_share<__class_small>(prealloc_size));
+      usize share_medium = __saturate_bytes(__prealloc_share<__class_medium>(prealloc_size));
       __debug_print("__arena(): prealloc share small: ", share_small);
       __debug_print("__arena(): prealloc share medium: ", share_medium);
       __init_tlsf<__class_small>(_small, share_small);
@@ -1633,8 +1633,8 @@ public:
 
     if constexpr ( !__default_lazy_construct ) {
       if constexpr ( __default_init_large_pages and !__is_constrained ) {
-        u64 share_large = __prealloc_share<__class_large>(prealloc_size);
-        u64 share_huge = __prealloc_share<__class_huge>(prealloc_size);
+        usize share_large = __saturate_bytes(__prealloc_share<__class_large>(prealloc_size));
+        usize share_huge = __saturate_bytes(__prealloc_share<__class_huge>(prealloc_size));
         __debug_print("__arena(): prealloc share large: ", share_large);
         __debug_print("__arena(): prealloc share huge: ", share_huge);
         __init_buddy<__class_large>(_large, share_large);
@@ -1885,7 +1885,7 @@ public:
   __is_cached(byte *ptr) const
   {
     bool cached = false;
-    (void)__dispatch_addr(reinterpret_cast<addr_t *>(ptr), [&](const auto &tier, i32) {
+    (void)__dispatch_addr(micron::ptr_cast<addr_t *>(ptr), [&](const auto &tier, i32) {
       cached = tier.__cache.contains(ptr);
       return true;
     });
@@ -2029,7 +2029,7 @@ public:
     auto __g = __struct_guard();
     __debug_print_addr("reset_page(): resetting sheet containing: ", ptr);
     // binary search each tier for the sheet whose range covers the address
-    addr_t *addr = reinterpret_cast<addr_t *>(ptr);
+    addr_t *addr = micron::ptr_cast<addr_t *>(ptr);
     auto do_reset = [&](auto &tier) {
       i32 idx = tier.find_range(addr);
       if ( idx >= 0 ) {
@@ -2057,7 +2057,7 @@ public:
   {
     if ( __is_cached(ptr) ) [[unlikely]]
       return nullptr;
-    const usize old_size = __size_of_alloc(reinterpret_cast<addr_t *>(ptr));
+    const usize old_size = __size_of_alloc(micron::ptr_cast<addr_t *>(ptr));
     if ( old_size == 0 ) [[unlikely]]
       return nullptr;
     // in-place reuse
@@ -2066,7 +2066,7 @@ public:
       // caller may now legally write, so re-lay it at the new bound. new_sz <= old_size ==
       // bs - hdr - 2 * rz guarantees ptr + new_sz + rz <= block end
       if constexpr ( __default_redzone ) {
-        if ( _precise.find_range(reinterpret_cast<addr_t *>(ptr)) >= 0 or _small.find_range(reinterpret_cast<addr_t *>(ptr)) >= 0 )
+        if ( _precise.find_range(micron::ptr_cast<addr_t *>(ptr)) >= 0 or _small.find_range(micron::ptr_cast<addr_t *>(ptr)) >= 0 )
           write_redzone(ptr, new_sz);
       }
       ABC_DOCTOR(doctor::record_realloc(ptr, new_sz);)

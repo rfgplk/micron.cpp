@@ -149,7 +149,7 @@ find_tls_in_phdrs(unsigned long phdr_addr, unsigned long phent, unsigned long ph
 
   u64 bias = 0;
   for ( unsigned long i = 0; i < phnum; ++i ) {
-    const phdr_t *ph = reinterpret_cast<const phdr_t *>(p + i * phent);
+    const phdr_t *ph = micron::ptr_cast<const phdr_t *>(p + i * phent);
     if ( ph->p_type == elf::pt_phdr ) {
       bias = static_cast<u64>(phdr_addr) - static_cast<u64>(ph->p_vaddr);
       break;
@@ -157,7 +157,7 @@ find_tls_in_phdrs(unsigned long phdr_addr, unsigned long phent, unsigned long ph
   }
 
   for ( unsigned long i = 0; i < phnum; ++i ) {
-    const phdr_t *ph = reinterpret_cast<const phdr_t *>(p + i * phent);
+    const phdr_t *ph = micron::ptr_cast<const phdr_t *>(p + i * phent);
     if ( ph->p_type == elf::pt_tls ) {
       out.image = reinterpret_cast<const byte *>(static_cast<u64>(ph->p_vaddr) + bias);
       out.filesz = ph->p_filesz;
@@ -216,7 +216,7 @@ inline bool
 __ehdr_usable(void) noexcept
 {
   if ( __ehdr_start == nullptr ) return false;
-  const ehdr_t *eh = reinterpret_cast<const ehdr_t *>(__ehdr_start);
+  const ehdr_t *eh = micron::ptr_cast<const ehdr_t *>(__ehdr_start);
   if ( eh->e_ident[0] != 0x7f or eh->e_ident[1] != 'E' or eh->e_ident[2] != 'L' or eh->e_ident[3] != 'F' ) return false;
   return eh->e_phoff != 0 and eh->e_phentsize != 0 and eh->e_phnum != 0;
 }
@@ -228,13 +228,13 @@ find_tls_from_ehdr(void) noexcept
   tls_image out{ nullptr, 0, 0, 0 };
   if ( !__ehdr_usable() ) return out;
 
-  const ehdr_t *eh = reinterpret_cast<const ehdr_t *>(__ehdr_start);
+  const ehdr_t *eh = micron::ptr_cast<const ehdr_t *>(__ehdr_start);
   const byte *p = __ehdr_start + eh->e_phoff;
 
   u64 bias = 0;
   bool have_bias = false;
   for ( u16 i = 0; i < eh->e_phnum; ++i ) {
-    const phdr_t *ph = reinterpret_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
+    const phdr_t *ph = micron::ptr_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
     if ( ph->p_type == elf::pt_phdr ) {
       bias = reinterpret_cast<u64>(p) - static_cast<u64>(ph->p_vaddr);
       have_bias = true;
@@ -243,7 +243,7 @@ find_tls_from_ehdr(void) noexcept
   }
   if ( !have_bias ) {
     for ( u16 i = 0; i < eh->e_phnum; ++i ) {
-      const phdr_t *ph = reinterpret_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
+      const phdr_t *ph = micron::ptr_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
       if ( ph->p_type == elf::pt_load and ph->p_offset == 0 ) {
         bias = reinterpret_cast<u64>(__ehdr_start) - static_cast<u64>(ph->p_vaddr);
         break;
@@ -252,7 +252,7 @@ find_tls_from_ehdr(void) noexcept
   }
 
   for ( u16 i = 0; i < eh->e_phnum; ++i ) {
-    const phdr_t *ph = reinterpret_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
+    const phdr_t *ph = micron::ptr_cast<const phdr_t *>(p + static_cast<usize>(i) * eh->e_phentsize);
     if ( ph->p_type == elf::pt_tls ) {
       out.image = reinterpret_cast<const byte *>(static_cast<u64>(ph->p_vaddr) + bias);
       out.filesz = ph->p_filesz;

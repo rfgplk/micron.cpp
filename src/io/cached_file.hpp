@@ -37,7 +37,7 @@ public:
   }
 
   cached_file(const char *name, const io::modes mode)
-      : file(name, mode), data(), __cursor(mode == io::modes::append || mode == io::modes::appendread ? size() : 0)
+      : file(name, mode), data(), __cursor(mode == io::modes::append || mode == io::modes::appendread ? static_cast<usize>(size()) : 0)
   {
   }
 

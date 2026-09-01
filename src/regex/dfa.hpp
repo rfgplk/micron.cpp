@@ -169,7 +169,7 @@ build_dfa(prog_view pv, char *seen) noexcept
       if ( restart ) dfa_eclose(pv, 0, seen, nk, na, ne, false, false);      // unanchored restart
       for ( usize pc = 0; pc < pv.ncode; ++pc ) {
         if ( !((ks[pc >> 6] >> (pc & 63)) & 1) ) continue;
-        if ( dfa_consumes(pv.code[pc], (u8)c, pv.cls, pv.ncls) ) dfa_eclose(pv, pc + 1, seen, nk, na, ne, false, false);
+        if ( dfa_consumes(pv.code[pc], (u8)c, pv.cls, pv.ncls) ) dfa_eclose(pv, static_cast<u32>(pc + 1), seen, nk, na, ne, false, false);
       }
       i32 nid = intern(nk, na, ne);
       if ( nid < 0 ) break;

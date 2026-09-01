@@ -42,8 +42,9 @@ __read_from(S &buf, const fd_t &handle)
 
 // redirect from stdin to some other arbitrary FILE*
 void
-copy_to(const fd_t &handle)
+copy_to([[maybe_unused]] const fd_t &handle)
 {
+      // TODO: unimplemented
 }
 };      // namespace io
 

@@ -242,7 +242,7 @@ arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, f64 val)
 
 // wide floats
 inline usize
-arith_to_buf(char *buf, usize buf_sz, long double val)
+arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, long double val)
 {
 #if defined(__micron_ldbl_binary64)
   return micron::__impl::__fpconv::d2s_buffered(static_cast<f64>(val), buf);

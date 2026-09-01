@@ -90,7 +90,7 @@ __spin_drop(__spin_ctl *__c, u32 __what) noexcept
   }
   if constexpr ( !micron::is_void_v<R> ) {
     if ( __b->__has ) {
-      reinterpret_cast<R *>(__b->__slot)->~R();
+      micron::ptr_cast<R *>(__b->__slot)->~R();
       __b->__has = false;
     }
   }
@@ -258,8 +258,8 @@ public:
     if ( !__res->__has ) [[unlikely]]
       micron::exc<except::library_error>("micron::coro::routine: no result (fn did not complete)");
     __res->__has = false;
-    R __r = micron::move(*reinterpret_cast<R *>(__res->__slot));
-    reinterpret_cast<R *>(__res->__slot)->~R();
+    R __r = micron::move(*micron::ptr_cast<R *>(__res->__slot));
+    micron::ptr_cast<R *>(__res->__slot)->~R();
     return __r;
   }
 

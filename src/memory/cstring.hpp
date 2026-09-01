@@ -111,9 +111,9 @@ strlen128(const char *str) noexcept
     uint8x16_t chunk = vld1q_u8(reinterpret_cast<const uint8_t *>(ptr));
     uint8x16_t cmp = vceqq_u8(chunk, zero);
 
-    const uint64x2_t v64 = vreinterpretq_u64_u8(cmp);
-    const uint64_t lo = vgetq_lane_u64(v64, 0);
-    const uint64_t hi = vgetq_lane_u64(v64, 1);
+    const uint64x2_t cmp64 = vreinterpretq_u64_u8(cmp);
+    const uint64_t lo = vgetq_lane_u64(cmp64, 0);
+    const uint64_t hi = vgetq_lane_u64(cmp64, 1);
 
     if ( (lo | hi) != 0 ) {
       if ( lo != 0 )

@@ -605,11 +605,11 @@ public:
     thread_attr_t attrs = micron::__thread_attr_with_stack(posix::getpid(), posix::sched_other, stack_ptr, Sz);
     // WARNING: important, make sure no temporaries are created
     auto __cn = cpu_t<true>();
-    new (&threads.mut(counter)) thread_t<Tr>{ micron::move(__cn), micron::move(attrs) };
+    new (&threads.mut(static_cast<usize>(counter))) thread_t<Tr>{ micron::move(__cn), micron::move(attrs) };
     sstring<16> thread_name = "c/" + int_to_string_stack<u32, char, 12>(static_cast<u32>(counter));
     thread_name[15] = 0x0;
-    micthread::set_name(threads.mut(counter).thread.native_handle(), thread_name.c_str());
-    return threads.mut(counter++);
+    micthread::set_name(threads.mut(static_cast<usize>(counter)).thread.native_handle(), thread_name.c_str());
+    return threads.mut(static_cast<usize>(counter++));
   }
 
   void clean(void) = delete;
@@ -622,10 +622,10 @@ public:
   {
     micron::lock_guard l(mtx);
     if ( !counter ) micron::exc<except::thread_error>("micron concurrent_arena::add(): empty arena");
-    threads.mut(add_counter).thread[micron::forward<Fn &&>(fn), micron::forward<Args &&>(args)...];
+    threads.mut(static_cast<usize>(add_counter)).thread[micron::forward<Fn &&>(fn), micron::forward<Args &&>(args)...];
     umax_t __ot = add_counter;
     if ( ++add_counter >= counter ) add_counter = 0;
-    return threads[__ot];
+    return threads[static_cast<usize>(__ot)];
   }
 
   void

@@ -527,7 +527,7 @@ public:
       __destroy = &destroy_fn<D>;
       __copy = &copy_fn<D>;
       __move = &move_fn<D>;
-      return *reinterpret_cast<D *>(storage);
+      return *micron::ptr_cast<D *>(storage);
     }
   }
 
@@ -572,7 +572,7 @@ public:
     if constexpr ( micron::is_void_v<D> ) {
       return;      // void
     } else {
-      return *reinterpret_cast<D *>(storage);
+      return *micron::ptr_cast<D *>(storage);
     }
   }
 
@@ -585,7 +585,7 @@ public:
     if constexpr ( micron::is_void_v<D> ) {
       return;      // void
     } else {
-      return *reinterpret_cast<const D *>(storage);
+      return *micron::ptr_cast<const D *>(storage);
     }
   }
 

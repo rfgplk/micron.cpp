@@ -127,7 +127,7 @@ read_file(const io::path_t &p)
     out.set_size(static_cast<usize>(sz));
     max_t r = f.read(out);
     if ( r < 0 ) [[unlikely]]
-      return micron::option<T, io::error_t>{ io::error_t(r) };
+      return micron::option<T, io::error_t>{ io::error_t(static_cast<i32>(r)) };
     out.set_size(static_cast<usize>(r));      // trim to bytes actually read (file may have shrunk since fstat)
     return micron::option<T, io::error_t>{ micron::move(out) };
   }
@@ -138,7 +138,7 @@ read_file(const io::path_t &p)
       max_t r = f.read(static_cast<void *>(chunk), sizeof(chunk));
       if ( r < 0 ) [[unlikely]] {
         if ( -r == error::interrupted ) continue;
-        return micron::option<T, io::error_t>{ io::error_t(r) };
+        return micron::option<T, io::error_t>{ io::error_t(static_cast<i32>(r)) };
       }
       if ( r == 0 ) break;
       for ( max_t i = 0; i < r; ++i ) out.push_back(static_cast<typename T::value_type>(chunk[i]));

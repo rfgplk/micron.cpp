@@ -63,7 +63,7 @@ struct sys_allocator {
   dealloc(T *mem, usize len)
   {      // deallocate at location N
     if ( mem == nullptr ) return;
-    if ( micron::munmap(reinterpret_cast<addr_t *>(mem), len) == -1 )
+    if ( micron::munmap(micron::ptr_cast<addr_t *>(mem), len) == -1 )
       exc<except::critical_error>("sys_allocator::dealloc(): munmap() failed");
     mem = nullptr;
   }

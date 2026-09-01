@@ -83,7 +83,7 @@ __scan(unsigned long base_addr) noexcept
   if ( base_addr == 0 ) return o;
   const u8 *base = reinterpret_cast<const u8 *>(base_addr);
 
-  const elf::nehdr_t *eh = reinterpret_cast<const elf::nehdr_t *>(base);
+  const elf::nehdr_t *eh = micron::ptr_cast<const elf::nehdr_t *>(base);
   if ( eh->ident[0] != 0x7f || eh->ident[1] != 'E' || eh->ident[2] != 'L' || eh->ident[3] != 'F' ) return o;
   if ( eh->phoff == 0 || eh->phentsize == 0 || eh->phnum == 0 ) return o;
 
@@ -91,11 +91,11 @@ __scan(unsigned long base_addr) noexcept
   const elf::ndyn_t *dyn = nullptr;
 
   for ( elf::half i = 0; i < eh->phnum; ++i ) {
-    const elf::nphdr_t *p = reinterpret_cast<const elf::nphdr_t *>(ph + static_cast<usize>(i) * eh->phentsize);
+    const elf::nphdr_t *p = micron::ptr_cast<const elf::nphdr_t *>(ph + static_cast<usize>(i) * eh->phentsize);
     if ( p->type == elf::pt_load && o.bias == nullptr ) {
       o.bias = reinterpret_cast<const u8 *>(base_addr + static_cast<unsigned long>(p->offset) - static_cast<unsigned long>(p->vaddr));
     } else if ( p->type == elf::pt_dynamic ) {
-      dyn = reinterpret_cast<const elf::ndyn_t *>(base + p->offset);
+      dyn = micron::ptr_cast<const elf::ndyn_t *>(base + p->offset);
     }
   }
   if ( !dyn || !o.bias ) return o;
@@ -106,13 +106,13 @@ __scan(unsigned long base_addr) noexcept
       o.dyn.strtab = reinterpret_cast<const char *>(o.bias + d->un.ptr);
       break;
     case elf::dt_symtab:
-      o.dyn.symtab = reinterpret_cast<const elf::nsym_t *>(o.bias + d->un.ptr);
+      o.dyn.symtab = micron::ptr_cast<const elf::nsym_t *>(o.bias + d->un.ptr);
       break;
     case elf::dt_hash:
-      o.dyn.hash = reinterpret_cast<const elf::word *>(o.bias + d->un.ptr);
+      o.dyn.hash = micron::ptr_cast<const elf::word *>(o.bias + d->un.ptr);
       break;
     case elf::dt_gnu_hash:
-      o.dyn.gnu_hash = reinterpret_cast<const elf::word *>(o.bias + d->un.ptr);
+      o.dyn.gnu_hash = micron::ptr_cast<const elf::word *>(o.bias + d->un.ptr);
       break;
     default:
       break;

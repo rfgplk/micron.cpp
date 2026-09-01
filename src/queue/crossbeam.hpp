@@ -76,7 +76,7 @@ class crossbeam
   [[gnu::always_inline]] static inline T *
   __value(__cell &cell) noexcept
   {
-    return reinterpret_cast<T *>(cell.storage);
+    return micron::ptr_cast<T *>(cell.storage);
   }
 
   [[gnu::always_inline]] static inline const T *
@@ -176,7 +176,7 @@ public:
   crossbeam() : __tail(0), __head(0)
   {
     __block = __allocator_create<Alloc, __cell_align>(allocation_multiply_or_throw(sizeof(__cell), __capacity));
-    __cells = reinterpret_cast<__cell *>(__block.ptr);
+    __cells = micron::ptr_cast<__cell *>(__block.ptr);
     for ( usize i = 0; i < __capacity; ++i ) {
       new (&__cells[i]) __cell;
       __cells[i].state.store(__free, memory_order_relaxed);

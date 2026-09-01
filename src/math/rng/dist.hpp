@@ -106,10 +106,10 @@ uniform_real(Rng &g) noexcept
 {
   if constexpr ( sizeof(F) == 8 ) {
     const u64 r = rng::__impl::next64(g);
-    return F((r >> 11) * 0x1.0p-53);
+    return F(static_cast<double>(r >> 11) * 0x1.0p-53);
   } else {
     const u32 r = rng::__impl::next32(g);
-    return F((r >> 8) * 0x1.0p-24f);
+    return F(static_cast<float>(r >> 8) * 0x1.0p-24f);
   }
 }
 

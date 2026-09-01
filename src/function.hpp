@@ -66,8 +66,8 @@ template<typename G>
 inline const void *
 __fn_type_tag() noexcept
 {
-  static const int __sentinel = 0;
-  return &__sentinel;
+  static const int __fn_sentinel = 0;
+  return &__fn_sentinel;
 }
 
 // custom vtable for concrete callable type G
@@ -1094,7 +1094,7 @@ struct __thunk {
 
   ~__thunk()
   {
-    if ( __evaluated ) reinterpret_cast<value_type *>(__storage)->~value_type();
+    if ( __evaluated ) micron::ptr_cast<value_type *>(__storage)->~value_type();
   }
 
   const value_type &
@@ -1104,7 +1104,7 @@ struct __thunk {
       new (__storage) value_type(__fn());
       __evaluated = true;
     }
-    return *reinterpret_cast<const value_type *>(__storage);
+    return *micron::ptr_cast<const value_type *>(__storage);
   }
 
   const value_type &

@@ -137,10 +137,10 @@ __alloc(usize size, usize align, VkSystemAllocationScope scope) noexcept
   const uintptr_t user_addr = (raw_addr + __header_size + align_eff - 1) & ~(static_cast<uintptr_t>(align_eff) - 1);
   byte *user = reinterpret_cast<byte *>(user_addr);
 
-  *reinterpret_cast<usize *>(user - __off_raw) = user_addr - raw_addr;
-  *reinterpret_cast<usize *>(user - __off_size) = size;
-  *reinterpret_cast<usize *>(user - __off_scope) = static_cast<usize>(static_cast<u32>(static_cast<i32>(scope)));
-  *reinterpret_cast<usize *>(user - __off_magic) = __magic;
+  *micron::ptr_cast<usize *>(user - __off_raw) = user_addr - raw_addr;
+  *micron::ptr_cast<usize *>(user - __off_size) = size;
+  *micron::ptr_cast<usize *>(user - __off_scope) = static_cast<usize>(static_cast<u32>(static_cast<i32>(scope)));
+  *micron::ptr_cast<usize *>(user - __off_magic) = __magic;
 
   __stat_on_alloc(size, scope);
   return user;
@@ -152,21 +152,21 @@ __free(void *user_ptr) noexcept
   if ( !user_ptr ) return;
   byte *user = reinterpret_cast<byte *>(user_ptr);
   __stat_on_free(user);
-  const usize offset_to_raw = *reinterpret_cast<usize *>(user - __off_raw);
+  const usize offset_to_raw = *micron::ptr_cast<usize *>(user - __off_raw);
   abc::dealloc(user - offset_to_raw);
 }
 
 inline usize
 __size_of(void *user_ptr) noexcept
 {
-  return *reinterpret_cast<usize *>(reinterpret_cast<byte *>(user_ptr) - __off_size);
+  return *micron::ptr_cast<usize *>(reinterpret_cast<byte *>(user_ptr) - __off_size);
 }
 
 inline VkSystemAllocationScope
 __scope_of(void *user_ptr) noexcept
 {
   return static_cast<VkSystemAllocationScope>(
-      static_cast<i32>(*reinterpret_cast<usize *>(reinterpret_cast<byte *>(user_ptr) - __off_scope)));
+      static_cast<i32>(*micron::ptr_cast<usize *>(reinterpret_cast<byte *>(user_ptr) - __off_scope)));
 }
 
 inline void *

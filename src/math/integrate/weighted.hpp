@@ -91,7 +91,7 @@ tanh_sinh_finite(Fn f, F a, F b, const tanh_sinh_options<F> &options) noexcept
           result.status = quad_status::non_finite;
           return result;
         }
-        term = weight * value;
+        term = static_cast<work_type>(weight) * static_cast<work_type>(value);
       } else {
         const work_type endpoint_distance = halfwidth * (work_type(1) - z);
         F xp = F(work_type(b) - endpoint_distance);
@@ -105,7 +105,7 @@ tanh_sinh_finite(Fn f, F a, F b, const tanh_sinh_options<F> &options) noexcept
           result.status = quad_status::non_finite;
           return result;
         }
-        term = weight * (fp + fm);
+        term = static_cast<work_type>(weight) * static_cast<work_type>(fp + fm);
       }
       sum += term;
       if ( k > 4 && mk::manip::fabs<work_type>(h * halfwidth * term) <= work_type(options.abs_tol) * work_type(0.001) )
