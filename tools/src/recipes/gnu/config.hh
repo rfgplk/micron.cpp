@@ -167,6 +167,7 @@ struct config_t {
   bool cfi = false;          // x86 -fcf-protection=full / arm -mbranch-protection=
   bool fortify = false;      // -D_FORTIFY_SOURCE=2|3
   bool pie = false;
+  bool pie_explicit = false;             // --pie given by name, not implied by --harden
   bool static_pie = false;               // -static-pie -fPIE
   bool relro = false;                    // -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack
   bool gc = false;                       // -ffunction-sections -fdata-sections -Wl,--gc-sections
@@ -525,6 +526,7 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
       conf.fortify = true;
     } else if ( mc::strcmp(argv[i], "--pie") == 0 ) {
       conf.pie = true;
+      conf.pie_explicit = true;
     } else if ( mc::strcmp(argv[i], "--static-pie") == 0 ) {
       conf.static_pie = true;
     } else if ( mc::strcmp(argv[i], "--relro") == 0 ) {

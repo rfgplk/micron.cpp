@@ -193,8 +193,9 @@ compose(const config_t &conf, bool linking)
   if ( conf.fortify and !fs and !sanitized and conf.opt_mode != gcc::opt_flags::flags::optimize_zero )
     __compose_flags(c.extensions, conf.arch == __arch::x86 ? gcc::preprocessor_flags::flags::fortify_source_three
                                                            : gcc::preprocessor_flags::flags::fortify_source_two);
-  // static-PIE needs -fPIE even under -k
-  if ( (conf.pie and !fs) or conf.static_pie ) __compose_flags(c.extensions, gcc::opt_flags::flags::PIE);
+  // -fPIE is codegen, and is legitimate under -k
+  // --harden's implied pie still collapses under -k
+  if ( (conf.pie and (!fs or conf.pie_explicit)) or conf.static_pie ) __compose_flags(c.extensions, gcc::opt_flags::flags::PIE);
   if ( conf.gc ) __compose_flags(c.extensions, gcc::opt_flags::flags::function_sections, gcc::opt_flags::flags::data_sections);
   if ( conf.unroll ) __compose_flags(c.extensions, gcc::opt_flags::flags::unroll_loops);
   // --fp. asan/tsan already inject this above; don't emit it twice

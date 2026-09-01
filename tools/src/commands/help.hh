@@ -208,6 +208,10 @@ help(void)
   mc::console("                      default -all puts a canary on every function, a tax that scales");
   mc::console("                      with call density and so biases a measurement against its floor");
   mc::console("    --pie             position-independent executable  (-fPIE -pie)");
+  mc::console("                      -fPIE survives -k (codegen); -pie does not (a freestanding");
+  mc::console("                      image has no _start). this is the recipe a rebased image");
+  mc::console("                      needs: non-PIE emits absolute slots too narrow for a");
+  mc::console("                      load-time base");
   mc::console("    --static-pie      static PIE (-static-pie -fPIE);  conflicts with -s");
   mc::console("    --relro           full RELRO (-Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack)");
   mc::console("    --strip           strip symbols at link            (-Wl,--strip-all)");
