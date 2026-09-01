@@ -19,6 +19,10 @@ constexpr static const int wexited = 0x00000004;
 constexpr static const int wstopped = wuntraced;
 constexpr static const int wnowait = 0x01000000;
 
+constexpr static const int __wall = 0x40000000;
+constexpr static const int __wclone = static_cast<int>(0x80000000u);
+constexpr static const int __wnothread = 0x20000000;
+
 constexpr int
 wexitstatus(int status) noexcept
 {
