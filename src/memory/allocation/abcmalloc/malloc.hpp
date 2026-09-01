@@ -718,6 +718,9 @@ aligned_free(void *ptr, usize alignment)
 
 };      // namespace abc
 
+// out of process inspection descriptor
+#include "inspect.hpp"
+
 #if defined(ABCMALLOC_DOCTOR_HELP)
 #include "doctor.hpp"
 #endif

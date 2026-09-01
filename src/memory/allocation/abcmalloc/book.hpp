@@ -45,6 +45,9 @@ private:
   stack_page_list __book;
   usize __guard_offset;
 
+  // the out of process inspector has to cross these three; see abcmalloc/inspect.hpp
+  friend struct __ins_probe;
+
   // when a new malloc happens insert it into the book
 
   inline __attribute__((always_inline)) void
@@ -320,6 +323,9 @@ private:
   micron::__chunk<byte> __kernel_memory;
   stack_page_list __book;
   usize __guard_offset;
+
+  // the out of process inspector has to cross these three; see abcmalloc/inspect.hpp
+  friend struct __ins_probe;
 
   inline __attribute__((always_inline)) void
   __impl_release(void)

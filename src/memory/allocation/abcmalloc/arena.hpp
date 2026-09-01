@@ -186,6 +186,9 @@ class __arena: private cache
 
     Cache __cache;
 
+    // named so the inspection descriptor can publish this cache's layout
+    using __ins_cache_t = Cache;
+
     // multi-word bitmap helpers
     inline __attribute__((always_inline)) bool
     __mask_get(u32 pos) const noexcept
@@ -2226,5 +2229,64 @@ public:
   {
     return _precise.zeroed();
   }
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // inspection layout
+  //
+  // NOTE: order here is relied upon by the tier table
+  using __ins_precise_t = decltype(_precise);
+  using __ins_small_t = decltype(_small);
+  using __ins_medium_t = decltype(_medium);
+  using __ins_large_t = decltype(_large);
+  using __ins_huge_t = decltype(_huge);
+  using __ins_internal_t = decltype(_arena_tier);
+
+  // WARNING: the arena's own member offsets cannot be taken; class is incomplete inside its own body
+  friend struct __ins_probe;
+
+  template<typename T> static constexpr usize __ins_tier_off_idx = __builtin_offsetof(T, __idx);
+  template<typename T> static constexpr usize __ins_tier_off_count = __builtin_offsetof(T, __count);
+  template<typename T> static constexpr usize __ins_tier_off_mask = __builtin_offsetof(T, __space_mask);
+  template<typename T> static constexpr usize __ins_tier_off_cache = __builtin_offsetof(T, __cache);
+
+  // per tier free cache
+  template<typename C>
+  static consteval usize
+  __ins_cache_off_size(void)
+  {
+    if constexpr ( C::__cache_slots != 0 )
+      return __builtin_offsetof(C, _size);
+    else
+      return 0;
+  }
+
+  template<typename C>
+  static consteval usize
+  __ins_cache_off_ptr(void)
+  {
+    if constexpr ( C::__cache_slots != 0 )
+      return __builtin_offsetof(C, _ptr);
+    else
+      return 0;
+  }
+
+  template<typename C>
+  static consteval usize
+  __ins_cache_off_count(void)
+  {
+    if constexpr ( C::__cache_slots != 0 )
+      return __builtin_offsetof(C, _count);
+    else
+      return 0;
+  }
+
+  static constexpr usize __ins_sizeof_range = sizeof(typename __ins_precise_t::__range);
+  static constexpr usize __ins_off_range_lo = __builtin_offsetof(typename __ins_precise_t::__range, lo);
+  static constexpr usize __ins_off_range_hi = __builtin_offsetof(typename __ins_precise_t::__range, hi);
+  static constexpr usize __ins_off_range_nd = __builtin_offsetof(typename __ins_precise_t::__range, nd);
+
+  // a node points at the sheet; that pointer is the last hop before the book itself
+  static constexpr usize __ins_sizeof_node = sizeof(node<tlsf_sheet<__class_precise>>);
+  static constexpr usize __ins_off_node_nd = __builtin_offsetof(node<tlsf_sheet<__class_precise>>, nd);
 };
 };      // namespace abc
