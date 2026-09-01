@@ -207,6 +207,10 @@ help(void)
   mc::console("    --no-ssp          -fno-stack-protector -- no canary at all. For benchmarks: the");
   mc::console("                      default -all puts a canary on every function, a tax that scales");
   mc::console("                      with call density and so biases a measurement against its floor");
+  mc::console("    --marm            force ARM state on armv7-a (-marm). must be on the command");
+  mc::console("                      line: a #pragma does not cover .text.startup, which the");
+  mc::console("                      Linaro default emits as Thumb");
+  mc::console("    --mtp <model>     armv7-a thread-pointer access: soft | cp15 | auto (-mtp=)");
   mc::console("    --pie             position-independent executable  (-fPIE -pie)");
   mc::console("                      -fPIE survives -k (codegen); -pie does not (a freestanding");
   mc::console("                      image has no _start). this is the recipe a rebased image");

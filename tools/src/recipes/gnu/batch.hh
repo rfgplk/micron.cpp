@@ -537,6 +537,14 @@ batch_cmp_armv7(const config_t &conf)
   string_type main_flags = __main_opt_flags(conf);
   __compose_flags(main_flags, gcc::arm_flags::flags::march_armv7_a, gcc::arm_flags::flags::mfpu_neon,
                   gcc::arm_flags::flags::mfloat_abi_hard);
+  // -marm has to be on the command line
+  // a #pragma GCC target("arm") does __not__ cover the compiler-synthesized .text.startup
+  if ( conf.marm ) __compose_flags(main_flags, gcc::arm_flags::flags::marm);
+  if ( !conf.mtp.empty() ) {
+    string_type tp = get_string_flag(gcc::arm_flags::flags::mtp);
+    tp += conf.mtp.c_str();
+    __compose_add(main_flags, tp.c_str());
+  }
   const char *comp_type = __flags_comp_type(conf);
   // -c/-S/-E never reach the linker: link inputs and link flags must stay out of those commands
   const bool linking = (conf.compile_type == __comp_type::linked);

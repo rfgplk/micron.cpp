@@ -149,6 +149,8 @@ struct config_t {
   string_type bin_dir;
   string_type standard;
   string_type start_dir;      // --start <dir> / MICRON_START; empty until finalize_and_infer resolves it
+  bool marm = false;          // --marm: -marm, force ARM state on armv7-a
+  string_type mtp;            // --mtp <soft|cp15|auto>: -mtp=, how the thread pointer is read on armv7-a
   mc::vector<string_type> include_path;
   mc::vector<string_type> lib_path;
   mc::vector<string_type> bonus_objs;
@@ -209,7 +211,7 @@ __flag_takes_value(const char *a)
 {
   return mc::strcmp(a, "-o") == 0 or mc::strcmp(a, "-i") == 0 or mc::strcmp(a, "-l") == 0 or mc::strcmp(a, "--lib") == 0
          or mc::strcmp(a, "--def") == 0 or mc::strcmp(a, "--std") == 0 or mc::strcmp(a, "--isa") == 0 or mc::strcmp(a, "-j") == 0
-         or mc::strcmp(a, "--timeout") == 0 or mc::strcmp(a, "--start") == 0;
+         or mc::strcmp(a, "--timeout") == 0 or mc::strcmp(a, "--start") == 0 or mc::strcmp(a, "--mtp") == 0;
 }
 
 inline int
@@ -373,6 +375,13 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
   if ( conf.compiler == __compilers::clang and conf.tsan and conf.static_binary )
     mc::cerror("clang has no -static-libtsan equivalent; drop -s or use --gcc");
 
+  // --marm/--mtp are armv7-a only
+  if ( conf.marm and conf.arch != __arch::arm ) mc::cerror("--marm is an armv7-a flag - the target is not --arm");
+  if ( !conf.mtp.empty() ) {
+    if ( conf.arch != __arch::arm ) mc::cerror("--mtp is an armv7-a flag - the target is not --arm");
+    if ( conf.mtp != "soft" and conf.mtp != "cp15" and conf.mtp != "auto" ) mc::cerror("--mtp takes soft, cp15 or auto");
+  }
+
   // --start/--direct are freestanding-only knobs. MICRON_START is deliberately NOT validated here:
   // an env var applies to a whole run and must stay inert on the hosted lines of a batchfile
   if ( !conf.start_dir.empty() and !conf.freestanding )
@@ -524,6 +533,11 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
       conf.cfi = true;
     } else if ( mc::strcmp(argv[i], "--fortify") == 0 ) {
       conf.fortify = true;
+    } else if ( mc::strcmp(argv[i], "--marm") == 0 ) {
+      conf.marm = true;
+    } else if ( mc::strcmp(argv[i], "--mtp") == 0 ) {
+      if ( ++i >= argc ) mc::cerror("the --mtp flag must be followed by soft, cp15 or auto");
+      conf.mtp = string_type{ argv[i] };
     } else if ( mc::strcmp(argv[i], "--pie") == 0 ) {
       conf.pie = true;
       conf.pie_explicit = true;
