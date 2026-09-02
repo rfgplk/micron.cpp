@@ -39,6 +39,10 @@ enum class align_val_t : usize { };
 operator new(usize size)
 {
   ALLOC_MESSAGE("new(", size, ")");
+  // [expr.new]/[basic.stc.dynamic.allocation]: a zero-size request must still
+  // yield a unique non-null pointer
+  // ; the arena hands back null for 0, so ask for one byte like libstdc++
+  if ( size == 0 ) size = 1;
   if ( void *ptr = micron::__alloc(size) ) {
     ALLOC_MESSAGE("returning(", ptr, ")");
     return ptr;
@@ -50,6 +54,7 @@ operator new(usize size)
 operator new[](usize size)
 {
   ALLOC_MESSAGE("new[](", size, ")");
+  if ( size == 0 ) size = 1;
   if ( void *ptr = micron::__alloc(size) ) {
     ALLOC_MESSAGE("returning(", ptr, ")");
     return ptr;
@@ -123,6 +128,7 @@ __do_free(void *ptr, usize align)
 operator new(usize size, std::align_val_t al)
 {
   ALLOC_MESSAGE("new(", size, ", align=", static_cast<usize>(al), ")");
+  if ( size == 0 ) size = 1;
   if ( void *ptr = micron::__aligned_new::__do_alloc(size, static_cast<usize>(al)) ) return ptr;
   micron::exc<micron::except::memory_error_new_scalar_aligned>("micron::operator new(align): aligned_alloc failed");
 }
@@ -131,6 +137,7 @@ operator new(usize size, std::align_val_t al)
 operator new[](usize size, std::align_val_t al)
 {
   ALLOC_MESSAGE("new[](", size, ", align=", static_cast<usize>(al), ")");
+  if ( size == 0 ) size = 1;
   if ( void *ptr = micron::__aligned_new::__do_alloc(size, static_cast<usize>(al)) ) return ptr;
   micron::exc<micron::except::memory_error_new_array_aligned>("micron::operator new[](align): aligned_alloc failed");
 }
