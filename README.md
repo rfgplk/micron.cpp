@@ -195,7 +195,7 @@ To build it you need to pass `-freflection` + `-std=c++26`, have at least gcc 16
 
 ##### Code Coverage & Validation
 
-Currently we are aiming for (near) 100% code coverage, of all functions and for (within reason) all inputs/domains. However, as of now the testing suites are still being written.
+The micron library has an extensive testing suite located at `tests/`. As of 1.9, it's approaching near 100% code coverage, as well as providing extensive fuzzing and cross-validation suites. 
 
 ###### Conformance with the STL
 
