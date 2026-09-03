@@ -1,0 +1,83 @@
+# tests/adv -- the adversarial tier for src/sec
+#
+# One published sandbox-escape CVE per file, driven against micron's analogue of the defect rather
+# than against the vendor's product. INVERTED POLARITY: each file asserts the property that SHOULD
+# hold, so it FAILS on a tree carrying the defect -- that failure is the proof-of-vulnerability --
+# and becomes the permanent regression guard once the fix lands. CVE_AUDIT.md is the ledger.
+#
+# Runtime cells are x86_64 ONLY, for the reason tests/rigor/sec.duck:3-9 gives: seccomp, landlock and
+# unprivileged user namespaces behave differently or not at all under qemu-user, and a suite that
+# quietly skipped there would report green while testing nothing. arm32 / arm64 / i386 get their
+# coverage from tests/compiletests/sec.cpp, whose static_asserts are the only thing that can see a
+# mistake in the #if-selected group tables.
+#
+# UNLIKE tests/rigor/sec.duck, this tier DOES skip. It has to: an adv file asks about a kernel ABI
+# the box may not have (landlock scope is 6.12+, the mount API is 5.2+), and sb::skip keeps that
+# visible instead of green-by-luck. A skip still exits with the PASS sentinel, so read the SKIP lines
+# in the log, not just the exit codes.
+#
+# --timeout is on every line and is a HANG detector, not a perf budget. Several of these fork jails
+# and park on pipes; a deadlock must be graded, not waited on.
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the tier, at the default recipe (-Ofast, native ISA)
+
+test tests/adv/adv_cve_2019_9893_arg64_split.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2019_10063_tiocsti.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2017_5206_tsync.cpp -o bin/adv --timeout 300 -f
+test tests/adv/adv_cve_2025_68736_ll_widening.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2024_42318_keyctl.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2026_63917_nested_userns.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2026_63921_netns_crossing.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2019_12589_filter_immutable.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2019_5736_procexe.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2024_21626_leaked_dirfd.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2022_0185_fsconfig.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2026_72183_signal_scope.cpp -o bin/adv --timeout 180 -f
+test tests/adv/adv_cve_2026_15226_setuid_bind.cpp -o bin/adv --timeout 180 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# -O2
+#
+# The encoder files are jump ladders and integer control flow -- pure enough that a miscompile under
+# -Ofast's reassociation would show up as a DIFFERENT VERDICT rather than a crash, which is the one
+# failure mode the oracle differential cannot distinguish from a real encoder bug. Same reasoning as
+# tests/rigor/sec.duck:26-27.
+
+test tests/adv/adv_cve_2019_9893_arg64_split.cpp -o bin/adv/o2 -O2 --timeout 180 -f
+test tests/adv/adv_cve_2019_10063_tiocsti.cpp -o bin/adv/o2 -O2 --timeout 180 -f
+test tests/adv/adv_cve_2026_63917_nested_userns.cpp -o bin/adv/o2 -O2 --timeout 180 -f
+test tests/adv/adv_cve_2026_63921_netns_crossing.cpp -o bin/adv/o2 -O2 --timeout 180 -f
+test tests/adv/adv_cve_2022_0185_fsconfig.cpp -o bin/adv/o2 -O2 --timeout 180 -f
+test tests/adv/adv_cve_2019_12589_filter_immutable.cpp -o bin/adv/o2 -O2 --timeout 180 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# --isa base  (SSE2 floor, -march=x86-64)
+#
+# Only the files with no SIMD surface at all. The point is not vectorisation: it is that the group
+# tables and the BPF encoder are ISA-independent, so a difference here would mean something in
+# src/sec had picked up a dependency on -march that nobody intended.
+
+test tests/adv/adv_cve_2019_9893_arg64_split.cpp -o bin/adv/base --isa base --timeout 180 -f
+test tests/adv/adv_cve_2019_10063_tiocsti.cpp -o bin/adv/base --isa base --timeout 180 -f
+test tests/adv/adv_cve_2022_0185_fsconfig.cpp -o bin/adv/base --isa base --timeout 180 -f
+test tests/adv/adv_cve_2024_42318_keyctl.cpp -o bin/adv/base --isa base --timeout 180 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# --asan
+#
+# The files that fork, write fixed-size records into pipes, and index char buffers by parsed offsets.
+# adv_cve_2019_12589 in particular copies a BPF program through a pipe into a fixed array, which is
+# exactly the shape asan exists for.
+
+test tests/adv/adv_cve_2019_12589_filter_immutable.cpp -o bin/adv/asan --asan --timeout 600 -f
+test tests/adv/adv_cve_2024_21626_leaked_dirfd.cpp -o bin/adv/asan --asan --timeout 600 -f
+test tests/adv/adv_cve_2019_5736_procexe.cpp -o bin/adv/asan --asan --timeout 600 -f
+test tests/adv/adv_cve_2019_9893_arg64_split.cpp -o bin/adv/asan --asan --timeout 600 -f
+
+# NOTE: there is deliberately no --ubsan group. Every TU that reaches
+# memory/allocation/abcmalloc/inspect.hpp fails to BUILD under --ubsan at HEAD
+# ("inspect.hpp:426: non-constant condition for static assertion"), tree-wide and unrelated to
+# src/sec -- tests/rigor/sec.duck:53-58 keeps its --ubsan cells anyway and eats three failures for
+# it. This manifest does not, because a tier whose whole value is "a red line means a real finding"
+# must not ship three red lines that mean nothing. Add the group when that assertion is fixed.

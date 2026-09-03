@@ -1,0 +1,61 @@
+# micron::sec -- the linux security suite
+#
+# Runtime cells are x86_64 ONLY and assert unconditionally: seccomp, landlock and unprivileged user
+# namespaces all behave differently or not at all under qemu-user, and a suite that quietly skipped
+# there would report green while testing nothing. arm32 / arm64 / i386 get compile coverage from
+# tests/compiletests/sec.cpp, which both verify_compile_*.duck manifests sweep.
+#
+# NOTE: every suite that installs a filter, restricts itself or unshares does it in a forked child.
+# None of these confine the test runner.
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# default build (-Ofast, native ISA)
+test tests/rigor/sec_bpf_encode.cpp   -o bin/sec --timeout 300 -f
+test tests/rigor/sec_policy.cpp       -o bin/sec --timeout 300 -f
+test tests/rigor/sec_fp.cpp           -o bin/sec --timeout 300 -f
+test tests/rigor/sec_seccomp_live.cpp -o bin/sec --timeout 300 -f
+test tests/rigor/sec_landlock.cpp     -o bin/sec --timeout 300 -f
+test tests/rigor/sec_namespaces.cpp   -o bin/sec --timeout 300 -f
+test tests/rigor/sec_sandbox.cpp      -o bin/sec --timeout 300 -f
+test tests/rigor/sec_fail_closed.cpp  -o bin/sec --timeout 300 -f
+test tests/rigor/sec_pivot_root.cpp   -o bin/sec --timeout 300 -f
+test tests/rigor/sec_descriptors.cpp  -o bin/sec --timeout 300 -f
+test tests/rigor/sec_selinux.cpp      -o bin/sec --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# -O2: the encoder's jump ladders are pure integer control flow, so this is where a miscompile
+# under -Ofast's reassociation would show up as a DIFFERENT verdict rather than a crash
+test tests/rigor/sec_bpf_encode.cpp   -o bin/sec/o2 -O2 --timeout 300 -f
+test tests/rigor/sec_policy.cpp       -o bin/sec/o2 -O2 --timeout 300 -f
+test tests/rigor/sec_fp.cpp           -o bin/sec/o2 -O2 --timeout 300 -f
+test tests/rigor/sec_seccomp_live.cpp -o bin/sec/o2 -O2 --timeout 300 -f
+test tests/rigor/sec_sandbox.cpp      -o bin/sec/o2 -O2 --timeout 300 -f
+test tests/rigor/sec_fail_closed.cpp  -o bin/sec/o2 -O2 --timeout 300 -f
+test tests/rigor/sec_pivot_root.cpp   -o bin/sec/o2 -O2 --timeout 300 -f
+test tests/rigor/sec_descriptors.cpp  -o bin/sec/o2 -O2 --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# SSE2 floor: the selinux context parser and the group scans take their scalar arms here
+test tests/rigor/sec_bpf_encode.cpp   -o bin/sec/base --isa base --timeout 300 -f
+test tests/rigor/sec_fail_closed.cpp  -o bin/sec/base --isa base --timeout 300 -f
+test tests/rigor/sec_selinux.cpp      -o bin/sec/base --isa base --timeout 300 -f
+test tests/rigor/sec_policy.cpp       -o bin/sec/base --isa base --timeout 300 -f
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# sanitizers. the sandbox writes a fixed-size record into a pipe from a forked child and the
+# selinux parser indexes a char buffer by parsed offsets -- both are exactly what these catch
+test tests/rigor/sec_bpf_encode.cpp   -o bin/sec/asan --asan --timeout 600 -f
+test tests/rigor/sec_pivot_root.cpp   -o bin/sec/asan --asan --timeout 600 -f
+test tests/rigor/sec_fail_closed.cpp  -o bin/sec/asan --asan --timeout 600 -f
+test tests/rigor/sec_selinux.cpp      -o bin/sec/asan --asan --timeout 600 -f
+test tests/rigor/sec_policy.cpp       -o bin/sec/asan --asan --timeout 600 -f
+
+# NOTE (2026-09-02): the --ubsan cells below DO NOT BUILD at HEAD, and not because of anything in
+# src/sec. Every TU that reaches memory/allocation/abcmalloc/inspect.hpp fails there with
+#   inspect.hpp:426: non-constant condition for static assertion
+# under --ubsan -- tests/rigor/rigor_lz_laziness.cpp and tests/rigor/vector_try_reserve.cpp fail
+# identically, and lz.duck already carries --ubsan cells with the same breakage. The cells are kept
+# because they are the right cells; they will pass once that assertion is fixed tree-wide.
+test tests/rigor/sec_bpf_encode.cpp   -o bin/sec/ubsan --ubsan --timeout 600 -f
+test tests/rigor/sec_selinux.cpp      -o bin/sec/ubsan --ubsan --timeout 600 -f
+test tests/rigor/sec_policy.cpp       -o bin/sec/ubsan --ubsan --timeout 600 -f

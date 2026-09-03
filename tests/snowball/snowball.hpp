@@ -34,6 +34,7 @@ using string_type = micron::string;
 inline string_type __global_test_case{};
 inline void (*__global_on_require)() = nullptr;
 inline void (*__global_on_check)() = nullptr;
+inline usize __global_skips = 0;
 
 namespace config
 {
@@ -310,6 +311,37 @@ early_end(void)
   __abort();
 }
 
+// A test case that CANNOT run here -- no user namespace, a landlock ABI too old for the right the
+// case is about, no SELinux, no tty -- is SKIPPED, not failed. It is counted and printed so a green
+// sweep is still readable, and it does NOT touch the exit status: the binary goes on to `return 1`
+// and grades PASS.
+//
+// WARNING: this is not a way out of an assertion you cannot get to pass. A skip must name a
+// property of the ENVIRONMENT, and it must be reached by having attempted the thing -- probing the
+// kernel by asking permission ("am I root?") answers a different question than doing the operation,
+// and the gap between them is where a suite goes green while testing nothing. The strictly better
+// pattern, where it is available, is the one at sec_fail_closed.cpp:375-401: branch on the
+// capability and assert something DIFFERENT in each arm rather than asserting nothing in one.
+inline void
+skip(const char *why)
+{
+  ++__global_skips;
+  __print("\033[33msnowball SKIP:\033[0m ");
+  if ( !__global_test_case.empty() ) {
+    __print("[");
+    __print(__global_test_case.c_str());
+    __print("] ");
+  }
+  __print(why);
+  __print("\n\r");
+}
+
+[[nodiscard]] inline usize
+skips(void)
+{
+  return __global_skips;
+}
+
 template<typename... T>
 void
 print(const T &...p)
@@ -418,6 +450,25 @@ inline void
 require_distinct(const bool a, const bool b)
 {
   if ( a == b ) {
+    __print_error("\033[34msnowball require() failure:\033[0m expected output was wrong.\n\r");
+    should_print_stack();
+    __require_clbck();
+    __abort();
+  }
+};
+
+// WARNING: the bool overload above is a trap without this one. `require_distinct(x, y)` on two
+// non-bool values used to convert BOTH to bool first, so any two nonzero numbers compared equal and
+// the assertion failed without ever looking at them -- and any two zeroes did the same. Callers
+// worked around it by writing `require_distinct(a == b, true)` (sec_bpf_encode.cpp:126), which is
+// correct but is not what the name suggests. `require` already carried this exact pair of
+// overloads; this is the missing half.
+template<typename A, typename B>
+  requires(!micron::is_same_v<micron::remove_cvref_t<A>, bool> || !micron::is_same_v<micron::remove_cvref_t<B>, bool>)
+void
+require_distinct(const A &_a, const B &_b)
+{
+  if ( _a == _b ) {
     __print_error("\033[34msnowball require() failure:\033[0m expected output was wrong.\n\r");
     should_print_stack();
     __require_clbck();

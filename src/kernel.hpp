@@ -137,6 +137,7 @@ inline constexpr u32 faccessat2 = ver(5, 8);
 inline constexpr u32 close_range = ver(5, 9);
 inline constexpr u32 keyctl_move = ver(5, 10);      // KEYCTL_MOVE (keyctl op 30)
 inline constexpr u32 epoll_pwait2 = ver(5, 11);
+inline constexpr u32 mount_setattr = ver(5, 12);
 inline constexpr u32 uring_renameat = ver(5, 11);      // IORING_OP_RENAMEAT / UNLINKAT
 inline constexpr u32 memfd_secret = ver(5, 14);
 inline constexpr u32 madv_populate = ver(5, 14);      // MADV_POPULATE_READ / MADV_POPULATE_WRITE
@@ -162,6 +163,18 @@ inline constexpr u32 time64_syscalls = ver(5, 1);      // clock_gettime64 and th
 inline constexpr u32 futex_time64 = ver(5, 1);
 inline constexpr u32 futex_waitv = ver(5, 16);
 inline constexpr u32 futex2 = ver(6, 7);      // futex_wake / futex_wait / futex_requeue
+
+// lsm / sandboxing
+inline constexpr u32 landlock = ver(5, 13);
+inline constexpr u32 landlock_refer = ver(5, 19);
+inline constexpr u32 landlock_truncate = ver(6, 2);
+inline constexpr u32 landlock_net = ver(6, 7);
+inline constexpr u32 landlock_ioctl_dev = ver(6, 10);
+inline constexpr u32 landlock_scope = ver(6, 12);
+inline constexpr u32 landlock_audit = ver(6, 15);
+inline constexpr u32 setns_pidfd = ver(5, 8);        // setns() on a pidfd (multiple ns at once)
+inline constexpr u32 nsfs_mntns_id = ver(6, 8);      // NS_GET_MNTNS_ID
+inline constexpr u32 nsfs_ns_id = ver(6, 15);        // NS_GET_ID
 
 inline constexpr u32 xattrat = ver(6, 13);      // setxattrat / getxattrat / listxattrat / removexattrat
 inline constexpr u32 open_tree_attr = ver(6, 15);

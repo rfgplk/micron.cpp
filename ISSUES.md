@@ -182,3 +182,11 @@ run
 - **armv7-a reads no cycle counter by default.**
 - **`chrono/tz.hpp` reads TZif v2/v3 only.**
 - **Offsets render to minute resolution.**
+
+## src/sec
+
+- **`posix::cap_last_cap` is a compile-time constant** (`linux/sys/capabilities.hpp:71`, = 40)
+- **`sec::chroot_to` is escapable from inside a user namespace.** The child holds CAP_SYS_CHROOT at
+  the filesystem stage (3), and it is not dropped until the caps stage (9); use `pivot_to` externally
+- **io_uring voids the seccomp half of any file policy.**
+- **`__impl::__rel_put_old` is purely lexical**

@@ -985,9 +985,10 @@ ap(micron::function<R(A)> ff, micron::function<B(A)> fg) -> micron::function<mic
 //
 //  x |> f |> g |> h in place of h(g(f(x)))
 
+// NOTE: constexpr so a pipeline can be constevaluated
 template<typename A, typename F>
   requires micron::invocable<F, A>
-auto
+constexpr auto
 operator|(A &&a, F &&f) -> micron::invoke_result_t<F, A>
 {
   return micron::forward<F>(f)(micron::forward<A>(a));

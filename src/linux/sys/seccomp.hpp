@@ -22,6 +22,11 @@ constexpr static const u32 seccomp_set_mode_filter = 1u;
 constexpr static const u32 seccomp_get_action_avail = 2u;
 constexpr static const u32 seccomp_get_notif_sizes = 3u;
 
+// NOTE: prctl(PR_SET_SECCOMP, mode) selectors
+constexpr static const u32 seccomp_mode_disabled = 0u;
+constexpr static const u32 seccomp_mode_strict = 1u;
+constexpr static const u32 seccomp_mode_filter = 2u;
+
 constexpr static const u32 seccomp_filter_flag_tsync = (1u << 0);
 constexpr static const u32 seccomp_filter_flag_log = (1u << 1);
 constexpr static const u32 seccomp_filter_flag_spec_allow = (1u << 2);
@@ -39,6 +44,7 @@ constexpr static const u32 seccomp_ret_trace = 0x7ff00000u;
 constexpr static const u32 seccomp_ret_log = 0x7ffc0000u;
 constexpr static const u32 seccomp_ret_allow = 0x7fff0000u;
 constexpr static const u32 seccomp_ret_action_full = 0xffff0000u;
+constexpr static const u32 seccomp_ret_action = 0x7fff0000u;
 constexpr static const u32 seccomp_ret_data = 0x0000ffffu;
 
 struct seccomp_data_t {
@@ -141,7 +147,8 @@ seccomp_load_filter_notif(const bpf::fprog_t &prog, u32 extra_flags = 0)
 constexpr static const u32 seccomp_ioctl_notif_recv = 0xc0502100u;
 constexpr static const u32 seccomp_ioctl_notif_send = 0xc0182101u;
 constexpr static const u32 seccomp_ioctl_notif_id_valid = 0x40082102u;
-constexpr static const u32 seccomp_ioctl_notif_addfd = 0x40182103u;      // _IOW (was 0xc0=_IOWR)
+constexpr static const u32 seccomp_ioctl_notif_addfd = 0x40182103u;          // _IOW (was 0xc0=_IOWR)
+constexpr static const u32 seccomp_ioctl_notif_set_flags = 0x40082104u;      // _IOW(!, 4, u64)
 
 inline int
 seccomp_notify_receive(int fd, seccomp_notif_t &req)

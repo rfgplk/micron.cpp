@@ -5,9 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../concepts.hpp"
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
 #include "../sys/capabilities.hpp"
+#include "../sys/system.hpp"
 
 namespace micron
 {
@@ -350,7 +352,7 @@ template<is_cap_set Caps>
 inline int
 apply_caps_child(const Caps &cs) noexcept
 {
-  posix::cap_set_keepcaps(1);
+  if ( const int r = posix::cap_set_keepcaps(1); r < 0 ) return r;
 
   u64 want_bnd;
   if constexpr ( requires { cs.bounding; } )
@@ -359,9 +361,13 @@ apply_caps_child(const Caps &cs) noexcept
     want_bnd = cap_all_mask;
 
   u64 drop_bnd = ~want_bnd & cap_all_mask;
+  int err = 0;
   for ( u32 i = 0; i <= posix::cap_last_cap; ++i ) {
-    if ( drop_bnd & (u64(1) << i) ) posix::cap_bset_drop(i);
+    if ( !(drop_bnd & (u64(1) << i)) ) continue;
+    const int d = posix::cap_bset_drop(i);
+    if ( d < 0 && d != -error::invalid_arg && err == 0 ) err = d;
   }
+  if ( err < 0 ) return err;
 
   posix::cap_data_t data[2]{};
   posix::caps_to_data(cs.effective, cs.permitted, cs.inheritable, data);
@@ -371,11 +377,13 @@ apply_caps_child(const Caps &cs) noexcept
   if constexpr ( requires { cs.ambient; } ) {
     u64 amb = static_cast<u64>(cs.ambient) & static_cast<u64>(cs.inheritable);
     for ( u32 i = 0; i <= posix::cap_last_cap; ++i ) {
-      if ( amb & (u64(1) << i) ) posix::cap_ambient_raise(i);
+      if ( !(amb & (u64(1) << i)) ) continue;
+      const int a = posix::cap_ambient_raise(i);
+      if ( a < 0 && err == 0 ) err = a;
     }
   }
 
-  return 0;
+  return err;
 }
 
 };      // namespace micron
