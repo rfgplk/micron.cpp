@@ -368,3 +368,11 @@ build tests/compiletests/containers.cpp --x86 -Ofast -k --direct --start ./start
 # Keep the ARM64 CRT override cell focused on startup plumbing; the C ABI shim
 # does not pull the full allocator/math surface into this one targeted row.
 build tests/memory/free/cabi_shims_freestanding.cpp --arm64 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests/arm64_k_startdir
+
+# the mx entry stubs. --mx swaps start*.s for mx/start*.s (__micron_mxc, the entry takes a
+# descriptor); --cont links mx/cont*.s alone, which defines _continue and no _start at all, and
+# needs both attach macros because they are what compile the body the stub calls.
+build tests/mx_entry_sim.cpp --x86 -Ofast -k --mx --start ./start -i . -i ./src -o bin/compiletests/amd64_k_mx
+build tests/attach_cont.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests/amd64_k_continuec
+compile tests/support/mx_cont_stub.cpp --x86 -O2 -k --raw-obj --cont --start ./start -i . -i ./src --def MICRON_ATTACH_MODULE --def MICRON_MX_CONTINUATION -o bin/compiletests/amd64_k_cont
+compile tests/support/mx_cont_stub.cpp --arm -O2 -k --raw-obj --cont --marm --mtp cp15 --start ./start -i . -i ./src --def MICRON_ATTACH_MODULE --def MICRON_MX_CONTINUATION -o bin/compiletests/arm32_k_cont

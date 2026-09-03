@@ -162,6 +162,8 @@ struct config_t {
   bool freestanding = false;
   bool freestanding_eh = false;      // freestanding + the micron C++ exception trampoline
   bool direct = false;               // --direct: link direct*.s (enters __micron_directc, no runtime init)
+  bool mx = false;                   // --mx: link mx/start*.s (enters __micron_mxc, the entry takes a descriptor)
+  bool cont = false;                 // --cont: link mx/cont*.s (defines _continue, and no _start at all)
   bool asan = false;
   bool ubsan = false;
   bool tsan = false;
@@ -389,6 +391,21 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
   if ( conf.direct and !conf.freestanding ) mc::cerror("--direct only means something on a freestanding build - add -k (or -ke)");
   if ( conf.direct and conf.static_pie and conf.arch == __arch::x86 )
     mc::cerror("--direct has nothing to swap: a static-PIE x86 freestanding image links no _start stub");
+  if ( conf.mx and !conf.freestanding ) mc::cerror("--mx only means something on a freestanding build - add -k (or -ke)");
+  if ( conf.cont and !conf.freestanding ) mc::cerror("--cont only means something on a freestanding build - add -k (or -ke)");
+  if ( static_cast<int>(conf.direct) + static_cast<int>(conf.mx) + static_cast<int>(conf.cont) > 1 )
+    mc::cerror("--direct, --mx and --cont each replace the entry stub - pick one");
+  if ( (conf.mx or conf.cont) and conf.static_pie and conf.arch == __arch::x86 )
+    mc::cerror("--mx/--cont have nothing to swap: a static-PIE x86 freestanding image links no _start stub");
+  if ( conf.cont ) {
+    bool has_am = false, has_mc = false;
+    for ( const auto &d : conf.defines ) {
+      if ( d == "MICRON_ATTACH_MODULE" ) has_am = true;
+      if ( d == "MICRON_MX_CONTINUATION" ) has_mc = true;
+    }
+    if ( !has_am or !has_mc )
+      mc::cerror("--cont needs --def MICRON_ATTACH_MODULE and --def MICRON_MX_CONTINUATION - they are what compile _continue's body");
+  }
 
   // the crt location: --start > MICRON_START > the built-in /usr/src/mc_start
   if ( conf.start_dir.empty() ) {
@@ -502,6 +519,13 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
       // direct*.s enters __micron_directc: TLS + stack + auxv only. no atexit, no threadpool, no io
       // buffers, no .init_array -- global constructors do NOT run. you boot what you need
       conf.direct = true;
+    } else if ( mc::strcmp(argv[i], "--mx") == 0 ) {
+      // mx/start*.s enters __micron_mxc
+      conf.mx = true;
+      conf.defines.push_back(string_type{ "MICRON_MX_START" });
+    } else if ( mc::strcmp(argv[i], "--cont") == 0 ) {
+      // mx/cont*.s defines _continue and no _start: a continuation blob has no ordinary entry point
+      conf.cont = true;
     } else if ( mc::strcmp(argv[i], "-f") == 0 ) {
       conf.check_compileability = false;
     } else if ( mc::strcmp(argv[i], "--recursive") == 0 ) {

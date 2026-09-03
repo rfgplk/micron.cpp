@@ -4,6 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+#include <micron/attach/mx_entry.hpp>
 #include <micron/bits/__arch.hpp>
 #include <micron/bits/__pause.hpp>
 #include <micron/config.hpp>
@@ -19,12 +20,22 @@
 // (where the fallback isn't inlined)
 #include <micron/math/__gcc_math_syms.hpp>
 
+#if !defined(MICRON_MX_START)
 // call user declared main from out __micron_user_main
 // NOTE: we need to surpress Wodr because the compiler complains about multiple main definitions; we're okay though
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wodr"
 extern "C" int __micron_user_main(int argc, char **argv, char **envp) __asm__("main");
 #pragma GCC diagnostic pop
+#endif
+
+#if defined(MICRON_MX_START)
+// the mx entry takes a descriptor rather than (argc, argv, envp), so it cannot be called main;
+#if !defined(MICRON_MX_ENTRY)
+#define MICRON_MX_ENTRY "entry"
+#endif
+extern "C" int __micron_mx_user_entry(const micron_mx_entry_args *args) __asm__(MICRON_MX_ENTRY);
+#endif
 
 // microns entry/exit points
 // __boot_io_buffers is optional
@@ -100,6 +111,8 @@ enable_fast_fp() noexcept
 {
 }
 #endif
+#if !defined(MICRON_MX_START)
+
 extern "C" __attribute__((used, visibility("default"), noreturn)) int
 __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noexcept
 {
@@ -160,6 +173,56 @@ __micron_directc(int argc, char **argv, char **envp, const micron::auxv_t *auxv)
 
   micron::group_exit(rc);
 }
+
+#endif      // the default pair
+
+#if defined(MICRON_MX_START)
+
+// mx start variant
+extern "C" __attribute__((used, visibility("default"), noreturn)) int
+__micron_mxc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noexcept
+{
+  environ = envp;
+
+  micron::__tls_init(auxv);
+  micron::__stack_init(auxv);
+
+  if ( __micron_mem_init ) __micron_mem_init();
+
+  micron::atexit([] { __shutdown_io_buffers(); });
+
+  __boot_threadpool();
+  __boot_io_sigpipe();
+
+  for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p ) (*p)();
+  for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p ) (*p)();
+
+  __boot_io_buffers();
+
+  if constexpr ( micron::config::fast_math_x86 ) enable_fast_fp();
+
+  micron_mx_entry_args a{};
+  a.abi = micron_mx_entry_abi;
+  a.size = static_cast<u32>(sizeof(micron_mx_entry_args));
+  a.argc = static_cast<u32>(argc);
+  a.argv = static_cast<u64>(reinterpret_cast<uintptr_t>(argv));
+  a.envp = static_cast<u64>(reinterpret_cast<uintptr_t>(envp));
+  a.auxv = static_cast<u64>(reinterpret_cast<uintptr_t>(auxv));
+  a.self_base = static_cast<u64>(micron::__auxv_lookup(auxv, micron::at_base));
+  a.page_size = static_cast<u64>(micron::__auxv_lookup(auxv, micron::at_pagesz));
+  if ( micron::__micron_main_stack.start != nullptr && micron::__micron_main_stack.size != 0 ) {
+    const uintptr_t lo = reinterpret_cast<uintptr_t>(micron::__micron_main_stack.start);
+    a.stack_lo = static_cast<u64>(lo);
+    a.stack_hi = static_cast<u64>(lo + static_cast<uintptr_t>(micron::__micron_main_stack.size));
+    a.flags |= micron_mx_entry_f_have_stack;
+  }
+
+  const int rc = __micron_mx_user_entry(&a);
+
+  micron::group_exit(rc);
+}
+
+#endif      // MICRON_MX_START
 
 extern "C" {
 

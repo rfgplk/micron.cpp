@@ -319,10 +319,20 @@ __flags_freestanding(const config_t &conf, bool linking)
   return r;
 }
 
-// -k/-ke entry stub, one per arch+width. --direct swaps __micron_startc for __micron_directc
+// -k/-ke entry stub, one per arch+width
 inline const char *
 __start_stub_name(const config_t &conf)
 {
+  if ( conf.mx ) {
+    if ( conf.arch == __arch::arm ) return "mx/start_arm32.s";
+    if ( conf.arch == __arch::arm64 ) return "mx/start_arm64.s";
+    return (conf.width == 32) ? "mx/start_i386.s" : "mx/start.s";
+  }
+  if ( conf.cont ) {
+    if ( conf.arch == __arch::arm ) return "mx/cont_arm32.s";
+    if ( conf.arch == __arch::arm64 ) return "mx/cont_arm64.s";
+    return (conf.width == 32) ? "mx/cont_i386.s" : "mx/cont.s";
+  }
   if ( conf.arch == __arch::arm ) return conf.direct ? "direct_arm32.s" : "start_arm32.s";
   if ( conf.arch == __arch::arm64 ) return conf.direct ? "direct_arm64.s" : "start_arm64.s";
   // width-aware _start: a -32 freestanding link must use the i386 crt, not the amd64 one
@@ -349,6 +359,7 @@ __startup_objs(const config_t &conf, bool linking)
   if ( !conf.freestanding or !linking ) return r;
   if ( conf.arch == __arch::x86 and conf.static_pie ) return r;
   __start_append(r, conf, __start_stub_name(conf));
+  if ( conf.cont ) return r;
   __start_append(r, conf, "start.cpp");
   if ( conf.freestanding_eh ) __start_append(r, conf, "eh_runtime.cpp");
   return r;

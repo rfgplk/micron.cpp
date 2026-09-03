@@ -192,6 +192,14 @@ help(void)
   mc::console("                      TLS, stack and auxv, then main. NO .init_array (global ctors");
   mc::console("                      never run), no atexit, no threadpool, no io buffers (printing");
   mc::console("                      is dead). You boot what you need. Freestanding only");
+  mc::console("    --mx              link mx/start*.s, entering __micron_mxc: __micron_startc's boot");
+  mc::console("                      in full, but the entry is named by MICRON_MX_ENTRY (default");
+  mc::console("                      \"entry\") and takes a micron_mx_entry_args * rather than");
+  mc::console("                      argc/argv/envp. Freestanding only");
+  mc::console("    --cont            link mx/cont*.s: defines _continue and no _start, for an");
+  mc::console("                      mx MX_CONTINUATION blob a running host calls. Needs");
+  mc::console("                      --def MICRON_ATTACH_MODULE --def MICRON_MX_CONTINUATION.");
+  mc::console("                      Freestanding only");
   mc::console("    --asan            AddressSanitizer (-fsanitize=address,");
   mc::console("                      -fno-omit-frame-pointer); disables -flto");
   mc::console("    --ubsan           UBSanitizer (-fsanitize=undefined); disables -flto;");
@@ -334,6 +342,7 @@ help(void)
   mc::console("    duck build src/k.cpp -k -s --std c++23  # freestanding static");
   mc::console("    duck build src/k.cpp -k --start ./start -i .  # crt from the tree, not /usr/src");
   mc::console("    duck build src/k.cpp -k --direct        # no runtime init at all");
+  mc::console("    duck build src/k.cpp -k --mx            # full runtime, entry takes a descriptor");
   mc::console("    duck build src/svc.cpp --harden       # full hosted hardening profile");
   mc::console("    duck build --arm64 src/k.cpp -k --gc --cfi  # freestanding, gc'd, PAC/BTI");
   mc::console("    duck build src/hot.cpp --perf         # -O3 + unroll (FP-safe)");

@@ -325,6 +325,10 @@ build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --direct --start
 # does not pull the full allocator/math surface into this one targeted row.
 build --clang tests/memory/free/cabi_shims_freestanding.cpp --arm64 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/arm64_k_startdir
 
+# the mx entry stubs (see the gcc matrix for what each flag swaps)
+build --clang tests/mx_entry_sim.cpp --x86 -Ofast -k --mx --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_mx
+build --clang tests/attach_cont.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_continuec
+
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # vk host allocator
 # the tests/compiletests/ sweep above already carries vk_headers.cpp with the counters OFF; these

@@ -86,4 +86,7 @@ _detach(void) noexcept
   // WARNING: the hooks stay installed on purpose
 }
 
+// continue run entry
+#include "continue.hpp"
+
 #endif
