@@ -169,6 +169,153 @@ main(void)
   sb::require(true);
   sb::end_test_case();
 
+  sb::test_case("lower_bound / upper_bound / equal_range vs std::set");
+  {
+    micron::rb_tree<int> t;
+    std::set<int> oracle;
+    u64 rng = 0x51A7B0UL;
+    for ( int i = 0; i < 400; ++i ) {
+      const int v = static_cast<int>(splitmix64(rng++) % 500) * 2;      // evens only
+      t.insert(v);
+      oracle.insert(v);
+    }
+    // probe evens (present), odds (absent, strictly between), and both ends
+    for ( int probe = -3; probe <= 1003; ++probe ) {
+      auto lb = t.lower_bound(probe);
+      auto ub = t.upper_bound(probe);
+      auto olb = oracle.lower_bound(probe);
+      auto oub = oracle.upper_bound(probe);
+
+      if ( olb == oracle.end() )
+        sb::require(lb == t.end());
+      else {
+        sb::require(lb != t.end());
+        sb::require(*lb == *olb);
+      }
+      if ( oub == oracle.end() )
+        sb::require(ub == t.end());
+      else {
+        sb::require(ub != t.end());
+        sb::require(*ub == *oub);
+      }
+
+      auto er = t.equal_range(probe);
+      sb::require(er.a == lb);
+      sb::require(er.b == ub);
+      sb::require(t.count(probe) == (oracle.count(probe) ? 1ULL : 0ULL));
+    }
+  }
+  sb::end_test_case();
+
+  sb::test_case("node pool - erase/insert churn reuses slots, blocks do not grow without bound");
+  {
+    micron::rb_tree<u64> t;
+    for ( u64 i = 0; i < 20000; ++i ) t.insert(splitmix64(i));
+    const usize blocks_after_build = t.blocks_allocated();
+    sb::require(blocks_after_build > 0ULL);
+
+    // drain and rebuild the same count many times. every freed node must come back off the free
+    // list, so the block count must not climb -- that is the whole contract of the pool
+    for ( u32 round = 0; round < 8; ++round ) {
+      for ( u64 i = 0; i < 20000; ++i ) t.erase(splitmix64(i));
+      sb::require(t.size() == 0ULL);
+      for ( u64 i = 0; i < 20000; ++i ) t.insert(splitmix64(i));
+      sb::require(t.size() == 20000ULL);
+    }
+    sb::require(t.blocks_allocated() == blocks_after_build);
+
+    // clear() must actually hand the blocks back, not just recycle nodes
+    t.clear();
+    sb::require(t.size() == 0ULL);
+    sb::require(t.blocks_allocated() == 0ULL);
+
+    // and the tree must still work afterwards
+    for ( u64 i = 0; i < 1000; ++i ) t.insert(splitmix64(i + 777));
+    sb::require(t.size() == 1000ULL);
+    for ( u64 i = 0; i < 1000; ++i ) sb::require(t.contains(splitmix64(i + 777)));
+  }
+  sb::end_test_case();
+
+  sb::test_case("node pool - reserve, and copy builds an independent pool");
+  {
+    micron::rb_tree<int> a;
+    a.reserve(4096);
+    for ( int i = 0; i < 4000; ++i ) a.insert(i);
+    // everything fit in the reserved run
+    sb::require(a.blocks_allocated() == 1ULL);
+
+    micron::rb_tree<int> b(a);
+    sb::require(b.size() == a.size());
+    // freeing a must not touch b -- separate pools
+    a.clear();
+    sb::require(a.blocks_allocated() == 0ULL);
+    sb::require(b.size() == 4000ULL);
+    for ( int i = 0; i < 4000; ++i ) sb::require(b.contains(i));
+
+    // self-assignment must not destroy the tree
+    micron::rb_tree<int> &br = b;
+    b = br;
+    sb::require(b.size() == 4000ULL);
+  }
+  sb::end_test_case();
+
+  sb::test_case("node pool - non-trivial T is destroyed exactly once");
+  {
+    // T with a real destructor takes the destroy_subtree path in __destroy_all; a trivially
+    // destructible one skips it. Both must free the blocks, and neither may double-destroy.
+    struct counted {
+      static int &
+      live()
+      {
+        static int n = 0;
+        return n;
+      }
+
+      int v;
+
+      counted() noexcept : v(0) { ++live(); }
+
+      explicit counted(int x) noexcept : v(x) { ++live(); }
+
+      counted(const counted &o) noexcept : v(o.v) { ++live(); }
+
+      counted(counted &&o) noexcept : v(o.v) { ++live(); }
+
+      counted &
+      operator=(const counted &o) noexcept
+      {
+        v = o.v;
+        return *this;
+      }
+
+      counted &
+      operator=(counted &&o) noexcept
+      {
+        v = o.v;
+        return *this;
+      }
+
+      ~counted() { --live(); }
+
+      bool
+      operator<(const counted &o) const noexcept
+      {
+        return v < o.v;
+      }
+    };
+
+    const int before = counted::live();
+    {
+      micron::rb_tree<counted> t;
+      for ( int i = 0; i < 3000; ++i ) t.insert(counted(i));
+      sb::require(t.size() == 3000ULL);
+      for ( int i = 0; i < 1500; ++i ) sb::require(t.erase(counted(i)));
+      sb::require(t.size() == 1500ULL);
+    }
+    sb::require(counted::live() == before);
+  }
+  sb::end_test_case();
+
   sb::print("=== ALL TESTS PASSED ===");
   return 1;
 }

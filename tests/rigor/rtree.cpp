@@ -43,6 +43,13 @@ mkbox(float x0, float y0, float x1, float y1)
 }
 
 bool
+bx_same(const box2 &a, const box2 &b)
+{
+  return a.min_corner.data[0] == b.min_corner.data[0] && a.min_corner.data[1] == b.min_corner.data[1]
+         && a.max_corner.data[0] == b.max_corner.data[0] && a.max_corner.data[1] == b.max_corner.data[1];
+}
+
+bool
 bx_intersect(const box2 &a, const box2 &b) noexcept
 {
   for ( int d = 0; d < 2; ++d ) {
@@ -302,6 +309,50 @@ main(void)
     int hits = 0;
     b.query(mkbox(500, 0, 501, 1), [&](const box2 &, const int &) { ++hits; });
     sb::require(hits >= 1);
+  }
+  sb::end_test_case();
+
+  sb::test_case("erase matches the box EXACTLY, not by overlap");
+  {
+    // erase_rec used to select with mbr[i].intersects(b), so erase(box, value) removed the first
+    // entry that merely OVERLAPPED the box and compared equal on the value. An index of ids --
+    // rtree<u32> of handles, which is the shape the hit-test users hold -- therefore deleted the
+    // wrong record whenever two entries overlapped and shared a value. The old suite could not
+    // see it: every case it erased used a box that only matched itself.
+    micron::rtree<u32, float, 2> t;
+
+    // three nested boxes that all overlap, all carrying the SAME value
+    box2 outer = mkbox(0.f, 0.f, 100.f, 100.f);
+    box2 middle = mkbox(10.f, 10.f, 50.f, 50.f);
+    box2 inner = mkbox(20.f, 20.f, 30.f, 30.f);
+    t.insert(outer, 7u);
+    t.insert(middle, 7u);
+    t.insert(inner, 7u);
+    sb::require(t.size() == 3ULL);
+
+    // erasing the innermost must remove the innermost -- overlap alone must not qualify
+    sb::require(t.erase(inner, 7u));
+    sb::require(t.size() == 2ULL);
+
+    // and the two survivors must be exactly outer and middle
+    int saw_outer = 0, saw_middle = 0, saw_inner = 0;
+    t.for_each([&](const box2 &b, const u32 &) {
+      if ( bx_same(b, outer) ) ++saw_outer;
+      if ( bx_same(b, middle) ) ++saw_middle;
+      if ( bx_same(b, inner) ) ++saw_inner;
+    });
+    sb::require(saw_outer == 1);
+    sb::require(saw_middle == 1);
+    sb::require(saw_inner == 0);
+
+    // a box that overlaps everything but equals nothing must erase nothing
+    sb::require(!t.erase(mkbox(15.f, 15.f, 45.f, 45.f), 7u));
+    sb::require(t.size() == 2ULL);
+
+    // NEGATIVE CONTROL: the exact boxes still erase, so the tightening did not just break erase
+    sb::require(t.erase(outer, 7u));
+    sb::require(t.erase(middle, 7u));
+    sb::require(t.size() == 0ULL);
   }
   sb::end_test_case();
 

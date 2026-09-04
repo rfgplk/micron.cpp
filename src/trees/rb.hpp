@@ -10,8 +10,10 @@
 #include "../memory/addr.hpp"
 #include "../memory/new.hpp"
 #include "../tags.hpp"
+#include "../tuple.hpp"
 #include "../types.hpp"
 #include "../vector/fvector.hpp"
+#include "__tree_store.hpp"
 #include "__tree_walk.hpp"
 
 namespace micron
@@ -42,6 +44,16 @@ public:
 
   explicit rb_node(T &&dt) noexcept(noexcept(T(micron::move(dt))))
       : data(micron::move(dt)), color(RBColor::RED), parent(nullptr), left(nullptr), right(nullptr), kind(kind_t::leaf)
+  {
+  }
+
+  // construct T in place
+  struct emplace_tag {
+  };
+
+  template<class... A>
+  explicit rb_node(emplace_tag, A &&...a) noexcept(noexcept(T(micron::forward<A>(a)...)))
+      : data(micron::forward<A>(a)...), color(RBColor::RED), parent(nullptr), left(nullptr), right(nullptr), kind(kind_t::leaf)
   {
   }
 
@@ -189,29 +201,44 @@ private:
   node *root_;
   usize size_;
 
+  // node pool
+  using __pool_t = __tree_store::block_pool<node, Alloc>;
+
+  __pool_t __pool;
+
+  // T destructors first
+  void
+  __destroy_all() noexcept
+  {
+    if constexpr ( !micron::is_trivially_destructible_v<T> ) destroy_subtree(root_);
+    __pool.release();
+    root_ = nullptr;
+    size_ = 0;
+  }
+
   template<class... Args>
-  static node *
+  node *
   make_node(Args &&...args)
   {
-    node *memory = __allocator_allocate_array<Alloc, node>(1);
+    node *memory = __pool.take();
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
 #endif
-      return new (static_cast<void *>(memory)) node(T(micron::forward<Args>(args)...));
+      return new (static_cast<void *>(memory)) node(typename node::emplace_tag{}, micron::forward<Args>(args)...);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     } catch ( ... ) {
-      __allocator_deallocate_array<Alloc>(memory);
+      __pool.give(memory);
       throw;
     }
 #endif
   }
 
-  static void
-  destroy_node(node *p)
+  void
+  destroy_node(node *p) noexcept
   {
     if ( !p ) return;
     p->~node();
-    __allocator_deallocate_array<Alloc>(p);
+    __pool.give(p);
   }
 
   static node *
@@ -377,6 +404,33 @@ private:
   }
 
   node *
+  __lower_bound_node(const T &key) const noexcept
+  {
+    node *cand = nullptr;
+    node *cur = root_;
+    while ( cur ) {
+      const bool go_left = !Less::lt(cur->data, key);
+      cand = go_left ? cur : cand;
+      cur = go_left ? cur->left : cur->right;
+    }
+    return cand;
+  }
+
+  // the first node greater than `key`
+  node *
+  __upper_bound_node(const T &key) const noexcept
+  {
+    node *cand = nullptr;
+    node *cur = root_;
+    while ( cur ) {
+      const bool go_left = Less::lt(key, cur->data);
+      cand = go_left ? cur : cand;
+      cur = go_left ? cur->left : cur->right;
+    }
+    return cand;
+  }
+
+  node *
   find_node(const T &key) const noexcept
   {
     node *cur = root_;
@@ -408,7 +462,7 @@ private:
     return nullptr;
   }
 
-  static node *
+  node *
   clone_subtree(node *src, node *parent)
   {
     if ( !src ) return nullptr;
@@ -432,8 +486,8 @@ private:
     return n;
   }
 
-  static void
-  destroy_subtree(node *x)
+  void
+  destroy_subtree(node *x) noexcept
   {
     while ( x ) {
       if ( x->left ) {
@@ -552,32 +606,36 @@ private:
   }
 
 public:
-  rb_tree() : root_(nullptr), size_(0) { }
+  rb_tree() noexcept : root_(nullptr), size_(0), __pool() { }
 
   template<class Fn>
     requires(micron::is_invocable_v<Fn, usize>)
-  rb_tree(usize n, Fn gen) : root_(nullptr), size_(0)
+  rb_tree(usize n, Fn gen) : rb_tree()
   {
     for ( usize i = 0; i < n; ++i ) insert_or_assign(gen(i));
   }
 
   template<class Fn>
     requires(micron::is_invocable_v<Fn> && !micron::is_invocable_v<Fn, usize>)
-  rb_tree(usize n, Fn gen) : root_(nullptr), size_(0)
+  rb_tree(usize n, Fn gen) : rb_tree()
   {
     for ( usize i = 0; i < n; ++i ) insert_or_assign(gen());
   }
 
   template<class Fn>
     requires(micron::is_invocable_v<Fn, rb_tree &>)
-  explicit rb_tree(Fn build) : root_(nullptr), size_(0)
+  explicit rb_tree(Fn build) : rb_tree()
   {
     build(*this);
   }
 
-  rb_tree(const rb_tree &o) : root_(clone_subtree(o.root_, nullptr)), size_(o.size_) { }
+  rb_tree(const rb_tree &o) : rb_tree()
+  {
+    root_ = clone_subtree(o.root_, nullptr);
+    size_ = o.size_;
+  }
 
-  rb_tree(rb_tree &&o) noexcept : root_(o.root_), size_(o.size_)
+  rb_tree(rb_tree &&o) noexcept : root_(o.root_), size_(o.size_), __pool(micron::move(o.__pool))
   {
     o.root_ = nullptr;
     o.size_ = 0;
@@ -587,9 +645,10 @@ public:
   operator=(const rb_tree &o)
   {
     if ( this != &o ) {
-      destroy_subtree(root_);
-      root_ = clone_subtree(o.root_, nullptr);
-      size_ = o.size_;
+      rb_tree tmp;
+      tmp.root_ = tmp.clone_subtree(o.root_, nullptr);
+      tmp.size_ = o.size_;
+      swap(tmp);
     }
     return *this;
   }
@@ -598,9 +657,10 @@ public:
   operator=(rb_tree &&o) noexcept
   {
     if ( this != &o ) {
-      destroy_subtree(root_);
+      __destroy_all();
       root_ = o.root_;
       size_ = o.size_;
+      __pool = micron::move(o.__pool);
       o.root_ = nullptr;
       o.size_ = 0;
     }
@@ -634,7 +694,7 @@ public:
     build(*this);
   }
 
-  ~rb_tree() { destroy_subtree(root_); }
+  ~rb_tree() { __destroy_all(); }
 
   bool
   empty() const noexcept
@@ -683,6 +743,12 @@ public:
   contains(const T &key) const noexcept
   {
     return find_node(key) != nullptr;
+  }
+
+  usize
+  count(const T &key) const noexcept
+  {
+    return find_node(key) != nullptr ? 1u : 0u;
   }
 
   T *
@@ -934,6 +1000,28 @@ public:
     return const_iterator{};
   }
 
+  // first element not less than key
+  const_iterator
+  lower_bound(const T &key) const noexcept
+  {
+    node *n = __lower_bound_node(key);
+    return n ? const_iterator{ n } : const_iterator{};
+  }
+
+  // first element greater than key
+  const_iterator
+  upper_bound(const T &key) const noexcept
+  {
+    node *n = __upper_bound_node(key);
+    return n ? const_iterator{ n } : const_iterator{};
+  }
+
+  micron::pair<const_iterator, const_iterator>
+  equal_range(const T &key) const noexcept
+  {
+    return { lower_bound(key), upper_bound(key) };
+  }
+
   const_iterator
   cbegin() const noexcept
   {
@@ -988,11 +1076,41 @@ public:
   }
 
   void
-  clear()
+  clear() noexcept
   {
-    destroy_subtree(root_);
-    root_ = nullptr;
-    size_ = 0;
+    __destroy_all();
+  }
+
+  void
+  reserve(usize n)
+  {
+    __pool.reserve(n);
+  }
+
+  void
+  swap(rb_tree &o) noexcept
+  {
+    micron::swap(root_, o.root_);
+    micron::swap(size_, o.size_);
+    __pool.swap(o.__pool);
+  }
+
+  [[nodiscard]] usize
+  blocks_allocated() const noexcept
+  {
+    return __pool.blocks();
+  }
+
+  [[nodiscard]] usize
+  pool_bytes() const noexcept
+  {
+    return __pool.bytes_held();
+  }
+
+  [[nodiscard]] static constexpr usize
+  node_bytes() noexcept
+  {
+    return sizeof(node);
   }
 };
 };      // namespace micron

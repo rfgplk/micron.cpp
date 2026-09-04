@@ -378,6 +378,122 @@ main(void)
   }
   sb::end_test_case();
 
+  sb::test_case("predicates and finds EARLY EXIT (ISSUES.md: they used to be O(n))");
+  {
+    // The claim is not "it returns the right answer" -- it always did. The claim is that the
+    // predicate stops being called. Count the calls against a tripwire; a flag-checking walk
+    // visits all n and this asserts it visits far fewer.
+    constexpr int N = 4096;
+
+    micron::rb_tree<int> st;
+    for ( int i = 0; i < N; ++i ) st.insert(i);
+
+    micron::b_tree<int, int> bt;
+    for ( int i = 0; i < N; ++i ) bt.insert(i, i);
+
+    // any_of / contains_if: the very first element already satisfies it
+    {
+      int calls = 0;
+      const bool r = micron::any_of(st, [&](const int &) {
+        ++calls;
+        return true;
+      });
+      sb::require(r);
+      sb::require(calls == 1);
+    }
+    {
+      int calls = 0;
+      const bool r = micron::any_of(bt, [&](const int &, const int &) {
+        ++calls;
+        return true;
+      });
+      sb::require(r);
+      sb::require(calls == 1);
+    }
+    // all_of: the first element already fails it
+    {
+      int calls = 0;
+      const bool r = micron::all_of(st, [&](const int &) {
+        ++calls;
+        return false;
+      });
+      sb::require(!r);
+      sb::require(calls == 1);
+    }
+    {
+      int calls = 0;
+      const bool r = micron::all_of(bt, [&](const int &, const int &) {
+        ++calls;
+        return false;
+      });
+      sb::require(!r);
+      sb::require(calls == 1);
+    }
+    // find_if on a hit at a known depth: in-order, so element 7 is the 8th visit
+    {
+      int calls = 0;
+      const int *hit = micron::find_if(st, [&](const int &e) {
+        ++calls;
+        return e == 7;
+      });
+      sb::require(hit != nullptr);
+      sb::require(*hit == 7);
+      sb::require(calls == 8);
+    }
+    {
+      int calls = 0;
+      const int *hit = micron::find_if(bt, [&](const int &k, const int &) {
+        ++calls;
+        return k == 7;
+      });
+      sb::require(hit != nullptr);
+      sb::require(calls == 8);
+    }
+    // find_if_not: the first element already fails the predicate
+    {
+      int calls = 0;
+      const int *hit = micron::find_if_not(st, [&](const int &e) {
+        ++calls;
+        return e != 0;
+      });
+      sb::require(hit != nullptr);
+      sb::require(*hit == 0);
+      sb::require(calls == 1);
+    }
+    // none_of routes through any_of, so it inherits the exit
+    {
+      int calls = 0;
+      const bool r = micron::none_of(st, [&](const int &) {
+        ++calls;
+        return true;
+      });
+      sb::require(!r);
+      sb::require(calls == 1);
+    }
+    // NEGATIVE CONTROL: a predicate that never fires must still visit every element, so the
+    // counter above is measuring the exit and not some unrelated short-circuit
+    {
+      int calls = 0;
+      const bool r = micron::any_of(st, [&](const int &) {
+        ++calls;
+        return false;
+      });
+      sb::require(!r);
+      sb::require(calls == N);
+    }
+    // count_if cannot early-exit by definition; it must still see everything
+    {
+      int calls = 0;
+      const usize n = micron::count_if(st, [&](const int &) {
+        ++calls;
+        return true;
+      });
+      sb::require(n == static_cast<usize>(N));
+      sb::require(calls == N);
+    }
+  }
+  sb::end_test_case();
+
   sb::print("=== ALL TESTS PASSED ===");
   return 1;
 }

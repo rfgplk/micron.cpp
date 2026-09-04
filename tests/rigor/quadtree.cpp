@@ -237,6 +237,53 @@ main(void)
   }
   sb::end_test_case();
 
+  sb::test_case("erase RECLAIMS nodes - churn must not grow the arena without bound");
+  {
+    // erase() used to remove the entry and decrement count, and stop there: no emptied leaf
+    // freed, no overflow node unlinked, no childless internal node collapsed. nodes_used() was
+    // monotonically non-decreasing, so a steady-state insert/erase workload grew forever. The
+    // assertion is on nodes_used(), not on correctness -- the old code answered every query right
+    // while leaking, which is exactly why no existing test saw it.
+    const box2 uni = mkbox(0, 0, 1000, 1000);
+    micron::quadtree<u32> t(uni);
+
+    constexpr int N = 4000;
+    u64 rng = 0x0C7EE501ULL;
+    vec2 pts[N];
+    for ( int i = 0; i < N; ++i ) pts[i] = vec2{ static_cast<float>(splitmix64(rng++) % 900), static_cast<float>(splitmix64(rng++) % 900) };
+
+    for ( int i = 0; i < N; ++i ) t.insert(pts[i], static_cast<u32>(i));
+    const usize peak = t.nodes_used();
+    sb::require(peak > 0ULL);
+    sb::require(t.size() == static_cast<usize>(N));
+
+    // drain completely: every node must come back
+    for ( int i = 0; i < N; ++i ) sb::require(t.erase(pts[i], static_cast<u32>(i)));
+    sb::require(t.size() == 0ULL);
+    sb::require(t.nodes_used() == 0ULL);
+
+    // and a steady-state churn must not ratchet the high-water mark upward
+    for ( int i = 0; i < N; ++i ) t.insert(pts[i], static_cast<u32>(i));
+    const usize after_rebuild = t.nodes_used();
+    sb::require(after_rebuild <= peak);
+    for ( u32 round = 0; round < 6; ++round ) {
+      for ( int i = 0; i < N; ++i ) t.erase(pts[i], static_cast<u32>(i));
+      for ( int i = 0; i < N; ++i ) t.insert(pts[i], static_cast<u32>(i));
+      sb::require(t.size() == static_cast<usize>(N));
+      sb::require(t.nodes_used() <= after_rebuild);
+    }
+
+    // NEGATIVE CONTROL: a tree that is never drained must still report nodes in use, so the
+    // assertion above is measuring reclaim and not a nodes_used() that always answers zero
+    sb::require(t.nodes_used() > 0ULL);
+
+    // and every point is still findable after all that churn
+    int found = 0;
+    t.for_each([&](const vec2 &, const u32 &) { ++found; });
+    sb::require(found == N);
+  }
+  sb::end_test_case();
+
   sb::print("=== ALL TESTS PASSED ===");
   return 1;
 }

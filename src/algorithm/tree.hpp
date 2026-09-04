@@ -8,6 +8,7 @@
 #include "../concepts.hpp"
 #include "../math/generic.hpp"
 #include "../memory/addr.hpp"
+#include "../trees/__tree_walk.hpp"
 #include "../tuple.hpp"
 #include "../type_traits.hpp"
 #include "../vector/fvector.hpp"
@@ -72,72 +73,71 @@ accumulate(const Tree &t, Acc init)
   return init;
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// early exit scans
+
+namespace __impl
+{
+
+template<class Tree, class Fn>
+bool
+tree_scan(const Tree &t, Fn fn)
+{
+  if constexpr ( requires { t.traverse(fn); } ) {
+    return t.traverse(fn) != walk_ctl::stop;
+  } else {
+    bool going = true;
+    t.for_each([&](auto &&...a) {
+      if ( going ) going = fn(static_cast<decltype(a)>(a)...);
+    });
+    return going;
+  }
+}
+
+};      // namespace __impl
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // predicates
 template<is_set_tree Tree, typename Fn>
 bool
 all_of(const Tree &t, Fn fn)
 {
-  bool r = true;
-  t.for_each([&](const auto &e) {
-    if ( r && !fn(e) ) r = false;
-  });
-  return r;
+  return __impl::tree_scan(t, [&](const auto &e) { return fn(e); });
 }
 
 template<is_tree_map Tree, typename Fn>
 bool
 all_of(const Tree &t, Fn fn)
 {
-  bool r = true;
-  t.for_each([&](const auto &k, const auto &v) {
-    if ( r && !fn(k, v) ) r = false;
-  });
-  return r;
+  return __impl::tree_scan(t, [&](const auto &k, const auto &v) { return fn(k, v); });
 }
 
 template<is_spatial_tree Tree, typename Fn>
 bool
 all_of(const Tree &t, Fn fn)
 {
-  bool r = true;
-  t.for_each([&](const auto &key, const auto &v) {
-    if ( r && !fn(key, v) ) r = false;
-  });
-  return r;
+  return __impl::tree_scan(t, [&](const auto &key, const auto &v) { return fn(key, v); });
 }
 
 template<is_set_tree Tree, typename Fn>
 bool
 any_of(const Tree &t, Fn fn)
 {
-  bool r = false;
-  t.for_each([&](const auto &e) {
-    if ( !r && fn(e) ) r = true;
-  });
-  return r;
+  return !__impl::tree_scan(t, [&](const auto &e) { return !fn(e); });
 }
 
 template<is_tree_map Tree, typename Fn>
 bool
 any_of(const Tree &t, Fn fn)
 {
-  bool r = false;
-  t.for_each([&](const auto &k, const auto &v) {
-    if ( !r && fn(k, v) ) r = true;
-  });
-  return r;
+  return !__impl::tree_scan(t, [&](const auto &k, const auto &v) { return !fn(k, v); });
 }
 
 template<is_spatial_tree Tree, typename Fn>
 bool
 any_of(const Tree &t, Fn fn)
 {
-  bool r = false;
-  t.for_each([&](const auto &key, const auto &v) {
-    if ( !r && fn(key, v) ) r = true;
-  });
-  return r;
+  return !__impl::tree_scan(t, [&](const auto &key, const auto &v) { return !fn(key, v); });
 }
 
 template<is_tree Tree, typename Fn>
@@ -189,8 +189,12 @@ const typename micron::remove_cvref_t<Tree>::value_type *
 find_if(const Tree &t, Fn fn)
 {
   const typename micron::remove_cvref_t<Tree>::value_type *hit = nullptr;
-  t.for_each([&](const auto &e) {
-    if ( !hit && fn(e) ) hit = micron::addressof(e);
+  __impl::tree_scan(t, [&](const auto &e) {
+    if ( fn(e) ) {
+      hit = micron::addressof(e);
+      return false;
+    }
+    return true;
   });
   return hit;
 }
@@ -200,8 +204,12 @@ const typename micron::remove_cvref_t<Tree>::mapped_type *
 find_if(const Tree &t, Fn fn)
 {
   const typename micron::remove_cvref_t<Tree>::mapped_type *hit = nullptr;
-  t.for_each([&](const auto &k, const auto &v) {
-    if ( !hit && fn(k, v) ) hit = micron::addressof(v);
+  __impl::tree_scan(t, [&](const auto &k, const auto &v) {
+    if ( fn(k, v) ) {
+      hit = micron::addressof(v);
+      return false;
+    }
+    return true;
   });
   return hit;
 }
@@ -211,8 +219,12 @@ const typename micron::remove_cvref_t<Tree>::mapped_type *
 find_if(const Tree &t, Fn fn)
 {
   const typename micron::remove_cvref_t<Tree>::mapped_type *hit = nullptr;
-  t.for_each([&](const auto &key, const auto &v) {
-    if ( !hit && fn(key, v) ) hit = micron::addressof(v);
+  __impl::tree_scan(t, [&](const auto &key, const auto &v) {
+    if ( fn(key, v) ) {
+      hit = micron::addressof(v);
+      return false;
+    }
+    return true;
   });
   return hit;
 }
@@ -324,8 +336,12 @@ const typename micron::remove_cvref_t<Tree>::value_type *
 find_if_not(const Tree &t, Fn fn)
 {
   const typename micron::remove_cvref_t<Tree>::value_type *hit = nullptr;
-  t.for_each([&](const auto &e) {
-    if ( !hit && !fn(e) ) hit = micron::addressof(e);
+  __impl::tree_scan(t, [&](const auto &e) {
+    if ( !fn(e) ) {
+      hit = micron::addressof(e);
+      return false;
+    }
+    return true;
   });
   return hit;
 }
@@ -335,8 +351,12 @@ const typename micron::remove_cvref_t<Tree>::mapped_type *
 find_if_not(const Tree &t, Fn fn)
 {
   const typename micron::remove_cvref_t<Tree>::mapped_type *hit = nullptr;
-  t.for_each([&](const auto &k, const auto &v) {
-    if ( !hit && !fn(k, v) ) hit = micron::addressof(v);
+  __impl::tree_scan(t, [&](const auto &k, const auto &v) {
+    if ( !fn(k, v) ) {
+      hit = micron::addressof(v);
+      return false;
+    }
+    return true;
   });
   return hit;
 }
@@ -346,8 +366,12 @@ const typename micron::remove_cvref_t<Tree>::mapped_type *
 find_if_not(const Tree &t, Fn fn)
 {
   const typename micron::remove_cvref_t<Tree>::mapped_type *hit = nullptr;
-  t.for_each([&](const auto &key, const auto &v) {
-    if ( !hit && !fn(key, v) ) hit = micron::addressof(v);
+  __impl::tree_scan(t, [&](const auto &key, const auto &v) {
+    if ( !fn(key, v) ) {
+      hit = micron::addressof(v);
+      return false;
+    }
+    return true;
   });
   return hit;
 }

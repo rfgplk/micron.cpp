@@ -14,6 +14,7 @@
 #include "../memory/new.hpp"
 #include "../tuple.hpp"
 #include "../type_traits.hpp"
+#include "__tree_store.hpp"
 
 namespace micron
 {
@@ -91,6 +92,112 @@ class art
 
   __node_base *__root = nullptr;
   usize __size = 0;
+
+  // %%%%%%%%%%%%%%%%%%%%%
+  // node pools
+
+  __tree_store::block_pool<__leaf> __pleaf;
+  __tree_store::block_pool<__n4> __p4;
+  __tree_store::block_pool<__n16> __p16;
+  __tree_store::block_pool<__n48> __p48;
+  __tree_store::block_pool<__n256> __p256;
+
+  template<class N, class... A>
+  [[gnu::always_inline]] N *
+  __mk(__tree_store::block_pool<N> &pool, A &&...a)
+  {
+    N *mem = pool.take();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      return new (static_cast<void *>(mem)) N(micron::forward<A>(a)...);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      pool.give(mem);
+      throw;
+    }
+#endif
+  }
+
+  template<class N>
+  [[gnu::always_inline]] void
+  __rm(__tree_store::block_pool<N> &pool, N *p) noexcept
+  {
+    p->~N();
+    pool.give(p);
+  }
+
+  void
+  __free_node(__node_base *n) noexcept
+  {
+    switch ( n->kind ) {
+    case __node_kind::leaf:
+      __rm(__pleaf, static_cast<__leaf *>(n));
+      break;
+    case __node_kind::n4:
+      __rm(__p4, static_cast<__n4 *>(n));
+      break;
+    case __node_kind::n16:
+      __rm(__p16, static_cast<__n16 *>(n));
+      break;
+    case __node_kind::n48:
+      __rm(__p48, static_cast<__n48 *>(n));
+      break;
+    case __node_kind::n256:
+      __rm(__p256, static_cast<__n256 *>(n));
+      break;
+    }
+  }
+
+  // K and V destructors
+  void
+  __destroy_leaves(__node_base *n) noexcept
+  {
+    if ( !n ) return;
+    if ( n->kind == __node_kind::leaf ) {
+      for ( __leaf *cur = static_cast<__leaf *>(n); cur; cur = cur->next ) cur->~__leaf();
+      return;
+    }
+    switch ( n->kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast<__n4 *>(n);
+      for ( u8 i = 0; i < p->num_children; ++i ) __destroy_leaves(p->children[i]);
+      break;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast<__n16 *>(n);
+      for ( u8 i = 0; i < p->num_children; ++i ) __destroy_leaves(p->children[i]);
+      break;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast<__n48 *>(n);
+      for ( u16 i = 0; i < 48; ++i )
+        if ( p->children[i] ) __destroy_leaves(p->children[i]);
+      break;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast<__n256 *>(n);
+      for ( u16 i = 0; i < 256; ++i ) __destroy_leaves(p->children[i]);
+      break;
+    }
+    default:
+      break;
+    }
+  }
+
+  void
+  __release_all() noexcept
+  {
+    if constexpr ( !(micron::is_trivially_destructible_v<K> && micron::is_trivially_destructible_v<V>) )
+      __destroy_leaves(__root);
+    __pleaf.release();
+    __p4.release();
+    __p16.release();
+    __p48.release();
+    __p256.release();
+    __root = nullptr;
+    __size = 0;
+  }
 
   static constexpr usize __hash_bytes = sizeof(hash64_t);
 
@@ -170,34 +277,34 @@ class art
     switch ( n->kind ) {
     case __node_kind::n4: {
       auto *p = static_cast<__n4 *>(n);
-      auto *q = new __n16();
+      auto *q = __mk(__p16);
       q->num_children = p->num_children;
       for ( u8 i = 0; i < 4u; ++i ) {
         q->keys[i] = p->keys[i];
         q->children[i] = p->children[i];
       }
-      delete p;
+      __rm(__p4, p);
       return q;
     }
     case __node_kind::n16: {
       auto *p = static_cast<__n16 *>(n);
-      auto *q = new __n48();
+      auto *q = __mk(__p48);
       q->num_children = p->num_children;
       for ( u8 i = 0; i < 16u; ++i ) {
         q->idx[p->keys[i]] = i + 1;
         q->children[i] = p->children[i];
       }
-      delete p;
+      __rm(__p16, p);
       return q;
     }
     case __node_kind::n48: {
       auto *p = static_cast<__n48 *>(n);
-      auto *q = new __n256();
+      auto *q = __mk(__p256);
       q->num_children = p->num_children;
       for ( int b = 0; b < 256; ++b ) {
         if ( p->idx[b] != 0 ) q->children[b] = p->children[p->idx[b] - 1];
       }
-      delete p;
+      __rm(__p48, p);
       return q;
     }
     default:
@@ -254,6 +361,54 @@ class art
   }
 
   __node_base *
+  __shrink(__node_base *n)
+  {
+    switch ( n->kind ) {
+    case __node_kind::n16: {
+      auto *p = static_cast<__n16 *>(n);
+      auto *q = __mk(__p4);
+      q->num_children = p->num_children;
+      for ( u8 i = 0; i < p->num_children; ++i ) {
+        q->keys[i] = p->keys[i];
+        q->children[i] = p->children[i];
+      }
+      __rm(__p16, p);
+      return q;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast<__n48 *>(n);
+      auto *q = __mk(__p16);
+      u8 m = 0;
+      for ( int bb = 0; bb < 256; ++bb )
+        if ( p->idx[bb] != 0 ) {
+          q->keys[m] = static_cast<u8>(bb);
+          q->children[m] = p->children[p->idx[bb] - 1];
+          ++m;
+        }
+      q->num_children = m;
+      __rm(__p48, p);
+      return q;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast<__n256 *>(n);
+      auto *q = __mk(__p48);
+      u8 m = 0;
+      for ( int bb = 0; bb < 256; ++bb )
+        if ( p->children[bb] ) {
+          q->children[m] = p->children[bb];
+          q->idx[bb] = static_cast<u8>(m + 1);
+          ++m;
+        }
+      q->num_children = m;
+      __rm(__p256, p);
+      return q;
+    }
+    default:
+      return n;
+    }
+  }
+
+  __node_base *
   __remove_child(__node_base *n, u8 b)
   {
     switch ( n->kind ) {
@@ -267,7 +422,7 @@ class art
           }
           --p->num_children;
           if ( p->num_children == 0 ) {
-            delete p;
+            __rm(__p4, p);
             return nullptr;
           }
           return n;
@@ -284,6 +439,11 @@ class art
             p->children[j] = p->children[j + 1];
           }
           --p->num_children;
+          if ( p->num_children == 0 ) {
+            __rm(__p16, p);
+            return nullptr;
+          }
+          if ( p->num_children <= 3 ) return __shrink(n);
           return n;
         }
       }
@@ -307,6 +467,11 @@ class art
       p->children[last] = nullptr;
       p->idx[b] = 0;
       --p->num_children;
+      if ( p->num_children == 0 ) {
+        __rm(__p48, p);
+        return nullptr;
+      }
+      if ( p->num_children <= 12 ) return __shrink(n);
       return n;
     }
     case __node_kind::n256: {
@@ -315,6 +480,11 @@ class art
         p->children[b] = nullptr;
         --p->num_children;
       }
+      if ( p->num_children == 0 ) {
+        __rm(__p256, p);
+        return nullptr;
+      }
+      if ( p->num_children <= 37 ) return __shrink(n);
       return n;
     }
     default:
@@ -330,7 +500,7 @@ class art
       __leaf *cur = static_cast<__leaf *>(n);
       while ( cur ) {
         __leaf *nx = cur->next;
-        delete cur;
+        __rm(__pleaf, cur);
         cur = nx;
       }
       return;
@@ -339,26 +509,26 @@ class art
     case __node_kind::n4: {
       auto *p = static_cast<__n4 *>(n);
       for ( u8 i = 0; i < p->num_children; ++i ) __release(p->children[i]);
-      delete p;
+      __rm(__p4, p);
       break;
     }
     case __node_kind::n16: {
       auto *p = static_cast<__n16 *>(n);
       for ( u8 i = 0; i < p->num_children; ++i ) __release(p->children[i]);
-      delete p;
+      __rm(__p16, p);
       break;
     }
     case __node_kind::n48: {
       auto *p = static_cast<__n48 *>(n);
       for ( u8 i = 0; i < 48; ++i )
         if ( p->children[i] ) __release(p->children[i]);
-      delete p;
+      __rm(__p48, p);
       break;
     }
     case __node_kind::n256: {
       auto *p = static_cast<__n256 *>(n);
       for ( int i = 0; i < 256; ++i ) __release(p->children[i]);
-      delete p;
+      __rm(__p256, p);
       break;
     }
     default:
@@ -371,7 +541,7 @@ class art
   {
     if ( !n ) {
       inserted = true;
-      return new __leaf(h, k, micron::move(v));
+      return __mk(__pleaf, h, k, micron::move(v));
     }
     if ( n->kind == __node_kind::leaf ) {
       auto *lf = static_cast<__leaf *>(n);
@@ -385,7 +555,7 @@ class art
             return n;
           }
           if ( !cur->next ) {
-            cur->next = new __leaf(h, k, micron::move(v));
+            cur->next = __mk(__pleaf, h, k, micron::move(v));
             inserted = true;
             return n;
           }
@@ -396,14 +566,14 @@ class art
       if ( depth >= __hash_bytes ) [[unlikely]] {
         __leaf *cur = lf;
         while ( cur->next ) cur = cur->next;
-        cur->next = new __leaf(h, k, micron::move(v));
+        cur->next = __mk(__pleaf, h, k, micron::move(v));
         inserted = true;
         return n;
       }
 
       u8 b_old = __byte_at(lf->hash, depth);
       u8 b_new = __byte_at(h, depth);
-      auto *inner = new __n4();
+      auto *inner = __mk(__p4);
       __node_base *new_root = inner;
       if ( b_old == b_new ) {
 
@@ -412,7 +582,7 @@ class art
         inserted = true;
         return new_root;
       }
-      __node_base *new_leaf = new __leaf(h, k, micron::move(v));
+      __node_base *new_leaf = __mk(__pleaf, h, k, micron::move(v));
       new_root = __add_child(new_root, b_old, lf);
       new_root = __add_child(new_root, b_new, new_leaf);
       inserted = true;
@@ -426,7 +596,7 @@ class art
       return n;
     }
 
-    auto *new_leaf = new __leaf(h, k, micron::move(v));
+    auto *new_leaf = __mk(__pleaf, h, k, micron::move(v));
     inserted = true;
     return __add_child(n, b, new_leaf);
   }
@@ -437,19 +607,19 @@ class art
     if ( depth >= __hash_bytes ) [[unlikely]] {
       __leaf *cur = lf;
       while ( cur->next ) cur = cur->next;
-      cur->next = new __leaf(h, k, micron::move(v));
+      cur->next = __mk(__pleaf, h, k, micron::move(v));
       return lf;
     }
     u8 b_old = __byte_at(lf->hash, depth);
     u8 b_new = __byte_at(h, depth);
     if ( b_old != b_new ) {
-      __node_base *new_root = new __n4();
-      __node_base *new_leaf = new __leaf(h, k, micron::move(v));
+      __node_base *new_root = __mk(__p4);
+      __node_base *new_leaf = __mk(__pleaf, h, k, micron::move(v));
       new_root = __add_child(new_root, b_old, lf);
       new_root = __add_child(new_root, b_new, new_leaf);
       return new_root;
     }
-    auto *inner = new __n4();
+    auto *inner = __mk(__p4);
     __node_base *deeper = __split_descend(lf, h, k, micron::move(v), depth + 1);
     return __add_child(inner, b_old, deeper);
   }
@@ -469,16 +639,16 @@ class art
             if ( cur->next ) {
               n = cur->next;
               cur->next = nullptr;
-              delete cur;
+              __rm(__pleaf, cur);
               return true;
             }
-            delete cur;
+            __rm(__pleaf, cur);
             n = nullptr;
             return true;
           }
           prev->next = cur->next;
           cur->next = nullptr;
-          delete cur;
+          __rm(__pleaf, cur);
           return true;
         }
         prev = cur;
@@ -553,6 +723,46 @@ class art
     }
   }
 
+  static usize
+  __bytes_rec(__node_base *n) noexcept
+  {
+    if ( !n ) return 0;
+    if ( n->kind == __node_kind::leaf ) {
+      usize t = 0;
+      for ( __leaf *c = static_cast<__leaf *>(n); c; c = c->next ) t += sizeof(__leaf);
+      return t;
+    }
+    switch ( n->kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast<__n4 *>(n);
+      usize t = sizeof(__n4);
+      for ( u8 i = 0; i < p->num_children; ++i ) t += __bytes_rec(p->children[i]);
+      return t;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast<__n16 *>(n);
+      usize t = sizeof(__n16);
+      for ( u8 i = 0; i < p->num_children; ++i ) t += __bytes_rec(p->children[i]);
+      return t;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast<__n48 *>(n);
+      usize t = sizeof(__n48);
+      for ( u16 i = 0; i < 48; ++i )
+        if ( p->children[i] ) t += __bytes_rec(p->children[i]);
+      return t;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast<__n256 *>(n);
+      usize t = sizeof(__n256);
+      for ( u16 i = 0; i < 256; ++i ) t += __bytes_rec(p->children[i]);
+      return t;
+    }
+    default:
+      return 0;
+    }
+  }
+
 public:
   using category_type = tree_tag;
   using mutability_type = mutable_tag;
@@ -561,7 +771,7 @@ public:
   using key_type = K;
   using mapped_type = V;
 
-  ~art() { __release(__root); }
+  ~art() { __release_all(); }
 
   art() = default;
 
@@ -575,7 +785,9 @@ public:
   art(const art &) = delete;
   art &operator=(const art &) = delete;
 
-  art(art &&o) noexcept : __root(o.__root), __size(o.__size)
+  art(art &&o) noexcept
+      : __root(o.__root), __size(o.__size), __pleaf(micron::move(o.__pleaf)), __p4(micron::move(o.__p4)),
+        __p16(micron::move(o.__p16)), __p48(micron::move(o.__p48)), __p256(micron::move(o.__p256))
   {
     o.__root = nullptr;
     o.__size = 0;
@@ -585,9 +797,14 @@ public:
   operator=(art &&o) noexcept
   {
     if ( this == &o ) return *this;
-    __release(__root);
+    __release_all();
     __root = o.__root;
     __size = o.__size;
+    __pleaf = micron::move(o.__pleaf);
+    __p4 = micron::move(o.__p4);
+    __p16 = micron::move(o.__p16);
+    __p48 = micron::move(o.__p48);
+    __p256 = micron::move(o.__p256);
     o.__root = nullptr;
     o.__size = 0;
     return *this;
@@ -608,9 +825,26 @@ public:
   void
   clear()
   {
-    __release(__root);
-    __root = nullptr;
-    __size = 0;
+    __release_all();
+  }
+
+  // block count across all five pools
+  [[nodiscard]] usize
+  node_bytes_live() const noexcept
+  {
+    return __bytes_rec(const_cast<art *>(this)->__root);
+  }
+
+  [[nodiscard]] usize
+  blocks_allocated() const noexcept
+  {
+    return __pleaf.blocks() + __p4.blocks() + __p16.blocks() + __p48.blocks() + __p256.blocks();
+  }
+
+  [[nodiscard]] usize
+  pool_bytes() const noexcept
+  {
+    return __pleaf.bytes_held() + __p4.bytes_held() + __p16.bytes_held() + __p48.bytes_held() + __p256.bytes_held();
   }
 
   bool
@@ -677,6 +911,11 @@ public:
   void
   swap(art &o) noexcept
   {
+    __pleaf.swap(o.__pleaf);
+    __p4.swap(o.__p4);
+    __p16.swap(o.__p16);
+    __p48.swap(o.__p48);
+    __p256.swap(o.__p256);
     micron::swap(__root, o.__root);
     micron::swap(__size, o.__size);
   }
