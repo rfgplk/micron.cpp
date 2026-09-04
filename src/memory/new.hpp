@@ -23,14 +23,10 @@ constexpr static const bool __micron_global__alloc_debug = true;
 constexpr static const bool __micron_global__alloc_debug = false;
 #endif
 
-// Clang does not inject this compiler-required type until <new> is included. Micron cannot
-// include that STL header, so provide the language ABI declaration itself.
-#if defined(__clang__) && !defined(_NEW) && !defined(_LIBCPP_NEW) && !defined(_LIBCPP___NEW)
 namespace std
 {
-enum class align_val_t : usize { };
+enum class align_val_t : __SIZE_TYPE__;
 };
-#endif
 #if !defined(__micron_sanitizer_owns_heap)
 
 // §17.6.3 — scalar new/delete
@@ -96,7 +92,7 @@ operator delete[](void *ptr, usize size) noexcept
 //
 // abc::aligned_alloc routes to abc::alloc() when alignment <= 32 (__hdr_offset) and to a shifted aligned-pointer scheme when alignment > 32
 //
-// NOTE: std::align_val_t is implicitly defined by the compiler under -faligned-new (default for -std=c++17 and later), so we don't need new
+// NOTE: std::align_val_t is declared, not defined, at the top of this file
 
 namespace micron
 {

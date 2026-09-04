@@ -82,10 +82,16 @@ rdtsc() noexcept
   u32 lo, hi;
   asm volatile("lfence; rdtsc" : "=a"(lo), "=d"(hi));
   return (static_cast<u64>(hi) << 32) | lo;
-#else
+#elif defined(__micron_arch_arm64)
   u64 v;
   asm volatile("mrs %0, cntvct_el0" : "=r"(v));
   return v;
+#else
+  // armv7-a: CNTVCT is PL0-gated (CNTKCTL.PL0VCTEN) and PMCCNTR needs PMUSERENR.EN -- both SIGILL
+  // by default, so fall back to the monotonic clock the way the other benches do.
+  micron::timespec_t ts{};
+  micron::clock_gettime(micron::clock_monotonic, ts);
+  return static_cast<u64>(ts.tv_sec) * 1000000000ULL + static_cast<u64>(ts.tv_nsec);
 #endif
 }
 

@@ -135,9 +135,10 @@ bench_ticks() noexcept
   asm volatile("isb; mrs %0, cntvct_el0" : "=r"(value));
   return value;
 #else
-  u32 value;
-  asm volatile("isb; mrc p15, 0, %0, c9, c13, 0" : "=r"(value));
-  return value;
+  // armv7-a: PMCCNTR is PL0-gated behind PMUSERENR.EN (default 0) -> SIGILL. Use the clock.
+  micron::timespec_t ts{};
+  micron::clock_gettime(micron::clock_monotonic, ts);
+  return static_cast<u64>(ts.tv_sec) * 1000000000ULL + static_cast<u64>(ts.tv_nsec);
 #endif
 }
 

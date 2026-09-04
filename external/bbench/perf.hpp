@@ -32,7 +32,7 @@ __pe_call(long r)
 }
 
 static long
-perf_event(struct perf_event_attr &event, pid_t pid, int cpu, int group_fd, unsigned long flags)
+perf_event(struct perf_event_attr &event, micron::pid_t pid, int cpu, int group_fd, unsigned long flags)
 {
   return __pe_call(micron::syscall(SYS_perf_event_open, &event, pid, cpu, group_fd, flags));
 };
@@ -50,7 +50,7 @@ perf_event_attach(int fd, struct perf_event_attr &event)
 };
 
 static long
-perf_event_pid(struct perf_event_attr &event, pid_t pid)
+perf_event_pid(struct perf_event_attr &event, micron::pid_t pid)
 {
   return __pe_call(micron::syscall(SYS_perf_event_open, &event, pid, -1, -1, 0));
 };
@@ -326,7 +326,7 @@ template<class T, kernel_clock_types R> struct kernel_clock {
   }
 
   int
-  reopen(pid_t pid)
+  reopen(micron::pid_t pid)
   {
     if ( e_fd != -1 ) micron::close(e_fd);
     e_fd = static_cast<int>(perf_event_pid(event, pid));
@@ -352,7 +352,7 @@ template<class T, kernel_clock_types R> struct kernel_clock {
   }
 
   int
-  open(pid_t pid)
+  open(micron::pid_t pid)
   {
     e_fd = static_cast<int>(perf_event_pid(event, pid));
     if ( e_fd == -1 ) {
@@ -438,7 +438,7 @@ template<class T, kernel_clock_types R> struct kernel_clock {
   }
 };
 
-enum class system_clocks : clockid_t {
+enum class system_clocks : micron::clockid_t {
   realtime_set = micron::clock_realtime,
   realtime = micron::clock_realtime_alarm,
   realtime_coarse = micron::clock_realtime_coarse,
@@ -459,7 +459,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   {
     micron::memset(&time_begin, 0x0, sizeof(micron::timespec_t));
     micron::memset(&time_end, 0x0, sizeof(micron::timespec_t));
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_begin) == -1 )
+    if ( micron::clock_gettime(static_cast<micron::clockid_t>(C), time_begin) == -1 )
       micron::exc<micron::except::runtime_error>("bbench clock failed to get time");
   }
 
@@ -467,21 +467,21 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   {
     micron::memset(&time_begin, 0x0, sizeof(micron::timespec_t));
     micron::memset(&time_end, 0x0, sizeof(micron::timespec_t));
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_begin) == -1 )
+    if ( micron::clock_gettime(static_cast<micron::clockid_t>(C), time_begin) == -1 )
       micron::exc<micron::except::runtime_error>("bbench clock failed to get time");
   }
 
   inline __attribute__((always_inline)) void
   start(void)
   {
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_begin) == -1 )
+    if ( micron::clock_gettime(static_cast<micron::clockid_t>(C), time_begin) == -1 )
       micron::exc<micron::except::runtime_error>("bbench clock failed to get time");
   }
 
   inline __attribute__((always_inline)) auto
   start_get(void) -> micron::timespec_t
   {
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_begin) == -1 )
+    if ( micron::clock_gettime(static_cast<micron::clockid_t>(C), time_begin) == -1 )
       micron::exc<micron::except::runtime_error>("bbench clock failed to get time");
     return time_begin;
   }
@@ -489,14 +489,14 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   inline __attribute__((always_inline)) void
   stop(void)
   {
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_end) == -1 )
+    if ( micron::clock_gettime(static_cast<micron::clockid_t>(C), time_end) == -1 )
       micron::exc<micron::except::runtime_error>("bbench clock failed to get time");
   }
 
   inline __attribute__((always_inline)) auto
   stop_get(void) -> micron::timespec_t
   {
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_end) == -1 )
+    if ( micron::clock_gettime(static_cast<micron::clockid_t>(C), time_end) == -1 )
       micron::exc<micron::except::runtime_error>("bbench clock failed to get time");
     return time_end;
   }
@@ -505,7 +505,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   now(void) -> double
   {
     micron::timespec_t t;
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), t) == -1 )
+    if ( micron::clock_gettime(static_cast<micron::clockid_t>(C), t) == -1 )
       micron::exc<micron::except::runtime_error>("bbench clock failed to get time");
     auto sec = static_cast<double>(t.tv_sec);
     auto ns = static_cast<double>(t.tv_nsec);

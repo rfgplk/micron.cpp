@@ -28,11 +28,16 @@ popcount64(u64 v)
 
 typedef u64 (*hfn)(const byte *, i64, usize);
 
+// zzz is not arch-independent: src/hash/zzz.hpp has no #else, so on x86 below AVX2 (and on any
+// target without NEON) micron::hashes has no zzz family at all. __micron_hash_zzz (hash.hpp:36) is
+// the gate the library itself uses.
+#if defined(__micron_hash_zzz)
 static u64
 h_zzzf(const byte *p, i64 s, usize n)
 {
   return micron::hashes::zzzf64(p, s, n);
 }
+#endif
 
 static u64
 h_murmur(const byte *p, i64 s, usize n)
@@ -70,11 +75,18 @@ main()
 {
   print("=== MICRON HASH AVALANCHE ===");
   static const hentry hs[] = {
-    { "zzzf64", h_zzzf },     { "murmur", h_murmur }, { "xxhash64", h_xxh }, { "rapidhash", h_rapid },
+#if defined(__micron_hash_zzz)
+    { "zzzf64", h_zzzf },
+#endif
+    { "murmur", h_murmur }, { "xxhash64", h_xxh }, { "rapidhash", h_rapid },
 #if defined(__micron_arch_x86_any)
     { "meowhash64", h_meow },
 #endif
   };
+
+#if !defined(__micron_hash_zzz)
+  sb::skip("no zzz backend below AVX2 / without NEON: zzzf64 is absent from the sweep");
+#endif
 
   constexpr usize sizes[] = { 8, 32, 33, 96 };
   constexpr u64 trials = 100;

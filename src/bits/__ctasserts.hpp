@@ -97,6 +97,24 @@ struct __ct_type_checker {
     // static_assert(sizeof(usize) == sizeof(void *), "usize must match pointer size");
     // static_assert(sizeof(max_t) == sizeof(ptrdiff_t), "max_t must match ptrdiff_t");
 
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // macro-poisoning
+    static_assert(__is_same(size_t, decltype(sizeof(0))), "size_t must be the type of sizeof");
+    static_assert(__is_same(usize, size_t), "usize must be size_t");
+    static_assert(__is_same(uintptr_t, size_t), "uintptr_t must be size_t on every micron target");
+    static_assert(__is_same(ptr_t, size_t), "ptr_t must be size_t");
+    static_assert(__is_same(addr_t, size_t), "addr_t must be size_t");
+    static_assert(__is_same(__SIZE_TYPE__, size_t), "__SIZE_TYPE__ must still name size_t");
+    static_assert(__is_same(ptrdiff_t, decltype(static_cast<char *>(nullptr) - static_cast<char *>(nullptr))),
+                  "ptrdiff_t must be the type of pointer subtraction");
+    static_assert(__is_same(intptr_t, ptrdiff_t), "intptr_t is ptrdiff_t on every micron target");
+    static_assert(__is_same(ssize_t, intptr_t), "ssize_t must be intptr_t");
+    static_assert(sizeof(ssize_t) == sizeof(size_t), "ssize_t must be size_t's width");
+    static_assert(__is_same(int32_t, int), "int32_t must be `int`");
+    static_assert(__is_same(uint32_t, unsigned int), "uint32_t must be `unsigned int`");
+    static_assert(__is_same(int8_t, signed char), "int8_t must be `signed char`");
+    static_assert(__is_same(uint8_t, unsigned char), "uint8_t must be `unsigned char`");
+
     // NOTE: each branch must use only macros defined on its arch; referring
     // to a macro that isn't `#define`d as a bare C++ identifier fails on
     // clang (which doesn't auto-substitute 0 outside of `#if` directives).

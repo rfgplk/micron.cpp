@@ -262,18 +262,18 @@ main()
     static const char feed[] = "hello interact";
     sb::require(micron::syscall(SYS_write, in_pipe[1], feed, sizeof(feed) - 1) == static_cast<long>(sizeof(feed) - 1));
     micron::syscall(SYS_close, in_pipe[1]);      // EOF for the reader
-    long save0 = micron::syscall(SYS_dup, 0);
-    long save1 = micron::syscall(SYS_dup, 1);
-    micron::syscall(SYS_dup2, in_pipe[0], 0);
-    micron::syscall(SYS_dup2, out_pipe[1], 1);
+    const i32 save0 = micron::posix::dup(0);
+    const i32 save1 = micron::posix::dup(1);
+    micron::posix::dup2(in_pipe[0], 0);
+    micron::posix::dup2(out_pipe[1], 1);
     max_t w = coro::sync_wait(cio::interact([](micron::string &&s) {
       micron::string up = micron::move(s);
       for ( usize i = 0; i < up.size(); ++i )
         if ( up[i] >= 'a' && up[i] <= 'z' ) up[i] = static_cast<char>(up[i] - 32);
       return up;
     }));
-    micron::syscall(SYS_dup2, save0, 0);
-    micron::syscall(SYS_dup2, save1, 1);
+    micron::posix::dup2(save0, 0);
+    micron::posix::dup2(save1, 1);
     micron::syscall(SYS_close, save0);
     micron::syscall(SYS_close, save1);
     sb::check(w == static_cast<max_t>(sizeof(feed) - 1));

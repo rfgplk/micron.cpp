@@ -132,6 +132,10 @@ main()
   sb::end_test_case();
 #endif
 
+  // zzz is not arch-independent: src/hash/zzz.hpp has no #else, so on x86 below AVX2 (and on any
+  // target without NEON) micron::hashes has no zzz family at all. The known-answer values below are
+  // the AVX2/NEON kernel's, so they are only meaningful where that kernel exists.
+#if defined(__micron_hash_zzz)
   sb::test_case("zzz-family self-consistency");
   {
     require_true(micron::hashes::zzzf64<0>(buf, 32) == 0xd1485c41af329b34ull);
@@ -139,6 +143,9 @@ main()
     require_true(micron::hashes::zzzf64<0x99u>(buf, 96) == micron::hashes::zzzf64(buf, 0x99, 96));
   }
   sb::end_test_case();
+#else
+  sb::skip("no zzz backend below AVX2 / without NEON: known-answer vectors not exercised");
+#endif
 
   print("[HASH KNOWN-ANSWER VECTORS OK]");
   return 1;

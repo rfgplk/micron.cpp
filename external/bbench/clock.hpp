@@ -134,7 +134,7 @@ public:
   }
 
   inline __attribute__((always_inline)) void
-  reopen(pid_t pid)
+  reopen(micron::pid_t pid)
   {
     C::reopen(pid);
   }

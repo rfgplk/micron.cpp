@@ -43,14 +43,11 @@ constexpr bool stats_live = true;
 constexpr bool stats_live = false;
 #endif
 
-u64
-now_ns(void) noexcept
-{
-  micron::timespec_t t{};
-  micron::clock_gettime(micron::clock_monotonic, t);
-  return static_cast<u64>(t.tv_sec) * 1000000000ull + static_cast<u64>(t.tv_nsec);
-}
-
+// NOTE: there is no local now_ns() here any more. `using namespace micron;` in main hoists
+// micron::now_ns (chrono/clock.hpp:749) into the same lookup level as an anonymous-namespace one,
+// and every call becomes ambiguous. It would also be the WRONG clock to fall back to: micron::now_ns
+// reads clock_realtime, which is settable and NTP-slewable, and these are duration measurements.
+// chrono::mono_ns() (clock.hpp:63) is clock_monotonic -- byte for byte what the local helper did.
 }      // namespace
 
 static_assert(micron::is_mutex<micron::futex_mutex>, "futex_mutex must satisfy is_mutex");
@@ -172,9 +169,9 @@ main(void)
   test_case("try_lock_for succeeds immediately when the lock is free");
   {
     futex_mutex m;
-    const u64 t0 = now_ns();
+    const u64 t0 = static_cast<u64>(micron::chrono::mono_ns());
     require_true(m.try_lock_for(500ull * 1000000ull));
-    const u64 dt = now_ns() - t0;
+    const u64 dt = static_cast<u64>(micron::chrono::mono_ns()) - t0;
     m.unlock();
     require_true(dt < 100ull * 1000000ull);      // must not have waited out the timeout
   }
@@ -196,9 +193,9 @@ main(void)
     while ( !holding.get(memory_order::acquire) ) micron::yield();
 
     constexpr u64 kTimeoutNs = 120ull * 1000000ull;      // 120 ms
-    const u64 t0 = now_ns();
+    const u64 t0 = static_cast<u64>(micron::chrono::mono_ns());
     const bool got = m.try_lock_for(kTimeoutNs);
-    const u64 dt = now_ns() - t0;
+    const u64 dt = static_cast<u64>(micron::chrono::mono_ns()) - t0;
 
     go.store(true, memory_order::release);
     solo::join(t);
@@ -247,9 +244,9 @@ main(void)
     micron::clock_gettime(micron::clock_monotonic, past);
     past.tv_sec -= 5;
 
-    const u64 t0 = now_ns();
+    const u64 t0 = static_cast<u64>(micron::chrono::mono_ns());
     require_false(m.try_lock_until(past));
-    const u64 dt = now_ns() - t0;
+    const u64 dt = static_cast<u64>(micron::chrono::mono_ns()) - t0;
 
     go.store(true, memory_order::release);
     solo::join(t);

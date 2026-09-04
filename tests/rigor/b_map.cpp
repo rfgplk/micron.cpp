@@ -13,6 +13,7 @@
 #include "../snowball/snowball.hpp"
 
 #include <climits>
+#include <cstdio>
 #include <cstring>
 #include <set>
 #include <vector>

@@ -125,7 +125,7 @@ union pthread_barrierattr_t {
 typedef union pthread_barrierattr_t pthread_barrierattr_t;
 #endif
 
-extern "C" pid_t pthread_gettid_np (pthread_t __thread_id);
+extern "C" micron::pid_t pthread_gettid_np (pthread_t __thread_id);
 
 extern "C" int pthread_detach (pthread_t __th) __THROW;
 
@@ -229,7 +229,7 @@ extern "C" int pthread_join(pthread_t __th, void **__thread_return);
 extern "C" int pthread_tryjoin_np(pthread_t __th, void **__thread_return) __THROW;
 
 extern "C" int pthread_timedjoin_np(pthread_t __th, void **__thread_return, const struct timespec *__abstime);
-extern "C" int pthread_clockjoin_np(pthread_t __th, void **__thread_return, clockid_t __clockid,
+extern "C" int pthread_clockjoin_np(pthread_t __th, void **__thread_return, micron::clockid_t __clockid,
                                 const struct timespec *__abstime);
 extern "C" int pthread_attr_setstack (pthread_attr_t *__attr, void *__stackaddr,
 				  usize __stacksize) __THROW __nonnull ((1));

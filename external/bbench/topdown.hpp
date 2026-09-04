@@ -63,7 +63,7 @@ struct __td_event {
   }
 
   int
-  open_pid(pid_t pid)
+  open_pid(micron::pid_t pid)
   {
     e_fd = static_cast<int>(perf_event_pid(attr, pid));
     if ( e_fd == -1 ) {

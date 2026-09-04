@@ -35,6 +35,16 @@
 #include "../src/simd/aliases.hpp"
 #include "../src/std.hpp"
 
+// The packed rows below need TWO things at once: a vector backend for the math itself
+// (__micron_math_packed -- AVX2+FMA on x86, NEON on arm; math/simd/_dispatch.hpp:13), and the x86
+// load/store aliases the kernels are written against (micron::simd::avx / ::sse, which do not exist
+// on arm at all). Where either is missing -- an --isa base build, or any arm target -- the bench
+// reports the scalar rows only. Measuring the NEON packed path would need NEON kernels this file
+// does not have yet; it is a missing bench, not a missing gate.
+#if defined(__micron_math_packed) && defined(__micron_arch_x86_any)
+#define TRIG_BENCH_PACKED 1
+#endif
+
 namespace
 {
 
@@ -367,6 +377,7 @@ k_scalar_f32_sc(Fn f) noexcept
   clobber(g_out_f32_b);
 }
 
+#if defined(TRIG_BENCH_PACKED)
 [[gnu::always_inline]] inline mc::simd::d256
 ld_d256(const f64 *p) noexcept
 {
@@ -492,6 +503,7 @@ k_f128(Fn f) noexcept
   }
   clobber(g_out_f32);
 }
+#endif      // TRIG_BENCH_PACKED
 
 void
 sweep_unary_sin(range_kind rk)
@@ -503,6 +515,7 @@ sweep_unary_sin(range_kind rk)
   print_cell(measure("mk::trig    f32 scalar ", 1, [] { k_scalar_f32([](f32 x) { return mc::math::mk::trig::sin<f32>(x); }); }));
   print_cell(measure("mk::cordic  f64 scalar ", 1, [] { k_scalar_f64([](f64 x) { return mc::math::mk::cordic::sin<f64>(x); }); }));
   print_cell(measure("mk::cordic  f32 scalar ", 1, [] { k_scalar_f32([](f32 x) { return mc::math::mk::cordic::sin<f32>(x); }); }));
+#if defined(TRIG_BENCH_PACKED)
   print_cell(measure("mk::trig    d256 (4xf64)", 4, [] { k_d256([](mc::simd::d256 v) { return mc::sin(v); }); }));
   print_cell(measure("mk::trig    d128 (2xf64)", 2, [] { k_d128([](mc::simd::d128 v) { return mc::sin(v); }); }));
   print_cell(measure("mk::trig    f256 (8xf32)", 8, [] { k_f256([](mc::simd::f256 v) { return mc::sin(v); }); }));
@@ -511,6 +524,7 @@ sweep_unary_sin(range_kind rk)
   print_cell(measure("mk::cordic  d128 (2xf64)", 2, [] { k_d128([](mc::simd::d128 v) { return mc::sin_cordic(v); }); }));
   print_cell(measure("mk::cordic  f256 (8xf32)", 8, [] { k_f256([](mc::simd::f256 v) { return mc::sin_cordic(v); }); }));
   print_cell(measure("mk::cordic  f128 (4xf32)", 4, [] { k_f128([](mc::simd::f128 v) { return mc::sin_cordic(v); }); }));
+#endif
 }
 
 void
@@ -523,6 +537,7 @@ sweep_unary_cos(range_kind rk)
   print_cell(measure("mk::trig    f32 scalar ", 1, [] { k_scalar_f32([](f32 x) { return mc::math::mk::trig::cos<f32>(x); }); }));
   print_cell(measure("mk::cordic  f64 scalar ", 1, [] { k_scalar_f64([](f64 x) { return mc::math::mk::cordic::cos<f64>(x); }); }));
   print_cell(measure("mk::cordic  f32 scalar ", 1, [] { k_scalar_f32([](f32 x) { return mc::math::mk::cordic::cos<f32>(x); }); }));
+#if defined(TRIG_BENCH_PACKED)
   print_cell(measure("mk::trig    d256 (4xf64)", 4, [] { k_d256([](mc::simd::d256 v) { return mc::cos(v); }); }));
   print_cell(measure("mk::trig    d128 (2xf64)", 2, [] { k_d128([](mc::simd::d128 v) { return mc::cos(v); }); }));
   print_cell(measure("mk::trig    f256 (8xf32)", 8, [] { k_f256([](mc::simd::f256 v) { return mc::cos(v); }); }));
@@ -531,6 +546,7 @@ sweep_unary_cos(range_kind rk)
   print_cell(measure("mk::cordic  d128 (2xf64)", 2, [] { k_d128([](mc::simd::d128 v) { return mc::cos_cordic(v); }); }));
   print_cell(measure("mk::cordic  f256 (8xf32)", 8, [] { k_f256([](mc::simd::f256 v) { return mc::cos_cordic(v); }); }));
   print_cell(measure("mk::cordic  f128 (4xf32)", 4, [] { k_f128([](mc::simd::f128 v) { return mc::cos_cordic(v); }); }));
+#endif
 }
 
 void
@@ -544,12 +560,14 @@ sweep_unary_tan(range_kind rk)
   print_cell(measure("mk::cordic  f64 scalar ", 1, [] { k_scalar_f64([](f64 x) { return mc::math::mk::cordic::tan<f64>(x); }); }));
   print_cell(measure("mk::cordic  f32 scalar ", 1, [] { k_scalar_f32([](f32 x) { return mc::math::mk::cordic::tan<f32>(x); }); }));
 
+#if defined(TRIG_BENCH_PACKED)
   print_cell(measure("mk::trig    d256 (4xf64)", 4, [] { k_d256([](mc::simd::d256 v) { return mc::tan(v); }); }));
 
   print_cell(measure("mk::cordic  d256 (4xf64)", 4, [] { k_d256([](mc::simd::d256 v) { return mc::tan_cordic(v); }); }));
   print_cell(measure("mk::cordic  d128 (2xf64)", 2, [] { k_d128([](mc::simd::d128 v) { return mc::tan_cordic(v); }); }));
   print_cell(measure("mk::cordic  f256 (8xf32)", 8, [] { k_f256([](mc::simd::f256 v) { return mc::tan_cordic(v); }); }));
   print_cell(measure("mk::cordic  f128 (4xf32)", 4, [] { k_f128([](mc::simd::f128 v) { return mc::tan_cordic(v); }); }));
+#endif
 }
 
 void
@@ -567,6 +585,7 @@ sweep_sincos(range_kind rk)
   print_cell(measure("mk::cordic  f32 scalar ", 1,
                      [] { k_scalar_f32_sc([](f32 x, f32 &s, f32 &c) { mc::math::mk::cordic::sincos<f32>(x, s, c); }); }));
 
+#if defined(TRIG_BENCH_PACKED)
   print_cell(measure("mk::trig    d256 (4xf64)", 4,
                      [] { k_d256_sc([](mc::simd::d256 v, mc::simd::d256 *s, mc::simd::d256 *c) { mc::math::mk::sincos(v, s, c); }); }));
 
@@ -576,6 +595,7 @@ sweep_sincos(range_kind rk)
   print_cell(measure("mk::cordic  f256 (8xf32)", 8, [] {
     k_f256_sc([](mc::simd::f256 v, mc::simd::f256 *s, mc::simd::f256 *c) { mc::math::mk::sincos_cordic(v, s, c); });
   }));
+#endif
 }
 
 void

@@ -16,9 +16,7 @@
 #include "type_traits.hpp"
 
 // must surpress int128 extensions
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wpedantic")
-typedef unsigned char __u_char;
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic") typedef unsigned char __u_char;
 typedef unsigned short int __u_short;
 typedef unsigned int __u_int;
 typedef unsigned long int __u_long;
@@ -36,9 +34,13 @@ using int64_t = __INT64_TYPE__;
 // using uint128_t = __uint128_t;
 // #endif
 
+// NOTE: uintptr_t and size_t must be defined off sizeof(), NEVER __UINTPTR_TYPE__;
+// arm uapi header asm/types.h does #undef __UINTPTR_TYPE__ / #define __UINTPTR_TYPE__ unsigned long,
+// while gcc's arm32-glibc builtin is unsigned int; any TU that saw a kernel header before a
+// micron one therefore got a size_t that conflicted with glibc's, and stopped compiling
 using ptrdiff_t = __PTRDIFF_TYPE__;
 using intptr_t = __INTPTR_TYPE__;
-using uintptr_t = __UINTPTR_TYPE__;
+using uintptr_t = decltype(sizeof(0));
 using uint8_t = __UINT8_TYPE__;
 using uint16_t = __UINT16_TYPE__;
 using uint32_t = __UINT32_TYPE__;
@@ -67,17 +69,11 @@ using umax_t = __UINTMAX_TYPE__;
 // more correct
 // TODO: replace all usize types with umax_t in the codebase
 using ssize_t = __INTPTR_TYPE__;
-using size_t = __UINTPTR_TYPE__;
+using size_t = decltype(sizeof(0));      // see the NOTE at uintptr_t
 using usize = size_t;
 
 // time block
-using clock_t = __clock_t_type;
-using clockid_t = __clockid_t_type;
-using timer_t = __timer_t_type;
-using suseconds_t = __suseconds_t_type;
-
-using time_t = __time_t_type;
-// time64_t is ALWAYS 64-bit
+// NOTE: clock_t / clockid_t / timer_t / suseconds_t / time_t are libc's names; no longer in global scope
 using time64_t = __INT64_TYPE__;
 using slong_t = __syscall_slong_type;
 using ulong_t = __syscall_ulong_type;
@@ -149,7 +145,6 @@ typedef umax_t __attribute__((__may_alias__)) word;
 constexpr u32 byte_width = 8;
 
 using pnt_t = byte;
-// using time_t = uint64_t;
 
 #if defined(__GNUC__) && !defined(__clang__) && defined(__cplusplus) && __cplusplus >= 202300L && defined(__micron_arch_amd64)
 using f16 = _Float16;
