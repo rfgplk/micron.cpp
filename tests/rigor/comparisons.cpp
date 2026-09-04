@@ -295,16 +295,16 @@ main(void)
   sb::print("=== COMPARE FUNCTION TESTS ===");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // SECTION 1  compare(ptr, ptr, n)
+  // SECTION 1  compare_range(ptr, ptr, n)
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  sb::print("-- Section 1: compare(ptr, ptr, n) --");
+  sb::print("-- Section 1: compare_range(ptr, ptr, n) --");
 
   sb::test_case("equal byte buffers returns 0");
   {
     guarded<byte, 32> a, b;
     a.fill(0xAA);
     b.fill(0xAA);
-    sb::require(mc::compare(a.begin(), b.begin(), 32) == 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 32) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -316,7 +316,7 @@ main(void)
     a.fill(0x01);
     b.fill(0x01);
     b[0] = 0xFF;
-    long int r = mc::compare(a.begin(), b.begin(), 32);
+    long int r = mc::compare_range(a.begin(), b.begin(), 32);
     sb::require(r != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
@@ -329,7 +329,7 @@ main(void)
     a.fill(0x55);
     b.fill(0x55);
     b[31] = 0xAA;
-    sb::require(mc::compare(a.begin(), b.begin(), 32) != 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 32) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -343,7 +343,7 @@ main(void)
     a.fill(0xAA);
     b.fill(0xAA);
     b.poison_right(0x00);      // right guard now 0x00 != 0xAA
-    long int r = mc::compare(a.begin(), b.begin(), 16);
+    long int r = mc::compare_range(a.begin(), b.begin(), 16);
     sb::require(r == 0);      // must not have read the guard byte
     sb::require(a.guards_ok());
     // b's right guard was intentionally poisoned — only check left guard
@@ -356,7 +356,7 @@ main(void)
     guarded<byte, 8> a, b;
     a.fill(0x42);
     b.fill(0x42);
-    sb::require(mc::compare(a.begin(), b.begin(), 1) == 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 1) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -367,7 +367,7 @@ main(void)
     guarded<byte, 8> a, b;
     a.fill(0x42);
     b.fill(0x43);
-    sb::require(mc::compare(a.begin(), b.begin(), 1) != 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 1) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -378,9 +378,9 @@ main(void)
     guarded<byte, 13> a, b;
     a.fill(0x7F);
     b.fill(0x7F);
-    sb::require(mc::compare(a.begin(), b.begin(), 13) == 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 13) == 0);
     b[12] = 0x80;
-    sb::require(mc::compare(a.begin(), b.begin(), 13) != 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 13) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -391,7 +391,7 @@ main(void)
     guarded<u32, 16> a, b;
     a.fill(0xDEADBEEFu);
     b.fill(0xDEADBEEFu);
-    sb::require(mc::compare(a.begin(), b.begin(), 16) == 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 16) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -403,7 +403,7 @@ main(void)
     a.fill(0xDEADBEEFu);
     b.fill(0xDEADBEEFu);
     b[8] = 0xCAFEBABEu;
-    sb::require(mc::compare(a.begin(), b.begin(), 16) != 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 16) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -414,7 +414,7 @@ main(void)
     guarded<u64, 8> a, b;
     a.fill(0xFEEDFACECAFEBABEull);
     b.fill(0xFEEDFACECAFEBABEull);
-    sb::require(mc::compare(a.begin(), b.begin(), 8) == 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 8) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -427,7 +427,7 @@ main(void)
     a[1] = a[2] = a[3] = 0x00;
     b[0] = 0x01;
     b[1] = b[2] = b[3] = 0x00;
-    sb::require(mc::compare(a.begin(), b.begin(), 4) > 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 4) > 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -441,24 +441,24 @@ main(void)
     a[1] = a[2] = a[3] = 0x00;
     b[0] = 0xFF;
     b[1] = b[2] = b[3] = 0x00;
-    mc::console(mc::compare(a.begin(), b.begin(), 4));
-    sb::require(mc::compare(a.begin(), b.begin(), 4) < 0);
+    mc::console(mc::compare_range(a.begin(), b.begin(), 4));
+    sb::require(mc::compare_range(a.begin(), b.begin(), 4) < 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
   sb::end_test_case();
 **/
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // SECTION 2  compare(ptr, ptr, n, binary Fn)
+  // SECTION 2  compare_range(ptr, ptr, n, binary Fn)
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  sb::print("-- Section 2: compare(ptr, ptr, n, binary Fn) --");
+  sb::print("-- Section 2: compare_range(ptr, ptr, n, binary Fn) --");
 
   sb::test_case("equal ints: pred returns true");
   {
     guarded<int, 8> a, b;
     a.fill(42);
     b.fill(42);
-    sb::require(mc::compare(a.begin(), b.begin(), 8, [](const int &x, const int &y) { return x == y; }));
+    sb::require(mc::compare_range(a.begin(), b.begin(), 8, [](const int &x, const int &y) { return x == y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -470,7 +470,7 @@ main(void)
     a.fill(42);
     b.fill(42);
     b[3] = 99;
-    sb::require(!mc::compare(a.begin(), b.begin(), 8, [](const int &x, const int &y) { return x == y; }));
+    sb::require(!mc::compare_range(a.begin(), b.begin(), 8, [](const int &x, const int &y) { return x == y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -483,7 +483,7 @@ main(void)
     b.fill(1);
     b[2] = 99;
     int calls = 0;
-    mc::compare(a.begin(), b.begin(), 8, [&calls](const int &x, const int &y) -> bool {
+    mc::compare_range(a.begin(), b.begin(), 8, [&calls](const int &x, const int &y) -> bool {
       ++calls;
       return x == y;
     });
@@ -498,7 +498,7 @@ main(void)
     guarded<int, 8> a, b;
     a.fill(1);
     b.fill(2);
-    sb::require(mc::compare(a.begin(), b.begin(), 8, [](const int &x, const int &y) { return x < y; }));
+    sb::require(mc::compare_range(a.begin(), b.begin(), 8, [](const int &x, const int &y) { return x < y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -509,7 +509,7 @@ main(void)
     guarded<int, 8> a, b;
     a.fill(2);
     b.fill(2);
-    sb::require(!mc::compare(a.begin(), b.begin(), 8, [](const int &x, const int &y) { return x < y; }));
+    sb::require(!mc::compare_range(a.begin(), b.begin(), 8, [](const int &x, const int &y) { return x < y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -521,7 +521,7 @@ main(void)
     a.fill(0xBB);
     b.fill(0xBB);
     b.poison_right(0x00);      // 0x00 != 0xBB, pred would return false if read
-    bool r = mc::compare(a.begin(), b.begin(), 8, [](const byte &x, const byte &y) { return x == y; });
+    bool r = mc::compare_range(a.begin(), b.begin(), 8, [](const byte &x, const byte &y) { return x == y; });
     sb::require(r == true);
     sb::require(a.guards_ok());
     for ( size_t i = 0; i < GUARD; i++ ) sb::require(b.storage[i] == LEFT_CANARY);
@@ -529,16 +529,16 @@ main(void)
   sb::end_test_case();
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // SECTION 3  compare(ptr, ptr, n, pointer-pair Fn)
+  // SECTION 3  compare_range(ptr, ptr, n, pointer-pair Fn)
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  sb::print("-- Section 3: compare(ptr, ptr, n, pointer-pair Fn) --");
+  sb::print("-- Section 3: compare_range(ptr, ptr, n, pointer-pair Fn) --");
 
   sb::test_case("equal bytes: pred returns true");
   {
     guarded<byte, 16> a, b;
     a.fill(0xCC);
     b.fill(0xCC);
-    sb::require(mc::compare(a.begin(), b.begin(), 16, [](const byte *x, const byte *y) { return *x == *y; }));
+    sb::require(mc::compare_range(a.begin(), b.begin(), 16, [](const byte *x, const byte *y) { return *x == *y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -550,7 +550,7 @@ main(void)
     a.fill(0xCC);
     b.fill(0xCC);
     b[8] = 0xDD;
-    sb::require(!mc::compare(a.begin(), b.begin(), 16, [](const byte *x, const byte *y) { return *x == *y; }));
+    sb::require(!mc::compare_range(a.begin(), b.begin(), 16, [](const byte *x, const byte *y) { return *x == *y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -564,7 +564,7 @@ main(void)
       b[i] = static_cast<int>(i * 10);
     }
     int match = 0;
-    mc::compare(a.begin(), b.begin(), 4, [&match, &a, &b](const int *x, const int *y) -> bool {
+    mc::compare_range(a.begin(), b.begin(), 4, [&match, &a, &b](const int *x, const int *y) -> bool {
       // pointers must point into the actual payload arrays
       bool a_ok = (x >= a.begin() && x < a.end());
       bool b_ok = (y >= b.begin() && y < b.end());
@@ -583,23 +583,23 @@ main(void)
     a.fill(0x55);
     b.fill(0x55);
     b.poison_right(0xFF);      // 0xFF != 0x55
-    bool r = mc::compare(a.begin(), b.begin(), 8, [](const byte *x, const byte *y) { return *x == *y; });
+    bool r = mc::compare_range(a.begin(), b.begin(), 8, [](const byte *x, const byte *y) { return *x == *y; });
     sb::require(r == true);
     sb::require(a.guards_ok());
   }
   sb::end_test_case();
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // SECTION 4  compare<Fn>(ptr, ptr, n)  nttp
+  // SECTION 4  compare_range<Fn>(ptr, ptr, n)  nttp
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  sb::print("-- Section 4: compare<Fn>(ptr, ptr, n) nttp --");
+  sb::print("-- Section 4: compare_range<Fn>(ptr, ptr, n) nttp --");
 
   sb::test_case("eq_int equal");
   {
     guarded<int, 8> a, b;
     a.fill(7);
     b.fill(7);
-    sb::require((mc::compare<eq_int>(a.begin(), b.begin(), 8)));
+    sb::require((mc::compare_range<eq_int>(a.begin(), b.begin(), 8)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -611,7 +611,7 @@ main(void)
     a.fill(7);
     b.fill(7);
     b[5] = 0;
-    sb::require(!(mc::compare<eq_int>(a.begin(), b.begin(), 8)));
+    sb::require(!(mc::compare_range<eq_int>(a.begin(), b.begin(), 8)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -622,7 +622,7 @@ main(void)
     guarded<int, 8> a, b;
     a.fill(3);
     b.fill(3);
-    sb::require((mc::compare<ptr_eq_int>(a.begin(), b.begin(), 8)));
+    sb::require((mc::compare_range<ptr_eq_int>(a.begin(), b.begin(), 8)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -634,7 +634,7 @@ main(void)
     a.fill(3);
     b.fill(3);
     b[2] = 99;
-    sb::require(!(mc::compare<ptr_eq_int>(a.begin(), b.begin(), 8)));
+    sb::require(!(mc::compare_range<ptr_eq_int>(a.begin(), b.begin(), 8)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -645,7 +645,7 @@ main(void)
     guarded<int, 6> a, b;
     a.fill(1);
     b.fill(2);
-    sb::require((mc::compare<lt_int>(a.begin(), b.begin(), 6)));
+    sb::require((mc::compare_range<lt_int>(a.begin(), b.begin(), 6)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -656,7 +656,7 @@ main(void)
     guarded<int, 6> a, b;
     a.fill(2);
     b.fill(2);
-    sb::require(!(mc::compare<lt_int>(a.begin(), b.begin(), 6)));
+    sb::require(!(mc::compare_range<lt_int>(a.begin(), b.begin(), 6)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -669,7 +669,7 @@ main(void)
     b.fill(1);
     // write a divergent int value at the start of b's right guard
     *reinterpret_cast<int *>(b.storage + GUARD + 4 * sizeof(int)) = 0xDEAD;
-    bool r = mc::compare<eq_int>(a.begin(), b.begin(), 4);
+    bool r = mc::compare_range<eq_int>(a.begin(), b.begin(), 4);
     sb::require(r == true);
     sb::require(a.guards_ok());
     // verify only b's left guard
@@ -678,16 +678,16 @@ main(void)
   sb::end_test_case();
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // SECTION 5  compare(first, end, first2)  pointer range
+  // SECTION 5  compare_range(first, end, first2)  pointer range
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  sb::print("-- Section 5: compare(first, end, first2) --");
+  sb::print("-- Section 5: compare_range(first, end, first2) --");
 
   sb::test_case("equal bytes range returns 0");
   {
     guarded<byte, 24> a, b;
     a.fill(0x55);
     b.fill(0x55);
-    sb::require(mc::compare(a.begin(), a.end(), b.begin()) == 0);
+    sb::require(mc::compare_range(a.begin(), a.end(), b.begin()) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -699,7 +699,7 @@ main(void)
     a.fill(0x55);
     b.fill(0x55);
     b[10] = 0xAA;
-    sb::require(mc::compare(a.begin(), a.end(), b.begin()) != 0);
+    sb::require(mc::compare_range(a.begin(), a.end(), b.begin()) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -710,7 +710,7 @@ main(void)
     guarded<byte, 8> a, b;
     a.fill(0x01);
     b.fill(0xFF);
-    sb::require(mc::compare(a.begin(), a.begin(), b.begin()) == 0);
+    sb::require(mc::compare_range(a.begin(), a.begin(), b.begin()) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -722,7 +722,7 @@ main(void)
     a.fill(0x22);
     b.fill(0x22);
     b.poison_right(0x00);
-    long int r = mc::compare(a.begin(), a.end(), b.begin());
+    long int r = mc::compare_range(a.begin(), a.end(), b.begin());
     sb::require(r == 0);
     sb::require(a.guards_ok());
   }
@@ -733,7 +733,7 @@ main(void)
     guarded<int, 12> a, b;
     a.fill(100);
     b.fill(100);
-    sb::require(mc::compare(a.begin(), a.end(), b.begin(), [](const int &x, const int &y) { return x == y; }));
+    sb::require(mc::compare_range(a.begin(), a.end(), b.begin(), [](const int &x, const int &y) { return x == y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -745,7 +745,7 @@ main(void)
     a.fill(100);
     b.fill(100);
     b[6] = 200;
-    sb::require(!mc::compare(a.begin(), a.end(), b.begin(), [](const int &x, const int &y) { return x == y; }));
+    sb::require(!mc::compare_range(a.begin(), a.end(), b.begin(), [](const int &x, const int &y) { return x == y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -756,7 +756,7 @@ main(void)
     guarded<u32, 8> a, b;
     a.fill(0xBEEFu);
     b.fill(0xBEEFu);
-    sb::require(mc::compare(a.begin(), a.end(), b.begin(), [](const u32 *x, const u32 *y) { return *x == *y; }));
+    sb::require(mc::compare_range(a.begin(), a.end(), b.begin(), [](const u32 *x, const u32 *y) { return *x == *y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -767,7 +767,7 @@ main(void)
     guarded<int, 8> a, b;
     a.fill(5);
     b.fill(5);
-    sb::require((mc::compare<eq_int>(a.begin(), a.end(), b.begin())));
+    sb::require((mc::compare_range<eq_int>(a.begin(), a.end(), b.begin())));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -779,7 +779,7 @@ main(void)
     a.fill(5);
     b.fill(5);
     b[4] = 6;
-    sb::require(!(mc::compare<eq_int>(a.begin(), a.end(), b.begin())));
+    sb::require(!(mc::compare_range<eq_int>(a.begin(), a.end(), b.begin())));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -791,21 +791,21 @@ main(void)
     a.fill(9);
     b.fill(9);
     *reinterpret_cast<int *>(b.storage + GUARD + 4 * sizeof(int)) = -1;
-    bool r = mc::compare<eq_int>(a.begin(), a.end(), b.begin());
+    bool r = mc::compare_range<eq_int>(a.begin(), a.end(), b.begin());
     sb::require(r == true);
     sb::require(a.guards_ok());
   }
   sb::end_test_case();
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // SECTION 6  compare(container, container)
+  // SECTION 6  compare_range(container, container)
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  sb::print("-- Section 6: compare(container, container) --");
+  sb::print("-- Section 6: compare_range(container, container) --");
 
   sb::test_case("equal bytes returns 0");
   {
     gc<byte, 32> a(static_cast<byte>(0x77)), b(static_cast<byte>(0x77));
-    sb::require(mc::compare(a, b) == 0);
+    sb::require(mc::compare_range(a, b) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -815,7 +815,7 @@ main(void)
   {
     gc<byte, 32> a(static_cast<byte>(0x77)), b(static_cast<byte>(0x77));
     b[16] = 0xFF;
-    sb::require(mc::compare(a, b) != 0);
+    sb::require(mc::compare_range(a, b) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -824,7 +824,7 @@ main(void)
   sb::test_case("equal ints returns 0");
   {
     gc<int, 16> a(12345), b(12345);
-    sb::require(mc::compare(a, b) == 0);
+    sb::require(mc::compare_range(a, b) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -834,7 +834,7 @@ main(void)
   {
     gc<int, 16> a(12345), b(12345);
     b[0] = 0;
-    sb::require(mc::compare(a, b) != 0);
+    sb::require(mc::compare_range(a, b) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -844,7 +844,7 @@ main(void)
   {
     gc<byte, 4> a(static_cast<byte>(0x01));
     gc<byte, 8> b(static_cast<byte>(0x01));
-    sb::require(mc::compare(a, b) < 0);
+    sb::require(mc::compare_range(a, b) < 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -854,7 +854,7 @@ main(void)
   {
     gc<byte, 8> a(static_cast<byte>(0x01));
     gc<byte, 4> b(static_cast<byte>(0x01));
-    sb::require(mc::compare(a, b) > 0);
+    sb::require(mc::compare_range(a, b) > 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -863,7 +863,7 @@ main(void)
   sb::test_case("runtime binary pred equal returns true");
   {
     gc<int, 10> a(42), b(42);
-    sb::require(mc::compare(a, b, [](const int &x, const int &y) { return x == y; }));
+    sb::require(mc::compare_range(a, b, [](const int &x, const int &y) { return x == y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -873,7 +873,7 @@ main(void)
   {
     gc<int, 10> a(42), b(42);
     b[9] = 1;
-    sb::require(!mc::compare(a, b, [](const int &x, const int &y) { return x == y; }));
+    sb::require(!mc::compare_range(a, b, [](const int &x, const int &y) { return x == y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -884,7 +884,7 @@ main(void)
     gc<int, 4> a(1);
     gc<int, 8> b(1);
     int calls = 0;
-    bool r = mc::compare(a, b, [&calls](const int &x, const int &y) -> bool {
+    bool r = mc::compare_range(a, b, [&calls](const int &x, const int &y) -> bool {
       ++calls;
       return x == y;
     });
@@ -898,7 +898,7 @@ main(void)
   sb::test_case("runtime ptr-pair pred equal returns true");
   {
     gc<byte, 20> a(static_cast<byte>(0xAB)), b(static_cast<byte>(0xAB));
-    sb::require(mc::compare(a, b, [](const byte *x, const byte *y) { return *x == *y; }));
+    sb::require(mc::compare_range(a, b, [](const byte *x, const byte *y) { return *x == *y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -908,7 +908,7 @@ main(void)
   {
     gc<byte, 20> a(static_cast<byte>(0xAB)), b(static_cast<byte>(0xAB));
     b[10] = 0xCD;
-    sb::require(!mc::compare(a, b, [](const byte *x, const byte *y) { return *x == *y; }));
+    sb::require(!mc::compare_range(a, b, [](const byte *x, const byte *y) { return *x == *y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -917,7 +917,7 @@ main(void)
   sb::test_case("nttp eq_byte equal");
   {
     gc<byte, 12> a(static_cast<byte>(0x07)), b(static_cast<byte>(0x07));
-    sb::require((mc::compare<eq_byte>(a, b)));
+    sb::require((mc::compare_range<eq_byte>(a, b)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -927,7 +927,7 @@ main(void)
   {
     gc<byte, 12> a(static_cast<byte>(0x07)), b(static_cast<byte>(0x07));
     b[11] = 0x08;
-    sb::require(!(mc::compare<eq_byte>(a, b)));
+    sb::require(!(mc::compare_range<eq_byte>(a, b)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -937,7 +937,7 @@ main(void)
   {
     gc<int, 4> a(3);
     gc<int, 8> b(3);
-    sb::require(!(mc::compare<eq_int>(a, b)));
+    sb::require(!(mc::compare_range<eq_int>(a, b)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -946,24 +946,24 @@ main(void)
   sb::test_case("container canary: all three pred paths leave guards intact");
   {
     gc<byte, 16> a(static_cast<byte>(0x33)), b(static_cast<byte>(0x33));
-    mc::compare(a, b);
-    mc::compare(a, b, [](const byte &x, const byte &y) { return x == y; });
-    mc::compare(a, b, [](const byte *x, const byte *y) { return *x == *y; });
-    mc::compare<eq_byte>(a, b);
+    mc::compare_range(a, b);
+    mc::compare_range(a, b, [](const byte &x, const byte &y) { return x == y; });
+    mc::compare_range(a, b, [](const byte *x, const byte *y) { return *x == *y; });
+    mc::compare_range<eq_byte>(a, b);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
   sb::end_test_case();
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  // SECTION 7  compare(C, D) mixed container types
+  // SECTION 7  compare_range(C, D) mixed container types
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  sb::print("-- Section 7: compare(C, D) mixed containers --");
+  sb::print("-- Section 7: compare_range(C, D) mixed containers --");
 
   sb::test_case("mixed: equal content same size returns 0");
   {
     gc<int, 8> a(5), b(5);
-    sb::require(mc::compare(a, b) == 0);
+    sb::require(mc::compare_range(a, b) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -973,7 +973,7 @@ main(void)
   {
     gc<int, 8> a(5), b(5);
     b[3] = 99;
-    sb::require(mc::compare(a, b) != 0);
+    sb::require(mc::compare_range(a, b) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -983,7 +983,7 @@ main(void)
   {
     gc<byte, 4> a(static_cast<byte>(0x01));
     gc<byte, 8> b(static_cast<byte>(0x01));
-    sb::require(mc::compare(a, b) < 0);
+    sb::require(mc::compare_range(a, b) < 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -992,7 +992,7 @@ main(void)
   sb::test_case("mixed: runtime binary pred equal same size");
   {
     gc<int, 6> a(7), b(7);
-    sb::require(mc::compare(a, b, [](const int &x, const int &y) { return x == y; }));
+    sb::require(mc::compare_range(a, b, [](const int &x, const int &y) { return x == y; }));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -1003,7 +1003,7 @@ main(void)
     gc<int, 4> a(1);
     gc<int, 8> b(1);
     int calls = 0;
-    bool r = mc::compare(a, b, [&calls](const int &x, const int &y) -> bool {
+    bool r = mc::compare_range(a, b, [&calls](const int &x, const int &y) -> bool {
       ++calls;
       return x == y;
     });
@@ -1017,7 +1017,7 @@ main(void)
   sb::test_case("mixed: nttp equal");
   {
     gc<int, 5> a(3), b(3);
-    sb::require((mc::compare<eq_int>(a, b)));
+    sb::require((mc::compare_range<eq_int>(a, b)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -1027,7 +1027,7 @@ main(void)
   {
     gc<int, 4> a(3);
     gc<int, 8> b(3);
-    sb::require(!(mc::compare<eq_int>(a, b)));
+    sb::require(!(mc::compare_range<eq_int>(a, b)));
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -1268,7 +1268,7 @@ main(void)
     guarded<byte, 1024> a, b;
     a.fill(0x3C);
     b.fill(0x3C);
-    sb::require(mc::compare(a.begin(), b.begin(), 1024) == 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 1024) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -1280,7 +1280,7 @@ main(void)
     a.fill(0x3C);
     b.fill(0x3C);
     b[1023] = 0x3D;
-    sb::require(mc::compare(a.begin(), b.begin(), 1024) != 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 1024) != 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -1291,7 +1291,7 @@ main(void)
     guarded<int, 256> a, b;
     a.seq(0);
     b.seq(0);
-    sb::require(mc::compare(a.begin(), b.begin(), 256) == 0);
+    sb::require(mc::compare_range(a.begin(), b.begin(), 256) == 0);
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
   }
@@ -1316,7 +1316,7 @@ main(void)
     for ( int v = 0; v < 256; v++ ) {
       a.fill(static_cast<byte>(v));
       b.fill(static_cast<byte>(v));
-      sb::require(mc::compare(a.begin(), b.begin(), 64) == 0);
+      sb::require(mc::compare_range(a.begin(), b.begin(), 64) == 0);
     }
     sb::require(a.guards_ok());
     sb::require(b.guards_ok());
@@ -1331,7 +1331,7 @@ main(void)
       b.fill(0);
       b[fail_at] = 999;
       int calls = 0;
-      mc::compare(a.begin(), b.begin(), 16, [&calls](const int &x, const int &y) -> bool {
+      mc::compare_range(a.begin(), b.begin(), 16, [&calls](const int &x, const int &y) -> bool {
         ++calls;
         return x == y;
       });

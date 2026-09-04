@@ -297,50 +297,38 @@ compile --clang tests/rigor/abcmalloc_harden.cpp --arm64 -Ofast --def MICRON_ABC
 compile --clang tests/rigor/abcmalloc_harden.cpp --x86 --isa base -O2 --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_base
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# graph
-compile --clang tests/compiletests/graph.cpp --x86 --isa base -O0 --raw-obj -i . -o bin/compiletests-clang/graph_base_O0
-compile --clang tests/compiletests/graph.cpp --x86 -Ofast --raw-obj -i . -o bin/compiletests-clang/graph_native_Ofast
-compile --clang tests/compiletests/graph.cpp --i386 -O2 --raw-obj -i . -o bin/compiletests-clang/graph_i386_O2
-compile --clang tests/compiletests/graph.cpp --arm -O2 --raw-obj -i . -o bin/compiletests-clang/graph_arm32_O2
-compile --clang tests/compiletests/graph.cpp --arm64 -O2 --raw-obj -i . -o bin/compiletests-clang/graph_arm64_O2
-compile --clang tests/compiletests/graph.cpp --x86 --isa base -O2 --raw-obj -k -i . -o bin/compiletests-clang/graph_base_O2_k
-compile --clang tests/compiletests/graph.cpp --x86 --isa base -O2 --raw-obj -ke -i . -o bin/compiletests-clang/graph_base_O2_ke
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# opt-in compute DAG and thread-pool adapter
-compile --clang tests/compiletests/compute.cpp --x86 --isa base -O0 --raw-obj -i . -o bin/compiletests-clang/compute_base_O0
-compile --clang tests/compiletests/compute.cpp --x86 -Ofast --raw-obj -i . -o bin/compiletests-clang/compute_native_Ofast
-compile --clang tests/compiletests/compute.cpp --i386 -O2 --raw-obj -i . -o bin/compiletests-clang/compute_i386_O2
-compile --clang tests/compiletests/compute.cpp --arm -O2 --raw-obj -i . -o bin/compiletests-clang/compute_arm32_O2
-compile --clang tests/compiletests/compute.cpp --arm64 -O2 --raw-obj -i . -o bin/compiletests-clang/compute_arm64_O2
-compile --clang tests/compiletests/compute.cpp --x86 --isa base -O2 --raw-obj -k -i . -o bin/compiletests-clang/compute_base_O2_k
-compile --clang tests/compiletests/compute.cpp --x86 --isa base -O2 --raw-obj -ke -i . -o bin/compiletests-clang/compute_base_O2_ke
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# the crt path override
-build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_startdir
-build --clang tests/compiletests/containers.cpp --x86 -Ofast -ke --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_ke_startdir
-build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --direct --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_direct
-# Keep the ARM64 CRT override cell focused on startup plumbing; the C ABI shim
-# does not pull the full allocator/math surface into this one targeted row.
-build --clang tests/memory/free/cabi_shims_freestanding.cpp --arm64 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/arm64_k_startdir
-
-# the mx entry stubs (see the gcc matrix for what each flag swaps)
-build --clang tests/mx_entry_sim.cpp --x86 -Ofast -k --mx --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_mx
-build --clang tests/attach_cont.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_continuec
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # vk host allocator
 # the tests/compiletests/ sweep above already carries vk_headers.cpp with the counters OFF; these
 # rows are the ON column. the block header keeps one layout either way, so what is actually under
 # test here is the gated code, not a second ABI.
-compile --clang tests/compiletests/vk_headers.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_x86
-compile --clang tests/compiletests/vk_headers.cpp --i386 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_i386
-compile --clang tests/compiletests/vk_headers.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_arm32
-compile --clang tests/compiletests/vk_headers.cpp --arm64 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_arm64
-compile --clang tests/compiletests/vk_headers.cpp --x86 --isa base -O2 --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_stats_base
-compile --clang tests/rigor/vk_allocator.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_alloc_stats_x86
-compile --clang tests/rigor/vk_allocator.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests-clang/vk_alloc_stats_arm32
+compile --clang tests/compiletests/vk_headers.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_x86
+compile --clang tests/compiletests/vk_headers.cpp --i386 -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_i386
+compile --clang tests/compiletests/vk_headers.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_arm32
+compile --clang tests/compiletests/vk_headers.cpp --arm64 -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_arm64
+compile --clang tests/compiletests/vk_headers.cpp --x86 --isa base -O2 --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_base
+compile --clang tests/rigor/vk_allocator.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_alloc_stats_x86
+compile --clang tests/rigor/vk_allocator.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_alloc_stats_arm32
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%
+# libstdc++ interop
+compile --clang tests/rigor/libc_interop.cpp --x86 -O2 -i . -o bin/compiletests-clang/libc_interop_x86
+compile --clang tests/rigor/libc_interop.cpp --i386 -O2 -i . -o bin/compiletests-clang/libc_interop_i386
+compile --clang tests/rigor/libc_interop.cpp --arm -O2 -i . -o bin/compiletests-clang/libc_interop_arm32
+compile --clang tests/rigor/libc_interop.cpp --arm64 -O2 -i . -o bin/compiletests-clang/libc_interop_arm64
+compile --clang tests/rigor/libc_interop.cpp --x86 --isa base -O2 -i . -o bin/compiletests-clang/libc_interop_base
+compile --clang tests/rigor/libc_interop.cpp --x86 -O2 --def MICRON_INTEROP_STD_FIRST -i . -o bin/compiletests-clang/libc_interop_stdfirst_x86
+compile --clang tests/rigor/libc_interop.cpp --i386 -O2 --def MICRON_INTEROP_STD_FIRST -i . -o bin/compiletests-clang/libc_interop_stdfirst_i386
+compile --clang tests/rigor/libc_interop.cpp --arm -O2 --def MICRON_INTEROP_STD_FIRST -i . -o bin/compiletests-clang/libc_interop_stdfirst_arm32
+compile --clang tests/rigor/libc_interop.cpp --arm64 -O2 --def MICRON_INTEROP_STD_FIRST -i . -o bin/compiletests-clang/libc_interop_stdfirst_arm64
+compile --clang tests/rigor/libc_interop.cpp --x86 --isa base -O2 --def MICRON_INTEROP_STD_FIRST -i . -o bin/compiletests-clang/libc_interop_stdfirst_base
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# cacheline ops
+compile --clang tests/rigor/cacheline_ops.cpp --x86 -Ofast -i . -o bin/compiletests-clang/cacheline_x86
+compile --clang tests/rigor/cacheline_ops.cpp --i386 -Ofast -i . -o bin/compiletests-clang/cacheline_i386
+compile --clang tests/rigor/cacheline_ops.cpp --arm -Ofast -i . -o bin/compiletests-clang/cacheline_arm32
+compile --clang tests/rigor/cacheline_ops.cpp --arm64 -Ofast -i . -o bin/compiletests-clang/cacheline_arm64
+compile --clang tests/rigor/cacheline_ops.cpp --x86 --isa base -O2 -i . -o bin/compiletests-clang/cacheline_base
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # allocator modes
@@ -354,3 +342,40 @@ compile --clang tests/compiletests/allocator_types.cpp --x86 --isa base -O2 --ra
 compile --clang tests/compiletests/allocator_types.cpp --i386 -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests-clang/allocator_persistent_i386
 compile --clang tests/compiletests/allocator_types.cpp --arm -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests-clang/allocator_persistent_arm32
 compile --clang tests/compiletests/allocator_types.cpp --arm64 -O2 --raw-obj --def MICRON_ABC_PERSISTENT -o bin/compiletests-clang/allocator_persistent_arm64
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# graph
+compile --clang tests/compiletests/graph.cpp --x86 --isa base -O0 --raw-obj -o bin/compiletests-clang/graph_base_O0
+compile --clang tests/compiletests/graph.cpp --x86 -Ofast --raw-obj -o bin/compiletests-clang/graph_native_Ofast
+compile --clang tests/compiletests/graph.cpp --i386 -O2 --raw-obj -o bin/compiletests-clang/graph_i386_O2
+compile --clang tests/compiletests/graph.cpp --arm -O2 --raw-obj -o bin/compiletests-clang/graph_arm32_O2
+compile --clang tests/compiletests/graph.cpp --arm64 -O2 --raw-obj -o bin/compiletests-clang/graph_arm64_O2
+compile --clang tests/compiletests/graph.cpp --x86 --isa base -O2 --raw-obj -k -o bin/compiletests-clang/graph_base_O2_k
+compile --clang tests/compiletests/graph.cpp --x86 --isa base -O2 --raw-obj -ke -o bin/compiletests-clang/graph_base_O2_ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# opt-in compute DAG and thread-pool adapter
+compile --clang tests/compiletests/compute.cpp --x86 --isa base -O0 --raw-obj -o bin/compiletests-clang/compute_base_O0
+compile --clang tests/compiletests/compute.cpp --x86 -Ofast --raw-obj -o bin/compiletests-clang/compute_native_Ofast
+compile --clang tests/compiletests/compute.cpp --i386 -O2 --raw-obj -o bin/compiletests-clang/compute_i386_O2
+compile --clang tests/compiletests/compute.cpp --arm -O2 --raw-obj -o bin/compiletests-clang/compute_arm32_O2
+compile --clang tests/compiletests/compute.cpp --arm64 -O2 --raw-obj -o bin/compiletests-clang/compute_arm64_O2
+compile --clang tests/compiletests/compute.cpp --x86 --isa base -O2 --raw-obj -k -o bin/compiletests-clang/compute_base_O2_k
+compile --clang tests/compiletests/compute.cpp --x86 --isa base -O2 --raw-obj -ke -o bin/compiletests-clang/compute_base_O2_ke
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the crt path override
+build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_startdir
+build --clang tests/compiletests/containers.cpp --x86 -Ofast -ke --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_ke_startdir
+build --clang tests/compiletests/containers.cpp --x86 -Ofast -k --direct --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_direct
+# Keep the ARM64 CRT override cell focused on startup plumbing; the C ABI shim
+# does not pull the full allocator/math surface into this one targeted row.
+build --clang tests/memory/free/cabi_shims_freestanding.cpp --arm64 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/arm64_k_startdir
+
+# the mx entry stubs. --mx swaps start*.s for mx/start*.s (__micron_mxc, the entry takes a
+# descriptor); --cont links mx/cont*.s alone, which defines _continue and no _start at all, and
+# needs both attach macros because they are what compile the body the stub calls.
+build --clang tests/mx_entry_sim.cpp --x86 -Ofast -k --mx --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_mx
+build --clang tests/attach_cont.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_continuec
+compile --clang tests/support/mx_cont_stub.cpp --x86 -O2 -k --raw-obj --cont --start ./start -i . -i ./src --def MICRON_ATTACH_MODULE --def MICRON_MX_CONTINUATION -o bin/compiletests-clang/amd64_k_cont
+compile --clang tests/support/mx_cont_stub.cpp --arm -O2 -k --raw-obj --cont --marm --mtp cp15 --start ./start -i . -i ./src --def MICRON_ATTACH_MODULE --def MICRON_MX_CONTINUATION -o bin/compiletests-clang/arm32_k_cont

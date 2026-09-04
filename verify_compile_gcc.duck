@@ -327,6 +327,27 @@ compile tests/compiletests/vk_headers.cpp --x86 --isa base -O2 --def MICRON_VK_H
 compile tests/rigor/vk_allocator.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_alloc_stats_x86
 compile tests/rigor/vk_allocator.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -o bin/compiletests/vk_alloc_stats_arm32
 
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%
+# libstdc++ interop
+compile tests/rigor/libc_interop.cpp --x86 -O2 -o bin/compiletests/libc_interop_x86
+compile tests/rigor/libc_interop.cpp --i386 -O2 -o bin/compiletests/libc_interop_i386
+compile tests/rigor/libc_interop.cpp --arm -O2 -o bin/compiletests/libc_interop_arm32
+compile tests/rigor/libc_interop.cpp --arm64 -O2 -o bin/compiletests/libc_interop_arm64
+compile tests/rigor/libc_interop.cpp --x86 --isa base -O2 -o bin/compiletests/libc_interop_base
+compile tests/rigor/libc_interop.cpp --x86 -O2 --def MICRON_INTEROP_STD_FIRST -o bin/compiletests/libc_interop_stdfirst_x86
+compile tests/rigor/libc_interop.cpp --i386 -O2 --def MICRON_INTEROP_STD_FIRST -o bin/compiletests/libc_interop_stdfirst_i386
+compile tests/rigor/libc_interop.cpp --arm -O2 --def MICRON_INTEROP_STD_FIRST -o bin/compiletests/libc_interop_stdfirst_arm32
+compile tests/rigor/libc_interop.cpp --arm64 -O2 --def MICRON_INTEROP_STD_FIRST -o bin/compiletests/libc_interop_stdfirst_arm64
+compile tests/rigor/libc_interop.cpp --x86 --isa base -O2 --def MICRON_INTEROP_STD_FIRST -o bin/compiletests/libc_interop_stdfirst_base
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# cacheline ops
+compile tests/rigor/cacheline_ops.cpp --x86 -Ofast -o bin/compiletests/cacheline_x86
+compile tests/rigor/cacheline_ops.cpp --i386 -Ofast -o bin/compiletests/cacheline_i386
+compile tests/rigor/cacheline_ops.cpp --arm -Ofast -o bin/compiletests/cacheline_arm32
+compile tests/rigor/cacheline_ops.cpp --arm64 -Ofast -o bin/compiletests/cacheline_arm64
+compile tests/rigor/cacheline_ops.cpp --x86 --isa base -O2 -o bin/compiletests/cacheline_base
+
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # allocator modes
 # the directory sweep above covers the disabled/default ABI on every target.

@@ -1,7 +1,11 @@
 #include "../types.hpp"
 
 #ifndef _MICRON_COROUTINE
+#ifndef _GLIBCXX_COROUTINE
+#ifndef _LIBCPP_COROUTINE
 #define _MICRON_COROUTINE
+#define _GLIBCXX_COROUTINE 1
+#define _LIBCPP_COROUTINE 1
 
 #pragma GCC system_header
 
@@ -335,4 +339,6 @@ template <typename _Promise> struct hash<coroutine_handle<_Promise>> {
 
 };      // namespace std
 
+#endif    // _LIBCPP_COROUTINE
+#endif    // _GLIBCXX_COROUTINE
 #endif    

@@ -10,8 +10,7 @@
 //
 // WARNING: gcc's implementation additionally hardcodes lookups of std::vector (standard required) 
 // as well as std::ranges::range_value_t/range_reference_t (used by reflect_constant_array).
-// we have to put those names in std:: as well, which means a translation unit that wants libstdc++'s real containers
-// must include them before this header
+// we have to put those names in std:: as well, which means a translation unit that wants libstdc++'s real containers must include them before this header
 
 #if !defined(__cpp_impl_reflection)
 #error "micron <meta> requires reflection language support (compile with -freflection)"

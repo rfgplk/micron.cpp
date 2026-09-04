@@ -1,5 +1,12 @@
 
 
+// The zzzf full-diffusion spec.
+//
+// zzz is NOT arch-independent: src/hash/zzz.hpp has no #else, so on x86 below AVX2 -- and on any
+// target without NEON -- micron::hashes has no zzz family at all and this whole file has nothing to
+// measure. __micron_hash_zzz (hash.hpp:36) is the gate the library itself uses. Below it the binary
+// still reaches `return 1` and grades PASS, with a counted SKIP line naming why.
+
 #include "../../src/hash/hash.hpp"
 
 #include "../snowball/snowball.hpp"
@@ -43,6 +50,9 @@ int
 main()
 {
   print("=== ZZZF FULL-DIFFUSION SPEC ===");
+#if !defined(__micron_hash_zzz)
+  sb::skip("no zzz backend below AVX2 / without NEON: the diffusion spec is not exercised here");
+#else
 
   sb::test_case("golden vectors (algorithm + cross-arch pin)");
   {
@@ -152,6 +162,7 @@ main()
   }
   sb::end_test_case();
 
+#endif
   print("[ZZZF FULL-DIFFUSION SPEC OK]");
   return 1;
 }

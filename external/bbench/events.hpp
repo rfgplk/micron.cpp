@@ -171,7 +171,7 @@ struct dynamic_event {
   }
 
   int
-  open(pid_t pid)
+  open(micron::pid_t pid)
   {
     e_fd = static_cast<int>(perf_event_pid(attr, pid));
     if ( e_fd == -1 ) {
@@ -185,7 +185,7 @@ struct dynamic_event {
   }
 
   int
-  reopen(pid_t pid)
+  reopen(micron::pid_t pid)
   {
     if ( e_fd != -1 ) micron::close(e_fd);
     return open(pid);
@@ -275,7 +275,7 @@ struct dynamic_event_group {
   }
 
   int
-  reopen(pid_t pid)
+  reopen(micron::pid_t pid)
   {
     int bad = 0;
     for ( usize i = 0; i < count; ++i )

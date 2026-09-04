@@ -30,8 +30,8 @@ run
 - **`tests/rigor/rigor_algo_core_imperative.cpp` returns 6 FAIL (require) on `--arm`**, in the
 
 ## Building / optimizations
-- currently, you _cannot_ use micron alongside the STL (or any glibc) code; technically you can (if you poison the right headers and work around defines) but if you try you will _almost certainly_ run into conflicting type declarations. If you truly want to include micron code alongside glibc (say in a legacy codebase) my recommendation is to splice the micron code/headers you want verbatim rather than pulling in the whole thing. Most micron external fns map cleanly to glibc aliases, so you shouldn't have much trouble.
-  - `src/__special/compare` hosted build uses libstdc++'s real `<compare>` rather than declaring the comparison categories itself. `<compare>` is not a leaf; libstdc++'s `<bits/stl_iterator.h>` uses it for `three_way_comparable_with`; freestanding self-hosts
+- micron and libstdc++/glibc **can** coexist in one TU, but it isn't recommended. You may hit conflict issues, although most have been pruned
+- `src/__special/compare` hosted build uses libstdc++'s real `<compare>` rather than declaring the comparison categories itself. `<compare>` is not a leaf; libstdc++'s `<bits/stl_iterator.h>` uses it for `three_way_comparable_with`; freestanding self-hosts
 - under `-Ofast`/`-ffast-math` + LTO, `micron::numeric_limits<F>::max()` / `-max()` / `infinity()` can constant-fold to 0/-0 when used as a sentinel
 - `[[gnu::flatten]]` transitively inlines all fns and blows up LTO compile time
 - the `-flto` flag is still mandatory under ASan testing
@@ -48,6 +48,8 @@ run
 
 ## Bugs / Limitations you should know
 - **`external/bbench` can only be built against the working tree with `-i .`.**
+- **`micron::buffer` is accepted by `io::coro::read_file` but cannot be grown
+- **`io::printk` cannot print a pointer-to-volatile.**
 - **`micron::hashes::z64` and `zz64` are weak. Neither is a default.**
 - **`duck --clang` is broken on anything that pulls in AVX**
 - **micron is single-TU BY DESIGN.**
@@ -107,8 +109,6 @@ run
 ## Platform / Arch gaps
 - `src/simd/fma.hpp` is x86-only (`_mm_fmadd_*` / `_mm256_fmadd_*`)
 - `src/math/simd/trig.hpp` + `src/math/quaternions/batched.hpp`: NEON f32 on ARM, but f64 only on amd64/arm64; arm32 double-precision trig/quaternion falls back to scalar
-- arm32: reading CNTVCT (`mrrc p15,1,…c14`) faults SIGILL under qemu/PL0
-- arm32: `tests/coro/t_parallel_{map,quick,radix,sort}` fail to compile against the Linaro sysroot — `conflicting declaration 'typedef __time_t time_t'` / `suseconds_t` between micron's typedefs and glibc's `bits/types/time_t.h`
 
 ## Math (vectors / matrices)
 
@@ -122,7 +122,7 @@ run
   `boykov_kolmogorov` calls Dinic; `king_ordering` and `sloan_ordering` call reverse Cuthill-McKee;
   `minimum_degree_ordering` calls smallest-last. The community-family implementations remain the existing
   simplified variants
-- **Map and tree `any_of` / `find` / `find_if` / `contains_if` never early-exit.**
+- **Map `any_of` / `find` / `find_if` / `contains_if` never early-exit.**
 - **`fp::nub_by` and `fp::unique(c, eq)` are O(n^2)**
 - **`search` / `find_end` fall back to an O(nm) skip scan for a pattern wider than
   `__impl::kmp_stack_max` (256)**
@@ -134,6 +134,8 @@ run
   byte.**
 - **The container overload of `merge()` does not merge; it concatenates instead.**
 - **A NaN differential test is meaningless under `-Ofast`.**
+
+- **`micron::swap` SILENTLY FAILS TO LINK FOR A MOVE-ONLY TYPE.**
 
 ## Compiler hazards
 - **`#pragma GCC optimize("no-fast-math", …)` does not protect an `always_inline` body, and on x86 the flag that actually rewrites your divide is not an optimize option at all.** (actual wtf?)

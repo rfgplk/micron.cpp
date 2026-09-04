@@ -126,7 +126,7 @@ main()
 
   sb::test_case("unsafe::spawn: missing path -> child runs spawn_process, reports ENOENT");
   {
-    pid_t pid = 1;
+    micron::pid_t pid = 1;
     const char *argv[] = { "/nonexistent/xyzzy", nullptr };
     const char *envp[] = { nullptr };
     int rc = mc::unsafe::spawn(pid, "/nonexistent/xyzzy", const_cast<char *const *>(argv), const_cast<char *const *>(envp));
@@ -136,7 +136,7 @@ main()
 
   sb::test_case("unsafe::spawn: /bin/true launches on the new stack and exits 0");
   {
-    pid_t pid = 1;
+    micron::pid_t pid = 1;
     const char *argv[] = { "/bin/true", nullptr };
     const char *envp[] = { nullptr };
     int rc = mc::unsafe::spawn(pid, "/bin/true", const_cast<char *const *>(argv), const_cast<char *const *>(envp));

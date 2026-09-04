@@ -180,6 +180,10 @@ a_noop(const byte *, i64 s, usize)
   return (u64)s;
 }
 
+// The zzz family is AVX2-only on x86 and NEON-only on arm: src/hash/zzz.hpp has no #else, so below
+// that micron::hashes has no z/zz/zzz/zzzf at all. __micron_hash_zzz (hash.hpp:36) is the gate the
+// library itself uses; below it the bench simply reports fewer columns.
+#if defined(__micron_hash_zzz)
 static u64
 a_z(const byte *p, i64 s, usize n)
 {
@@ -203,6 +207,7 @@ a_zzzf(const byte *p, i64 s, usize n)
 {
   return micron::hashes::zzzf64(p, s, n);
 }
+#endif
 
 static u64
 a_xxh(const byte *p, i64 s, usize n)
@@ -228,6 +233,7 @@ a_rapidn(const byte *p, i64 s, usize n)
   return micron::hashes::rapidhash_nano(p, (u64)s, n);
 }
 
+#if defined(__micron_hash_zzz)
 static u64
 a_zzz128(const byte *p, i64 s, usize n)
 {
@@ -241,6 +247,7 @@ a_zzzf128(const byte *p, i64 s, usize n)
   auto h = micron::hashes::zzzf128(p, s, n);
   return h.a ^ h.b;
 }
+#endif
 
 static u64
 a_murmur(const byte *p, i64 s, usize n)
@@ -358,10 +365,12 @@ main()
   micron::io::println("=== MICRON HASH THROUGHPUT (median-of-5, baseline-subtracted) ===");
 
   static const col g64[] = {
+#if defined(__micron_hash_zzz)
     { "z64", a_z },
     { "zz64", a_zz },
     { "zzz64", a_zzz },
     { "zzzf64", a_zzzf },
+#endif
     { "xxhash64", a_xxh },
     { "rapidhash", a_rapid },
     { "rapidhashMicro", a_rapidm },
@@ -371,8 +380,10 @@ main()
 #endif
   };
   static const col g128[] = {
+#if defined(__micron_hash_zzz)
     { "zzz128", a_zzz128 },
     { "zzzf128", a_zzzf128 },
+#endif
     { "murmur3", a_murmur },
 #if defined(__micron_arch_x86_any)
     { "meowhash128", a_meow128 },

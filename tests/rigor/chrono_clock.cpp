@@ -74,9 +74,9 @@ test_readers(void)
   test_case("C.5: a bad clockid answers -errno and does NOT abort");
   {
     // reaching the next line at all is the assertion: under -k, exc<> would have aborted the process
-    const i64 r = ch::clock_ns(static_cast<clockid_t>(0x7FFFFFFF));
+    const i64 r = ch::clock_ns(static_cast<micron::clockid_t>(0x7FFFFFFF));
     require_true(r < 0);
-    const i64 res = ch::clock_resolution_ns(static_cast<clockid_t>(0x7FFFFFFF));
+    const i64 res = ch::clock_resolution_ns(static_cast<micron::clockid_t>(0x7FFFFFFF));
     require_true(res < 0);
   }
   end_test_case();

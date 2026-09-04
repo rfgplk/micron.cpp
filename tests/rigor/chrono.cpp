@@ -82,50 +82,50 @@ test_normalise()
 
   sb::test_case("positive nsec unchanged");
   {
-    time_t sec = 5;
+    micron::time_t sec = 5;
     long nsec = 500'000'000L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 5 });
+    sb::require(sec, micron::time_t{ 5 });
     sb::require(nsec, 500'000'000L);
   }
   sb::end_test_case();
 
   sb::test_case("zero nsec unchanged");
   {
-    time_t sec = 3;
+    micron::time_t sec = 3;
     long nsec = 0L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 3 });
+    sb::require(sec, micron::time_t{ 3 });
     sb::require(nsec, 0L);
   }
   sb::end_test_case();
 
   sb::test_case("negative nsec borrows one second");
   {
-    time_t sec = 5;
+    micron::time_t sec = 5;
     long nsec = -200'000'000L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 4 });
+    sb::require(sec, micron::time_t{ 4 });
     sb::require(nsec, 800'000'000L);
   }
   sb::end_test_case();
 
   sb::test_case("negative nsec exactly -1s becomes 0 nsec");
   {
-    time_t sec = 2;
+    micron::time_t sec = 2;
     long nsec = -1'000'000'000L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 1 });
+    sb::require(sec, micron::time_t{ 1 });
     sb::require(nsec, 0L);
   }
   sb::end_test_case();
 
   sb::test_case("sec 0, negative nsec => sec -1");
   {
-    time_t sec = 0;
+    micron::time_t sec = 0;
     long nsec = -1L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ -1 });
+    sb::require(sec, micron::time_t{ -1 });
     sb::require(nsec, 999'999'999L);
   }
   sb::end_test_case();
@@ -403,7 +403,7 @@ test_system_clock_timing()
   sb::test_case("now_ts() returns a valid micron::timespec (tv_sec > 0)");
   {
     auto ts = micron::system_clock<>::now_ts();
-    sb::require_greater(ts.tv_sec, time_t{ 0 });
+    sb::require_greater(ts.tv_sec, micron::time_t{ 0 });
   }
   sb::end_test_case();
 
@@ -829,7 +829,7 @@ test_year_month_day()
   sb::test_case("to_unix(from_unix(0)) == 0");
   {
     auto ymd = micron::year_month_day::from_unix(0);
-    sb::require(ymd.to_unix(), time_t{ 0 });
+    sb::require(ymd.to_unix(), micron::time_t{ 0 });
   }
   sb::end_test_case();
 
@@ -837,7 +837,7 @@ test_year_month_day()
   sb::test_case("to_unix(from_unix(946684800)) == 946684800");
   {
     auto ymd = micron::year_month_day::from_unix(946684800LL);
-    sb::require(ymd.to_unix(), time_t{ 946684800LL });
+    sb::require(ymd.to_unix(), micron::time_t{ 946684800LL });
   }
   sb::end_test_case();
 
@@ -845,7 +845,7 @@ test_year_month_day()
   sb::test_case("to_unix round-trip 2024-03-15");
   {
     auto ymd = micron::year_month_day::from_unix(1710460800LL);
-    sb::require(ymd.to_unix(), time_t{ 1710460800LL });
+    sb::require(ymd.to_unix(), micron::time_t{ 1710460800LL });
   }
   sb::end_test_case();
 
@@ -874,12 +874,12 @@ test_year_month_day()
   sb::test_case("from_unix round-trips multiple consecutive days");
   {
     // step through 30 days from 2000-01-01 and verify day increments
-    time_t base = 946684800LL;
+    micron::time_t base = 946684800LL;
     for ( int d = 0; d < 30; d++ ) {
-      auto ymd = micron::year_month_day::from_unix(base + static_cast<time_t>(d) * 86400LL);
+      auto ymd = micron::year_month_day::from_unix(base + static_cast<micron::time_t>(d) * 86400LL);
       sb::require_true(ymd.ok());
       // round-trip
-      sb::require(ymd.to_unix(), base + static_cast<time_t>(d) * 86400LL);
+      sb::require(ymd.to_unix(), base + static_cast<micron::time_t>(d) * 86400LL);
     }
   }
   sb::end_test_case();
@@ -964,7 +964,7 @@ test_free_utils()
   sb::test_case("now_ts() tv_sec is positive (post-epoch)");
   {
     auto ts = micron::now_ts();
-    sb::require_greater(ts.tv_sec, time_t{ 0 });
+    sb::require_greater(ts.tv_sec, micron::time_t{ 0 });
   }
   sb::end_test_case();
 
@@ -1051,9 +1051,9 @@ test_stress()
   sb::test_case("from_unix / to_unix round-trip across 100 years (daily)");
   {
     // 1970-01-01 through ~2042 stepping one day
-    time_t base = 0LL;
+    micron::time_t base = 0LL;
     for ( int d = 0; d < 365 * 70; d += 31 ) {      // every 31 days
-      time_t ts = base + static_cast<time_t>(d) * 86400LL;
+      micron::time_t ts = base + static_cast<micron::time_t>(d) * 86400LL;
       auto ymd = micron::year_month_day::from_unix(ts);
       sb::require_true(ymd.ok());
       sb::require(ymd.to_unix(), ts);
@@ -1074,10 +1074,10 @@ test_stress()
   sb::test_case("normalise idempotent for nsec in [0, 1e9)");
   {
     for ( long nsec = 0; nsec < 1'000'000'000L; nsec += 100'000'000L ) {
-      time_t sec = 10;
+      micron::time_t sec = 10;
       long n = nsec;
       micron::__impl::normalise(sec, n);
-      sb::require(sec, time_t{ 10 });
+      sb::require(sec, micron::time_t{ 10 });
       sb::require(n, nsec);
     }
   }
