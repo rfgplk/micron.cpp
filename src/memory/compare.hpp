@@ -12,16 +12,18 @@
 #include "../memory/cmemory/memcmp.hpp"
 #include "../memory/memory.hpp"
 
+// NOTE: the unbounded fns are now compare_range, not compare; was colliding with a namespace
+
 namespace micron
 {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// compare ptr
+// compare_range ptr
 
 template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr long int
-compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
+compare_range(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 {
   return bytecmp(reinterpret_cast<const byte *>(a), reinterpret_cast<const byte *>(b), n * sizeof(T));
 }
@@ -29,7 +31,7 @@ compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T &, const T &>
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noexcept
+compare_range(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noexcept
 {
   for ( usize i = 0; i < n; ++i )
     if ( !fn(a[i], b[i]) ) return false;
@@ -39,7 +41,7 @@ compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noex
 template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T *, const T *>
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noexcept
+compare_range(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noexcept
 {
   for ( usize i = 0; i < n; ++i )
     if ( !fn(&a[i], &b[i]) ) return false;
@@ -49,7 +51,7 @@ compare(const T *__restrict a, const T *__restrict b, const usize n, Fn fn) noex
 template<auto Fn, typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
+compare_range(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 {
   for ( usize i = 0; i < n; ++i ) {
     if constexpr ( micron::is_invocable_v<decltype(Fn), const T *, const T *> ) {
@@ -67,7 +69,7 @@ compare(const T *__restrict a, const T *__restrict b, const usize n) noexcept
 template<typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr long int
-compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2) noexcept
+compare_range(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2) noexcept
 {
   return bytecmp(reinterpret_cast<const byte *>(first1), reinterpret_cast<const byte *>(first2),
                  static_cast<usize>(end1 - first1) * sizeof(T));
@@ -76,7 +78,7 @@ compare(const T *__restrict first1, const T *__restrict end1, const T *__restric
 template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T &, const T &>
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2, Fn fn) noexcept
+compare_range(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2, Fn fn) noexcept
 {
   for ( ; first1 != end1; ++first1, ++first2 )
     if ( !fn(*first1, *first2) ) return false;
@@ -86,7 +88,7 @@ compare(const T *__restrict first1, const T *__restrict end1, const T *__restric
 template<typename T, typename Fn>
   requires(!micron::is_null_pointer_v<T>) && micron::is_invocable_v<Fn, const T *, const T *>
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2, Fn fn) noexcept
+compare_range(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2, Fn fn) noexcept
 {
   for ( ; first1 != end1; ++first1, ++first2 )
     if ( !fn(first1, first2) ) return false;
@@ -96,7 +98,7 @@ compare(const T *__restrict first1, const T *__restrict end1, const T *__restric
 template<auto Fn, typename T>
   requires(!micron::is_null_pointer_v<T>)
 __attribute__((nonnull)) constexpr bool
-compare(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2) noexcept
+compare_range(const T *__restrict first1, const T *__restrict end1, const T *__restrict first2) noexcept
 {
   for ( ; first1 != end1; ++first1, ++first2 ) {
     if constexpr ( micron::is_invocable_v<decltype(Fn), const T *, const T *> ) {
@@ -109,11 +111,11 @@ compare(const T *__restrict first1, const T *__restrict end1, const T *__restric
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// compare containers
+// compare_range containers
 
 template<is_iterable_container C>
 constexpr long int
-compare(const C &a, const C &b) noexcept
+compare_range(const C &a, const C &b) noexcept
 {
   const usize n = a.size() < b.size() ? a.size() : b.size();
   const long int r
@@ -125,7 +127,7 @@ compare(const C &a, const C &b) noexcept
 template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type &, const typename C::value_type &>
 constexpr bool
-compare(const C &a, const C &b, Fn fn) noexcept
+compare_range(const C &a, const C &b, Fn fn) noexcept
 {
   if ( a.size() != b.size() ) return false;
   auto ia = a.begin();
@@ -139,7 +141,7 @@ compare(const C &a, const C &b, Fn fn) noexcept
 template<is_iterable_container C, typename Fn>
   requires micron::is_invocable_v<Fn, const typename C::value_type *, const typename C::value_type *>
 constexpr bool
-compare(const C &a, const C &b, Fn fn) noexcept
+compare_range(const C &a, const C &b, Fn fn) noexcept
 {
   if ( a.size() != b.size() ) return false;
   auto ia = a.begin();
@@ -152,7 +154,7 @@ compare(const C &a, const C &b, Fn fn) noexcept
 
 template<auto Fn, is_iterable_container C>
 constexpr bool
-compare(const C &a, const C &b) noexcept
+compare_range(const C &a, const C &b) noexcept
 {
   if ( a.size() != b.size() ) return false;
   auto ia = a.begin();
@@ -171,7 +173,7 @@ compare(const C &a, const C &b) noexcept
 template<is_iterable_container C, is_iterable_container D>
   requires micron::is_same_v<typename C::value_type, typename D::value_type>
 constexpr long int
-compare(const C &a, const D &b) noexcept
+compare_range(const C &a, const D &b) noexcept
 {
   const usize n = a.size() < b.size() ? a.size() : b.size();
   const long int r
@@ -184,7 +186,7 @@ template<is_iterable_container C, is_iterable_container D, typename Fn>
   requires micron::is_same_v<typename C::value_type, typename D::value_type>
            && micron::is_invocable_v<Fn, const typename C::value_type &, const typename C::value_type &>
 constexpr bool
-compare(const C &a, const D &b, Fn fn) noexcept
+compare_range(const C &a, const D &b, Fn fn) noexcept
 {
   if ( a.size() != b.size() ) return false;
   auto ia = a.begin();
@@ -198,7 +200,7 @@ compare(const C &a, const D &b, Fn fn) noexcept
 template<auto Fn, is_iterable_container C, is_iterable_container D>
   requires micron::is_same_v<typename C::value_type, typename D::value_type>
 constexpr bool
-compare(const C &a, const D &b) noexcept
+compare_range(const C &a, const D &b) noexcept
 {
   if ( a.size() != b.size() ) return false;
   auto ia = a.begin();
@@ -214,7 +216,7 @@ compare(const C &a, const D &b) noexcept
   return true;
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // compare_ns
 
 template<typename T>

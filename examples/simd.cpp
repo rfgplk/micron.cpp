@@ -11,7 +11,7 @@
 // Concrete aliases (in `micron::` and `micron::simd::`):
 //   v8 / v16 / v32 / v64        — 128-bit integer with 8/16/32/64-bit lanes
 //   vfloat / vdouble            — 128-bit float / double
-//   w8..w64 / wfloat / wdouble  — 256-bit (x86)
+//   w8..w64 / wfloat / wdouble  — 256-bit (x86; wfloat/wdouble need AVX, w8..w64 need AVX2)
 //   z8..z64 / zfloat / zdouble  — 512-bit (x86, AVX-512)
 //
 // Eigen-style names also exist: packet4f, packet2d, packet8i, packet16i, etc.
@@ -101,10 +101,11 @@ main()
   // ================================================================
   // 5. 256-bit (AVX2) — w*-prefixed types
   // ----------------------------------------------------------------
-  // wfloat = 8 lanes of float. Only available on x86; the headers
-  // gate on __micron_arch_x86_any.
+  // wfloat = 8 lanes of float. Only available on x86 WITH AVX -- the
+  // header gates on __micron_arch_x86_any && __micron_x86_avx
+  // (simd/simd.hpp:49,130), so an --isa base build has no wfloat at all.
   // ================================================================
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx)
   micron::io::println("-- 5. wfloat (256-bit) --");
 
   micron::wfloat w(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f);

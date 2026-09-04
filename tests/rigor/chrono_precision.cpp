@@ -52,60 +52,60 @@ test_normalise_precision()
 
   sb::test_case("nsec = -1 borrows exactly one nanosecond");
   {
-    time_t sec = 1;
+    micron::time_t sec = 1;
     long nsec = -1L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 0 });
+    sb::require(sec, micron::time_t{ 0 });
     sb::require(nsec, 999'999'999L);
   }
   sb::end_test_case();
 
   sb::test_case("nsec = -(1e9 - 1) leaves sec-1 and nsec=1");
   {
-    time_t sec = 5;
+    micron::time_t sec = 5;
     long nsec = -999'999'999L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 4 });
+    sb::require(sec, micron::time_t{ 4 });
     sb::require(nsec, 1L);
   }
   sb::end_test_case();
 
   sb::test_case("nsec = -1e9 leaves sec-1 and nsec=0");
   {
-    time_t sec = 3;
+    micron::time_t sec = 3;
     long nsec = -1'000'000'000L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 2 });
+    sb::require(sec, micron::time_t{ 2 });
     sb::require(nsec, 0L);
   }
   sb::end_test_case();
 
   sb::test_case("nsec = 0 leaves both unchanged");
   {
-    time_t sec = 7;
+    micron::time_t sec = 7;
     long nsec = 0L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 7 });
+    sb::require(sec, micron::time_t{ 7 });
     sb::require(nsec, 0L);
   }
   sb::end_test_case();
 
   sb::test_case("nsec = 999999999 (max valid) leaves both unchanged");
   {
-    time_t sec = 2;
+    micron::time_t sec = 2;
     long nsec = 999'999'999L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ 2 });
+    sb::require(sec, micron::time_t{ 2 });
     sb::require(nsec, 999'999'999L);
   }
   sb::end_test_case();
 
   sb::test_case("sec=0, nsec=-1 produces sec=-1, nsec=999999999");
   {
-    time_t sec = 0;
+    micron::time_t sec = 0;
     long nsec = -1L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ -1 });
+    sb::require(sec, micron::time_t{ -1 });
     sb::require(nsec, 999'999'999L);
   }
   sb::end_test_case();
@@ -113,10 +113,10 @@ test_normalise_precision()
   sb::test_case("sec=LLONG_MIN+1, nsec=-1 does not wrap to positive");
   {
     // Just verify the subtraction is monotone — if sec was, say, -100
-    time_t sec = -100;
+    micron::time_t sec = -100;
     long nsec = -500'000'000L;
     micron::__impl::normalise(sec, nsec);
-    sb::require(sec, time_t{ -101 });
+    sb::require(sec, micron::time_t{ -101 });
     sb::require(nsec, 500'000'000L);
   }
   sb::end_test_case();
@@ -464,7 +464,7 @@ test_elapsed_precision()
   sb::print("=== elapsed() precision ===");
 
   // Build two micron::timespec_t values with a known, exact delta.
-  auto make_ts = [](time_t sec, long nsec) -> micron::timespec_t {
+  auto make_ts = [](micron::time_t sec, long nsec) -> micron::timespec_t {
     micron::timespec_t t{};
     t.tv_sec = sec;
     t.tv_nsec = nsec;
@@ -614,7 +614,7 @@ test_elapsed_precision()
   sb::test_case("elapsed<ns>: large timestamps, small 1ns delta");
   {
     // begin and end share a large sec value; only 1ns separates them
-    time_t big = 1'700'000'000LL;      // ~2023 unix time
+    micron::time_t big = 1'700'000'000LL;      // ~2023 unix time
     auto b = make_ts(big, 0L);
     auto e = make_ts(big, 1L);
     sb::require_cmp(micron::elapsed<U::nanoseconds>(b, e), micron::fduration_t{ 1.0 }, approx_eq);
@@ -623,7 +623,7 @@ test_elapsed_precision()
 
   sb::test_case("elapsed<us>: large timestamps, 1us delta");
   {
-    time_t big = 1'700'000'000LL;
+    micron::time_t big = 1'700'000'000LL;
     auto b = make_ts(big, 0L);
     auto e = make_ts(big, 1'000L);
     sb::require_cmp(micron::elapsed<U::microseconds>(b, e), micron::fduration_t{ 1.0 }, approx_eq);
@@ -632,7 +632,7 @@ test_elapsed_precision()
 
   sb::test_case("elapsed<ms>: large timestamps, 1ms delta");
   {
-    time_t big = 1'700'000'000LL;
+    micron::time_t big = 1'700'000'000LL;
     auto b = make_ts(big, 0L);
     auto e = make_ts(big, 1'000'000L);
     sb::require_cmp(micron::elapsed<U::milliseconds>(b, e), micron::fduration_t{ 1.0 }, approx_eq);
@@ -861,7 +861,7 @@ test_calendar_precision()
   sb::print("=== calendar precision ===");
 
   struct ymd_case {
-    time_t unix_sec;
+    micron::time_t unix_sec;
     int y;
     unsigned m;
     unsigned d;
@@ -921,13 +921,13 @@ test_calendar_precision()
 
   sb::test_case("consecutive days: to_unix delta == 86400 for 365 steps");
   {
-    time_t base = 946684800LL;      // 2000-01-01
+    micron::time_t base = 946684800LL;      // 2000-01-01
     for ( int i = 0; i < 365; ++i ) {
-      time_t t0 = base + static_cast<time_t>(i) * 86400LL;
-      time_t t1 = base + static_cast<time_t>(i + 1) * 86400LL;
+      micron::time_t t0 = base + static_cast<micron::time_t>(i) * 86400LL;
+      micron::time_t t1 = base + static_cast<micron::time_t>(i + 1) * 86400LL;
       auto y0 = micron::year_month_day::from_unix(t0);
       auto y1 = micron::year_month_day::from_unix(t1);
-      sb::require(y1.to_unix() - y0.to_unix(), time_t{ 86400LL });
+      sb::require(y1.to_unix() - y0.to_unix(), micron::time_t{ 86400LL });
     }
   }
   sb::end_test_case();
@@ -971,8 +971,8 @@ test_timediff_precision()
 
   sb::test_case("timediff commutator: timediff(a,b) == -timediff(b,a)");
   {
-    for ( time_t a : { 0LL, 1LL, 1000LL, -5LL, 1'700'000'000LL } ) {
-      for ( time_t b : { 0LL, 1LL, 1000LL, -5LL, 1'700'000'001LL } ) {
+    for ( micron::time_t a : { 0LL, 1LL, 1000LL, -5LL, 1'700'000'000LL } ) {
+      for ( micron::time_t b : { 0LL, 1LL, 1000LL, -5LL, 1'700'000'001LL } ) {
         auto fwd = micron::timediff(a, b);
         auto rev = micron::timediff(b, a);
         sb::require_cmp(fwd, -rev, approx_eq);
@@ -984,8 +984,8 @@ test_timediff_precision()
   sb::test_case("timediff with large Unix timestamps preserves precision");
   {
     // These differ by exactly 1 second — verify no catastrophic cancellation
-    time_t t0 = 1'700'000'000LL;
-    time_t t1 = 1'700'000'001LL;
+    micron::time_t t0 = 1'700'000'000LL;
+    micron::time_t t1 = 1'700'000'001LL;
     sb::require_cmp(micron::timediff(t0, t1), micron::fduration_t{ 1.0 }, approx_eq);
   }
   sb::end_test_case();

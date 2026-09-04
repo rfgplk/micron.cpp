@@ -32,6 +32,8 @@ using blksize_t = __blksize_t_type;
 using blkcnt_t = __blkcnt_t_type;
 using nlink_t = __nlink_t_type;
 using clock_t = __clock_t_type;
+using clockid_t = __clockid_t_type;
+using timer_t = __timer_t_type;
 
 using dev_t = __dev_t_type;
 
@@ -42,10 +44,11 @@ using ino64_t = __ino64_t_type;
 using daddr_t = __s32_type;
 };      // namespace posix
 
-// REEXPORT GLOBALLY
+// REEXPORT INTO micron:: -- NOT into the global namespace
 using posix::blkcnt_t;
 using posix::blksize_t;
 using posix::clock_t;
+using posix::clockid_t;
 using posix::dev_t;
 using posix::gid_t;
 using posix::id_t;
@@ -58,12 +61,14 @@ using posix::off64_t;
 using posix::off_t;
 using posix::pid_t;
 using posix::rlim_t;
+using posix::suseconds64_t;
+using posix::suseconds_t;
 using posix::time_t;
+using posix::timer_t;
 using posix::uid_t;
 
 };      // namespace micron
 
 #include "../../bits/__arch.hpp"
-using pid_t = ::micron::posix::pid_t;
-using uid_t = ::micron::posix::uid_t;
-using gid_t = ::micron::posix::gid_t;
+
+// NOTE: pid_t / uid_t / gid_t are libc's names and no longer live here

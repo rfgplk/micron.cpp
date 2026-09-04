@@ -9,6 +9,8 @@
 
 #define MICRON_CORO_PBUF_ENTRIES 8u
 
+#include "../../src/kernel.hpp"
+#include "../../src/linux/sys/uring.hpp"
 #include "../../src/tasks/tasks.hpp"
 
 #include "../snowball/snowball.hpp"
@@ -194,6 +196,28 @@ t_guards(int rfd)
 int
 main()
 {
+  // WITHOUT this the FAILS counter below is never incremented and the sb::require(FAILS == 0) at the
+  // end of main is vacuous -- every sb::check in this file would fail silently.
+  sb::check_callback([]() { ++FAILS; });
+
+  // io_uring is not emulated by qemu-user at all, so the arm32/arm64 rows of coro.duck reach every
+  // op as -ENOSYS/-EOPNOTSUPP. Probe by actually creating a ring rather than by asking permission.
+  {
+    micron::uring::ring probe;
+    if ( int rc = probe.init(4); rc != 0 ) {
+      sb::skip("io_uring unavailable (ring.init failed); multishot recv tests SKIPPED");
+      return 1;
+    }
+  }
+
+  // a live ring is not enough: mrecv rides provided-buffer rings (tasks/coroutine/aio.hpp:549),
+  // which the kernel only grew in 5.19. Below that mrecv_arm answers -95 and every case here is
+  // moot, so skip on the capability rather than failing on it.
+  if ( !micron::kernel::has(micron::kernel::feature::uring_files_sparse) ) {
+    sb::skip("kernel predates io_uring provided-buffer rings (5.19); multishot recv tests SKIPPED");
+    return 1;
+  }
+
   sb::test_case("multishot recv: byte-exact stream, exhaustion re-arm cycles, EOF");
   {
     int fds[2];

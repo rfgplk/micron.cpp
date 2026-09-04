@@ -37,7 +37,7 @@ __coerce(T __v) noexcept
   if constexpr ( micron::is_null_pointer_v<T> )
     return 0L;
   else if constexpr ( micron::is_pointer_v<T> )
-    return static_cast<long int>(reinterpret_cast<__UINTPTR_TYPE__>(__v));
+    return static_cast<long int>(reinterpret_cast<__tt_size_t>(__v));
   else
     return static_cast<long int>(__v);
 }

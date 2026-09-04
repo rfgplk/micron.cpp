@@ -19,11 +19,16 @@ using ::sb::require_true;
 
 typedef u64 (*hfn)(const byte *, i64, usize);
 
+// zzz is not arch-independent: src/hash/zzz.hpp has no #else, so on x86 below AVX2 (and on any
+// target without NEON) micron::hashes has no zzz family at all. __micron_hash_zzz (hash.hpp:36) is
+// the gate the library itself uses.
+#if defined(__micron_hash_zzz)
 static u64
 h_zzzf(const byte *p, i64 s, usize n)
 {
   return micron::hashes::zzzf64(p, s, n);
 }
+#endif
 
 static u64
 h_murmur(const byte *p, i64 s, usize n)
@@ -78,7 +83,10 @@ main()
 {
   print("=== MICRON HASH COLLISIONS ===");
   static const hentry hs[] = {
-    { "zzzf64", h_zzzf },     { "murmur", h_murmur }, { "xxhash64", h_xxh }, { "rapidhash", h_rapid },
+#if defined(__micron_hash_zzz)
+    { "zzzf64", h_zzzf },
+#endif
+    { "murmur", h_murmur }, { "xxhash64", h_xxh }, { "rapidhash", h_rapid },
 #if defined(__micron_arch_x86_any)
     { "meowhash64", h_meow },
 #endif
@@ -123,6 +131,7 @@ main()
     sb::end_test_case();
   }
 
+#if defined(__micron_hash_zzz)
   sb::test_case("zzzf length + dead-byte regressions");
   {
     alignas(32) byte buf[64] = {};
@@ -140,6 +149,9 @@ main()
     require_true(micron::hashes::zzzf64(a, 7, 32) != micron::hashes::zzzf64(b, 7, 32));
   }
   sb::end_test_case();
+#else
+  sb::skip("no zzz backend below AVX2 / without NEON: zzzf regressions not exercised");
+#endif
 
   print("[HASH COLLISIONS OK]");
   return 1;

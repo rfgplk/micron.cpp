@@ -77,9 +77,14 @@ main()
       g_peer_done.store(0, micron::memory_order_relaxed);
       g_spins.store(0, micron::memory_order_relaxed);
 
+      // NOTE: the target must be a GROWABLE container. micron::buffer is a memory_block, which has
+      // no reserve() and no set_size()/_buf_set_length(), so __set_length (io/coroutine/__acore.hpp:296)
+      // is a no-op for it and its max_size() is whatever capacity it was built with -- 0 here. The
+      // bulk read path then trips its own `elems > out.max_size()` guard (__acore.hpp:318) and
+      // answers -error::file_too_big, deterministically, before any scheduling is exercised at all.
       static max_t rd = 0;
       auto reader = []() -> micron::task<void> {
-        micron::buffer out(0);
+        micron::string out;
         rd = co_await micron::io::coro::read_file("/proc/self/cmdline", out);
         g_peer_done.store(1, micron::memory_order_release);
       };
@@ -91,6 +96,9 @@ main()
       coro::sync_wait(both(200000u, reader));
       sb::check(g_peer_done.get(micron::memory_order_acquire) == 1u);
       sb::check(rd >= 0);
+      // without this the section cannot see the regression it exists for: the yielder bails at cap
+      // and the read still completes eventually, so the two checks above pass either way
+      sb::check(g_spins.get(micron::memory_order_acquire) <= 200000u);
     }
   }
   sb::end_test_case();

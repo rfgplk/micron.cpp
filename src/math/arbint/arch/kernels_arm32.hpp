@@ -47,17 +47,17 @@ inline constexpr usize kern_min_limbs = 8u;
 [[gnu::always_inline]] inline limb_t
 __add_n_blocks(limb_t *rp, const limb_t *ap, const limb_t *bp, usize blocks) noexcept
 {
-  limb_t cy = 0, a0, a1, b0, b1;
+  limb_t cy = 0, t0, t1;
   __asm__ volatile("cmn %[n], #0\n\t"
                    "1:\n\t"
-                   "ldr %[a0], [%[ap]]\n\t"
-                   "ldr %[a1], [%[ap], #4]\n\t"
-                   "ldr %[b0], [%[bp]]\n\t"
-                   "ldr %[b1], [%[bp], #4]\n\t"
-                   "adcs %[a0], %[a0], %[b0]\n\t"
-                   "adcs %[a1], %[a1], %[b1]\n\t"
-                   "str %[a0], [%[rp]]\n\t"
-                   "str %[a1], [%[rp], #4]\n\t"
+                   "ldr %[t0], [%[ap]]\n\t"
+                   "ldr %[t1], [%[bp]]\n\t"
+                   "adcs %[t0], %[t0], %[t1]\n\t"
+                   "str %[t0], [%[rp]]\n\t"
+                   "ldr %[t0], [%[ap], #4]\n\t"
+                   "ldr %[t1], [%[bp], #4]\n\t"
+                   "adcs %[t0], %[t0], %[t1]\n\t"
+                   "str %[t0], [%[rp], #4]\n\t"
                    "add %[ap], %[ap], #8\n\t"
                    "add %[bp], %[bp], #8\n\t"
                    "add %[rp], %[rp], #8\n\t"
@@ -65,8 +65,7 @@ __add_n_blocks(limb_t *rp, const limb_t *ap, const limb_t *bp, usize blocks) noe
                    "teq %[n], #0\n\t"
                    "bne 1b\n\t"
                    "adc %[cy], %[cy], #0\n\t"
-                   : [cy] "+r"(cy), [rp] "+r"(rp), [ap] "+r"(ap), [bp] "+r"(bp), [n] "+r"(blocks), [a0] "=&r"(a0), [a1] "=&r"(a1),
-                     [b0] "=&r"(b0), [b1] "=&r"(b1)
+                   : [cy] "+r"(cy), [rp] "+r"(rp), [ap] "+r"(ap), [bp] "+r"(bp), [n] "+r"(blocks), [t0] "=&r"(t0), [t1] "=&r"(t1)
                    :
                    : "cc", "memory");
   return cy;
@@ -75,17 +74,17 @@ __add_n_blocks(limb_t *rp, const limb_t *ap, const limb_t *bp, usize blocks) noe
 [[gnu::always_inline]] inline limb_t
 __sub_n_blocks(limb_t *rp, const limb_t *ap, const limb_t *bp, usize blocks) noexcept
 {
-  limb_t bw = 0, a0, a1, b0, b1;
+  limb_t bw = 0, t0, t1;
   __asm__ volatile("cmp %[n], %[n]\n\t"
                    "1:\n\t"
-                   "ldr %[a0], [%[ap]]\n\t"
-                   "ldr %[a1], [%[ap], #4]\n\t"
-                   "ldr %[b0], [%[bp]]\n\t"
-                   "ldr %[b1], [%[bp], #4]\n\t"
-                   "sbcs %[a0], %[a0], %[b0]\n\t"
-                   "sbcs %[a1], %[a1], %[b1]\n\t"
-                   "str %[a0], [%[rp]]\n\t"
-                   "str %[a1], [%[rp], #4]\n\t"
+                   "ldr %[t0], [%[ap]]\n\t"
+                   "ldr %[t1], [%[bp]]\n\t"
+                   "sbcs %[t0], %[t0], %[t1]\n\t"
+                   "str %[t0], [%[rp]]\n\t"
+                   "ldr %[t0], [%[ap], #4]\n\t"
+                   "ldr %[t1], [%[bp], #4]\n\t"
+                   "sbcs %[t0], %[t0], %[t1]\n\t"
+                   "str %[t0], [%[rp], #4]\n\t"
                    "add %[ap], %[ap], #8\n\t"
                    "add %[bp], %[bp], #8\n\t"
                    "add %[rp], %[rp], #8\n\t"
@@ -94,8 +93,7 @@ __sub_n_blocks(limb_t *rp, const limb_t *ap, const limb_t *bp, usize blocks) noe
                    "bne 1b\n\t"
                    "sbc %[bw], %[bw], #0\n\t"      // 0 if C (no borrow), -1 otherwise
                    "rsb %[bw], %[bw], #0\n\t"      // -> 0 or 1
-                   : [bw] "+r"(bw), [rp] "+r"(rp), [ap] "+r"(ap), [bp] "+r"(bp), [n] "+r"(blocks), [a0] "=&r"(a0), [a1] "=&r"(a1),
-                     [b0] "=&r"(b0), [b1] "=&r"(b1)
+                   : [bw] "+r"(bw), [rp] "+r"(rp), [ap] "+r"(ap), [bp] "+r"(bp), [n] "+r"(blocks), [t0] "=&r"(t0), [t1] "=&r"(t1)
                    :
                    : "cc", "memory");
   return bw;
@@ -142,24 +140,23 @@ sub_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept
 [[gnu::always_inline]] inline limb_t
 __mul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept
 {
-  limb_t a0, a1, l0, l1;
-  __asm__ volatile(
-      "1:\n\t"
-      "ldr %[a0], [%[ap]]\n\t"
-      "ldr %[a1], [%[ap], #4]\n\t"
-      "mov %[l0], #0\n\t"
-      "mov %[l1], #0\n\t"
-      "umaal %[l0], %[cy], %[a0], %[b]\n\t"
-      "umaal %[l1], %[cy], %[a1], %[b]\n\t"
-      "str %[l0], [%[rp]]\n\t"
-      "str %[l1], [%[rp], #4]\n\t"
-      "add %[ap], %[ap], #8\n\t"
-      "add %[rp], %[rp], #8\n\t"
-      "subs %[n], %[n], #1\n\t"
-      "bne 1b\n\t"
-      : [cy] "+r"(cy), [rp] "+r"(rp), [ap] "+r"(ap), [n] "+r"(blocks), [a0] "=&r"(a0), [a1] "=&r"(a1), [l0] "=&r"(l0), [l1] "=&r"(l1)
-      : [b] "r"(b)
-      : "cc", "memory");
+  limb_t a0, l0;
+  __asm__ volatile("1:\n\t"
+                   "ldr %[a0], [%[ap]]\n\t"
+                   "mov %[l0], #0\n\t"
+                   "umaal %[l0], %[cy], %[a0], %[b]\n\t"
+                   "str %[l0], [%[rp]]\n\t"
+                   "ldr %[a0], [%[ap], #4]\n\t"
+                   "mov %[l0], #0\n\t"
+                   "umaal %[l0], %[cy], %[a0], %[b]\n\t"
+                   "str %[l0], [%[rp], #4]\n\t"
+                   "add %[ap], %[ap], #8\n\t"
+                   "add %[rp], %[rp], #8\n\t"
+                   "subs %[n], %[n], #1\n\t"
+                   "bne 1b\n\t"
+                   : [cy] "+r"(cy), [rp] "+r"(rp), [ap] "+r"(ap), [n] "+r"(blocks), [a0] "=&r"(a0), [l0] "=&r"(l0)
+                   : [b] "r"(b)
+                   : "cc", "memory");
   return cy;
 }
 
@@ -167,24 +164,23 @@ __mul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) 
 [[gnu::always_inline]] inline limb_t
 __addmul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept
 {
-  limb_t a0, a1, r0, r1;
-  __asm__ volatile(
-      "1:\n\t"
-      "ldr %[a0], [%[ap]]\n\t"
-      "ldr %[a1], [%[ap], #4]\n\t"
-      "ldr %[r0], [%[rp]]\n\t"
-      "ldr %[r1], [%[rp], #4]\n\t"
-      "umaal %[r0], %[cy], %[a0], %[b]\n\t"
-      "umaal %[r1], %[cy], %[a1], %[b]\n\t"
-      "str %[r0], [%[rp]]\n\t"
-      "str %[r1], [%[rp], #4]\n\t"
-      "add %[ap], %[ap], #8\n\t"
-      "add %[rp], %[rp], #8\n\t"
-      "subs %[n], %[n], #1\n\t"
-      "bne 1b\n\t"
-      : [cy] "+r"(cy), [rp] "+r"(rp), [ap] "+r"(ap), [n] "+r"(blocks), [a0] "=&r"(a0), [a1] "=&r"(a1), [r0] "=&r"(r0), [r1] "=&r"(r1)
-      : [b] "r"(b)
-      : "cc", "memory");
+  limb_t a0, r0;
+  __asm__ volatile("1:\n\t"
+                   "ldr %[a0], [%[ap]]\n\t"
+                   "ldr %[r0], [%[rp]]\n\t"
+                   "umaal %[r0], %[cy], %[a0], %[b]\n\t"
+                   "str %[r0], [%[rp]]\n\t"
+                   "ldr %[a0], [%[ap], #4]\n\t"
+                   "ldr %[r0], [%[rp], #4]\n\t"
+                   "umaal %[r0], %[cy], %[a0], %[b]\n\t"
+                   "str %[r0], [%[rp], #4]\n\t"
+                   "add %[ap], %[ap], #8\n\t"
+                   "add %[rp], %[rp], #8\n\t"
+                   "subs %[n], %[n], #1\n\t"
+                   "bne 1b\n\t"
+                   : [cy] "+r"(cy), [rp] "+r"(rp), [ap] "+r"(ap), [n] "+r"(blocks), [a0] "=&r"(a0), [r0] "=&r"(r0)
+                   : [b] "r"(b)
+                   : "cc", "memory");
   return cy;
 }
 
@@ -192,21 +188,21 @@ __addmul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t c
 [[gnu::always_inline]] inline limb_t
 __submul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept
 {
-  limb_t a0, a1, l0, l1, d0, d1;
+  limb_t t0, l0;
   __asm__ volatile("cmp %[n], %[n]\n\t"      // C = 1: no borrow yet
                    "1:\n\t"
-                   "ldr %[a0], [%[ap]]\n\t"
-                   "ldr %[a1], [%[ap], #4]\n\t"
+                   "ldr %[t0], [%[ap]]\n\t"
                    "mov %[l0], #0\n\t"
-                   "mov %[l1], #0\n\t"
-                   "umaal %[l0], %[cy], %[a0], %[b]\n\t"
-                   "umaal %[l1], %[cy], %[a1], %[b]\n\t"
-                   "ldr %[d0], [%[rp]]\n\t"
-                   "ldr %[d1], [%[rp], #4]\n\t"
-                   "sbcs %[d0], %[d0], %[l0]\n\t"
-                   "sbcs %[d1], %[d1], %[l1]\n\t"
-                   "str %[d0], [%[rp]]\n\t"
-                   "str %[d1], [%[rp], #4]\n\t"
+                   "umaal %[l0], %[cy], %[t0], %[b]\n\t"
+                   "ldr %[t0], [%[rp]]\n\t"
+                   "sbcs %[t0], %[t0], %[l0]\n\t"
+                   "str %[t0], [%[rp]]\n\t"
+                   "ldr %[t0], [%[ap], #4]\n\t"
+                   "mov %[l0], #0\n\t"
+                   "umaal %[l0], %[cy], %[t0], %[b]\n\t"
+                   "ldr %[t0], [%[rp], #4]\n\t"
+                   "sbcs %[t0], %[t0], %[l0]\n\t"
+                   "str %[t0], [%[rp], #4]\n\t"
                    "add %[ap], %[ap], #8\n\t"
                    "add %[rp], %[rp], #8\n\t"
                    "sub %[n], %[n], #1\n\t"
@@ -214,8 +210,7 @@ __submul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t c
                    "bne 1b\n\t"
                    "sbc %[l0], %[l0], %[l0]\n\t"      // 0 if C (no borrow), -1 if borrow
                    "sub %[cy], %[cy], %[l0]\n\t"      // cy += borrow
-                   : [cy] "+r"(cy), [rp] "+r"(rp), [ap] "+r"(ap), [n] "+r"(blocks), [a0] "=&r"(a0), [a1] "=&r"(a1), [l0] "=&r"(l0),
-                     [l1] "=&r"(l1), [d0] "=&r"(d0), [d1] "=&r"(d1)
+                   : [cy] "+r"(cy), [rp] "+r"(rp), [ap] "+r"(ap), [n] "+r"(blocks), [t0] "=&r"(t0), [l0] "=&r"(l0)
                    : [b] "r"(b)
                    : "cc", "memory");
   return cy;

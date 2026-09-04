@@ -19,11 +19,12 @@ is_aligned(B *ptr)
   return reinterpret_cast<uintptr_t>(ptr) % (A / 8) == 0;
 }
 
-template<int H, typename B>
-void
+template<int L = 3, typename B>
+inline void
 prefetch(B *ptr)
 {
-  _mm_prefetch(ptr, H);
+  static_assert(L >= 0 && L <= 3, "prefetch locality must be 0 (NTA) .. 3 (T0)");
+  _mm_prefetch(ptr, L);
 }
 
 template<typename T>
@@ -37,7 +38,7 @@ template<typename T>
 inline void
 clflush(T &addr)
 {
-  _mm_clflush(&addr);
+  _mm_clflush(micron::addressof(addr));
 }
 
 inline void

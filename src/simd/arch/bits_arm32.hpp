@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../syscall.hpp"
 #include "../../types.hpp"
 #include "../types.hpp"
 
@@ -19,25 +20,28 @@ is_aligned(B *ptr)
   return reinterpret_cast<uintptr_t>(ptr) % (A / 8) == 0;
 }
 
-template<typename B>
+template<int L = 3, typename B>
 inline void
-prefetch(B *ptr, int = 0)
+prefetch(B *ptr)
 {
-  __builtin_prefetch(ptr, 0, 3);
+  static_assert(L >= 0 && L <= 3, "prefetch locality must be 0 (NTA) .. 3 (T0)");
+  __builtin_prefetch(ptr, 0, L);
 }
 
+// NOTE: armv7-a has no PL0 cache-maintenance instruction
 template<typename T>
 inline void
 clflush(T *addr)
 {
-  asm volatile("mcr p15, 0, %0, c7, c14, 1" ::"r"(addr) : "memory");
+  const uintptr_t __b = reinterpret_cast<uintptr_t>(addr);
+  micron::syscall(SYS_arm_cacheflush, __b, __b + sizeof(T), 0);
 }
 
 template<typename T>
 inline void
 clflush(T &addr)
 {
-  asm volatile("mcr p15, 0, %0, c7, c14, 1" ::"r"(&addr) : "memory");
+  clflush(micron::addressof(addr));
 }
 
 inline void

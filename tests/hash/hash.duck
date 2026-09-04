@@ -3,6 +3,8 @@
 #   duck tests/hash/hash.duck          (== duck batch tests/hash/hash.duck)
 #
 # amd64/x64 hosted. The meow_hash sections are x86-only (they #if-compile out on
-# other arches); rapidhash / murmur / xxhash / crc / fnv / zzz are arch-independent.
+# other arches), and the zzz sections need AVX2 on x86 or NEON on arm -- src/hash/zzz.hpp has no
+# #else, so below that the family does not exist and the tests gate on __micron_hash_zzz.
+# rapidhash / murmur / xxhash / crc / fnv are the genuinely arch-independent ones.
 
 test tests/hash/ -o bin/hash/x64

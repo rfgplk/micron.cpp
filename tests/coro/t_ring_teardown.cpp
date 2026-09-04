@@ -10,6 +10,8 @@
 
 #include "../../src/io/coroutine/coro_io.hpp"
 
+#include "../../src/linux/sys/uring.hpp"
+
 #include "../../src/attributes.hpp"
 #include "../../src/exit.hpp"
 #include "../snowball/snowball.hpp"
@@ -56,6 +58,17 @@ int
 main(int, char **)
 {
   sb::print("=== CORO RING TEARDOWN ===");
+
+  // io_uring is not emulated by qemu-user at all, so under the arm32/arm64 rows of coro.duck every
+  // op in churn() resolves -ENOSYS inline and the first require trips. Probe by actually creating a
+  // ring -- and do it BEFORE the atexit hook is armed, so the early return does not trip it.
+  {
+    micron::uring::ring probe;
+    if ( int rc = probe.init(4); rc != 0 ) {
+      sb::skip("io_uring unavailable (ring.init failed); ring teardown test SKIPPED");
+      return 1;
+    }
+  }
 
   micron::atexit(&__check_runtime_reaped);
 
