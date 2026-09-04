@@ -9,6 +9,7 @@
 #include "trees/b.hpp"
 #include "trees/octree.hpp"
 #include "trees/quadtree.hpp"
+#include "trees/radix.hpp"
 #include "trees/rb.hpp"
 #include "trees/rtree.hpp"
 

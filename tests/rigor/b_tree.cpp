@@ -308,6 +308,77 @@ main(void)
   }
   sb::end_test_case();
 
+  sb::test_case("reserve pins the arena, and nodes_used counts LIVE nodes");
+  {
+    // node_arena::reserve existed but b_tree exposed nothing, so a caller could not avoid the
+    // repeated slab reallocation -- which byte-copies the whole arena AND invalidates every V*
+    // that find()/at()/operator[] ever handed out.
+    micron::b_tree<u64, u64> t;
+    t.reserve(50000);
+    const usize cap = t.nodes_reserved();
+    sb::require(cap > 0ULL);
+
+    for ( u64 i = 0; i < 50000; ++i ) t.insert(splitmix64(i), i);
+    sb::require(t.size() == 50000ULL);
+    // nothing grew, so nothing relocated
+    sb::require(t.nodes_reserved() == cap);
+    sb::require(t.nodes_used() > 0ULL);
+    sb::require(t.nodes_used() <= cap);
+
+    // nodes_used is the LIVE count, so draining must bring it down -- it used to be the arena
+    // high-water mark, which never falls and could not have shown a reclaim failure
+    const usize live_full = t.nodes_used();
+    for ( u64 i = 0; i < 50000; ++i ) sb::require(t.erase(splitmix64(i)));
+    sb::require(t.size() == 0ULL);
+    sb::require(t.nodes_used() < live_full);
+
+    for ( u64 i = 0; i < 50000; ++i ) t.insert(splitmix64(i), i);
+    sb::require(t.size() == 50000ULL);
+    sb::require(t.nodes_reserved() == cap);      // the refill reused the freed slots
+    for ( u64 i = 0; i < 50000; i += 991 ) {
+      const u64 *p = t.find(splitmix64(i));
+      sb::require(p != nullptr);
+      sb::require(*p == i);
+    }
+  }
+  sb::end_test_case();
+
+  sb::test_case("swap - it did not even LINK before");
+  {
+    // b_tree::swap called micron::swap(__arena, ...). micron::swap (memory/actions.hpp) is
+    // constrained on is_copy_constructible_v, node_arena is move-only, so the call bound to the
+    // declared-but-never-defined overload in type_traits.hpp and failed at LINK time. Nothing had
+    // ever called it. Merely naming it here is most of the test.
+    micron::b_tree<u64, u64> a, b;
+    for ( u64 i = 0; i < 5000; ++i ) a.insert(splitmix64(i), i);
+    b.insert(999999, 42);
+
+    a.swap(b);
+    sb::require(a.size() == 1ULL);
+    sb::require(b.size() == 5000ULL);
+    sb::require(a.find(999999) != nullptr);
+    sb::require(*a.find(999999) == 42ULL);
+    sb::require(a.find(splitmix64(0)) == nullptr);
+    for ( u64 i = 0; i < 5000; i += 313 ) {
+      const u64 *p = b.find(splitmix64(i));
+      sb::require(p != nullptr);
+      sb::require(*p == i);
+    }
+
+    // and back, so neither side is left holding the other's arena
+    a.swap(b);
+    sb::require(a.size() == 5000ULL);
+    sb::require(b.size() == 1ULL);
+    sb::require(*b.find(999999) == 42ULL);
+
+    // self-swap must be a no-op, not a teardown
+    micron::b_tree<u64, u64> &ar = a;
+    a.swap(ar);
+    sb::require(a.size() == 5000ULL);
+    sb::require(*a.find(splitmix64(313)) == 313ULL);
+  }
+  sb::end_test_case();
+
   sb::print("=== ALL TESTS PASSED ===");
   return 1;
 }

@@ -197,16 +197,25 @@ private:
     return is_leaf(i) ? lnode(i).mbr : inode(i).mbr;
   }
 
+  static bool
+  same_box(const box_type &a, const box_type &b) noexcept
+  {
+    for ( usize d = 0; d < Dim; ++d )
+      if ( a.min_corner.data[d] != b.min_corner.data[d] || a.max_corner.data[d] != b.max_corner.data[d] ) return false;
+    return true;
+  }
+
   static F
   area(const box_type &b) noexcept
   {
     F a = F(1);
+    F lo = F(0);
     for ( usize d = 0; d < Dim; ++d ) {
-      F e = b.max_corner.data[d] - b.min_corner.data[d];
-      if ( e < F(0) ) return F(0);
+      const F e = b.max_corner.data[d] - b.min_corner.data[d];
       a *= e;
+      lo = e < lo ? e : lo;
     }
-    return a;
+    return lo < F(0) ? F(0) : a;
   }
 
   static F
@@ -242,7 +251,15 @@ private:
   static F
   enlargement(const box_type &e, const box_type &b) noexcept
   {
-    return area(combine(e, b)) - area(e);
+    F united = F(1);
+    F own = F(1);
+    for ( usize d = 0; d < Dim; ++d ) {
+      const F lo = e.min_corner.data[d] < b.min_corner.data[d] ? e.min_corner.data[d] : b.min_corner.data[d];
+      const F hi = e.max_corner.data[d] > b.max_corner.data[d] ? e.max_corner.data[d] : b.max_corner.data[d];
+      united *= (hi - lo);
+      own *= (e.max_corner.data[d] - e.min_corner.data[d]);
+    }
+    return united - own;
   }
 
   static F
@@ -250,14 +267,12 @@ private:
   {
     F s = F(0);
     for ( usize d = 0; d < Dim; ++d ) {
-      F v = p.data[d];
-      if ( v < b.min_corner.data[d] ) {
-        F dd = b.min_corner.data[d] - v;
-        s += dd * dd;
-      } else if ( v > b.max_corner.data[d] ) {
-        F dd = v - b.max_corner.data[d];
-        s += dd * dd;
-      }
+      const F v = p.data[d];
+      const F a = b.min_corner.data[d] - v;
+      const F c = v - b.max_corner.data[d];
+      F dd = a > c ? a : c;
+      dd = dd > F(0) ? dd : F(0);
+      s += dd * dd;
     }
     return s;
   }
@@ -647,7 +662,7 @@ private:
     if ( is_leaf(n) ) {
       leaf_node &L = lnode(n);
       for ( u16 i = 0; i < L.count; ++i ) {
-        if ( L.mbr[i].intersects(b) && L.vals()[i] == v ) {
+        if ( same_box(L.mbr[i], b) && L.vals()[i] == v ) {
           remove_leaf_entry(L, i);
           return true;
         }
@@ -713,6 +728,36 @@ public:
       o.__size = 0;
     }
     return *this;
+  }
+
+  void
+  reserve_nodes(usize n)
+  {
+    __arena.reserve(n);
+  }
+
+  [[nodiscard]] usize
+  nodes_used(void) const noexcept
+  {
+    return __arena.slots_live();
+  }
+
+  [[nodiscard]] usize
+  nodes_high_water(void) const noexcept
+  {
+    return __arena.slots_used();
+  }
+
+  [[nodiscard]] usize
+  nodes_reserved(void) const noexcept
+  {
+    return __arena.slots_reserved();
+  }
+
+  [[nodiscard]] static constexpr usize
+  node_bytes(void) noexcept
+  {
+    return __slot_bytes;
   }
 
   usize

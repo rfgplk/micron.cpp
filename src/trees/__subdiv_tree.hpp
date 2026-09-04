@@ -105,14 +105,38 @@ private:
     return __arena.raw(i)[0] != 0;
   }
 
+  // branchless
+  static usize
+  octant_at(const point_type &c, const point_type &p) noexcept
+  {
+    usize oc = 0;
+    for ( usize d = 0; d < Dim; ++d ) oc |= static_cast<usize>(p.data[d] >= c.data[d]) << d;
+    return oc;
+  }
+
   static usize
   octant(const box_type &nb, const point_type &p) noexcept
   {
-    point_type c = nb.center();
-    usize oc = 0;
-    for ( usize d = 0; d < Dim; ++d )
-      if ( p.data[d] >= c.data[d] ) oc |= (usize(1) << d);
-    return oc;
+    return octant_at(nb.center(), p);
+  }
+
+  // child_box() recomputes nb.center() every call, and every caller calls it once per child --
+  // so an octree node paid 8 centre computations per level, and knn_rec paid TWO for the same
+  // child (once to score it, once to descend). The centre is a property of the node; hoist it.
+  static box_type
+  child_box_at(const box_type &nb, const point_type &c, usize oc) noexcept
+  {
+    box_type cb;
+    for ( usize d = 0; d < Dim; ++d ) {
+      if ( oc & (usize(1) << d) ) {
+        cb.min_corner.data[d] = c.data[d];
+        cb.max_corner.data[d] = nb.max_corner.data[d];
+      } else {
+        cb.min_corner.data[d] = nb.min_corner.data[d];
+        cb.max_corner.data[d] = c.data[d];
+      }
+    }
+    return cb;
   }
 
   static box_type
@@ -135,16 +159,15 @@ private:
   static F
   mindist2(const point_type &p, const box_type &b) noexcept
   {
+    // at most one of (lo-v) and (v-hi) can be positive, so their max clamped at zero is the axis distance
     F s = F(0);
     for ( usize d = 0; d < Dim; ++d ) {
-      F v = p.data[d];
-      if ( v < b.min_corner.data[d] ) {
-        F dd = b.min_corner.data[d] - v;
-        s += dd * dd;
-      } else if ( v > b.max_corner.data[d] ) {
-        F dd = v - b.max_corner.data[d];
-        s += dd * dd;
-      }
+      const F v = p.data[d];
+      const F a = b.min_corner.data[d] - v;
+      const F c = v - b.max_corner.data[d];
+      F dd = a > c ? a : c;
+      dd = dd > F(0) ? dd : F(0);
+      s += dd * dd;
     }
     return s;
   }
@@ -208,14 +231,16 @@ private:
     destroy_node(i);
   }
 
+  // NOT noexcept
+  template<class VV>
   void
-  add_to_leaf(node_idx n, const point_type &p, const Value &v) noexcept
+  add_to_leaf(node_idx n, const point_type &p, VV &&v)
   {
     while ( true ) {
       leaf_node &L = lnode(n);
       if ( L.count < B ) {
         L.pts[L.count] = p;
-        new (micron::addr(L.vals()[L.count])) Value(v);
+        new (micron::addr(L.vals()[L.count])) Value(micron::forward<VV>(v));
         ++L.count;
         return;
       }
@@ -227,12 +252,13 @@ private:
     }
   }
 
+  template<class VV>
   node_idx
-  insert_rec(node_idx n, const box_type &nb, const point_type &p, const Value &v, usize depth, bool &added)
+  insert_rec(node_idx n, const box_type &nb, const point_type &p, VV &&v, usize depth, bool &added)
   {
     if ( is_leaf(n) ) {
       if ( lnode(n).count < B || depth >= MaxDepth ) {
-        add_to_leaf(n, p, v);
+        add_to_leaf(n, p, micron::forward<VV>(v));
         added = true;
         return n;
       }
@@ -245,19 +271,20 @@ private:
         leaf_node &L = lnode(n);
         for ( u16 i = 0; i < cnt; ++i ) {
           opts[i] = L.pts[i];
-          new (micron::addr(ov[i])) Value(L.vals()[i]);
+          new (micron::addr(ov[i])) Value(micron::move(L.vals()[i]));
         }
       }
       destroy_node(n);
       node_idx in = alloc_internal();
       bool a;
-      for ( u16 i = 0; i < cnt; ++i ) in = insert_rec(in, nb, opts[i], ov[i], depth, a);
-      in = insert_rec(in, nb, p, v, depth, added);
+      for ( u16 i = 0; i < cnt; ++i ) in = insert_rec(in, nb, opts[i], micron::move(ov[i]), depth, a);
+      in = insert_rec(in, nb, p, micron::forward<VV>(v), depth, added);
       for ( u16 i = 0; i < cnt; ++i ) ov[i].~Value();
       return in;
     }
-    usize oc = octant(nb, p);
-    box_type cb = child_box(nb, oc);
+    const point_type ctr = nb.center();
+    const usize oc = octant_at(ctr, p);
+    const box_type cb = child_box_at(nb, ctr, oc);
     node_idx child = inode(n).kids[oc];
     if ( child == nil ) child = alloc_leaf();      // may move slab; re-fetch below
     node_idx nc = insert_rec(child, cb, p, v, depth + 1, added);
@@ -280,9 +307,10 @@ private:
       return;
     }
     internal_node &I = inode(n);
+    const point_type ctr = nb.center();
     for ( usize oc = 0; oc < NCHILD; ++oc ) {
       if ( I.kids[oc] == nil ) continue;
-      box_type cb = child_box(nb, oc);
+      const box_type cb = child_box_at(nb, ctr, oc);
       if ( cb.intersects(q) ) query_rec(I.kids[oc], cb, q, fn);
     }
   }
@@ -302,9 +330,10 @@ private:
       return;
     }
     internal_node &I = inode(n);
+    const point_type ctr = nb.center();
     for ( usize oc = 0; oc < NCHILD; ++oc ) {
       if ( I.kids[oc] == nil ) continue;
-      box_type cb = child_box(nb, oc);
+      const box_type cb = child_box_at(nb, ctr, oc);
       if ( mindist2(c, cb) <= r2 ) radius_rec(I.kids[oc], cb, c, r2, fn);
     }
   }
@@ -363,13 +392,16 @@ private:
       return;
     }
     internal_node &I = inode(n);
+    const point_type ctr = nb.center();
     usize order[NCHILD];
     F od[NCHILD];
+    box_type cbx[NCHILD];
     usize m = 0;
     for ( usize oc = 0; oc < NCHILD; ++oc ) {
       if ( I.kids[oc] == nil ) continue;
       order[m] = oc;
-      od[m] = mindist2(p, child_box(nb, oc));
+      cbx[oc] = child_box_at(nb, ctr, oc);
+      od[m] = mindist2(p, cbx[oc]);
       ++m;
     }
     for ( usize i = 1; i < m; ++i ) {
@@ -386,7 +418,7 @@ private:
     }
     for ( usize t = 0; t < m; ++t ) {
       if ( best.size() >= k && od[t] >= best[best.size() - 1].d ) break;
-      knn_rec(I.kids[order[t]], child_box(nb, order[t]), p, k, best);
+      knn_rec(I.kids[order[t]], cbx[order[t]], p, k, best);
     }
   }
 
@@ -478,9 +510,24 @@ public:
   }
 
   [[nodiscard, gnu::always_inline]] usize
+  // LIVE nodes, not the high-water mark. This used to return slots_used(), which never falls --
+  // so it reported the same number whether or not erase() reclaimed anything, and could not have
+  // shown the leak it was the natural metric for. nodes_high_water() keeps the old meaning.
   nodes_used() const noexcept
   {
+    return __arena.slots_live();
+  }
+
+  [[nodiscard, gnu::always_inline]] usize
+  nodes_high_water() const noexcept
+  {
     return __arena.slots_used();
+  }
+
+  [[nodiscard]] static constexpr usize
+  node_bytes() noexcept
+  {
+    return __slot_bytes;
   }
 
   [[nodiscard, gnu::always_inline]] usize
@@ -500,21 +547,37 @@ public:
     return added;
   }
 
+  // point test is exact float equality
   bool
   erase(const point_type &p, const Value &v)
   {
     if ( __root == nil || !__universe.contains(p) ) return false;
+
+    // remember the descent so an emptied subtree can be unlinked on the way back up
+    node_idx path[MaxDepth + 2];
+    usize slot[MaxDepth + 2];
+    usize depth = 0;
+
     node_idx n = __root;
     box_type nb = __universe;
     while ( !is_leaf(n) ) {
-      usize oc = octant(nb, p);
-      node_idx c = inode(n).kids[oc];
+      const point_type ctr = nb.center();
+      const usize oc = octant_at(ctr, p);
+      const node_idx c = inode(n).kids[oc];
       if ( c == nil ) return false;
-      nb = child_box(nb, oc);
+      if ( depth < MaxDepth + 2 ) {
+        path[depth] = n;
+        slot[depth] = oc;
+        ++depth;
+      }
+      nb = child_box_at(nb, ctr, oc);
       n = c;
     }
 
+    // walk the overflow chain, keeping the predecessor so an emptied chain node can be spliced out
+    node_idx prev = nil;
     node_idx cc = n;
+    bool removed = false;
     while ( cc != nil ) {
       leaf_node &L = lnode(cc);
       for ( u16 i = 0; i < L.count; ++i ) {
@@ -526,13 +589,58 @@ public:
             L.vals()[j + 1].~Value();
           }
           --L.count;
-          --__size;
-          return true;
+          removed = true;
+          break;
         }
       }
-      cc = L.overflow;
+      if ( removed ) break;
+      prev = cc;
+      cc = lnode(cc).overflow;
     }
-    return false;
+    if ( !removed ) return false;
+    --__size;
+
+    // read everything out of the node before any destroy_node recycles its storage
+    const u16 left = lnode(cc).count;
+    const node_idx chained = lnode(cc).overflow;
+    if ( left != 0 ) return true;
+
+    if ( prev != nil ) {
+      // an overflow node emptied: splice it out of the chain and reclaim it
+      lnode(prev).overflow = chained;
+      destroy_node(cc);
+      return true;
+    }
+    // the head leaf emptied. If a chain still hangs off it the head has to stay as the anchor;
+    // it becomes reclaimable once the last chain node goes.
+    if ( chained != nil ) return true;
+
+    destroy_node(cc);
+    if ( depth == 0 ) {
+      __root = nil;
+      return true;
+    }
+    inode(path[depth - 1]).kids[slot[depth - 1]] = nil;
+
+    // collapse internal nodes that just lost their last child
+    while ( depth > 0 ) {
+      const node_idx in = path[depth - 1];
+      bool any = false;
+      for ( usize c = 0; c < NCHILD; ++c )
+        if ( inode(in).kids[c] != nil ) {
+          any = true;
+          break;
+        }
+      if ( any ) break;
+      destroy_node(in);
+      --depth;
+      if ( depth == 0 ) {
+        __root = nil;
+        break;
+      }
+      inode(path[depth - 1]).kids[slot[depth - 1]] = nil;
+    }
+    return true;
   }
 
   template<typename Fn>

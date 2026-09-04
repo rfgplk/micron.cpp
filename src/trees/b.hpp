@@ -25,6 +25,9 @@ namespace micron
 
 // default ordering policy
 template<typename T> struct b_default_less {
+  // machine order or not, for __tree_store
+  using __natural_order = void;
+
   static bool
   lt(const T &a, const T &b)
   {
@@ -201,17 +204,19 @@ class b_tree
   [[gnu::always_inline]] u16
   child_index(internal_node &I, const K &key) noexcept
   {
-    u16 ci = 0;
-    while ( ci < I.nkeys && !Compare::lt(key, I.keys()[ci]) ) ++ci;
-    return ci;
+    return __tree_store::upper_bound_scan<K, Compare>(I.keys(), I.nkeys, key);
   }
 
   [[gnu::always_inline]] u16
   leaf_lb(leaf_node &L, const K &key) noexcept
   {
-    u16 p = 0;
-    while ( p < L.count && Compare::lt(L.keys()[p], key) ) ++p;
-    return p;
+    return __tree_store::lower_bound_scan<K, Compare>(L.keys(), L.count, key);
+  }
+
+  [[gnu::always_inline]] bool
+  eq_at_lb(const K &probe, const K &key) noexcept
+  {
+    return !Compare::lt(key, probe);
   }
 
   void
@@ -282,7 +287,7 @@ class b_tree
     }
     leaf_node &L = lnode(cur);
     u16 pos = leaf_lb(L, key);
-    if ( pos < L.count && eq(L.keys()[pos], key) ) {
+    if ( pos < L.count && eq_at_lb(L.keys()[pos], key) ) {
       if ( overwrite ) {
         L.vals()[pos].~V();
         new (micron::addr(L.vals()[pos])) V(micron::forward<VV>(val));
@@ -312,7 +317,7 @@ class b_tree
     }
     leaf_node &L = lnode(cur);
     u16 pos = leaf_lb(L, key);
-    if ( pos < L.count && eq(L.keys()[pos], key) ) {
+    if ( pos < L.count && eq_at_lb(L.keys()[pos], key) ) {
       __tree_store::erase_at(L.keys(), pos, L.count);
       __tree_store::erase_at(L.vals(), pos, L.count);
       --L.count;
@@ -506,6 +511,34 @@ public:
     __arena.reset();
   }
 
+  // pre-size the slab. Worth doing for more than the one saved allocation: growth REALLOCATES and
+  // byte-copies the whole arena, and it invalidates every V* handed out by find()/at()/operator[]
+  void
+  reserve(usize n_entries)
+  {
+    // one leaf per MAXK entries at perfect fill, plus the internal spine; 2x covers realistic fill
+    const usize leaves = n_entries / MAXK + 1;
+    __arena.reserve(2 * leaves + leaves / (T - 1) + 2);
+  }
+
+  [[nodiscard]] usize
+  nodes_used() const noexcept
+  {
+    return __arena.slots_live();
+  }
+
+  [[nodiscard]] usize
+  nodes_reserved() const noexcept
+  {
+    return __arena.slots_reserved();
+  }
+
+  [[nodiscard]] static constexpr usize
+  node_bytes() noexcept
+  {
+    return __slot_bytes;
+  }
+
   V *
   find(const K &key) noexcept
   {
@@ -514,7 +547,7 @@ public:
       if ( is_leaf(cur) ) {
         leaf_node &L = lnode(cur);
         u16 pos = leaf_lb(L, key);
-        if ( pos < L.count && eq(L.keys()[pos], key) ) return micron::addr(L.vals()[pos]);
+        if ( pos < L.count && eq_at_lb(L.keys()[pos], key) ) return micron::addr(L.vals()[pos]);
         return nullptr;
       }
       cur = inode(cur).kids[child_index(inode(cur), key)];
@@ -637,7 +670,8 @@ public:
   void
   swap(b_tree &o) noexcept
   {
-    micron::swap(__arena, o.__arena);
+    // NOT micron::swap on the arena -- see node_arena::swap. This function did not link.
+    __arena.swap(o.__arena);
     micron::swap(__root, o.__root);
     micron::swap(__size, o.__size);
   }

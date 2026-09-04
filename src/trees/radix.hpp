@@ -5,181 +5,495 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../array/arrays.hpp"
-#include "../memory/new.hpp"
-#include "../pointer.hpp"
+#include "../concepts.hpp"
+#include "../except.hpp"
+#include "../memory/addr.hpp"
 #include "../tags.hpp"
+#include "../type_traits.hpp"
 #include "../types.hpp"
-#include "../vector/fvector.hpp"
+#include "__tree_store.hpp"
+#include "__tree_walk.hpp"
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// micron::radix_tree
+//
+// a compressed radix trie (Patricia) over sequence keys
+
+namespace micron
+{
 
 template<typename Key, typename Value>
   requires micron::is_copy_constructible_v<Key> && micron::is_move_constructible_v<Key> && micron::is_copy_constructible_v<Value>
            && micron::is_move_constructible_v<Value>
-class radix_node
+class radix_tree
 {
+public:
+  using category_type = tree_tag;
+  using mutability_type = mutable_tag;
+  using memory_type = heap_tag;
+  using size_type = usize;
+  using key_type = Key;
+  using mapped_type = Value;
+
+private:
   struct node {
-    Key key_fragment;
-    Value value;
-    bool is_leaf;
-    mc::fvector<node *> children;
+    Key frag;           // the edge label leading into this node
+    Value value;        // meaningful only when has_value
+    node *child;        // first child
+    node *sibling;      // next sibling; the chain is keyed by frag[0], which is unique per level
+    bool has_value;
 
-    node() = delete;
-
-    node(const Key &k, const Value &v) : key_fragment(k), value(v), is_leaf(true) { }
-
-    node(Key &&k, Value &&v) noexcept : key_fragment(micron::move(k)), value(micron::move(v)), is_leaf(true) { }
-
-    node(const node &o) = delete;
-
-    node(node &&o) noexcept
-        : key_fragment(micron::move(o.key_fragment)), value(micron::move(o.value)), is_leaf(o.is_leaf), children(micron::move(o.children))
-    {
-      o.is_leaf = false;
-      o.children.clear();
-    }
-
-    node &operator=(const node &o) = delete;
-
-    node &
-    operator=(node &&o) noexcept
-    {
-      if ( this != &o ) {
-        key_fragment = micron::move(o.key_fragment);
-        value = micron::move(o.value);
-        is_leaf = o.is_leaf;
-        children = micron::move(o.children);
-        o.is_leaf = false;
-        o.children.clear();
-      }
-      return *this;
-    }
-
-    ~node()
-    {
-      for ( auto c : children ) delete c;
-    }
+    node() : frag(), value(), child(nullptr), sibling(nullptr), has_value(false) { }
   };
 
-  node *root;
+  using __pool_t = __tree_store::block_pool<node>;
+
+  __pool_t __pool;
+  node *__root;
+  usize __size;
+
+  template<class... A>
+  node *
+  __mk(A &&...a)
+  {
+    node *p = __pool.take();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      return new (static_cast<void *>(p)) node(micron::forward<A>(a)...);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __pool.give(p);
+      throw;
+    }
+#endif
+  }
+
+  void
+  __free(node *p) noexcept
+  {
+    p->~node();
+    __pool.give(p);
+  }
 
   static usize
-  common_prefix_length(const Key &a, const Key &b)
+  __match_at(const Key &frag, const Key &k, usize off) noexcept
   {
+    const usize fn = frag.size();
+    const usize kn = k.size();
     usize i = 0;
-    while ( i < a.size() && i < b.size() && a[i] == b[i] ) i++;
+    while ( i < fn && off + i < kn && frag[i] == k[off + i] ) ++i;
     return i;
   }
 
+  static node *
+  __find_edge(node *parent, const Key &k, usize off) noexcept
+  {
+    const auto c0 = k[off];
+    for ( node *c = parent->child; c; c = c->sibling )
+      if ( c->frag[0] == c0 ) return c;
+    return nullptr;
+  }
+
+  static void
+  __link(node *parent, node *c) noexcept
+  {
+    c->sibling = parent->child;
+    parent->child = c;
+  }
+
+  static void
+  __unlink(node *parent, node *c) noexcept
+  {
+    if ( parent->child == c ) {
+      parent->child = c->sibling;
+      return;
+    }
+    for ( node *p = parent->child; p; p = p->sibling )
+      if ( p->sibling == c ) {
+        p->sibling = c->sibling;
+        return;
+      }
+  }
+
+  void
+  __destroy_values() noexcept
+  {
+    if constexpr ( !(micron::is_trivially_destructible_v<Key> && micron::is_trivially_destructible_v<Value>)) {
+      node *stack = nullptr;
+      if ( __root ) {
+        for ( node *c = __root->child; c; ) {
+          node *nx = c->sibling;
+          c->sibling = stack;
+          stack = c;
+          c = nx;
+        }
+      }
+      while ( stack ) {
+        node *n = stack;
+        stack = n->sibling;
+        for ( node *c = n->child; c; ) {
+          node *nx = c->sibling;
+          c->sibling = stack;
+          stack = c;
+          c = nx;
+        }
+        n->~node();
+      }
+      if ( __root ) __root->~node();
+    }
+  }
+
+  void
+  __release_all() noexcept
+  {
+    __destroy_values();
+    __pool.release();
+    __root = nullptr;
+    __size = 0;
+  }
+
+  void
+  __ensure_root()
+  {
+    if ( !__root ) __root = __mk();
+  }
+
+  template<class Fn>
+  static walk_ctl
+  __walk(node *n, Key &acc, Fn &fn)
+  {
+    for ( node *c = n->child; c; c = c->sibling ) {
+      const usize base = acc.size();
+      acc += c->frag;
+      if ( c->has_value ) {
+        if ( micron::__impl::invoke_walk(fn, static_cast<const Key &>(acc), c->value) == walk_ctl::stop ) return walk_ctl::stop;
+      }
+      if ( __walk(c, acc, fn) == walk_ctl::stop ) return walk_ctl::stop;
+      acc = acc.substr(0, base);
+    }
+    return walk_ctl::continue_;
+  }
+
 public:
-  radix_node() : root(nullptr) { }
+  radix_tree() noexcept : __pool(), __root(nullptr), __size(0) { }
 
-  ~radix_node() { clear(); }
+  template<class Fn>
+    requires(micron::is_invocable_v<Fn, radix_tree &>)
+  explicit radix_tree(Fn build) : radix_tree()
+  {
+    build(*this);
+  }
 
-  radix_node(const radix_node &o) = delete;
+  radix_tree(const radix_tree &) = delete;
+  radix_tree &operator=(const radix_tree &) = delete;
 
-  radix_node(radix_node &&o) noexcept : root(o.root) { o.root = nullptr; }
+  radix_tree(radix_tree &&o) noexcept : __pool(micron::move(o.__pool)), __root(o.__root), __size(o.__size)
+  {
+    o.__root = nullptr;
+    o.__size = 0;
+  }
 
-  radix_node &operator=(const radix_node &o) = delete;
-
-  radix_node &
-  operator=(radix_node &&o) noexcept
+  radix_tree &
+  operator=(radix_tree &&o) noexcept
   {
     if ( this != &o ) {
-      clear();
-      root = o.root;
-      o.root = nullptr;
+      __release_all();
+      __pool = micron::move(o.__pool);
+      __root = o.__root;
+      __size = o.__size;
+      o.__root = nullptr;
+      o.__size = 0;
     }
     return *this;
   }
 
-  void
-  insert(Key &&k, Value &&v)
+  ~radix_tree() { __release_all(); }
+
+  [[nodiscard]] usize
+  size() const noexcept
   {
-    if ( !root ) {
-      root = new node(micron::move(k), micron::move(v));
-      return;
-    }
-    node *cur = root;
-    while ( true ) {
-      usize prefix = common_prefix_length(cur->key_fragment, k);
-      if ( prefix == cur->key_fragment.size() ) {
-        if ( prefix == k.size() ) {
-          // exact match
-          cur->value = micron::move(v);
-          cur->is_leaf = true;
-          return;
-        }
-        Key remaining = k.substr(prefix);
-        for ( auto c : cur->children ) {
-          if ( c->key_fragment[0] == remaining[0] ) {
-            k = remaining;
-            cur = c;
-            goto next_iter;
-          }
-        }
-        cur->children.push_back(new node(micron::move(remaining), micron::move(v)));
-        cur->is_leaf = false;
-        return;
-      } else {
-        // split node
-        Key old_suffix = cur->key_fragment.substr(prefix);
-        node *split_node = new node(micron::move(old_suffix), micron::move(cur->value));
-        split_node->children = micron::move(cur->children);
-        split_node->is_leaf = cur->is_leaf;
+    return __size;
+  }
 
-        cur->key_fragment = cur->key_fragment.substr(0, prefix);
-        cur->children.clear();
-        cur->children.push_back(split_node);
-        cur->is_leaf = false;
-
-        if ( prefix < k.size() ) {
-          Key new_suffix = k.substr(prefix);
-          cur->children.push_back(new node(micron::move(new_suffix), micron::move(v)));
-        } else {
-          cur->value = micron::move(v);
-          cur->is_leaf = true;
-        }
-        return;
-      }
-    next_iter:;
-    }
+  [[nodiscard]] bool
+  empty() const noexcept
+  {
+    return __size == 0;
   }
 
   void
-  insert(const Key &k, const Value &v)
+  clear() noexcept
   {
-    insert(Key(k), Value(v));
+    __release_all();
   }
 
   Value *
-  find(const Key &k)
+  find(const Key &k) noexcept
   {
-    node *cur = root;
-    usize pos = 0;
-    while ( cur ) {
-      usize prefix = common_prefix_length(cur->key_fragment, k.substr(pos));
-      if ( prefix == cur->key_fragment.size() ) {
-        pos += prefix;
-        if ( pos == k.size() ) return cur->is_leaf ? &cur->value : nullptr;
-        bool found = false;
-        for ( auto c : cur->children ) {
-          if ( c->key_fragment[0] == k[pos] ) {
-            cur = c;
-            found = true;
-            break;
-          }
-        }
-        if ( !found ) return nullptr;
-      } else
-        return nullptr;
+    if ( !__root || k.size() == 0 ) return nullptr;
+    node *cur = __root;
+    usize off = 0;
+    while ( off < k.size() ) {
+      node *e = __find_edge(cur, k, off);
+      if ( !e ) return nullptr;
+      const usize m = __match_at(e->frag, k, off);
+      if ( m != e->frag.size() ) return nullptr;
+      off += m;
+      if ( off == k.size() ) return e->has_value ? micron::addr(e->value) : nullptr;
+      cur = e;
     }
     return nullptr;
   }
 
-  void
-  clear()
+  const Value *
+  find(const Key &k) const noexcept
   {
-    delete root;
-    root = nullptr;
+    return const_cast<radix_tree *>(this)->find(k);
+  }
+
+  [[nodiscard]] bool
+  contains(const Key &k) const noexcept
+  {
+    return const_cast<radix_tree *>(this)->find(k) != nullptr;
+  }
+
+  [[nodiscard]] usize
+  count(const Key &k) const noexcept
+  {
+    return contains(k) ? 1u : 0u;
+  }
+
+  Value &
+  at(const Key &k)
+  {
+    Value *v = find(k);
+    if ( !v ) [[unlikely]]
+      exc<except::library_error>("radix_tree::at(): key not found");
+    return *v;
+  }
+
+  const Value &
+  at(const Key &k) const
+  {
+    const Value *v = find(k);
+    if ( !v ) [[unlikely]]
+      exc<except::library_error>("radix_tree::at(): key not found");
+    return *v;
+  }
+
+  Value *
+  longest_prefix_match(const Key &k) noexcept
+  {
+    if ( !__root ) return nullptr;
+    node *best = nullptr;
+    node *cur = __root;
+    usize off = 0;
+    while ( off < k.size() ) {
+      node *e = __find_edge(cur, k, off);
+      if ( !e ) break;
+      const usize m = __match_at(e->frag, k, off);
+      if ( m != e->frag.size() ) break;
+      off += m;
+      if ( e->has_value ) best = e;
+      if ( off == k.size() ) break;
+      cur = e;
+    }
+    return best ? micron::addr(best->value) : nullptr;
+  }
+
+  const Value *
+  longest_prefix_match(const Key &k) const noexcept
+  {
+    return const_cast<radix_tree *>(this)->longest_prefix_match(k);
+  }
+
+  template<class VV>
+  bool
+  insert_or_assign(const Key &k, VV &&v)
+  {
+    if ( k.size() == 0 ) return false;
+    __ensure_root();
+    node *cur = __root;
+    usize off = 0;
+
+    for ( ;; ) {
+      node *e = __find_edge(cur, k, off);
+      if ( !e ) {
+
+        node *n = __mk();
+        n->frag = k.substr(off);
+        n->value = micron::forward<VV>(v);
+        n->has_value = true;
+        __link(cur, n);
+        ++__size;
+        return true;
+      }
+
+      const usize m = __match_at(e->frag, k, off);
+      if ( m == e->frag.size() ) {
+        off += m;
+        if ( off == k.size() ) {
+          const bool fresh = !e->has_value;
+          e->value = micron::forward<VV>(v);
+          e->has_value = true;
+          if ( fresh ) ++__size;
+          return fresh;
+        }
+        cur = e;
+        continue;
+      }
+
+      node *tail = __mk();
+      tail->frag = e->frag.substr(m);
+      tail->child = e->child;
+      tail->has_value = e->has_value;
+      if ( e->has_value ) tail->value = micron::move(e->value);
+
+      e->frag = e->frag.substr(0, m);
+      e->child = nullptr;
+      e->has_value = false;
+      __link(e, tail);
+
+      if ( off + m == k.size() ) {
+
+        e->value = micron::forward<VV>(v);
+        e->has_value = true;
+      } else {
+        node *branch = __mk();
+        branch->frag = k.substr(off + m);
+        branch->value = micron::forward<VV>(v);
+        branch->has_value = true;
+        __link(e, branch);
+      }
+      ++__size;
+      return true;
+    }
+  }
+
+  bool
+  insert(const Key &k, const Value &v)
+  {
+    if ( contains(k) ) return false;
+    return insert_or_assign(k, v);
+  }
+
+  bool
+  insert(const Key &k, Value &&v)
+  {
+    if ( contains(k) ) return false;
+    return insert_or_assign(k, micron::move(v));
+  }
+
+  Value &
+  operator[](const Key &k)
+  {
+    Value *p = find(k);
+    if ( p ) return *p;
+    insert_or_assign(k, Value());
+    return *find(k);
+  }
+
+  bool
+  erase(const Key &k)
+  {
+    if ( !__root || k.size() == 0 ) return false;
+
+    node *parent = __root;
+    node *cur = nullptr;
+    usize off = 0;
+    node *path_parent[64];
+    node *path_node[64];
+    usize depth = 0;
+
+    while ( off < k.size() ) {
+      node *e = __find_edge(parent, k, off);
+      if ( !e ) return false;
+      const usize m = __match_at(e->frag, k, off);
+      if ( m != e->frag.size() ) return false;
+      off += m;
+      if ( depth < 64 ) {
+        path_parent[depth] = parent;
+        path_node[depth] = e;
+        ++depth;
+      }
+      if ( off == k.size() ) {
+        cur = e;
+        break;
+      }
+      parent = e;
+    }
+    if ( !cur || !cur->has_value ) return false;
+
+    cur->has_value = false;
+    cur->value = Value();
+    --__size;
+
+    while ( depth > 0 ) {
+      node *n = path_node[depth - 1];
+      node *pp = path_parent[depth - 1];
+      if ( n->has_value || n->child ) break;
+      __unlink(pp, n);
+      __free(n);
+      --depth;
+    }
+    return true;
+  }
+
+  void
+  swap(radix_tree &o) noexcept
+  {
+    __pool.swap(o.__pool);
+    micron::swap(__root, o.__root);
+    micron::swap(__size, o.__size);
+  }
+
+  template<class Fn>
+  void
+  for_each(Fn &&fn)
+  {
+    if ( !__root ) return;
+    Key acc;
+    auto wrap = [&](const Key &kk, Value &vv) { fn(kk, vv); };
+    __walk(__root, acc, wrap);
+  }
+
+  template<class Fn>
+  void
+  for_each(Fn &&fn) const
+  {
+    const_cast<radix_tree *>(this)->for_each([&](const Key &kk, Value &vv) { fn(kk, static_cast<const Value &>(vv)); });
+  }
+
+  template<class Fn>
+  walk_ctl
+  traverse(Fn fn) const
+  {
+    radix_tree *self = const_cast<radix_tree *>(this);
+    if ( !self->__root ) return walk_ctl::continue_;
+    Key acc;
+    return __walk(self->__root, acc, fn);
+  }
+
+  [[nodiscard]] usize
+  blocks_allocated() const noexcept
+  {
+    return __pool.blocks();
+  }
+
+  [[nodiscard]] usize
+  pool_bytes() const noexcept
+  {
+    return __pool.bytes_held();
+  }
+
+  [[nodiscard]] static constexpr usize
+  node_bytes() noexcept
+  {
+    return sizeof(node);
   }
 };
+
+template<typename Key, typename Value> using radix = radix_tree<Key, Value>;
+
+};      // namespace micron
