@@ -23,6 +23,8 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 
 <br/>
 
+> [!NOTE]
+> the baremetal micron implementation lives on the [`barebones` branch](https://github.com/rfgplk/micron.cpp/tree/barebones).
 
 > [!WARNING]
 > micron is still in active development, the ABI may change at any point, and without notice.
