@@ -1,4 +1,4 @@
-<img align="left" style="width:300px" src="https://github.com/user-attachments/assets/8d544599-d4a3-4b8a-a61a-b83eb2a30b64" alt="micron_logo_default" width="300"/> 
+<img align="left" style="width:300px" src="https://github.com/user-attachments/assets/87b82b93-b3bf-43bf-86f2-c90a9256e888" alt="micron_barebones_logo_default" width="300"/> 
 
 <div align="left">
 
