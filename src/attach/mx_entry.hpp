@@ -23,7 +23,7 @@ inline constexpr u32 micron_mx_entry_f_all
     = micron_mx_entry_f_have_stack | micron_mx_entry_f_have_tls | micron_mx_entry_f_have_user;
 
 // 128 bytes, 8-aligned, no interior padding
-struct micron_mx_entry_args {
+struct alignas(8) micron_mx_entry_args {
   u32 abi;             // 0    == micron_mx_entry_abi
   u32 size;            // 4    == sizeof(micron_mx_entry_args) as the CRT compiled it
   u32 flags;           // 8    micron_mx_entry_f_*

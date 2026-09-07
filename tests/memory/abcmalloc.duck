@@ -28,3 +28,8 @@ test tests/rigor/abcmalloc_harden.cpp --def MICRON_ABC_ENFORCE_PROVENANCE=true -
 test tests/rigor/abcmalloc_harden.cpp --def MICRON_ABC_REDZONE=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -o bin/abc/harden_rz_prov --timeout 300
 test tests/rigor/abcmalloc_harden.cpp --arm64 -s --def MICRON_ABC_ZERO_ON_FREE=true -o bin/abc/harden_arm64 --timeout 300
 test tests/rigor/abcmalloc_harden.cpp --arm64 -s --def MICRON_ABC_REDZONE=true -o bin/abc/harden_rz_arm64 --timeout 300
+
+test tests/rigor/abcmalloc_align_predicate.cpp -o bin/abc/alignpred --timeout 300
+test tests/rigor/abcmalloc_align_predicate.cpp --def MICRON_ABC_REDZONE=true -o bin/abc/alignpred_rz --timeout 300
+test tests/rigor/abcmalloc_align_predicate.cpp --def MICRON_ABC_REDZONE=true -O2 -o bin/abc/alignpred_rz_o2 --timeout 300
+test tests/rigor/abcmalloc_align_predicate.cpp --arm64 -s --def MICRON_ABC_REDZONE=true -o bin/abc/alignpred_rz_arm64 --timeout 300

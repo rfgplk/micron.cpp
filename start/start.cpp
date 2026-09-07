@@ -4,7 +4,6 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include <micron/attach/mx_entry.hpp>
 #include <micron/bits/__arch.hpp>
 #include <micron/bits/__pause.hpp>
 #include <micron/config.hpp>
@@ -30,6 +29,7 @@ extern "C" int __micron_user_main(int argc, char **argv, char **envp) __asm__("m
 #endif
 
 #if defined(MICRON_MX_START)
+#include <micron/attach/mx_entry.hpp>
 // the mx entry takes a descriptor rather than (argc, argv, envp), so it cannot be called main;
 #if !defined(MICRON_MX_ENTRY)
 #define MICRON_MX_ENTRY "entry"

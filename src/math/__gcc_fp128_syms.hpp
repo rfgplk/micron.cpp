@@ -14,6 +14,10 @@
 
 #include "../types.hpp"
 
+#ifndef __mc_libgcc_sym
+#define __mc_libgcc_sym __attribute__((weak, used, retain))
+#endif
+
 #if defined(__SIZEOF_INT128__) && defined(__FLT128_MANT_DIG__)
 __micron_diagnostic_push
 __micron_diagnostic_ignored("-Wpedantic")
@@ -218,19 +222,19 @@ __tf_trunc_to(__tf_rep b) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // arithmetic
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __addtf3(_Float128 fa, _Float128 fb) noexcept
 {
   return __tf_addsub(__tf_bits(fa), __tf_bits(fb));
 }
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __subtf3(_Float128 fa, _Float128 fb) noexcept
 {
   return __tf_addsub(__tf_bits(fa), __tf_bits(fb) ^ __tf_signbit);
 }
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __multf3(_Float128 fa, _Float128 fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
@@ -282,7 +286,7 @@ __multf3(_Float128 fa, _Float128 fb) noexcept
   return __tf_from(result);
 }
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __divtf3(_Float128 fa, _Float128 fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
@@ -344,7 +348,7 @@ __divtf3(_Float128 fa, _Float128 fb) noexcept
   return __tf_from(result);
 }
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __negtf2(_Float128 x) noexcept
 {
   return __tf_from(__tf_bits(x) ^ __tf_signbit);
@@ -353,7 +357,7 @@ __negtf2(_Float128 x) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // integer -> binary128
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __floatditf(long long i) noexcept      // signed 64-bit int -> binary128 (exact)
 {
   if ( i == 0 ) return __tf_from(0);
@@ -365,7 +369,7 @@ __floatditf(long long i) noexcept      // signed 64-bit int -> binary128 (exact)
   return __tf_from((neg ? __tf_signbit : 0) | (exp << __tf_mantbits) | (sig & __tf_mantmask));
 }
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __floatunditf(unsigned long long u) noexcept      // unsigned 64-bit int -> binary128 (exact)
 {
   if ( u == 0 ) return __tf_from(0);
@@ -375,13 +379,13 @@ __floatunditf(unsigned long long u) noexcept      // unsigned 64-bit int -> bina
   return __tf_from((exp << __tf_mantbits) | (sig & __tf_mantmask));
 }
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __floatsitf(int i) noexcept
 {
   return __floatditf(i);
 }
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __floatunsitf(unsigned int u) noexcept
 {
   return __floatunditf(u);
@@ -391,7 +395,7 @@ __floatunsitf(unsigned int u) noexcept
 // binary128 -> integer
 // sign-selected extreme, matching __fixtfdi's original convention)
 
-extern "C" __attribute__((weak)) long long
+extern "C" __mc_libgcc_sym long long
 __fixtfdi(_Float128 fa) noexcept      // binary128 -> signed 64-bit int (truncate toward zero)
 {
   const __tf_rep a = __tf_bits(fa);
@@ -412,7 +416,7 @@ __fixtfdi(_Float128 fa) noexcept      // binary128 -> signed 64-bit int (truncat
   return neg ? -static_cast<long long>(m) : static_cast<long long>(m);
 }
 
-extern "C" __attribute__((weak)) unsigned long long
+extern "C" __mc_libgcc_sym unsigned long long
 __fixunstfdi(_Float128 fa) noexcept      // binary128 -> unsigned 64-bit int (truncate toward zero)
 {
   const __tf_rep a = __tf_bits(fa);
@@ -427,7 +431,7 @@ __fixunstfdi(_Float128 fa) noexcept      // binary128 -> unsigned 64-bit int (tr
   return static_cast<unsigned long long>(sig >> (__tf_mantbits - unbiased));
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __fixtfsi(_Float128 fa) noexcept
 {
   const long long v = __fixtfdi(fa);
@@ -436,7 +440,7 @@ __fixtfsi(_Float128 fa) noexcept
   return static_cast<int>(v);
 }
 
-extern "C" __attribute__((weak)) unsigned int
+extern "C" __mc_libgcc_sym unsigned int
 __fixunstfsi(_Float128 fa) noexcept
 {
   const unsigned long long v = __fixunstfdi(fa);
@@ -446,7 +450,7 @@ __fixunstfsi(_Float128 fa) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // widening conversions
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __extenddftf2(double x) noexcept
 {
   const unsigned long long db = __builtin_bit_cast(unsigned long long, x);
@@ -465,7 +469,7 @@ __extenddftf2(double x) noexcept
   return __tf_from(s | (static_cast<__tf_rep>(de - 1023 + __tf_bias) << __tf_mantbits) | (static_cast<__tf_rep>(dm) << 60));
 }
 
-extern "C" __attribute__((weak)) _Float128
+extern "C" __mc_libgcc_sym _Float128
 __extendsftf2(float x) noexcept
 {
   const unsigned int fb = __builtin_bit_cast(unsigned int, x);
@@ -486,13 +490,13 @@ __extendsftf2(float x) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%
 // narrowing conversions
 
-extern "C" __attribute__((weak)) double
+extern "C" __mc_libgcc_sym double
 __trunctfdf2(_Float128 x) noexcept
 {
   return __builtin_bit_cast(double, __tf_trunc_to<unsigned long long, 52, 11, 1023>(__tf_bits(x)));
 }
 
-extern "C" __attribute__((weak)) float
+extern "C" __mc_libgcc_sym float
 __trunctfsf2(_Float128 x) noexcept
 {
   return __builtin_bit_cast(float, __tf_trunc_to<unsigned int, 23, 8, 127>(__tf_bits(x)));
@@ -501,7 +505,7 @@ __trunctfsf2(_Float128 x) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // comparisons; libgcc style
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __lttf2(_Float128 fa, _Float128 fb) noexcept      // <0 if a<b, 0 if a==b, >0 otherwise; unordered -> >0
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
@@ -509,7 +513,7 @@ __lttf2(_Float128 fa, _Float128 fb) noexcept      // <0 if a<b, 0 if a==b, >0 ot
   return __tf_cmp3(a, b);
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __letf2(_Float128 fa, _Float128 fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
@@ -517,7 +521,7 @@ __letf2(_Float128 fa, _Float128 fb) noexcept
   return __tf_cmp3(a, b);
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __gttf2(_Float128 fa, _Float128 fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
@@ -525,7 +529,7 @@ __gttf2(_Float128 fa, _Float128 fb) noexcept
   return __tf_cmp3(a, b);
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __getf2(_Float128 fa, _Float128 fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
@@ -533,7 +537,7 @@ __getf2(_Float128 fa, _Float128 fb) noexcept
   return __tf_cmp3(a, b);
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __eqtf2(_Float128 fa, _Float128 fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
@@ -541,7 +545,7 @@ __eqtf2(_Float128 fa, _Float128 fb) noexcept
   return __tf_cmp3(a, b) != 0;
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __netf2(_Float128 fa, _Float128 fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
@@ -549,7 +553,7 @@ __netf2(_Float128 fa, _Float128 fb) noexcept
   return __tf_cmp3(a, b) != 0;
 }
 
-extern "C" __attribute__((weak)) int
+extern "C" __mc_libgcc_sym int
 __unordtf2(_Float128 fa, _Float128 fb) noexcept
 {
   return __tf_either_nan(__tf_bits(fa), __tf_bits(fb)) ? 1 : 0;

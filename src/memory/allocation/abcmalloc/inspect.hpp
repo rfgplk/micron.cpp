@@ -407,7 +407,9 @@ build(void)
 constexpr bool
 abc_inspect_valid(const abc_inspect_desc *d)
 {
-  if ( d == nullptr ) return false;
+  if !consteval {
+    if ( d == nullptr ) return false;
+  }
   if ( d->magic != abc_inspect_magic ) return false;
   if ( d->version != abc_inspect_version ) return false;
   if ( d->abi != static_cast<u16>(MICRON_ABI) ) return false;
@@ -448,8 +450,7 @@ __ins_tiers_consistent(void)
   const auto &d = __ins::__self;
   for ( u32 i = 0; i < abc_n_tiers; ++i ) {
     if ( d.tiers[i].off_idx != d.tiers[0].off_idx ) return false;
-    if ( d.tiers[i].off_count
-         != static_cast<u64>(d.tiers[i].off_idx) + static_cast<u64>(d.tiers[i].max_sheets) * d.sizeof_range )
+    if ( d.tiers[i].off_count != static_cast<u64>(d.tiers[i].off_idx) + static_cast<u64>(d.tiers[i].max_sheets) * d.sizeof_range )
       return false;
   }
   return true;

@@ -99,8 +99,6 @@ operator delete[](void *ptr, usize size) noexcept
 
 // §17.6.3 — aligned scalar/array new and delete
 //
-// abc::aligned_alloc routes to abc::alloc() when alignment <= 32 (__hdr_offset) and to a shifted aligned-pointer scheme when alignment > 32
-//
 // NOTE: std::align_val_t is declared, not defined, at the top of this file
 
 namespace micron
@@ -111,29 +109,13 @@ namespace __aligned_new
 __do_alloc(usize size, usize align)
 {
   const usize padded = (size + align - 1) & ~(align - 1);
-#if defined(__micron_abcmalloc_std_backend)
-  return abc::aligned_alloc(align, padded ? padded : align);
-#else
-  return ::aligned_alloc(align, padded ? padded : align);
-#endif
+  return micron::__alloc_aligned(align, padded ? padded : align);
 }
 
 [[gnu::always_inline]] inline void
 __do_free(void *ptr, usize align)
 {
-#if defined(__micron_abcmalloc_std_backend)
-  // WARNING: the bound is native_block_alignment, NOT a literal 32 -- under
-  // MICRON_ABC_REDZONE it is 16, so a 32-aligned new took the prefix path while
-  // this took the raw one and the block start was never released
-  if ( align <= abc::native_block_alignment ) {
-    micron::__free(ptr);      // alignment fits in the abc header offset, raw alloc was used
-  } else {
-    abc::aligned_free(ptr);
-  }
-#else
-  (void)align;
-  micron::__free(ptr);
-#endif
+  micron::__free_aligned(ptr, align);
 }
 };      // namespace __aligned_new
 };      // namespace micron

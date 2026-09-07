@@ -74,10 +74,3 @@ test tests/adv/adv_cve_2019_12589_filter_immutable.cpp -o bin/adv/asan --asan --
 test tests/adv/adv_cve_2024_21626_leaked_dirfd.cpp -o bin/adv/asan --asan --timeout 600 -f
 test tests/adv/adv_cve_2019_5736_procexe.cpp -o bin/adv/asan --asan --timeout 600 -f
 test tests/adv/adv_cve_2019_9893_arg64_split.cpp -o bin/adv/asan --asan --timeout 600 -f
-
-# NOTE: there is deliberately no --ubsan group. Every TU that reaches
-# memory/allocation/abcmalloc/inspect.hpp fails to BUILD under --ubsan at HEAD
-# ("inspect.hpp:426: non-constant condition for static assertion"), tree-wide and unrelated to
-# src/sec -- tests/rigor/sec.duck:53-58 keeps its --ubsan cells anyway and eats three failures for
-# it. This manifest does not, because a tier whose whole value is "a red line means a real finding"
-# must not ship three red lines that mean nothing. Add the group when that assertion is fixed.

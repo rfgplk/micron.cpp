@@ -1,0 +1,9 @@
+test tests/rigor/simd_bitwise.cpp -o bin/simd/native            --timeout 180 -f
+test tests/rigor/simd_bitwise.cpp -o bin/simd/base  --isa base  --timeout 180 -f
+test tests/rigor/simd_bitwise.cpp -o bin/simd/v3    --isa v3    --timeout 180 -f
+test tests/rigor/simd_bitwise.cpp -o bin/simd/o0    -O0         --timeout 180 -f
+test tests/rigor/simd_bitwise.cpp -o bin/simd/arm   --arm       --timeout 300
+test tests/rigor/simd_bitwise.cpp -o bin/simd/arm64 --arm64     --timeout 300
+test tests/rigor/gcc_int_syms.cpp -o bin/simd/native            --timeout 180 -f
+test tests/rigor/gcc_int_syms.cpp -o bin/simd/o0    -O0         --timeout 180 -f
+test tests/rigor/gcc_int_syms.cpp -o bin/simd/arm64 --arm64     --timeout 300

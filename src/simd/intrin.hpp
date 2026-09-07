@@ -157,6 +157,16 @@
 
 #endif
 
+namespace micron
+{
+namespace simd
+{
+namespace __bits
+{
+}
+};      // namespace simd
+};      // namespace micron
+
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 using namespace ::micron::simd::__bits;
 #endif

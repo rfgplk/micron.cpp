@@ -139,7 +139,7 @@ all_set_128(const void *_ptr, usize len, const char b)
     i128 chunk = _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr + i));
     i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
 
-    if ( _mm_movemask_epi8(cmp) != -1 ) return false;
+    if ( _mm_movemask_epi8(cmp) != 0xFFFF ) return false;
   }
   // scalar tail
   for ( ; i < len; ++i )

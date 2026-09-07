@@ -13,7 +13,9 @@
 #include "../types.hpp"
 
 // WARNING: USED IS NOT OPTIONAL HERE WEAK ALONE ISN'T ENOUGH
+#ifndef __mc_libgcc_sym
 #define __mc_libgcc_sym __attribute__((weak, used, retain))
+#endif
 
 #if !defined(__x86_64__) && !defined(__aarch64__)
 
@@ -153,6 +155,74 @@ __umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
     if ( r >= d ) r -= d;
   }
   return r;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// TI-MODE SHIFTS. A VARIABLE-DISTANCE SHIFT OF AN __int128 *IS* THE LIBCALL BEING DEFINED HERE, so
+// writing these as `u << b` makes each one call itself. The constant distances above (`<< 1`,
+// `>> 127`) are fine -- those expand inline -- but a runtime distance does not, which is why these
+// split into 64-bit halves where the shift is a native instruction.
+//
+// __gcc_fp128_syms.hpp needs __lshrti3 for its own normalisation shifts, so without this an aarch64
+// freestanding link fails at the very header that exists to keep it linking. The other two are the
+// rest of the family: a sibling missing from a ladder is how that gap arrived in the first place.
+// The shift count is `int` -- libgcc2.h's shift_count_type, which aarch64 does not override.
+extern "C" __mc_libgcc_sym __int128
+__ashlti3(__int128 u, int b) noexcept
+{
+  if ( b == 0 ) return u;
+  const unsigned __int128 uu = static_cast<unsigned __int128>(u);
+  const unsigned long long lo = static_cast<unsigned long long>(uu);
+  const unsigned long long hi = static_cast<unsigned long long>(uu >> 64);
+  const int bm = 64 - b;
+  unsigned long long rlo, rhi;
+  if ( bm <= 0 ) {
+    rlo = 0;
+    rhi = lo << (-bm);
+  } else {
+    rlo = lo << b;
+    rhi = (hi << b) | (lo >> bm);
+  }
+  return static_cast<__int128>((static_cast<unsigned __int128>(rhi) << 64) | rlo);
+}
+
+extern "C" __mc_libgcc_sym __int128
+__lshrti3(__int128 u, int b) noexcept
+{
+  if ( b == 0 ) return u;
+  const unsigned __int128 uu = static_cast<unsigned __int128>(u);
+  const unsigned long long lo = static_cast<unsigned long long>(uu);
+  const unsigned long long hi = static_cast<unsigned long long>(uu >> 64);
+  const int bm = 64 - b;
+  unsigned long long rlo, rhi;
+  if ( bm <= 0 ) {
+    rhi = 0;
+    rlo = hi >> (-bm);
+  } else {
+    rhi = hi >> b;
+    rlo = (lo >> b) | (hi << bm);
+  }
+  return static_cast<__int128>((static_cast<unsigned __int128>(rhi) << 64) | rlo);
+}
+
+extern "C" __mc_libgcc_sym __int128
+__ashrti3(__int128 u, int b) noexcept
+{
+  if ( b == 0 ) return u;
+  const unsigned __int128 uu = static_cast<unsigned __int128>(u);
+  const unsigned long long lo = static_cast<unsigned long long>(uu);
+  const long long hi = static_cast<long long>(static_cast<unsigned long long>(uu >> 64));
+  const int bm = 64 - b;
+  unsigned long long rlo;
+  long long rhi;
+  if ( bm <= 0 ) {
+    rhi = hi >> 63;      // the sign bit smeared the whole way down
+    rlo = static_cast<unsigned long long>(hi >> (-bm));
+  } else {
+    rhi = hi >> b;
+    rlo = (lo >> b) | (static_cast<unsigned long long>(hi) << bm);
+  }
+  return static_cast<__int128>((static_cast<unsigned __int128>(static_cast<unsigned long long>(rhi)) << 64) | rlo);
 }
 
 __micron_diagnostic_pop

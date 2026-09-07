@@ -31,7 +31,7 @@ thread_local int g_tls_probe = 11;
 }      // namespace
 
 extern "C" int
-mx_main(const micron_mx_entry_args *a)
+entry(const micron_mx_entry_args *a)
 {
   sb::print("=== MICRON MX ENTRY ===");
 

@@ -26,6 +26,20 @@ __free(T *ptr)
 {
   abc::dealloc(reinterpret_cast<byte *>(ptr));
 }
+
+inline constexpr usize __native_alignment = abc::native_block_alignment;
+
+inline __attribute__((always_inline)) void *
+__alloc_aligned(usize alignment, usize bytes)
+{
+  return abc::aligned_alloc(alignment, bytes);
+}
+
+inline __attribute__((always_inline)) void
+__free_aligned(void *ptr, usize alignment)
+{
+  abc::aligned_free(ptr, alignment);
+}
 #else
 inline __attribute__((always_inline)) void *
 __alloc(usize sz)
@@ -36,6 +50,20 @@ __alloc(usize sz)
 template<typename T>
 inline __attribute__((always_inline)) void
 __free(T *ptr)
+{
+  ::free(ptr);
+}
+
+inline constexpr usize __native_alignment = sizeof(void *) * 2;
+
+inline __attribute__((always_inline)) void *
+__alloc_aligned(usize alignment, usize bytes)
+{
+  return ::aligned_alloc(alignment, bytes);
+}
+
+inline __attribute__((always_inline)) void
+__free_aligned(void *ptr, usize)
 {
   ::free(ptr);
 }

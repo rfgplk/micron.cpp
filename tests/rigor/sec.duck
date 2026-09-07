@@ -50,12 +50,6 @@ test tests/rigor/sec_fail_closed.cpp  -o bin/sec/asan --asan --timeout 600 -f
 test tests/rigor/sec_selinux.cpp      -o bin/sec/asan --asan --timeout 600 -f
 test tests/rigor/sec_policy.cpp       -o bin/sec/asan --asan --timeout 600 -f
 
-# NOTE (2026-09-02): the --ubsan cells below DO NOT BUILD at HEAD, and not because of anything in
-# src/sec. Every TU that reaches memory/allocation/abcmalloc/inspect.hpp fails there with
-#   inspect.hpp:426: non-constant condition for static assertion
-# under --ubsan -- tests/rigor/rigor_lz_laziness.cpp and tests/rigor/vector_try_reserve.cpp fail
-# identically, and lz.duck already carries --ubsan cells with the same breakage. The cells are kept
-# because they are the right cells; they will pass once that assertion is fixed tree-wide.
 test tests/rigor/sec_bpf_encode.cpp   -o bin/sec/ubsan --ubsan --timeout 600 -f
 test tests/rigor/sec_selinux.cpp      -o bin/sec/ubsan --ubsan --timeout 600 -f
 test tests/rigor/sec_policy.cpp       -o bin/sec/ubsan --ubsan --timeout 600 -f

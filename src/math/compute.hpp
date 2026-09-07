@@ -8,7 +8,7 @@
 #include "../atomic/atomic.hpp"
 #include "../concepts.hpp"
 #include "../except.hpp"
-#include "../memory/allocation/abcmalloc/malloc.hpp"
+#include "../memory/allocation/__internal.hpp"
 #include "../memory/cmemory.hpp"
 #include "../new.hpp"
 #include "../slice.hpp"
@@ -186,17 +186,14 @@ struct host_domains {
     usize padded{};
     if ( __builtin_add_overflow(bytes, alignment - 1, &padded) ) return nullptr;
     padded &= ~(alignment - 1);
-    return abc::aligned_alloc(alignment, padded);
+    return micron::__alloc_aligned(alignment, padded);
   }
 
   static void
   release(domain_type, void *pointer, usize, usize alignment) noexcept
   {
     if ( !pointer ) return;
-    if ( alignment <= abc::__hdr_offset )
-      abc::dealloc(reinterpret_cast<byte *>(pointer));
-    else
-      abc::aligned_free(pointer);
+    micron::__free_aligned(pointer, alignment);
   }
 
   [[nodiscard]] static compute_status

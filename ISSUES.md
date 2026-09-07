@@ -18,6 +18,7 @@
 - **`convector`'s `fast_mutex` shares a cache line with the metadata it guards**
 - **`ivector::insert()` cannot insert at the end.**
 - **`clear()` is O(n) even for a trivially destructible element type, by design.**
+- **a zero-length `micron::vector` is formal UB**
 
 ## Known-failing tests
 
