@@ -8,7 +8,7 @@
 #include "__arch.hpp"
 #include "__attach_hook.hpp"
 
-#include "../syscall.hpp"
+#include "../port/wait.hpp"
 #include "../types.hpp"
 
 // per-thread exit hooks
@@ -120,8 +120,11 @@ __micron_park_checkpoint() noexcept
   if ( p == nullptr ) return;
   u32 v = __atomic_load_n(p, __ATOMIC_ACQUIRE);
   while ( v == __park_parked ) {
-    // NOTE: deliberately the RAW syscall, not micron::__futex, abcmalloc pulls this in
-    micron::syscall(SYS_futex, p, 128 /*FUTEX_WAIT|FUTEX_PRIVATE_FLAG*/, __park_parked, nullptr, nullptr, 0);
+    // Phase 4: this was deliberately a RAW syscall rather than micron::__futex, because
+    // sync/futex.hpp costs 64 transitive headers and abcmalloc pulls this file in. port/wait.hpp
+    // costs 18 and emits the same instruction, so the original argument no longer applies --
+    // MEASURED, not assumed (see the plan's Step 9 note).
+    micron::port::wait(p, __park_parked, -1);
     v = __atomic_load_n(p, __ATOMIC_ACQUIRE);
   }
   if ( v == __park_dying && __micron_thread_die ) __micron_thread_die();

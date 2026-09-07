@@ -1,5 +1,5 @@
 #include "../../src/simd/strings.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 // NOTE: values must be UNIQUE within the array for "first match == i" to hold, which caps the
 // element count at 200 so a u8 array stays collision-free. Needle 0 is never stored, so it is a
 // guaranteed miss for every width.

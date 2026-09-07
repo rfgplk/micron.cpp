@@ -68,7 +68,7 @@ bit(const unsigned long r, const unsigned long b)
   return 0x01 & (r >> b);
 }
 
-char
+static inline char
 have_cpuid(void)
 {
   unsigned int eax = 0, ebx = 0;
@@ -92,7 +92,7 @@ have_cpuid(void)
   return 1;
 }
 
-int
+static inline int
 maximum_leaf(void)
 {
   cstruct_t cs = { .eax = 0, .ebx = 0, .ecx = 0, .edx = 0 };

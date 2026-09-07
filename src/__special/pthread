@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../linux/sys/types.hpp"
+#include "../bits/__posix_types.hpp"
 #include "../bits-types.hpp"
 
 #undef __USE_GUN

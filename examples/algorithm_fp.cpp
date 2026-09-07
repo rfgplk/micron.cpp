@@ -26,7 +26,7 @@
 
 #include "../src/algorithm/fp.hpp"
 #include "../src/array/array.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/vector/vector.hpp"
 
 // println(vec) gives "{ 1, 2, 3 }"; this thin wrapper just prefixes

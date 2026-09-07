@@ -184,7 +184,7 @@ sd_rsqrt(const double x)
 #endif
 }
 
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
 __attribute__((always_inline)) inline simd::f128
 vsqrt(simd::f128 v) noexcept
 {
@@ -202,7 +202,7 @@ vrsqrt_approx(simd::f128 v) noexcept
 {
   return simd::sse::rsqrt_f32(v);
 }
-#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon) && !defined(__micron_simd_generic)
 __attribute__((always_inline)) inline simd::f128
 vsqrt(simd::f128 v) noexcept
 {
@@ -234,7 +234,7 @@ vrsqrt_approx(simd::f128 v) noexcept
 }
 #endif
 
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
 __attribute__((always_inline)) inline simd::f256
 vsqrt(simd::f256 v) noexcept
 {

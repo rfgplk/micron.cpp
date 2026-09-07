@@ -13,7 +13,7 @@
 //
 // Build: `duck build tests/rigor/rigor_fvector.cpp`; run `bin/rigor_fvector`.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/vector/fvector.hpp"
 

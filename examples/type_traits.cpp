@@ -8,7 +8,7 @@
 //   examples/types.cpp    — the underlying type aliases (i32, f64, ...)
 
 #include "../src/type_traits.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 // Helper: print a bool with a label
 static void

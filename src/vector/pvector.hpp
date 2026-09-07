@@ -9,6 +9,7 @@
 #include "../except.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
+#include "../memory/allocation/__internal.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/new.hpp"
 #include "../tags.hpp"
@@ -129,7 +130,7 @@ class pvector
   static inline __node *
   __alloc_internal(void)
   {
-    __node *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
+    __node *n = reinterpret_cast<__node *>(micron::__alloc(sizeof(__node)));
     n->refs = 1;
     for ( usize i = 0; i < B; ++i ) n->children[i] = nullptr;
     return n;
@@ -138,7 +139,7 @@ class pvector
   static inline __leaf *
   __alloc_leaf(void)
   {
-    __leaf *l = reinterpret_cast<__leaf *>(abc::alloc(sizeof(__leaf)));
+    __leaf *l = reinterpret_cast<__leaf *>(micron::__alloc(sizeof(__leaf)));
     if ( l != nullptr ) [[likely]]
       l->refs = 1u;
     return l;
@@ -150,7 +151,7 @@ class pvector
     if constexpr ( !micron::is_trivially_destructible_v<T> ) {
       for ( usize i = 0; i < B; ++i ) l->values[i].~T();
     }
-    abc::dealloc(reinterpret_cast<byte *>(l));
+    micron::__free(l);
   }
 
   template<usize Lvl>
@@ -184,7 +185,7 @@ class pvector
       __node *n = __as_node(p);
       if ( __atomic_fetch_sub(&n->refs, 1u, __ATOMIC_ACQ_REL) == 1u ) [[unlikely]] {
         for ( usize i = 0; i < B; ++i ) __release<Lvl - 1>(n->children[i]);
-        abc::dealloc(reinterpret_cast<byte *>(n));
+        micron::__free(n);
       }
     }
   }
@@ -217,7 +218,7 @@ class pvector
       } catch ( ... ) {
         if constexpr ( !micron::is_trivially_copyable_v<T> )
           for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
-        abc::dealloc(reinterpret_cast<byte *>(fresh));
+        micron::__free(fresh);
         throw;
       }
 #endif
@@ -245,7 +246,7 @@ class pvector
         }
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
-        abc::dealloc(reinterpret_cast<byte *>(fresh));
+        micron::__free(fresh);
         throw;
       }
 #endif
@@ -299,7 +300,7 @@ class pvector
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < built; ++j ) l->values[j].~T();
-        abc::dealloc(reinterpret_cast<byte *>(l));
+        micron::__free(l);
         throw;
       }
 #endif
@@ -315,7 +316,7 @@ class pvector
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(n->children[j]);
-        abc::dealloc(reinterpret_cast<byte *>(n));
+        micron::__free(n);
         throw;
       }
 #endif
@@ -346,7 +347,7 @@ class pvector
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < built; ++j ) l->values[j].~T();
-        abc::dealloc(reinterpret_cast<byte *>(l));
+        micron::__free(l);
         throw;
       }
 #endif
@@ -362,7 +363,7 @@ class pvector
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(n->children[j]);
-        abc::dealloc(reinterpret_cast<byte *>(n));
+        micron::__free(n);
         throw;
       }
 #endif
@@ -398,7 +399,7 @@ class pvector
       } catch ( ... ) {
         if constexpr ( !micron::is_trivially_copyable_v<T> )
           for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
-        abc::dealloc(reinterpret_cast<byte *>(fresh));
+        micron::__free(fresh);
         throw;
       }
 #endif
@@ -430,7 +431,7 @@ class pvector
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < done; ++j ) __release<Lvl - 1>(fresh->children[j]);
-        abc::dealloc(reinterpret_cast<byte *>(fresh));
+        micron::__free(fresh);
         throw;
       }
 #endif
@@ -1262,7 +1263,7 @@ public:
   {
     if ( __size < 2 ) return pvector(*this);
 
-    byte *buf = reinterpret_cast<byte *>(abc::alloc(__size * sizeof(T)));
+    byte *buf = reinterpret_cast<byte *>(micron::__alloc_n(__size, sizeof(T)));
     T *arr = reinterpret_cast<T *>(buf);
     for ( usize i = 0; i < __size; ++i ) new (micron::addr(arr[i])) T(get(i));
 
@@ -1273,7 +1274,7 @@ public:
     if constexpr ( !micron::is_trivially_destructible_v<T> ) {
       for ( usize i = 0; i < __size; ++i ) arr[i].~T();
     }
-    abc::dealloc(buf);
+    micron::__free(buf);
 
     return pvector(root, __size);
   }

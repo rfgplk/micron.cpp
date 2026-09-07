@@ -5,9 +5,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../linux/sys/types.hpp"
 #include "../numerics.hpp"
-#include "../syscall.hpp"
+#include "../port/backends/__syscall.hpp"
 #include "../types.hpp"
 
 #include "addr.hpp"

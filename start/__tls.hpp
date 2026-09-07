@@ -6,11 +6,16 @@
 #pragma once
 
 #include <micron/bits/__arch.hpp>
+
 #include <micron/exit.hpp>
-#include <micron/syscall.hpp>
+
+#include <micron/port/backends/__syscall.hpp>
+
 #include <micron/types.hpp>
 
-#include <micron/attach/surplus.hpp>
+#if defined(MICRON_ENABLE_ATTACH)
+#include "surplus.hpp"
+#endif
 
 #include "__auxv.hpp"
 

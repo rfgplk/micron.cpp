@@ -8,7 +8,7 @@
 
 #include "../src/hash/xx.hpp"
 #include "../src/hash/zzz.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/std.hpp"
 
 int

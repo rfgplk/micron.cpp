@@ -1,7 +1,7 @@
 // span_tests.cpp
 // Comprehensive snowball test suite for micron::span<T, N>
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/span.hpp"
 #include "../../src/std.hpp"
 

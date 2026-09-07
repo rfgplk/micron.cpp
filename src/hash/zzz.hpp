@@ -6,9 +6,12 @@
 #pragma once
 
 #include "../bits/__arch.hpp"
-#if defined(__micron_arch_arm_any)
+// zzz is a vector-only hash family: the ARM port needs NEON and the x86 port needs AVX2. Below
+// either -- and on the generic tier, where the ISA may exist but is not ours to use -- this file
+// defines nothing and default_hash_* falls back to murmur/rapid, as it always has.
+#if defined(__micron_arch_arm_any) && defined(__micron_arm_neon) && !defined(__micron_simd_generic)
 #include "zzz_arm.hpp"
-#elif defined(__micron_x86_avx2)
+#elif defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
 
 #include "../simd/aliases.hpp"
 #include "../simd/simd.hpp"

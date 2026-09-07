@@ -28,6 +28,13 @@ mkdir -p mystart
 touch mystart/start.s        mystart/start_i386.s  mystart/start_arm32.s  mystart/start_arm64.s \
       mystart/direct.s       mystart/direct_i386.s mystart/direct_arm32.s mystart/direct_arm64.s \
       mystart/start.cpp      mystart/eh_runtime.cpp
+mkdir -p mystart/metal
+touch mystart/metal/reset.s        mystart/metal/reset_i386.s  mystart/metal/reset_arm32.s \
+      mystart/metal/reset_arm64.s  mystart/metal/reset_amd64_lm.s mystart/metal/reset_cortexm.s \
+      mystart/metal/metal_start.cpp mystart/metal/mc_mport.cpp \
+      mystart/metal/mc_metal_libgcc.cpp \
+      mystart/metal/metal.ld       mystart/metal/metal_i386.ld mystart/metal/metal_arm32.ld \
+      mystart/metal/metal_arm64.ld mystart/metal/metal_stm32.ld
 printf '.text\n.global _start\n_start:\n'  > boot.s
 
 pass=0
@@ -35,6 +42,9 @@ fail=0
 
 # splat emits the compile line first; the run line (if any) follows
 compile_line() { "$duck" splat "$@" 2>/dev/null | head -1; }
+
+# stdout OR stderr
+line_any() { "$duck" splat "$@" 2>&1 | head -1; }
 
 ok() { pass=$((pass + 1)); }
 no() { fail=$((fail + 1)); printf '  FAIL  %s\n' "$1"; }
@@ -235,5 +245,140 @@ must_fail "--start but no source"         build --start mystart -k
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo "[--kernel: the Phase 5 kernel-module object]"
+# the codegen set, per arch. these are the flags that make a .ko object legal; a missing one is not
+# a style problem, it is a corrupted userspace FP state or a link failure inside kbuild.
+want "kernel amd64 kills the vector units" "$(compile_line compile t.cpp --kernel --x86 -o out)" \
+     "-mno-sse" "-mno-mmx" "-mno-80387" "-mno-3dnow" "-mno-red-zone" "-mcmodel=kernel"
+want "kernel amd64 kills the C++ runtime hooks" "$(compile_line compile t.cpp --kernel --x86 -o out)" \
+     "-fno-threadsafe-statics" "-fno-use-cxa-atexit" "-fno-common" "-fno-asynchronous-unwind-tables" "-fno-pie"
+want "kernel defines the four macros" "$(compile_line compile t.cpp --kernel --x86 -o out)" \
+     "-DMICRON_PORT_KERNEL" "-DMICRON_NO_SIMD" "-DMICRON_NO_FP" "-DMICRON_NO_TLS"
+want "kernel arm64 uses -mgeneral-regs-only" "$(compile_line compile t.cpp --kernel --arm64 -o out)" "-mgeneral-regs-only"
+# armv7's -mgeneral-regs-only rejects a float in a DECLARATION, not merely in codegen; soft-float is
+# what the real arm32 kernel builds with. Getting this wrong is 426 errors in numerics.hpp alone.
+want    "kernel armv7 uses soft-float"      "$(compile_line compile t.cpp --kernel --arm -o out)" "-mfloat-abi=soft"
+wantnot "kernel armv7 avoids -mgeneral-regs-only" "$(compile_line compile t.cpp --kernel --arm -o out)" "-mgeneral-regs-only"
+# --kernel forces a real object: no LTO bytecode, and no crt however hard you ask for one
+want    "kernel is a real object" "$(compile_line compile t.cpp --kernel --x86 -o out)" "-c" "-fno-lto"
+wantnot "kernel links no crt"     "$(compile_line compile t.cpp --kernel --x86 --start /nope -o out)" "start.s" "start.cpp"
+# and it is not a program
+must_fail "duck run --kernel"     run t.cpp --kernel
+must_fail "duck test --kernel"    test t.cpp --kernel
+must_fail "duck emulate --kernel" emulate t.cpp --kernel --arm64
+must_fail "--kernel with --direct" compile t.cpp --kernel --direct
+
+echo "[--metal: the Phase 6 bare-metal image]"
+
+# the same "no vector unit, no FPU" set as --kernel...
+want "metal amd64 kills the vector units" "$(compile_line build t.cpp --metal --x86 --start mystart -o out)" \
+     "-mno-sse" "-mno-mmx" "-mno-80387" "-mno-3dnow" "-mno-red-zone"
+# ...but NOT the kernel's own address model: -mcmodel=kernel is a Linux-kernel choice and means
+# nothing on a board
+wantnot "metal does not use -mcmodel=kernel" "$(compile_line build t.cpp --metal --x86 --start mystart -o out)" "-mcmodel=kernel"
+want "metal defines the four macros" "$(compile_line build t.cpp --metal --x86 --start mystart -o out)" \
+     "-DMICRON_PORT_METAL" "-DMICRON_NO_SIMD" "-DMICRON_NO_FP" "-DMICRON_NO_TLS"
+want "metal arm64 uses -mgeneral-regs-only" "$(compile_line build t.cpp --metal --arm64 --start mystart -o out)" "-mgeneral-regs-only"
+want "metal armv7 uses soft-float"         "$(compile_line build t.cpp --metal --arm --start mystart -o out)" "-mfloat-abi=soft"
+
+# UNLIKE --kernel, IT LINKS -- the reset vector, the entry body, the board hooks, the libgcc shim
+# and the layout script. A board has no other linker.
+want "metal links the reset vector + crt" "$(compile_line build t.cpp --metal --x86 --start mystart -o out)" \
+     "mystart/metal/reset.s" "mystart/metal/metal_start.cpp" "mystart/metal/mc_mport.cpp" "mystart/metal/mc_metal_libgcc.cpp"
+want "metal i386 takes the i386 reset vector" "$(compile_line build t.cpp --metal --i386 --start mystart -o out)" "mystart/metal/reset_i386.s"
+want "metal arm32 takes the arm32 reset vector" "$(compile_line build t.cpp --metal --arm --start mystart -o out)" "mystart/metal/reset_arm32.s"
+want "metal arm64 takes the arm64 reset vector" "$(compile_line build t.cpp --metal --arm64 --start mystart -o out)" "mystart/metal/reset_arm64.s"
+# NOT start.cpp: that boots TLS, auxv, atexit, a threadpool and io buffers, none of which exists here
+wantnot "metal does not link start.cpp" "$(compile_line build t.cpp --metal --x86 --start mystart -o out)" "mystart/start.cpp" "mystart/start.s"
+# the layout script is not optional and is per arch
+want "metal amd64 uses metal.ld"  "$(compile_line build t.cpp --metal --x86   --start mystart -o out)" "-T" "mystart/metal/metal.ld"
+want "metal i386 uses metal_i386.ld" "$(compile_line build t.cpp --metal --i386 --start mystart -o out)" "mystart/metal/metal_i386.ld"
+want "metal arm64 uses metal_arm64.ld" "$(compile_line build t.cpp --metal --arm64 --start mystart -o out)" "mystart/metal/metal_arm64.ld"
+want "metal is static" "$(compile_line build t.cpp --metal --x86 --start mystart -o out)" "-static"
+
+# and it is not a host program, and it owns the entry slot
+must_fail "duck run --metal"       run t.cpp --metal --start mystart
+must_fail "duck test --metal"      test t.cpp --metal --start mystart
+must_fail "duck emulate --metal"   emulate t.cpp --metal --arm64 --start mystart
+must_fail "--metal with --kernel"  compile t.cpp --metal --kernel
+must_fail "--metal with --direct"  compile t.cpp --metal --direct
+must_fail "--metal with --mx"      compile t.cpp --metal --mx
+# a board port is a second TU by design (weak hooks vs strong), so compiling one alone is allowed
+want "metal accepts a lone TU as an object" "$(compile_line compile t.cpp --metal --raw-obj --x86 --start mystart -o out)" "-c" "-DMICRON_PORT_METAL"
+must_fail "--metal with --static-pie" build t.cpp --metal --static-pie --start mystart
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# --metal-entry: WHO SWITCHES THE CPU INTO LONG MODE
+#
+# amd64 has two reset vectors and the difference is not cosmetic. The default is entered by a loader
+# in 32-BIT protected mode -- that is what PVH gives, and PVH is the only protocol qemu will use for
+# a 64-bit ELF -- so reset.s builds a GDT and an identity map itself. `lm` assumes the board's first
+# stage already did, and nothing in this tree can boot that shape, which is exactly why linking it
+# is gated.
+want "metal-entry default is the pvh trampoline" "$(compile_line build t.cpp --metal --x86 --start mystart -o out)" "mystart/metal/reset.s"
+want "metal-entry lm takes the long-mode stub"   "$(compile_line build t.cpp --metal --metal-entry lm --x86 --start mystart -o out)" "mystart/metal/reset_amd64_lm.s"
+wantnot "metal-entry lm does not take reset.s"   "$(compile_line build t.cpp --metal --metal-entry lm --x86 --start mystart -o out)" "mystart/metal/reset.s "
+want "metal-entry pvh is the default spelled out" "$(compile_line build t.cpp --metal --metal-entry pvh --x86 --start mystart -o out)" "mystart/metal/reset.s"
+# both shapes share one layout script
+want "metal-entry lm still uses metal.ld" "$(compile_line build t.cpp --metal --metal-entry lm --x86 --start mystart -o out)" "mystart/metal/metal.ld"
+must_fail "--metal-entry without --metal"  build t.cpp -k --metal-entry lm --start mystart
+must_fail "--metal-entry lm on arm64"      build t.cpp --metal --metal-entry lm --arm64 --start mystart
+must_fail "--metal-entry lm on i386"       build t.cpp --metal --metal-entry lm --i386 --start mystart
+must_fail "--metal-entry with a bad value" build t.cpp --metal --metal-entry sideways --x86 --start mystart
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# THE BUILT-IN CRT DEFAULT IS PER-CRT
+#
+# There are two crts and they cannot share a directory: the barebones start/ names
+# <micron/port/backends/__syscall.hpp>, which exists only on this branch, and the userland one names
+# <micron/syscall.hpp>. scripts/install_start.py:8 has always installed to /usr/src/mc_start_bb for
+# that reason -- "don't clobber the userland start" -- while duck defaulted BOTH to /usr/src/mc_start.
+# So `duck --metal` with no --start looked in the userland directory for metal/ files that
+# install_start.py had put somewhere else, and said "cannot open linker script" about a path that
+# looks entirely reasonable.
+#
+# THE TRAILING SLASH IN THESE ASSERTIONS IS LOAD-BEARING: "/usr/src/mc_start_bb" contains
+# "/usr/src/mc_start" as a substring, so a check for the userland path without it passes on the
+# barebones one. conf.start_dir is slash-normalised before use, so "/usr/src/mc_start/" is exact.
+#
+# These deliberately pass no --start, which is the whole point. Whether the directory exists decides
+# whether duck prints a command or an error naming the missing file -- and both name the path, which
+# is what is being asserted.
+want "userland crt defaults to mc_start"    "$(line_any build t.cpp --x86 -k -o out)"  "/usr/src/mc_start/"
+wantnot "userland crt is not the bb one"    "$(line_any build t.cpp --x86 -k -o out)"  "/usr/src/mc_start_bb"
+want "--mx keeps the userland crt"          "$(line_any build t.cpp --x86 -k --mx -o out)" "/usr/src/mc_start/"
+want "--direct keeps the userland crt"      "$(line_any build t.cpp --x86 -k --direct -o out)" "/usr/src/mc_start/"
+want "--metal defaults to mc_start_bb"      "$(line_any build t.cpp --x86 --metal -o out)" "/usr/src/mc_start_bb"
+want "--metal arm64 too"                    "$(line_any build t.cpp --arm64 --metal -o out)" "/usr/src/mc_start_bb"
+want "--metal --cortex-m too"               "$(line_any build t.cpp --cortex-m cortex-m4 --metal -o out)" "/usr/src/mc_start_bb"
+# and an explicit path still beats the default, either way round
+want "--start beats the bb default"         "$(compile_line build t.cpp --x86 --metal --start mystart -o out)" "mystart/metal/metal.ld"
+wantnot "--start really beats it"           "$(compile_line build t.cpp --x86 --metal --start mystart -o out)" "/usr/src/mc_start"
+
+want "metal arm64 is strict-align"       "$(compile_line build t.cpp --metal --arm64 --start mystart -o out)" "-mstrict-align"
+want "metal armv7-a forbids unaligned"   "$(compile_line build t.cpp --metal --arm --start mystart -o out)" "-mno-unaligned-access"
+wantnot "metal cortex-m does NOT"        "$(compile_line build t.cpp --cortex-m cortex-m4 --metal --start mystart -o out)" "-mno-unaligned-access"
+wantnot "metal amd64 has no arm flags"   "$(compile_line build t.cpp --metal --x86 --start mystart -o out)" "-mstrict-align" "-mno-unaligned-access"
+# and --kernel does not get them: a module runs with the MMU on and its memory Normal
+wantnot "kernel arm64 is not strict-align" "$(compile_line compile t.cpp --kernel --arm64 -o out)" "-mstrict-align"
+wantnot "kernel armv7 does not forbid unaligned" "$(compile_line compile t.cpp --kernel --arm -o out)" "-mno-unaligned-access"
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# --cortex-m: ARMv7-M, an ARM SUB-TARGET
+want "cortex-m takes the cpu it was given" "$(compile_line build t.cpp --cortex-m cortex-m4 --metal --start mystart -o out)" "-mcpu=cortex-m4" "-mthumb" "-mfloat-abi=soft"
+want "cortex-m3 too" "$(compile_line build t.cpp --cortex-m cortex-m3 --metal --start mystart -o out)" "-mcpu=cortex-m3"
+wantnot "cortex-m drops the armv7-a trio" "$(compile_line build t.cpp --cortex-m cortex-m4 --metal --start mystart -o out)" "-march=armv7-a" "-mfpu=neon" "-mfloat-abi=hard"
+want "cortex-m takes the M-profile reset table" "$(compile_line build t.cpp --cortex-m cortex-m4 --metal --start mystart -o out)" "mystart/metal/reset_cortexm.s"
+want "cortex-m takes the two-region layout" "$(compile_line build t.cpp --cortex-m cortex-m4 --metal --start mystart -o out)" "mystart/metal/metal_stm32.ld"
+# --arm is untouched by any of this
+want "--arm still armv7-a neon hard" "$(compile_line build t.cpp --arm --metal --start mystart -o out)" "-march=armv7-a" "-mfpu=neon"
+want "--arm still takes reset_arm32.s" "$(compile_line build t.cpp --arm --metal --start mystart -o out)" "mystart/metal/reset_arm32.s"
+must_fail "--cortex-m with --marm"        build t.cpp --cortex-m cortex-m4 --marm --metal --start mystart
+must_fail "--cortex-m with --kernel"      compile t.cpp --cortex-m cortex-m3 --kernel
+must_fail "--cortex-m with --mtp"         build t.cpp --cortex-m cortex-m4 --mtp soft --metal --start mystart
+must_fail "--cortex-m eats no flag"       build t.cpp --cortex-m -o out
+must_fail "--cortex-m rejects an arch"    build t.cpp --cortex-m armv7-m --metal --start mystart
+
 echo "passed: $pass   failed: $fail"
 [ "$fail" -eq 0 ]

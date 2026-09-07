@@ -57,7 +57,7 @@ sqrt_ss(f32 x) noexcept
     return __constexpr_sqrt(x);
 #endif
   }
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_sse)
   f32 r;
   __asm__("sqrtss %1, %0" : "=x"(r) : "x"(x));
   return r;

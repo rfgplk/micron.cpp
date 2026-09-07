@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #include "../src/hash/murmur.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/span.hpp"
 #include "../src/std.hpp"
 

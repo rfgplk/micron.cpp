@@ -7,7 +7,7 @@
 #include "snowball/snowball.hpp"
 
 #include "../src/circle_buffer.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/std.hpp"
 
 int

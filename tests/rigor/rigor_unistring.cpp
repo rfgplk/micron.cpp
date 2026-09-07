@@ -21,7 +21,7 @@
 //
 // Build: `duck build tests/rigor/rigor_unistring.cpp`; run `bin/rigor_unistring`.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/strings.hpp"
 #include "../../src/string/unistring.hpp"

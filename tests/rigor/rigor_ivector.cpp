@@ -13,7 +13,7 @@
 //
 // Build: `duck build tests/rigor/rigor_ivector.cpp`; run `bin/rigor_ivector`.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/vector/ivector.hpp"
 

@@ -16,7 +16,7 @@
 //
 // Build: `duck build tests/rigor/rigor_string.cpp`; run `bin/rigor_string`.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/string.hpp"
 #include "../../src/string/strings.hpp"

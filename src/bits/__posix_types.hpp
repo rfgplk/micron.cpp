@@ -1,0 +1,76 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
+#pragma once
+
+#include "../bits-types.hpp"
+
+namespace micron
+{
+// TODO: think about renaming all posix namespaces to linux (as in reality it references modern linux impl. not the posix
+// spec)
+namespace posix
+{
+using idtype_t = __u32_type;
+using id_t = __u32_type;
+using pid_t = __pid_t_type;
+using key_t = __key_t_type;
+using uid_t = __uid_t_type;
+using gid_t = __gid_t_type;
+using suseconds_t = __suseconds_t_type;
+using suseconds64_t = __suseconds64_t_type;
+using rlim_t = __rlim_t_type;
+using mode_t = __mode_t_type;
+using off_t = __off_t_type;
+using off64_t = __off64_t_type;
+
+using syscall_long_t = __syscall_slong_type;
+using syscall_ulong_t = __syscall_ulong_type;
+using blksize_t = __blksize_t_type;
+using blkcnt_t = __blkcnt_t_type;
+using nlink_t = __nlink_t_type;
+using clock_t = __clock_t_type;
+using clockid_t = __clockid_t_type;
+using timer_t = __timer_t_type;
+
+using dev_t = __dev_t_type;
+
+using time_t = __time_t_type;
+using ino_t = __ino_t_type;
+using ino64_t = __ino64_t_type;
+
+using daddr_t = __s32_type;
+};      // namespace posix
+
+// REEXPORT INTO micron:: -- NOT into the global namespace
+using posix::blkcnt_t;
+using posix::blksize_t;
+using posix::clock_t;
+using posix::clockid_t;
+using posix::dev_t;
+using posix::gid_t;
+using posix::id_t;
+using posix::ino64_t;
+using posix::ino_t;
+using posix::key_t;
+using posix::mode_t;
+using posix::nlink_t;
+using posix::off64_t;
+using posix::off_t;
+using posix::pid_t;
+using posix::rlim_t;
+using posix::suseconds64_t;
+using posix::suseconds_t;
+using posix::time_t;
+using posix::timer_t;
+using posix::uid_t;
+
+};      // namespace micron
+
+#include "__arch.hpp"
+
+// NOTE: relocated from linux/sys/types.hpp at Phase 4. Pure typedefs, zero syscalls -- which is
+// why src/types.hpp may include it. The trailing __arch.hpp include is deliberately AFTER the
+// namespace close; something rode that ordering before the move.

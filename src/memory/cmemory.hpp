@@ -37,7 +37,7 @@ namespace micron
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 128-bit SIMD memory primitives
 
-#if defined(__micron_arch_x86_any) || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
+#if defined(__micron_arch_x86_any) || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon)) || defined(__micron_simd_generic)
 
 // memcpy
 using simd::amemcpy128;
@@ -71,8 +71,11 @@ using simd::wordset128;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 256-bit + 512-bit SIMD memory primitives x86 only
+//
+// the generic tier carries the same names (scalar forwards, see simd/arch/memory_generic.hpp) so a
+// no-SIMD build does not silently lose a public entry point a wider build has
 
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) || defined(__micron_simd_generic)
 
 // memcpy
 using simd::amemcpy256;

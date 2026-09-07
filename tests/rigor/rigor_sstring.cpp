@@ -19,7 +19,7 @@
 // Build: `duck build tests/rigor/rigor_sstring.cpp`; run `bin/rigor_sstring`.
 // Exceptions are ON by default (src/defs.hpp).
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/sstring.hpp"
 #include "../../src/string/strings.hpp"

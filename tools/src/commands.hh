@@ -68,6 +68,10 @@ splat_dispatch(__modes mode, int argc, char **argv)
     const int fi = (argc > 2 and mc::strcmp(argv[2], "parallel") == 0) ? 3 : 2;
     if ( argc <= fi ) mc::cerror("splat requires at least one source");
     for ( auto &conf : parse_argv_build(argc - fi, argv + fi) ) {
+      // a kernel-module object has no _start and no main; there is nothing to run.
+      if ( conf.kernel ) mc::cerror("--kernel builds an object for kbuild to link, not a program - use `duck compile`");
+      if ( conf.metal and mode == __modes::test )
+        mc::cerror("--metal builds a bare-metal image, not a host program - it has no OS to run on. Use `duck build`, then boot it (examples/metal/Makefile boots the i386 one under qemu-system-i386 -kernel)");
       emit(batch(conf));
       // test compiles each target and then runs it; splat shows both, in that order
       if ( mode == __modes::test ) emit(run_command(conf));
@@ -97,12 +101,18 @@ splat_dispatch(__modes mode, int argc, char **argv)
   }
   case __modes::run: {
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
+    // a kernel-module object has no _start and no main; there is nothing to run.
+    if ( conf.kernel ) mc::cerror("--kernel builds an object for kbuild to link, not a program - use `duck compile`");
+    if ( conf.metal ) mc::cerror("--metal builds a bare-metal image, not a host program - it has no OS to run on. Use `duck build`, then boot it (examples/metal/Makefile boots the i386 one under qemu-system-i386 -kernel)");
     emit(batch(conf));
     emit(conf.target_out);      // run execs the binary directly, never under qemu
     break;
   }
   case __modes::emulate: {
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
+    // a kernel-module object has no _start and no main; there is nothing to emulate under qemu.
+    if ( conf.kernel ) mc::cerror("--kernel builds an object for kbuild to link, not a program - use `duck compile`");
+    if ( conf.metal ) mc::cerror("--metal builds a bare-metal image, not a host program - it has no OS to run on. Use `duck build`, then boot it (examples/metal/Makefile boots the i386 one under qemu-system-i386 -kernel)");
     emit(batch(conf));
     emit(run_command(conf));
     break;
@@ -280,11 +290,17 @@ parse_main(int argc, char **argv)
   case __modes::run: {
     // can't be batched doesn't make sense
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
+    // a kernel-module object has no _start and no main; there is nothing to run.
+    if ( conf.kernel ) mc::cerror("--kernel builds an object for kbuild to link, not a program - use `duck compile`");
+    if ( conf.metal ) mc::cerror("--metal builds a bare-metal image, not a host program - it has no OS to run on. Use `duck build`, then boot it (examples/metal/Makefile boots the i386 one under qemu-system-i386 -kernel)");
     build_and_run(conf);
     break;
   }
   case __modes::emulate: {
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
+    // a kernel-module object has no _start and no main; there is nothing to emulate under qemu.
+    if ( conf.kernel ) mc::cerror("--kernel builds an object for kbuild to link, not a program - use `duck compile`");
+    if ( conf.metal ) mc::cerror("--metal builds a bare-metal image, not a host program - it has no OS to run on. Use `duck build`, then boot it (examples/metal/Makefile boots the i386 one under qemu-system-i386 -kernel)");
     return build_and_emulate(conf);
   }
   case __modes::make: {
@@ -296,9 +312,19 @@ parse_main(int argc, char **argv)
     if ( argc > 2 and mc::strcmp(argv[2], "parallel") == 0 ) {
       if ( argc < 4 ) mc::cerror("test parallel requires at least one source");
       auto confs = parse_argv_build(argc - 3, argv + 3);
+      // the same two refusals as the serial path below -- `test parallel` had neither, so
+      // `duck test parallel x.cpp --kernel` would build a module object and then try to exec it
+      for ( const auto &c : confs ) {
+        if ( c.kernel ) mc::cerror("--kernel builds an object for kbuild to link, not a program - use `duck compile`");
+        if ( c.metal ) mc::cerror("--metal builds a bare-metal image, not a host program - it has no OS to run on. Use `duck build`, then boot it (examples/metal/Makefile boots the i386 one under qemu-system-i386 -kernel)");
+      }
       return cicd_test_parallel(confs);
     }
     auto confs = parse_argv_build(argc - 2, argv + 2);
+    for ( const auto &c : confs ) {
+      if ( c.kernel ) mc::cerror("--kernel builds an object for kbuild to link, not a program - use `duck compile`");
+      if ( c.metal ) mc::cerror("--metal builds a bare-metal image, not a host program - it has no OS to run on. Use `duck build`, then boot it (examples/metal/Makefile boots the i386 one under qemu-system-i386 -kernel)");
+    }
     return cicd_test(confs);
   }
   case __modes::doctor: {

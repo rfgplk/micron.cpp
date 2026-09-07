@@ -12,7 +12,7 @@
 
 #include "../../src/algorithm/fp.hpp"
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/std.hpp"
 

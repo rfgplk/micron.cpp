@@ -11,7 +11,7 @@
 //   c++ -std=c++23 -g -fsanitize=address,undefined -Wall -Wextra \
 //       -o test_hstring test_hstring.cpp && ./test_hstring
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/string/strings.hpp"
 #include "../snowball/snowball.hpp"
 

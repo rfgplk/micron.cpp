@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../src/math/graph.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/string/format.hpp"
 
 int

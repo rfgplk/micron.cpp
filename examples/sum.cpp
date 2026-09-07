@@ -23,7 +23,7 @@
 #include "../src/sum.hpp"
 #include "../src/function.hpp"
 #include "../src/except.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 // ================================================================
 // any<Ts...> examples

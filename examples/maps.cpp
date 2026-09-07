@@ -15,7 +15,7 @@
 //              micron::fast_map<V> = hopscotch_map<hash64_t, V>
 
 #include "../src/except.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/map.hpp"
 
 int

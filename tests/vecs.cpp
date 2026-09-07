@@ -7,7 +7,7 @@
 #include "../src/math/quants/vecs.hpp"
 #include "../src/std.hpp"
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 int
 main()

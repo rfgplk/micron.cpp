@@ -24,7 +24,7 @@
 // mismatch (not a sign indicating which is "greater"), and returns 0 on equal.
 
 #include "../src/memory/cmemory.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 int
 main()

@@ -10,6 +10,7 @@
 #include "../memory/actions.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
+#include "../memory/allocation/__internal.hpp"
 #include "../memory/memory.hpp"
 
 #include "../except.hpp"
@@ -91,24 +92,26 @@ class immutable_map
     }
   };
 
+  // the threshold is micron::__native_alignment and NOT a literal 32. It was 32, which happened to
+  // match abcmalloc's __hdr_offset and is wrong for any allocator whose plain alloc guarantees
+  // less: the barebones tier answers 16, so a node with alignof == 32 took the plain branch and
+  // came back UNDER-ALIGNED. Both branches must read the same constant or the pair diverges, which
+  // is the defect memory/new.hpp:125 already records for the other half of this pattern.
   static inline byte *
   __alloc_node()
   {
-    if constexpr ( alignof(__node) <= 32 ) {
-      return abc::alloc(sizeof(__node));
+    if constexpr ( alignof(__node) <= micron::__native_alignment ) {
+      return micron::__alloc(sizeof(__node));
     } else {
       constexpr usize bytes = (sizeof(__node) + alignof(__node) - 1) & ~(alignof(__node) - 1);
-      return reinterpret_cast<byte *>(abc::aligned_alloc(alignof(__node), bytes));
+      return reinterpret_cast<byte *>(micron::__alloc_aligned(alignof(__node), bytes));
     }
   }
 
   static inline void
   __free_node(__node *n)
   {
-    if constexpr ( alignof(__node) <= 32 )
-      abc::dealloc(reinterpret_cast<byte *>(n));
-    else
-      abc::aligned_free(n);
+    micron::__free_aligned(n, alignof(__node));
   }
 
   template<typename Kf, typename Vf>
@@ -116,7 +119,7 @@ class immutable_map
   __make_node(Kf &&k, Vf &&v, __node *l, __node *r, bool rd)
   {
     auto *n = micron::ptr_cast<__node *>(__alloc_node());
-    if ( !n ) [[unlikely]] {      // abc::alloc returns nullptr on OOM (it does NOT throw)
+    if ( !n ) [[unlikely]] {      // micron::__alloc returns nullptr on OOM (it does NOT throw)
       __release(l);
       __release(r);
       exc<except::critical_error>("immutable_map: node allocation failed (out of memory)");
@@ -143,7 +146,7 @@ class immutable_map
   __make_node_emplace(Kf &&k, __node *l, __node *r, bool rd, Args &&...args)
   {
     auto *n = reinterpret_cast<__node *>(__alloc_node());
-    if ( !n ) [[unlikely]] {      // abc::alloc returns nullptr on OOM (it does NOT throw)
+    if ( !n ) [[unlikely]] {      // micron::__alloc returns nullptr on OOM (it does NOT throw)
       __release(l);
       __release(r);
       exc<except::critical_error>("immutable_map: node allocation failed (out of memory)");

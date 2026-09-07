@@ -37,7 +37,7 @@ class mcs_lock
 {
   using __pool = __lock_slot_table<__mcs_slot>;
 
-  const u64 __id;
+  const usize __id;
   queuing_mutex __q;
   atomic_token<__mcs_slot *> __holder;
   [[no_unique_address]] __lock_stats st;

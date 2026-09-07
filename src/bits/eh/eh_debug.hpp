@@ -9,7 +9,11 @@
 
 #if defined(__micron_eh)
 
-#include "../../syscall.hpp"
+// Phase 4: was a raw SYS_write to fd 1. port::write_diag goes to fd 2, which is the correct
+// destination for a diagnostic anyway -- the fd-1 choice looks accidental. Included here directly
+// rather than relied on transitively: abcmalloc/printing.hpp is this tree's cautionary tale about a
+// low-level header that only compiles because its includers happen to pull things first.
+#include "../../port/panic.hpp"
 #include "../../types.hpp"
 
 namespace micron::eh
@@ -21,7 +25,7 @@ __dbg_s(const char *s) noexcept
 #if defined(__MICRON_EH_DEBUG)
   usize n = 0;
   while ( s[n] ) ++n;
-  micron::syscall(SYS_write, 1, reinterpret_cast<const void *>(s), n);
+  micron::port::write_diag(s, n);
 #else
   (void)s;
 #endif
@@ -39,7 +43,7 @@ __dbg_h(usize v) noexcept
     buf[2 + i] = static_cast<char>(nyb < 10 ? '0' + nyb : 'a' + (nyb - 10));
   }
   buf[18] = '\n';
-  micron::syscall(SYS_write, 1, reinterpret_cast<const void *>(buf), 19);
+  micron::port::write_diag(buf, 19);
 #else
   (void)v;
 #endif

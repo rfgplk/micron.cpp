@@ -25,7 +25,6 @@
 
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/bits/__pause.hpp"
-#include "../../src/sync/pause.hpp"
 #include "../../src/sync/yield.hpp"
 #include "../../src/types.hpp"
 

@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #include <iostream>
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/range.hpp"
 #include "../src/stack.hpp"
 #include "../src/std.hpp"

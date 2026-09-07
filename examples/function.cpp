@@ -28,7 +28,7 @@
 //   bind_method        — bind member function pointer + object
 
 #include "../src/function.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/vector/vector.hpp"
 #include "../src/algorithm/fp.hpp"
 

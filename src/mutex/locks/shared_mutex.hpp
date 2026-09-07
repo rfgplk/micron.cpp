@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../../atomic/atomic.hpp"
+#include "../../port/yield.hpp"
 #include "../../sync/futex.hpp"
 
 #include "../backoff.hpp"
@@ -35,7 +36,10 @@ template<spin_policy P = spin_yield> class basic_shared_mutex
   void
   __park_on(u32 observed) noexcept
   {
-    micron::__futex(__s.ptr(), futex_wait | futex_private_flag, observed, nullptr, nullptr, 0);
+    // see futex_mutex.hpp: a backend that cannot block yet answers immediately, and every caller of
+    // this sits in a retry loop, so discarding the return spins the CPU flat out.
+    if ( micron::port::wait_unavailable(micron::port::wait(__s.ptr(), observed, -1)) )
+      micron::port::cpu_relax();
   }
 
   void

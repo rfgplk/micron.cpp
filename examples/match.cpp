@@ -19,7 +19,7 @@
 
 #include "../src/match.hpp"
 #include "../src/sum.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/tuple.hpp"
 
 // Handlers must be function pointers (or lambdas captured in constexpr context)

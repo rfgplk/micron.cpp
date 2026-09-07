@@ -1,7 +1,7 @@
 
 
 #include "../../src/cmalloc.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/memory/allocation/abcmalloc/__abc.hpp"
 #include "../../src/memory/allocation/abcmalloc/config.hpp"
 #include "../../src/memory/allocation/abcmalloc/malloc.hpp"

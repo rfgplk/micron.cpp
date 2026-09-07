@@ -855,7 +855,7 @@ rsctypeset_safe(F &s, const T in) noexcept
 // wordsets
 
 // BASIC WORDSET - RUNTIME COUNT
-word *
+inline word *
 wordset(word *src, const word in, const u64 cnt) noexcept
 {
   if ( cnt % 4 == 0 )
@@ -871,7 +871,7 @@ wordset(word *src, const word in, const u64 cnt) noexcept
 }
 
 // WORDSET WITH REFERENCE RETURN
-word &
+inline word &
 rwordset(word &s, const word in, const u64 cnt) noexcept
 {
   word *src = &s;
@@ -930,7 +930,7 @@ rscwordset(word &s, const word in) noexcept
 
 // COMPILE-TIME CONSTANT WORDSET - TEMPLATE COUNT AND VALUE
 template<word in, u64 cnt>
-word *
+inline word *
 wordset(word *src) noexcept
 {
   __unroll::assign(src, in, micron::make_index_sequence<cnt>{});

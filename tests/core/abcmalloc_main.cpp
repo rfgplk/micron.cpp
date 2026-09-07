@@ -18,7 +18,7 @@
 // which cannot strip the pointee's volatile, so `console(p)` is a hard compile error.
 
 #include "../../src/cmalloc.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/std.hpp"
 
 #include "../../src/string/strings.hpp"

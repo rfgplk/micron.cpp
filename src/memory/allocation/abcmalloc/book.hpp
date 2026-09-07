@@ -24,6 +24,7 @@
 #include "../../../except.hpp"
 #include "../../../memory/addr.hpp"
 #include "../../../types.hpp"
+#include "../../mman.hpp"
 #include "../kmemory.hpp"
 #include "cache_list.hpp"
 #include "config.hpp"

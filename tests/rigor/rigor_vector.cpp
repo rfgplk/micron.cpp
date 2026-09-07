@@ -18,7 +18,7 @@
 //
 // Build: `duck build tests/rigor/rigor_vector.cpp`; run `bin/rigor_vector`.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/vector/vector.hpp"
 

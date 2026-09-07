@@ -1,5 +1,5 @@
 #include "../src/type_traits.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/std.hpp"
 
 int

@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../linux/sys/time.hpp"
+#include "../bits/__posix_time_types.hpp"
 #include "../math/ratios.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"
@@ -462,4 +462,16 @@ dur_of_ts(const timespec_t &ts) noexcept
 
 };      // namespace chrono
 
+
+// Phase 4: relocated from linux/sys/time.hpp, which was deleted with the rest of linux/. It is pure
+// arithmetic and has no business behind a syscall header. Deliberately NOT in
+// bits/__posix_time_types.hpp: that one is on the kernel path, and under -mno-sse a function that
+// merely RETURNS a double is a hard error before its body is considered.
+inline double
+difftime(time_t t1, time_t t0)
+{
+  return static_cast<double>(t1) - static_cast<double>(t0);
+}
+
 };      // namespace micron
+

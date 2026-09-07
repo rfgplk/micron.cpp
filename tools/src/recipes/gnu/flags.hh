@@ -291,6 +291,8 @@ constexpr static const i32 flag_w_no_virtual_move_assign = 115;
 constexpr static const i32 flag_w_volatile = 116;
 constexpr static const i32 flag_exceptions = 117;
 constexpr static const i32 flag_rtti = 118;
+constexpr static const i32 flag_no_use_cxa_atexit = 119;
+constexpr static const i32 flag_no_common = 120;
 
 enum class flags : i32 {
   abi_version = flag_abi_version,
@@ -411,7 +413,9 @@ enum class flags : i32 {
   w_no_virtual_move_assign = flag_w_no_virtual_move_assign,
   w_volatile = flag_w_volatile,
   exceptions = flag_exceptions,
-  rtti = flag_rtti
+  rtti = flag_rtti,
+  no_use_cxa_atexit = flag_no_use_cxa_atexit,
+  no_common = flag_no_common
 };
 
 // String literals for C++ flags
@@ -533,9 +537,11 @@ constexpr static const char *flag_strings[] = { "-fabi-version=",
                                                 "-Wno-virtual-move-assign",
                                                 "-Wvolatile",
                                                 "-fexceptions",
-                                                "-frtti" };
+                                                "-frtti",
+                                                "-fno-use-cxa-atexit",
+                                                "-fno-common" };
 
-static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_rtti + 1,
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_no_common + 1,
               "flags.hh: cpp_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
@@ -1701,6 +1707,8 @@ constexpr static const i32 flag_no_lto = 258;
 constexpr static const i32 flag_PIE = 259;
 constexpr static const i32 flag_asynchronous_unwind_tables = 260;
 constexpr static const i32 flag_unwind_tables = 261;
+constexpr static const i32 flag_no_asynchronous_unwind_tables = 262;
+constexpr static const i32 flag_no_PIE = 263;
 
 enum class flags : i32 {
   aggressive_loop_optimizations = flag_aggressive_loop_optimizations,
@@ -1964,7 +1972,9 @@ enum class flags : i32 {
   no_lto = flag_no_lto,
   PIE = flag_PIE,
   asynchronous_unwind_tables = flag_asynchronous_unwind_tables,
-  unwind_tables = flag_unwind_tables
+  unwind_tables = flag_unwind_tables,
+  no_asynchronous_unwind_tables = flag_no_asynchronous_unwind_tables,
+  no_PIE = flag_no_PIE
 };
 
 constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations",
@@ -2228,9 +2238,11 @@ constexpr static const char *flag_strings[] = { "-faggressive-loop-optimizations
                                                 "-fno-lto",
                                                 "-fPIE",
                                                 "-fasynchronous-unwind-tables",
-                                                "-funwind-tables" };
+                                                "-funwind-tables",
+                                                "-fno-asynchronous-unwind-tables",
+                                                "-fno-pie" };
 
-static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_unwind_tables + 1,
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_no_PIE + 1,
               "flags.hh: opt_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *
@@ -3351,6 +3363,14 @@ constexpr static const i32 flag_march_x86_64 = 206;
 constexpr static const i32 flag_march_x86_64_v2 = 207;
 constexpr static const i32 flag_march_x86_64_v3 = 208;
 constexpr static const i32 flag_march_x86_64_v4 = 209;
+// the kernel/bare-metal codegen set. -msoft-float (:11), -mno-red-zone (:167) and
+// -mgeneral-regs-only (:193) were already here; these four were the gap duck --kernel needed.
+// APPEND ONLY: the index, the enum entry and the string live at the same ordinal, and inserting in
+// the middle silently renumbers every flag after it.
+constexpr static const i32 flag_mno_sse = 210;
+constexpr static const i32 flag_mno_mmx = 211;
+constexpr static const i32 flag_mno_80387 = 212;
+constexpr static const i32 flag_mno_3dnow = 213;
 
 enum class flags : i32 {
   mtune = flag_mtune,
@@ -3562,7 +3582,11 @@ enum class flags : i32 {
   march_x86_64 = flag_march_x86_64,
   march_x86_64_v2 = flag_march_x86_64_v2,
   march_x86_64_v3 = flag_march_x86_64_v3,
-  march_x86_64_v4 = flag_march_x86_64_v4
+  march_x86_64_v4 = flag_march_x86_64_v4,
+  mno_sse = flag_mno_sse,
+  mno_mmx = flag_mno_mmx,
+  mno_80387 = flag_mno_80387,
+  mno_3dnow = flag_mno_3dnow
 };
 
 constexpr static const char *flag_strings[] = { "-mtune=",
@@ -3774,9 +3798,13 @@ constexpr static const char *flag_strings[] = { "-mtune=",
                                                 "-march=x86-64",
                                                 "-march=x86-64-v2",
                                                 "-march=x86-64-v3",
-                                                "-march=x86-64-v4" };
+                                                "-march=x86-64-v4",
+                                                "-mno-sse",
+                                                "-mno-mmx",
+                                                "-mno-80387",
+                                                "-mno-3dnow" };
 
-static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_march_x86_64_v4 + 1,
+static_assert(sizeof(flag_strings) / sizeof(*flag_strings) == flag_mno_3dnow + 1,
               "flags.hh: x86_flags flag_strings[] is out of step with its index constants");
 
 constexpr const char *

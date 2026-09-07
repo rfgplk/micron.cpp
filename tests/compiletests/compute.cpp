@@ -5,7 +5,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../../src/math/compute.hpp"
-#include "../../src/math/compute/thread_pool.hpp"
 
 namespace mcx = micron::math::compute;
 

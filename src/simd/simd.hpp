@@ -24,6 +24,9 @@ namespace simd
 // 128-bit (all archs)
 // NB: d128 is arm64 + x86 only; arm32 NEON has no f64 vector type.
 
+// the v128/v256/v512 class aliases exist only where the class API does; see
+// types/simd_dispatch.hpp for why the generic tier has none
+#if !defined(__micron_simd_generic)
 using v8 = v128<i128, __v8>;
 using v16 = v128<i128, __v16>;
 using v32 = v128<i128, __v32>;
@@ -102,12 +105,14 @@ concept is_simd_class
 #endif
     ;
 
+#endif      // !__micron_simd_generic
 };      // namespace simd
 
 __micron_diagnostic_pop
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // forwarding aliases in micron:: scope
 
+#if !defined(__micron_simd_generic)
 using v8 = simd::v8;
 using v16 = simd::v16;
 using v32 = simd::v32;
@@ -163,4 +168,5 @@ using packet16f = simd::packet16f;
 using packet8d = simd::packet8d;
 #endif
 
+#endif      // !__micron_simd_generic
 };      // namespace micron

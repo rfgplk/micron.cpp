@@ -2,7 +2,7 @@
 // Rigorous snowball test suite for micron::stack<T> and micron::fstack<T>
 
 #include "../../src/stack.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/std.hpp"
 
 #include "../snowball/snowball.hpp"

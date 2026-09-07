@@ -19,7 +19,8 @@
 #include "ieee.hpp"
 
 // x86 needs SSE2
-#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_sse2) ) || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
+#if ( ( defined(__micron_arch_x86_any) && defined(__micron_x86_sse2) ) || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))) \
+    && !defined(__micron_simd_generic)
 #define __micron_gfx_simd 1
 #include "../simd/aliases.hpp"
 #include "../simd/types.hpp"
@@ -47,9 +48,9 @@ __div_exact_ss(f32 a, f32 b) noexcept
   if consteval {
     return a / b;
   }
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_sse)
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_sse) && !defined(__micron_simd_generic)
   f32 r;
-#if defined(__micron_x86_avx)
+#if defined(__micron_x86_avx) && !defined(__micron_simd_generic)
   __asm__("vdivss %2, %1, %0" : "=x"(r) : "x"(a), "x"(b));
 #else
   r = a;
@@ -67,9 +68,9 @@ __div_exact_sd(f64 a, f64 b) noexcept
   if consteval {
     return a / b;
   }
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_sse2)
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_sse2) && !defined(__micron_simd_generic)
   f64 r;
-#if defined(__micron_x86_avx)
+#if defined(__micron_x86_avx) && !defined(__micron_simd_generic)
   __asm__("vdivsd %2, %1, %0" : "=x"(r) : "x"(a), "x"(b));
 #else
   r = a;
@@ -239,7 +240,7 @@ __dot4_splat(simd::f128 a, simd::f128 b) noexcept
 __div_exact(simd::f128 a, simd::f128 b) noexcept
 {
   simd::f128 r;
-#if defined(__micron_x86_avx)
+#if defined(__micron_x86_avx) && !defined(__micron_simd_generic)
   __asm__("vdivps %2, %1, %0" : "=x"(r) : "x"(a), "x"(b));
 #else
   r = a;

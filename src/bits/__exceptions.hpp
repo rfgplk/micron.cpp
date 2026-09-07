@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../exit.hpp"
-#include "../syscall.hpp"
+#include "../port/panic.hpp"
 
 #include "../memory/addr.hpp"
 
@@ -23,23 +23,26 @@ namespace except
 {
 
 // so we don't rely on io
-void
+//
+// NOTE: these were declared `void`, not `inline void`, which is a multiple-definition error as soon
+// as two TUs include this header. It went unnoticed because micron is single-TU by design.
+inline void
 __write_n(const char *str_err)
 {
-  micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
-  micron::syscall(SYS_write, 2, micron::voidify("\n"), 1);
+  micron::port::write_diag(str_err, strlen(str_err));
+  micron::port::write_diag("\n", 1);
 }
 
-void
+inline void
 __write(const char *str_err, usize sz)
 {
-  micron::syscall(SYS_write, 2, micron::voidify(str_err), sz);
+  micron::port::write_diag(str_err, sz);
 }
 
-void
+inline void
 __write(const char *str_err)
 {
-  micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
+  micron::port::write_diag(str_err, strlen(str_err));
 }
 
 template<typename T>

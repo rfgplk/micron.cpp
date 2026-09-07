@@ -10,7 +10,7 @@
 // each block carries a fingerprint derived from its address + index +
 // iteration, and the fingerprint is re-verified at every observation point.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/cmalloc.hpp"
 #include "../../src/memory/allocation/abcmalloc/__abc.hpp"

@@ -53,8 +53,33 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __syscall_wordsize 32
 inline constexpr unsigned __micron_arch = __micron_arch_x86;
 inline constexpr unsigned __micron_width = __wordsize;
+#elif defined(MICRON_ALLOW_GENERIC_ARCH)
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// the generic tier
+//
+// no ISA backend, no syscall table, no arch-specific asm; everything routes through the scalar
+// paths. this is what a new target (riscv64, xtensa, ...) enters on, and it is opt-in so a
+// mis-targeted build still fails loudly instead of silently degrading
+#define __micron_arch_generic 5
+#if !defined(__SIZEOF_POINTER__)
+#error "generic arch tier needs __SIZEOF_POINTER__ to size the word"
+#endif
+#if __SIZEOF_POINTER__ == 8
+#define __micron_arch_width_64 1
+#define __wordsize 64
+#define __syscall_wordsize 64
+#elif __SIZEOF_POINTER__ == 4
+#define __micron_arch_width_32 1
+#define __wordsize 32
+#define __syscall_wordsize 32
 #else
-#error "Unsupported architecture. Is your compiler working properly?"
+#error "generic arch tier supports 32- and 64-bit pointers only"
+#endif
+inline constexpr unsigned __micron_arch = __micron_arch_generic;
+inline constexpr unsigned __micron_width = __wordsize;
+#else
+#error                                                                                                                                     \
+    "Unsupported architecture. Is your compiler working properly? (define MICRON_ALLOW_GENERIC_ARCH to build on the scalar generic tier)"
 #endif
 
 #if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
@@ -107,7 +132,27 @@ inline constexpr unsigned __micron_width = __wordsize;
 #endif
 
 // default kernel base page size; arm64 kernels run 4KB, 16KB, or 64KB base pages
-#if defined(__micron_arch_arm64)
+//
+// (E) HAS NO MMU AND THEREFORE NO PAGE. On bare metal this constant stops meaning "what the
+// hardware maps" and starts meaning "the granule port::page_alloc carves the linker pool in".
+// MICRON_PORT_PAGE_SIZE names it; the default is 64 and not 4096 because a 256 KiB device cannot
+// afford a 4 KiB quantum, and 64 is a power of two >= micron::bb::native_alignment.
+//
+// IT MUST NEVER BE 0. pages_linux.hpp used to prescribe "default 0, meaning no paging", and that
+// does not build: micron::page_size feeds allocation_policy<page_size, page_size, 3, 1>
+// (allocation/policies.hpp:30) whose first static_assert is `Granularity != 0`, and bb::carve
+// rounds a span by it (barebones/bb_alloc.hpp:177). "Is there paging" is answered by
+// port::has_paging, which is a bool, not by overloading a size with a sentinel.
+//
+// Keyed on MICRON_PORT_METAL rather than __micron_port_metal: port/__backend.hpp includes THIS file
+// before deriving the internal spelling, so the internal one does not exist yet at this point.
+#if defined(MICRON_PORT_METAL)
+#if defined(MICRON_PORT_PAGE_SIZE)
+#define __micron_page_size_default MICRON_PORT_PAGE_SIZE
+#else
+#define __micron_page_size_default 64
+#endif
+#elif defined(__micron_arch_arm64)
 #define __micron_page_size_default 65536
 #else
 #define __micron_page_size_default 4096
@@ -431,6 +476,142 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_arm_simd_tier 0
 #endif
 
+#endif
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// __micron_no_fp -- no hardware floating point is usable
+//
+// Distinct from __micron_simd_generic: that one is about vector registers, this one is about
+// floating point at all. A Linux kernel module has neither, and most MCUs have no FPU. Code that
+// only uses FP for a heuristic (abcmalloc's sheet-sizing curves) must take an integer path here.
+//
+// __GCC_IEC_559 == 0 means the target cannot do conforming binary FP -- true for x86 -mno-80387
+// -mno-sse, for aarch64 -mgeneral-regs-only, and for arm32 -mfloat-abi=soft. It is ALSO zero under
+// -ffast-math, hence the __FAST_MATH__ exclusion; and -Ofast together with kernel flags would
+// therefore look like a normal FP target, which is why duck --kernel/--metal pass MICRON_NO_FP
+// explicitly rather than relying on the derivation.
+//
+// AND __GCC_IEC_559 IS NOT ENOUGH ON ITS OWN. Measured on this box, the derivation as it stood
+// answered WRONG in three of five configurations that matter:
+//
+//   g++ -mno-sse -mno-80387                    IEC_559=0                -> fires   correct
+//   g++ -Ofast                                 IEC_559=0 FAST_MATH=1    -> no      correct
+//   g++ -Ofast -mno-sse -mno-80387             IEC_559=0 FAST_MATH=1    -> NO      WRONG
+//   clang++ -mno-sse -mno-80387                IEC_559 NOT DEFINED      -> NO      WRONG
+//   clang++ --target=aarch64 -mgeneral-regs-only   IEC_559 NOT DEFINED  -> NO      WRONG
+//
+// clang does not define __GCC_IEC_559 at all, so on clang the third disjunct is unconditionally
+// false and no-FP was only ever reachable by an explicit macro. duck --kernel covers itself by
+// passing MICRON_NO_FP, but nothing covers a hand-rolled build or the clang no-FP arm.
+//
+// So ask the target directly as well. These are capability questions, in the spirit of hard rule
+// #3 -- "gate on capability, never on arch" -- and each is the compiler's own statement that the
+// register file is gone: no __ARM_FP on aarch64 means -mgeneral-regs-only, __SOFTFP__ is arm32
+// -mfloat-abi=soft, and on amd64 the SysV ABI passes float and double in xmm, so no __SSE2__ there
+// genuinely means no FP. All three are set by both compilers and survive -Ofast, which is exactly
+// what __GCC_IEC_559 does not.
+//
+// THE SSE DISJUNCT IS amd64, NOT x86_any, AND THAT IS THE TRAP. i386 has x87 whether or not it has
+// SSE: `g++ -m32 -march=i686` defines neither __SSE__ nor __SSE2__ and has a perfectly good FPU.
+// Writing __micron_arch_x86_any here made every ordinary 32-bit hosted build report no-FP --
+// measured, and caught only because the probe covered the negative case. On i386 the question is
+// answered by __GCC_IEC_559 (which -mno-80387 does set to 0) or by the explicit macro.
+//
+// And key on the USER macros for the two ports, not the internal spellings: port/__backend.hpp
+// includes THIS file, so __micron_port_kernel does not exist yet here. That is the same reason
+// __micron_page_size_default at :150 reads MICRON_PORT_METAL rather than __micron_port_metal.
+#if defined(MICRON_NO_FP) || defined(__micron_arch_generic) || defined(MICRON_PORT_KERNEL) || defined(MICRON_PORT_METAL)                     \
+    || (defined(__GCC_IEC_559) && __GCC_IEC_559 == 0 && !defined(__FAST_MATH__))                                                            \
+    || (defined(__micron_arch_amd64) && !defined(__SSE2__))                                                                                 \
+    || (defined(__micron_arch_arm64) && !defined(__ARM_FP)) || defined(__SOFTFP__)
+#define __micron_no_fp 1
+#endif
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// __micron_simd_generic -- the scalar SIMD tier selector
+//
+// one macro drives every simd/*.hpp ladder. it fires in three cases:
+//   1. MICRON_NO_SIMD, set explicitly. this is what a kernel module on amd64 uses: the arch has
+//      AVX-512, but touching an xmm register outside kernel_fpu_begin() corrupts user FP state
+//   2. the generic arch tier, which has no ISA backend at all
+//   3. an x86 build below SSE2 or an ARM build without NEON -- previously a hard #error
+//
+// the generic backends are plain C++ over compiler generic vectors, so they emit no instruction
+// the build flags did not authorize (hard rule: no function emits an unauthorized instruction)
+#if defined(MICRON_NO_SIMD) || defined(__micron_arch_generic)
+#define __micron_simd_generic 1
+#elif defined(__micron_arch_x86_any) && !defined(__micron_x86_sse2)
+#define __micron_simd_generic 1
+#elif defined(__micron_arch_arm_any) && !defined(__micron_arm_neon)
+#define __micron_simd_generic 1
+#endif
+
+// a generic-SIMD build authorizes no vector width and no ARM SIMD tier, whatever -march said
+#if defined(__micron_simd_generic)
+#undef __micron_x86_simd_width
+#define __micron_x86_simd_width 0
+#undef __micron_arm_simd_tier
+#define __micron_arm_simd_tier 0
+
+// AND IT AUTHORIZES NO VECTOR ISA EITHER. The width and tier were cleared here and the
+// ISA-PRESENCE macros were not, so roughly 150 `#if defined(__micron_x86_avx2)` / `#if
+// defined(__micron_arm_neon)` sites across the tree stayed live under MICRON_NO_SIMD -- guarding
+// code that needs vector REGISTERS on a question about what -march enabled. That is hard rule #3
+// ("gate on capability, never on arch") and BAREBONES.md records four of these being repaired by
+// hand as "the 9 red cells"; the class was never repaired. Clearing them here fixes all of it in
+// one place and, better, converts any future one into a compile error rather than a wrong branch.
+//
+// THE SCALAR ISA MACROS ARE DELIBERATELY KEPT. popcnt, bmi1 and bmi2 are general-purpose-register
+// instructions -- popcnt, tzcnt, andn, bzhi -- with no vector register anywhere near them, and they
+// are perfectly legal in ring 0. MICRON_NO_SIMD means "no vector unit", not "no instructions newer
+// than i386", and clearing these would cost a kernel build its bit-manipulation fast paths for
+// nothing. fma goes, because it is xmm/ymm.
+//
+// Hash values do not move: hash.hpp:39 already gates __micron_hash_zzz on !__micron_simd_generic
+// as well as on the ISA, so a MICRON_NO_SIMD build was already taking the ISA-free defaults.
+// Verified against a fixed corpus across {plain, MICRON_NO_SIMD} x {base, v2, v3} before and after.
+#undef __micron_x86_sse
+#undef __micron_x86_sse2
+#undef __micron_x86_sse3
+#undef __micron_x86_ssse3
+#undef __micron_x86_sse4_1
+#undef __micron_x86_sse4_2
+#undef __micron_x86_avx
+#undef __micron_x86_avx2
+#undef __micron_x86_fma
+#undef __micron_x86_avx512f
+#undef __micron_x86_avx512bw
+#undef __micron_x86_avx512cd
+#undef __micron_x86_avx512dq
+#undef __micron_x86_avx512vl
+#undef __micron_x86_avx512vnni
+#undef __micron_x86_avx512bf16
+#undef __micron_x86_avx512fp16
+#undef __micron_arm_neon
+#endif
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// __micron_no_tls -- no ELF thread-local storage
+//
+// a kernel module and a bare-metal image have no TLS runtime, so a namespace-scope thread_local is
+// not merely slow there, it does not link. code that keeps per-thread state for convenience must
+// degrade to a single shared object under this macro.
+//
+// opt-in only, and deliberately NOT derived from __micron_arch_generic: a new arch says nothing
+// about whether the target has TLS, and guessing wrong turns working state into shared state
+// silently. duck --kernel/--metal pass it explicitly, the way they pass MICRON_NO_FP.
+//
+// It IS derived from the two port selectors, though, and that is a different question from the
+// arch one: "is this a kernel module" and "is this a bare-metal image" both answer "there is no TLS
+// runtime here" definitionally, which is what the paragraph above already says. Leaving it opt-in
+// meant a hand-rolled -DMICRON_PORT_KERNEL build without -DMICRON_NO_TLS compiled thread_local
+// state into a module that has no TLS -- and on x86-64 in ring 0 %fs is the PER-CPU base, so a
+// @tpoff access is not a link error, it is a write into arbitrary per-CPU kernel memory.
+//
+// The USER macros, for the include-order reason given at :150 and in the no-FP block above:
+// port/__backend.hpp includes this file, so the __micron_port_* spellings do not exist yet.
+#if defined(MICRON_NO_TLS) || defined(MICRON_PORT_KERNEL) || defined(MICRON_PORT_METAL)
+#define __micron_no_tls 1
 #endif
 
 // NOTE: this lib is only made for gcc, but it's good to have fallbacks

@@ -21,7 +21,8 @@
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/concepts.hpp"
 #include "../../src/memory/new.hpp"
-#include "../../src/sync/inlet.hpp"
+// NOTE: Phase 4 deleted sync/inlet.hpp -- an orphan (its only includer, sync/async.hpp, was itself
+// reachable only from the deleted stdthread.hpp). Its one-line queuing_mutex_adapter alias was
 
 namespace
 {
@@ -126,7 +127,6 @@ micron::basic_clh_lock<2> g_clh2;
 micron::basic_clh_lock<64, micron::spin_only> g_clh64;
 micron::basic_shared_mutex<micron::spin_only> g_shared_only;
 
-micron::queuing_inlet<long> g_qinlet;
 
 static_assert(noexcept(g_mcs.try_lock()));
 static_assert(noexcept(g_clh.try_lock()));
@@ -281,9 +281,6 @@ touch_locks(void)
   (void)g_ttas.stats().yields();
   (void)g_ttas.stats().parks();
 
-  g_qinlet.store(7);
-  (void)g_qinlet.load();
-  g_qinlet.apply([](long &v) { ++v; });
 
   micron::__lock_backoff<micron::spin_yield> bo;
   (void)bo.next();

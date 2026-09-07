@@ -13,8 +13,7 @@
 // Each section drives construction, mutation, erase, lifetime, growth-driven
 // moves, and stress vs std::unordered_map<int, std::vector<int>> ground truth.
 
-#include "../../src/io/console.hpp"
-#include "../../src/io/stdout.hpp"
+#include "../../src/print.hpp"
 #include "../../src/maps/robin.hpp"
 #include "../../src/std.hpp"
 #include "../../src/string/string.hpp"

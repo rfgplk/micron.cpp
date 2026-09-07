@@ -26,7 +26,7 @@
 //
 // Build: `duck build tests/rigor/rope.cpp`. Exceptions ON.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/rope.hpp"
 #include "../../src/string/string.hpp"

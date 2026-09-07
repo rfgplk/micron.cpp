@@ -17,7 +17,7 @@
 // All dispatch to AVX2/SSE2/NEON where available.
 
 #include "../src/memory/cmemory.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 int
 main()

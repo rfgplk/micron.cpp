@@ -12,7 +12,7 @@
 //
 // Build: `duck build tests/rigor/rigor_pvector.cpp`; run `bin/rigor_pvector`.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/vector/pvector.hpp"
 

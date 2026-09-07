@@ -5,6 +5,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+// NOTE: names addr_t/i32 at namespace scope, so it must carry its own types include -- it is included
+// standalone by the abcmalloc configs, which want only the prot_*/map_* constants and no syscall.
+#include "../types.hpp"
+
 namespace micron
 {
 

@@ -10,7 +10,7 @@
 #include "../../vector/vector.hpp"
 #include "../ieee.hpp"
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 #include "../../simd/aliases.hpp"
 #include "../../simd/arch/types_amd64.hpp"
 #endif
@@ -34,12 +34,12 @@ namespace matrix
 namespace pack
 {
 
-#if defined(__AVX512F__)
+#if defined(__micron_x86_avx512f)
 inline constexpr usize mr_f32 = 16;
 inline constexpr usize nr_f32 = 6;
 inline constexpr usize mr_f64 = 8;
 inline constexpr usize nr_f64 = 6;
-#elif defined(__AVX2__)
+#elif defined(__micron_x86_avx2)
 inline constexpr usize mr_f32 = 8;
 inline constexpr usize nr_f32 = 8;
 inline constexpr usize mr_f64 = 4;
@@ -73,7 +73,7 @@ template<usize MR, typename T>
 [[gnu::flatten, gnu::always_inline]] inline void
 pack_a_panel(const T *A, ssize_t rs_A, ssize_t cs_A, usize m, usize k, T *dst) noexcept
 {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if constexpr ( MR == 6 && sizeof(T) == 8 && ieee754_floating<T> ) {
     if !consteval {
       // rs_A == 1 means the MR-direction is contiguous (e.g. trA=true on row-major A)
@@ -248,7 +248,7 @@ template<usize NR, typename T>
 [[gnu::flatten, gnu::always_inline]] inline void
 pack_b_panel(const T *B, ssize_t rs_B, ssize_t cs_B, usize k, usize n, T *dst) noexcept
 {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if constexpr ( NR == 8 && sizeof(T) == 8 && ieee754_floating<T> ) {
     if !consteval {
       // rs_B == 1 means K-direction is contiguous (trB=true on row-major B)
@@ -409,7 +409,7 @@ micro_kernel(const T *Ap, const T *Bp, usize k, T alpha, T beta, T *C, ssize_t r
   micro_kernel_scalar<MR, NR, T>(Ap, Bp, k, alpha, beta, C, rs_C, cs_C);
 }
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 
 [[gnu::flatten, gnu::always_inline]] inline void
 micro_kernel_4x8_avx2_f64(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
@@ -2382,7 +2382,7 @@ micro_kernel_partial(usize mr, usize nr, const T *Ap, const T *Bp, usize k, T al
 template<typename T> inline constexpr usize gemm_mr_v = mr_v<T>;
 template<typename T> inline constexpr usize gemm_nr_v = nr_v<T>;
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 template<> inline constexpr usize gemm_mr_v<f64> = 6;
 template<> inline constexpr usize gemm_nr_v<f64> = 8;
 template<> inline constexpr usize gemm_mr_v<f32> = 8;
@@ -2452,7 +2452,7 @@ gemm_blocked_aligned(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_r
             const T *Ap_tile = Ap + (ir / MR) * MR * kc;
             T *C_tile = C + ssize_t(ic + ir) * rs_C + ssize_t(jc + jr) * cs_C;
             if ( mr_eff == MR && nr_eff == NR ) {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
               if constexpr ( MR == 6 && NR == 8 && sizeof(T) == 8 && ieee754_floating<T> ) {
                 micro_kernel_6x8_avx2_f64_asm_aligned(reinterpret_cast<const double *>(Ap_tile), reinterpret_cast<const double *>(Bp_tile),
                                                       kc, double(alpha), double(beta_eff), reinterpret_cast<double *>(C_tile), rs_C, cs_C);
@@ -2513,7 +2513,7 @@ gemm_blocked_aligned_exp_a(usize m, usize n, usize k, T alpha, const T *A, ssize
             const T *Ap_tile = Ap + (ir / MR) * MR * kc;
             T *C_tile = C + ssize_t(ic + ir) * rs_C + ssize_t(jc + jr) * cs_C;
             if ( mr_eff == MR && nr_eff == NR ) {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
               if constexpr ( MR == 6 && NR == 8 && sizeof(T) == 8 && ieee754_floating<T> ) {
                 micro_kernel_6x8_avx2_f64_asm_relax(reinterpret_cast<const double *>(Ap_tile), reinterpret_cast<const double *>(Bp_tile),
                                                     kc, double(alpha), double(beta_eff), reinterpret_cast<double *>(C_tile), rs_C, cs_C);
@@ -2537,7 +2537,7 @@ template<typename T>
 gemm_blocked_aligned_exp_b(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs,
                            ssize_t b_cs, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
 {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if constexpr ( sizeof(T) == 8 && ieee754_floating<T> ) {
     constexpr usize MR = 4;
     constexpr usize NR = 12;
@@ -2624,7 +2624,7 @@ gemm_blocked_aligned_exp_c(usize m, usize n, usize k, T alpha, const T *A, ssize
             const T *Ap_tile = Ap + (ir / MR) * MR * kc;
             T *C_tile = C + ssize_t(ic + ir) * rs_C + ssize_t(jc + jr) * cs_C;
             if ( mr_eff == MR && nr_eff == NR ) {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
               if constexpr ( MR == 6 && NR == 8 && sizeof(T) == 8 && ieee754_floating<T> ) {
                 micro_kernel_6x8_avx2_f64_asm_roll(reinterpret_cast<const double *>(Ap_tile), reinterpret_cast<const double *>(Bp_tile), kc,
                                                    double(alpha), double(beta_eff), reinterpret_cast<double *>(C_tile), rs_C, cs_C);
@@ -2683,7 +2683,7 @@ gemm_blocked(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize
             T *C_tile = C + ssize_t(ic + ir) * rs_C + ssize_t(jc + jr) * cs_C;
             if ( mr_eff == MR && nr_eff == NR ) {
               // NOTE: don't match against type identity; double and f64 aren't the same type
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
               if constexpr ( MR == 6 && NR == 8 && sizeof(T) == 8 && ieee754_floating<T> ) {
                 micro_kernel_6x8_avx2_f64_asm_unr4_sp(reinterpret_cast<const double *>(Ap_tile), reinterpret_cast<const double *>(Bp_tile),
                                                       kc, double(alpha), double(beta_eff), reinterpret_cast<double *>(C_tile), rs_C, cs_C);

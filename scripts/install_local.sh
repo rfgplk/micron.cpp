@@ -1,7 +1,8 @@
 #!/bin/sh
 
 SRC="./src"
-DEFAULT_DEST="/usr/include/micron"
+# don't clobber system userland headers
+DEFAULT_DEST="/usr/include/micronbb"
 
 if [ "$#" -ge 1 ]; then
     DEST="$1"

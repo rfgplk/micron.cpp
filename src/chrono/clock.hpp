@@ -10,11 +10,15 @@
 #include "../memory/cmemory.hpp"
 
 #include "calendar.hpp"
+#include "../port/clock.hpp"
+
 #include "units.hpp"
 
-#if defined(MICRON_CHRONO_VDSO)
-#include "vdso.hpp"
-#endif
+// NOTE: Phase 4 deleted chrono/vdso.hpp. It was the keep-set's only consumer of the elf:: layer
+// (~20 type and constant names via linux/elf/{auxval,consts,hash,header}.hpp), it was off by
+// default (MICRON_CHRONO_VDSO was defined nowhere in src/), and the vDSO is a userspace-loader
+// mechanism that neither a kernel module nor a bare-metal image has. read_clock now always goes
+// through port::clock_gettime, which is the seam the rest of chrono already uses.
 
 namespace micron
 {
@@ -43,11 +47,7 @@ namespace chrono
 [[gnu::always_inline]] inline ssize_t
 read_clock(clockid_t clk, timespec_t &ts) noexcept
 {
-#if defined(MICRON_CHRONO_VDSO)
-  return vdso::clock_gettime(clk, ts);
-#else
-  return micron::clock_gettime(clk, ts);
-#endif
+  return micron::port::clock_gettime(clk, ts);
 }
 
 [[gnu::always_inline]] inline i64
@@ -120,7 +120,7 @@ now_ms() noexcept
 now_s() noexcept
 {
   timespec_t ts{};
-  const ssize_t r = micron::clock_gettime(clock_realtime, ts);
+  const ssize_t r = micron::port::clock_gettime(clock_realtime, ts);
   if ( r < 0 ) [[unlikely]]
     return static_cast<i64>(r);
   return static_cast<i64>(ts.tv_sec);
@@ -130,7 +130,7 @@ inline i64
 clock_resolution_ns(clockid_t clk) noexcept
 {
   timespec_t res{};
-  const ssize_t r = micron::clock_getres(clk, res);
+  const ssize_t r = micron::port::clock_getres(clk, res);
   if ( r < 0 ) [[unlikely]]
     return static_cast<i64>(r);
   return ns_of_ts(res);
@@ -145,7 +145,7 @@ sleep_until(clockid_t clk, i64 deadline_ns) noexcept
 {
   const timespec_t ts = ts_of_ns(deadline_ns);
   for ( ;; ) {
-    const i32 r = static_cast<i32>(micron::clock_nanosleep(clk, timer_abstime, ts));
+    const i32 r = static_cast<i32>(micron::port::clock_nanosleep(clk, timer_abstime, ts));
     if ( r == 0 ) return 0;
     if ( -r != static_cast<i32>(error::interrupted) ) return r;
   }
@@ -156,7 +156,7 @@ inline i32
 sleep_until_once(clockid_t clk, i64 deadline_ns) noexcept
 {
   const timespec_t ts = ts_of_ns(deadline_ns);
-  return static_cast<i32>(micron::clock_nanosleep(clk, timer_abstime, ts));
+  return static_cast<i32>(micron::port::clock_nanosleep(clk, timer_abstime, ts));
 }
 
 inline constexpr i64 __ns_max = 0x7FFF'FFFF'FFFF'FFFFll;
@@ -229,7 +229,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
     micron::memset(&time_begin, 0x0, sizeof(timespec_t));
     micron::memset(&time_end, 0x0, sizeof(timespec_t));
     // NOTE: must check < 0, since this is a raw syscall uth
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_begin) < 0 )
+    if ( micron::port::clock_gettime(static_cast<clockid_t>(C), time_begin) < 0 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
   }
 
@@ -280,14 +280,14 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   inline __attribute__((always_inline)) void
   start(void)
   {
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_begin) < 0 )
+    if ( micron::port::clock_gettime(static_cast<clockid_t>(C), time_begin) < 0 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
   }
 
   inline __attribute__((always_inline)) auto
   start_get(void) -> timespec_t
   {
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_begin) < 0 )
+    if ( micron::port::clock_gettime(static_cast<clockid_t>(C), time_begin) < 0 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
     return time_begin;
   }
@@ -295,14 +295,14 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   inline __attribute__((always_inline)) void
   stop(void)
   {
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_end) < 0 )
+    if ( micron::port::clock_gettime(static_cast<clockid_t>(C), time_end) < 0 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
   }
 
   inline __attribute__((always_inline)) auto
   stop_get(void) -> timespec_t
   {
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_end) < 0 )
+    if ( micron::port::clock_gettime(static_cast<clockid_t>(C), time_end) < 0 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
     return time_end;
   }
@@ -311,7 +311,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   reset(void)
   {
     micron::memset(&time_end, 0x0, sizeof(timespec_t));
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), time_begin) < 0 )
+    if ( micron::port::clock_gettime(static_cast<clockid_t>(C), time_begin) < 0 )
       exc<except::runtime_error>("micron::system_clock failed to get time");
   }
 
@@ -329,7 +329,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   now(void) -> fduration_t
   {
     timespec_t t;
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), t) < 0 )
+    if ( micron::port::clock_gettime(static_cast<clockid_t>(C), t) < 0 )
       exc<except::runtime_error>("micron::system_clock::now failed to get time");
     return static_cast<fduration_t>(t.tv_sec) * 1'000.0 + static_cast<fduration_t>(t.tv_nsec) / 1'000'000.0;
   }
@@ -338,7 +338,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   now_ts(void) -> timespec_t
   {
     timespec_t t;
-    if ( micron::clock_gettime(static_cast<clockid_t>(C), t) < 0 )
+    if ( micron::port::clock_gettime(static_cast<clockid_t>(C), t) < 0 )
       exc<except::runtime_error>("micron::system_clock::now_ts failed to get time");
     return t;
   }
@@ -353,7 +353,7 @@ template<system_clocks C = system_clocks::realtime> struct system_clock {
   resolution(void) -> timespec_t
   {
     timespec_t res;
-    if ( micron::clock_getres(static_cast<clockid_t>(C), &res) < 0 ) exc<except::runtime_error>("micron::system_clock::resolution failed");
+    if ( micron::port::clock_getres(static_cast<clockid_t>(C), &res) < 0 ) exc<except::runtime_error>("micron::system_clock::resolution failed");
     return res;
   }
 
@@ -694,7 +694,7 @@ inline fduration_t
 now(void)
 {
   timespec_t t;
-  if ( micron::clock_gettime(static_cast<clockid_t>(clock_realtime), t) < 0 ) exc<except::runtime_error>("micron::now failed to get time");
+  if ( micron::port::clock_gettime(static_cast<clockid_t>(clock_realtime), t) < 0 ) exc<except::runtime_error>("micron::now failed to get time");
   return static_cast<fduration_t>(t.tv_sec) * 1'000.0 + static_cast<fduration_t>(t.tv_nsec) / 1'000'000.0;
 }
 
@@ -702,7 +702,7 @@ inline timespec_t
 now_ts(void)
 {
   timespec_t t;
-  if ( micron::clock_gettime(static_cast<clockid_t>(clock_realtime), t) < 0 )
+  if ( micron::port::clock_gettime(static_cast<clockid_t>(clock_realtime), t) < 0 )
     exc<except::runtime_error>("micron::now_ts failed to get time");
   return t;
 }
@@ -710,20 +710,20 @@ now_ts(void)
 inline time_t
 unix_time(void)
 {
-  return micron::time();
+  return micron::port::wall_seconds();
 }
 
 inline year_month_day
 today(void)
 {
-  return year_month_day::from_unix(micron::time());
+  return year_month_day::from_unix(micron::port::wall_seconds());
 }
 
 inline time_of_day
 time_of_day_now(void)
 {
   timespec_t t;
-  if ( micron::clock_gettime(static_cast<clockid_t>(clock_realtime), t) < 0 )
+  if ( micron::port::clock_gettime(static_cast<clockid_t>(clock_realtime), t) < 0 )
     exc<except::runtime_error>("micron::time_of_day_now failed to get time");
   fduration_t secs_today = static_cast<fduration_t>(t.tv_sec % __dur_sec_per_day) + static_cast<fduration_t>(t.tv_nsec) * 1e-9;
   return time_of_day(secs_today);

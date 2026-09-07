@@ -24,13 +24,11 @@
 #include "../../src/chrono/parse.hpp"
 #include "../../src/chrono/posix.hpp"
 #include "../../src/chrono/units.hpp"
-#include "../../src/chrono/vdso.hpp"
 
 // tz.hpp is not in the umbrella (it does file io), so it gets its own instantiation
 #include "../../src/chrono/tz.hpp"
 
 // utime / utimes / futimesat / lutimes are FILE functions and live next to utimensat, not in chrono
-#include "../../src/linux/io/sys.hpp"
 
 namespace ch = micron::chrono;
 namespace pp = micron::posix;
@@ -286,35 +284,22 @@ use_posix(void)
   g_sink_i = pp::sysconf(pp::_sc_pagesize);
 
   g_sink_f = micron::difftime(1, 0);
-  g_sink_i = micron::tai_offset();
-  micron::timex_t tx{};
-  g_sink_i = micron::adjtimex(tx);
-  g_sink_i = micron::clock_adjtime(micron::clock_realtime, tx);
+  // NOTE: Phase 4 deleted linux/sys/time.hpp. adjtimex/timex_t/tai_offset were its NTP-discipline
+  // machinery -- userspace clock administration, with no analogue in a .ko or a metal image.
+  // difftime survived, relocated into chrono/units.hpp where it belongs.
   micron::timespec_t ts{};
-  g_sink_i = micron::sched_rr_get_interval(0, ts);
   micron::timeval_t tv{};
-  g_sink_i = micron::settimeofday(tv);
-  g_sink_u = micron::alarm(0);
 
-  pp::utimbuf_t ub{ 0, 0 };
-  g_sink_i = pp::utime("/nonexistent", &ub);
   micron::timeval_t tvs[2] = {};
-  g_sink_i = pp::utimes("/nonexistent", tvs);
-  g_sink_i = pp::futimesat(-100, "/nonexistent", tvs);
-  g_sink_i = pp::lutimes("/nonexistent", tvs);
 
-  g_sink_u = micron::getauxval(micron::at_pagesz);
-  g_sink_u = micron::auxval_has(micron::at_clktck) ? 1u : 0u;
 }
 
+// Phase 4 deleted chrono/vdso.hpp -- it was the keep-set's only elf:: consumer and the vDSO is a
+// userspace-loader mechanism with no meaning in a kernel module or a bare-metal image. The tz half
+// of this function is unchanged and still pinned.
 void
-use_vdso_and_tz(void)
+use_tz(void)
 {
-  g_sink_u = ch::vdso::available() ? 1u : 0u;
-  g_sink_u = ch::vdso::supported ? 1u : 0u;
-  micron::timespec_t ts{};
-  g_sink_i = ch::vdso::clock_gettime(micron::clock_monotonic, ts);
-
   static u8 scratch[1024];
   static ch::tz::tz_storage<8> store;
   g_sink_u = ch::tz::load_named("UTC", scratch, sizeof(scratch), store) ? 1u : 0u;
@@ -356,7 +341,7 @@ main(void)
     use_format();
     use_cycles();
     use_posix();
-    use_vdso_and_tz();
+    use_tz();
     use_legacy();
   }
   return 1;

@@ -147,12 +147,12 @@ private:
   __match(u8 hash_val, usize ind) const
   {
     // NOTE: must be unaligned load, no guarantee ind will always be aligned
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
     simd::i128 match = simd::sse::splat_i8(static_cast<char>(hash_val));
     simd::i128 meta = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__control_bytes[ind]));
     int mask = simd::sse::movemask_i8(simd::sse::eq_i8(match, meta));
     return __mask(mask);
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     uint8x16_t match = simd::neon::splat_u8(hash_val);
     uint8x16_t meta = simd::neon::load_u8(&__control_bytes[ind]);
     return __mask(static_cast<i32>(simd::neon::movemask_u8(simd::neon::eq(meta, match))));
@@ -167,12 +167,12 @@ private:
   __mask
   __match_empty(usize ind) const
   {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
     simd::i128 empty = simd::sse::splat_i8(static_cast<char>(__empty));
     simd::i128 meta = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__control_bytes[ind]));
     int mask = simd::sse::movemask_i8(simd::sse::eq_i8(empty, meta));
     return __mask(mask);
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     uint8x16_t empty = simd::neon::splat_u8(__empty);
     uint8x16_t meta = simd::neon::load_u8(&__control_bytes[ind]);
     return __mask(static_cast<i32>(simd::neon::movemask_u8(simd::neon::eq(empty, meta))));
@@ -187,13 +187,13 @@ private:
   __mask
   __match_empty_or_deleted(usize ind) const
   {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
     simd::i128 meta = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__control_bytes[ind]));
     simd::i128 empty = simd::sse::splat_i8(static_cast<char>(__empty));
     simd::i128 deleted = simd::sse::splat_i8(static_cast<char>(__deleted));
     int mask = simd::sse::movemask_i8(simd::sse::or_i128(simd::sse::eq_i8(meta, empty), simd::sse::eq_i8(meta, deleted)));
     return __mask(mask);
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     uint8x16_t meta = simd::neon::load_u8(&__control_bytes[ind]);
     uint8x16_t empty = simd::neon::splat_u8(__empty);
     uint8x16_t deleted = simd::neon::splat_u8(__deleted);

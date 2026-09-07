@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "algorithm/algorithm.hpp"      // generate/transform at :114,:125 -- named here, never included
 #include "algorithm/memory.hpp"
 #include "bits/__container.hpp"
 #include "memory/addr.hpp"

@@ -18,7 +18,7 @@
 //                    (dangerous; only when storage is initialised)
 
 #include "../src/except.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/vector/vector.hpp"
 
 struct Tracked {

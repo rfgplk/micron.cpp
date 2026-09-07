@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../src/heap/bloom.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/std.hpp"
 #include "../src/vector/vector.hpp"
 

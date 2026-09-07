@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../defs.hpp"      // __micron_bb_alloc -- see the barebones policy below
 #include "../../types.hpp"
 #include "kmemory.hpp"
 
@@ -27,8 +28,34 @@ template<usize MinimumBytes, usize Granularity, usize GrowthNumerator, usize Gro
   static constexpr f32 on_grow = static_cast<f32>(GrowthNumerator) / static_cast<f32>(GrowthDenominator);
 };
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// the default under every container, and the one number that decides whether micron fits on a
+// device.
+//
+// allocation_policy<page_size, page_size, 3, 1> means an empty mc::vector<u8> costs a full page:
+// 4 KiB, or 64 KiB on arm64 (__micron_page_size_default, bits/__arch.hpp). On a 256 KiB MCU that is
+// four vectors. So the barebones tier retunes it, and the numbers are not arbitrary:
+//
+//   minimum 64    a cache line, and what bb_allocator::auto_size() answers. 16 would give a hash
+//                 map one bucket (robin.hpp divides auto_size by the node size).
+//   granularity 16  the allocator's native alignment, so capacity <= grant with no rounding loss.
+//   growth 2/1    a power-of-two step from a power-of-two base is zero waste in a buddy tier;
+//                 3/1 lands between size classes and rounds up into the next one.
+//
+// GATED ON __micron_bb_alloc, WHICH IS WHY defs.hpp IS INCLUDED ABOVE. This header did not include
+// it before, and a `#if defined(__micron_bb_alloc)` without that include is not a conservative
+// default -- it is dead text that silently always takes the else branch. Verified: the macro is not
+// visible here without it.
+#if defined(__micron_bb_alloc)
+struct barebones_allocation_policy: allocation_policy<64, 16, 2, 1> {
+};
+
+struct serial_allocation_policy: barebones_allocation_policy {
+};
+#else
 struct serial_allocation_policy: allocation_policy<page_size, page_size, 3, 1> {
 };
+#endif
 
 struct small_allocation_policy: allocation_policy<512, 512, 2, 1> {
 };

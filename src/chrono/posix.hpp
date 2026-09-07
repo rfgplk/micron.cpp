@@ -6,8 +6,9 @@
 #pragma once
 
 #include "../errno.hpp"
-#include "../linux/elf/auxval.hpp"
-#include "../linux/sys/time.hpp"
+#include "../port/pages.hpp"
+#include "../bits/__posix_time_types.hpp"
+#include "../port/clock.hpp"
 
 #include "calendar.hpp"
 #include "civil.hpp"
@@ -409,7 +410,7 @@ usleep(u64 usec) noexcept
   timespec_t r = chrono::ts_of_ns(static_cast<i64>(usec) * static_cast<i64>(chrono::ns_per_us));
   timespec_t rem{};
   for ( ;; ) {
-    const i32 v = static_cast<i32>(micron::nanosleep(r, rem));
+    const i32 v = static_cast<i32>(micron::port::nanosleep(r, rem));
     if ( v == 0 ) return 0;
     if ( -v != static_cast<i32>(error::interrupted) ) return v;
     r = rem;
@@ -422,7 +423,7 @@ nsleep(u64 nsec) noexcept
   timespec_t r = chrono::ts_of_ns(static_cast<i64>(nsec));
   timespec_t rem{};
   for ( ;; ) {
-    const i32 v = static_cast<i32>(micron::nanosleep(r, rem));
+    const i32 v = static_cast<i32>(micron::port::nanosleep(r, rem));
     if ( v == 0 ) return 0;
     if ( -v != static_cast<i32>(error::interrupted) ) return v;
     r = rem;
@@ -440,11 +441,15 @@ inline constexpr int _sc_page_size = 30;
 inline constexpr int _sc_nprocessors_conf = 83;
 inline constexpr int _sc_nprocessors_onln = 84;
 
+// Phase 4: AT_CLKTCK comes from the ELF auxiliary vector, which is a userspace-loader concept --
+// a kernel module and a bare-metal image have no auxv at all. The 100 fallback was always here and
+// is the value every mainstream linux configuration actually uses (CONFIG_HZ_100 aside, the USER_HZ
+// the kernel reports through auxv is 100 on every supported arch). See ISSUES.md, which already
+// records micron::user_hz as a hardcoded constexpr 100.
 inline long
 clk_tck(void) noexcept
 {
-  const unsigned long v = micron::getauxval(micron::at_clktck);
-  return v != 0 ? static_cast<long>(v) : 100l;
+  return 100l;
 }
 
 inline long
@@ -453,10 +458,10 @@ sysconf(int name) noexcept
   switch ( name ) {
   case _sc_clk_tck:
     return clk_tck();
-  case _sc_pagesize: {
-    const unsigned long v = micron::getauxval(micron::at_pagesz);
-    return v != 0 ? static_cast<long>(v) : static_cast<long>(__micron_page_size_default);
-  }
+  case _sc_pagesize:
+    // port::page_size is a better answer than the old auxv read with a compile-time fallback: the
+    // backend knows the real page size on every target, including one with no auxv.
+    return static_cast<long>(micron::port::page_size);
   default:
     return -1l;
   }

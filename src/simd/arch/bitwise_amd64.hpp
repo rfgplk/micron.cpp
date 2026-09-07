@@ -139,7 +139,12 @@ all_set_128(const void *_ptr, usize len, const char b)
     i128 chunk = _mm_loadu_si128(reinterpret_cast<const i128 *>(ptr + i));
     i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
 
-    if ( _mm_movemask_epi8(cmp) != -1 ) return false;
+    // WARNING: _mm_movemask_epi8 yields one bit per byte in the LOW 16 bits and zero above, so a
+    // full 16-byte match is 0x0000FFFF -- never -1. Comparing against -1 was therefore always true
+    // and all_set_128 answered false for every buffer of 16 bytes or more (found by
+    // tests/rigor/simd_generic.cpp against the scalar oracle). The 256 form is unaffected: its
+    // movemask fills all 32 bits, so 0xFFFFFFFF is right there.
+    if ( _mm_movemask_epi8(cmp) != 0xFFFF ) return false;
   }
   // scalar tail
   for ( ; i < len; ++i )

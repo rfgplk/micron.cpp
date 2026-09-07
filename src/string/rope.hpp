@@ -9,6 +9,7 @@
 #include "../memory/actions.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
+#include "../memory/allocation/__internal.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/new.hpp"
 #include "../memory_block.hpp"
@@ -88,7 +89,7 @@ private:
 
     ~__node_stack() noexcept
     {
-      if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+      if ( __heap ) micron::__free(__heap);
     }
 
     const __node **
@@ -107,12 +108,12 @@ private:
     __grow()
     {
       usize ncap = __cap * 2;
-      auto *nb = reinterpret_cast<const __node **>(abc::alloc(ncap * sizeof(const __node *)));
+      auto *nb = reinterpret_cast<const __node **>(micron::__alloc_n(ncap, sizeof(const __node *)));
       if ( !nb ) [[unlikely]]
         exc<except::memory_error>("micron::rope walker stack out of memory");
       const __node **src = __buf();
       for ( usize i = 0; i < __sz; ++i ) nb[i] = src[i];
-      if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+      if ( __heap ) micron::__free(__heap);
       __heap = nb;
       __cap = ncap;
     }
@@ -143,7 +144,7 @@ private:
     operator=(const __node_stack &o)
     {
       if ( this != &o ) [[likely]] {
-        if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+        if ( __heap ) micron::__free(__heap);
         __heap = nullptr;
         __cap = __sbo;
         __sz = 0;
@@ -165,7 +166,7 @@ private:
     operator=(__node_stack &&o) noexcept
     {
       if ( this != &o ) [[likely]] {
-        if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+        if ( __heap ) micron::__free(__heap);
         __heap = o.__heap;
         __cap = o.__cap;
         __sz = o.__sz;
@@ -183,7 +184,7 @@ private:
     __copy_from(const __node_stack &o)
     {
       if ( o.__sz > __sbo ) {
-        __heap = reinterpret_cast<const __node **>(abc::alloc(o.__cap * sizeof(const __node *)));
+        __heap = reinterpret_cast<const __node **>(micron::__alloc_n(o.__cap, sizeof(const __node *)));
         if ( !__heap ) [[unlikely]]
           exc<except::memory_error>("micron::rope walker stack out of memory");
         __cap = o.__cap;
@@ -224,7 +225,7 @@ private:
   static inline __node *
   __alloc_node(usize bytes)
   {
-    auto *n = reinterpret_cast<__node *>(abc::alloc(bytes));
+    auto *n = reinterpret_cast<__node *>(micron::__alloc(bytes));
     if ( !n ) [[unlikely]]
       exc<except::memory_error>("micron::rope node allocation failed");
     return n;
@@ -287,7 +288,7 @@ private:
   static inline __node *
   __make_branch(__node *l, __node *r)
   {
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
+    auto *n = reinterpret_cast<__node *>(micron::__alloc(sizeof(__node)));
     if ( !n ) [[unlikely]] {
       __release(l);
       __release(r);
@@ -320,13 +321,13 @@ private:
           break;
         }
         if ( __is_leaf(n) ) {
-          abc::dealloc(reinterpret_cast<byte *>(n));
+          micron::__free(n);
           n = nullptr;
           break;
         }
         __node *l = n->left;
         __node *r = n->right;
-        abc::dealloc(reinterpret_cast<byte *>(n));
+        micron::__free(n);
         if ( l ) pend.push(l);
         n = r;
       }
@@ -398,7 +399,7 @@ private:
 
     ~__frame_stack() noexcept
     {
-      if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+      if ( __heap ) micron::__free(__heap);
     }
 
     __frame_stack(const __frame_stack &) = delete;
@@ -414,12 +415,12 @@ private:
     __grow()
     {
       usize ncap = __cap * 2;
-      auto *nb = reinterpret_cast<__split_frame *>(abc::alloc(ncap * sizeof(__split_frame)));
+      auto *nb = reinterpret_cast<__split_frame *>(micron::__alloc_n(ncap, sizeof(__split_frame)));
       if ( !nb ) [[unlikely]]
         exc<except::memory_error>("micron::rope split stack out of memory");
       __split_frame *src = __buf();
       for ( usize i = 0; i < __sz; ++i ) nb[i] = src[i];
-      if ( __heap ) abc::dealloc(reinterpret_cast<byte *>(__heap));
+      if ( __heap ) micron::__free(__heap);
       __heap = nb;
       __cap = ncap;
     }
@@ -638,12 +639,12 @@ private:
     __ensure_flat();
     if ( __length > npos / sizeof(T) ) [[unlikely]]
       exc<except::memory_error>("micron::rope bitop size overflow");
-    T *tmp = reinterpret_cast<T *>(abc::alloc(__length * sizeof(T)));
+    T *tmp = reinterpret_cast<T *>(micron::__alloc_n(__length, sizeof(T)));
     if ( !tmp ) [[unlikely]]
       exc<except::memory_error>("micron::rope bitop allocation failed");
     micron::simd::__bytes_cycle<Op>(reinterpret_cast<byte *>(tmp), reinterpret_cast<const byte *>(__flat), __length * sizeof(T), k.p, k.n);
     rope out(__build_balanced(tmp, __length), __length);
-    abc::dealloc(reinterpret_cast<byte *>(tmp));
+    micron::__free(tmp);
     return out;
   }
 
@@ -706,7 +707,7 @@ private:
   __free_flat(void) const
   {
     if ( __flat ) {
-      abc::dealloc(reinterpret_cast<byte *>(__flat));
+      micron::__free(__flat);
       __flat = nullptr;
     }
   }
@@ -718,7 +719,7 @@ private:
 
     if ( __length > npos / sizeof(T) - 1 ) [[unlikely]]
       exc<except::memory_error>("micron::rope flatten size overflow");
-    T *buf = reinterpret_cast<T *>(abc::alloc((__length + 1) * sizeof(T)));
+    T *buf = reinterpret_cast<T *>(micron::__alloc_n(__length + 1, sizeof(T)));
     if ( !buf ) [[unlikely]]
       exc<except::memory_error>("micron::rope flatten allocation failed");
 
@@ -733,7 +734,7 @@ private:
     T *expected = nullptr;
     if ( !__atomic_compare_exchange_n(&__flat, &expected, buf, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) ) [[unlikely]] {
       // another thread published first; drop ours and use theirs.
-      abc::dealloc(reinterpret_cast<byte *>(buf));
+      micron::__free(buf);
     }
   }
 

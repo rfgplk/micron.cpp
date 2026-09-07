@@ -89,7 +89,19 @@ constexpr const string_type __clang_sysroot_arm64 = "/usr/gcc-linaro-aarch64/aar
 constexpr const string_type __clang_linker_arm = "/usr/gcc-linaro/bin/arm-none-linux-gnueabihf-ld";
 constexpr const string_type __clang_linker_arm64 = "/usr/gcc-linaro-aarch64/bin/aarch64-none-linux-gnu-ld";
 
+// TWO CRT DEFAULTS, BECAUSE THERE ARE TWO CRTs AND THEY MUST NOT SHARE A DIRECTORY.
+//
+// scripts/install_start.py:8 installs the barebones crt to /usr/src/mc_start_bb, and its comment
+// says why in four words -- "don't clobber the userland start". The two are not interchangeable:
+// the barebones start/ names <micron/port/backends/__syscall.hpp>, which exists only on this
+// branch, while the userland one names <micron/syscall.hpp>. Installing either over the other
+// gives a crt whose includes do not resolve against the micron tree beside it.
+//
+// duck defaulted to mc_start for both, so `duck --metal` with no --start looked in the userland
+// directory -- for metal/reset*.s and metal/*.ld that install_start.py had put somewhere else
+// entirely. The failure was a bare "cannot open linker script" naming a path that looks correct.
 constexpr const string_type __mc_start_default = "/usr/src/mc_start";
+constexpr const string_type __mc_start_default_bb = "/usr/src/mc_start_bb";
 
 struct std_entry {
   const string_type *full;
@@ -164,6 +176,25 @@ struct config_t {
   bool direct = false;               // --direct: link direct*.s (enters __micron_directc, no runtime init)
   bool mx = false;                   // --mx: link mx/start*.s (enters __micron_mxc, the entry takes a descriptor)
   bool cont = false;                 // --cont: link mx/cont*.s (defines _continue, and no _start at all)
+  bool kernel = false;               // --kernel: a Linux kernel module object. no crt, no FPU, no syscalls
+  bool metal = false;                // --metal: a bare-metal image. own crt + linker script, no OS underneath
+  // --metal-entry: WHO OWNS THE TRANSITION INTO LONG MODE, and it is an amd64-only question.
+  // The default reset.s is entered by a loader in 32-BIT protected mode (PVH, which is the only
+  // protocol qemu will use for a 64-bit ELF) and does the GDT/paging/EFER work itself. `lm` picks
+  // reset_amd64_lm.s, which assumes the board's first stage already did all of it. Both share the
+  // linker script and the same 64-bit body.
+  bool metal_lm = false;
+  // --cortex-m: an ARM SUB-TARGET, not a fifth arch. Everything about ARMv7-M that duck has to know
+  // -- which compiler, which sysroot, which assembler -- is identical to --arm, and adding an
+  // __arch value would have meant auditing every one of the ~20 `conf.arch == __arch::arm` sites
+  // for whether it meant "the ARM toolchain" or "ARMv7-A". It is spelled the way --isa is spelled:
+  // a refinement of an existing target.
+  //
+  // It replaces -march=armv7-a -mfpu=neon -mfloat-abi=hard with -mcpu=<cpu> -mthumb
+  // -mfloat-abi=soft. M-profile has no ARM state and no NEON, and passing an A-profile -march
+  // alongside an M-profile -mcpu is not a warning, it is a conflict gcc resolves silently.
+  bool cortex_m = false;
+  string_type cortex_m_cpu;      // default cortex-m4; --cortex-m <cpu> overrides
   bool asan = false;
   bool ubsan = false;
   bool tsan = false;
@@ -213,7 +244,8 @@ __flag_takes_value(const char *a)
 {
   return mc::strcmp(a, "-o") == 0 or mc::strcmp(a, "-i") == 0 or mc::strcmp(a, "-l") == 0 or mc::strcmp(a, "--lib") == 0
          or mc::strcmp(a, "--def") == 0 or mc::strcmp(a, "--std") == 0 or mc::strcmp(a, "--isa") == 0 or mc::strcmp(a, "-j") == 0
-         or mc::strcmp(a, "--timeout") == 0 or mc::strcmp(a, "--start") == 0 or mc::strcmp(a, "--mtp") == 0;
+         or mc::strcmp(a, "--timeout") == 0 or mc::strcmp(a, "--start") == 0 or mc::strcmp(a, "--mtp") == 0
+         or mc::strcmp(a, "--metal-entry") == 0 or mc::strcmp(a, "--cortex-m") == 0;
 }
 
 inline int
@@ -379,6 +411,10 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
 
   // --marm/--mtp are armv7-a only
   if ( conf.marm and conf.arch != __arch::arm ) mc::cerror("--marm is an armv7-a flag - the target is not --arm");
+  // M-profile has no ARM state at all, so --marm is not merely redundant there, it is unbuildable
+  if ( conf.cortex_m and conf.marm ) mc::cerror("--marm and --cortex-m are contradictory - ARMv7-M has no ARM instruction set, only Thumb");
+  if ( conf.cortex_m and conf.kernel ) mc::cerror("--cortex-m and --kernel are contradictory - an MCU runs no Linux kernel");
+  if ( conf.cortex_m and !conf.mtp.empty() ) mc::cerror("--mtp is an armv7-a flag - ARMv7-M has no thread-pointer register");
   if ( !conf.mtp.empty() ) {
     if ( conf.arch != __arch::arm ) mc::cerror("--mtp is an armv7-a flag - the target is not --arm");
     if ( conf.mtp != "soft" and conf.mtp != "cp15" and conf.mtp != "auto" ) mc::cerror("--mtp takes soft, cp15 or auto");
@@ -393,8 +429,17 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
     mc::cerror("--direct has nothing to swap: a static-PIE x86 freestanding image links no _start stub");
   if ( conf.mx and !conf.freestanding ) mc::cerror("--mx only means something on a freestanding build - add -k (or -ke)");
   if ( conf.cont and !conf.freestanding ) mc::cerror("--cont only means something on a freestanding build - add -k (or -ke)");
-  if ( static_cast<int>(conf.direct) + static_cast<int>(conf.mx) + static_cast<int>(conf.cont) > 1 )
-    mc::cerror("--direct, --mx and --cont each replace the entry stub - pick one");
+  if ( static_cast<int>(conf.direct) + static_cast<int>(conf.mx) + static_cast<int>(conf.cont) + static_cast<int>(conf.kernel)
+           + static_cast<int>(conf.metal)
+       > 1 )
+    mc::cerror("--direct, --mx, --cont, --kernel and --metal each decide the entry/startup shape - pick one");
+  if ( conf.kernel and conf.static_pie ) mc::cerror("--kernel and --static-pie are contradictory - a module is not an image");
+  if ( conf.metal and conf.static_pie ) mc::cerror("--metal and --static-pie are contradictory - a reset vector is not relocatable");
+  if ( conf.metal_lm and !conf.metal ) mc::cerror("--metal-entry only means something with --metal");
+  // every other target has one entry shape: i386 is multiboot, arm32/arm64 are entered with the MMU
+  // off and nothing to switch. Accepting it silently there would read as a choice that exists.
+  if ( conf.metal_lm and !(conf.arch == __arch::x86 and conf.width == 64) )
+    mc::cerror("--metal-entry lm is amd64-only - it names who performs the switch into long mode, and no other target has one");
   if ( (conf.mx or conf.cont) and conf.static_pie and conf.arch == __arch::x86 )
     mc::cerror("--mx/--cont have nothing to swap: a static-PIE x86 freestanding image links no _start stub");
   if ( conf.cont ) {
@@ -407,10 +452,16 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
       mc::cerror("--cont needs --def MICRON_ATTACH_MODULE and --def MICRON_MX_CONTINUATION - they are what compile _continue's body");
   }
 
-  // the crt location: --start > MICRON_START > the built-in /usr/src/mc_start
+  // the crt location: --start > MICRON_START > the built-in default
+  //
+  // and the built-in default is per-CRT. A bare-metal image takes the barebones crt, which is what
+  // install_start.py installs and the only one carrying metal/. --start and MICRON_START still win
+  // over both, so an explicit path is never second-guessed.
   if ( conf.start_dir.empty() ) {
     const char *__start_env = mc::env_get("MICRON_START");
-    conf.start_dir = (__start_env != nullptr and *__start_env != '\0') ? string_type{ __start_env } : __mc_start_default;
+    conf.start_dir = (__start_env != nullptr and *__start_env != '\0')
+                         ? string_type{ __start_env }
+                         : (conf.metal ? __mc_start_default_bb : __mc_start_default);
   }
   // normalized once, for all three sources; batch.hh joins by plain concatenation
   if ( *(conf.start_dir.end() - 1) != '/' ) conf.start_dir.insert(conf.start_dir.end(), '/');
@@ -463,6 +514,17 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
       conf.width = 32;
     } else if ( mc::strcmp(argv[i], "--arm") == 0 ) {
       conf.arch = __arch::arm;
+    } else if ( mc::strcmp(argv[i], "--cortex-m") == 0 ) {
+      conf.arch = __arch::arm;
+      conf.cortex_m = true;
+      if ( ++i >= argc ) mc::cerror("the --cortex-m flag must be followed by a cpu, e.g. cortex-m4 or cortex-m3");
+      // the value is checked, not merely consumed: `duck build x.cpp --cortex-m -o bin` otherwise
+      // eats the -o and hands gcc `-mcpu=-o`, which is the silent-swallow behaviour CLAUDE.md 7
+      // says duck stopped doing. Any cortex-m* is allowed -- gcc knows the list, duck does not
+      // need to -- but it must look like one.
+      if ( mc::strncmp(argv[i], "cortex-m", 8) != 0 )
+        mc::cerror("--cortex-m takes an ARMv7-M/v8-M cpu, e.g. cortex-m4, cortex-m3, cortex-m7 - got '", argv[i], "'");
+      conf.cortex_m_cpu = string_type{ argv[i] };
     } else if ( mc::strcmp(argv[i], "--arm64") == 0 or mc::strcmp(argv[i], "--aarch64") == 0 ) {
       conf.arch = __arch::arm64;
     } else if ( mc::strcmp(argv[i], "--isa") == 0 ) {
@@ -526,6 +588,32 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
     } else if ( mc::strcmp(argv[i], "--cont") == 0 ) {
       // mx/cont*.s defines _continue and no _start: a continuation blob has no ordinary entry point
       conf.cont = true;
+    } else if ( mc::strcmp(argv[i], "--kernel") == 0 ) {
+      conf.kernel = true;
+      conf.freestanding = true;
+      conf.compile_type = __comp_type::object;
+      conf.raw_object = true;
+      user_provided_type = true;
+      conf.defines.push_back(string_type{ "MICRON_PORT_KERNEL" });
+      conf.defines.push_back(string_type{ "MICRON_NO_SIMD" });
+      conf.defines.push_back(string_type{ "MICRON_NO_FP" });
+      conf.defines.push_back(string_type{ "MICRON_NO_TLS" });
+    } else if ( mc::strcmp(argv[i], "--metal") == 0 ) {
+      // a bare-metal image
+      conf.metal = true;
+      conf.freestanding = true;
+      conf.defines.push_back(string_type{ "MICRON_PORT_METAL" });
+      conf.defines.push_back(string_type{ "MICRON_NO_SIMD" });
+      conf.defines.push_back(string_type{ "MICRON_NO_FP" });
+      conf.defines.push_back(string_type{ "MICRON_NO_TLS" });
+    } else if ( mc::strcmp(argv[i], "--metal-entry") == 0 ) {
+      if ( ++i >= argc ) mc::cerror("the --metal-entry flag must be followed by one of: pvh, lm");
+      if ( mc::strcmp(argv[i], "lm") == 0 )
+        conf.metal_lm = true;
+      else if ( mc::strcmp(argv[i], "pvh") == 0 or mc::strcmp(argv[i], "default") == 0 )
+        conf.metal_lm = false;
+      else
+        mc::cerror("--metal-entry takes pvh (the default: a loader enters in 32-bit mode and the stub switches) or lm (the board is already in long mode)");
     } else if ( mc::strcmp(argv[i], "-f") == 0 ) {
       conf.check_compileability = false;
     } else if ( mc::strcmp(argv[i], "--recursive") == 0 ) {

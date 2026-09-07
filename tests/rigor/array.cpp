@@ -2,7 +2,7 @@
 // Rigorous adversarial test suite for micron::array<T, N>
 
 #include "../../src/array/array.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/vector/vector.hpp"
 #include "../snowball/snowball.hpp"
 

@@ -183,7 +183,10 @@ help(void)
   mc::console("                      implies -k, and disables the default LTO mode");
   mc::console("    --start <dir>     where the micron crt lives: the _start stub, start.cpp and");
   mc::console("                      (under -ke) eh_runtime.cpp. Order: --start, else $MICRON_START,");
-  mc::console("                      else /usr/src/mc_start. Put one there with");
+  mc::console("                      else /usr/src/mc_start -- or /usr/src/mc_start_bb under");
+  mc::console("                      --metal, which is where install_start.py puts the");
+  mc::console("                      barebones crt so it cannot clobber the userland one.");
+  mc::console("                      Put one there with");
   mc::console("                      scripts/install_start.py <dir>. Freestanding c/c++ targets only:");
   mc::console("                      a .s/.asm target links bare and ignores it. NOTE this relocates");
   mc::console("                      the crt SOURCES only -- they still take <micron/...> off the");
@@ -200,6 +203,27 @@ help(void)
   mc::console("                      mx MX_CONTINUATION blob a running host calls. Needs");
   mc::console("                      --def MICRON_ATTACH_MODULE --def MICRON_MX_CONTINUATION.");
   mc::console("                      Freestanding only");
+  mc::console("    --kernel          a Linux kernel module OBJECT. Implies -k plus");
+  mc::console("                      -fno-threadsafe-statics -fno-use-cxa-atexit -fno-common");
+  mc::console("                      -fno-pie -fno-asynchronous-unwind-tables, and per arch:");
+  mc::console("                      amd64  -mno-sse -mno-mmx -mno-80387 -mno-3dnow");
+  mc::console("                             -mno-red-zone -mcmodel=kernel");
+  mc::console("                      arm64  -mgeneral-regs-only");
+  mc::console("                      armv7  -mfloat-abi=soft");
+  mc::console("                      Defines MICRON_PORT_KERNEL MICRON_NO_SIMD MICRON_NO_FP");
+  mc::console("                      MICRON_NO_TLS. Forces --raw-obj: kbuild links the .ko,");
+  mc::console("    --metal           a bare-metal IMAGE. Implies -k plus the --kernel codegen");
+  mc::console("                      set minus -mcmodel=kernel, and defines MICRON_PORT_METAL");
+  mc::console("                      MICRON_NO_SIMD MICRON_NO_FP MICRON_NO_TLS. Unlike --kernel");
+  mc::console("                      it LINKS: <crt>/metal/reset*.s + metal_start.cpp +");
+  mc::console("                      mc_mport.cpp + mc_metal_libgcc.cpp, laid out by");
+  mc::console("                      -T <crt>/metal/metal_<arch>.ld, -static. Needs a heap:");
+  mc::console("                      --def MICRON_BB_PORT_POOL=<bytes>. run/test/emulate refuse");
+  mc::console("                      it; boot the image (examples/metal/Makefile).");
+  mc::console("    --metal-entry X   amd64 only, X = pvh (default) | lm. Who switches the CPU");
+  mc::console("                      into long mode. pvh: a loader enters the 32-bit trampoline");
+  mc::console("                      in reset.s, which builds a GDT and one identity mapping.");
+  mc::console("                      lm: reset_amd64_lm.s, for a board whose first stage did it.");
   mc::console("    --asan            AddressSanitizer (-fsanitize=address,");
   mc::console("                      -fno-omit-frame-pointer); disables -flto");
   mc::console("    --ubsan           UBSanitizer (-fsanitize=undefined); disables -flto;");
@@ -268,7 +292,8 @@ help(void)
   mc::console("    MICRON_START      fallback for --start: the micron crt directory, applied to every");
   mc::console("                      line of a run, so a batchfile needs no per-line flag. --start");
   mc::console("                      outranks it, and it stays inert on non-freestanding lines.");
-  mc::console("                      Unset or empty means /usr/src/mc_start");
+  mc::console("                      Unset or empty means /usr/src/mc_start, or");
+  mc::console("                      /usr/src/mc_start_bb when --metal is given");
   mc::console("");
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

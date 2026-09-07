@@ -15,7 +15,7 @@
 #include "../../src/stacks/stack.hpp"
 #include "../../src/std.hpp"
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../snowball/snowball.hpp"
 #include "../support/stack_rigor.hpp"

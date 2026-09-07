@@ -7,8 +7,6 @@
 
 #include "../../bits/__arch.hpp"
 
-#include "../../memory/mman.hpp"
-
 #include "../../numerics.hpp"
 
 #include "../../types.hpp"
@@ -61,22 +59,4 @@ to_chunk(T *ptr, usize len)
 {
   return chunk<byte>(reinterpret_cast<byte *>(ptr), len);
 }
-
-inline addr_t *
-map_normal(addr_t *ptr, const usize n)
-{
-  return (micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous, -1, 0));
-};
-
-inline addr_t *
-map_frozen(addr_t *ptr, const usize n)
-{
-  return (micron::mmap(ptr, n, prot_read, map_private | map_anonymous, -1, 0));
-};
-
-inline addr_t *
-map_large(addr_t *ptr, const usize n)
-{
-  return (micron::mmap(ptr, n, prot_read | prot_write, map_private | map_anonymous | map_hugetlb, -1, 0));
-};
 };      // namespace micron

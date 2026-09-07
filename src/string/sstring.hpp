@@ -210,7 +210,7 @@ private:
   {
     if ( len == 0 ) return npos;
     if constexpr ( sizeof(T) == 1 ) {
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
       const size_type i = micron::simd::find_first_set_256(p, len, static_cast<char>(ch));
 #else
       const size_type i = micron::simd::find_first_set_128(p, len, static_cast<char>(ch));
@@ -227,7 +227,7 @@ private:
   {
     if ( len == 0 ) return npos;
     if constexpr ( sizeof(T) == 1 ) {
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
       auto *r = micron::simd::memrchr256(reinterpret_cast<const byte *>(p), static_cast<u8>(ch), len);
 #else
       auto *r = micron::simd::memrchr128(reinterpret_cast<const byte *>(p), static_cast<u8>(ch), len);
@@ -249,7 +249,7 @@ private:
       return r == len ? npos : r;
     }
     size_type i = pos;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
     __m256i cv[K];
     for ( size_type k = 0; k < K; ++k ) cv[k] = _mm256_set1_epi8(static_cast<char>(chars[k]));
     for ( ; i + 32 <= len; i += 32 ) {
@@ -260,7 +260,7 @@ private:
       if ( m ) return i + static_cast<size_type>(__builtin_ctz(static_cast<unsigned int>(m)));
     }
 #endif
-#if defined(__micron_x86_sse2)
+#if defined(__micron_x86_sse2) && !defined(__micron_simd_generic)
     __m128i cv128[K];
     for ( size_type k = 0; k < K; ++k ) cv128[k] = _mm_set1_epi8(static_cast<char>(chars[k]));
     for ( ; i + 16 <= len; i += 16 ) {
@@ -270,7 +270,7 @@ private:
       u32 m = static_cast<u32>(_mm_movemask_epi8(any));
       if ( m ) return i + static_cast<size_type>(__builtin_ctz(static_cast<unsigned int>(m)));
     }
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     micron::simd::__bits::uint8x16_t cv_n[K];
     for ( size_type k = 0; k < K; ++k ) cv_n[k] = vdupq_n_u8(static_cast<u8>(chars[k]));
     for ( ; i + 16 <= len; i += 16 ) {
@@ -298,7 +298,7 @@ private:
       return r == end ? npos : r;
     }
     size_type i = end;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
     __m256i cv[K];
     for ( size_type k = 0; k < K; ++k ) cv[k] = _mm256_set1_epi8(static_cast<char>(chars[k]));
     while ( i >= 32 ) {
@@ -313,7 +313,7 @@ private:
       i -= 32;
     }
 #endif
-#if defined(__micron_x86_sse2)
+#if defined(__micron_x86_sse2) && !defined(__micron_simd_generic)
     __m128i cv128[K];
     for ( size_type k = 0; k < K; ++k ) cv128[k] = _mm_set1_epi8(static_cast<char>(chars[k]));
     while ( i >= 16 ) {
@@ -327,7 +327,7 @@ private:
       }
       i -= 16;
     }
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     micron::simd::__bits::uint8x16_t cv_n[K];
     for ( size_type k = 0; k < K; ++k ) cv_n[k] = vdupq_n_u8(static_cast<u8>(chars[k]));
     while ( i >= 16 ) {
@@ -365,7 +365,7 @@ private:
       return cnt;
     }
     if ( nlen == 1 ) {
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
       return micron::simd::count_set_256(hay, hlen, static_cast<char>(needle[0]));
 #else
       return micron::simd::count_set_128(hay, hlen, static_cast<char>(needle[0]));
@@ -373,7 +373,7 @@ private:
     }
     size_type n = 0, pos = 0;
     const size_type limit = hlen - nlen + 1;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
     const __m256i first = _mm256_set1_epi8(static_cast<char>(needle[0]));
     while ( pos + 32 <= limit ) {
       __m256i v = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(hay + pos));
@@ -401,7 +401,7 @@ private:
       pos += 32;
     sstring_count_substr_next_avx:;
     }
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     const micron::simd::__bits::uint8x16_t first = vdupq_n_u8(static_cast<u8>(needle[0]));
     while ( pos + 16 <= limit ) {
       auto v = vld1q_u8(reinterpret_cast<const u8 *>(hay + pos));
@@ -1418,7 +1418,7 @@ public:
       return *this;
     }
     size_type i = 0;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
     const __m256i vA = _mm256_set1_epi8('A');
     const __m256i v26b = _mm256_set1_epi8(26 - 0x80);
     const __m256i v80 = _mm256_set1_epi8(static_cast<char>(0x80));
@@ -1432,7 +1432,7 @@ public:
       _mm256_storeu_si256(reinterpret_cast<__m256i *>(&memory[i]), _mm256_or_si256(v, delta));
     }
 #endif
-#if defined(__micron_x86_sse2)
+#if defined(__micron_x86_sse2) && !defined(__micron_simd_generic)
     const __m128i vA128 = _mm_set1_epi8('A');
     const __m128i v26b128 = _mm_set1_epi8(26 - 0x80);
     const __m128i v80_128 = _mm_set1_epi8(static_cast<char>(0x80));
@@ -1445,7 +1445,7 @@ public:
       __m128i delta = _mm_and_si128(mask, vSpace128);
       _mm_storeu_si128(reinterpret_cast<__m128i *>(&memory[i]), _mm_or_si128(v, delta));
     }
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     const micron::simd::__bits::uint8x16_t vA_n = vdupq_n_u8('A');
     const micron::simd::__bits::uint8x16_t v26_n = vdupq_n_u8(26);
     const micron::simd::__bits::uint8x16_t vSpace_n = vdupq_n_u8(0x20);
@@ -1470,7 +1470,7 @@ public:
       return *this;
     }
     size_type i = 0;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
     const __m256i va = _mm256_set1_epi8('a');
     const __m256i v26b = _mm256_set1_epi8(26 - 0x80);
     const __m256i v80 = _mm256_set1_epi8(static_cast<char>(0x80));
@@ -1484,7 +1484,7 @@ public:
       _mm256_storeu_si256(reinterpret_cast<__m256i *>(&memory[i]), _mm256_andnot_si256(delta, v));
     }
 #endif
-#if defined(__micron_x86_sse2)
+#if defined(__micron_x86_sse2) && !defined(__micron_simd_generic)
     const __m128i va128 = _mm_set1_epi8('a');
     const __m128i v26b128 = _mm_set1_epi8(26 - 0x80);
     const __m128i v80_128 = _mm_set1_epi8(static_cast<char>(0x80));
@@ -1497,7 +1497,7 @@ public:
       __m128i delta = _mm_and_si128(mask, vSpace128);
       _mm_storeu_si128(reinterpret_cast<__m128i *>(&memory[i]), _mm_andnot_si128(delta, v));
     }
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     // has no native ANDNOT wrapper for u8 on arm32
     const micron::simd::__bits::uint8x16_t va_n = vdupq_n_u8('a');
     const micron::simd::__bits::uint8x16_t v26_n = vdupq_n_u8(26);
@@ -1533,7 +1533,7 @@ public:
     }
     static const T ws[4] = { static_cast<T>(' '), static_cast<T>('\t'), static_cast<T>('\n'), static_cast<T>('\r') };
     size_type i = 0;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
     {
       __m256i cv[4];
       for ( int k = 0; k < 4; ++k ) cv[k] = _mm256_set1_epi8(static_cast<char>(ws[k]));
@@ -1548,7 +1548,7 @@ public:
         }
       }
     }
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     {
       micron::simd::__bits::uint8x16_t cv_n[4];
       for ( int k = 0; k < 4; ++k ) cv_n[k] = vdupq_n_u8(static_cast<u8>(ws[k]));
@@ -1567,7 +1567,7 @@ public:
             && (memory[i] == static_cast<T>(' ') || memory[i] == static_cast<T>('\t') || memory[i] == static_cast<T>('\n')
                 || memory[i] == static_cast<T>('\r')) )
       ++i;
-#if defined(__micron_x86_avx2) || defined(__micron_arm_neon)
+#if (defined(__micron_x86_avx2) || defined(__micron_arm_neon)) && !defined(__micron_simd_generic)
   sstring_trim_left_done:
 #endif
     if ( i > length ) i = length;
@@ -1596,7 +1596,7 @@ public:
     }
     static const T ws[4] = { static_cast<T>(' '), static_cast<T>('\t'), static_cast<T>('\n'), static_cast<T>('\r') };
     size_type i = length;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
     {
       __m256i cv[4];
       for ( int k = 0; k < 4; ++k ) cv[k] = _mm256_set1_epi8(static_cast<char>(ws[k]));
@@ -1612,7 +1612,7 @@ public:
         i -= 32;
       }
     }
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     {
       micron::simd::__bits::uint8x16_t cv_n[4];
       for ( int k = 0; k < 4; ++k ) cv_n[k] = vdupq_n_u8(static_cast<u8>(ws[k]));
@@ -1632,7 +1632,7 @@ public:
             && (memory[i - 1] == static_cast<T>(' ') || memory[i - 1] == static_cast<T>('\t') || memory[i - 1] == static_cast<T>('\n')
                 || memory[i - 1] == static_cast<T>('\r')) )
       --i;
-#if defined(__micron_x86_avx2) || defined(__micron_arm_neon)
+#if (defined(__micron_x86_avx2) || defined(__micron_arm_neon)) && !defined(__micron_simd_generic)
   sstring_trim_right_done:
 #endif
     if ( i < length ) {
@@ -1657,7 +1657,7 @@ public:
       return *this;
     }
     size_type lo = 0, hi = length;
-#if defined(__micron_x86_ssse3) || defined(__micron_x86_avx2)
+#if (defined(__micron_x86_ssse3) || defined(__micron_x86_avx2)) && !defined(__micron_simd_generic)
     const __m128i rev = _mm_setr_epi8(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
     while ( hi >= lo + 32 ) {
       __m128i a = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&memory[lo]));
@@ -1667,7 +1667,7 @@ public:
       lo += 16;
       hi -= 16;
     }
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     while ( hi >= lo + 32 ) {
       auto a = vld1q_u8(reinterpret_cast<const u8 *>(&memory[lo]));
       auto b = vld1q_u8(reinterpret_cast<const u8 *>(&memory[hi - 16]));
@@ -1692,7 +1692,7 @@ public:
   {
     if ( length == 0 ) return 0;
     if constexpr ( sizeof(T) != 1 ) return micron::simd::count_elem<T>(memory, length, ch);
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
     return micron::simd::count_set_256(memory, length, static_cast<char>(ch));
 #else
     return micron::simd::count_set_128(memory, length, static_cast<char>(ch));

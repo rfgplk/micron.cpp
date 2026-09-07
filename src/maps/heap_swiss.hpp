@@ -92,11 +92,11 @@ class heap_swiss_map
   ::micron::__mask
   __match_h2(u8 hash_val, usize ind) const noexcept
   {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
     simd::i128 m = simd::sse::splat_i8(static_cast<char>(hash_val));
     simd::i128 c = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__ctrl[ind]));
     return ::micron::__mask(simd::sse::movemask_i8(simd::sse::eq_i8(m, c)));
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     uint8x16_t m = simd::neon::splat_u8(hash_val);
     uint8x16_t c = simd::neon::load_u8(&__ctrl[ind]);
     return ::micron::__mask(static_cast<i32>(simd::neon::movemask_u8(simd::neon::eq(c, m))));
@@ -111,11 +111,11 @@ class heap_swiss_map
   ::micron::__mask
   __match_empty_slots(usize ind) const noexcept
   {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
     simd::i128 e = simd::sse::splat_i8(static_cast<char>(__empty));
     simd::i128 c = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__ctrl[ind]));
     return ::micron::__mask(simd::sse::movemask_i8(simd::sse::eq_i8(e, c)));
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     uint8x16_t e = simd::neon::splat_u8(__empty);
     uint8x16_t c = simd::neon::load_u8(&__ctrl[ind]);
     return ::micron::__mask(static_cast<i32>(simd::neon::movemask_u8(simd::neon::eq(c, e))));
@@ -130,12 +130,12 @@ class heap_swiss_map
   ::micron::__mask
   __match_empty_or_del(usize ind) const noexcept
   {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
     simd::i128 c = simd::sse::loadu_i128(reinterpret_cast<const __m128i_u *>(&__ctrl[ind]));
     simd::i128 e = simd::sse::splat_i8(static_cast<char>(__empty));
     simd::i128 d = simd::sse::splat_i8(static_cast<char>(__deleted));
     return ::micron::__mask(simd::sse::movemask_i8(simd::sse::or_i128(simd::sse::eq_i8(c, e), simd::sse::eq_i8(c, d))));
-#elif defined(__micron_arm_neon)
+#elif defined(__micron_arm_neon) && !defined(__micron_simd_generic)
     uint8x16_t c = simd::neon::load_u8(&__ctrl[ind]);
     uint8x16_t e = simd::neon::splat_u8(__empty);
     uint8x16_t d = simd::neon::splat_u8(__deleted);

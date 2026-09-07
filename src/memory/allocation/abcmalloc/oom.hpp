@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "../../../linux/sys/sysinfo.hpp"
+#include "../../../port/pages.hpp"
 #include "config.hpp"
 
 namespace abc
@@ -39,9 +39,10 @@ check_oom(void) -> bool
     if ( ++__oom_budget < __default_oom_check_interval ) [[likely]]
       return false;
     __oom_budget = 0;
-    micron::resources rs;
-    usize total_ram = rs.total_memory;
-    usize free_ram = rs.free_memory;
+    const auto rs = micron::port::heap_extent();
+    usize total_ram = rs.total;
+    usize free_ram = rs.free;
+    if ( total_ram == 0 ) return false;      // extent unknown; do not size a decision from it
     if ( ((float)free_ram / (float)total_ram) <= __default_oom_limit_error ) {
       return true;
     } else if ( ((float)free_ram / (float)total_ram) <= __default_oom_limit_warn ) {

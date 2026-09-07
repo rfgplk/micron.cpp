@@ -34,7 +34,7 @@
 //     internally. You rarely write SIMD by hand; this layer is for
 //     the cases when you need to.
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/simd/simd.hpp"
 
 int

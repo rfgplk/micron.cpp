@@ -14,7 +14,7 @@
 //   - No default what() string — pass a message to the constructor.
 
 #include "../src/except.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 // --- Function that throws a micron exception ---
 static int

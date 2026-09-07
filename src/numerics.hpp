@@ -1737,6 +1737,12 @@ public:
   static constexpr bool tinyness_before = false;
 };
 
+// WARNING: clang REJECTS this specialization outright on a target built without long double
+// support -- "'min' requires 'long double' type support" -- at declaration time, not at use.
+// GCC accepts the declarations and only errors if one is instantiated. Both are right; the type
+// simply does not exist on x86 -mno-80387, aarch64 -mgeneral-regs-only or arm32 soft-float, and
+// no correct micron code can want numeric_limits<long double> there. See __micron_no_fp.
+#if !defined(__micron_no_fp)
 template<> class numeric_limits<long double>
 {
 public:
@@ -1823,6 +1829,7 @@ public:
   static constexpr bool traps = false;
   static constexpr bool tinyness_before = false;
 };
+#endif      // !__micron_no_fp
 
 template<class T> class numeric_limits<const T>: public numeric_limits<T>
 {

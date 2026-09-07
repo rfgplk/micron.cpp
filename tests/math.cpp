@@ -1,6 +1,6 @@
 #include "../src/math/sqrt.hpp"
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 #include "../src/std.hpp"
 

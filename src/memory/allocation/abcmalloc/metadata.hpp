@@ -45,7 +45,7 @@ enum block_flags : i32 {
   __block_temporal = 4,
 };
 
-constexpr static usize __hdr_offset = sizeof(micron::simd::i256);
+constexpr static usize __hdr_offset = 32;
 
 inline block_header *
 get_block_header(byte *user_ptr)

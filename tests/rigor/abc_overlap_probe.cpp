@@ -4,7 +4,7 @@
 // block against every live block at the instant it is handed out.
 
 #include "../../src/cmalloc.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/math/rng/engines.hpp"
 #include "../../src/memory/allocation/abcmalloc/__abc.hpp"
 #include "../../src/memory/allocation/abcmalloc/config.hpp"

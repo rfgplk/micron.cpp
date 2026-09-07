@@ -23,9 +23,7 @@
 
 #include "../external/bbench/bench.hpp"
 
-#include "../src/io/console.hpp"
-#include "../src/io/stdout.hpp"
-#include "../src/linux/sys/sched.hpp"
+#include "../src/print.hpp"
 #include "../src/std.hpp"
 
 namespace mb

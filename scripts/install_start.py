@@ -4,7 +4,8 @@ import shutil
 import sys
 
 src_path = "./start"
-default_dest_dir = "/usr/src/mc_start"
+# don't clobber the userland start
+default_dest_dir = "/usr/src/mc_start_bb"
 
 def main():
     dest = sys.argv[1] if len(sys.argv) > 1 else default_dest_dir
@@ -20,7 +21,7 @@ def main():
     for root, _, files in os.walk(src_path):
         for f in files:
             if (
-                f.endswith((".h", ".hh", ".hpp", ".c", ".cc", ".cpp", ".s"))
+                f.endswith((".h", ".hh", ".hpp", ".c", ".cc", ".cpp", ".s", ".ld"))
                 or f in ("initializer_list", "index_sequence", "pthread")
             ):
                 src_file = os.path.join(root, f)

@@ -4,7 +4,7 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/io/stdout.hpp"
+#include "../src/print.hpp"
 #include "../src/iterator.hpp"
 #include "../src/std.hpp"
 #include "../src/vector/vector.hpp"

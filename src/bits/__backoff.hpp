@@ -8,7 +8,8 @@
 #include "__arch.hpp"
 #include "__pause.hpp"
 
-#include "../syscall.hpp"
+#include "../port/panic.hpp"
+#include "../port/yield.hpp"
 #include "../types.hpp"
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +80,7 @@ template<> struct __cache_pad<0> {
 [[gnu::always_inline]] inline void
 __sched_yield() noexcept
 {
-  (void)micron::syscall(SYS_sched_yield);
+  micron::port::yield();
 }
 
 struct spin_policy {
@@ -166,11 +167,9 @@ using park_backoff = __lock_backoff<spin_park>;
 [[noreturn]] [[gnu::cold]] inline void
 __lock_misuse_trap(const char *__m) noexcept
 {
-  usize __n = 0;
-  while ( __m[__n] ) ++__n;
-  (void)micron::syscall(SYS_write, 2, "micron lock misuse: ", 20);
-  (void)micron::syscall(SYS_write, 2, __m, __n);
-  (void)micron::syscall(SYS_write, 2, "\n", 1);
+  micron::port::write_diag("micron lock misuse: ", 20);
+  micron::port::write_diag(__m);
+  micron::port::write_diag("\n", 1);
   __builtin_trap();
 }
 

@@ -23,7 +23,7 @@ namespace micron
 __memmove_large(byte *d, const byte *s, const u64 n) noexcept
 {
   if ( d < s || d >= s + n ) {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
     if ( n < __mem_rep_min ) return simd::__memmove_bulk_fwd(d, s, n);
     const __mem_tunables &t = __mem_tun_get();
     const bool disjoint = (d + n <= s) || (s + n <= d);
@@ -32,7 +32,7 @@ __memmove_large(byte *d, const byte *s, const u64 n) noexcept
       simd::__bits::__rep_movsb(d, s, static_cast<usize>(n));
       return d;
     }
-#elif defined(__micron_arch_arm64)
+#elif defined(__micron_arch_arm64) && !defined(__micron_simd_generic)
     if ( ((d + n <= s) || (s + n <= d)) && n >= __mem_nt_threshold_arm64 ) return simd::__memcpy_bulk_nt(d, s, n);
 #endif
     return simd::__memmove_bulk_fwd(d, s, n);
@@ -56,7 +56,7 @@ __memmove_bytes(byte *d, const byte *s, const u64 bytes) noexcept
     __ml::__copy_65_128(d, s, bytes);
     return d;
   }
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   if ( bytes <= 256 ) {
     __ml::__copy_129_256(d, s, bytes);
     return d;

@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../kmapping.hpp"
 #include "../kmemory.hpp"
 
 #include "../../../errno.hpp"

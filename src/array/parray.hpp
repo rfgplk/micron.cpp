@@ -9,6 +9,7 @@
 #include "../except.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
+#include "../memory/allocation/__internal.hpp"
 #include "../memory/memory.hpp"
 #include "../tags.hpp"
 #include "../type_traits.hpp"
@@ -50,7 +51,7 @@ class parray
   static inline __node *
   __alloc_internal()
   {
-    auto *n = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
+    auto *n = reinterpret_cast<__node *>(micron::__alloc(sizeof(__node)));
     n->refs = 1;
     for ( usize i = 0; i < B; ++i ) n->children[i] = nullptr;
     return n;
@@ -59,7 +60,7 @@ class parray
   static inline __leaf *
   __alloc_leaf()
   {
-    return reinterpret_cast<__leaf *>(abc::alloc(sizeof(__leaf)));
+    return reinterpret_cast<__leaf *>(micron::__alloc(sizeof(__leaf)));
   }
 
   static inline __leaf *
@@ -77,7 +78,7 @@ class parray
     if constexpr ( !micron::is_trivially_destructible_v<T> ) {
       for ( usize i = 0; i < B; ++i ) l->values[i].~T();
     }
-    abc::dealloc(reinterpret_cast<byte *>(l));
+    micron::__free(l);
   }
 
   template<usize Lvl>
@@ -109,7 +110,7 @@ class parray
       __node *n = static_cast<__node *>(p);
       if ( __atomic_fetch_sub(&n->refs, 1u, __ATOMIC_ACQ_REL) == 1u ) [[unlikely]] {
         for ( usize i = 0; i < B; ++i ) __release<Lvl - 1>(n->children[i]);
-        abc::dealloc(reinterpret_cast<byte *>(n));
+        micron::__free(n);
       }
     }
   }
@@ -147,7 +148,7 @@ class parray
 #if !defined(__micron_freestanding) || defined(__micron_eh)
         } catch ( ... ) {
           for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
-          abc::dealloc(reinterpret_cast<byte *>(fresh));
+          micron::__free(fresh);
           throw;
         }
 #endif
@@ -227,7 +228,7 @@ class parray
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < built; ++j ) l->values[j].~T();
-        abc::dealloc(reinterpret_cast<byte *>(l));
+        micron::__free(l);
         throw;
       }
 #endif
@@ -264,7 +265,7 @@ class parray
 #if !defined(__micron_freestanding) || defined(__micron_eh)
       } catch ( ... ) {
         for ( usize j = 0; j < built; ++j ) l->values[j].~T();
-        abc::dealloc(reinterpret_cast<byte *>(l));
+        micron::__free(l);
         throw;
       }
 #endif
@@ -325,7 +326,7 @@ class parray
 #if !defined(__micron_freestanding) || defined(__micron_eh)
         } catch ( ... ) {
           for ( usize j = 0; j < built; ++j ) fresh->values[j].~T();
-          abc::dealloc(reinterpret_cast<byte *>(fresh));
+          micron::__free(fresh);
           throw;
         }
 #endif
@@ -446,7 +447,7 @@ class parray
       }
       return fresh;
     } else {
-      __node *fresh = reinterpret_cast<__node *>(abc::alloc(sizeof(__node)));
+      __node *fresh = reinterpret_cast<__node *>(micron::__alloc(sizeof(__node)));
       fresh->refs = 1;
       if ( p ) {
         const __node *old = static_cast<const __node *>(p);

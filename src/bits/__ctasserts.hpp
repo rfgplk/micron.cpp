@@ -56,8 +56,12 @@
 // arches
 #if defined(__micron_arch_arm_any)
 #elif defined(__micron_arch_x86_any)
+#elif defined(__micron_arch_generic)
+// the scalar generic tier (MICRON_ALLOW_GENERIC_ARCH). no ISA backend and no syscall table --
+// everything reachable is scalar C++. see __arch.hpp
 #else
-#error "This version of the Micron standard library is designed for x86 (amd64 / i386) or ARM (armv7-a / aarch64)."
+#error                                                                                                                                     \
+    "This version of the Micron standard library is designed for x86 (amd64 / i386) or ARM (armv7-a / aarch64). Define MICRON_ALLOW_GENERIC_ARCH for the scalar generic tier."
 #endif
 
 struct __ct_type_checker {

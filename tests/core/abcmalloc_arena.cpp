@@ -10,7 +10,7 @@
 
 #include "../../src/memory/allocation/abcmalloc/arena.hpp"
 #include "../../src/memory/allocation/abcmalloc/book.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/std.hpp"
 
 #include "../snowball/snowball.hpp"

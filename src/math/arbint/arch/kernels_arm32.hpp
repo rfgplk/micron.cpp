@@ -22,7 +22,7 @@
 // NOTE: no ldm/stm; the assembler sorts a register list by REGISTER NUMBER, not by the order written, so
 // `ldmia %[ap]!, {%[a0], %[a1]}` loads in whatever order gcc's allocation happens to imply
 //
-// WARNING: THUMB-2 HAZARD. src/linux/sys/syscall_arm32.hpp:87-92 documents a register asm("r7") that breaks
+// WARNING: THUMB-2 HAZARD. src/port/backends/syscall_arm32.hpp:87-92 documents a register asm("r7") that breaks
 // under -fno-omit-frame-pointer; every operand here is "r"/"=&r" and gcc does the allocation, so the hazard cannot arise
 
 namespace micron

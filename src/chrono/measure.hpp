@@ -6,8 +6,22 @@
 #pragma once
 
 #include "../bits/__arch.hpp"
-#include "../linux/sys/cpu.hpp"
-#include "../linux/sys/sched.hpp"
+#include "../port/ident.hpp"
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Phase 4: CPU AFFINITY IS OPT-IN.
+//
+// sched_getaffinity/sched_setaffinity and posix::cpu_set_t are userspace-scheduler concepts. A
+// kernel module pins with its own APIs and a bare-metal image has one core and no scheduler, so
+// there is nothing for a port facet to abstract here -- unlike current_cpu(), which is exactly
+// port::cpu_id().
+//
+// Define MICRON_CHRONO_AFFINITY on a tree that still carries linux/sys/{cpu,sched}.hpp to get the
+// pinning helpers back. Without it they compile to an honest -ENOSYS rather than disappearing,
+// so a caller gets a runtime answer instead of a link error.
+#if defined(MICRON_CHRONO_AFFINITY)
+#error "MICRON_CHRONO_AFFINITY needs linux/sys/{cpu,sched}.hpp for posix::cpu_set_t and sched_{get,set}affinity. Phase 4 deleted src/linux/ from the barebones branch. current_cpu() still works -- it is port::cpu_id(); only the pinning helpers are unavailable, and they return 0 / -ENOSYS."
+#endif
 #include "../type_traits.hpp"
 #include "../types.hpp"
 
@@ -132,29 +146,40 @@ current_cpu(void) noexcept
 {
   u32 cpu = 0;
   u32 node = 0;
-  if ( micron::posix::getcpu(&cpu, &node) < 0 ) return ~0u;
+  const i32 __c = micron::port::cpu_id();
+  if ( __c < 0 ) return ~0u;
+  cpu = static_cast<u32>(__c);
   return cpu;
 }
 
 inline u32
 first_available_cpu(void) noexcept
 {
+#if defined(MICRON_CHRONO_AFFINITY)
   micron::posix::cpu_set_t set{};
   if ( micron::posix::sched_getaffinity(0, sizeof(set), set) < 0 ) return 0;
   for ( usize c = 0; c < static_cast<usize>(micron::posix::cpu_setsize); ++c ) {
     if ( set.cpu_isset(c) ) return static_cast<u32>(c);
   }
   return 0;
+#else
+  return 0;      // no affinity mask to consult; cpu 0 is the only answer we can stand behind
+#endif
 }
 
 // 0 on success, -errno otherwise
 inline i32
 pin_to_cpu(u32 cpu) noexcept
 {
+#if defined(MICRON_CHRONO_AFFINITY)
   micron::posix::cpu_set_t set{};
   set.cpu_zero();
   set.cpu_set(static_cast<usize>(cpu));
   return static_cast<i32>(micron::posix::sched_setaffinity(0, sizeof(set), set));
+#else
+  (void)cpu;
+  return -38;      // -ENOSYS: honest, and distinguishable from a real affinity failure
+#endif
 }
 
 inline i32

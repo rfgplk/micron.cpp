@@ -282,6 +282,168 @@ __flags_warn_ignore()
   return make_flags(gcc::w_flags::flags::Wno_variadic_macros, gcc::w_flags::flags::Wno_inline);
 }
 
+// --kernel: the codegen set for a Linux kernel module object.
+//
+// Emitted from inside __flags_freestanding because all three compiler builders (batch_cmp,
+// batch_cmp_armv7, batch_cmp_aarch64) already call that one function -- threading a fourth fragment
+// through each of them would be three places for the arm64 and arm32 cases to drift apart.
+//
+// Every flag here is load-bearing, and the two groups are load-bearing for different reasons:
+//
+//  THE REGISTERS ARE NOT OURS. -mno-sse/-mno-mmx/-mno-80387/-mno-3dnow on x86,
+//  -mgeneral-regs-only on aarch64 and -mfloat-abi=soft on armv7 (see the arm arm below for why
+//  those two differ). A kernel build is amd64 with every ISA macro set and none of the
+//  vector registers available: touching them outside kernel_fpu_begin() silently corrupts a
+//  userspace task's FP state. This is why MICRON_NO_SIMD is a define and not an -march choice --
+//  CLAUDE.md hard rule #3, gate on capability rather than arch.
+//
+//  THE C++ RUNTIME IS NOT THERE. -fno-threadsafe-statics (a function-local static would call
+//  __cxa_guard_acquire), -fno-use-cxa-atexit (a static with a destructor would call __cxa_atexit
+//  and want a __dso_handle), -fno-asynchronous-unwind-tables (nothing will ever unwind a module).
+//  The kernel provides none of the three.
+//
+// -fno-pie/-fno-common/-mcmodel=kernel/-mno-red-zone are simply the kernel's ABI.
+//
+// NOTE: -k already supplied -ffreestanding, -fno-exceptions, -fno-rtti and -fno-stack-protector
+// above; --kernel implies --kernel-is-freestanding (config.hh sets conf.freestanding), so those are
+// not repeated here.
+inline string_type
+__flags_kernel(const config_t &conf)
+{
+  string_type r;
+  if ( !conf.kernel ) return r;
+
+  __compose_flags(r, gcc::cpp_flags::flags::no_threadsafe_statics, gcc::cpp_flags::flags::no_use_cxa_atexit,
+                  gcc::cpp_flags::flags::no_common, gcc::opt_flags::flags::no_asynchronous_unwind_tables,
+                  gcc::opt_flags::flags::no_PIE);
+
+  if ( conf.arch == __arch::x86 ) {
+    __compose_flags(r, gcc::x86_flags::flags::mno_sse, gcc::x86_flags::flags::mno_mmx, gcc::x86_flags::flags::mno_80387,
+                    gcc::x86_flags::flags::mno_3dnow, gcc::x86_flags::flags::mno_red_zone);
+    // -mcmodel= is a PREFIX in the inventory, the value is concatenated by the caller -- the same
+    // shape --mtp uses. It is 64-bit only: an i386 module is not a target micron claims.
+    if ( conf.width == 64 ) {
+      string_type cm = get_string_flag(gcc::x86_flags::flags::mcmodel);
+      cm += "kernel";
+      __compose_add(r, cm.c_str());
+    }
+  } else if ( conf.arch == __arch::arm64 ) {
+    __compose_flags(r, gcc::aarch64_flags::flags::mgeneral_regs_only);
+  } else if ( conf.arch == __arch::arm ) {
+    // -mfloat-abi=soft, NOT -mgeneral-regs-only. Measured: armv7's -mgeneral-regs-only is far
+    // stricter than aarch64's -- it rejects a float in a DECLARATION, not merely in generated code,
+    // so numerics.hpp alone produced 426 errors before its body was ever considered. The real arm32
+    // kernel builds with soft-float, and BAREBONES.md's 12-mode gate already covers that
+    // configuration. batch_cmp_armv7 unconditionally emits -mfloat-abi=hard in main_flags; this
+    // fragment lands after it on the command line and gcc takes the last one.
+    string_type fa = get_string_flag(gcc::arm_flags::flags::mfloat_abi);
+    fa += "soft";
+    __compose_add(r, fa.c_str());
+  }
+  return r;
+}
+
+// --metal: the same "no vector unit, no FPU" codegen set as --kernel, minus the kernel's own ABI
+// (-mcmodel=kernel is a Linux-kernel address-model choice and means nothing on a board), plus the
+// two things only a bare-metal link needs: the per-arch layout script and -static.
+//
+// The linker script is NOT optional and is not a default the linker would pick: it places the reset
+// vector at the board's entry address, provides __stack_top / __data_load / __bss_* for the stub and
+// __{pre,}init_array_* for metal_start.cpp. Those array symbols are weak-hidden, so a script that
+// omits them links fine and leaves them null -- and every global constructor is silently never run.
+inline string_type
+__flags_metal(const config_t &conf, bool linking)
+{
+  string_type r;
+  if ( !conf.metal ) return r;
+
+  __compose_flags(r, gcc::cpp_flags::flags::no_threadsafe_statics, gcc::cpp_flags::flags::no_use_cxa_atexit,
+                  gcc::cpp_flags::flags::no_common, gcc::opt_flags::flags::no_asynchronous_unwind_tables,
+                  gcc::opt_flags::flags::no_PIE);
+
+  if ( conf.arch == __arch::x86 ) {
+    __compose_flags(r, gcc::x86_flags::flags::mno_sse, gcc::x86_flags::flags::mno_mmx, gcc::x86_flags::flags::mno_80387,
+                    gcc::x86_flags::flags::mno_3dnow, gcc::x86_flags::flags::mno_red_zone);
+  } else if ( conf.arch == __arch::arm64 ) {
+    // -mstrict-align, AND IT IS NOT A PRECAUTION. The reset stub hands over with the MMU off, and
+    // with no translation every access is Device-nGnRnE -- on which an unaligned access faults,
+    // unconditionally, regardless of SCTLR_EL1.A. Without this the image boots, runs the whole
+    // container workload, and dies inside println:
+    //
+    //     micron-metal: vector n=4096 sorted=true sum=micron-metal: unhandled exception, VBAR_EL1 trap
+    //
+    // Measured under qemu-system-aarch64 -M virt. It reaches the message at all only because
+    // reset_arm64.s installs a vector table; before that it was a silent hang.
+    //
+    // A board that turns the MMU on and maps its RAM Normal-Cacheable can drop the flag, and that
+    // is the real fix for a board that cares -- but it is the board's to make, not a library's.
+    __compose_flags(r, gcc::aarch64_flags::flags::mgeneral_regs_only, gcc::aarch64_flags::flags::mstrict_align);
+  } else if ( conf.arch == __arch::arm ) {
+    // -mfloat-abi=soft, not -mgeneral-regs-only: see the note in __flags_kernel
+    string_type fa = get_string_flag(gcc::arm_flags::flags::mfloat_abi);
+    fa += "soft";
+    __compose_add(r, fa.c_str());
+    // the armv7-a half of the aarch64 note above -- same cause, same fix, different spelling, and
+    // measured the same way: without it the arm32 image HANGS at the same println. A literal rather
+    // than an inventory entry because flags.hh carries -munaligned-access and not its negation, and
+    // -static two lines down is added the same way.
+    //
+    // NOT on M-profile. An MCU has no MMU to be off: its SRAM is Normal memory in the default
+    // system address map, unaligned LDR/STR is permitted, and CCR.UNALIGN_TRP is clear at reset.
+    // The STM32 image passes without it, so it is not applied -- a flag that costs codegen and
+    // buys nothing is the "dead text" problem wearing a different hat.
+    if ( !conf.cortex_m ) __compose_add(r, "-mno-unaligned-access");
+  }
+
+  if ( linking ) {
+    string_type ld = "-T ";
+    ld += conf.start_dir;
+    ld += "metal/";
+    if ( conf.arch == __arch::arm )
+      // an MCU is not a board with RAM at one address: flash and SRAM are separate regions at fixed
+      // addresses, and .data has a real LMA->VMA copy to do. That is a different script, not a
+      // different origin.
+      ld += conf.cortex_m ? "metal_stm32.ld" : "metal_arm32.ld";
+    else if ( conf.arch == __arch::arm64 )
+      ld += "metal_arm64.ld";
+    else
+      ld += (conf.width == 32) ? "metal_i386.ld" : "metal.ld";
+    // CHECKED, like every crt source __start_append appends. It was not, and the two paths fail
+    // very differently: a missing .cpp said which file and how to install it, a missing .ld said
+    // "cannot open linker script" from ld and nothing else. scripts/install_start.py did not copy
+    // .ld files at all until 2026-09-07, so an installed crt reached exactly that.
+    {
+      const char *__ldp = ld.c_str() + 3;      // past the "-T "
+      if ( !mc::posix::exists(__ldp) )
+        mc::cerror("--metal needs the layout script '", __ldp, "' - install the barebones crt with ",
+                   "'sudo python3 scripts/install_start.py' (it defaults to /usr/src/mc_start_bb, which is where ",
+                   "--metal looks), or point duck elsewhere with --start <dir> or MICRON_START");
+    }
+    __compose_add(r, ld.c_str());
+    __compose_add(r, "-static");
+  }
+  return r;
+}
+
+// -mcpu=<m-profile> -mthumb, and the A-profile trio suppressed. Shared by the C++ and the gas
+// command builders, which is why it is a function rather than two copies.
+inline void
+__compose_arm_isa(string_type &dst, const config_t &conf)
+{
+  if ( conf.cortex_m ) {
+    string_type cpu = get_string_flag(gcc::arm_flags::flags::mcpu);
+    cpu += conf.cortex_m_cpu.empty() ? "cortex-m4" : conf.cortex_m_cpu.c_str();
+    __compose_add(dst, cpu.c_str());
+    __compose_flags(dst, gcc::arm_flags::flags::mthumb);
+    string_type fa = get_string_flag(gcc::arm_flags::flags::mfloat_abi);
+    fa += "soft";
+    __compose_add(dst, fa.c_str());
+    return;
+  }
+  __compose_flags(dst, gcc::arm_flags::flags::march_armv7_a, gcc::arm_flags::flags::mfpu_neon,
+                  gcc::arm_flags::flags::mfloat_abi_hard);
+}
+
 // -k/-ke
 inline string_type
 __flags_freestanding(const config_t &conf, bool linking)
@@ -316,6 +478,8 @@ __flags_freestanding(const config_t &conf, bool linking)
     __compose_add(r, clang_flags::no_unwind_tables);
     __compose_add(r, clang_flags::no_async_unwind_tables);
   }
+  __compose_add(r, __flags_kernel(conf).c_str());
+  __compose_add(r, __flags_metal(conf, linking).c_str());
   return r;
 }
 
@@ -332,6 +496,19 @@ __start_stub_name(const config_t &conf)
     if ( conf.arch == __arch::arm ) return "mx/cont_arm32.s";
     if ( conf.arch == __arch::arm64 ) return "mx/cont_arm64.s";
     return (conf.width == 32) ? "mx/cont_i386.s" : "mx/cont.s";
+  }
+  if ( conf.metal ) {
+    // the reset vector, not an entry stub: no loader has run, so this is the first instruction the
+    // machine executes. Sets SP, copies .data LMA->VMA, zeroes .bss, calls __micron_metalc.
+    // M-profile does not have an entry point in the ELF sense: the CPU loads SP from vector[0] and
+    // PC from vector[1]. reset_cortexm.s is that table, not a function.
+    if ( conf.arch == __arch::arm ) return conf.cortex_m ? "metal/reset_cortexm.s" : "metal/reset_arm32.s";
+    if ( conf.arch == __arch::arm64 ) return "metal/reset_arm64.s";
+    if ( conf.width == 32 ) return "metal/reset_i386.s";
+    // amd64 has two, because a 64-bit image cannot be entered by a 32-bit loader without someone
+    // doing the mode switch. reset.s does it (PVH; the default, and the only shape qemu will boot);
+    // reset_amd64_lm.s assumes a first stage already did. --metal-entry lm.
+    return conf.metal_lm ? "metal/reset_amd64_lm.s" : "metal/reset.s";
   }
   if ( conf.arch == __arch::arm ) return conf.direct ? "direct_arm32.s" : "start_arm32.s";
   if ( conf.arch == __arch::arm64 ) return conf.direct ? "direct_arm64.s" : "start_arm64.s";
@@ -360,6 +537,17 @@ __startup_objs(const config_t &conf, bool linking)
   if ( conf.arch == __arch::x86 and conf.static_pie ) return r;
   __start_append(r, conf, __start_stub_name(conf));
   if ( conf.cont ) return r;
+  if ( conf.metal ) {
+    // NOT start.cpp. That file boots TLS, auxv, atexit, a threadpool and io buffers, none of which
+    // exists on a board; metal_start.cpp is the same entry body with all of it removed, and what
+    // survives is the part nothing else can do -- something must run .init_array, because there is
+    // no loader. mc_mport.cpp carries the weak board hooks, mc_metal_libgcc.cpp the libgcc integer
+    // symbols that a hosted link would have got from start.cpp.
+    __start_append(r, conf, "metal/metal_start.cpp");
+    __start_append(r, conf, "metal/mc_mport.cpp");
+    __start_append(r, conf, "metal/mc_metal_libgcc.cpp");
+    return r;
+  }
   __start_append(r, conf, "start.cpp");
   if ( conf.freestanding_eh ) __start_append(r, conf, "eh_runtime.cpp");
   return r;
@@ -546,8 +734,7 @@ string_type
 batch_cmp_armv7(const config_t &conf)
 {
   string_type main_flags = __main_opt_flags(conf);
-  __compose_flags(main_flags, gcc::arm_flags::flags::march_armv7_a, gcc::arm_flags::flags::mfpu_neon,
-                  gcc::arm_flags::flags::mfloat_abi_hard);
+  __compose_arm_isa(main_flags, conf);
   // -marm has to be on the command line
   // a #pragma GCC target("arm") does __not__ cover the compiler-synthesized .text.startup
   if ( conf.marm ) __compose_flags(main_flags, gcc::arm_flags::flags::marm);
@@ -680,7 +867,7 @@ batch_gas(const config_t &conf)
   if ( conf.arch == __arch::x86 )
     main_flags = (conf.width == 64) ? make_flags(gcc::x86_flags::flags::m64) : make_flags(gcc::x86_flags::flags::m32);
   else if ( conf.arch == __arch::arm )
-    main_flags = make_flags(gcc::arm_flags::flags::march_armv7_a, gcc::arm_flags::flags::mfpu_neon, gcc::arm_flags::flags::mfloat_abi_hard);
+    __compose_arm_isa(main_flags, conf);
   else if ( conf.arch == __arch::arm64 )
     main_flags = make_flags(gcc::arm_flags::flags::march_armv8_a);
   const char *comp_type = (conf.compile_type == __comp_type::object)         ? get_string_flag(gcc::driver_flags::flags::compile_only)

@@ -40,3 +40,19 @@
 #endif
 
 #endif      // MICRON_PROFILE_TINY
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%
+// MICRON_PORT_METAL
+#if defined(MICRON_PORT_METAL)
+
+#ifndef MICRON_PORT_SINGLE_CORE
+#define MICRON_PORT_SINGLE_CORE 1      // one core until a board says otherwise; port::cpu_id() is 0
+#endif
+#ifndef MICRON_ATEXIT_CAP
+#define MICRON_ATEXIT_CAP 32      // 32 KiB -> 512 bytes. A board image registers few destructors
+#endif
+#ifndef MICRON_MEM_NO_PROBE
+#define MICRON_MEM_NO_PROBE 1      // no serializing cpuid burst: the cutovers it tunes need an MMU-era cache hierarchy
+#endif
+
+#endif      // MICRON_PORT_METAL

@@ -229,3 +229,11 @@ public:
 #include "locks/shared_mutex.hpp"
 #include "locks/ticket_lock.hpp"
 #include "locks/ttas_lock.hpp"
+
+namespace micron
+{
+// Phase 4: relocated from sync/inlet.hpp, which was an orphan (its only includer, sync/async.hpp,
+// was itself reachable only from the deleted stdthread.hpp). The alias names a keep-set lock, so it
+// costs one line to keep and would otherwise be a silent public-API removal.
+using queuing_mutex_adapter = micron::mcs_lock;
+};      // namespace micron

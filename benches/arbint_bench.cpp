@@ -17,7 +17,7 @@
 #endif
 
 #include "../src/chrono.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/math/__asm/rdrand.hpp"
 #include "../src/math/arbint.hpp"
 #include "../src/std.hpp"

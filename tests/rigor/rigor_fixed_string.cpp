@@ -15,7 +15,7 @@
 //
 // Build: `duck test tests/rigor/rigor_fixed_string.cpp -o bin/t --timeout 120`
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/fixed_string.hpp"
 

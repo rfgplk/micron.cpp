@@ -28,7 +28,7 @@
 // oracle: the writers given a buffer that is always big enough. every layer above them must agree
 // with that, byte for byte, or truncate it at a documented point.
 
-#include "../../src/io/echo.hpp"
+#include "../../src/print.hpp"
 #include "../../src/string/format.hpp"
 #include "../../src/string/strings.hpp"
 #include "../../src/vector.hpp"

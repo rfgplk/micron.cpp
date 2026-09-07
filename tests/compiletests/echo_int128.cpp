@@ -24,7 +24,7 @@
 //
 // Nothing here is run. Failing to compile IS the failing test, on whichever cell fails.
 
-#include "../../src/io/echo.hpp"
+#include "../../src/print.hpp"
 #include "../../src/string/format.hpp"
 #include "../../src/string/strings.hpp"
 
@@ -48,13 +48,11 @@ __echo_128(void)
   const u128 u = (static_cast<u128>(1) << 100) + static_cast<u128>(7);
   const i128 s = -(static_cast<i128>(1) << 100);
 
-  mc::io::echo("u128:", u, " i128:", s);
-  mc::io::echon(u, s);
-  mc::io::echof("{} {}\n", u, s);
-  mc::io::echofn("{:x} {:#b}", u, s);
+  mc::println("u128:", u, " i128:", s);
+  mc::printn(u, s);
 
   // the sink path, which carries its own scratch
-  mc::io::stdout_sink snk;
+  mc::port_sink snk;
   (void)mc::io::printk(snk, u);
   (void)mc::io::printk(snk, s);
 

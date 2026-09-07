@@ -12,8 +12,13 @@
 #include "../except.hpp"
 #include "../memory/cache.hpp"
 #include "../memory/new.hpp"
-#include "../mutex/locks/guard_lock.hpp"
-#include "../mutex/locks/spin_lock.hpp"
+// mutex/locks.hpp is the STITCHER, not just an umbrella: adopt_lock_t / defer_lock_t /
+// try_to_lock_t are declared in its prologue (:20-24) and locks/*.hpp are included after (:217+),
+// exactly like allocator_types/*.hpp under __allocators.hpp. Including a fragment directly compiles
+// it before its own tag types exist. This worked only because abcmalloc/va_reserve.hpp:29 also
+// reaches guard_lock.hpp and got here first; under the barebones allocator abcmalloc is not
+// compiled in and conmap becomes the first arrival. Take the stitcher.
+#include "../mutex/locks.hpp"
 #include "../tuple.hpp"
 
 #include "robin.hpp"

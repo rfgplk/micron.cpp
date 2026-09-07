@@ -6,9 +6,9 @@
 #pragma once
 
 #include "../../atomic/atomic.hpp"
+#include "../../port/ident.hpp"
 #include "../../sync/yield.hpp"
 
-#include "../../linux/sys/system.hpp"
 
 namespace micron
 {
@@ -23,6 +23,26 @@ class recursive_lock
   atomic_token<usize> owner;
   atomic_token<usize> depth;
 
+  // THE OWNER STAMP. Hosted, it is a lazily minted per-thread counter -- cheaper than any identity
+  // the OS can hand back, and the only property it needs is that two live threads never share one.
+  //
+  // Under __micron_no_tls the thread_local is not available: a kernel module has no TLS runtime, so
+  // %fs is the PER-CPU base there and a @tpoff access reads and writes arbitrary per-CPU kernel
+  // memory -- it links, loads, and corrupts. (Measured: this exact symbol was emitted as TLS by a
+  // --kernel -DMICRON_NO_TLS object before this gate.)
+  //
+  // port::exec_id() answers the same question without storage, and answers it BETTER than a shard
+  // would: it is current->pid under (K), a genuine per-task identity, so the "only the owner may
+  // unlock" check below stays exactly as strong as it is hosted. On (E) it is 0 for every caller,
+  // which is correct -- a single-core image with no scheduler has one thread of control. The +1
+  // keeps it clear of __ownerless, which is 0 and means "nobody holds this".
+#if defined(__micron_no_tls)
+  static usize
+  current_thread() noexcept
+  {
+    return static_cast<usize>(micron::port::exec_id()) + 1;
+  }
+#else
   static usize
   current_thread() noexcept
   {
@@ -31,6 +51,7 @@ class recursive_lock
       __id = __lock_owner_ids.fetch_add(1, memory_order::acq_rel);
     return __id;
   }
+#endif
 
   void
   reset()

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../../atomic/atomic.hpp"
+#include "../../port/ident.hpp"
 #include "../../except.hpp"
 #include "../../types.hpp"
 
@@ -19,9 +20,26 @@ namespace micron
 #define MICRON_MCS_DEPTH 8      // distinct queue locks one thread may hold at once
 #endif
 
-inline atomic_token<u64> __lock_slot_ids{ 1 };
+// how many CPUs the no-TLS slot table shards across. Only read under __micron_no_tls; a shard index
+// past the end wraps rather than faulting, so an under-sized value costs sharing, not memory safety.
+#ifndef MICRON_MCS_CPUS
+#define MICRON_MCS_CPUS 64
+#endif
 
-[[nodiscard]] inline u64
+// THE ID IS POINTER-WIDTH, NOT u64, AND THAT IS LOAD-BEARING RATHER THAN TIDY.
+//
+// atomic_token asserts __atomic_always_lock_free (atomic.hpp:62). On i386 with no x87 and no SSE
+// there is no 8-byte atomic LOAD at all, so atomic_token<u64> cannot be instantiated -- and this
+// variable is a namespace-scope definition, so it is instantiated the moment mutex/locks.hpp is
+// included, which array/conarray.hpp does unconditionally. That put array.hpp, and with it most of
+// micron, out of reach of every 32-bit no-FPU build: exactly the (K) and (E) i386 configuration,
+// and i386 is the one bare-metal target that boots end to end (start/metal/reset_i386.s carries
+// the multiboot header). A lock-slot counter on a 32-bit machine does not need 64 bits.
+// recursive_lock.hpp:16 already had this right.
+
+inline atomic_token<usize> __lock_slot_ids{ 1 };
+
+[[nodiscard]] inline usize
 __next_lock_slot_id() noexcept
 {
   return __lock_slot_ids.fetch_add(1, memory_order::acq_rel);
@@ -30,10 +48,11 @@ __next_lock_slot_id() noexcept
 template<typename Slot, usize Depth = MICRON_MCS_DEPTH> class __lock_slot_table
 {
   static_assert(Depth > 0, "__lock_slot_table needs at least one slot");
+  static constexpr usize __cpu_shards = MICRON_MCS_CPUS;
 
   struct __entry {
     const void *owner;
-    u64 id;
+    usize id;
     Slot slot;
   };
 
@@ -41,16 +60,46 @@ template<typename Slot, usize Depth = MICRON_MCS_DEPTH> class __lock_slot_table
     __entry e[Depth]{};
   };
 
+  // THE PER-THREAD SLOT TABLE, AND WHAT IT BECOMES WITH NO TLS RUNTIME.
+  //
+  // A queue lock needs somewhere to put the node it spins on, and it must be storage no other
+  // waiter can touch. `thread_local` is the natural answer and it is what a hosted build gets.
+  //
+  // Under __micron_no_tls there IS no thread-local storage -- not "it costs something", it does not
+  // link. Worse than that on (K): a kernel module has no TLS runtime, so %fs is the PER-CPU base
+  // and a @tpoff access reads and writes arbitrary per-CPU kernel memory. It compiles, it loads,
+  // and it corrupts. (Measured before this gate existed: a --kernel -DMICRON_NO_TLS object using
+  // mcs_lock emitted this very symbol as TLS.)
+  //
+  // So the no-TLS arm shards by CPU instead, which is the substitution BAREBONES.md already names
+  // for abcmalloc's __tls_arena. On (E) port::cpu_id() is 0 and this is exactly a single table,
+  // which is correct for a single-core image.
+  //
+  // THE CONTRACT THAT COMES WITH IT, stated here because it is not free: a per-CPU table is only
+  // private to its user while that user cannot migrate. A caller that takes an mcs_lock in ring 0
+  // must therefore hold it with preemption disabled -- the ordinary kernel discipline for a queue
+  // lock, and the same shape of "this backend cannot give you the stronger thing" that
+  // pages_kernel.hpp's page_protect states by returning false.
+#if defined(__micron_no_tls)
+  static __table &
+  __tls() noexcept
+  {
+    static __table t[__cpu_shards]{};
+    const i32 c = micron::port::cpu_id();
+    return t[(c < 0 ? 0 : static_cast<usize>(c)) % __cpu_shards];
+  }
+#else
   static __table &
   __tls() noexcept
   {
     static thread_local __table t{};
     return t;
   }
+#endif
 
   template<typename Pred>
   [[nodiscard]] static Slot *
-  __claim_keyed(const void *lock, u64 id, bool &fresh, Pred evictable) noexcept
+  __claim_keyed(const void *lock, usize id, bool &fresh, Pred evictable) noexcept
   {
     __table &t = __tls();
     usize free = Depth;
@@ -89,7 +138,7 @@ public:
   }
 
   [[nodiscard]] static Slot *
-  find(const void *lock, u64 id) noexcept
+  find(const void *lock, usize id) noexcept
   {
     __table &t = __tls();
     for ( usize i = 0; i < Depth; ++i )
@@ -113,7 +162,7 @@ public:
   }
 
   [[nodiscard]] static Slot *
-  claim(const void *lock, u64 id, bool &fresh)
+  claim(const void *lock, usize id, bool &fresh)
   {
     Slot *s = __claim_keyed(lock, id, fresh, [](const Slot &) { return false; });
     if ( s == nullptr ) micron::exc<except::thread_error>("queue-lock slot table exhausted; raise MICRON_MCS_DEPTH");
@@ -146,7 +195,7 @@ public:
 
   template<typename Pred>
   [[nodiscard]] static Slot *
-  claim_evicting(const void *lock, u64 id, bool &fresh, Pred evictable)
+  claim_evicting(const void *lock, usize id, bool &fresh, Pred evictable)
   {
     Slot *s = __claim_keyed(lock, id, fresh, evictable);
     if ( s == nullptr )
@@ -156,7 +205,7 @@ public:
 
   template<typename Pred>
   [[nodiscard]] static Slot *
-  try_claim(const void *lock, u64 id, bool &fresh, Pred evictable) noexcept
+  try_claim(const void *lock, usize id, bool &fresh, Pred evictable) noexcept
   {
     return __claim_keyed(lock, id, fresh, evictable);
   }

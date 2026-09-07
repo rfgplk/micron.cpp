@@ -1,0 +1,384 @@
+#  duck verify_compile_barebones.duck
+#  duck batch parallel verify_compile_barebones.duck
+#
+# The barebones matrix: the keep-set built with no vector unit, and (where duck can express it yet)
+# with no floating point either.
+#
+# WARNING: real codegen only. Every cell here is `compile ... --raw-obj`, never a syntax check.
+# "SSE register return with SSE disabled" and "x87 register return with x87 disabled" are raised
+# during code generation and are completely invisible to -fsyntax-only -- an early sweep of this
+# work reported all-green with two such errors still in the tree.
+#
+# The kernel cells arrived at Phase 5. The bare-metal cells arrived at Phase 6 and are at the bottom
+# of this file -- five targets, and each of the five is LINKED, not merely compiled.
+#
+# THE LINKED CELLS ARE THE POINT, and their absence is what let three real defects through. Every
+# `compile` cell here is --raw-obj, and so is everything in tests/compiletests/, so for two phases
+# nothing in the tree asked whether a metal image links. When someone finally asked: arm32 did not
+# (no __aeabi_* in the libgcc shim), amd64 could not be booted by anything (no boot header), and two
+# ordinary external-linkage definitions in headers stopped a board port being a second TU. A cell
+# that compiles is not a cell that links, and on this target linking is the deliverable.
+#
+# !! THE METAL AND KERNEL CELLS NEED A REBUILT DUCK. --kernel arrived at Phase 5, --metal,
+# --metal-entry and --cortex-m at Phase 6; a duck installed before those rejects them as unknown
+# flags, and the cell then fails for a reason that has nothing to do with the code. Note also that on this branch `sh scripts/bootstap_duck.sh` does NOT work from the
+# working tree: duck's own sources include src/linux/ and src/io/, which the Phase 4 prune deleted
+# (uncommitted, so HEAD still has them). Build it from a worktree at HEAD with tools/ overlaid --
+# see BAREBONES.md.
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the scalar SIMD tier on x86 -- the ISA is present, MICRON_NO_SIMD says do not use it.
+# this is the shape a kernel module takes on amd64.
+
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O0 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/amd64_nosimd_O0
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/amd64_nosimd_O2
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -Ofast --raw-obj --def MICRON_NO_SIMD -o bin/barebones/amd64_nosimd_Ofast
+compile tests/compiletests/barebones_core.cpp --x86 --isa v3 -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/amd64_v3_nosimd_O2
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/amd64_nosimd_k
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj -ke --def MICRON_NO_SIMD -o bin/barebones/amd64_nosimd_ke
+
+# the ISA tier still has to work with the scalar backend forced off, i.e. no regression
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj -o bin/barebones/amd64_base_O2
+compile tests/compiletests/barebones_core.cpp --x86 --isa v3 -O2 --raw-obj -o bin/barebones/amd64_v3_O2
+compile tests/compiletests/barebones_core.cpp --x86 --isa v4 -O2 --raw-obj -o bin/barebones/amd64_v4_O2
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# i386 -- 32-bit width, where the pointer-size and register-pair paths differ
+
+compile tests/compiletests/barebones_core.cpp --i386 -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/i386_nosimd_O2
+compile tests/compiletests/barebones_core.cpp --i386 -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/i386_nosimd_k
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# aarch64 -- with NEON (no regression) and with the scalar tier forced
+
+compile tests/compiletests/barebones_core.cpp --arm64 -O2 --raw-obj -o bin/barebones/arm64_O2
+compile tests/compiletests/barebones_core.cpp --arm64 -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/arm64_nosimd_O2
+compile tests/compiletests/barebones_core.cpp --arm64 -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/arm64_nosimd_k
+compile tests/compiletests/barebones_core.cpp --arm64 -O0 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/arm64_nosimd_O0
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# armv7-a -- the usual breaker
+
+compile tests/compiletests/barebones_core.cpp --arm -O2 --raw-obj -o bin/barebones/arm32_O2
+compile tests/compiletests/barebones_core.cpp --arm -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/arm32_nosimd_O2
+compile tests/compiletests/barebones_core.cpp --arm -O0 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/arm32_nosimd_O0
+compile tests/compiletests/barebones_core.cpp --arm -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/arm32_nosimd_k
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the port layer.
+#
+# micron::port is the whole OS surface, and the linux backend is the reference implementation the
+# kernel and metal ones are measured against. tests/compiletests/port.cpp calls every name each
+# facet owes, so a backend that forgets one fails here and not in a later phase's call site.
+#
+# NOTE: both verify_compile_{gcc,clang}.duck sweep tests/compiletests/ by DIRECTORY, so port.cpp is
+# already in ~60 gcc and ~55 clang cells. These are the barebones-specific ones this manifest names.
+
+compile tests/compiletests/port.cpp --x86 --isa base -O0 --raw-obj -o bin/barebones/port_amd64_O0
+compile tests/compiletests/port.cpp --x86 --isa base -O2 --raw-obj -o bin/barebones/port_amd64_O2
+compile tests/compiletests/port.cpp --x86 --isa base -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/port_amd64_nosimd
+compile tests/compiletests/port.cpp --x86 --isa base -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/port_amd64_k
+compile tests/compiletests/port.cpp --x86 --isa base -O2 --raw-obj -ke --def MICRON_NO_SIMD -o bin/barebones/port_amd64_ke
+compile tests/compiletests/port.cpp --x86 --isa base -O2 --raw-obj --def MICRON_NO_TLS -o bin/barebones/port_amd64_notls
+compile tests/compiletests/port.cpp --i386 -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/port_i386_nosimd
+compile tests/compiletests/port.cpp --arm64 -O2 --raw-obj -o bin/barebones/port_arm64_O2
+compile tests/compiletests/port.cpp --arm64 -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/port_arm64_k
+compile tests/compiletests/port.cpp --arm -O2 --raw-obj -o bin/barebones/port_arm32_O2
+compile tests/compiletests/port.cpp --arm -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/port_arm32_k
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# no thread-local storage.
+#
+# MICRON_NO_TLS -> __micron_no_tls, which drops the thread_local from errno.hpp's __micron_errno.
+# A kernel module and a bare-metal image have no ELF TLS runtime, so a namespace-scope thread_local
+# does not merely cost something there, it does not link. These cells are what keeps that branch
+# compiled; without one, the #if is dead text that nothing ever reads.
+#
+# NOTE: abcmalloc still has two ungated thread_locals of its own (abc::__tls_arena and
+# abc::__arena_releaser_tls, tapi.hpp:54 and :130). They are on the barebones allocator's
+# must-not-have list and are replaced by port::cpu_id() sharding, not by this macro.
+
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj --def MICRON_NO_TLS -o bin/barebones/amd64_notls_O2
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj -k --def MICRON_NO_SIMD --def MICRON_NO_TLS -o bin/barebones/amd64_nosimd_notls_k
+compile tests/compiletests/barebones_core.cpp --arm64 -O2 --raw-obj -k --def MICRON_NO_SIMD --def MICRON_NO_TLS -o bin/barebones/arm64_nosimd_notls_k
+compile tests/compiletests/barebones_core.cpp --arm -O2 --raw-obj -k --def MICRON_NO_SIMD --def MICRON_NO_TLS -o bin/barebones/arm32_nosimd_notls_k
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the dark corners -- gated code NO cell in either host manifest compiles
+#
+# Measured at Phase 4: ABCMALLOC_DOCTOR_HELP has ZERO cells in verify_compile_gcc.duck and ZERO in
+# verify_compile_clang.duck. A #if-gated branch nothing compiles is dead text, and that is exactly
+# how io/coroutine/wave.hpp escaped Phase 3 -- it was behind MICRON_CORO_URING, which only one cell
+# in the full matrix reached.
+#
+# Phase 4 made doctor's crash-safe layer opt-in, because it is the only
+# part of the file that needs linux/sys/signal.hpp. All three combinations are pinned here: doctor
+# off (the default, and byte-exact), doctor on without signals (the barebones shape), and doctor on
+# with signals (the path a tree that still has linux/ takes).
+
+compile tests/compiletests/memory.cpp --x86 --isa base -O2 --raw-obj --def ABCMALLOC_DOCTOR_HELP -o bin/barebones/doctor_amd64_O2
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj --def ABCMALLOC_DOCTOR_HELP --def MICRON_NO_SIMD -o bin/barebones/doctor_nosimd
+compile tests/compiletests/memory.cpp --arm64 -O2 --raw-obj --def ABCMALLOC_DOCTOR_HELP -o bin/barebones/doctor_arm64_O2
+
+# __MICRON_EH_DEBUG: the second dark corner, also ZERO cells in either host manifest before Phase 4.
+# It gates the fd-writes in bits/eh/eh_debug.hpp, which Phase 4 rerouted to port::write_diag -- so
+# without a cell here that reroute is unverified dead text. Needs -ke: the debug hooks live inside
+# #if defined(__micron_eh).
+compile tests/compiletests/eh_runtime.cpp --x86 --isa base -O2 --raw-obj -ke -o bin/barebones/eh_amd64
+compile tests/compiletests/eh_runtime.cpp --x86 --isa base -O2 --raw-obj -ke --def __MICRON_EH_DEBUG -o bin/barebones/ehdebug_amd64
+compile tests/compiletests/eh_runtime.cpp --arm64 -O2 --raw-obj -ke --def __MICRON_EH_DEBUG -o bin/barebones/ehdebug_arm64
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the printer (Phase 4)
+#
+# src/print.hpp replaced io/echo.hpp. io/echo.hpp went through the buffered stream layer and a file
+# descriptor and could NEVER compile under kernel flags; print.hpp sits on port::write_diag and
+# does. These cells are the proof -- print_barebones.cpp is integer-only for the same reason
+# barebones_core.cpp is (under -mno-sse a function that merely returns a double is a hard error).
+
+compile tests/compiletests/print_barebones.cpp --x86 --isa base -O2 --raw-obj -o bin/barebones/print_amd64_O2
+compile tests/compiletests/print_barebones.cpp --x86 --isa base -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/print_nosimd
+compile tests/compiletests/print_barebones.cpp --x86 --isa base -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/print_amd64_k
+compile tests/compiletests/print_barebones.cpp --x86 --isa base -O2 --raw-obj -ke --def MICRON_NO_SIMD -o bin/barebones/print_amd64_ke
+compile tests/compiletests/print_barebones.cpp --i386 -O2 --raw-obj --def MICRON_NO_SIMD -o bin/barebones/print_i386
+compile tests/compiletests/print_barebones.cpp --arm64 -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/print_arm64_k
+compile tests/compiletests/print_barebones.cpp --arm -O2 --raw-obj -k --def MICRON_NO_SIMD -o bin/barebones/print_arm32_k
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the generic-tier correctness suite. built BOTH ways: it is an oracle test, so the ISA backend has
+# to pass it too, and a disagreement between the two is the finding.
+
+test tests/rigor/simd_generic.cpp --x86 -O2 -o bin/barebones/rigor_simd
+test tests/rigor/simd_generic.cpp --x86 -O2 --def MICRON_NO_SIMD -o bin/barebones/rigor_generic
+test tests/rigor/simd_generic.cpp --x86 --isa base -O2 --def MICRON_NO_SIMD -o bin/barebones/rigor_generic_base
+test tests/rigor/simd_generic.cpp --x86 -O0 --def MICRON_NO_SIMD -o bin/barebones/rigor_generic_O0
+test tests/rigor/simd_generic.cpp --x86 -Ofast --def MICRON_NO_SIMD -o bin/barebones/rigor_generic_Ofast
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# PHASE 5 -- the kernel seam (K)
+#
+# --kernel is the whole configuration in one token: -ffreestanding -fno-exceptions -fno-rtti
+# -fno-threadsafe-statics -fno-use-cxa-atexit -fno-common -fno-asynchronous-unwind-tables -fno-pie,
+# plus -mno-sse -mno-mmx -mno-80387 -mno-3dnow -mno-red-zone -mcmodel=kernel on amd64,
+# -mgeneral-regs-only on aarch64 and -mfloat-abi=soft on armv7, plus
+# -DMICRON_PORT_KERNEL -DMICRON_NO_SIMD -DMICRON_NO_FP -DMICRON_NO_TLS. It also forces --raw-obj:
+# a .ko is linked by kbuild, never by duck, and LTO bytecode is not an object kbuild can consume.
+#
+# WHAT THESE CELLS ARE FOR, beyond "it compiles". Compiling was never the hard part. Before the
+# kernel backends existed, barebones_core.cpp under -DMICRON_PORT_KERNEL built CLEANLY and emitted
+# 41 syscall instructions, every one inside abc:: -- __va_reserve_once, __get_kernel_memory,
+# __vmap_freeze_at, the sheet release paths. It compiled, it linked, and it would have executed
+# `syscall` in ring 0. The real assertion is on the OBJECT:
+#
+#   objdump -d <obj> | grep -cE '\bsyscall\b|\bsvc\b'      must be 0
+#   objdump -d <obj> | grep -cE '%xmm|%ymm|%zmm|%st\('     must be 0   (amd64)
+#
+# Both are negative-controlled rather than assumed: the same source built -k on the linux backend
+# gives 30 syscalls on amd64 and 30 svc on arm64, and tests/compiletests/math.cpp built normally on
+# arm64 gives 560 FP instructions against this object's 0.
+#
+# NO i386 CELL, and that is not an oversight. i386 with -mno-sse -mno-80387 fails in
+# mutex/locks/recursive_lock.hpp:22 -- `atomic_token<u64> __lock_slot_ids` trips atomic.hpp:62's
+# __atomic_always_lock_free assertion, because a 64-bit atomic on i386 needs cmpxchg8b and neither
+# the default -march nor the (absent) SSE path guarantees it. Reproduced with barebones_core.cpp and
+# no Phase 5 selection at all, so it is a pre-existing gap in a configuration nothing previously
+# compiled, not a kernel-seam defect. Recorded in ISSUES.md.
+
+compile tests/compiletests/barebones_kernel.cpp --x86 --isa base -O2 --kernel -o bin/barebones/kern_amd64_O2
+compile tests/compiletests/barebones_kernel.cpp --x86 --isa base -O0 --kernel -o bin/barebones/kern_amd64_O0
+compile tests/compiletests/barebones_kernel.cpp --x86 --isa v3 -O2 --kernel -o bin/barebones/kern_amd64_v3
+compile tests/compiletests/barebones_kernel.cpp --arm64 -O2 --kernel -o bin/barebones/kern_arm64_O2
+compile tests/compiletests/barebones_kernel.cpp --arm64 -O0 --kernel -o bin/barebones/kern_arm64_O0
+compile tests/compiletests/barebones_kernel.cpp --arm -O2 --kernel -o bin/barebones/kern_arm32_O2
+
+# the port contract test and the printer, through the kernel backend. port.cpp calls every name each
+# facet owes, so a backend that forgets one fails here and not at a distant call site.
+compile tests/compiletests/port.cpp --x86 --isa base -O2 --kernel -o bin/barebones/kern_port_amd64
+compile tests/compiletests/port.cpp --arm64 -O2 --kernel -o bin/barebones/kern_port_arm64
+compile tests/compiletests/port.cpp --arm -O2 --kernel -o bin/barebones/kern_port_arm32
+compile tests/compiletests/print_barebones.cpp --x86 --isa base -O2 --kernel -o bin/barebones/kern_print_amd64
+compile tests/compiletests/print_barebones.cpp --arm64 -O2 --kernel -o bin/barebones/kern_print_arm64
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the barebones allocator, RUN rather than merely compiled
+#
+# micron::bb is selected automatically by MICRON_PORT_KERNEL, but MICRON_BAREBONES_ALLOC selects it
+# on its own so the suite can run HOSTED, over the linux page source. That separation is the point:
+# an allocator whose only test environment is a kernel module is an allocator nobody tests -- you
+# cannot run a rigor suite under insmod, and a failure there is an oops rather than a require() line.
+#
+# Both defects this suite has already caught were found by RUNNING it, not compiling it: a heap
+# overflow whenever alignment == page_size, and a SIGSEGV probing a freed block's header.
+
+# MICRON_NO_ZZZ_HASH IS PINNED HERE AND IT IS NOT COSMETIC. These cells default to -march=native,
+# which puts the default hash on zzz -- and zzz SILENTLY LOSES INSERTS in hopscotch_map above
+# -march=x86-64-v2. Measured on this box: 3 lost of 1000, 10 of 4000, 37 of 8000, with
+# -DMICRON_NO_ZZZ_HASH clean at every ISA tier and identical numbers on abcmalloc and on
+# micron::bb, so it is a hash defect and has nothing to do with the allocator. Pinning it keeps
+# this suite testing the allocator; the defect itself is recorded in ISSUES.md, where it belongs.
+
+test tests/rigor/bb_allocator.cpp --x86 -O2 --def MICRON_BAREBONES_ALLOC --def MICRON_NO_ZZZ_HASH -o bin/barebones/rigor_bb
+test tests/rigor/bb_allocator.cpp --x86 -O0 --def MICRON_BAREBONES_ALLOC --def MICRON_NO_ZZZ_HASH -o bin/barebones/rigor_bb_O0
+test tests/rigor/bb_allocator.cpp --x86 --isa base -O2 --def MICRON_BAREBONES_ALLOC --def MICRON_NO_SIMD -o bin/barebones/rigor_bb_nosimd
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# THE CELLS THAT LINK
+#
+# Every `compile` cell above is --raw-obj. Not one of them links, and neither does anything in
+# tests/compiletests/ -- which is how a hard link failure in a top-level public umbrella survived:
+# allocation/__seam.hpp declared __heap_owns `inline` and left the definition to __internal.hpp,
+# which array.hpp / memory/cmemory.hpp / memory/cstring.hpp never reach. `#include <micron/array.hpp>`
+# plus one micron::smemset did not link, on both allocator arms.
+#
+# The second source is the whole of the second test: micron is single-TU by design, so a header that
+# defines an ordinary external-linkage symbol is invisible to every "does it compile" gate. errno.hpp
+# had two, and A .ko IS INHERENTLY MULTI-TU. Linking two objects found eleven more of the same class
+# in cmemory and external/x86/cpuid.h.
+
+#
+# -i . IS LOAD-BEARING ON THESE FOUR. They are the only cells in this manifest that spell
+# <micron/...>, and duck's default include path is ./src -- so without it the angle form resolves
+# against /usr/include/micron, the stale installed snapshot, which predates allocation/__seam.hpp
+# entirely and fails with '__heap_owns is not a member of micron'. That is exactly the trap
+# tests/build/poison_include_path.cpp exists for, and these cells walked into it on the first run.
+compile tests/build/errno_odr_second_tu.cpp --x86 -O2 --raw-obj -i . -i ./src -o bin/barebones/odr_tu2
+build   tests/build/seam_link.cpp bin/barebones/odr_tu2/errno_odr_second_tu.o seam_link_abc --x86 -O2 -i . -i ./src -o bin/barebones
+compile tests/build/errno_odr_second_tu.cpp --x86 -O2 --raw-obj --def MICRON_BAREBONES_ALLOC -i . -i ./src -o bin/barebones/odr_tu2_bb
+build   tests/build/seam_link.cpp bin/barebones/odr_tu2_bb/errno_odr_second_tu.o seam_link_bb --x86 -O2 --def MICRON_BAREBONES_ALLOC -i . -i ./src -o bin/barebones
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# THE HOSTED crt, LINKED, ON ALL FOUR ARCHES
+#
+# NOT metal -- start.cpp, the ordinary freestanding crt. It is here because the Phase 4 prune broke
+# it and nothing noticed for two phases. start.cpp named <micron/attach/mx_entry.hpp> and
+# __tls.hpp/__stack.hpp named <micron/syscall.hpp>; the prune deleted src/attach/ and src/syscall.hpp,
+# and on a machine carrying an installed snapshot NEITHER INCLUDE FAILED. Both resolved to
+# /usr/include/micron, dragged a second copy of types.hpp in behind them, and produced 789
+# "redefinition of micron::integral_constant" errors that named none of their own cause. On a
+# machine without the snapshot it would have been two honest "no such file".
+#
+# Four arches because the crt's TLS and stack code is per-arch: --i386 was the cell that caught
+# mx_entry.hpp's `alignof == 8` static_assert failing on an ABI that aligns u64 to four, and --arm
+# was the one that caught math/__gcc_int_syms.hpp's new __aeabi_* set colliding with the six
+# start.cpp has always defined.
+#
+# --start ./start -i . -i ./src is the documented invocation and every token earns its place:
+# --start relocates the crt SOURCES, and -i . is what makes their own <micron/...> includes resolve
+# in-tree through the repo-root micron -> src symlink rather than against the snapshot.
+build tests/build/seam_link.cpp --x86   -O2 -k  --start ./start -i . -i ./src -o bin/barebones/crt_amd64_k
+build tests/build/seam_link.cpp --x86   -O2 -ke --start ./start -i . -i ./src -o bin/barebones/crt_amd64_ke
+build tests/build/seam_link.cpp --i386  -O2 -k  --start ./start -i . -i ./src -o bin/barebones/crt_i386_k
+build tests/build/seam_link.cpp --arm   -O2 -k  --start ./start -i . -i ./src -o bin/barebones/crt_arm32_k
+build tests/build/seam_link.cpp --arm64 -O2 -k  --start ./start -i . -i ./src -o bin/barebones/crt_arm64_k
+build tests/build/seam_link.cpp --x86   -O2 -k --direct --start ./start -i . -i ./src -o bin/barebones/crt_amd64_direct
+
+# --mx, which is the entry shape mx_entry.hpp exists for. MICRON_MX_ENTRY defaults to "entry"
+# (start.cpp:35) and the test defines that symbol, so no --def is needed; naming it wrongly is an
+# undefined reference to `entry' that mentions nothing else.
+build tests/build/mx_entry_link.cpp --x86 -O2 --mx -k --start ./start -i . -i ./src -o bin/barebones/crt_amd64_mx
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# (E) -- bare metal. THESE DID NOT EXIST: `duck --metal` was written at Phase 6 and the manifest's
+# own header said the metal cells "wait on duck --metal". Until then every metal backend, all four
+# reset vectors, all four linker scripts and bb_alloc.hpp's entire metal branch were dead text that
+# nothing compiled -- the exact failure mode BAREBONES.md §6 names as its most expensive lesson.
+#
+# MICRON_BB_PORT_POOL is passed explicitly on every cell because (E) takes no heap default: a
+# bare-metal image declares its own, and a silent port::page_alloc would carve the RAM the board was
+# about to hand us. Dropping it is a build error, which is that design decision made enforceable.
+
+compile tests/compiletests/barebones_core.cpp --x86 -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_amd64_core
+compile tests/compiletests/barebones_core.cpp --i386 -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_i386_core
+compile tests/compiletests/barebones_core.cpp --arm64 -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_arm64_core
+compile tests/compiletests/barebones_core.cpp --arm -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_arm32_core
+
+compile tests/compiletests/port.cpp --x86 -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_amd64_port
+compile tests/compiletests/port.cpp --i386 -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_i386_port
+compile tests/compiletests/port.cpp --arm64 -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_arm64_port
+compile tests/compiletests/port.cpp --arm -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_arm32_port
+
+compile tests/compiletests/print_barebones.cpp --x86 -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_amd64_print
+compile tests/compiletests/memory.cpp --x86 -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_amd64_mem
+
+# --isa base on the two x86 metal cells, and it is not tidiness. duck defaults to -march=native, so
+# an amd64 metal image is built for whatever CPU happens to be doing the building -- a claim about
+# the BUILD host baked into a BOARD image. That is BAREBONES.md 11's "failure that looked like a
+# micron bug and was not", from the other end: there it was qemu's default CPU being too old for the
+# image, here it is the image being too new for anything.
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj --def MICRON_PORT_METAL --def MICRON_NO_SIMD --def MICRON_NO_FP --def MICRON_NO_TLS --def MICRON_BB_PORT_POOL=1048576 -o bin/barebones/metal_amd64_base
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# ARMv7-M -- an MCU, and the fifth target
+#
+# duck --cortex-m is an ARM SUB-TARGET, not a new arch: same toolchain, same sysroot, -mcpu=cortex-m4
+# -mthumb -mfloat-abi=soft in place of -march=armv7-a -mfpu=neon -mfloat-abi=hard. Both an M4 and an
+# M3 cell, because the M3 has no DSP extension and is the stricter test of the scalar tier.
+compile tests/compiletests/barebones_core.cpp --cortex-m cortex-m4 --metal --minsize --raw-obj --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=49152 -o bin/barebones/metal_cm4_core
+compile tests/compiletests/barebones_core.cpp --cortex-m cortex-m3 --metal --minsize --raw-obj --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=49152 -o bin/barebones/metal_cm3_core
+compile tests/compiletests/port.cpp --cortex-m cortex-m4 --metal --minsize --raw-obj --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=49152 -o bin/barebones/metal_cm4_port
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the real (E) deliverable: LINKED images, through duck --metal, with their own crt and layout
+# script. All five arches, because "it compiles" is what hid arm32's missing __aeabi_uldivmod for
+# two phases. examples/metal/Makefile is what BOOTS them (`make ARCH=<a> run`) -- duck cannot exec a
+# bare-metal image and refuses to try -- and that step needs qemu-system-{arm,aarch64} for three of
+# the five.
+compile examples/metal/board_pc.cpp --i386 --metal --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 --raw-obj -o bin/barebones/metal_board_i386
+build   examples/metal/metal_demo.cpp bin/barebones/metal_board_i386/board_pc.o metal_image_i386 --i386 --metal --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 -o bin/barebones
+
+compile examples/metal/board_pc.cpp --x86 --isa base --metal --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 --raw-obj -o bin/barebones/metal_board_amd64
+build   examples/metal/metal_demo.cpp bin/barebones/metal_board_amd64/board_pc.o metal_image_amd64 --x86 --isa base --metal --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 -o bin/barebones
+
+# the long-mode entry shape. It cannot be booted by anything here -- no loader in this tree hands
+# over in long mode -- so linking it IS the whole gate, and without this cell reset_amd64_lm.s is
+# dead text of exactly the kind that was the subject of Phase 6.
+compile examples/metal/board_pc.cpp --x86 --isa base --metal --metal-entry lm --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 --raw-obj -o bin/barebones/metal_board_lm
+build   examples/metal/metal_demo.cpp bin/barebones/metal_board_lm/board_pc.o metal_image_amd64_lm --x86 --isa base --metal --metal-entry lm --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 -o bin/barebones
+
+compile examples/metal/board_virt.cpp --arm --metal --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 --raw-obj -o bin/barebones/metal_board_arm32
+build   examples/metal/metal_demo.cpp bin/barebones/metal_board_arm32/board_virt.o metal_image_arm32 --arm --metal --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 -o bin/barebones
+
+compile examples/metal/board_virt.cpp --arm64 --metal --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 --raw-obj -o bin/barebones/metal_board_arm64
+build   examples/metal/metal_demo.cpp bin/barebones/metal_board_arm64/board_virt.o metal_image_arm64 --arm64 --metal --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=8388608 -o bin/barebones
+
+compile examples/metal/board_stm32.cpp --cortex-m cortex-m4 --metal --minsize --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=49152 --raw-obj -o bin/barebones/metal_board_stm32
+build   examples/metal/metal_stm32_demo.cpp bin/barebones/metal_board_stm32/board_stm32.o metal_image_stm32 --cortex-m cortex-m4 --metal --minsize --start ./start -i . -i ./src --def MICRON_BB_PORT_POOL=49152 -o bin/barebones
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# the feature macros, ISOLATED
+#
+# MICRON_NO_FP had no cell of its own anywhere: every no-FP cell was a --kernel cell, which changes
+# the port backend, the allocator, SIMD and TLS at the same time. And --kernel at -Ofast is the exact
+# interaction duck's explicit MICRON_NO_FP exists for (-Ofast zeroes __GCC_IEC_559 AND sets
+# __FAST_MATH__, so the derivation cannot see it) -- asserted in a comment, compiled by nothing.
+#
+# MICRON_ALLOW_GENERIC_ARCH had no cell in ANY manifest, tree-wide, which is why
+# port/backends/__syscall.hpp could sit there with four #elifs and no #else.
+
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj --def MICRON_NO_FP -o bin/barebones/amd64_nofp_only
+compile tests/compiletests/barebones_core.cpp --arm64 -O2 --raw-obj --def MICRON_NO_FP -o bin/barebones/arm64_nofp_only
+compile tests/compiletests/barebones_kernel.cpp --x86 --isa base -Ofast --raw-obj --kernel -o bin/barebones/kern_amd64_Ofast
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj --kernel --def MICRON_ALLOW_GENERIC_ARCH -o bin/barebones/generic_arch
+
+# MICRON_BAREBONES_ALLOC was three cells, all --x86, all on bb_allocator.cpp -- the KEEP-SET was
+# never built against it, and never on a 32-bit or 64K-page target where the region and tag
+# arithmetic differs.
+compile tests/compiletests/barebones_core.cpp --x86 --isa base -O2 --raw-obj --def MICRON_BAREBONES_ALLOC -o bin/barebones/bb_core_amd64
+compile tests/compiletests/barebones_core.cpp --arm64 -O2 --raw-obj --def MICRON_BAREBONES_ALLOC -o bin/barebones/bb_core_arm64
+compile tests/compiletests/barebones_core.cpp --arm -O2 --raw-obj --def MICRON_BAREBONES_ALLOC -o bin/barebones/bb_core_arm32
+compile tests/compiletests/barebones_core.cpp --i386 -O2 --raw-obj --def MICRON_BAREBONES_ALLOC -o bin/barebones/bb_core_i386
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# HASH STABILITY ACROSS THE ISA TIERS
+#
+# bits/__arch.hpp clears the vector ISA-presence macros under __micron_simd_generic, which is what
+# makes the ~150 `#if defined(__micron_x86_avx2)` sites in the tree answer the capability question
+# rather than the -march one. hash.hpp:39 already gated __micron_hash_zzz on !__micron_simd_generic,
+# so hash values do not move -- but "do not move" is a claim, and these cells are the measurement.
+# Every MICRON_NO_SIMD cell must produce the SAME digest as every other, at every tier.
+
+test tests/rigor/hash_isa_stability.cpp --x86 --isa base -O2 -o bin/barebones/hash_base
+test tests/rigor/hash_isa_stability.cpp --x86 --isa v2 -O2 -o bin/barebones/hash_v2
+test tests/rigor/hash_isa_stability.cpp --x86 --isa base -O2 --def MICRON_NO_SIMD -o bin/barebones/hash_base_nosimd
+test tests/rigor/hash_isa_stability.cpp --x86 --isa v2 -O2 --def MICRON_NO_SIMD -o bin/barebones/hash_v2_nosimd
+test tests/rigor/hash_isa_stability.cpp --x86 --isa v3 -O2 --def MICRON_NO_SIMD -o bin/barebones/hash_v3_nosimd

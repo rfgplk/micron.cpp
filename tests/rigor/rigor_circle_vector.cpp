@@ -12,7 +12,7 @@
 //
 // Build: `duck build tests/rigor/rigor_circle_vector.cpp`; run bin/rigor_circle_vector.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/vector/circle_vector.hpp"
 

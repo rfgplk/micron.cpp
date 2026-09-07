@@ -7,7 +7,7 @@
 
 #include "../../src/atomic/atomic.hpp"
 #include "../../src/bits/__pause.hpp"
-#include "../../src/syscall.hpp"
+#include "../../src/port/backends/__syscall.hpp"
 #include "../../src/types.hpp"
 
 #ifndef STRESS_SCALE

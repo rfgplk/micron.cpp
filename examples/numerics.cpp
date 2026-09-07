@@ -14,7 +14,7 @@
 //   micron::pi, half_pi, pi64, half_pi64 — math constants
 
 #include "../src/numerics.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 int
 main()

@@ -50,7 +50,7 @@
 
 // types FIRST
 #include "concepts.hpp"
-#include "linux/sys/types.hpp"
+#include "bits/__posix_types.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
 
@@ -71,19 +71,16 @@
 #include "endian.hpp"
 
 // includes sleeps through sync/pause
-#include "control.hpp"
 
 // exceptions
 #include "errno.hpp"
 #include "except.hpp"
 
-#include "io/__std.hpp"
-#include "linux/sys/signal.hpp"
-
 #include "version.hpp"
 
-// syscall
-#include "syscall.hpp"
+// NOTE: Phase 4 dropped io/__std.hpp, linux/sys/signal.hpp and syscall.hpp from this umbrella.
+// A syscall is no longer part of micron's public surface -- micron::port:: is the OS seam, and on
+// a kernel or bare-metal backend there is no syscall to expose. Include port/port.hpp for it.
 
 #if defined(__clang__)
 #define COMPILER "Clang/LLVM"
@@ -107,9 +104,13 @@
 #error "The micron standard library wasn't made for Windows."
 #endif
 
-#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)
+// the THIRD independent arch gate. bits/__arch.hpp:57 and bits/__ctasserts.hpp:60 learned about the
+// scalar generic tier in Phase 1; this one did not, so MICRON_ALLOW_GENERIC_ARCH still could not get
+// through std.hpp. barebones_core.cpp includes the module umbrellas directly, so no gate saw it.
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)     \
+    || defined(__micron_arch_generic)
 #else
-#error "This version of the Micron standard library is designed for amd64 and ARM."
+#error "micron: unrecognised architecture. amd64/i386/armv7-a/aarch64 are supported directly; for anything else define MICRON_ALLOW_GENERIC_ARCH to enter the scalar generic tier."
 #endif
 #if !defined(__GNUC__) && !defined(__clang__)
 #error "Only gcc or clang are currently supported compilers. Remove this if you're willing to take risks."

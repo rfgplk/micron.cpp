@@ -5,8 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../../src/string/unistring.hpp"
-#include "../../src/io/console.hpp"
-#include "../../src/io/stdout.hpp"
+#include "../../src/print.hpp"
 #include "../../src/std.hpp"
 
 #include "../snowball/snowball.hpp"

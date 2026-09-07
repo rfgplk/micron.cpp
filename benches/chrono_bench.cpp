@@ -21,8 +21,7 @@
 #include "../src/chrono.hpp"
 #include "../src/chrono/calibrate.hpp"
 #include "../src/chrono/measure.hpp"
-#include "../src/chrono/vdso.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/std.hpp"
 
 namespace ch = micron::chrono;
@@ -85,30 +84,21 @@ bench_clock_reads(void)
 
   micron::timespec_t ts{};
   row("clock_gettime(REALTIME)   syscall", measure_ps(200000, [&] {
-        micron::clock_gettime(micron::clock_realtime, ts);
+        micron::port::clock_gettime(micron::clock_realtime, ts);
         ch::sink_ptr(&ts);
       }));
   row("clock_gettime(MONOTONIC)  syscall", measure_ps(200000, [&] {
-        micron::clock_gettime(micron::clock_monotonic, ts);
+        micron::port::clock_gettime(micron::clock_monotonic, ts);
         ch::sink_ptr(&ts);
       }));
   row("clock_gettime(MONO_COARSE) syscall", measure_ps(200000, [&] {
-        micron::clock_gettime(micron::clock_monotonic_coarse, ts);
+        micron::port::clock_gettime(micron::clock_monotonic_coarse, ts);
         ch::sink_ptr(&ts);
       }));
 
-  if ( ch::vdso::available() ) {
-    row("clock_gettime(REALTIME)   vDSO", measure_ps(2000000, [&] {
-          ch::vdso::clock_gettime(micron::clock_realtime, ts);
-          ch::sink_ptr(&ts);
-        }));
-    row("clock_gettime(MONOTONIC)  vDSO", measure_ps(2000000, [&] {
-          ch::vdso::clock_gettime(micron::clock_monotonic, ts);
-          ch::sink_ptr(&ts);
-        }));
-  } else {
-    mc::console("  (no vDSO resolved on this machine)");
-  }
+  // Phase 4 deleted chrono/vdso.hpp -- it was the keep-set's only elf:: consumer, off by default,
+  // and meaningless in a kernel module or a bare-metal image. The two vDSO rows are gone;
+  // port::clock_gettime is the only clock path now and is already timed above.
 
   row("chrono::mono_ns()", measure_ps(200000, [] { ch::sink(ch::mono_ns()); }));
   row("chrono::now_ns()", measure_ps(200000, [] { ch::sink(ch::now_ns()); }));
@@ -239,7 +229,6 @@ main(void)
   mc::console("pinned to cpu ", (long long)ch::current_cpu(), ", warmed, median of ", (long long)K_MEASUREMENTS, " runs");
   mc::console("counter: ", ch::counter_is_native ? "native" : "clock_gettime fallback",
               ",  invariant: ", ch::counter_traits().invariant ? "yes" : "no");
-  mc::console("vDSO: ", ch::vdso::available() ? "resolved" : "unavailable");
 
   bench_clock_reads();
   bench_counter();

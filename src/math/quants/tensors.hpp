@@ -19,7 +19,6 @@
 #include "../sqrt.hpp"
 #include "../trig.hpp"
 
-#include "../../control.hpp"
 
 namespace micron
 {

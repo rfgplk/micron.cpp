@@ -7,10 +7,10 @@
 
 #include "../../../bits/__arch.hpp"
 
-#if defined(__OPTIMIZE__) && defined(__micron_arch_amd64)
+#if defined(__OPTIMIZE__) && !defined(__micron_simd_generic) && defined(__micron_arch_amd64)
 #include "arch/batch_amd64.hpp"
-#elif defined(__OPTIMIZE__) && defined(__micron_arch_arm32) && defined(__micron_arm_neon)
+#elif defined(__OPTIMIZE__) && !defined(__micron_simd_generic) && defined(__micron_arch_arm32) && defined(__micron_arm_neon)
 #include "arch/batch_arm32.hpp"
-#elif defined(__OPTIMIZE__) && defined(__micron_arch_arm64) && defined(__micron_arm_neon)
+#elif defined(__OPTIMIZE__) && !defined(__micron_simd_generic) && defined(__micron_arch_arm64) && defined(__micron_arm_neon)
 #include "arch/batch_arm64.hpp"
 #endif

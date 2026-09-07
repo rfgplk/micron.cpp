@@ -11,7 +11,6 @@
 #include "../../type_traits.hpp"
 #include "../../types.hpp"
 
-#include "../../control.hpp"
 
 namespace micron
 {

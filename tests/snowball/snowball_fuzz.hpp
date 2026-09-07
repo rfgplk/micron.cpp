@@ -21,8 +21,64 @@
 #include "../../src/vector/vector.hpp"
 
 #include "../../src/function.hpp"
-#include "../../src/linux/process/fork.hpp"
-#include "../../src/linux/process/wait.hpp"
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Phase 4: fork-per-iteration crash isolation, self-declared.
+//
+// This driver forks a child per fuzz iteration so a SIGSEGV kills only that iteration and the seed
+// that produced it is reported. That is worth keeping -- 12 rigor tests depend on it -- but
+// linux/process/{fork,wait}.hpp are deleted with the rest of linux/, and there is nothing for a
+// port facet to abstract: a kernel module and a bare-metal image cannot fork at all.
+//
+// So the harness declares the four calls it needs itself, the same way port/backends/pages_linux.hpp
+// hand-declares the sysinfo record. The W* helpers are pure bit arithmetic on the wait status.
+// LINUX ONLY, and gated as such -- on any other backend the fuzz driver runs in-process.
+#include "../../src/port/__backend.hpp"
+
+#if defined(__micron_port_linux)
+#include "../../src/port/backends/__syscall.hpp"
+
+namespace snowball::__fuzz_os
+{
+
+// SYS_clone with SIGCHLD and no CLONE_VM: a plain fork. amd64/arm64 have no SYS_fork at all.
+inline int
+fork(void) noexcept
+{
+  return static_cast<int>(micron::syscall(SYS_clone, 17 /*SIGCHLD*/, 0, 0, 0, 0));
+}
+
+inline int
+waitpid(int pid, int *status, int options) noexcept
+{
+  return static_cast<int>(micron::syscall(SYS_wait4, pid, status, options, nullptr));
+}
+
+constexpr int
+wexitstatus(int status) noexcept
+{
+  return (status & 0xff00) >> 8;
+}
+
+constexpr int
+wtermsig(int status) noexcept
+{
+  return status & 0x7f;
+}
+
+constexpr bool
+wifexited(int status) noexcept
+{
+  return wtermsig(status) == 0;
+}
+
+constexpr bool
+wifsignaled(int status) noexcept
+{
+  return static_cast<signed char>(((status & 0x7f) + 1) >> 1) > 0;
+}
+
+};      // namespace snowball::__fuzz_os
+#endif      // __micron_port_linux
 
 #include <initializer_list>
 
@@ -1262,7 +1318,7 @@ struct scenario {
   exec_result
   __execute(const program &p) const
   {
-    int pid = micron::fork();
+    int pid = __fuzz_os::fork();
     if ( pid == 0 ) {
       exec_ctx ex;
       ex.sc = this;
@@ -1282,13 +1338,13 @@ struct scenario {
       micron::sys_exit(0);
     }
     int status = 0;
-    micron::waitpid(pid, &status, 0);
+    __fuzz_os::waitpid(pid, &status, 0);
     exec_result res;
-    if ( micron::wifsignaled(status) ) {
+    if ( __fuzz_os::wifsignaled(status) ) {
       res.st = outcome::signaled;
-      res.signal = micron::wtermsig(status);
-    } else if ( micron::wifexited(status) ) {
-      int code = micron::wexitstatus(status);
+      res.signal = __fuzz_os::wtermsig(status);
+    } else if ( __fuzz_os::wifexited(status) ) {
+      int code = __fuzz_os::wexitstatus(status);
       if ( code == 0 )
         res.st = outcome::ok;
       else {

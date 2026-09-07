@@ -14,8 +14,7 @@
 #include "../../src/string/string.hpp"
 #include "../../src/vector/vector.hpp"
 
-#include "../../src/io/console.hpp"
-#include "../../src/io/stdout.hpp"
+#include "../../src/print.hpp"
 
 #include "../snowball/snowball.hpp"
 

@@ -10,7 +10,7 @@
 #if defined(__micron_eh)
 
 #include "../../exit.hpp"
-#include "../../syscall.hpp"
+#include "../../port/rawmap.hpp"
 #include "../../types.hpp"
 #include "cxa_eh_globals.hpp"
 #include "cxa_exception.hpp"
@@ -21,28 +21,24 @@
 namespace micron::eh
 {
 
-// this allocator is self contained; otherwise we'd risk pulling spaghettified abcmalloc and self recursing
-constexpr int __eh_prot_rw = 0x1 | 0x2;             // PROT_READ | PROT_WRITE
-constexpr int __eh_map_priv_anon = 0x2 | 0x20;      // MAP_PRIVATE | MAP_ANONYMOUS
+// this allocator is self contained; otherwise we'd risk pulling spaghettified abcmalloc and self recursing.
+// Phase 4: the two mmap wrappers moved to port/rawmap.hpp, which exists precisely to preserve that
+// property -- it is 16 transitive headers (the same as panic_linux.hpp) where port/pages.hpp is 22
+// and reaches memory/mman.hpp + kmapping.hpp + kmemory.hpp. An emergency pool that allocates through
+// the allocator cannot serve a throw raised BY the allocator.
 constexpr usize __eh_page = 4096;
 constexpr usize __eh_prefix = 16;      // stores the mapping size; keeps the object 16-aligned
 
 inline void *
 __eh_raw_map(usize sz) noexcept
 {
-#if defined(__micron_arch_width_32)
-  const long r = micron::syscall(SYS_mmap2, 0, sz, __eh_prot_rw, __eh_map_priv_anon, -1, 0);
-#else
-  const long r = micron::syscall(SYS_mmap, 0, sz, __eh_prot_rw, __eh_map_priv_anon, -1, 0);
-#endif
-  if ( static_cast<unsigned long>(r) >= static_cast<unsigned long>(-4095) ) return nullptr;
-  return reinterpret_cast<void *>(r);
+  return micron::port::raw_map(sz);
 }
 
 inline void
 __eh_raw_unmap(void *p, usize sz) noexcept
 {
-  micron::syscall(SYS_munmap, p, sz);
+  micron::port::raw_unmap(p, sz);
 }
 
 constexpr usize __emergency_slots = 16;

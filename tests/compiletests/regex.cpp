@@ -82,6 +82,11 @@ force_truffle_build(const rgx::charreach &cls)
 // v128::shuffle itself, on every 128-bit integer lane width, so the SSSE3 gate and its SSE2 leg are
 // both codegen'd rather than merely parsed.
 
+// NOTE: gated on the same macro the Sheng kernel is. simd::v8 is the class lane API, which does not
+// exist on the scalar tier (simd/types/simd_dispatch.hpp) -- every one of its operations passes a
+// lane container by value, which is the ABI error that tier exists to avoid. There is no shuffle
+// path to codegen there, so there is nothing for this function to pin.
+#if defined(__micron_regex_sheng)
 [[gnu::noinline]] void
 force_shuffle(unsigned char *out, const unsigned char *a, const unsigned char *b)
 {
@@ -90,6 +95,7 @@ force_shuffle(unsigned char *out, const unsigned char *a, const unsigned char *b
   c.uload(const_cast<unsigned char *>(b));
   x.shuffle(c).get(reinterpret_cast<signed char *>(out));
 }
+#endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // the porcelain, which is what actually reaches the DFA in practice

@@ -10,7 +10,7 @@
 //   examples/concepts.cpp — concepts that pivot on these types
 //   examples/io.cpp       — println dispatches per type
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/types.hpp"
 
 int

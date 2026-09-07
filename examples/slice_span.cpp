@@ -24,7 +24,7 @@
 // types that look like containers ARE containers. The non-owning view
 // gets the explicit "raw_" prefix because it skips destruction.
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/slice.hpp"
 #include "../src/span.hpp"
 #include "../src/vector/vector.hpp"

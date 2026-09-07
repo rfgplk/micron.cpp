@@ -13,7 +13,7 @@ namespace simd
 inline usize
 sse_strlen(const char *str)
 {
-#if defined(__micron_x86_sse2)
+#if defined(__micron_x86_sse2) && !defined(__micron_simd_generic)
   const char *p = str;
   i128 zero = _mm_setzero_si128();
 
@@ -43,7 +43,7 @@ template<typename T>
 __simd_find_byte(const T *p, usize len, T ch) noexcept
 {
   if ( len == 0 ) return len;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   return micron::simd::find_first_set_256(p, len, static_cast<char>(ch));
 #else
   return micron::simd::find_first_set_128(p, len, static_cast<char>(ch));
@@ -73,7 +73,7 @@ concept __scan_width = (sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || si
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // lane primitives
 
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
 #define __micron_scan_lanes 1
 
 template<typename T> inline constexpr usize __lane_elems = 32 / sizeof(T);
@@ -141,7 +141,7 @@ __lane_bits_ne(__m256i cmp) noexcept
   return ~__lane_bits(cmp);
 }
 
-#elif defined(__micron_x86_sse2)
+#elif defined(__micron_x86_sse2) && !defined(__micron_simd_generic)
 #define __micron_scan_lanes 1
 
 template<typename T> inline constexpr usize __lane_elems = 16 / sizeof(T);
@@ -181,7 +181,7 @@ __lane_cmpeq(__m128i v, __m128i needle) noexcept
   else if constexpr ( sizeof(T) == 4 )
     return _mm_cmpeq_epi32(v, needle);
   else {
-#if defined(__micron_x86_sse4_1)
+#if defined(__micron_x86_sse4_1) && !defined(__micron_simd_generic)
     return _mm_cmpeq_epi64(v, needle);
 #else
     // SSE2 has no 64-bit compare
@@ -216,7 +216,7 @@ __lane_bits_ne(__m128i cmp) noexcept
   return (~__lane_bits(cmp)) & 0xFFFFu;
 }
 
-#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+#elif defined(__micron_arch_arm_any) && defined(__micron_arm_neon) && !defined(__micron_simd_generic)
 #define __micron_scan_lanes 1
 
 template<typename T> inline constexpr usize __lane_elems = 16 / sizeof(T);
@@ -580,7 +580,7 @@ template<typename T>
 to_lower_elem(T *p, usize len) noexcept
 {
   usize i = 0;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   if constexpr ( sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 ) {
     constexpr usize EPV = 32 / sizeof(T);
     for ( ; i + EPV <= len; i += EPV ) {
@@ -617,7 +617,7 @@ template<typename T>
 to_upper_elem(T *p, usize len) noexcept
 {
   usize i = 0;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   if constexpr ( sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 ) {
     constexpr usize EPV = 32 / sizeof(T);
     for ( ; i + EPV <= len; i += EPV ) {
@@ -683,7 +683,7 @@ __bytes_cycle(byte *dst, const byte *a, usize an, const byte *b, usize bn) noexc
     return;
   }
   usize i = 0;
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   if ( bn >= an ) {
     for ( ; i + 32 <= an; i += 32 ) {
       __m256i va = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(a + i));

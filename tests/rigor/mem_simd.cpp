@@ -11,8 +11,7 @@
 // block primitives in __bits/__asm_blocks_*.hpp directly, with
 // guard zones to catch any over-write past the requested length.
 
-#include "../../src/io/console.hpp"
-#include "../../src/io/stdout.hpp"
+#include "../../src/print.hpp"
 #include "../../src/memory/memory.hpp"
 #include "../../src/std.hpp"
 

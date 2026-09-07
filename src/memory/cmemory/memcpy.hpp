@@ -23,7 +23,7 @@ namespace micron
 [[gnu::noinline]] static __micron_optimize_no_tree_loop_distribute byte *
 __memcpy_large(byte *restrict d, const byte *restrict s, const u64 n) noexcept
 {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
   if ( n < __mem_rep_min ) return simd::__memcpy_bulk(d, s, n);
   const __mem_tunables &t = __mem_tun_get();
   if ( n >= t.nt_copy_threshold ) return simd::__memcpy_bulk_nt(d, s, n);
@@ -32,7 +32,7 @@ __memcpy_large(byte *restrict d, const byte *restrict s, const u64 n) noexcept
     return d;
   }
   return simd::__memcpy_bulk(d, s, n);
-#elif defined(__micron_arch_arm64)
+#elif defined(__micron_arch_arm64) && !defined(__micron_simd_generic)
   if ( n >= __mem_nt_threshold_arm64 ) return simd::__memcpy_bulk_nt(d, s, n);
   return simd::__memcpy_bulk(d, s, n);
 #else
@@ -56,7 +56,7 @@ __memcpy_bytes(byte *restrict d, const byte *restrict s, const u64 bytes) noexce
     __ml::__copy_65_128(d, s, bytes);
     return d;
   }
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   if ( bytes <= 256 ) {
     __ml::__copy_129_256(d, s, bytes);
     return d;
@@ -424,7 +424,11 @@ rscbytecpy(F &restrict _dest, const D &restrict _src) noexcept
   return true;
 };
 
-void *
+// `inline`: this is a plain function definition in a header included by most of the tree, so two
+// TUs is `multiple definition of micron::voidcpy` -- the same class as errno.hpp's __micron_errno
+// and except::__write_n before it. Found by tests/build/seam_link.cpp, the first cell that links two
+// objects. The template siblings below were never affected; only the non-template one.
+inline void *
 voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
 {
   __memcpy_bytes(reinterpret_cast<byte *>(_dest), reinterpret_cast<const byte *>(_src), cnt);

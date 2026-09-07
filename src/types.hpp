@@ -12,7 +12,7 @@
 #include "endian.hpp"
 
 #include "bits-types.hpp"
-#include "linux/sys/types.hpp"
+#include "bits/__posix_types.hpp"
 #include "type_traits.hpp"
 
 // must surpress int128 extensions
@@ -161,13 +161,28 @@ using f16 = float;
 using f32 = float;
 using f64 = double;
 using f128 = double;
+#elif defined(__clang__) && defined(__micron_no_fp)
+// WARNING: clang rejects a DECLARATION mentioning long double on a target that cannot represent it
+// ("requires 'f128' (aka 'long double') type support"), where GCC accepts the declaration and only
+// errors if one is instantiated. Under __micron_no_fp there is no long double at all, so f128 maps
+// to double here: the wide-accumulator declarations in algorithm/, lz::reduce and math/ stay
+// well-formed, and any actual FP use still fails at codegen, which is what should happen on a
+// target with no FPU. __ctasserts.hpp only requires sizeof(f128) >= 8, so this holds.
+using f16 = float;
+using f32 = float;
+using f64 = double;
+using f128 = double;
 #elif (defined(__clang__))
 using f16 = float;
 using f32 = float;
 using f64 = double;
 typedef long double f128;
 #endif
+#if defined(__clang__) && defined(__micron_no_fp)
+typedef double flong;
+#else
 typedef long double flong;
+#endif
 using ff = float;
 using df = double;
 

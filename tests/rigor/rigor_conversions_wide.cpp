@@ -17,7 +17,7 @@
 //
 // snowball convention: exit 1 == success.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/math/arbint.hpp"
 #include "../../src/math/types.hpp"
 #include "../../src/string/format.hpp"

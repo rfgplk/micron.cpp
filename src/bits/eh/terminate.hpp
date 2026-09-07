@@ -10,7 +10,7 @@
 #if defined(__micron_eh)
 
 #include "../../exit.hpp"
-#include "../../syscall.hpp"
+#include "../../port/panic.hpp"
 #include "../../types.hpp"
 #include "unwind.hpp"
 
@@ -30,7 +30,7 @@ namespace micron::eh
 inline void
 __eh_diag(const char *msg, usize len) noexcept
 {
-  micron::syscall(SYS_write, 2, reinterpret_cast<const void *>(msg), len);
+  micron::port::write_diag(msg, len);
 }
 
 inline std::terminate_handler __terminate_handler_slot = nullptr;

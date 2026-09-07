@@ -31,7 +31,7 @@
 //     std::call_once tracks state in a separate flag.
 
 #include "../src/mutex/mutex.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/mutex/barrier.hpp"
 #include "../src/mutex/locks.hpp"
 #include "../src/mutex/once.hpp"

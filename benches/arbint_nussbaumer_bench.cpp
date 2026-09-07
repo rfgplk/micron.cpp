@@ -10,7 +10,7 @@
 // profile: add --def ARBINT_NUSSBAUMER_BENCH_PROFILE, then run under perf record/stat
 // run  : taskset -c 2 ./bin/b/arbint_nussbaumer_bench
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/math/__asm/rdrand.hpp"
 #include "../src/math/arbint.hpp"
 #include "../src/std.hpp"

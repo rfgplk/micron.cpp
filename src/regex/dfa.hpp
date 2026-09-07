@@ -22,8 +22,18 @@ inline constexpr i32 kDfaMaxStates = 255;      // state ids fit in a u8
 inline constexpr u8 kShengAccept = 0x10;       // bit 4 -- $-less accept
 inline constexpr u8 kShengEol = 0x20;          // bit 5 -- accept only at end ($)
 
-#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_ssse3) )                                                                      \
-    || ((defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon))
+// Sheng is a per-byte PSHUFB/TBL shuffle over a 16-entry state vector. It needs SSSE3 or NEON, and
+// it needs the simd::v8 class API -- which the generic tier does not have (see
+// simd/types/simd_dispatch.hpp). One macro decides both the constant and whether the kernel below
+// is compiled at all; kShengAvailable alone is not enough, because dfa_sheng_has_match is a plain
+// inline function and its body is parsed even where the constant is false.
+#if ( ( defined(__micron_arch_x86_any) && defined(__micron_x86_ssse3) )                                                                     \
+      || ((defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) && defined(__micron_arm_neon)) )                                   \
+    && !defined(__micron_simd_generic)
+#define __micron_regex_sheng 1
+#endif
+
+#if defined(__micron_regex_sheng)
 inline constexpr bool kShengAvailable = true;
 #else
 inline constexpr bool kShengAvailable = false;
@@ -258,6 +268,7 @@ dfa_free(dfa *d) noexcept
   micron::free(d);
 }
 
+#if defined(__micron_regex_sheng)
 // one PSHUFB per byte (<=16 states), unrolled 4 bytes per iteration; four loads are independent, shuffles chained on cur
 inline bool
 dfa_sheng_has_match(const dfa *d, const char *in, usize n) noexcept
@@ -296,6 +307,15 @@ dfa_sheng_has_match(const dfa *d, const char *in, usize n) noexcept
   }
   return (cur.byte0() & kShengEol) != 0;
 }
+#else
+// unreachable: has_sheng is `kShengAvailable && ...`, and kShengAvailable is false here. Defined so
+// the runtime call site at dfa_has_match still links; the scalar table walk is what actually runs.
+inline bool
+dfa_sheng_has_match(const dfa *, const char *, usize) noexcept
+{
+  return false;
+}
+#endif
 
 inline bool
 dfa_table_has_match(const dfa *d, const char *in, usize n) noexcept

@@ -20,7 +20,7 @@
 // that string_len is the content length for every string type, and that every generic consumer
 // now agrees with c_str()/strlen.
 
-#include "../../src/io/echo.hpp"
+#include "../../src/print.hpp"
 #include "../../src/string/format.hpp"
 #include "../../src/string/strings.hpp"
 

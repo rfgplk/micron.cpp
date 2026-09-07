@@ -4,7 +4,7 @@
 #include "../../src/queue/queue.hpp"
 #include "../../src/std.hpp"
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../snowball/snowball.hpp"
 

@@ -6,7 +6,9 @@
 #pragma once
 
 #include "../../atomic/atomic.hpp"
-#include "../../linux/sys/time.hpp"
+#include "../../bits/__posix_time_types.hpp"
+#include "../../port/clock.hpp"
+#include "../../port/yield.hpp"
 #include "../../sync/futex.hpp"
 
 #include "../backoff.hpp"
@@ -44,7 +46,7 @@ class futex_mutex
   static bool
   __now(timespec_t &t) noexcept
   {
-    return micron::clock_gettime(clock_monotonic, t) == 0;
+    return micron::port::clock_gettime(clock_monotonic, t) == 0;
   }
 
   // *out = a - b, clamped at zero
@@ -91,7 +93,12 @@ public:
       // publish that a waiter exists, then sleep
       u32 c = __s.swap(__contended, memory_order::acq_rel);
       while ( c != __free ) {
-        micron::__futex(__s.ptr(), futex_wait | futex_private_flag, __contended, nullptr, nullptr, 0);
+        // The return is NOT discardable. A backend that cannot block yet -- the kernel one answers
+        // -ENOSYS until mc_kport_init() has built its wait-queue table -- turns this into an
+        // unthrottled hot spin with no pause instruction in it. Relaxing keeps it a spin loop
+        // instead of a livelock on a sibling core.
+        if ( micron::port::wait_unavailable(micron::port::wait(__s.ptr(), __contended, -1)) )
+          micron::port::cpu_relax();
         c = __s.swap(__contended, memory_order::acq_rel);
       }
     }
@@ -143,7 +150,10 @@ public:
         if ( __s.get(memory_order::relaxed) == __contended ) micron::wake_futex(__s.ptr(), 1);
         return false;
       }
-      auto r = micron::__futex(__s.ptr(), futex_wait | futex_private_flag, __contended, &rel, nullptr, 0);
+      // port::wait takes the timeout in ns; __remaining already clamped it at zero. The seam
+      // converts back to a timespec internally, which is the same value that used to be passed here.
+      const i64 rel_ns = static_cast<i64>(rel.tv_sec) * 1'000'000'000 + static_cast<i64>(rel.tv_nsec);
+      auto r = micron::port::wait(__s.ptr(), __contended, rel_ns);
       if ( r == -110 ) {      // ETIMEDOUT
         if ( __s.get(memory_order::relaxed) == __contended ) micron::wake_futex(__s.ptr(), 1);
         return false;

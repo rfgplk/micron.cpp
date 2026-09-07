@@ -21,7 +21,7 @@
 // oracle: a hand-rolled schoolbook base conversion over the hi/lo halves, independent of
 // micron::to_chars and of the formatter.
 
-#include "../../src/io/echo.hpp"
+#include "../../src/print.hpp"
 #include "../../src/string/format.hpp"
 #include "../../src/string/strings.hpp"
 

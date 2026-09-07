@@ -22,7 +22,7 @@
 //   - linalg ops (dot, cross, norm, normalize) operate on those types
 //     and live in math::linalg::ops.
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/math/branchless.hpp"
 #include "../src/math/constants.hpp"
 #include "../src/math/generic.hpp"

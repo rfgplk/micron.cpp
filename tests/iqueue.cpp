@@ -6,7 +6,7 @@
 
 #include "snowball/snowball.hpp"
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/queue/iqueue.hpp"
 #include "../src/std.hpp"
 

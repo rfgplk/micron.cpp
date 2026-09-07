@@ -14,7 +14,6 @@
 #include "../algorithm/memory.hpp"
 #include "../allocator.hpp"
 #include "../concepts.hpp"
-#include "../container_safety.hpp"
 #include "../except.hpp"
 #include "../memory/actions.hpp"
 #include "../memory/allocation/resources.hpp"

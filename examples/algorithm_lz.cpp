@@ -1,5 +1,5 @@
 #include "../src/algorithm/fp.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/list.hpp"
 #include "../src/lz.hpp"
 #include "../src/maps/swiss.hpp"

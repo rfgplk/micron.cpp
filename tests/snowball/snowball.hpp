@@ -16,15 +16,20 @@
 
 #include "../../src/string/strings.hpp"
 
-#include "../../src/io/console.hpp"
-#include "../../src/io/io.hpp"
-#include "../../src/io/stdout.hpp"
+// Phase 4: snowball's only output path was micron::io::print, through io/'s buffered stream layer.
+// src/print.hpp is the same formatter over port::write_diag -- verified byte-identical by A/B while
+// io/ still existed -- so every message below is unchanged in content and formatting.
+#include "../../src/print.hpp"
 
 #include "../../src/except.hpp"
 #include "../../src/exit.hpp"
 
 #if defined(__micron_arch_arm32)
-#include "../../src/linux/sys/time.hpp"
+// arm32 has no PL0 cycle counter, so __cycle_counter() falls back to a clock read. That was
+// micron::clock_gettime(clock_monotonic, ts); it is port::mono_ticks() now -- same nanoseconds,
+// no linux/ dependency. amd64 (rdtsc) and arm64 (mrs cntvct_el0) are inline asm and need nothing.
+#include "../../src/port/clock.hpp"
+#include "../../src/port/pages.hpp"
 #endif
 
 namespace snowball
@@ -103,8 +108,12 @@ __addr_readable(const void *p) noexcept
   const umax_t mask = ~static_cast<umax_t>(4095);
   const umax_t lo = reinterpret_cast<umax_t>(p) & mask;
   const umax_t hi = (reinterpret_cast<umax_t>(p) + 2 * sizeof(void *) - 1) & mask;      // fp[0] and fp[1] may straddle
-  if ( micron::syscall(SYS_mincore, reinterpret_cast<void *>(lo), 1, &v) != 0 ) return false;
-  if ( hi != lo && micron::syscall(SYS_mincore, reinterpret_cast<void *>(hi), 1, &v) != 0 ) return false;
+  // Phase 4: was SYS_mincore twice, directly. port::addr_readable asks the same question and is the
+  // only spelling available once linux/ is gone. Both ends are probed because fp[0] and fp[1] may
+  // straddle a page boundary.
+  (void)v;
+  if ( !micron::port::addr_readable(reinterpret_cast<void *>(lo)) ) return false;
+  if ( hi != lo && !micron::port::addr_readable(reinterpret_cast<void *>(hi)) ) return false;
   return true;
 }
 
@@ -1022,10 +1031,10 @@ __cycle_counter() noexcept
   asm volatile("mrs %0, cntvct_el0" : "=r"(v));
   return v;
 #elif defined(__micron_arch_arm32)
-  // CNTVCT is PL0-gated on arm32 (CNTKCTL.PL0VCTEN), use clock_gettime instead
-  micron::timespec_t ts{};
-  micron::clock_gettime(micron::clock_monotonic, ts);
-  return (static_cast<u64>(ts.tv_sec) * 1000000000ULL) + static_cast<u64>(ts.tv_nsec);
+  // CNTVCT is PL0-gated on arm32 (CNTKCTL.PL0VCTEN), so read a clock instead. Phase 4: this was
+  // micron::clock_gettime(clock_monotonic, ts) + a manual ns fold; port::mono_ticks() already
+  // returns nanoseconds and carries no linux/ dependency.
+  return static_cast<u64>(micron::port::mono_ticks());
 #else
   return 0;
 #endif

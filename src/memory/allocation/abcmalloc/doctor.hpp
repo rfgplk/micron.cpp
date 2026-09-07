@@ -26,10 +26,41 @@
 #include "../../../atomic/atomic.hpp"
 #include "../../../atomic/flag.hpp"
 #include "../../../bits/__pause.hpp"
-#include "../../../linux/sys/signal.hpp"
-#include "../../../syscall.hpp"
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Phase 4: SIGNAL-BASED CRASH SAFETY IS NOW OPT-IN.
+//
+// The crash-safe layer -- the SIGSEGV/SIGBUS handler, __guard_read's setjmp/longjmp probe, and the
+// pending-signal dump -- is the ONLY part of doctor that needs linux/sys/signal.hpp, and what it
+// needs is not small: sigaction_t, siginfo_t, sigset_t, and sigaction()'s arch-forked SA_RESTORER
+// trampoline. That header does not exist on the barebones branch, and a kernel module or a
+// bare-metal image has no signals to intercept in the first place.
+//
+// Everything else in this file -- fsck, rescue, leak reports, block dumps, backtraces, the arena
+// walk -- is unaffected and still compiles everywhere.
+//
+// Define MICRON_ABC_DOCTOR_SIGNALS on a tree that still carries the signal layer to get it back.
+// NOTE the guards below must be #if, not `if constexpr`: __install_fault_handler is a plain inline
+// function, so a discarded `if constexpr` branch is still required to be well-formed.
+// NO `&& defined(__micron_port_linux)`. The message below says src/linux/ was deleted from this
+// branch, which is true on ALL THREE backends -- so gating the refusal on the linux one let the
+// flag sail past on kernel and metal and fail deep inside on a missing sigaction_t instead.
+#if defined(MICRON_ABC_DOCTOR_SIGNALS)
+#error "MICRON_ABC_DOCTOR_SIGNALS needs linux/sys/signal.hpp (sigaction_t, siginfo_t, and sigaction()'s arch-forked SA_RESTORER trampoline). Phase 4 deleted src/linux/ from the barebones branch, so signal-based crash safety cannot be enabled here -- the rest of doctor (fsck, rescue, leak reports, block dumps, backtraces) is unaffected and needs no macro."
+#endif
+// DOCTOR IS LINUX-ONLY, not merely opt-in. Its forensic layer reads /proc/self/maps and issues
+// SYS_ioctl / SYS_openat / SYS_read / SYS_close / SYS_sched_getaffinity directly -- none of which
+// exists in ring 0 or on a board -- and abcmalloc itself is not the allocator on either target
+// (MICRON_PORT_KERNEL/_METAL select micron::bb). Saying so here beats a syscall instruction
+// executed in ring 0.
+#if !defined(__micron_port_linux)
+#error "abcmalloc doctor is linux-only: it reads /proc/self/maps and issues raw syscalls, and abcmalloc is not the allocator under MICRON_PORT_KERNEL/_METAL anyway (micron::bb is). Drop ABCMALLOC_DOCTOR_HELP/ABC_DOCTOR from this build."
+#endif
+#include "../../../port/backends/__syscall.hpp"
 #include "../../../types.hpp"
 
+#include "../../../port/ident.hpp"
+
+#include "../kmapping.hpp"
 #include "../kmemory.hpp"
 
 #include "config.hpp"
@@ -191,7 +222,7 @@ __munmap_bytes(void *p, usize n) noexcept
 inline i32
 __gettid(void) noexcept
 {
-  return static_cast<i32>(micron::syscall(SYS_gettid));
+  return micron::port::exec_id();
 }
 
 constexpr static const usize __doctor_bt_depth = 4;      // frames captured per alloc
@@ -220,6 +251,21 @@ __capture_backtrace(void **out, usize maxn) noexcept
   return n;
 }
 
+// arm64 (and any asm-generic table) has no SYS_open at all -- only SYS_openat. Pre-existing
+// defect, invisible until Phase 4 added the first matrix cell that compiles doctor on arm64.
+[[gnu::always_inline]] inline int
+__dr_open_ro(const char *path) noexcept
+{
+  // WARNING: SYS_open is an `inline constexpr __nr_t`, NOT a macro, so `#if defined(SYS_open)`
+  // is always FALSE and would silently send every arch down the openat path. The predicate has to
+  // be the arch, like everywhere else in the tree.
+#if defined(__micron_arch_arm64) || defined(__micron_arch_generic)
+  return static_cast<int>(micron::syscall(SYS_openat, -100 /*AT_FDCWD*/, path, 0 /*O_RDONLY*/, 0));
+#else
+  return static_cast<int>(micron::syscall(SYS_open, path, 0 /*O_RDONLY*/, 0));
+#endif
+}
+
 inline void
 __thread_name(i32 tid, char *out, usize cap) noexcept
 {
@@ -238,7 +284,7 @@ __thread_name(i32 tid, char *out, usize cap) noexcept
   while ( tn ) path[n++] = tmp[--tn];
   for ( const char *p = "/comm"; *p; ++p ) path[n++] = *p;
   path[n] = 0;
-  const int fd = static_cast<int>(micron::syscall(SYS_open, path, 0 /*O_RDONLY*/, 0));
+  const int fd = __dr_open_ro(path);
   if ( fd < 0 ) return;
   const long r = static_cast<long>(micron::syscall(SYS_read, fd, out, cap - 1));
   micron::syscall(SYS_close, fd);
@@ -271,7 +317,13 @@ __d_tid(i32 tid) noexcept
 inline void __report_hw_fault(int sig, const void *addr, const void *uctx) noexcept;
 
 #if defined(__micron_arch_amd64)
-constexpr static const bool __crash_safe_on = __default_doctor_crash_safe;
+#if defined(__micron_abc_doctor_signals)
+constexpr static const bool __doctor_signals_on = true;
+#else
+constexpr static const bool __doctor_signals_on = false;
+#endif
+// no handler => no way to survive the fault => __guard_read must not pretend it can
+constexpr static const bool __crash_safe_on = __default_doctor_crash_safe && __doctor_signals_on;
 
 // buf layout: [0]rbx [1]rbp [2]r12 [3]r13 [4]r14 [5]r15 [6]rsp [7]rip
 [[gnu::naked]] __micron_no_ssp inline int
@@ -344,6 +396,7 @@ inline thread_local void *__fault_jmp[8];      // setjmp buffer: rbx,rbp,r12-r15
 inline thread_local volatile bool __fault_armed = false;
 inline thread_local const void *volatile __fault_addr = nullptr;
 
+#if defined(__micron_abc_doctor_signals)
 inline micron::posix::sigaction_t __prev_segv{};
 inline micron::posix::sigaction_t __prev_bus{};
 inline micron::atomic_flag __sig_install_once{};
@@ -380,10 +433,25 @@ __install_fault_handler(void) noexcept
   }
 }
 
+#else
+// signal layer absent: the installer is a no-op so its five call sites need no guard of their own.
+inline void
+__install_fault_handler(void) noexcept
+{
+}
+#endif      // __micron_abc_doctor_signals
+
 template<class F>
 [[gnu::noinline]] inline bool
 __guard_read(F &&f) noexcept
 {
+  // NOTE: `if constexpr` does NOT protect __dr_setjmp here -- it is a non-dependent name, and
+  // [temp.res] requires those to be declared even in a discarded branch. It exists only on amd64,
+  // so the guard has to be #if. Pre-existing; the arm64 doctor cell added in Phase 4 found it.
+#if !defined(__micron_arch_amd64)
+  f();
+  return true;
+#else
   if constexpr ( !__crash_safe_on ) {
     f();
     return true;
@@ -397,6 +465,7 @@ __guard_read(F &&f) noexcept
     __fault_armed = false;
     return true;
   }
+#endif
 }
 
 struct __fault_installer {
@@ -884,7 +953,7 @@ inline void
 __dump_maps(void) noexcept
 {
   if ( __maps_dumped.test_and_set(micron::memory_order_acquire) ) return;
-  const int fd = static_cast<int>(micron::syscall(SYS_open, "/proc/self/maps", 0 /*O_RDONLY*/, 0));
+  const int fd = __dr_open_ro("/proc/self/maps");
   if ( fd < 0 ) return;
   __d("  --- /proc/self/maps (resolve backtrace addrs: addr2line -e <binary> <addr - module base>) ---\n");
   char buf[1024];
@@ -1501,13 +1570,10 @@ __dump_sched_sig_context(const u64 *at_fault) noexcept
   __d_nl();
 
   __d("  cpu now      ");
-  u32 cpu = ~0u, node = ~0u;
-  if ( micron::syscall(SYS_getcpu, &cpu, &node, nullptr) == 0 ) {
+  const i32 cpu = micron::port::cpu_id();
+  if ( cpu >= 0 ) {
     __d("#");
-    __d_u(cpu);
-    __d(" (node ");
-    __d_u(node);
-    __d(")");
+    __d_u(static_cast<u32>(cpu));
   } else
     __d("(unavailable)");
 
@@ -1538,8 +1604,10 @@ __dump_sched_sig_context(const u64 *at_fault) noexcept
   __d_nl();
 
   u64 blocked = 0, pending = 0;
+#if defined(__micron_abc_doctor_signals)
   micron::syscall(SYS_rt_sigprocmask, micron::posix::sig_block, nullptr, &blocked, micron::posix::__sig_syscall_size);
   micron::syscall(SYS_rt_sigpending, &pending, micron::posix::__sig_syscall_size);
+#endif
   if ( at_fault ) {
     __d("  sigmask      at-fault ");
     __d_sigset64(*at_fault);
@@ -2017,7 +2085,7 @@ __report_hw_fault(int sig, const void *addr, const void *uctx) noexcept
 {
   if constexpr ( __crash_safe_on ) {
     __banner("FAULT (hardware): ");
-    __d(sig == micron::posix::sig_bus ? "SIGBUS" : "SIGSEGV");
+    __d(sig == 7 /* SIGBUS */ ? "SIGBUS" : "SIGSEGV");
     __d(" at ");
     __d_ptr(addr);
     __d_nl();

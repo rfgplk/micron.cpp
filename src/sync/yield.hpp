@@ -5,13 +5,15 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../linux/sys/sched.hpp"
+// NOTE: this used to include linux/sys/sched.hpp for one sched_yield, and paid 139 transitive
+// headers for it. port/yield.hpp costs 16 and emits the same instruction.
+#include "../port/yield.hpp"
 
 namespace micron
 {
 inline void
 yield()
 {
-  posix::sched_yield();
+  micron::port::yield();
 }
 };      // namespace micron

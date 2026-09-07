@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../src/string/strings.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/memory/memory.hpp"
 #include "../src/std.hpp"
 #include "../src/string/string_view.hpp"

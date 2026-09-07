@@ -7,9 +7,28 @@
 
 #include "types.hpp"
 
-thread_local i32 __micron_errno = 0;
+// WARNING: no ELF TLS in a kernel module or a bare-metal image, so errno degrades to one shared
+// object there. thread_local is DROPPED, not replaced by static: at namespace scope static would
+// change this from external to internal linkage and hand every TU its own errno.
+//
+// AND THE SPELLING IS `inline`, WHICH IS THE STEP THE NOTE ABOVE STOPPED ONE SHORT OF. Without it
+// these are two ordinary external-linkage definitions in a header included by 177 files: `.globl`,
+// no comdat, one per TU. Any second TU is `multiple definition of '__micron_errno'` -- measured, on
+// BOTH arms (.tbss hosted, .bss under MICRON_NO_TLS), and micron got away with it only because it
+// is single-TU by design. A .ko is NOT: micron_demo-y is three objects, Kbuild passes -fno-common,
+// and mc_libgcc.cpp:33-34 documents that exactly one of them may pull a container header -- which
+// is a constraint that existed only to hide this. Same defect class BAREBONES.md records for
+// except::__write_n, which was `void` where it needed to be `inline void`.
+//
+// `extern "C"` on the accessor for the other half: it was mangled _Z23__micron_errno_locationv, so
+// a C object -- start/kernel/mc_kport.c, a board port -- could not have resolved it.
+#if defined(__micron_no_tls)
+inline i32 __micron_errno = 0;
+#else
+inline thread_local i32 __micron_errno = 0;
+#endif
 
-i32 *
+extern "C" inline i32 *
 __micron_errno_location(void)
 {
   return &__micron_errno;

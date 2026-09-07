@@ -5,7 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../../src/math/graph.hpp"
-#include "../../src/io/graph.hpp"
+// NOTE: Phase 4 deleted io/graph.hpp -- the graph TEXT serializer (edge_list/adjacency_list and
+// their parsers). That is io by nature. math/graph.hpp, the algorithms, is untouched and is what
+// the rest of this file pins.
 #include "../../src/string/format.hpp"
 
 struct non_default_vertex {
@@ -99,32 +101,6 @@ main()
   auto quality = micron::math::graphs::modularity(generated, communities.community);
   auto euler = micron::math::graphs::eulerian_path(generated);
   auto hash = micron::math::graphs::weisfeiler_lehman_hash(generated);
-  auto edge_text = micron::io::graph::edge_list(generated);
-  auto parsed = micron::io::graph::parse_edge_list<>(edge_text);
-  auto adjacency_text = micron::io::graph::adjacency_list(generated);
-  auto parsed_adjacency = micron::io::graph::parse_adjacency_list<>(adjacency_text.data(), adjacency_text.size());
-  auto market_text = micron::io::graph::matrix_market(generated);
-  auto parsed_market = micron::io::graph::parse_matrix_market<>(market_text.data(), market_text.size());
-  auto dimacs_text = micron::io::graph::dimacs(generated);
-  auto parsed_dimacs = micron::io::graph::parse_dimacs<>(dimacs_text.data(), dimacs_text.size());
-  auto binary = micron::io::graph::binary(generated);
-  auto decoded = micron::io::graph::parse_binary<>(binary);
-  micron::io::graph::native_property_codec native_codec;
-  auto weighted_binary = micron::io::graph::binary(network, native_codec);
-  auto weighted_decoded = micron::io::graph::parse_binary<micron::math::weighted_digraph<u32>>(weighted_binary, native_codec);
-  if ( false ) {
-    micron::io::path_t path;
-    (void)micron::io::graph::write_edge_list(path, generated);
-    (void)micron::io::graph::write_adjacency_list(path, generated);
-    (void)micron::io::graph::write_matrix_market(path, generated);
-    (void)micron::io::graph::write_dimacs(path, generated);
-    (void)micron::io::graph::write_binary(path, generated);
-    (void)micron::io::graph::read_edge_list<>(path);
-    (void)micron::io::graph::read_adjacency_list<>(path);
-    (void)micron::io::graph::read_matrix_market<>(path);
-    (void)micron::io::graph::read_dimacs<>(path);
-    (void)micron::io::graph::read_binary<>(path);
-  }
   (void)traversal;
   (void)depth_first;
   (void)components;
@@ -170,12 +146,6 @@ main()
   (void)quality;
   (void)euler;
   (void)hash;
-  (void)parsed;
-  (void)parsed_adjacency;
-  (void)parsed_market;
-  (void)parsed_dimacs;
-  (void)decoded;
-  (void)weighted_decoded;
 
   micron::math::weighted_digraph<int> weighted;
   (void)weighted.add_edge(0, 1, 7);

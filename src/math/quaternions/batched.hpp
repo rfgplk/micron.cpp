@@ -19,7 +19,7 @@
 #include "algebra.hpp"
 #include "rotations.hpp"
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 #include "../../simd/aliases.hpp"
 #include "../../simd/arch/types_amd64.hpp"
 #endif
@@ -41,7 +41,7 @@ namespace math
 namespace quaternions
 {
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 namespace __batched_detail
 {
 
@@ -146,7 +146,7 @@ template<ieee754_floating T>
 inline void
 batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *out, usize n) noexcept
 {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if constexpr ( sizeof(T) == 8 ) {
     usize i = 0;
     for ( ; i + 4 <= n; i += 4 ) {
@@ -311,7 +311,7 @@ template<ieee754_floating T>
 inline void
 batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
 {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if constexpr ( sizeof(T) == 8 ) {
     const __m256d one = simd::avx::splat_f64(1.0);
     usize i = 0;

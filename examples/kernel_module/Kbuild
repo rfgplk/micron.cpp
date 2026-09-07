@@ -1,0 +1,68 @@
+# micron in a Linux kernel module.
+#
+# kbuild has no C++ mode. it is a C build system
+
+obj-m := micron_demo.o
+micron_demo-y := mod_main.o mc_kport.o mod_demo.o mc_libgcc.o
+
+MICRON_ROOT := $(src)/../..
+
+# mc_kport.c and mc_libgcc.cpp live in the crt directory
+ccflags-y += -I$(MICRON_ROOT) -I$(MICRON_ROOT)/src
+
+# Every one of these is load-bearing:
+#   -ffreestanding                    no hosted library assumptions
+#   -fno-exceptions -fno-rtti         there is no unwinder and no typeinfo in a module
+#   -fno-threadsafe-statics           a function-local static would otherwise call
+#                                     __cxa_guard_acquire, which the kernel does not provide
+#   -fno-use-cxa-atexit               ...and a static with a destructor would call __cxa_atexit
+#                                     and want a __dso_handle
+#   -mno-sse -mno-mmx -mno-80387      the FPU/vector registers belong to userspace; touching them
+#     -mno-3dnow                      outside kernel_fpu_begin() corrupts a task's FP state
+#   -mcmodel=kernel -mno-red-zone     the kernel's memory model and ABI
+#   -fno-pie -fno-common              module objects are not position independent
+#   -fno-stack-protector              the kernel's canary is not ours to reference
+#   -fno-asynchronous-unwind-tables   nothing will ever unwind this
+#   MICRON_PORT_KERNEL                selects port/backends/*_kernel.hpp AND micron::bb
+#   MICRON_NO_SIMD                    the arch is amd64 with every ISA macro set and none of the
+#                                     registers available
+#   MICRON_NO_FP                      must be explicit; -Ofast-style flags defeat its derivation
+#   MICRON_NO_TLS                     a module has no ELF TLS runtime
+MICRON_CXX ?= g++
+MICRON_CXXFLAGS := -std=c++26 -O2 -nostdinc++ \
+	-ffreestanding -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-use-cxa-atexit \
+	-mno-sse -mno-mmx -mno-80387 -mno-3dnow -mcmodel=kernel -mno-red-zone \
+	-fno-pie -fno-common -fno-stack-protector -fno-asynchronous-unwind-tables \
+	-fno-strict-aliasing -Wall -Wextra -Wno-unused-parameter \
+	-I$(MICRON_ROOT) -I$(MICRON_ROOT)/src \
+	-DMICRON_PORT_KERNEL -DMICRON_NO_SIMD -DMICRON_NO_FP -DMICRON_NO_TLS \
+	-D__KERNEL__ -DMODULE
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# KERNEL'S SPECULATION MITIGATIONS
+ifdef CONFIG_MITIGATION_RETPOLINE
+MICRON_CXXFLAGS += -mindirect-branch=thunk-extern -mindirect-branch-register -mindirect-branch-cs-prefix -fno-jump-tables
+endif
+ifdef CONFIG_MITIGATION_RETHUNK
+MICRON_CXXFLAGS += -mfunction-return=thunk-extern
+endif
+ifdef CONFIG_MITIGATION_SLS
+MICRON_CXXFLAGS += -mharden-sls=all
+endif
+ifdef CONFIG_X86_KERNEL_IBT
+MICRON_CXXFLAGS += -fcf-protection=branch
+endif
+ifdef CONFIG_CALL_PADDING
+MICRON_CXXFLAGS += -fpatchable-function-entry=$(CONFIG_FUNCTION_PADDING_BYTES),$(CONFIG_FUNCTION_PADDING_BYTES)
+endif
+
+quiet_cmd_micron_cxx = CXX [M]  $@
+      cmd_micron_cxx = $(MICRON_CXX) $(MICRON_CXXFLAGS) -MD -MF $(depfile) -c -o $@ $< && \
+                       $(OBJCOPY) --remove-section=__patchable_function_entries \
+                                  --remove-section=.rela__patchable_function_entries $@
+
+$(obj)/%.o: $(src)/%.cpp FORCE
+	$(call if_changed_dep,micron_cxx)
+
+OBJECT_FILES_NON_STANDARD_mod_demo.o := y
+OBJECT_FILES_NON_STANDARD_mc_libgcc.o := y

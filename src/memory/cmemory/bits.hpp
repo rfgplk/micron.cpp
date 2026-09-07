@@ -17,7 +17,13 @@
 #include "../stack.hpp"
 #endif
 
-#include "../../memory/allocation/abcmalloc/malloc_forward.hpp"
+// the mem* family's one dependency on the allocator: "is this heap-owned", the bounds hint at :519.
+// ONE declaration-only seam for every arm now -- this used to be a two-branch #if naming abc::
+// directly, and the barebones branch pulled the whole allocator in behind a header that sits under
+// every container in the library. See allocation/__seam.hpp for the measurement and the cycle it
+// also closed.
+#include "../../defs.hpp"
+#include "../../memory/allocation/__seam.hpp"
 
 namespace micron
 {
@@ -58,7 +64,7 @@ broadcast_byte(byte b) noexcept
 // mem* dispatch
 
 // for bulk tiers
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
 constexpr u64 __mem_ladder_max = 256;
 #else
 constexpr u64 __mem_ladder_max = 128;
@@ -236,7 +242,7 @@ __copy_le32(byte *d, const byte *s, const u64 n) noexcept
 __copy_33_64(byte *d, const byte *s, const u64 n) noexcept
 {
   // n in (32, 64]
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   const __v32 a = __ld32(s), b = __ld32(s + n - 32);
   __st32(d, a);
   __st32(d + n - 32, b);
@@ -250,7 +256,7 @@ __copy_33_64(byte *d, const byte *s, const u64 n) noexcept
 #endif
 }
 
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
 [[gnu::always_inline]] static inline void
 __copy_65_128(byte *d, const byte *s, const u64 n) noexcept
 {
@@ -331,7 +337,7 @@ __set_le32(byte *d, const u64 w, const u64 n) noexcept
 __set_33_64(byte *d, const u64 w, const u64 n) noexcept
 {
   // n in (32, 64]
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   const __v32 v = { w, w, w, w };
   __st32(d, v);
   __st32(d + n - 32, v);
@@ -344,7 +350,7 @@ __set_33_64(byte *d, const u64 w, const u64 n) noexcept
 #endif
 }
 
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
 [[gnu::always_inline]] static inline void
 __set_65_128(byte *d, const u64 w, const u64 n) noexcept
 {
@@ -509,28 +515,28 @@ __is_at_stack(const F &ref, const u64 size) noexcept
   return true;
 }
 
-// rely on within for now
-// TODO: implement bounds checking for non abcmalloc allocators
+// a bounds HINT, not a proof of validity -- see __seam.hpp. It is exact on the barebones tier,
+// which answers from region membership; abcmalloc answers from its own owner table.
 
 template<typename F>
 bool
 __is_at_heap(const F *ptr) noexcept
 {
-  return abc::within(reinterpret_cast<const addr_t *>(ptr));
+  return micron::__heap_owns(static_cast<const void *>(ptr));
 }
 
 template<typename F>
 bool
 __is_at_heap(F &ref) noexcept
 {
-  return abc::within(reinterpret_cast<addr_t *>(&ref));
+  return micron::__heap_owns(static_cast<const void *>(&ref));
 }
 
 template<typename F>
 bool
 __is_at_heap(const F &ref) noexcept
 {
-  return abc::within(reinterpret_cast<const addr_t *>(&ref));
+  return micron::__heap_owns(static_cast<const void *>(&ref));
 }
 
 template<typename F>

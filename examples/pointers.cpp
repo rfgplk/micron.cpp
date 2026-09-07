@@ -22,7 +22,7 @@
 //     (unlike std::make_shared).
 
 #include "../src/pointer.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 struct Widget {
   int id;

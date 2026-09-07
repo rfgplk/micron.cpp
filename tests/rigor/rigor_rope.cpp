@@ -16,7 +16,7 @@
 //
 // Build: `duck build tests/rigor/rigor_rope.cpp`; run `bin/rigor_rope`.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/rope.hpp"
 #include "../../src/string/strings.hpp"

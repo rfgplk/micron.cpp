@@ -5,7 +5,8 @@ import sys
 
 src_path = "./src"
 external_path = "./external"
-default_dest_dir = "/usr/include/micron"
+# don't clobber system userland headers
+default_dest_dir = "/usr/include/micronbb"
 
 def main():
     dest = sys.argv[1] if len(sys.argv) > 1 else default_dest_dir

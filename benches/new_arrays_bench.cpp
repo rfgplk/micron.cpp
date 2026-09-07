@@ -8,8 +8,7 @@
 
 #include "../src/array/mdarray.hpp"
 #include "../src/array/soa.hpp"
-#include "../src/io/console.hpp"
-#include "../src/io/stdout.hpp"
+#include "../src/print.hpp"
 #include "../src/std.hpp"
 
 #include <cstdio>

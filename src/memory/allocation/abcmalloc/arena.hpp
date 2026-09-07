@@ -24,11 +24,12 @@
 #include "../../../closures.hpp"
 #include "../../../concepts.hpp"
 #include "../../../memory/allocation/kmemory.hpp"
+#include "../../../memory/mman.hpp"
 #include "../../../numerics.hpp"
 #include "../../../type_traits.hpp"
 #include "../../../types.hpp"
 
-#include "../../../linux/sys/sysinfo.hpp"
+#include "../../../port/pages.hpp"
 
 #include "prediction.hpp"
 
@@ -1611,9 +1612,17 @@ public:
     constexpr bool __wants_prealloc = __default_eager_hot_tiers or !__default_lazy_construct;
     u64 prealloc_size = 0;
     if constexpr ( __wants_prealloc ) {
-      micron::sysinfo info;
-      const u64 totalram = static_cast<u64>(info.totalram) * static_cast<u64>(info.mem_unit ? info.mem_unit : 1u);
+      const u64 totalram = static_cast<u64>(micron::port::heap_extent().total);
+#if defined(__micron_no_fp)
+      // WARNING: the f32 multiply below is a RUNTIME float operation and fails outright under
+      // -mno-sse / -mgeneral-regs-only. The constexpr conversion here is not: it folds in the
+      // compiler and emits no instruction, so only the parts-per-million constant survives into the
+      // object. The split multiply keeps a ~128 TiB totalram from overflowing.
+      constexpr u64 __prealloc_ppm = static_cast<u64>(static_cast<double>(__default_prealloc_factor) * 1000000.0);
+      prealloc_size = (totalram / 1000000ull) * __prealloc_ppm + ((totalram % 1000000ull) * __prealloc_ppm) / 1000000ull;
+#else
       prealloc_size = micron::math::floor<u64>(static_cast<f32>(totalram) * __default_prealloc_factor);
+#endif
       __debug_print("__arena(): total system RAM: ", totalram);
       __debug_print("__arena(): prealloc_factor target bytes: ", prealloc_size);
     }

@@ -35,7 +35,7 @@
 // distinct allocating worker-thread lifetimes <= 63 to keep every worker on its
 // own arena (matters for the cross-arena donation test).
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/cmalloc.hpp"
 #include "../../src/memory/allocation/abcmalloc/__abc.hpp"
@@ -47,6 +47,12 @@
 #include "../../src/math/rng/engines.hpp"
 #include "../../src/mutex/mutex.hpp"
 #include "../../src/new.hpp"
+// Phase 4: micron's thread subsystem is deleted, so the MT worker harness cannot exist here. The
+// ST_ONLY gate already existed for the standalone abcmalloc mirror; forcing it is what keeps the
+// single-threaded allocator rigor tests (adversarial, arena_recycle, realloc, soak_rand,
+// soak_serial_bulk) alive rather than losing them with the MT ones.
+#define ABC_RIGOR_ST_ONLY 1
+
 #ifndef ABC_RIGOR_ST_ONLY
 // MT worker harness (run_workers). Single-threaded consumers -- e.g. the standalone
 // abcmalloc mirror, where pulling micron's thread subsystem would drag in a second

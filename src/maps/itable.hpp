@@ -10,6 +10,7 @@
 #include "../memory/actions.hpp"
 #include "../memory/addr.hpp"
 #include "../memory/allocation/resources.hpp"
+#include "../memory/allocation/__internal.hpp"
 #include "../memory/memory.hpp"
 #include "../numerics.hpp"
 
@@ -130,8 +131,8 @@ class immutable_table
   static inline __leaf *
   __make_leaf(K k, V v)
   {
-    auto *l = micron::ptr_cast<__leaf *>(abc::alloc(sizeof(__leaf)));
-    if ( !l ) [[unlikely]]      // abc::alloc returns nullptr on OOM (it does NOT throw)
+    auto *l = micron::ptr_cast<__leaf *>(micron::__alloc(sizeof(__leaf)));
+    if ( !l ) [[unlikely]]      // micron::__alloc returns nullptr on OOM (it does NOT throw)
       exc<except::critical_error>("immutable_table: leaf allocation failed (out of memory)");
     new (l) __leaf(k, v);
     return l;
@@ -141,7 +142,7 @@ class immutable_table
   static inline __branch *
   __make_branch(u32 bp, uintptr_t c0, uintptr_t c1)
   {
-    auto *b = micron::ptr_cast<__branch *>(abc::alloc(sizeof(__branch)));
+    auto *b = micron::ptr_cast<__branch *>(micron::__alloc(sizeof(__branch)));
     if ( !b ) [[unlikely]] {      // OOM: release the child refs we were handed, then throw
       __release_tagged(c0);
       __release_tagged(c1);
@@ -155,14 +156,14 @@ class immutable_table
   __dealloc_leaf(__leaf *l)
   {
     l->~__leaf();
-    abc::dealloc(reinterpret_cast<byte *>(l));
+    micron::__free(l);
   }
 
   static inline void
   __dealloc_branch(__branch *b)
   {
     b->~__branch();
-    abc::dealloc(reinterpret_cast<byte *>(b));
+    micron::__free(b);
   }
 
   // NOTE: saturating + ATOMIC

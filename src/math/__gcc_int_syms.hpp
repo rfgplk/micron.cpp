@@ -97,6 +97,112 @@ __ffsdi2(unsigned long long x) noexcept
   return x ? 1 + __ctzdi2(x) : 0;
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// ARM EABI DIVISION HELPERS
+#if defined(__micron_arch_arm32) && defined(__ARM_EABI__) && !defined(MICRON_CRT_PROVIDES_AEABI)
+
+extern "C" __mc_libgcc_sym unsigned int
+__udivmodsi4(unsigned int n, unsigned int d, unsigned int *rem) noexcept
+{
+  if ( d == 0 ) {
+    if ( rem ) *rem = 0;
+    return 0;      // freestanding: no SIGFPE trap emulation, define div-by-zero as 0
+  }
+  unsigned int q = 0, r = 0;
+  for ( int i = 31; i >= 0; --i ) {
+    r = (r << 1) | ((n >> i) & 1u);
+    if ( r >= d ) {
+      r -= d;
+      q |= (1u << i);
+    }
+  }
+  if ( rem ) *rem = r;
+  return q;
+}
+
+extern "C" __mc_libgcc_sym long long
+__divmoddi4(long long n, long long d, long long *rem) noexcept
+{
+  const bool __qneg = (n < 0) != (d < 0);
+  const bool __rneg = n < 0;
+  unsigned long long un = n < 0 ? 0ull - static_cast<unsigned long long>(n) : static_cast<unsigned long long>(n);
+  unsigned long long ud = d < 0 ? 0ull - static_cast<unsigned long long>(d) : static_cast<unsigned long long>(d);
+  unsigned long long ur = 0;
+  const unsigned long long uq = __udivmoddi4(un, ud, &ur);
+  if ( rem ) *rem = __rneg ? static_cast<long long>(0ull - ur) : static_cast<long long>(ur);
+  return __qneg ? static_cast<long long>(0ull - uq) : static_cast<long long>(uq);
+}
+
+extern "C" __mc_libgcc_sym unsigned int
+__aeabi_uidiv(unsigned int n, unsigned int d) noexcept
+{
+  return __udivmodsi4(n, d, nullptr);
+}
+
+extern "C" __mc_libgcc_sym int
+__aeabi_idiv(int n, int d) noexcept
+{
+  const bool neg = (n < 0) != (d < 0);
+  const unsigned int un = n < 0 ? 0u - static_cast<unsigned int>(n) : static_cast<unsigned int>(n);
+  const unsigned int ud = d < 0 ? 0u - static_cast<unsigned int>(d) : static_cast<unsigned int>(d);
+  const unsigned int q = __udivmodsi4(un, ud, nullptr);
+  return neg ? static_cast<int>(0u - q) : static_cast<int>(q);
+}
+
+extern "C" __mc_libgcc_sym unsigned long long
+__aeabi_uidivmod(unsigned int n, unsigned int d) noexcept
+{
+  unsigned int r = 0;
+  const unsigned int q = __udivmodsi4(n, d, &r);
+  return static_cast<unsigned long long>(q) | (static_cast<unsigned long long>(r) << 32);
+}
+
+extern "C" __mc_libgcc_sym long long
+__aeabi_idivmod(int n, int d) noexcept
+{
+  const bool qneg = (n < 0) != (d < 0);
+  const bool rneg = n < 0;
+  const unsigned int un = n < 0 ? 0u - static_cast<unsigned int>(n) : static_cast<unsigned int>(n);
+  const unsigned int ud = d < 0 ? 0u - static_cast<unsigned int>(d) : static_cast<unsigned int>(d);
+  unsigned int ur = 0;
+  const unsigned int uq = __udivmodsi4(un, ud, &ur);
+  const unsigned int q = qneg ? 0u - uq : uq;
+  const unsigned int r = rneg ? 0u - ur : ur;
+  return static_cast<long long>(static_cast<unsigned long long>(q) | (static_cast<unsigned long long>(r) << 32));
+}
+
+#if defined(__thumb__)
+#define __mc_aeabi_thumb ".thumb_func\n\t"
+#else
+#define __mc_aeabi_thumb ""
+#endif
+
+#define __mc_aeabi_stub(__nm, __callee)                                                                                                    \
+  __asm__(".text\n\t"                                                                                                                      \
+          ".syntax unified\n\t"                                                                                                            \
+          ".align 2\n\t"                                                                                                                   \
+          ".weak " __nm "\n\t"                                                                                                             \
+          ".type " __nm ", %function\n\t" __mc_aeabi_thumb __nm ":\n\t"                                                                    \
+          "push {r4, lr}\n\t"                                                                                                              \
+          "sub  sp, sp, #16\n\t"                                                                                                           \
+          "add  r4, sp, #8\n\t"                                                                                                            \
+          "str  r4, [sp]\n\t"                                                                                                              \
+          "bl   " __callee "\n\t"                                                                                                          \
+          "ldr  r2, [sp, #8]\n\t"                                                                                                          \
+          "ldr  r3, [sp, #12]\n\t"                                                                                                         \
+          "add  sp, sp, #16\n\t"                                                                                                           \
+          "pop  {r4, pc}\n\t"                                                                                                              \
+          ".size " __nm ", . - " __nm "\n\t"                                                                                               \
+          ".previous\n\t")
+
+__mc_aeabi_stub("__aeabi_uldivmod", "__udivmoddi4");
+__mc_aeabi_stub("__aeabi_ldivmod", "__divmoddi4");
+
+#undef __mc_aeabi_stub
+#undef __mc_aeabi_thumb
+
+#endif      // __micron_arch_arm32 && __ARM_EABI__
+
 #endif
 
 extern "C" __mc_libgcc_sym int

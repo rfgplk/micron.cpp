@@ -157,6 +157,21 @@
 
 #endif
 
+// WARNING: MICRON_SIMD_INJECT_INTRIN_SYMS is #defined unconditionally at the top of this file, so
+// the using-directive below ALWAYS fires. On x86/NEON some __bits/* header has opened the namespace
+// by now; on the generic tier none has, and an unopened namespace is a hard error rather than an
+// empty injection. Declaring it empty here costs nothing and makes the directive well-formed on
+// every target.
+namespace micron
+{
+namespace simd
+{
+namespace __bits
+{
+}
+};      // namespace simd
+};      // namespace micron
+
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 using namespace ::micron::simd::__bits;
 #endif

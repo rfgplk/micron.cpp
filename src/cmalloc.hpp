@@ -8,12 +8,14 @@
 #include "defs.hpp"
 
 // only if we're not already including abcmalloc externally
-#ifndef MICRON_ABCMALLOC_DISABLE_STD
-#ifdef MICRON_ABCMALLOC_STD
+#if defined(__micron_abcmalloc_present)
 #include "memory/allocation/abcmalloc/__abc.hpp"
 #include "memory/allocation/abcmalloc/__sys.hpp"
 #include "memory/allocation/abcmalloc/malloc.hpp"
-#endif
+#elif defined(__micron_bb_alloc)
+// the barebones tier: micron::bb, with namespace abc aliased onto it so that the 18 keep-set
+// headers naming abc:: resolve unchanged. See defs.hpp for why abcmalloc is not an option here.
+#include "memory/allocation/barebones/abc_shim.hpp"
 #endif
 
 // alias the namespaces

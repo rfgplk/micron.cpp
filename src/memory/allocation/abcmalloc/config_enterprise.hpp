@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "../../mmap_bits.hpp"
 #include "../kmemory.hpp"
 
 namespace abc

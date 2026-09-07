@@ -519,7 +519,11 @@ rscbytecpy(F &restrict _dest, const D &restrict _src) noexcept
   return true;
 }
 
-void *
+// `inline`: this is a plain function definition in a header included by most of the tree, so two
+// TUs is `multiple definition of micron::voidcpy` -- the same class as errno.hpp's __micron_errno
+// and except::__write_n before it. Found by tests/build/seam_link.cpp, the first cell that links two
+// objects. The template siblings below were never affected; only the non-template one.
+inline void *
 voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
 {
   byte *dest = reinterpret_cast<byte *>(_dest);

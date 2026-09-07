@@ -16,7 +16,7 @@
 //   (unistring.hpp:156-225). It is the inverse of the usual "null means fine" reading, and asserting
 //   it the wrong way round is silent: the old form of this test printed `0` three times and passed.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/memory/memory.hpp"
 #include "../../src/string/unistring.hpp"
 

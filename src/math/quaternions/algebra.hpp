@@ -65,7 +65,7 @@
 #include "../quants/vecs.hpp"
 #include "../sqrt.hpp"
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 #include "../../simd/aliases.hpp"
 #include "../../simd/arch/types_amd64.hpp"
 #endif
@@ -198,7 +198,7 @@ template<ieee754_floating T>
 multiply(const quaternion<T> &a, const quaternion<T> &b) noexcept
 {
   if !consteval {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
     if constexpr ( sizeof(T) == 8 ) {
       const __m256d av = simd::avx::loadu_f64(reinterpret_cast<const double *>(&a.x));      // {ax, ay, az, aw}
       const __m256d bv = simd::avx::loadu_f64(reinterpret_cast<const double *>(&b.x));      // {bx, by, bz, bw}

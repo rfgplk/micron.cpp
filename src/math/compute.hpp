@@ -8,7 +8,7 @@
 #include "../atomic/atomic.hpp"
 #include "../concepts.hpp"
 #include "../except.hpp"
-#include "../memory/allocation/abcmalloc/malloc.hpp"
+#include "../memory/allocation/__internal.hpp"
 #include "../memory/cmemory.hpp"
 #include "../new.hpp"
 #include "../slice.hpp"
@@ -186,17 +186,20 @@ struct host_domains {
     usize padded{};
     if ( __builtin_add_overflow(bytes, alignment - 1, &padded) ) return nullptr;
     padded &= ~(alignment - 1);
-    return abc::aligned_alloc(alignment, padded);
+    return micron::__alloc_aligned(alignment, padded);
   }
 
   static void
   release(domain_type, void *pointer, usize, usize alignment) noexcept
   {
     if ( !pointer ) return;
-    if ( alignment <= abc::__hdr_offset )
-      abc::dealloc(reinterpret_cast<byte *>(pointer));
-    else
-      abc::aligned_free(pointer);
+    // the predicate is micron::__native_alignment, and it used to be abc::__hdr_offset. Those are
+    // NOT the same number: abcmalloc derives native_block_alignment as `__default_redzone ? 16 :
+    // __hdr_offset` (malloc.hpp:368) and routes aligned_balloc on it (:410), so under
+    // MICRON_ABC_REDZONE an alignment of 32 allocated through the over-aligned path -- returning an
+    // INTERIOR pointer with a prefix in front of it -- and was freed here as if it were a block
+    // start. Same defect memory/new.hpp:125 records for the other half of the pattern.
+    micron::__free_aligned(pointer, alignment);
   }
 
   [[nodiscard]] static compute_status

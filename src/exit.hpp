@@ -8,14 +8,16 @@
 #include "atomic/intrin.hpp"
 #include "bits/__pause.hpp"
 #include "bits/__profile.hpp"
-#include "syscall.hpp"
+#include "port/panic.hpp"
 #include "types.hpp"
 
 #include "bits/__attach_hook.hpp"
 #include "bits/__thread_exit_hook.hpp"
 
 extern "C" {
-// strong definition in io/__std.hpp, weakly stubbed in start.cpp
+// weakly stubbed in start.cpp. The strong definition used to live in io/__std.hpp, which Phase 4
+// deleted -- so on this branch the weak stub is the only definition and the null test below is
+// what makes that correct rather than a link error.
 extern void __shutdown_io_buffers(void) __attribute__((weak));
 }
 
@@ -26,8 +28,7 @@ namespace micron
 __attribute__((noreturn)) inline void
 sys_exit(int ret)
 {
-  micron::syscall(SYS_exit, ret);
-  __builtin_unreachable();
+  micron::port::halt_local(ret);
 }
 
 __attribute__((noreturn)) inline void
@@ -37,11 +38,10 @@ sys_group_exit(int ret)
   // WARNING: an attached guest must NEVER SYS_exit_group the host.
   if ( micron::__micron_attach_fatal ) {
     micron::__micron_attach_fatal(ret);
-    for ( ;; ) micron::syscall(SYS_exit, ret);
+    for ( ;; ) micron::port::halt_local(ret);
   }
 #endif
-  micron::syscall(SYS_exit_group, ret);
-  __builtin_unreachable();
+  micron::port::halt(ret);
 }
 
 constexpr static const int exit_ok = 0;
@@ -295,7 +295,7 @@ __aeabi_unwind_cpp_pr2()
 __cxa_pure_virtual()
 {
   static const char msg[] = "pure virtual function called\n";
-  micron::syscall(SYS_write, 2, msg, sizeof(msg) - 1);
+  micron::port::write_diag(msg, sizeof(msg) - 1);
   micron::abort(6);
 }
 
@@ -303,7 +303,7 @@ __cxa_pure_virtual()
 __cxa_deleted_virtual()
 {
   static const char msg[] = "deleted virtual function called\n";
-  micron::syscall(SYS_write, 2, msg, sizeof(msg) - 1);
+  micron::port::write_diag(msg, sizeof(msg) - 1);
   micron::abort(6);
 }
 

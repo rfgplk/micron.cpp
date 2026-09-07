@@ -21,7 +21,7 @@
 #include "../src/range.hpp"
 #include "../src/vector/vector.hpp"
 #include "../src/array/array.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 int
 main()

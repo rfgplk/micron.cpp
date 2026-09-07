@@ -38,7 +38,7 @@
 //     a stub returning npos — use char-by-char find or work with sstring's
 //     find_substr if you need substring search today.
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/string/conversions/floating_point.hpp"
 #include "../src/string/conversions/integral.hpp"
 #include "../src/string/string.hpp"

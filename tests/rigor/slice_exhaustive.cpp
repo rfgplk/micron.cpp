@@ -12,7 +12,7 @@
 // explicitly. This file uses the (n, value) form everywhere it relies on
 // exact size, and verifies the rounded-up behaviour separately.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/slice.hpp"
 #include "../../src/std.hpp"
 

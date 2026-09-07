@@ -1,7 +1,7 @@
 #include "../src/algorithm/algorithm.hpp"
 #include "../src/algorithm/fold.hpp"
 #include "../src/array/array.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/map.hpp"
 #include "../src/vector/vector.hpp"
 

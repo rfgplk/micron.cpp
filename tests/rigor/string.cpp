@@ -1,5 +1,5 @@
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/strings.hpp"
 

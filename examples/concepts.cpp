@@ -8,7 +8,7 @@
 //   examples/types.cpp       — fundamental types these concepts reason about
 
 #include "../src/concepts.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 // --- Custom function constrained by micron concepts ---
 

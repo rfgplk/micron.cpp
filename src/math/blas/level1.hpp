@@ -32,7 +32,7 @@
 #include "../mk.hpp"
 #include "../quants/views.hpp"
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 #include "../../simd/aliases.hpp"
 #include "../../simd/arch/types_amd64.hpp"
 #endif
@@ -66,7 +66,7 @@ ref(T *p, usize i, ssize_t inc) noexcept
   return p[ssize_t(i) * inc];
 }
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 
 [[nodiscard, gnu::flatten]] inline f64
 dot_packed_f64(const double *__restrict__ x, const double *__restrict__ y, usize n) noexcept
@@ -793,7 +793,7 @@ template<typename T>
 axpy(T alpha, const T *__restrict__ x, const T *__restrict__ x_end, T *__restrict__ y) noexcept
 {
   const usize n = usize(x_end - x);
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 8 ) {
@@ -904,7 +904,7 @@ template<typename T>
 scal(T alpha, T *first, T *last) noexcept
 {
   const usize n = usize(last - first);
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 8 ) {
@@ -995,7 +995,7 @@ template<ieee754_floating F>
 asum(const F *first, const F *last) noexcept
 {
   const usize n = usize(last - first);
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
       return F(__impl_level1::asum_packed_f64(reinterpret_cast<const double *>(first), n));
@@ -1107,7 +1107,7 @@ template<ieee754_floating F>
 nrm2_fast(const F *first, const F *last) noexcept
 {
   const usize n = usize(last - first);
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
       return F(mk::pow_ns::sqrt<f64>(__impl_level1::nrm2_fast_packed_f64(reinterpret_cast<const double *>(first), n)));
@@ -1198,7 +1198,7 @@ iamax(const T *first, const T *last) noexcept
 {
   if ( first == last ) return 0;
   const usize n = usize(last - first);
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 8 ) {
@@ -1308,7 +1308,7 @@ template<ieee754_floating F>
 dot(const F *__restrict__ x, const F *__restrict__ x_end, const F *__restrict__ y) noexcept
 {
   const usize n = usize(x_end - x);
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
       return F(__impl_level1::dot_packed_f64(reinterpret_cast<const double *>(x), reinterpret_cast<const double *>(y), n));

@@ -25,7 +25,7 @@ namespace micron
 [[gnu::noinline]] static __micron_optimize_no_tree_loop_distribute byte *
 __memset_large(byte *restrict d, const byte v, const u64 n) noexcept
 {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
   if ( n < __mem_rep_min ) return simd::__memset_bulk(d, v, n);
   const __mem_tunables &t = __mem_tun_get();
   if ( n >= t.nt_set_threshold ) return simd::__memset_bulk_nt(d, v, n);
@@ -34,7 +34,7 @@ __memset_large(byte *restrict d, const byte v, const u64 n) noexcept
     return d;
   }
   return simd::__memset_bulk(d, v, n);
-#elif defined(__micron_arch_arm64)
+#elif defined(__micron_arch_arm64) && !defined(__micron_simd_generic)
   if ( v == 0 && n >= __mem_zva_min ) return simd::__memset_bulk_zero(d, n);
   if ( n >= __mem_nt_threshold_arm64 ) return simd::__memset_bulk_nt(d, v, n);
   return simd::__memset_bulk(d, v, n);
@@ -60,7 +60,7 @@ __memset_bytes(byte *restrict d, const byte v, const u64 bytes) noexcept
     __ml::__set_65_128(d, w, bytes);
     return d;
   }
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
   if ( bytes <= 256 ) {
     __ml::__set_129_256(d, w, bytes);
     return d;
@@ -912,7 +912,7 @@ rsctypeset_safe(F &s, const T in) noexcept
 // START WORDSET
 
 // BASIC WORDSET - RUNTIME COUNT
-word *
+inline word *
 wordset(word *src, const word in, const u64 cnt) noexcept
 {
   __memset_words(reinterpret_cast<byte *>(src), static_cast<u64>(in), cnt * sizeof(word));
@@ -920,7 +920,7 @@ wordset(word *src, const word in, const u64 cnt) noexcept
 };
 
 // WORDSET WITH REFERENCE RETURN
-word &
+inline word &
 rwordset(word &s, const word in, const u64 cnt) noexcept
 {
   __memset_words(reinterpret_cast<byte *>(&s), static_cast<u64>(in), cnt * sizeof(word));
@@ -985,7 +985,7 @@ rscwordset(word &s, const word in) noexcept
 
 // COMPILE-TIME CONSTANT WORDSET - TEMPLATE COUNT AND VALUE
 template<word in, u64 cnt>
-word *
+inline word *
 wordset(word *src) noexcept
 {
   if constexpr ( cnt % 4 == 0 )

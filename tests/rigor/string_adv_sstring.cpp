@@ -1,6 +1,6 @@
 
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/slice.hpp"
 #include "../../src/string/sstring.hpp"

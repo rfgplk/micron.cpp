@@ -23,7 +23,7 @@
 // Build: `duck build tests/rigor/istring.cpp`. Exceptions ON per
 // `src/defs.hpp` default.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/istring.hpp"
 #include "../../src/string/sstring.hpp"

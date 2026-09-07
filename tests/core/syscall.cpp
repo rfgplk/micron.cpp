@@ -9,8 +9,7 @@
 // The mmap bit constants are micron::{prot_read,prot_write,map_private,map_anonymous}
 // (src/memory/mmap_bits.hpp:13,14,24,35), NOT the libc uppercase spellings.
 
-#include "../../src/syscall.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/memory/mman.hpp"
 #include "../../src/std.hpp"
 

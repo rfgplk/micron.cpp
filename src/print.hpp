@@ -1,0 +1,807 @@
+//  Copyright (c) 2024- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
+#pragma once
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// micron::print; printing, on top of /port
+//
+// print(...) - println(...) - printn(...) - printk(sink, x) - printkn(sink, x) - flush()
+
+#include "port/panic.hpp"
+
+#include "concepts.hpp"
+#include "type_traits.hpp"
+
+#include "memory/memory.hpp"
+#include "types.hpp"
+
+#include "tuple.hpp"
+
+#include "string/conversions/bits.hpp"
+#include "string/conversions/floating_point.hpp"
+#include "string/format.hpp"
+
+#include "bits/__print.hpp"
+#include "settle_fwd.hpp"
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// io printing engine + echo, the primary universal print facility
+// (supersedes console effectively)
+//
+//   io::echo(a, b, c)            marshal any micron type/container to stdout + '\n'
+//   io::echon(...)               same, no trailing newline
+//   io::echof("x = {}\n"...)     micron::format {}-string, trailing '\n' appended
+//   io::echofn(fmt, ...)         format-string, NO trailing newline
+//   io::echo(target, ...)        redirect: target = fd_t (io::stderr, a pipe end, ...),
+//                                an os_file-derived handle, or an io::stream<>
+//
+// the first raw int argument is always a fd_t/file/stream redirect
+
+namespace micron
+{
+namespace io
+{
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// sinks
+
+template<typename S>
+concept output_sink = requires(S &s, const char *p, usize n, char c) {
+  { s.put(p, n) } -> micron::convertible_to<max_t>;
+  { s.put(c) } -> micron::convertible_to<max_t>;
+  { s.flush() } -> micron::convertible_to<max_t>;
+};
+
+// nothing to drain: port::write_diag is unbuffered by construction. Kept so the call sites inside
+// print/println (inherited from io/echo.hpp, where stdout WAS buffered) need no edit.
+inline void
+flush(void)
+{
+}
+
+struct port_sink {
+  static max_t
+  put(const char *p, usize n)
+  {
+    micron::port::write_diag(p, n);
+    return static_cast<max_t>(n);
+  }
+
+  static max_t
+  put(char c)
+  {
+    micron::port::write_diag(&c, 1);
+    return 1;
+  }
+
+  static max_t
+  flush(void)
+  {
+    return 0;
+  }
+};
+
+namespace __impl
+{
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, i64 val)
+{
+  return micron::format::__impl::fmt_int_to_buf(buf, buf_sz, val, 10, false);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, u64 val)
+{
+  return micron::format::__impl::fmt_uint_to_buf(buf, buf_sz, val, 10, false);
+}
+
+inline usize
+arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, f32 val)
+{
+  return micron::__impl::__fpconv::f2s_buffered(val, buf);
+}
+
+inline usize
+arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, f64 val)
+{
+  return micron::__impl::__fpconv::d2s_buffered(val, buf);
+}
+
+// wide floats
+inline usize
+arith_to_buf(char *buf, [[maybe_unused]] usize buf_sz, long double val)
+{
+#if defined(__micron_ldbl_binary64)
+  return micron::__impl::__fpconv::d2s_buffered(static_cast<f64>(val), buf);
+#else
+  if ( static_cast<long double>(static_cast<f64>(val)) == val ) return micron::__impl::__fpconv::d2s_buffered(static_cast<f64>(val), buf);
+  return micron::__impl::__ryu::x2a_buffered(val, buf, buf_sz);
+#endif
+}
+
+#if defined(__micron_f128_distinct)
+// on amd64 f128 is _Float128
+inline usize
+arith_to_buf(char *buf, usize buf_sz, f128 val)
+{
+  if ( static_cast<f128>(static_cast<f64>(val)) == val ) return micron::__impl::__fpconv::d2s_buffered(static_cast<f64>(val), buf);
+  return micron::__impl::__ryu::x2a_buffered(val, buf, buf_sz);
+}
+#endif
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, const u128 &val)
+{
+  return micron::to_chars(buf, buf_sz, val, 10u, false);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, const i128 &val)
+{
+  return micron::to_chars(buf, buf_sz, val, 10u, false);
+}
+
+inline usize
+arith_to_buf(char *buf, usize buf_sz, bool val)
+{
+  return micron::format::__impl::bool_to_buf(buf, buf_sz, val);
+}
+
+inline usize
+ptr_to_buf(char *buf, usize buf_sz, const void *ptr)
+{
+  return micron::format::__impl::ptr_to_buf(buf, buf_sz, ptr);
+}
+
+};      // namespace __impl
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// printk(sink, x)
+
+template<typename T>
+concept __printk_arith = micron::is_arithmetic_v<T> || micron::is_same_v<T, u128> || micron::is_same_v<T, i128>;
+
+template<output_sink S, typename T>
+  requires __printk_arith<T>
+max_t printk(S &s, const T &x);
+
+template<output_sink S, has_cstr T>
+  requires micron::is_class_v<T>
+max_t printk(S &s, const T &str);
+
+template<output_sink S, typename T>
+  requires(micron::is_pointer_v<T> && !is_char_ptr<T>)
+max_t printk(S &s, const T &x);
+
+template<output_sink S, typename T>
+  requires micron::__print::printable<T>
+max_t printk(S &s, const T &x);
+
+template<output_sink S, typename A, typename B> max_t printk(S &s, const pair<A, B> &p);
+
+// char array literal
+template<output_sink S, typename T, usize M>
+  requires is_char_elem<T>
+inline max_t
+printk(S &s, T (&c)[M])
+{
+  const char *p = reinterpret_cast<const char *>(c);
+  usize n = 0;
+  while ( n < M && p[n] ) ++n;
+  return s.put(p, n);
+}
+
+// char pointer
+template<output_sink S, typename T>
+  requires is_char_ptr<T>
+inline max_t
+printk(S &s, const T &c)
+{
+  if ( c == nullptr ) return 0;
+  return s.put(reinterpret_cast<const char *>(c), micron::strlen(reinterpret_cast<const char *>(c)));
+}
+
+// single char
+template<output_sink S>
+inline max_t
+printk(S &s, char c)
+{
+  return s.put(c);
+}
+
+// raw sized print
+template<output_sink S>
+inline max_t
+sprintk(S &s, const char *c, usize len)
+{
+  return s.put(c, len);
+}
+
+// class with .c_str() (all string families; bytes as stored)
+template<output_sink S, has_cstr T>
+  requires micron::is_class_v<T>
+max_t
+printk(S &s, const T &str)
+{
+  return s.put(str.c_str(), micron::strlen(str.c_str()));
+}
+
+// non-char pointer (prints the address)
+template<output_sink S, typename T>
+  requires(micron::is_pointer_v<T> && !is_char_ptr<T>)
+max_t
+printk(S &s, const T &x)
+{
+  char buf[24];
+  usize n = __impl::ptr_to_buf(buf, 24, static_cast<const void *>(x));
+  return s.put(buf, n);
+}
+
+template<output_sink S>
+inline max_t
+printk(S &s, const micron::settle_note &n)
+{
+  max_t t = s.put(n.pre, micron::strlen(n.pre));
+  if ( n.has_id ) {
+    char buf[24];
+    usize k = __impl::arith_to_buf(buf, 24, n.id);
+    t += s.put(buf, k);
+  }
+  t += s.put(n.post, micron::strlen(n.post));
+  return t;
+}
+
+// arithmetic
+template<output_sink S, typename T>
+  requires __printk_arith<T>
+max_t
+printk(S &s, const T &x)
+{
+  char buf[128];
+  usize n = 0;
+
+  if constexpr ( micron::is_same_v<T, bool> ) {
+    n = __impl::arith_to_buf(buf, 128, x);
+  } else if constexpr ( micron::is_floating_point_v<T> ) {
+    if constexpr ( sizeof(T) <= sizeof(f32) ) {
+      n = __impl::arith_to_buf(buf, 128, static_cast<f32>(x));      // f16 widens exactly
+    } else if constexpr ( sizeof(T) <= sizeof(f64) ) {
+      n = __impl::arith_to_buf(buf, 128, static_cast<f64>(x));
+    } else if constexpr ( micron::is_same_v<T, long double> || micron::is_same_v<T, flong> ) {
+      n = __impl::arith_to_buf(buf, 128, static_cast<long double>(x));
+#if defined(__micron_f128_distinct)
+    } else if constexpr ( micron::is_same_v<T, f128> ) {
+      n = __impl::arith_to_buf(buf, 128, static_cast<f128>(x));
+#endif
+    } else {
+      n = __impl::arith_to_buf(buf, 128, static_cast<f64>(x));
+    }
+  } else if constexpr ( micron::is_same_v<T, u128> ) {
+    n = __impl::arith_to_buf(buf, 128, x);
+  } else if constexpr ( micron::is_same_v<T, i128> ) {
+    n = __impl::arith_to_buf(buf, 128, x);
+  } else if constexpr ( micron::is_signed_v<T> ) {
+    n = __impl::arith_to_buf(buf, 128, static_cast<i64>(x));
+  } else {
+    n = __impl::arith_to_buf(buf, 128, static_cast<u64>(x));
+  }
+
+  return s.put(buf, n);
+}
+
+// volatile arithmetic / pointer: read once, delegate
+template<output_sink S, typename T>
+  requires __printk_arith<T>
+max_t
+printk(S &s, const volatile T &x)
+{
+  T copy = const_cast<const T &>(x);
+  return printk(s, copy);
+}
+
+template<output_sink S, typename T>
+  requires(micron::is_pointer_v<T> && !is_char_ptr<T>)
+max_t
+printk(S &s, const volatile T &x)
+{
+  T copy = const_cast<const T &>(x);
+  return printk(s, copy);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// classified containers
+
+template<output_sink S> struct __sink_out {
+  S &__s;
+  max_t __t = 0;
+
+  void
+  raw(const char *p, usize n)
+  {
+    __t += __s.put(p, n);
+  }
+
+  void
+  num(u64 v)
+  {
+    char buf[24];
+    usize n = __impl::arith_to_buf(buf, 24, v);
+    __t += __s.put(buf, n);
+  }
+
+  template<typename E>
+  void
+  elem(const E &e)
+  {
+    __t += printk(__s, e);
+  }
+};
+
+template<output_sink S, typename T>
+  requires micron::__print::printable<T>
+max_t
+printk(S &s, const T &x)
+{
+  __sink_out<S> o{ s };
+  micron::__print::render(o, x);
+  return o.__t;
+}
+
+// pair: [a, b]
+template<output_sink S, typename A, typename B>
+max_t
+printk(S &s, const pair<A, B> &p)
+{
+  max_t t = s.put("[", 1);
+  t += printk(s, p.a);
+  t += s.put(", ", 2);
+  t += printk(s, p.b);
+  t += s.put("]", 1);
+  return t;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%
+// printkn(sink, x)
+
+template<output_sink S, typename T>
+max_t
+printkn(S &s, const T &x)
+{
+  max_t t = printk(s, x);
+  t += s.put('\n');
+  return t;
+}
+
+namespace __echo_impl
+{
+
+template<output_sink S, typename... Ts>
+inline max_t
+run(S &s, bool newline, const Ts &...args)
+{
+  max_t total = 0;
+  max_t err = 0;
+  (
+      [&] {
+        max_t r = printk(s, args);
+        if ( r < 0 && err == 0 ) [[unlikely]]
+          err = r;
+        else
+          total += r;
+      }(),
+      ...);
+  if ( newline ) total += s.put('\n');
+  return err != 0 ? err : total;
+}
+
+};      // namespace __echo_impl
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// echo / echon
+
+// settling form
+
+// no trailing newline
+
+// redirecting forms
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// echof / echofn: explicit micron::format {} strings
+namespace __echo_impl
+{
+
+template<output_sink S>
+inline max_t
+__put_fill_run(S &s, char fill, usize n)
+{
+  if ( !n ) return 0;
+  char buf[64];
+  const usize k0 = n < sizeof(buf) ? n : sizeof(buf);
+  for ( usize i = 0; i < k0; ++i ) buf[i] = fill;
+  max_t t = 0;
+  while ( n ) {
+    const usize k = n < sizeof(buf) ? n : sizeof(buf);
+    t += s.put(buf, k);
+    n -= k;
+  }
+  return t;
+}
+
+template<output_sink S>
+inline void
+apply_padding_sink(S &s, max_t &total, const char *content, usize content_len, const micron::format::__impl::fmt_spec &spec)
+{
+  if ( spec.width == 0 || content_len >= spec.width ) {
+    total += s.put(content, content_len);
+    return;
+  }
+  usize pad_total = spec.width - content_len;
+  char fill = spec.fill ? spec.fill : ' ';
+  char align = spec.align;
+  if ( align == '\0' ) align = (spec.type == 's' || spec.type == '\0') ? '<' : '>';
+
+  if ( align == '>' ) {
+    total += __put_fill_run(s, fill, pad_total);
+    total += s.put(content, content_len);
+  } else if ( align == '<' ) {
+    total += s.put(content, content_len);
+    total += __put_fill_run(s, fill, pad_total);
+  } else {
+    usize left = pad_total / 2;
+    usize right = pad_total - left;
+    total += __put_fill_run(s, fill, left);
+    total += s.put(content, content_len);
+    total += __put_fill_run(s, fill, right);
+  }
+}
+
+template<output_sink S>
+inline void
+format_one_sink(S &, max_t &, const char *, const char *, usize)
+{
+  // base case: no args left
+}
+
+template<output_sink S, typename T, typename... Rest>
+inline void
+format_one_sink(S &s, max_t &total, const char *spec_start, const char *spec_end, usize arg_index, const T &val, const Rest &...rest)
+{
+  if ( arg_index > 0 ) {
+    format_one_sink(s, total, spec_start, spec_end, arg_index - 1, rest...);
+    return;
+  }
+  micron::format::__impl::fmt_spec spec = micron::format::__impl::parse_spec(spec_start, spec_end);
+  using U = micron::remove_cvref_t<T>;
+  if constexpr ( requires(char *b, const U &v) { micron::format::formatter<U>::write(b, usize{}, v, spec); } ) {
+    // per formatter
+    constexpr usize __bs = micron::format::__impl::__fmt_buf_for<micron::format::formatter<U>>();
+    char buf[__bs];
+    usize n = micron::format::formatter<U>::write(buf, __bs, val, spec);
+    apply_padding_sink(s, total, buf, n, spec);
+  } else if constexpr ( requires(hstring<schar> &o, const U &v) { micron::format::formatter<U>::write_str(o, v, spec); } ) {
+    hstring<schar> out;
+    micron::format::formatter<U>::write_str(out, val, spec);
+    apply_padding_sink(s, total, out.c_str(), out.size(), spec);
+  } else {
+    static_assert(sizeof(U) == 0, "io::echof: no formatter<T> for this argument and it is not an echo-printable container");
+  }
+}
+
+template<output_sink S, typename... Args>
+inline max_t
+format_to_sink(S &s, const char *fmt, const Args &...args)
+{
+  max_t total = 0;
+  if ( fmt == nullptr ) return 0;
+  usize auto_index = 0;
+  const char *p = fmt;
+  while ( *p ) {
+    if ( *p == '{' ) {
+      if ( *(p + 1) == '{' ) {
+        total += s.put('{');
+        p += 2;
+        continue;
+      }
+      ++p;
+      const char *close = p;
+      while ( *close && *close != '}' ) ++close;
+      if ( *close != '}' ) break;
+      const char *colon = p;
+      while ( colon < close && *colon != ':' ) ++colon;
+      usize index = auto_index;
+      bool has_explicit_index = false;
+      if ( colon > p ) {
+        const char *num_p = p;
+        bool all_digits = true;
+        while ( num_p < colon ) {
+          if ( *num_p < '0' || *num_p > '9' ) {
+            all_digits = false;
+            break;
+          }
+          ++num_p;
+        }
+        if ( all_digits ) {
+          index = 0;
+          num_p = p;
+          while ( num_p < colon ) {
+            index = index * 10 + static_cast<usize>(*num_p - '0');
+            ++num_p;
+          }
+          has_explicit_index = true;
+        }
+      }
+      const char *spec_start = (colon < close) ? colon + 1 : close;
+      const char *spec_end = close;
+      format_one_sink(s, total, spec_start, spec_end, index, args...);
+      if ( !has_explicit_index )
+        ++auto_index;
+      else
+        auto_index = index + 1;
+      p = close + 1;
+    } else if ( *p == '}' && *(p + 1) == '}' ) {
+      total += s.put('}');
+      p += 2;
+    } else {
+      const char *run = p;
+      while ( *p && *p != '{' && *p != '}' ) ++p;
+      if ( p != run )
+        total += s.put(run, static_cast<usize>(p - run));
+      else {
+        total += s.put(*p);
+        ++p;
+      }
+    }
+  }
+  return total;
+}
+
+};      // namespace __echo_impl
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// format_to
+template<output_sink S, typename... Args>
+inline max_t
+format_to(S &s, const char *fmt, const Args &...args)
+{
+  return __echo_impl::format_to_sink(s, fmt, args...);
+}
+
+template<typename... T>
+  requires(!micron::any_settling<T...>)
+inline void
+print(const T &...str)
+{
+  port_sink s;
+  (printk(s, str), ...);
+  flush();
+}
+
+template<typename... T>
+void
+print(T &&...str)
+{
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          port_sink s;
+          (printk(s, v), ...);
+          flush();
+        },
+        micron::forward<T>(str)...);
+  } else {
+    port_sink s;
+    (printk(s, str), ...);
+    flush();
+  }
+}
+
+template<typename... T>
+  requires(!micron::any_settling<T...>)
+inline void
+printn(const T &...str)
+{
+  port_sink s;
+  (printkn(s, str), ...);
+}
+
+template<typename... T>
+void
+printn(T &&...str)
+{
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          port_sink s;
+          (printkn(s, v), ...);
+        },
+        micron::forward<T>(str)...);
+  } else {
+    port_sink s;
+    (printkn(s, str), ...);
+  }
+}
+
+template<typename... T>
+  requires(!micron::any_settling<T...>)
+inline void
+println(const T &...str)
+{
+  port_sink s;
+  if constexpr ( sizeof...(T) > 1 ) {
+    (printk(s, str), ...);
+    s.put('\n');
+  } else {
+    (printkn(s, str), ...);
+  }
+}
+
+template<typename... T>
+  requires(micron::any_settling<T...>)
+inline void
+println(T &&...str)
+{
+  micron::__settle_impl::__then(
+      [](const auto &...v) {
+        port_sink s;
+        if constexpr ( sizeof...(v) > 1 ) {
+          (printk(s, v), ...);
+          s.put('\n');
+        } else {
+          (printkn(s, v), ...);
+        }
+      },
+      micron::forward<T>(str)...);
+}
+
+template<typename... T>
+inline void
+println(const T *...str)
+{
+  port_sink s;
+  if constexpr ( sizeof...(T) > 1 ) {
+    (printk(s, str), ...);
+    s.put('\n');
+  } else {
+    (printkn(s, str), ...);
+  }
+}
+
+template<typename... T>
+inline void
+error(T &&...str)
+{
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          port_sink s;
+          (printk(s, v), ...);
+        },
+        micron::forward<T>(str)...);
+  } else {
+    port_sink s;
+    (printk(s, str), ...);
+  }
+}
+
+template<typename... T>
+inline void
+errorn(T &&...str)
+{
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          port_sink s;
+          ((printk(s, v), s.put('\n')), ...);
+        },
+        micron::forward<T>(str)...);
+  } else {
+    port_sink s;
+    ((printk(s, str), s.put('\n')), ...);
+  }
+}
+
+template<typename... T>
+inline void
+errorln(T &&...str)
+{
+  if constexpr ( micron::any_settling<T...> ) {
+    micron::__settle_impl::__then(
+        [](const auto &...v) {
+          port_sink s;
+          (printk(s, v), ...);
+          s.put('\n');
+        },
+        micron::forward<T>(str)...);
+  } else {
+    port_sink s;
+    (printk(s, str), ...);
+    s.put('\n');
+  }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// binary hex dump
+
+template<is_printable_container T>
+void
+bin(const T &data)
+{
+  port_sink s;
+  char buf[4096];
+  usize cnt = 0;
+  usize remaining = data.size();
+  while ( remaining > 0 ) {
+    usize chunk = remaining > 2047 ? 2047 : remaining;      // 2*chunk+1 must stay within buf[4096]
+    const auto *src = reinterpret_cast<const u8 *>(&data[cnt]);
+    for ( usize i = 0; i < chunk; ++i ) {
+      buf[i * 2] = micron::__impl::__hex_lower[src[i] >> 4];
+      buf[i * 2 + 1] = micron::__impl::__hex_lower[src[i] & 0xF];
+    }
+    s.put(buf, chunk * 2);
+    cnt += chunk;
+    remaining -= chunk;
+  }
+}
+
+template<has_cstr T>
+void
+bin(const T &data)
+{
+  port_sink s;
+  char buf[4096];
+  usize cnt = 0;
+  usize remaining = micron::string_len(data);
+  while ( remaining > 0 ) {
+    usize chunk = remaining > 2047 ? 2047 : remaining;
+    const auto *src = reinterpret_cast<const u8 *>(&data[cnt]);
+    for ( usize i = 0; i < chunk; ++i ) {
+      buf[i * 2] = micron::__impl::__hex_lower[src[i] >> 4];
+      buf[i * 2 + 1] = micron::__impl::__hex_lower[src[i] & 0xF];
+    }
+    s.put(" 0x", 3);
+    s.put(buf, chunk * 2);
+    cnt += chunk;
+    remaining -= chunk;
+  }
+}
+
+// stubbed
+inline void
+print_buffer(char **buf [[maybe_unused]])
+{
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// io/console.hpp compatibility
+template<typename... T>
+inline void
+console(const T &...str)
+{
+  println(str...);
+}
+
+template<typename... T>
+inline void
+consoled(const T &...str)
+{
+  print(str...);
+}
+
+};      // namespace io
+
+using io::console;
+using io::consoled;
+using io::flush;
+using io::output_sink;
+using io::port_sink;
+using io::print;
+using io::printk;
+using io::printkn;
+using io::println;
+using io::printn;
+
+};      // namespace micron

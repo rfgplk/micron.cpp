@@ -20,8 +20,7 @@
 //       round-trips with balanced ctor/dtor counts.
 //   5.  capacity stays power-of-two and >=N for assorted N.
 
-#include "../../src/io/console.hpp"
-#include "../../src/io/stdout.hpp"
+#include "../../src/print.hpp"
 #include "../../src/memory/cache.hpp"
 #include "../../src/queue/crossbeam.hpp"
 #include "../../src/std.hpp"

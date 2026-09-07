@@ -6,8 +6,15 @@
 #pragma once
 
 #include "../errno.hpp"
-#include "../linux/sys/fcntl.hpp"
-#include "../syscall.hpp"
+#include "../port/__backend.hpp"
+// UNDER THE SAME GATE AS ITS ONLY CALL SITE (:164). This header is one of the four documented
+// exceptions allowed to name a raw syscall, and it already answered -ENOSYS off the linux backend
+// -- but it pulled the ladder in unconditionally, so a kernel or metal TU parsed the raw syscall
+// machinery it must never execute. __syscall.hpp now refuses those backends outright, which makes
+// the gate here load-bearing rather than tidy.
+#if defined(__micron_port_linux)
+#include "../port/backends/__syscall.hpp"
+#endif
 #include "../types.hpp"
 
 #include "civil.hpp"
@@ -149,10 +156,25 @@ parse(const u8 *data, usize len, tz_storage<N> &out) noexcept
 namespace __impl
 {
 
+// Phase 4: reading the tz database is a FILESYSTEM operation, and the barebones targets have no
+// filesystem -- a kernel module has no cwd to resolve against and a bare-metal image has no VFS at
+// all. Gated on the linux backend; elsewhere it reports -ENOSYS and the caller falls back to UTC,
+// which is what tz.hpp already does for a missing zone file.
+//
+// AT_FDCWD is declared locally rather than taken from linux/sys/fcntl.hpp: one constant is not
+// worth an include of a header this file otherwise does not use, and that header is deleted here.
+constexpr long __tz_at_fdcwd = -100;
+
 inline max_t
 slurp(const char *path, u8 *buf, usize cap) noexcept
 {
-  const long fd = micron::syscall(SYS_openat, micron::posix::at_fdcwd, path, 0 /* O_RDONLY */, 0);
+#if !defined(__micron_port_linux)
+  (void)path;
+  (void)buf;
+  (void)cap;
+  return static_cast<max_t>(-38);      // -ENOSYS
+#else
+  const long fd = micron::syscall(SYS_openat, __tz_at_fdcwd, path, 0 /* O_RDONLY */, 0);
   if ( micron::syscall_failed(fd) ) return static_cast<max_t>(fd);
   usize got = 0;
   for ( ;; ) {
@@ -168,6 +190,7 @@ slurp(const char *path, u8 *buf, usize cap) noexcept
   }
   micron::syscall(SYS_close, fd);
   return static_cast<max_t>(got);
+#endif
 }
 
 constexpr bool

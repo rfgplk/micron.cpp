@@ -24,9 +24,26 @@ __micron_diagnostic_ignored("-Wignored-attributes")
 typedef u16 __u16u __attribute__((aligned(1), may_alias));
 typedef u32 __u32u __attribute__((aligned(1), may_alias));
 typedef u64 __u64u __attribute__((aligned(1), may_alias));
+#if defined(__micron_simd_generic)
+// WARNING: __ld16 RETURNS this type by value, and a compiler generic vector cannot be returned by
+// value under -mno-sse ("SSE register return with SSE disabled") or -mgeneral-regs-only -- the two
+// flag sets the generic tier exists for. always_inline does not help: GCC rejects the declared ABI
+// before it ever considers inlining, and -fsyntax-only does not catch it because the check happens
+// at codegen. A two-word POD has the same size and the same load-then-store shape and passes in
+// GPRs. See simd/arch/memory_generic.hpp.
+struct __v16 {
+  u64 w[2];
+};
+// WARNING: attributes on a typedef of an already-defined struct are IGNORED ("ignoring attributes
+// applied to __v16 after definition"), so __v16_u cannot weaken alignment the way the vector
+// typedef does. __ld16/__st16 below go through __builtin_memcpy on this tier instead, which is
+// alignment-agnostic and aliasing-safe by construction and lowers to the same pair of loads/stores.
+typedef __v16 __v16_u;
+#else
 typedef u64 __v16 __attribute__((vector_size(16), may_alias));
 typedef __v16 __v16_u __attribute__((aligned(1)));
-#if defined(__micron_x86_avx2)
+#endif
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
 typedef u64 __v32 __attribute__((vector_size(32), may_alias));
 typedef __v32 __v32_u __attribute__((aligned(1)));
 #endif
@@ -70,16 +87,26 @@ __stu64(byte *p, u64 v) noexcept
 [[gnu::always_inline]] static inline __v16
 __ld16(const byte *p) noexcept
 {
+#if defined(__micron_simd_generic)
+  __v16 v;
+  __builtin_memcpy(&v, p, 16);
+  return v;
+#else
   return *reinterpret_cast<const __v16_u *>(p);
+#endif
 }
 
 [[gnu::always_inline]] static inline void
 __st16(byte *p, __v16 v) noexcept
 {
+#if defined(__micron_simd_generic)
+  __builtin_memcpy(p, &v, 16);
+#else
   *reinterpret_cast<__v16_u *>(p) = v;
+#endif
 }
 
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
 [[gnu::always_inline]] static inline __v32
 __ld32(const byte *p) noexcept
 {
@@ -98,14 +125,18 @@ __st32(byte *p, __v32 v) noexcept
 [[gnu::always_inline]] static inline void
 __pin4(__v16 &a, __v16 &b, __v16 &c, __v16 &e) noexcept
 {
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_simd_generic)
+  // no vector register class to pin to; pin the eight machine words instead, which is the same
+  // "every store depends on all four loads" dependency the vector form builds
+  __asm__("" : "+r"(a.w[0]), "+r"(a.w[1]), "+r"(b.w[0]), "+r"(b.w[1]), "+r"(c.w[0]), "+r"(c.w[1]), "+r"(e.w[0]), "+r"(e.w[1]));
+#elif defined(__micron_arch_x86_any)
   __asm__("" : "+x"(a), "+x"(b), "+x"(c), "+x"(e));
 #else
   __asm__("" : "+w"(a), "+w"(b), "+w"(c), "+w"(e));
 #endif
 }
 
-#if defined(__micron_x86_avx2)
+#if defined(__micron_x86_avx2) && !defined(__micron_simd_generic)
 [[gnu::always_inline]] static inline void
 __pin4(__v32 &a, __v32 &b, __v32 &c, __v32 &e) noexcept
 {

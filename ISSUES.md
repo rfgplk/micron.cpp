@@ -1,4 +1,4 @@
-# Known Issues (as of 2026-08-14)
+# Known Issues (as of 2026-09-06)
 
 ## Hashing
 
@@ -26,8 +26,7 @@
 `tests/rigor/FAILING.md` is the current baseline of rigor tests that fail on a stock amd64 hosted
 run
 
-- `tests/rigor/memcmp.cpp` and `tests/rigor/memory.cpp` do not link
-- **`tests/rigor/rigor_algo_core_imperative.cpp` returns 6 FAIL (require) on `--arm`**, in the
+- **`tests/rigor/rigor_algo_core_imperative.cpp` returns 6 FAIL (require) on `--arm`**
 
 ## Building / optimizations
 - micron and libstdc++/glibc **can** coexist in one TU, but it isn't recommended. You may hit conflict issues, although most have been pruned
@@ -35,18 +34,17 @@ run
 - under `-Ofast`/`-ffast-math` + LTO, `micron::numeric_limits<F>::max()` / `-max()` / `infinity()` can constant-fold to 0/-0 when used as a sentinel
 - `[[gnu::flatten]]` transitively inlines all fns and blows up LTO compile time
 - the `-flto` flag is still mandatory under ASan testing
-- `-DMICRON_ABCMALLOC_DISABLE_STD` **does not build**
 - **ASan still cannot see container out-of-bounds**, only double-free/UAF
   `allocator_types/serial_allocator.hpp:32` rounds every request through
   `to_granularity<page_size>` (`policies.hpp:27`), containers issue `malloc(4096)` and an overflow past the logical end never reaches a redzone. Needs either a
   sanitizer-time granularity of 1 or `__asan_poison_memory_region`
-- **`--tsan` / `--asan` cannot compile ANY TU that reaches `src/thread/thread.hpp`** — 26
 - **`duck` rejects a multi-token flag string passed as one argv entry**
 - certain heavy abc tests need `vm.overcommit_memory=0|1` otherwise they'll fail at RUNTIME with `critical_error` (mmap refused)
 - micron splits static and main-thread thread_local destruction into two phases in __run_exit_sequence, where [basic.start.term] interleaves them by
   construction order.
 
 ## Bugs / Limitations you should know
+- **`micron::print` does not special-case wide strings.**
 - **`external/bbench` can only be built against the working tree with `-i .`.**
 - **`micron::buffer` is accepted by `io::coro::read_file` but cannot be grown
 - **`io::printk` cannot print a pointer-to-volatile.**
@@ -107,8 +105,29 @@ run
 - gcc emits a `-Warray-bounds` false positive for `lock_guard<M>::~lock_guard`'s member-function-pointer call when `M` is a one-byte lock with an empty `[[no_unique_address]]` member
 
 ## Platform / Arch gaps
+- **A no-FP target cannot instantiate `math/`'s floating-point subsystems**
 - `src/simd/fma.hpp` is x86-only (`_mm_fmadd_*` / `_mm256_fmadd_*`)
 - `src/math/simd/trig.hpp` + `src/math/quaternions/batched.hpp`: NEON f32 on ARM, but f64 only on amd64/arm64; arm32 double-precision trig/quaternion falls back to scalar
+
+## barebones
+
+- **The libc arm of `__internal.hpp` cannot be built.**
+- **OOM policy under (K) is `exc<critical_error>` -> write-then-`BUG()`.**
+- **`free_list.hpp:477-487` rejects `alignment > base_align`, and `__setup` halves `base_align`** on
+  a region too small to place an aligned base.
+- **`src/memory/allocation/bbmalloc/` IS GENERATED. Do not edit it.**
+- **i386 CANNOT BUILD NO-FPU**
+- **`sh scripts/bootstap_duck.sh` DOES NOT WORK FROM THIS BRANCH'S WORKING TREE.**
+  Build duck from a worktree at HEAD with `tools/` overlaid:
+  `git worktree add --detach /tmp/w HEAD && cp -r tools/src/... /tmp/w/tools/src/... && (cd /tmp/w && sh scripts/bootstap_duck.sh)`
+- **`port::page_protect` and `page_reserve/commit/decommit` are no-ops on (K).**
+- **`port::thread_alive` is always `true` on (K).**
+- **`exc<>` under (K) ends in `BUG()`.**
+- **A BOARD PORT MAY NOT INCLUDE A CONTAINER, PRINT OR STRING HEADER.**
+- **`MICRON_BB_PORT_GROW` and `MICRON_BB_MAX_REGIONS` are not set on bare metal.**
+- **A METAL IMAGE IS ENTERED WITH THE MMU OFF, ITS MEMORY IS DEVICE-TYPE, AND UNALIGNED ACCESSES
+  FAULT.**
+- **`DWT_CYCCNT` is an optional debug unit and qemu's Cortex-M models do not implement it.**
 
 ## Math (vectors / matrices)
 
@@ -155,40 +174,3 @@ run
   test comparing both signs saw the wrong string. Runtime values are unaffected (the converters read
   raw bits). In tests, launder constant ±0 bit patterns through a `volatile` u64/u32 first
   (`tests/rigor/rigor_format_ryu.cpp` `f64_opaque`).
-
-## chrono
-
-- **Timeout-carrying syscalls with no wrapper**, `semtimedop`, `mq_timedsend`/`mq_timedreceive`, `io_pgetevents`, `recvmmsg`, `pselect6`, and a
-  *timed* `rt_sigtimedwait`
-- **`i386: ftime = 35` is exposed as if usable.**
-- **A dlopened module's C++ static destructors do not run.**
-- **`handle_t::open_path` runs a module's initializers over `best_effort` relocations.**
-  `__legacy_opts` (`src/linux/elf/elf.hpp:120`) is `{ best_effort, run_init = true, ... }` and
-  `__load_module_from_path` does *not* load `DT_NEEDED`. So opening any module with an import that
-  `__resolve_across_loaded` cannot satisfy leaves the slot unbound and then calls the constructor
-  through it -- `handle_t::open_path("/usr/lib64/libibverbs/librxe-rdmav59.so")` SIGSEGVs the host
-  process. Reproduced against unmodified `src/`; unrelated to `count_dynsyms`.
-- **`micron::dso`/`elf::handle_t` are best-effort.**
-- **`dynamic_error()` is a fixed 192-byte thread_local buffer.**
-- **`dl_iterate_phdr` reports host modules with a null `dlpi_phdr`.**
-- **micron's `r_debug` chain is its own, and a hosted gdb will not find it.**
-- **The host-module snapshot is invalidated entirely on every unmap.**
-- **Only executable mappings become host modules.**
-- **`resolve_dependency` is guarded via `AT_SECURE`.**
-- **Static TLS relocations are refused** -- and `unsupported` is fatal in *every* mode.
-- **The `*_name` tables have no entry for several things for now.**
-- **`micron::user_hz` is a hardcoded `constexpr 100`** (`linux/process/resource.hpp:362`).
-- **`posix::sysconf` has only `_SC_CLK_TCK` and `_SC_PAGESIZE` implemented**
-- **The vDSO fast path resolves nothing under qemu-user.**
-- **`chrono::core_hz()` is only as stable as the rig.**
-- **armv7-a reads no cycle counter by default.**
-- **`chrono/tz.hpp` reads TZif v2/v3 only.**
-- **Offsets render to minute resolution.**
-
-## src/sec
-
-- **`posix::cap_last_cap` is a compile-time constant** (`linux/sys/capabilities.hpp:71`, = 40)
-- **`sec::chroot_to` is escapable from inside a user namespace.** The child holds CAP_SYS_CHROOT at
-  the filesystem stage (3), and it is not dropped until the caps stage (9); use `pivot_to` externally
-- **io_uring voids the seccomp half of any file policy.**
-- **`__impl::__rel_put_old` is purely lexical**

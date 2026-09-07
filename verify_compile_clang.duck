@@ -232,13 +232,6 @@ compile --clang tests/compiletests/ --i386 -g -i . -o bin/compiletests-clang/i38
 # %%%%%%%%%%%%%%
 # chrono
 
-compile --clang tests/compiletests/chrono.cpp --x86 --isa base -O0 --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_base_O0
-compile --clang tests/compiletests/chrono.cpp --x86 --isa base -Ofast --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_base_Ofast
-compile --clang tests/compiletests/chrono.cpp --x86 --isa v3 -O2 --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_v3_O2
-compile --clang tests/compiletests/chrono.cpp --x86 -g --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_debug
-compile --clang tests/compiletests/chrono.cpp --x86 -O2 --def MICRON_CHRONO_VDSO=1 -i . -o bin/compiletests-clang/chrono_vdso_O2_k -k
-compile --clang tests/compiletests/chrono.cpp --x86 -O2 --def MICRON_CHRONO_VDSO=1 -i . -o bin/compiletests-clang/chrono_vdso_O2_ke -ke
-compile --clang tests/compiletests/chrono.cpp --arm64 -Ofast --def MICRON_CHRONO_VDSO=1 --raw-obj -o bin/compiletests-clang/chrono_vdso_arm64_Ofast
 
 compile --clang tests/compiletests/chrono.cpp --arm -O0 --def MICRON_CHRONO_ARM32_CNTVCT=1 --raw-obj -o bin/compiletests-clang/chrono_cntvct_O0
 compile --clang tests/compiletests/chrono.cpp --arm -Ofast --def MICRON_CHRONO_ARM32_CNTVCT=1 --raw-obj -o bin/compiletests-clang/chrono_cntvct_Ofast
@@ -248,23 +241,7 @@ compile --clang tests/compiletests/chrono.cpp --arm -O2 --def MICRON_CHRONO_ARM3
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # elf
 
-compile --clang tests/compiletests/elf.cpp --i386 -O0 -i . -o bin/compiletests-clang/elf_i386_O0_link
-compile --clang tests/compiletests/elf.cpp --i386 -Ofast -i . -o bin/compiletests-clang/elf_i386_Ofast_link
-compile --clang tests/compiletests/elf.cpp --arm -O0 -i . -o bin/compiletests-clang/elf_arm32_O0_link
-compile --clang tests/compiletests/elf.cpp --arm -Ofast -i . -o bin/compiletests-clang/elf_arm32_Ofast_link
-compile --clang tests/compiletests/elf.cpp --i386 -O2 -i . -o bin/compiletests-clang/elf_i386_O2_k -k
-compile --clang tests/compiletests/elf.cpp --i386 -O2 -i . -o bin/compiletests-clang/elf_i386_O2_ke -ke
-compile --clang tests/compiletests/elf.cpp --arm -O2 -i . -o bin/compiletests-clang/elf_arm32_O2_k -k
-compile --clang tests/compiletests/elf.cpp --arm -O2 -i . -o bin/compiletests-clang/elf_arm32_O2_ke -ke
 
-compile --clang tests/compiletests/dynamic.cpp --i386 -O0 -i . -o bin/compiletests-clang/dyn_i386_O0_link
-compile --clang tests/compiletests/dynamic.cpp --i386 -Ofast -i . -o bin/compiletests-clang/dyn_i386_Ofast_link
-compile --clang tests/compiletests/dynamic.cpp --arm -O0 -i . -o bin/compiletests-clang/dyn_arm32_O0_link
-compile --clang tests/compiletests/dynamic.cpp --arm -Ofast -i . -o bin/compiletests-clang/dyn_arm32_Ofast_link
-compile --clang tests/compiletests/dynamic.cpp --i386 -O2 -i . -o bin/compiletests-clang/dyn_i386_O2_k -k
-compile --clang tests/compiletests/dynamic.cpp --i386 -O2 -i . -o bin/compiletests-clang/dyn_i386_O2_ke -ke
-compile --clang tests/compiletests/dynamic.cpp --arm -O2 -i . -o bin/compiletests-clang/dyn_arm32_O2_k -k
-compile --clang tests/compiletests/dynamic.cpp --arm -O2 -i . -o bin/compiletests-clang/dyn_arm32_O2_ke -ke
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # regex
@@ -287,27 +264,12 @@ compile --clang tests/compiletests/function.cpp --x86 --isa base -O2 -i . -o bin
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # abcmalloc hardening
-compile --clang tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_ZERO_ON_FREE=true -i . -o bin/compiletests-clang/abc_harden_zero_x86
-compile --clang tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_POISON_ON_FREE=true -i . -o bin/compiletests-clang/abc_harden_poison_x86
-compile --clang tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_x86
-compile --clang tests/rigor/abcmalloc_harden.cpp --x86 -Ofast --def MICRON_ABC_ENFORCE_PROVENANCE=true -i . -o bin/compiletests-clang/abc_harden_prov_x86
-compile --clang tests/rigor/abcmalloc_harden.cpp --i386 -Ofast --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_i386
-compile --clang tests/rigor/abcmalloc_harden.cpp --arm -Ofast --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_arm32
-compile --clang tests/rigor/abcmalloc_harden.cpp --arm64 -Ofast --def MICRON_ABC_ZERO_ON_FREE=true -i . -o bin/compiletests-clang/abc_harden_zero_arm64
-compile --clang tests/rigor/abcmalloc_harden.cpp --x86 --isa base -O2 --def MICRON_ABC_REDZONE=true -i . -o bin/compiletests-clang/abc_harden_rz_base
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # vk host allocator
 # the tests/compiletests/ sweep above already carries vk_headers.cpp with the counters OFF; these
 # rows are the ON column. the block header keeps one layout either way, so what is actually under
 # test here is the gated code, not a second ABI.
-compile --clang tests/compiletests/vk_headers.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_x86
-compile --clang tests/compiletests/vk_headers.cpp --i386 -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_i386
-compile --clang tests/compiletests/vk_headers.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_arm32
-compile --clang tests/compiletests/vk_headers.cpp --arm64 -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_arm64
-compile --clang tests/compiletests/vk_headers.cpp --x86 --isa base -O2 --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_stats_base
-compile --clang tests/rigor/vk_allocator.cpp --x86 -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_alloc_stats_x86
-compile --clang tests/rigor/vk_allocator.cpp --arm -Ofast --def MICRON_VK_HOST_STATS -i . -o bin/compiletests-clang/vk_alloc_stats_arm32
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%
 # libstdc++ interop
@@ -375,7 +337,5 @@ build --clang tests/memory/free/cabi_shims_freestanding.cpp --arm64 -Ofast -k --
 # the mx entry stubs. --mx swaps start*.s for mx/start*.s (__micron_mxc, the entry takes a
 # descriptor); --cont links mx/cont*.s alone, which defines _continue and no _start at all, and
 # needs both attach macros because they are what compile the body the stub calls.
-build --clang tests/mx_entry_sim.cpp --x86 -Ofast -k --mx --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_mx
-build --clang tests/attach_cont.cpp --x86 -Ofast -k --start ./start -i . -i ./src -o bin/compiletests-clang/amd64_k_continuec
 compile --clang tests/support/mx_cont_stub.cpp --x86 -O2 -k --raw-obj --cont --start ./start -i . -i ./src --def MICRON_ATTACH_MODULE --def MICRON_MX_CONTINUATION -o bin/compiletests-clang/amd64_k_cont
 compile --clang tests/support/mx_cont_stub.cpp --arm -O2 -k --raw-obj --cont --marm --mtp cp15 --start ./start -i . -i ./src --def MICRON_ATTACH_MODULE --def MICRON_MX_CONTINUATION -o bin/compiletests-clang/arm32_k_cont

@@ -5,7 +5,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../../syscall.hpp"
+#include "../../port/__backend.hpp"
+// under the same gate as its only call site (:43); see the note in chrono/tz.hpp
+#if defined(__micron_port_linux)
+#include "../../port/backends/__syscall.hpp"
+#endif
+#include "../../memory/addr.hpp"      // micron::addressof
 #include "../../types.hpp"
 #include "../types.hpp"
 
@@ -28,13 +33,21 @@ prefetch(B *ptr)
   __builtin_prefetch(ptr, 0, L);
 }
 
-// NOTE: armv7-a has no PL0 cache-maintenance instruction
+// NOTE: armv7-a has no PL0 cache-maintenance instruction -- USERSPACE has to ask the kernel.
+// Phase 4: that is a property of the privilege level, not of the architecture. A kernel module and
+// a bare-metal image both run at PL1 and can issue the maintenance ops directly, so the syscall is
+// gated on the linux backend and everything else goes through the compiler builtin, which lowers to
+// the right instruction sequence for the target.
 template<typename T>
 inline void
 clflush(T *addr)
 {
   const uintptr_t __b = reinterpret_cast<uintptr_t>(addr);
+#if defined(__micron_port_linux)
   micron::syscall(SYS_arm_cacheflush, __b, __b + sizeof(T), 0);
+#else
+  __builtin___clear_cache(reinterpret_cast<char *>(__b), reinterpret_cast<char *>(__b + sizeof(T)));
+#endif
 }
 
 template<typename T>

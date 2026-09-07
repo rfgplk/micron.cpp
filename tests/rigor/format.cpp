@@ -8,7 +8,7 @@
 #include "../../src/string/strings.hpp"
 #include "../snowball/snowball.hpp"
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 using namespace snowball;
 namespace fmt = micron::format;

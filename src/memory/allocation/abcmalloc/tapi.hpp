@@ -28,6 +28,7 @@
 #include "../../../bits/__profile.hpp"
 #include "../../../bits/__thread_exit_hook.hpp"
 #include "../../../mutex/locks.hpp"
+#include "../../../port/ident.hpp"
 
 // new threading API
 // if __default_multithread_safe is off, all multithreading guards are elided at comptime, zero overhead
@@ -68,7 +69,7 @@ inline micron::atomic_token<__arena_node *> __overflow_head{ nullptr };
 [[gnu::always_inline]] static inline i32
 __this_tid(void) noexcept
 {
-  return static_cast<i32>(micron::syscall(SYS_gettid));
+  return micron::port::exec_id();
 }
 
 // safety net for a thread that died WITHOUT running the exit hook
@@ -76,15 +77,14 @@ __this_tid(void) noexcept
 __owner_alive(i32 tid) noexcept
 {
   if ( tid == 0 ) return false;
-  const i32 pid = static_cast<i32>(micron::syscall(SYS_getpid));
-  return micron::syscall(SYS_tgkill, pid, tid, 0) == 0;
+  return micron::port::thread_alive(tid);
 }
 
 // the initial thread is the one whose tid == pid; it only ever "exits" at process teardown
 [[gnu::cold]] static inline bool
 __is_initial_thread(void) noexcept
 {
-  return __this_tid() == static_cast<i32>(micron::syscall(SYS_getpid));
+  return __this_tid() == micron::port::process_id();
 }
 
 // runs on the exiting thread (via thread_kernel) and returns its arena slot to the pool

@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include "../../src/cmalloc.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/math/rng.hpp"
 #include "../../src/memory/allocation/abcmalloc/__abc.hpp"
 #include "../../src/memory/allocation/abcmalloc/config.hpp"

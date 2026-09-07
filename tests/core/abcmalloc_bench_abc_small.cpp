@@ -1,5 +1,5 @@
 #include "../../src/cmalloc.hpp"
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/std.hpp"
 
 void *volatile escaped;

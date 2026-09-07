@@ -1,5 +1,5 @@
 #include "../src/except.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/trees.hpp"
 
 #include "../src/algorithm/fix.hpp"

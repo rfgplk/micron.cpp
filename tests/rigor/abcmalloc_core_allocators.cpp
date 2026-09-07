@@ -19,7 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 #include "../../src/memory/allocation/abcmalloc/cache_list.hpp"
 #include "../../src/memory/allocation/abcmalloc/free_list.hpp"
 #include "../../src/types.hpp"

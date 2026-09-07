@@ -360,39 +360,39 @@ rscmemcmp_safe(const F &_src, const F &_dest) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bytecmps
 
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) inline i64
 bytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(src, dest, cnt);
 };
 
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) inline i64
 bcmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
   return bytecmp(src, dest, cnt);
 };
 
-i64
+inline i64
 rbytecmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(&src, &dest, cnt);
 };
 
-i64
+inline i64
 rbcmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 {
   return rbytecmp(src, dest, cnt);
 };
 
 template<u64 N>
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) inline i64
 cbytecmp(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
   return __memcmp_bytes(src, dest, N);
 };
 
 template<u64 N>
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) inline i64
 cbcmp(const byte *__restrict src, const byte *__restrict dest) noexcept
 {
   return cbytecmp<N>(src, dest);
@@ -563,7 +563,7 @@ rscbcmp_safe(const byte &src, const byte &dest) noexcept
 
 template<typename T, typename F>
   requires(!micron::is_null_pointer_v<F>)
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) inline i64
 typecmp(const F *__restrict _src, const F *__restrict _dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(_src), reinterpret_cast<const byte *>(_dest), cnt * sizeof(T));
@@ -578,7 +578,7 @@ rtypecmp(const F &_src, const F &_dest, const u64 cnt) noexcept
 };
 
 template<u64 M, typename T, typename F>
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) inline i64
 ctypecmp(const F *__restrict _src, const F *__restrict _dest) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(_src), reinterpret_cast<const byte *>(_dest), M * sizeof(T));
@@ -634,20 +634,20 @@ rsctypecmp_safe(const F &_src, const F &_dest) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // wordcmps
 
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) inline i64
 wordcmp(const word *__restrict src, const word *__restrict dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), cnt * sizeof(word));
 };
 
-i64
+inline i64
 rwordcmp(const word &src, const word &dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(&src), reinterpret_cast<const byte *>(&dest), cnt * sizeof(word));
 };
 
 template<u64 M>
-__attribute__((nonnull)) i64
+__attribute__((nonnull)) inline i64
 cwordcmp(const word *__restrict src, const word *__restrict dest) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), M * sizeof(word));

@@ -29,7 +29,7 @@
 //   - Capacity is fixed at type level, not grown on demand.
 //   - lambda_queue's push has no STL analogue beyond a vector<function<void()>>.
 
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 #include "../src/queue/conqueue.hpp"
 #include "../src/queue/lambda_queue.hpp"
 #include "../src/queue/queue.hpp"

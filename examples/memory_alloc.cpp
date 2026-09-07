@@ -11,7 +11,7 @@
 
 #include "../src/allocator.hpp"
 #include "../src/memory/memory.hpp"
-#include "../src/io/console.hpp"
+#include "../src/print.hpp"
 
 int
 main()

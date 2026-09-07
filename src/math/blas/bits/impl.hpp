@@ -62,7 +62,7 @@ fma_acc(T a, T b, T c) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // gemv no-transpose panel kernels
 // y[i] = beta*y[i] + alpha * sum_j A[i,j] * x[j]   for row-major A
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 
 [[gnu::flatten, gnu::hot]] inline void
 gemv_n_panel_avx2_f64(usize m, usize n, double alpha, const double *A, ssize_t rs_A, const double *x, double beta, double *y) noexcept
@@ -466,7 +466,7 @@ gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_
   if !consteval {
     if ( cs_A == 1 && incx == 1 && incy == 1 ) {
       if constexpr ( ieee754_floating<T> ) {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
         if constexpr ( sizeof(T) == 8 ) {
           if ( tr ) {
             gemv_t_panel_avx2_f64(m, n, double(alpha), reinterpret_cast<const double *>(A), rs_A, reinterpret_cast<const double *>(x),
@@ -727,7 +727,7 @@ trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // small 4×8 AVX2 dgemm microkernel
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 
 [[gnu::flatten]] inline void
 gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const double *A, ssize_t a_rs, ssize_t a_cs, const double *B, ssize_t b_rs,
@@ -934,7 +934,7 @@ gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, 
   const bool beta_one = (beta == T(1));
 
   // inline 4x8 kernel with no panel packing
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if !consteval {
     if constexpr ( sizeof(T) == 8 && ieee754_floating<T> ) {
       const u64 nflops = u64(m) * u64(n) * u64(k);
@@ -1019,7 +1019,7 @@ gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, cons
   const ssize_t b_rs = trB ? cs_B : rs_B;
   const ssize_t b_cs = trB ? rs_B : cs_B;
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if !consteval {
     if constexpr ( sizeof(T) == 8 && ieee754_floating<T> ) {
       const u64 nflops = u64(m) * u64(n) * u64(k);

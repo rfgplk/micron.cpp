@@ -7,8 +7,7 @@
 
 #include "../external/bbench/bench.hpp"
 
-#include "../src/io/console.hpp"
-#include "../src/linux/sys/sched.hpp"
+#include "../src/print.hpp"
 
 namespace integrate_bench
 {

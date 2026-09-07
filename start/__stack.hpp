@@ -6,8 +6,11 @@
 #pragma once
 
 #include <micron/bits/__arch.hpp>
+
 #include <micron/memory/stack.hpp>
-#include <micron/syscall.hpp>
+
+#include <micron/port/backends/__syscall.hpp>
+
 #include <micron/types.hpp>
 
 #include "__auxv.hpp"

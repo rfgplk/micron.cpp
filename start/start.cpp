@@ -4,7 +4,6 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#include <micron/attach/mx_entry.hpp>
 #include <micron/bits/__arch.hpp>
 #include <micron/bits/__pause.hpp>
 #include <micron/config.hpp>
@@ -13,11 +12,16 @@
 #include "__crt.hpp"
 #include "__stack.hpp"
 #include "__tls.hpp"
+#include "mx_entry.hpp"      // a crt sibling, NOT <micron/attach/...> -- see its banner
 
 #include <micron/exit.hpp>      // micron::exit + __exit_internal::__push
 
 // WARNING: freestanding libm symbols; needed otherwise all __builtin calls will fail if you compile at a low enough optimization level
 // (where the fallback isn't inlined)
+// this TU carries its own __aeabi_* division set below (a umull __aeabi_uldivmod, among others), so
+// math/__gcc_int_syms.hpp must not also emit one -- two definitions in one TU is a compile error.
+// The metal and kernel crts, which link no start.cpp, leave this unset and take the header's.
+#define MICRON_CRT_PROVIDES_AEABI 1
 #include <micron/math/__gcc_math_syms.hpp>
 
 #if !defined(MICRON_MX_START)
@@ -136,8 +140,18 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
   __boot_io_sigpipe();      // SIG_IGN installed before any user write()
 
   // user / third-party global constructors
-  for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p ) (*p)();
-  for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p ) (*p)();
+  // The null and all-ones slots are SKIPPED, which these walks did not used to do. A legacy .ctors
+  // section carries an all-ones head sentinel and the metal linker scripts merge .ctors into
+  // .init_array, so calling every slot unconditionally means calling 0xFFFF...FF as a function.
+  // src/port/init.hpp has always skipped both; this file is the one that ships, and it did not.
+  //
+  // Deliberately open-coded rather than #include <micron/port/init.hpp>: this TU resolves
+  // <micron/...> against the INSTALLED snapshot on a freestanding link (CLAUDE.md's --start note)
+  // and /usr/include/micron/port does not exist there. Kept in sync by hand; it is four lines.
+  for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p )
+    if ( *p != nullptr && *p != reinterpret_cast<void (*)(void)>(~static_cast<usize>(0)) ) (*p)();
+  for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p )
+    if ( *p != nullptr && *p != reinterpret_cast<void (*)(void)>(~static_cast<usize>(0)) ) (*p)();
 
   // io buffer init MUST fire AFTER .init_array
   __boot_io_buffers();
@@ -194,8 +208,10 @@ __micron_mxc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noe
   __boot_threadpool();
   __boot_io_sigpipe();
 
-  for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p ) (*p)();
-  for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p ) (*p)();
+  for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p )
+    if ( *p != nullptr && *p != reinterpret_cast<void (*)(void)>(~static_cast<usize>(0)) ) (*p)();
+  for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p )
+    if ( *p != nullptr && *p != reinterpret_cast<void (*)(void)>(~static_cast<usize>(0)) ) (*p)();
 
   __boot_io_buffers();
 

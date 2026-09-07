@@ -21,8 +21,7 @@
 
 #pragma once
 
-#include "../../../memory/addr.hpp"
-#include "../../../syscall.hpp"
+#include "../../../port/panic.hpp"
 #include "../../../type_traits.hpp"
 #include "../../../types.hpp"
 
@@ -33,14 +32,14 @@ namespace abc
 inline void
 __write_n(const char *str, usize len)
 {
-  micron::syscall(SYS_write, 2, micron::voidify(str), len);
-  micron::syscall(SYS_write, 2, micron::voidify("\n"), 1);
+  micron::port::write_diag(str, len);
+  micron::port::write_diag("\n", 1);
 }
 
 inline void
 __write(const char *str, usize len)
 {
-  micron::syscall(SYS_write, 2, micron::voidify(str), len);
+  micron::port::write_diag(str, len);
 }
 
 template<typename T>

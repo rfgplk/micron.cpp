@@ -15,7 +15,7 @@
 //
 // Build: `duck build tests/rigor/rigor_istring.cpp`; run `bin/rigor_istring`.
 
-#include "../../src/io/console.hpp"
+#include "../../src/print.hpp"
 
 #include "../../src/string/istring.hpp"
 #include "../../src/string/sstring.hpp"
