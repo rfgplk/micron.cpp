@@ -25,13 +25,14 @@ namespace mkbits
 namespace rem
 {
 
-template<ieee754_floating F>
+template<bool Quo, ieee754_floating F>
 [[nodiscard]] inline constexpr F
-fmod(F x, F y) noexcept
+__fmod_core(F x, F y, u32 &quo) noexcept
 {
   using T = ieee::traits<F>;
   using U = typename T::uint_type;
 
+  if constexpr ( Quo ) quo = 0;
   if ( ieee::is_nan(x) || ieee::is_nan(y) || ieee::is_inf(x) || y == F(0) ) return ieee::qnan_v<F>();
   if ( ieee::is_inf(y) ) return x;
   if ( x == F(0) ) return x;
@@ -39,28 +40,43 @@ fmod(F x, F y) noexcept
   F ax = manip::fabs(x);
   F ay = manip::fabs(y);
   if ( ax < ay ) return x;
-  if ( ax == ay ) return manip::copysign<F>(F(0), x);
+  if ( ax == ay ) {
+    if constexpr ( Quo ) quo = 1;
+    return manip::copysign<F>(F(0), x);
+  }
 
   int ex = manip::ilogb<F>(ax);
   int ey = manip::ilogb<F>(ay);
 
   U bx = ieee::to_bits(ax);
   U by = ieee::to_bits(ay);
-  U mx = (bx & T::mant_mask) | T::implicit_one;
-  U my = (by & T::mant_mask) | T::implicit_one;
+  U mx = bx & T::mant_mask;
+  U my = by & T::mant_mask;
   if ( ((bx & T::exp_mask) >> T::mant_bits) == 0 ) {
     while ( (mx & T::implicit_one) == 0 ) mx <<= 1;
+  } else {
+    mx |= T::implicit_one;
   }
   if ( ((by & T::exp_mask) >> T::mant_bits) == 0 ) {
     while ( (my & T::implicit_one) == 0 ) my <<= 1;
+  } else {
+    my |= T::implicit_one;
   }
 
   int diff = ex - ey;
   for ( int i = 0; i < diff; ++i ) {
-    if ( mx >= my ) mx -= my;
+    if constexpr ( Quo ) quo <<= 1;
+    if ( mx >= my ) {
+      mx -= my;
+      if constexpr ( Quo ) quo |= 1u;
+    }
     mx <<= 1;
   }
-  if ( mx >= my ) mx -= my;
+  if constexpr ( Quo ) quo <<= 1;
+  if ( mx >= my ) {
+    mx -= my;
+    if constexpr ( Quo ) quo |= 1u;
+  }
 
   if ( mx == 0 ) return manip::copysign<F>(F(0), x);
 
@@ -82,6 +98,30 @@ fmod(F x, F y) noexcept
   return manip::copysign<F>(r, x);
 }
 
+// x - n*y with n = x/y rounded to nearest, ties to even
+template<ieee754_floating F>
+[[nodiscard]] inline constexpr F
+__remainder_quo(F x, F y, u32 &quo) noexcept
+{
+  F r = __fmod_core<true, F>(x, y, quo);
+  const F ay = manip::fabs(y);
+  const F ar = manip::fabs(r);
+  const F ar2 = ar + ar;
+  if ( ar2 > ay || (ar2 == ay && (quo & 1u) != 0u) ) {
+    r = (r > F(0)) ? F(r - ay) : F(r + ay);
+    ++quo;
+  }
+  return r;
+}
+
+template<ieee754_floating F>
+[[nodiscard]] inline constexpr F
+fmod(F x, F y) noexcept
+{
+  u32 quo = 0;
+  return __fmod_core<false, F>(x, y, quo);
+}
+
 template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 remainder(F x, F y) noexcept
@@ -89,29 +129,27 @@ remainder(F x, F y) noexcept
   if ( ieee::is_nan(x) || ieee::is_nan(y) || ieee::is_inf(x) || y == F(0) ) return ieee::qnan_v<F>();
   if ( ieee::is_inf(y) ) return x;
 
-  F r = fmod<F>(x, y);
-  F ay = manip::fabs(y);
-  F ar = manip::fabs(r);
-  F half = ay * F(0.5);
-  if ( ar > half || (ar == half && manip::fabs(F(r / y)) >= F(2)) ) {
-    r = (r > 0) ? F(r - ay) : F(r + ay);
-  }
-  return r;
+  u32 quo = 0;
+  return __remainder_quo<F>(x, y, quo);
 }
 
 template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 remquo(F x, F y, int *q) noexcept
 {
-  F r = remainder<F>(x, y);
-  F absy = manip::fabs(y);
-  if ( absy == F(0) || ieee::is_inf(x) || ieee::is_nan(x) || ieee::is_nan(y) ) {
+  if ( ieee::is_nan(x) || ieee::is_nan(y) || ieee::is_inf(x) || y == F(0) ) {
     *q = 0;
-    return r;
+    return ieee::qnan_v<F>();
   }
-  F qd = F((x - r) / y);
-  F q8 = fmod<F>(round_ns::round<F>(qd), F(8));
-  *q = int(q8);
+  if ( ieee::is_inf(y) ) {
+    *q = 0;
+    return x;
+  }
+
+  u32 quo = 0;
+  const F r = __remainder_quo<F>(x, y, quo);
+  const int n = int(quo & 7u);
+  *q = (manip::signbit(x) != manip::signbit(y)) ? -n : n;
   return r;
 }
 

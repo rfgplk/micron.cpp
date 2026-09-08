@@ -443,6 +443,19 @@ svd_bdc(const dynmat<F> &A, int max_iter = 60) noexcept
     return r;
   }
 
+  // For R < C, bidiagonalize leaves B(R-1, R) outside the K x K block; SVD(A) = (V, S, U) of SVD(A^T)
+  if ( R < C ) {
+    dynmat<F> At(C, R);
+    for ( usize i = 0; i < R; ++i )
+      for ( usize j = 0; j < C; ++j ) At.at(j, i) = A.at(i, j);
+    auto rt = svd_bdc<F>(At, max_iter);
+    r.U = micron::move(rt.V);
+    r.S = micron::move(rt.S);
+    r.V = micron::move(rt.U);
+    r.converged = rt.converged;
+    return r;
+  }
+
   auto bd = bidiagonalize<F>(A);
 
   micron::vector<F, micron::allocator_serial<>, false> d(K, F(0));

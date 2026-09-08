@@ -569,6 +569,35 @@ logmat(const mat<F, N, N> &A) noexcept
 namespace __impl_matfunc_schur
 {
 
+// f(A) = Q diag(f(lambda)) Q^T; exact for a symmetric A
+template<typename FnDesc, ieee754_floating F, usize N>
+[[nodiscard]] inline bool
+spectral_func(const mat<F, N, N> &A, mat<F, N, N> &out) noexcept
+{
+  for ( usize i = 0; i < N; ++i )
+    for ( usize j = i + 1; j < N; ++j )
+      if ( A.data[i * N + j] != A.data[j * N + i] ) return false;
+
+  auto e = decomp::eigen_sym<F, N>(A);
+  if ( !e.converged ) return false;
+
+  F fl[N];
+  for ( usize k = 0; k < N; ++k ) fl[k] = FnDesc::val(e.values.data[k]);
+
+  out = mat<F, N, N>::zero();
+  for ( usize i = 0; i < N; ++i ) {
+    const F *__restrict__ row_i = e.vectors.data + i * N;
+    F *__restrict__ row_o = out.data + i * N;
+    for ( usize j = 0; j < N; ++j ) {
+      const F *__restrict__ row_j = e.vectors.data + j * N;
+      F acc = F(0);
+      for ( usize k = 0; k < N; ++k ) acc = math::fma<F>(row_i[k] * fl[k], row_j[k], acc);
+      row_o[j] = acc;
+    }
+  }
+  return true;
+}
+
 template<ieee754_floating F, usize N>
 inline mat<F, N, N>
 back_transform(const mat<F, N, N> &Z, const mat<F, N, N> &F_T) noexcept
@@ -622,14 +651,14 @@ sinmat(const mat<F, N, N> &A) noexcept
   } else {
     auto sr = decomp::schur<F, N>(A);
     if ( !sr.converged ) {
-      r.X = mat<F, N, N>::zero();
-      r.converged = false;
+      r.converged = __impl_matfunc_schur::spectral_func<__impl_matfunc_schur::mfn_sin_desc<F>, F, N>(A, r.X);
+      if ( !r.converged ) r.X = mat<F, N, N>::zero();
       return r;
     }
     auto pr = __impl_matfunc_schur::parlett_func<__impl_matfunc_schur::mfn_sin_desc<F>, F, N>(sr.T);
     if ( !pr.converged ) {
-      r.X = mat<F, N, N>::zero();
-      r.converged = false;
+      r.converged = __impl_matfunc_schur::spectral_func<__impl_matfunc_schur::mfn_sin_desc<F>, F, N>(A, r.X);
+      if ( !r.converged ) r.X = mat<F, N, N>::zero();
       return r;
     }
     r.X = __impl_matfunc_schur::back_transform<F, N>(sr.Z, pr.F_T);
@@ -655,14 +684,14 @@ cosmat(const mat<F, N, N> &A) noexcept
   } else {
     auto sr = decomp::schur<F, N>(A);
     if ( !sr.converged ) {
-      r.X = mat<F, N, N>::zero();
-      r.converged = false;
+      r.converged = __impl_matfunc_schur::spectral_func<__impl_matfunc_schur::mfn_cos_desc<F>, F, N>(A, r.X);
+      if ( !r.converged ) r.X = mat<F, N, N>::zero();
       return r;
     }
     auto pr = __impl_matfunc_schur::parlett_func<__impl_matfunc_schur::mfn_cos_desc<F>, F, N>(sr.T);
     if ( !pr.converged ) {
-      r.X = mat<F, N, N>::zero();
-      r.converged = false;
+      r.converged = __impl_matfunc_schur::spectral_func<__impl_matfunc_schur::mfn_cos_desc<F>, F, N>(A, r.X);
+      if ( !r.converged ) r.X = mat<F, N, N>::zero();
       return r;
     }
     r.X = __impl_matfunc_schur::back_transform<F, N>(sr.Z, pr.F_T);
@@ -688,14 +717,14 @@ sinhmat(const mat<F, N, N> &A) noexcept
   } else {
     auto sr = decomp::schur<F, N>(A);
     if ( !sr.converged ) {
-      r.X = mat<F, N, N>::zero();
-      r.converged = false;
+      r.converged = __impl_matfunc_schur::spectral_func<__impl_matfunc_schur::mfn_sinh_desc<F>, F, N>(A, r.X);
+      if ( !r.converged ) r.X = mat<F, N, N>::zero();
       return r;
     }
     auto pr = __impl_matfunc_schur::parlett_func<__impl_matfunc_schur::mfn_sinh_desc<F>, F, N>(sr.T);
     if ( !pr.converged ) {
-      r.X = mat<F, N, N>::zero();
-      r.converged = false;
+      r.converged = __impl_matfunc_schur::spectral_func<__impl_matfunc_schur::mfn_sinh_desc<F>, F, N>(A, r.X);
+      if ( !r.converged ) r.X = mat<F, N, N>::zero();
       return r;
     }
     r.X = __impl_matfunc_schur::back_transform<F, N>(sr.Z, pr.F_T);
@@ -721,14 +750,14 @@ coshmat(const mat<F, N, N> &A) noexcept
   } else {
     auto sr = decomp::schur<F, N>(A);
     if ( !sr.converged ) {
-      r.X = mat<F, N, N>::zero();
-      r.converged = false;
+      r.converged = __impl_matfunc_schur::spectral_func<__impl_matfunc_schur::mfn_cosh_desc<F>, F, N>(A, r.X);
+      if ( !r.converged ) r.X = mat<F, N, N>::zero();
       return r;
     }
     auto pr = __impl_matfunc_schur::parlett_func<__impl_matfunc_schur::mfn_cosh_desc<F>, F, N>(sr.T);
     if ( !pr.converged ) {
-      r.X = mat<F, N, N>::zero();
-      r.converged = false;
+      r.converged = __impl_matfunc_schur::spectral_func<__impl_matfunc_schur::mfn_cosh_desc<F>, F, N>(A, r.X);
+      if ( !r.converged ) r.X = mat<F, N, N>::zero();
       return r;
     }
     r.X = __impl_matfunc_schur::back_transform<F, N>(sr.Z, pr.F_T);

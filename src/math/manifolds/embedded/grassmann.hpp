@@ -94,12 +94,27 @@ struct grassmann {
     return R;
   }
 
-  [[nodiscard, gnu::always_inline]] static mat<F, N, P>
+  // Riemannian logarithm (Edelman-Arias-Smith)
+  [[nodiscard]] static mat<F, N, P>
   log_map(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
   {
-    mat<F, N, P> diff{};
-    for ( usize i = 0; i < N * P; ++i ) diff.data[i] = Y.data[i] - X.data[i];
-    return project_to_tangent(X, diff);
+    const auto Minv = linalg::decomp::inv<F, P>(__grassmann_impl::xt_y<F, N, P>(X, Y));
+    if ( Minv.singular ) return inverse_retract(X, Y);
+    const auto Z = linalg::ops::gemm(Y, Minv.X);
+    mat<F, N, P> T{};
+    for ( usize i = 0; i < N * P; ++i ) T.data[i] = Z.data[i] - X.data[i];
+    const auto sv = linalg::decomp::svd<F, N, P>(T);
+    F th[P];
+    for ( usize i = 0; i < P; ++i ) th[i] = math::atan<F>(sv.S.data[i]);
+    mat<F, N, P> R{};
+    for ( usize r = 0; r < N; ++r ) {
+      for ( usize c = 0; c < P; ++c ) {
+        F acc = F(0);
+        for ( usize k = 0; k < P; ++k ) acc = math::fma<F>(sv.U.data[r * N + k] * th[k], sv.V.data[c * P + k], acc);
+        R.data[r * P + c] = acc;
+      }
+    }
+    return R;
   }
 
   [[nodiscard, gnu::always_inline]] static mat<F, N, P>
@@ -111,7 +126,9 @@ struct grassmann {
   [[nodiscard, gnu::always_inline]] static mat<F, N, P>
   inverse_retract(const mat<F, N, P> &X, const mat<F, N, P> &Y) noexcept
   {
-    return log_map(X, Y);
+    mat<F, N, P> diff{};
+    for ( usize i = 0; i < N * P; ++i ) diff.data[i] = Y.data[i] - X.data[i];
+    return project_to_tangent(X, diff);
   }
 
   [[nodiscard]] static vec<F, P>

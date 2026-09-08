@@ -181,10 +181,12 @@ cody_waite_dd(f64 x, dd64 *r) noexcept
 {
   const f64 fN = round_ns::rint<f64>(x * inv_pio2);
   const i64 N = i64(fN);
-  const f64 t0 = x - fN * pio2_hi;
+  // NOTE: cody-waite needs x - N*C1 EXACT
+  const dd64 p_hi = dd::two_prod(fN, pio2_hi);
   const dd64 p_mid = dd::two_prod(fN, pio2_mid);
   const dd64 p_lo = dd::two_prod(fN, pio2_lo);
-  dd64 t = dd::sub(dd64{ t0, 0.0 }, p_mid);
+  dd64 t = dd::sub(dd64{ x, 0.0 }, p_hi);
+  t = dd::sub(t, p_mid);
   t = dd::sub(t, p_lo);
   *r = t;
   return int(N & 3);

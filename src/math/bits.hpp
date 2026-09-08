@@ -21,23 +21,29 @@ namespace bits
 // rotates
 
 template<typename T>
+  requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr T
 rol(T x, int r) noexcept
 {
+  using U = micron::make_unsigned_t<T>;
   constexpr int w = sizeof(T) * 8;
   const int s = r & (w - 1);
   if ( s == 0 ) return x;
-  return static_cast<T>((x << s) | (x >> (w - s)));
+  const U u = static_cast<U>(x);
+  return static_cast<T>(static_cast<U>(U(u << s) | U(u >> (w - s))));
 }
 
 template<typename T>
+  requires(micron::is_integral_v<T>)
 [[nodiscard, gnu::always_inline]] inline constexpr T
 ror(T x, int r) noexcept
 {
+  using U = micron::make_unsigned_t<T>;
   constexpr int w = sizeof(T) * 8;
   const int s = r & (w - 1);
   if ( s == 0 ) return x;
-  return static_cast<T>((x >> s) | (x << (w - s)));
+  const U u = static_cast<U>(x);
+  return static_cast<T>(static_cast<U>(U(u >> s) | U(u << (w - s))));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr u32
@@ -203,7 +209,8 @@ template<typename T>
 ceil_pow2(T x) noexcept
 {
   if ( x <= 1 ) return 1;
-  return T(1) << (sizeof(T) * 8 - clz(static_cast<T>(x - 1)));
+  // saturate through an all-ones mask
+  return static_cast<T>(static_cast<T>(static_cast<T>(~T(0)) >> clz(static_cast<T>(x - 1))) + T(1));
 }
 
 };      // namespace bits

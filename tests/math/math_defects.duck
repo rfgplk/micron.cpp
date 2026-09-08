@@ -1,0 +1,75 @@
+# math_defects: the eighteen suites master's c760fe7 ("extensive math hardening && correctness")
+# added, plus the build axes that exist only on this branch.
+#
+#   duck tests/math/math_defects.duck          (== duck batch tests/math/math_defects.duck)
+#   duck batch parallel tests/math/math_defects.duck
+#
+# the cross rows are static (-s) because qemu-*-static runs static binaries directly.
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# hosted amd64 -- the row the commit was written against
+
+test tests/rigor/math_defects_branchless.cpp     -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_elem_kernels.cpp   -o bin/math_defects/x64 --timeout 300
+test tests/rigor/math_defects_fp128.cpp          -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_frontends.cpp      -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_graph.cpp          -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_hw_asm.cpp         -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_hw_fp128_b.cpp     -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_libm_shims.cpp     -o bin/math_defects/x64 --timeout 300
+test tests/rigor/math_defects_linalg.cpp         -o bin/math_defects/x64 --timeout 300
+test tests/rigor/math_defects_manifolds.cpp      -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_matrix_sparse.cpp  -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_packed.cpp         -o bin/math_defects/x64 --timeout 300
+test tests/rigor/math_defects_quants.cpp         -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_quaternions.cpp    -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_rem_special.cpp    -o bin/math_defects/x64 --timeout 300
+test tests/rigor/math_defects_scalar_utils.cpp   -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_splines_geom.cpp   -o bin/math_defects/x64 --timeout 180
+test tests/rigor/math_defects_vecsimd_rdrand.cpp -o bin/math_defects/x64 --timeout 180
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# THE SCALAR TIER, WHICH IS WHY THIS MANIFEST EXISTS
+#
+# bits/__arch.hpp:573-592 clears the vector ISA macros under MICRON_NO_SIMD, and MICRON_NO_SIMD is
+# not a macro master has -- so these four rows are the only cells in either tree that ever compile
+# the capability-absent arm of the ladders this commit rewrote:
+#
+#   hw.hpp         sqrt_ss/sqrt_sd fall past sqrtss/sqrtsd onto the x87 and __builtin_ arms
+#   __vec_simd     __div_exact_s{s,d} lose vdivss/vdivsd, __div_exact(f128) loses vdivps
+#   sqrt.hpp       the f256 block at :237 disappears entirely
+#   matrix/pack    all twelve AVX2+FMA regions disappear; the scalar gemm has to carry it alone
+
+test tests/rigor/math_defects_hw_asm.cpp         --x86 --isa base -O2 --def MICRON_NO_SIMD -o bin/math_defects/nosimd --timeout 180
+test tests/rigor/math_defects_vecsimd_rdrand.cpp --x86 --isa base -O2 --def MICRON_NO_SIMD -o bin/math_defects/nosimd --timeout 180
+test tests/rigor/math_defects_frontends.cpp      --x86 --isa base -O2 --def MICRON_NO_SIMD -o bin/math_defects/nosimd --timeout 180
+test tests/rigor/math_defects_packed.cpp         --x86 --isa base -O2 --def MICRON_NO_SIMD -o bin/math_defects/nosimd --timeout 300
+
+# the vector unit PRESENT, on both sides of the new sqrt.hpp:237 gate. base must not reach the f256
+# block at all; v3 must. the values have to agree either way.
+test tests/rigor/math_defects_frontends.cpp --x86 --isa base -O2 -o bin/math_defects/isa_base --timeout 180
+test tests/rigor/math_defects_frontends.cpp --x86 --isa v3   -O2 -o bin/math_defects/isa_v3   --timeout 180
+test tests/rigor/math_defects_packed.cpp    --x86 --isa base -O2 -o bin/math_defects/isa_base --timeout 300
+test tests/rigor/math_defects_packed.cpp    --x86 --isa v3   -O2 -o bin/math_defects/isa_v3   --timeout 300
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# i386. compile-only: there is no hosted multilib and no qemu-i386 here, the shape rng.duck uses.
+compile tests/rigor/math_defects_vecsimd_rdrand.cpp --i386 --raw-obj -o bin/math_defects/i386
+compile tests/rigor/math_defects_hw_asm.cpp         --i386 --raw-obj -o bin/math_defects/i386
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# ARM. the second Newton step __vec_simd.hpp's __inv_sqrt_fast_s gained is gated on
+# __micron_arm_neon, so ARM is the row that carries the claim and x86 is the control.
+test tests/rigor/math_defects_vecsimd_rdrand.cpp --arm   -s -o bin/math_defects/arm32 --timeout 600
+test tests/rigor/math_defects_vecsimd_rdrand.cpp --arm64 -s -o bin/math_defects/arm64 --timeout 600
+test tests/rigor/math_defects_hw_asm.cpp         --arm   -s -o bin/math_defects/arm32 --timeout 600
+test tests/rigor/math_defects_hw_asm.cpp         --arm64 -s -o bin/math_defects/arm64 --timeout 600
+test tests/rigor/math_defects_hw_fp128_b.cpp     --arm64 -s -o bin/math_defects/arm64 --timeout 600
+
+# THE ROW THAT LINKS. aarch64 is the only target whose long double is binary128, so it is the only
+# one emitting TF-mode libcalls, and -nostdlib supplies no libgcc. __gcc_fp128_syms.hpp's
+# __mc_libgcc_sym (weak, used, retain) is what survives LTO's symbol resolution -- a libcall is
+# created at RTL expansion, after that resolution has already decided what to keep. No --raw-obj
+# cell anywhere in this tree can see it. --start needs -i . -i ./src beside it or start.cpp reads
+# the stale /usr/include/micron.
+build tests/rigor/math_defects_hw_fp128_b.cpp --arm64 -O2 -k --start ./start -i . -i ./src -o bin/math_defects/arm64_k

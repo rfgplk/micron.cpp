@@ -28,6 +28,37 @@ namespace manifolds
 namespace lie
 {
 
+namespace __se2_impl
+{
+
+// Taylor coefficients of sin(w)/w as a polynomial in w**2
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+v_a_poly(F w2) noexcept
+{
+  F r = F(1) / F(362880);
+  r = r * w2 - F(1) / F(5040);
+  r = r * w2 + F(1) / F(120);
+  r = r * w2 - F(1) / F(6);
+  r = r * w2 + F(1);
+  return r;
+}
+
+// Taylor coefficients of (1 - cos w)/w**2 as a polynomial in w**2
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline constexpr F
+v_b_poly(F w2) noexcept
+{
+  F r = F(1) / F(3628800);
+  r = r * w2 - F(1) / F(40320);
+  r = r * w2 + F(1) / F(720);
+  r = r * w2 - F(1) / F(24);
+  r = r * w2 + F(0.5);
+  return r;
+}
+
+};      // namespace __se2_impl
+
 template<ieee754_floating F> struct SE2 {
   SO2<F> R;
   vec<F, 2> t;
@@ -77,11 +108,11 @@ template<ieee754_floating F> struct SE2 {
   exp_map(const vec<F, 3> &xi) noexcept
   {
     const F vx = xi.data[0], vy = xi.data[1], omega = xi.data[2];
+    const F w2 = omega * omega;
     F a, b;      // V = [[a, -b], [b, a]]
-    if ( omega * omega < F(0.01) ) {
-      // Taylor
-      a = F(1) - omega * omega / F(6);
-      b = omega * F(0.5) - omega * omega * omega / F(24);
+    if ( w2 < F(0.01) ) {
+      a = __se2_impl::v_a_poly<F>(w2);
+      b = omega * __se2_impl::v_b_poly<F>(w2);
     } else {
       F s, c;
       math::sincos<F>(omega, s, c);
@@ -98,11 +129,12 @@ template<ieee754_floating F> struct SE2 {
     const F ratio = g.R.theta / two_pi;
     const F k = static_cast<F>(static_cast<i64>(ratio + (ratio >= F(0) ? F(0.5) : F(-0.5))));
     const F omega = g.R.theta - two_pi * k;
+    const F w2 = omega * omega;
     F a, b;      // V = [[a, -b], [b, a]]
     // threshold matched to SO3/SE3 (|omega| < 0.1)
-    if ( omega * omega < F(0.01) ) {
-      a = F(1) - omega * omega / F(6);
-      b = omega * F(0.5) - omega * omega * omega / F(24);
+    if ( w2 < F(0.01) ) {
+      a = __se2_impl::v_a_poly<F>(w2);
+      b = omega * __se2_impl::v_b_poly<F>(w2);
     } else {
       F s, c;
       math::sincos<F>(omega, s, c);

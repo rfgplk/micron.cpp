@@ -91,17 +91,22 @@ template<ieee754_floating F>
 cbrt(F x) noexcept
 {
   if ( ieee::is_nan(x) || ieee::is_inf(x) || x == F(0) ) return x;
+  // NOTE: the iteration forms a**3, so the argument is first pulled into [1,8)
+  const int ex = manip::ilogb<F>(x);
+  int k = ex / 3;
+  if ( ex % 3 < 0 ) --k;
+  const F m = manip::ldexp<F>(manip::fabs(x), -3 * k);
   F a;
   if constexpr ( sizeof(F) == 4 )
-    a = F(__cbrt_impl::seed_f32(f32(x)));
+    a = F(__cbrt_impl::seed_f32(f32(m)));
   else
-    a = F(__cbrt_impl::seed_f64(f64(x)));
-  // halley's iteration: a * (a**3 + 2x) / (2*(a**3) + x)
+    a = F(__cbrt_impl::seed_f64(f64(m)));
+  // halley's iteration: a * (a**3 + 2m) / (2*(a**3) + m)
   for ( int i = 0; i < (sizeof(F) == 4 ? 2 : 3); ++i ) {
     F a3 = a * a * a;
-    a = a * (a3 + F(2) * x) / (F(2) * a3 + x);
+    a = a * (a3 + F(2) * m) / (F(2) * a3 + m);
   }
-  return a;
+  return manip::copysign<F>(manip::ldexp<F>(a, k), x);
 }
 
 template<ieee754_floating F>

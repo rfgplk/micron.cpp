@@ -43,7 +43,7 @@ classify_integer(F y) noexcept
   U bits = ieee::to_bits(manip::fabs(y));
   int e = int((bits & T::exp_mask) >> T::mant_bits) - T::exp_bias;
   if ( e < 0 ) return 0;
-  if ( e >= int(T::mant_bits) ) return 1;
+  if ( e > int(T::mant_bits) ) return 1;
   U frac_mask = (U(1) << (T::mant_bits - e)) - 1;
   if ( (bits & T::mant_mask & frac_mask) != 0 ) return 0;
   if ( e == 0 ) return 2;

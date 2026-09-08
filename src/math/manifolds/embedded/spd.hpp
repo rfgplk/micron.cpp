@@ -117,8 +117,13 @@ frobenius_squared(const mat<F, N, N> &A) noexcept
 
 };      // namespace __spd_impl
 
+// only the affine-invariant and log-Euclidean arms exist; euclidean_metric and bures_metric
+// satisfy metric_tag but would silently take the affine-invariant branch
+template<typename T>
+concept spd_metric_tag = micron::is_same_v<T, affine_invariant_metric> || micron::is_same_v<T, log_euclidean_metric>;
+
 template<ieee754_floating F, usize N>
-  requires(N >= 1)
+  requires(N >= 2)
 struct spd {
   using value_type = F;
   static constexpr usize dim_n = N;
@@ -171,7 +176,7 @@ struct spd {
     return __spd_impl::symmetrize<F, N>(V);
   }
 
-  template<metric_tag Metric = affine_invariant_metric>
+  template<spd_metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static mat<F, N, N>
   exp_map(const mat<F, N, N> &P, const mat<F, N, N> &V) noexcept
   {
@@ -190,7 +195,7 @@ struct spd {
     }
   }
 
-  template<metric_tag Metric = affine_invariant_metric>
+  template<spd_metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static mat<F, N, N>
   log_map(const mat<F, N, N> &P, const mat<F, N, N> &Q) noexcept
   {
@@ -208,7 +213,7 @@ struct spd {
     }
   }
 
-  template<metric_tag Metric = affine_invariant_metric>
+  template<spd_metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static F
   distance(const mat<F, N, N> &P, const mat<F, N, N> &Q) noexcept
   {
@@ -226,7 +231,7 @@ struct spd {
     }
   }
 
-  template<metric_tag Metric = affine_invariant_metric>
+  template<spd_metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static F
   squared_distance(const mat<F, N, N> &P, const mat<F, N, N> &Q) noexcept
   {
@@ -261,7 +266,7 @@ struct spd {
     return log_map<affine_invariant_metric>(P, Q);
   }
 
-  template<metric_tag Metric = affine_invariant_metric>
+  template<spd_metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static F
   inner(const mat<F, N, N> &P, const mat<F, N, N> &U, const mat<F, N, N> &V) noexcept
   {
@@ -280,7 +285,7 @@ struct spd {
     }
   }
 
-  template<metric_tag Metric = affine_invariant_metric>
+  template<spd_metric_tag Metric = affine_invariant_metric>
   [[nodiscard]] static F
   norm(const mat<F, N, N> &P, const mat<F, N, N> &V) noexcept
   {

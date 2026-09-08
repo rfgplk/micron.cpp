@@ -81,7 +81,7 @@ inline constexpr bool rdtsc64_available = false;
 [[nodiscard, gnu::always_inline]] inline u64
 rdtsc64() noexcept
 {
-#if defined(__micron_arch_amd64)
+#if defined(__micron_arch_x86_any)
   u32 lo = 0, hi = 0;
   asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
   return (u64(hi) << 32) | u64(lo);

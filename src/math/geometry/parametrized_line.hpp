@@ -39,15 +39,20 @@ struct parametrized_line {
   [[nodiscard, gnu::always_inline]] constexpr F
   distance(const vec<F, Dim> &p) const noexcept
   {
+    F po[Dim];
     F dot = F(0);
-    F po_sq = F(0);
+    F d_sq = F(0);
     for ( usize i = 0; i < Dim; ++i ) {
-      F po = p.data[i] - origin.data[i];
-      dot += po * direction.data[i];
-      po_sq += po * po;
+      po[i] = p.data[i] - origin.data[i];
+      dot += po[i] * direction.data[i];
+      d_sq += direction.data[i] * direction.data[i];
     }
-    F sq = po_sq - dot * dot;
-    if ( sq < F(0) ) sq = F(0);
+    const F u = (d_sq > F(0)) ? dot / d_sq : F(0);
+    F sq = F(0);
+    for ( usize i = 0; i < Dim; ++i ) {
+      const F w = po[i] - u * direction.data[i];
+      sq += w * w;
+    }
     return math::fsqrt(sq);
   }
 

@@ -46,25 +46,20 @@ eigen_sym(const mat<F, N, N> &A) noexcept
     mat<F, N, N> M = A;
     mat<F, N, N> V = mat<F, N, N>::identity();
     constexpr int max_sweeps = 50;
-    const F eps = default_eps<F>();
     bool converged = false;
 
     for ( int sweep = 0; sweep < max_sweeps; ++sweep ) {
-      // off-diagonal absolute sum (upper triangle only)
-      F off = F(0);
-      for ( usize i = 0; i + 1 < N; ++i )
-        for ( usize j = i + 1; j < N; ++j ) off += math::fabs(M.data[i * N + j]);
-      if ( off < eps ) {
-        converged = true;
-        break;
-      }
+      usize rotations = 0;
 
       for ( usize p = 0; p + 1 < N; ++p ) {
         for ( usize q = p + 1; q < N; ++q ) {
           F apq = M.data[p * N + q];
-          if ( math::fabs(apq) < eps ) continue;
           F app = M.data[p * N + p];
           F aqq = M.data[q * N + q];
+          // scale-free skip
+          const F dd = math::fabs(app) + math::fabs(aqq);
+          if ( math::fabs(apq) + dd == dd ) continue;
+          ++rotations;
           F theta = (aqq - app) / (F(2) * apq);
           F t;
           if ( theta >= F(0) )
@@ -97,6 +92,11 @@ eigen_sym(const mat<F, N, N> &A) noexcept
             V.data[rr * N + q] = s * vrp + c * vrq;
           }
         }
+      }
+
+      if ( rotations == 0 ) {
+        converged = true;
+        break;
       }
     }
 
@@ -369,10 +369,9 @@ svd(const mat<F, R_, C_> &A) noexcept
 
   mat<F, R_, C_> W = A;
   constexpr int max_sweeps = 30;
-  const F eps = default_eps<F>();
 
   for ( int sweep = 0; sweep < max_sweeps; ++sweep ) {
-    F off = F(0);
+    usize rotations = 0;
     for ( usize p = 0; p + 1 < C_; ++p ) {
       for ( usize q = p + 1; q < C_; ++q ) {
 
@@ -384,8 +383,10 @@ svd(const mat<F, R_, C_> &A) noexcept
           b = math::fma<F>(wq, wq, b);
           c = math::fma<F>(wp, wq, c);
         }
-        off += math::fabs(c);
-        if ( math::fabs(c) < eps * math::fsqrt(a * b + F(1e-30)) ) continue;
+        // scale-free skip
+        const F dd = math::fsqrt(a) * math::fsqrt(b) * F(R_);
+        if ( math::fabs(c) + dd == dd ) continue;
+        ++rotations;
 
         F theta = (b - a) / (F(2) * c);
         F t;
@@ -411,7 +412,7 @@ svd(const mat<F, R_, C_> &A) noexcept
         }
       }
     }
-    if ( off < eps ) {
+    if ( rotations == 0 ) {
       r.converged = true;
       break;
     }

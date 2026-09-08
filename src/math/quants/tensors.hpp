@@ -65,7 +65,7 @@ public:
   __tensor_base_avx(const std::initializer_list<B> &lst)
   {
     if ( lst.size() != __size ) exc<except::library_error>("__tensor_base_avx: initializer_list size mismatch");
-    micron::bytecpy(__data, lst.data(), __size * sizeof(B));
+    micron::bytecpy(__data, lst.begin(), __size * sizeof(B));
   }
 
   __tensor_base_avx(const __tensor_base_avx &o) { micron::cmemcpy<__size>(__data, o.__data); }
@@ -229,7 +229,8 @@ public:
   __tensor_base_avx &
   operator+=(B sc)
   {
-    for ( usize i = 0; i < __size; i += 8 ) {
+    usize i = 0;
+    for ( ; i + 8 <= __size; i += 8 ) {
       __data[i] += sc;
       __data[i + 1] += sc;
       __data[i + 2] += sc;
@@ -239,13 +240,15 @@ public:
       __data[i + 6] += sc;
       __data[i + 7] += sc;
     }
+    for ( ; i < __size; ++i ) __data[i] += sc;
     return *this;
   }
 
   __tensor_base_avx &
   operator-=(B sc)
   {
-    for ( usize i = 0; i < __size; i += 8 ) {
+    usize i = 0;
+    for ( ; i + 8 <= __size; i += 8 ) {
       __data[i] -= sc;
       __data[i + 1] -= sc;
       __data[i + 2] -= sc;
@@ -255,13 +258,15 @@ public:
       __data[i + 6] -= sc;
       __data[i + 7] -= sc;
     }
+    for ( ; i < __size; ++i ) __data[i] -= sc;
     return *this;
   }
 
   __tensor_base_avx &
   operator*=(B sc)
   {
-    for ( usize i = 0; i < __size; i += 8 ) {
+    usize i = 0;
+    for ( ; i + 8 <= __size; i += 8 ) {
       __data[i] *= sc;
       __data[i + 1] *= sc;
       __data[i + 2] *= sc;
@@ -271,13 +276,15 @@ public:
       __data[i + 6] *= sc;
       __data[i + 7] *= sc;
     }
+    for ( ; i < __size; ++i ) __data[i] *= sc;
     return *this;
   }
 
   __tensor_base_avx &
   operator/=(B sc)
   {
-    for ( usize i = 0; i < __size; i += 8 ) {
+    usize i = 0;
+    for ( ; i + 8 <= __size; i += 8 ) {
       __data[i] /= sc;
       __data[i + 1] /= sc;
       __data[i + 2] /= sc;
@@ -287,6 +294,7 @@ public:
       __data[i + 6] /= sc;
       __data[i + 7] /= sc;
     }
+    for ( ; i < __size; ++i ) __data[i] /= sc;
     return *this;
   }
 
@@ -486,7 +494,6 @@ public:
   }
 
   template<u32 W2>
-    requires(W == H)
   __tensor_base_avx<B, D, H, W2>
   bmm(const __tensor_base_avx<B, D, W, W2> &o) const
   {

@@ -83,10 +83,11 @@ view_overlaps(const Va &a, const Vb &b) noexcept
 
 };      // namespace __impl_level3
 
+// NEVER FLATTEN
 template<op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
   requires(mat_view_like<VA> and mat_view_like<VB> and mat_view_like<VC> and micron::same_as<typename VA::value_type, T>
            and micron::same_as<typename VB::value_type, T> and micron::same_as<typename VC::value_type, T>)
-[[gnu::flatten]] inline constexpr void
+inline constexpr void
 gemm(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
 {
   constexpr bool trA = micron::same_as<OpA, op::trans> or micron::same_as<OpA, op::conj_trans>;
@@ -128,7 +129,7 @@ gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usi
 template<op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC>
   requires(mat_view_like<VA> and mat_view_like<VB> and mat_view_like<VC> and micron::same_as<typename VA::value_type, T>
            and micron::same_as<typename VB::value_type, T> and micron::same_as<typename VC::value_type, T>)
-[[gnu::flatten]] inline constexpr void
+inline constexpr void
 gemm_aligned(T alpha, const VA &A, const VB &B, T beta, VC C) noexcept
 {
   constexpr bool trA = micron::same_as<OpA, op::trans> or micron::same_as<OpA, op::conj_trans>;

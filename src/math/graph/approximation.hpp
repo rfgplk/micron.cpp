@@ -184,18 +184,46 @@ template<graph_model G>
 [[nodiscard]] usize
 treewidth_min_degree_upper_bound(const G &graph)
 {
+  using I = typename G::index_type;
   using vertex_descriptor = typename G::vertex_descriptor;
-  micron::vector<u8, micron::allocator_serial<>, false> active(graph.vertex_slots(), u8(0));
+  using slot_vector = micron::vector<I, micron::allocator_serial<>, false>;
+  const usize slots = graph.vertex_slots();
+  micron::vector<u8, micron::allocator_serial<>, false> active(slots, u8(0));
+  micron::vector<u8, micron::allocator_serial<>, false> seen(slots, u8(0));
+  micron::vector<slot_vector, micron::allocator_serial<>, false> adjacency(slots);
   for ( auto vertex : graph.vertices() ) active.data()[static_cast<usize>(vertex.value)] = 1;
+  for ( auto vertex : graph.vertices() ) {
+    const usize slot = static_cast<usize>(vertex.value);
+    auto record = [&](vertex_descriptor neighbor) {
+      const usize other = static_cast<usize>(neighbor.value);
+      if ( other == slot || seen.data()[other] ) return;
+      seen.data()[other] = 1;
+      adjacency.data()[slot].push_back(neighbor.value);
+    };
+    for ( auto neighbor : graph.out_neighbors(vertex) ) record(neighbor);
+    if constexpr ( G::is_directed )
+      for ( auto neighbor : graph.in_neighbors(vertex) ) record(neighbor);
+    for ( I id : adjacency.data()[slot] ) seen.data()[static_cast<usize>(id)] = 0;
+  }
+
+  slot_vector clique;
   usize bound = 0;
   for ( usize removed = 0; removed < graph.vertices_count(); ++removed ) {
     vertex_descriptor selected = vertex_descriptor::invalid();
     usize selected_degree = 0;
     for ( auto vertex : graph.vertices() ) {
-      if ( !active.data()[static_cast<usize>(vertex.value)] ) continue;
+      const usize slot = static_cast<usize>(vertex.value);
+      if ( !active.data()[slot] ) continue;
+      auto &incident = adjacency.data()[slot];
       usize degree = 0;
-      for ( auto neighbor : graph.out_neighbors(vertex) )
-        if ( active.data()[static_cast<usize>(neighbor.value)] ) ++degree;
+      for ( usize i = 0; i < incident.size(); ++i ) {
+        const usize other = static_cast<usize>(incident.data()[i]);
+        if ( !active.data()[other] || seen.data()[other] ) continue;
+        seen.data()[other] = 1;
+        incident.data()[degree++] = incident.data()[i];
+      }
+      incident.resize(degree);
+      for ( I id : incident ) seen.data()[static_cast<usize>(id)] = 0;
       if ( !selected.valid() || degree < selected_degree ) {
         selected = vertex;
         selected_degree = degree;
@@ -203,7 +231,28 @@ treewidth_min_degree_upper_bound(const G &graph)
     }
     if ( !selected.valid() ) break;
     if ( selected_degree > bound ) bound = selected_degree;
-    active.data()[static_cast<usize>(selected.value)] = 0;
+    const usize slot = static_cast<usize>(selected.value);
+    active.data()[slot] = 0;
+    clique.clear();
+    for ( I id : adjacency.data()[slot] ) {
+      const usize other = static_cast<usize>(id);
+      if ( !active.data()[other] || seen.data()[other] ) continue;
+      seen.data()[other] = 1;
+      clique.push_back(id);
+    }
+    for ( I id : clique ) seen.data()[static_cast<usize>(id)] = 0;
+    for ( I id : clique ) {
+      const usize source = static_cast<usize>(id);
+      seen.data()[source] = 1;
+      for ( I other : adjacency.data()[source] ) seen.data()[static_cast<usize>(other)] = 1;
+      for ( I other : clique )
+        if ( !seen.data()[static_cast<usize>(other)] ) {
+          seen.data()[static_cast<usize>(other)] = 1;
+          adjacency.data()[source].push_back(other);
+        }
+      seen.data()[source] = 0;
+      for ( I other : adjacency.data()[source] ) seen.data()[static_cast<usize>(other)] = 0;
+    }
   }
   return bound;
 }

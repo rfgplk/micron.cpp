@@ -37,11 +37,11 @@ template<ieee754_floating T, micron::integral I>
 inline void
 spmv(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
-  // y := beta * y
+  // y := beta * y, over the A.rows the product defines
   if ( beta == T(0) ) {
-    for ( usize i = 0; i < y.size(); ++i ) y[i] = T(0);
+    for ( usize i = 0; i < A.rows; ++i ) y[i] = T(0);
   } else if ( beta != T(1) ) {
-    scal_values<T>(beta, y.data(), y.size());
+    scal_values<T>(beta, y.data(), A.rows);
   }
   if ( alpha == T(0) ) return;
 
@@ -69,9 +69,9 @@ inline void
 spmv_transposed(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
   if ( beta == T(0) ) {
-    for ( usize i = 0; i < y.size(); ++i ) y[i] = T(0);
+    for ( usize i = 0; i < A.cols; ++i ) y[i] = T(0);
   } else if ( beta != T(1) ) {
-    scal_values<T>(beta, y.data(), y.size());
+    scal_values<T>(beta, y.data(), A.cols);
   }
   if ( alpha == T(0) ) return;
 
@@ -95,9 +95,9 @@ inline void
 spmv(T alpha, const csr<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noexcept
 {
   if ( beta == T(0) ) {
-    for ( usize i = 0; i < y.size(); ++i ) y[i] = T(0);
+    for ( usize i = 0; i < A.rows; ++i ) y[i] = T(0);
   } else if ( beta != T(1) ) {
-    scal_values<T>(beta, y.data(), y.size());
+    scal_values<T>(beta, y.data(), A.rows);
   }
   if ( alpha == T(0) ) return;
 

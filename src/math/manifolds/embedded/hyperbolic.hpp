@@ -97,11 +97,19 @@ struct hyperbolic {
     return r;
   }
 
-  [[nodiscard, gnu::always_inline]] static F
+  // <q - p, q - p>_L = 4 sinh(d/2)**2, so d = 2*asinh(|q - p|_L / 2)
+  [[nodiscard, gnu::flatten]] static F
   distance(const vec<F, ambient> &p, const vec<F, ambient> &q) noexcept
   {
     F mpq = minkowski(p, q);
     if ( mpq > F(-1) ) mpq = F(-1);
+    if ( mpq > F(-2) ) {
+      vec<F, ambient> diff{};
+      for ( usize i = 0; i < ambient; ++i ) diff.data[i] = q.data[i] - p.data[i];
+      F c2 = minkowski(diff, diff);
+      if ( c2 < F(0) ) c2 = F(0);
+      return F(2) * math::asinh<F>(math::fsqrt(c2) * F(0.5));
+    }
     return math::acosh<F>(-mpq);
   }
 

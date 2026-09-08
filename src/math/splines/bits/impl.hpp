@@ -45,7 +45,7 @@ binary_advance(F knot, F query, usize candidate, usize &index) noexcept
                  : [index] "+&r"(index)
                  : [candidate] "r"(candidate), [knot] "x"(knot), [query] "x"(query)
                  : "cc");
-  } else {
+  } else if constexpr ( sizeof(F) == 4 ) {
 #if defined(__micron_x86_avx)
     asm volatile("vucomiss %[knot], %[query]\n\t"
 #else
@@ -55,6 +55,9 @@ binary_advance(F knot, F query, usize candidate, usize &index) noexcept
                  : [index] "+&r"(index)
                  : [candidate] "r"(candidate), [knot] "x"(knot), [query] "x"(query)
                  : "cc");
+  } else {
+    // long double / f128 have no xmm register class; ucomis* cannot take them
+    if ( knot <= query ) index = candidate;
   }
 #else
   if ( knot <= query ) index = candidate;

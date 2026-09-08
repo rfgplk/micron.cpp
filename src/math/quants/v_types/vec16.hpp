@@ -344,11 +344,11 @@ struct alignas(micron::math::vec_align_v<T, 16>) vector_16 {
   constexpr T
   linf_norm() const
   {
-    T p0 = math::fabsmax(math::fabsmax(math::fabs(x), math::fabs(y)), math::fabsmax(math::fabs(z), math::fabs(w)));
-    T p1 = math::fabsmax(math::fabsmax(math::fabs(a), math::fabs(b)), math::fabsmax(math::fabs(c), math::fabs(d)));
-    T p2 = math::fabsmax(math::fabsmax(math::fabs(e), math::fabs(f)), math::fabsmax(math::fabs(g), math::fabs(h)));
-    T p3 = math::fabsmax(math::fabsmax(math::fabs(i), math::fabs(j)), math::fabsmax(math::fabs(k), math::fabs(l)));
-    return math::fabsmax(math::fabsmax(p0, p1), math::fabsmax(p2, p3));
+    T p0 = math::fmax(math::fmax(math::fabs(x), math::fabs(y)), math::fmax(math::fabs(z), math::fabs(w)));
+    T p1 = math::fmax(math::fmax(math::fabs(a), math::fabs(b)), math::fmax(math::fabs(c), math::fabs(d)));
+    T p2 = math::fmax(math::fmax(math::fabs(e), math::fabs(f)), math::fmax(math::fabs(g), math::fabs(h)));
+    T p3 = math::fmax(math::fmax(math::fabs(i), math::fabs(j)), math::fmax(math::fabs(k), math::fabs(l)));
+    return math::fmax(math::fmax(p0, p1), math::fmax(p2, p3));
   }
 
   constexpr T
@@ -420,17 +420,17 @@ struct alignas(micron::math::vec_align_v<T, 16>) vector_16 {
   constexpr T
   cos_angle(const vector_16<T> &v) const
   {
-    T denom = squared_norm() * v.squared_norm();
-    if ( denom <= math::default_eps<T>() ) return T{ 0 };
-    return dot(v) * math::frsqrt(denom);
+    T denom = math::fsqrt(squared_norm()) * math::fsqrt(v.squared_norm());
+    if ( denom <= math::fsqrt(math::default_eps<T>()) ) return T{ 0 };
+    return dot(v) / denom;
   }
 
   constexpr T
   angle(const vector_16<T> &v) const
   {
-    T denom = squared_norm() * v.squared_norm();
-    if ( denom <= math::default_eps<T>() ) return T{ 0 };
-    return math::acos(math::fclamp(dot(v) * math::frsqrt(denom), T{ -1 }, T{ 1 }));
+    T denom = math::fsqrt(squared_norm()) * math::fsqrt(v.squared_norm());
+    if ( denom <= math::fsqrt(math::default_eps<T>()) ) return T{ 0 };
+    return math::acos(math::fclamp(dot(v) / denom, T{ -1 }, T{ 1 }));
   }
 
   constexpr T

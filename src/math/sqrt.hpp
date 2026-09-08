@@ -234,7 +234,7 @@ vrsqrt_approx(simd::f128 v) noexcept
 }
 #endif
 
-#if defined(__micron_arch_x86_any) && !defined(__micron_simd_generic)
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx) && !defined(__micron_simd_generic)
 __attribute__((always_inline)) inline simd::f256
 vsqrt(simd::f256 v) noexcept
 {

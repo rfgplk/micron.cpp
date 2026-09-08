@@ -485,9 +485,13 @@ template<typename T>
 constexpr T
 ceil(T s)
 {
-  i64 i = (i64)s;
-  if ( s > T(i) ) return T(i + 1);
-  return T(i);
+  if constexpr ( sizeof(T) == 4 || sizeof(T) == 8 ) {
+    return mkbits::round_ns::ceil<T>(s);
+  } else {
+    i64 i = (i64)s;
+    if ( s > T(i) ) return T(i + 1);
+    return T(i);
+  }
 }
 
 template<typename T>
@@ -495,9 +499,13 @@ template<typename T>
 constexpr T
 floor(T s)
 {
-  i64 i = (i64)s;
-  if ( s < T(i) ) return T(i - 1);
-  return T(i);
+  if constexpr ( sizeof(T) == 4 || sizeof(T) == 8 ) {
+    return mkbits::round_ns::floor<T>(s);
+  } else {
+    i64 i = (i64)s;
+    if ( s < T(i) ) return T(i - 1);
+    return T(i);
+  }
 }
 
 template<typename R, typename T>
@@ -516,9 +524,13 @@ template<typename R, typename T>
 constexpr R
 ceil(T s)
 {
-  i64 i = (i64)s;
-  if ( s > T(i) ) return static_cast<R>((i + 1));
-  return static_cast<R>(T(i));
+  if constexpr ( sizeof(T) == 4 || sizeof(T) == 8 ) {
+    return static_cast<R>(mkbits::round_ns::ceil<T>(s));
+  } else {
+    i64 i = (i64)s;
+    if ( s > T(i) ) return static_cast<R>((i + 1));
+    return static_cast<R>(T(i));
+  }
 }
 
 template<typename R, typename T>
@@ -526,9 +538,13 @@ template<typename R, typename T>
 constexpr R
 floor(T s)
 {
-  i64 i = (i64)s;
-  if ( s < T(i) ) return static_cast<R>(T(i - 1));
-  return static_cast<R>(T(i));
+  if constexpr ( sizeof(T) == 4 || sizeof(T) == 8 ) {
+    return static_cast<R>(mkbits::round_ns::floor<T>(s));
+  } else {
+    i64 i = (i64)s;
+    if ( s < T(i) ) return static_cast<R>(T(i - 1));
+    return static_cast<R>(T(i));
+  }
 }
 
 template<typename T>
@@ -556,7 +572,11 @@ template<typename T>
 constexpr T
 ftrunc(T x) noexcept
 {
-  return static_cast<T>(static_cast<long long>(x));
+  if constexpr ( micron::is_floating_point_v<T> && (sizeof(T) == 4 || sizeof(T) == 8) ) {
+    return mkbits::round_ns::trunc<T>(x);
+  } else {
+    return static_cast<T>(static_cast<long long>(x));
+  }
 }
 
 // the compiler won't use libm for these

@@ -86,7 +86,8 @@ to_axis_angle(const quaternion<T> &q) noexcept
   const T nw = q.w * inv_n;
   const T v2 = nx * nx + ny * ny + nz * nz;
   const T v_norm = math::fsqrt(v2);
-  if ( v_norm < math::default_eps<T>() ) {
+  // atan2 is exact for every representable v_norm; only the 1/v_norm below needs a floor
+  if ( v_norm <= __safe_min_n2<T>() ) {
     return axis_angle_t<T>{ micron::vector_3<T>{ T(1), T(0), T(0) }, T(0) };
   }
   const T half_angle = math::atan2<T>(v_norm, nw);
@@ -253,17 +254,21 @@ template<ieee754_floating T>
 [[nodiscard]] inline constexpr quaternion<T>
 from_two_vectors(const micron::vector_3<T> &a, const micron::vector_3<T> &b) noexcept
 {
-  const T na2 = a.x * a.x + a.y * a.y + a.z * a.z;
-  const T nb2 = b.x * b.x + b.y * b.y + b.z * b.z;
-  const T s = math::fsqrt(na2 * nb2);      // |a| * |b|
-  if ( s <= math::default_eps<T>() ) return identity<T>();
-  const T d = a.x * b.x + a.y * b.y + a.z * b.z;
-  const T cx = a.y * b.z - a.z * b.y;
-  const T cy = a.z * b.x - a.x * b.z;
-  const T cz = a.x * b.y - a.y * b.x;
+  const T ma = math::fmax(math::fabs(a.x), math::fmax(math::fabs(a.y), math::fabs(a.z)));
+  const T mb = math::fmax(math::fabs(b.x), math::fmax(math::fabs(b.y), math::fabs(b.z)));
+  if ( ma == T(0) || mb == T(0) ) return identity<T>();
+  const T ia = T(1) / math::fmax(ma, __safe_min_n2<T>());
+  const T ib = T(1) / math::fmax(mb, __safe_min_n2<T>());
+  const micron::vector_3<T> sa{ a.x * ia, a.y * ia, a.z * ia };
+  const micron::vector_3<T> sb{ b.x * ib, b.y * ib, b.z * ib };
+  const T s = math::fsqrt(sa.x * sa.x + sa.y * sa.y + sa.z * sa.z) * math::fsqrt(sb.x * sb.x + sb.y * sb.y + sb.z * sb.z);
+  const T d = sa.x * sb.x + sa.y * sb.y + sa.z * sb.z;
+  const T cx = sa.y * sb.z - sa.z * sb.y;
+  const T cy = sa.z * sb.x - sa.x * sb.z;
+  const T cz = sa.x * sb.y - sa.y * sb.x;
   const T w = s + d;
   if ( w > math::default_eps<T>() * s ) return quaternion<T>{ cx, cy, cz, w }.normalized();
-  const micron::vector_3<T> axis = __orthonormal_axis<T>(a);
+  const micron::vector_3<T> axis = __orthonormal_axis<T>(sa);
   return quaternion<T>{ axis.x, axis.y, axis.z, T(0) };
 }
 
