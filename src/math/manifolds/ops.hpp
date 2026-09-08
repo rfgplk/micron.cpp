@@ -48,42 +48,42 @@ between(const point_t<M> &a, const point_t<M> &b) noexcept
 
 template<manifold M>
 [[nodiscard, gnu::always_inline]] inline constexpr auto
-exp_map(const point_t<M> &p, const tangent_t<M> &v) noexcept
+exp_map(const point_t<M> &p, const tangent_t<M> &v) noexcept(noexcept(M::exp_map(p, v)))
 {
   return M::exp_map(p, v);
 }
 
 template<lie_group M>
 [[nodiscard, gnu::always_inline]] inline constexpr auto
-exp_map(const tangent_t<M> &X) noexcept
+exp_map(const tangent_t<M> &X) noexcept(noexcept(M::exp_map(X)))
 {
   return M::exp_map(X);
 }
 
 template<manifold M>
 [[nodiscard, gnu::always_inline]] inline constexpr auto
-log_map(const point_t<M> &p, const point_t<M> &q) noexcept
+log_map(const point_t<M> &p, const point_t<M> &q) noexcept(noexcept(M::log_map(p, q)))
 {
   return M::log_map(p, q);
 }
 
 template<lie_group M>
 [[nodiscard, gnu::always_inline]] inline constexpr auto
-log_map(const point_t<M> &g) noexcept
+log_map(const point_t<M> &g) noexcept(noexcept(M::log_map(g)))
 {
   return M::log_map(g);
 }
 
 template<manifold M>
 [[nodiscard, gnu::always_inline]] inline constexpr auto
-retract(const point_t<M> &p, const tangent_t<M> &v) noexcept
+retract(const point_t<M> &p, const tangent_t<M> &v) noexcept(noexcept(M::retract(p, v)))
 {
   return M::retract(p, v);
 }
 
 template<manifold M>
 [[nodiscard, gnu::always_inline]] inline constexpr auto
-inverse_retract(const point_t<M> &p, const point_t<M> &q) noexcept
+inverse_retract(const point_t<M> &p, const point_t<M> &q) noexcept(noexcept(M::inverse_retract(p, q)))
 {
   return M::inverse_retract(p, q);
 }
@@ -104,7 +104,7 @@ vector_transport(const point_t<M> &p, const point_t<M> &q, const tangent_t<M> &v
 
 template<manifold M>
 [[nodiscard, gnu::always_inline]] inline auto
-distance(const point_t<M> &p, const point_t<M> &q) noexcept
+distance(const point_t<M> &p, const point_t<M> &q) noexcept(noexcept(M::distance(p, q)))
 {
   return M::distance(p, q);
 }
@@ -118,7 +118,7 @@ inner(const point_t<M> &p, const tangent_t<M> &u, const tangent_t<M> &v) noexcep
 
 template<riemannian M>
 [[nodiscard, gnu::always_inline]] inline auto
-norm(const point_t<M> &p, const tangent_t<M> &v) noexcept
+norm(const point_t<M> &p, const tangent_t<M> &v) noexcept(noexcept(M::norm(p, v)))
 {
   return M::norm(p, v);
 }
@@ -132,7 +132,7 @@ squared_norm(const point_t<M> &p, const tangent_t<M> &v) noexcept
 
 template<manifold M>
 [[nodiscard, gnu::always_inline]] inline scalar_t<M>
-squared_distance(const point_t<M> &p, const point_t<M> &q) noexcept
+squared_distance(const point_t<M> &p, const point_t<M> &q)
 {
   if constexpr ( requires { M::squared_distance(p, q); } )
     return M::squared_distance(p, q);
@@ -151,7 +151,7 @@ project_to_tangent(const point_t<M> &p, const tangent_t<M> &v) noexcept
 
 template<manifold M>
 [[nodiscard, gnu::always_inline]] inline constexpr auto
-project_to_manifold(const point_t<M> &x) noexcept
+project_to_manifold(const point_t<M> &x) noexcept(noexcept(M::project_to_manifold(x)))
 {
   return M::project_to_manifold(x);
 }
@@ -159,7 +159,7 @@ project_to_manifold(const point_t<M> &x) noexcept
 template<manifold M, typename U>
   requires(micron::is_convertible_v<U, scalar_t<M>> && requires(const point_t<M> &p, const tangent_t<M> &v) { M::exp_map(p, v); })
 [[nodiscard, gnu::always_inline]] inline constexpr auto
-geodesic(const point_t<M> &p, const tangent_t<M> &v, U t) noexcept
+geodesic(const point_t<M> &p, const tangent_t<M> &v, U t) noexcept(noexcept(M::exp_map(p, v)))
 {
   return M::exp_map(p, v * static_cast<scalar_t<M>>(t));
 }
@@ -171,7 +171,7 @@ template<manifold M, typename U>
                 M::exp_map(p, v);
               })
 [[nodiscard, gnu::always_inline]] inline constexpr point_t<M>
-interpolate(const point_t<M> &p, const point_t<M> &q, U t) noexcept
+interpolate(const point_t<M> &p, const point_t<M> &q, U t) noexcept(noexcept(M::exp_map(p, M::log_map(p, q))))
 {
   return M::exp_map(p, M::log_map(p, q) * static_cast<scalar_t<M>>(t));
 }
@@ -179,7 +179,7 @@ interpolate(const point_t<M> &p, const point_t<M> &q, U t) noexcept
 template<lie_group M, typename U>
   requires(micron::is_convertible_v<U, scalar_t<M>>)
 [[nodiscard, gnu::always_inline]] inline constexpr point_t<M>
-interpolate(const point_t<M> &a, const point_t<M> &b, U t) noexcept
+interpolate(const point_t<M> &a, const point_t<M> &b, U t)
 {
   if constexpr ( requires { M::interpolate(a, b, static_cast<scalar_t<M>>(t)); } )
     return M::interpolate(a, b, static_cast<scalar_t<M>>(t));

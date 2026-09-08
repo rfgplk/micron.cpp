@@ -9,6 +9,7 @@
 // N-dimension rotation group
 
 #include "../../../concepts.hpp"
+#include "../../../except.hpp"
 #include "../../../types.hpp"
 #include "../../linalg/matfunc.hpp"
 #include "../../linalg/ops.hpp"
@@ -56,13 +57,13 @@ struct SOn {
   }
 
   [[nodiscard]] static SOn
-  exp_map(const mat<F, N, N> &X) noexcept
+  exp_map(const mat<F, N, N> &X) noexcept(!micron::except::__use_exceptions)
   {
     return SOn{ algebra_exp<F, N>(X) };
   }
 
   [[nodiscard]] static mat<F, N, N>
-  log_map(const SOn &g) noexcept
+  log_map(const SOn &g) noexcept(!micron::except::__use_exceptions)
   {
     return algebra_log<F, N>(g.R);
   }
@@ -98,7 +99,7 @@ struct SOn {
   }
 
   [[nodiscard]] static F
-  squared_distance(const SOn &a, const SOn &b) noexcept
+  squared_distance(const SOn &a, const SOn &b) noexcept(!micron::except::__use_exceptions)
   {
     const auto X = log_map(between(a, b));
     F s = F(0);
@@ -107,13 +108,13 @@ struct SOn {
   }
 
   [[nodiscard, gnu::always_inline]] static F
-  distance(const SOn &a, const SOn &b) noexcept
+  distance(const SOn &a, const SOn &b) noexcept(!micron::except::__use_exceptions)
   {
     return math::fsqrt(squared_distance(a, b));
   }
 
   [[nodiscard]] static SOn
-  interpolate(const SOn &a, const SOn &b, F t) noexcept
+  interpolate(const SOn &a, const SOn &b, F t) noexcept(!micron::except::__use_exceptions)
   {
     return compose(a, exp_map(log_map(between(a, b)) * t));
   }

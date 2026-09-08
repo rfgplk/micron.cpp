@@ -256,6 +256,22 @@ nth_element(T *first, T *last, usize k) noexcept
   return first[k];
 }
 
+// lo <= hi; forming lo + hi overflows for integer values living in the top half of T's range
+template<typename T>
+[[nodiscard, gnu::always_inline]] inline constexpr T
+__mid2(T lo, T hi) noexcept
+{
+  if constexpr ( micron::is_integral_v<T> && !micron::is_same_v<T, bool> ) {
+    using U = micron::make_unsigned_t<T>;
+    const U d = U(U(hi) - U(lo));
+    T m = static_cast<T>(U(U(lo) + U(d >> 1)));
+    if constexpr ( micron::is_signed_v<T> )
+      if ( (d & U(1)) && m < T(0) ) m = T(m + T(1));      // truncate toward zero, as (lo + hi) / 2 does
+    return m;
+  } else
+    return T((lo + hi) / T(2));
+}
+
 template<typename T>
 [[nodiscard]] inline T
 median(T *first, T *last) noexcept
@@ -266,7 +282,7 @@ median(T *first, T *last) noexcept
   T hi = nth_element(first, last, k);
   if ( n & 1 ) return hi;
   T lo = nth_element(first, first + k, k - 1);
-  return T((lo + hi) / T(2));
+  return __mid2<T>(lo, hi);
 }
 
 template<ieee754_floating F>

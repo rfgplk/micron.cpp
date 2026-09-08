@@ -536,7 +536,10 @@ private:
     operator*() const
     {
       const edge_descriptor edge = *__iterator;
-      if constexpr ( is_directed ) return __view->target(edge);
+      if constexpr ( is_directed ) {
+        if ( __view->target(edge) == __from ) return __view->source(edge);
+        return __view->target(edge);
+      }
       return __view->opposite(edge, __from);
     }
 

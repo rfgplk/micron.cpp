@@ -18,224 +18,223 @@
 #define __mc_libgcc_sym __attribute__((weak, used, retain))
 #endif
 
-#if defined(__SIZEOF_INT128__) && defined(__FLT128_MANT_DIG__)
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wpedantic")
-// IEEE-754 binary128 soft float runtime helpers
-namespace
+// AVOID COMPILER PORTABILITY ISSUES
+#if defined(__SIZEOF_INT128__)                                                                                                             \
+    && (defined(__FLT128_MANT_DIG__) || defined(__SIZEOF_FLOAT128__) || (defined(__LDBL_MANT_DIG__) && __LDBL_MANT_DIG__ == 113))
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic")
+    // IEEE-754 binary128 soft float runtime helpers
+    namespace
 {
-using __tf_rep = unsigned __int128;
+#if defined(__FLT128_MANT_DIG__)
+  using __tf_t = _Float128;
+#elif defined(__SIZEOF_FLOAT128__)
+  using __tf_t = __float128;
+#else
+  using __tf_t = long double;
+#endif
 
-inline constexpr int __tf_mantbits = 112;      // stored mantissa bits
-inline constexpr int __tf_bias = 16383;
-inline constexpr unsigned __tf_einf = 0x7FFFu;                                            // all-ones exponent field
-inline constexpr __tf_rep __tf_implicit = static_cast<__tf_rep>(1) << __tf_mantbits;      // 2^112
-inline constexpr __tf_rep __tf_mantmask = __tf_implicit - 1;                              // low 112 bits
-inline constexpr __tf_rep __tf_signbit = static_cast<__tf_rep>(1) << 127;
-inline constexpr __tf_rep __tf_absmask = ~__tf_signbit;
-inline constexpr __tf_rep __tf_infrep = static_cast<__tf_rep>(__tf_einf) << __tf_mantbits;
-inline constexpr __tf_rep __tf_qnanbit = static_cast<__tf_rep>(1) << (__tf_mantbits - 1);
-inline constexpr __tf_rep __tf_qnan = __tf_infrep | __tf_qnanbit;
+  using __tf_rep = unsigned __int128;
 
-[[gnu::always_inline]] inline __tf_rep
-__tf_bits(_Float128 x) noexcept
-{
-  return __builtin_bit_cast(__tf_rep, x);
-}
+  inline constexpr int __tf_mantbits = 112;      // stored mantissa bits
+  inline constexpr int __tf_bias = 16383;
+  inline constexpr unsigned __tf_einf = 0x7FFFu;                                            // all-ones exponent field
+  inline constexpr __tf_rep __tf_implicit = static_cast<__tf_rep>(1) << __tf_mantbits;      // 2^112
+  inline constexpr __tf_rep __tf_mantmask = __tf_implicit - 1;                              // low 112 bits
+  inline constexpr __tf_rep __tf_signbit = static_cast<__tf_rep>(1) << 127;
+  inline constexpr __tf_rep __tf_absmask = ~__tf_signbit;
+  inline constexpr __tf_rep __tf_infrep = static_cast<__tf_rep>(__tf_einf) << __tf_mantbits;
+  inline constexpr __tf_rep __tf_qnanbit = static_cast<__tf_rep>(1) << (__tf_mantbits - 1);
+  inline constexpr __tf_rep __tf_qnan = __tf_infrep | __tf_qnanbit;
 
-[[gnu::always_inline]] inline _Float128
-__tf_from(__tf_rep b) noexcept
-{
-  return __builtin_bit_cast(_Float128, b);
-}
+  [[gnu::always_inline]] inline __tf_rep __tf_bits(__tf_t x) noexcept { return __builtin_bit_cast(__tf_rep, x); }
 
-[[gnu::always_inline]] inline int
-__tf_clz(__tf_rep x) noexcept      // precondition: x != 0
-{
-  const unsigned long long hi = static_cast<unsigned long long>(x >> 64);
-  if ( hi ) return __builtin_clzll(hi);
-  return 64 + __builtin_clzll(static_cast<unsigned long long>(x));
-}
+  [[gnu::always_inline]] inline __tf_t __tf_from(__tf_rep b) noexcept { return __builtin_bit_cast(__tf_t, b); }
 
-// shift a (sub)normal significand so its leading 1 lands at bit __tf_mantbits
-[[gnu::always_inline]] inline int
-__tf_normalize(__tf_rep &sig) noexcept
-{
-  const int shift = __tf_clz(sig) - (127 - __tf_mantbits);
-  sig <<= shift;
-  return 1 - shift;
-}
+  [[gnu::always_inline]] inline int __tf_clz(__tf_rep x) noexcept      // precondition: x != 0
+  {
+    const unsigned long long hi = static_cast<unsigned long long>(x >> 64);
+    if ( hi ) return __builtin_clzll(hi);
+    return 64 + __builtin_clzll(static_cast<unsigned long long>(x));
+  }
 
-inline _Float128
-__tf_addsub(__tf_rep a, __tf_rep b) noexcept
-{
-  __tf_rep aAbs = a & __tf_absmask;
-  __tf_rep bAbs = b & __tf_absmask;
+  // shift a (sub)normal significand so its leading 1 lands at bit __tf_mantbits
+  [[gnu::always_inline]] inline int __tf_normalize(__tf_rep & sig) noexcept
+  {
+    const int shift = __tf_clz(sig) - (127 - __tf_mantbits);
+    sig <<= shift;
+    return 1 - shift;
+  }
 
-  if ( aAbs >= __tf_infrep || bAbs >= __tf_infrep || aAbs == 0 || bAbs == 0 ) {
-    if ( aAbs > __tf_infrep ) return __tf_from(a | __tf_qnanbit);      // a is NaN -> quiet
-    if ( bAbs > __tf_infrep ) return __tf_from(b | __tf_qnanbit);
-    if ( aAbs == __tf_infrep ) {
-      if ( bAbs == __tf_infrep && ((a ^ b) >> 127) ) return __tf_from(__tf_qnan);      // inf + -inf
-      return __tf_from(a);
+  [[gnu::always_inline]] inline __tf_t __tf_underflow(__tf_rep sign, int exp, __tf_rep sig) noexcept
+  {
+    if ( exp == 0 && sig == ((__tf_implicit << 1) - 1) ) return __tf_from(sign | __tf_implicit);
+    return __tf_from(sign);
+  }
+
+  inline __tf_t __tf_addsub(__tf_rep a, __tf_rep b) noexcept
+  {
+    __tf_rep aAbs = a & __tf_absmask;
+    __tf_rep bAbs = b & __tf_absmask;
+
+    if ( aAbs >= __tf_infrep || bAbs >= __tf_infrep || aAbs == 0 || bAbs == 0 ) {
+      if ( aAbs > __tf_infrep ) return __tf_from(a | __tf_qnanbit);      // a is NaN -> quiet
+      if ( bAbs > __tf_infrep ) return __tf_from(b | __tf_qnanbit);
+      if ( aAbs == __tf_infrep ) {
+        if ( bAbs == __tf_infrep && ((a ^ b) >> 127) ) return __tf_from(__tf_qnan);      // inf + -inf
+        return __tf_from(a);
+      }
+      if ( bAbs == __tf_infrep ) return __tf_from(b);
+      if ( aAbs == 0 ) return __tf_from(bAbs == 0 ? (a & b & __tf_signbit) : b);      // -0 + -0 = -0
+      return __tf_from(a);                                                            // b == 0
     }
-    if ( bAbs == __tf_infrep ) return __tf_from(b);
-    if ( aAbs == 0 ) return __tf_from(bAbs == 0 ? (a & b & __tf_signbit) : b);      // -0 + -0 = -0
-    return __tf_from(a);                                                            // b == 0
-  }
 
-  if ( bAbs > aAbs ) {      // keep |a| >= |b|
-    __tf_rep t = a;
-    a = b;
-    b = t;
-    t = aAbs;
-    aAbs = bAbs;
-    bAbs = t;
-  }
+    if ( bAbs > aAbs ) {      // keep |a| >= |b|
+      __tf_rep t = a;
+      a = b;
+      b = t;
+      t = aAbs;
+      aAbs = bAbs;
+      bAbs = t;
+    }
 
-  int aExp = static_cast<int>(aAbs >> __tf_mantbits);
-  int bExp = static_cast<int>(bAbs >> __tf_mantbits);
-  __tf_rep aSig = aAbs & __tf_mantmask;
-  __tf_rep bSig = bAbs & __tf_mantmask;
-  if ( aExp == 0 )
-    aExp = __tf_normalize(aSig);
-  else
-    aSig |= __tf_implicit;
-  if ( bExp == 0 )
-    bExp = __tf_normalize(bSig);
-  else
-    bSig |= __tf_implicit;
+    int aExp = static_cast<int>(aAbs >> __tf_mantbits);
+    int bExp = static_cast<int>(bAbs >> __tf_mantbits);
+    __tf_rep aSig = aAbs & __tf_mantmask;
+    __tf_rep bSig = bAbs & __tf_mantmask;
+    if ( aExp == 0 )
+      aExp = __tf_normalize(aSig);
+    else
+      aSig |= __tf_implicit;
+    if ( bExp == 0 )
+      bExp = __tf_normalize(bSig);
+    else
+      bSig |= __tf_implicit;
 
-  const bool subtraction = ((a ^ b) >> 127) != 0;
-  const __tf_rep resultSign = a & __tf_signbit;
+    const bool subtraction = ((a ^ b) >> 127) != 0;
+    const __tf_rep resultSign = a & __tf_signbit;
 
-  aSig <<= 3;      // make room for guard/round/sticky in the low 3 bits
-  bSig <<= 3;
-  const int align = aExp - bExp;
-  if ( align ) {
-    if ( align < 128 ) {
-      const __tf_rep sticky = (bSig << (128 - align)) != 0 ? static_cast<__tf_rep>(1) : 0;
-      bSig = (bSig >> align) | sticky;
+    aSig <<= 3;      // make room for guard/round/sticky in the low 3 bits
+    bSig <<= 3;
+    const int align = aExp - bExp;
+    if ( align ) {
+      if ( align < 128 ) {
+        const __tf_rep sticky = (bSig << (128 - align)) != 0 ? static_cast<__tf_rep>(1) : 0;
+        bSig = (bSig >> align) | sticky;
+      } else {
+        bSig = 1;      // wholly below the sticky bit
+      }
+    }
+
+    if ( subtraction ) {
+      aSig -= bSig;
+      if ( aSig == 0 ) return __tf_from(0);      // exact cancellation -> +0
+      if ( aSig < (__tf_implicit << 3) ) {       // renormalize after cancellation
+        const int shift = __tf_clz(aSig) - (127 - (__tf_mantbits + 3));
+        aSig <<= shift;
+        aExp -= shift;
+      }
     } else {
-      bSig = 1;      // wholly below the sticky bit
+      aSig += bSig;
+      if ( aSig & (__tf_implicit << 4) ) {      // carry out of the top
+        const __tf_rep sticky = aSig & 1;
+        aSig = (aSig >> 1) | sticky;
+        ++aExp;
+      }
     }
+
+    if ( aExp >= static_cast<int>(__tf_einf) ) return __tf_from(resultSign | __tf_infrep);
+    if ( aExp <= 0 ) return __tf_from(resultSign);      // subnormal/underflow -> signed zero (FTZ)
+
+    const unsigned grs = static_cast<unsigned>(aSig & 7u);
+    const __tf_rep frac = (aSig >> 3) & __tf_mantmask;
+    __tf_rep result = resultSign | (static_cast<__tf_rep>(aExp) << __tf_mantbits) | frac;
+    if ( grs > 4u || (grs == 4u && ((aSig >> 3) & 1u)) ) result += 1;      // RNE; carry flows into exp/inf
+    return __tf_from(result);
   }
 
-  if ( subtraction ) {
-    aSig -= bSig;
-    if ( aSig == 0 ) return __tf_from(0);      // exact cancellation -> +0
-    if ( aSig < (__tf_implicit << 3) ) {       // renormalize after cancellation
-      const int shift = __tf_clz(aSig) - (127 - (__tf_mantbits + 3));
-      aSig <<= shift;
-      aExp -= shift;
+  [[gnu::always_inline]] inline void __tf_wide_mul(__tf_rep a, __tf_rep b, __tf_rep & hi, __tf_rep & lo) noexcept
+  {
+    const unsigned long long al = static_cast<unsigned long long>(a), ah = static_cast<unsigned long long>(a >> 64);
+    const unsigned long long bl = static_cast<unsigned long long>(b), bh = static_cast<unsigned long long>(b >> 64);
+    const __tf_rep ll = static_cast<__tf_rep>(al) * bl;
+    const __tf_rep lh = static_cast<__tf_rep>(al) * bh;
+    const __tf_rep hl = static_cast<__tf_rep>(ah) * bl;
+    const __tf_rep hh = static_cast<__tf_rep>(ah) * bh;
+    const __tf_rep mid = (ll >> 64) + static_cast<unsigned long long>(lh) + static_cast<unsigned long long>(hl);
+    lo = static_cast<unsigned long long>(ll) | (mid << 64);
+    hi = hh + (lh >> 64) + (hl >> 64) + (mid >> 64);
+  }
+
+  // three-way ordered compare (callers handle NaN): -1/0/+1; +-0 compare equal
+  [[gnu::always_inline]] inline int __tf_cmp3(__tf_rep a, __tf_rep b) noexcept
+  {
+    const __tf_rep aAbs = a & __tf_absmask, bAbs = b & __tf_absmask;
+    if ( (aAbs | bAbs) == 0 ) return 0;
+    const bool aNeg = (a >> 127) != 0, bNeg = (b >> 127) != 0;
+    if ( aNeg != bNeg ) return aNeg ? -1 : 1;
+    if ( aAbs == bAbs ) return 0;
+    return ((aAbs < bAbs) != aNeg) ? -1 : 1;
+  }
+
+  [[gnu::always_inline]] inline bool __tf_either_nan(__tf_rep a, __tf_rep b) noexcept
+  {
+    return (a & __tf_absmask) > __tf_infrep || (b & __tf_absmask) > __tf_infrep;
+  }
+
+  // round a binary128 to a narrower binary format
+  template<typename U, int MBITS, int EBITS, int BIAS> [[gnu::always_inline]] inline U __tf_trunc_to(__tf_rep b) noexcept
+  {
+    const U sign = static_cast<U>(b >> 127) << (MBITS + EBITS);
+    const int e = static_cast<int>((b >> __tf_mantbits) & __tf_einf);
+    const __tf_rep m = b & __tf_mantmask;
+    const U emax = (static_cast<U>(1) << EBITS) - 1;
+    if ( e == static_cast<int>(__tf_einf) ) {
+      if ( m == 0 ) return sign | (emax << MBITS);      // inf
+      U pay = static_cast<U>(m >> (__tf_mantbits - MBITS));
+      pay |= static_cast<U>(1) << (MBITS - 1);
+      return sign | (emax << MBITS) | pay;
     }
-  } else {
-    aSig += bSig;
-    if ( aSig & (__tf_implicit << 4) ) {      // carry out of the top
-      const __tf_rep sticky = aSig & 1;
-      aSig = (aSig >> 1) | sticky;
-      ++aExp;
+    int ue;
+    __tf_rep sig;
+    if ( e == 0 ) {
+      if ( m == 0 ) return sign;      // +-0
+      ue = 1 - __tf_bias;             // f128 subnormal: far below any double/float subnormal
+      sig = m;
+    } else {
+      ue = e - __tf_bias;
+      sig = __tf_implicit | m;
     }
+    const int te = ue + BIAS;
+    if ( te >= static_cast<int>(emax) ) return sign | (emax << MBITS);      // overflow -> inf
+    int rshift = __tf_mantbits - MBITS;
+    if ( te <= 0 ) rshift += 1 - te;
+    if ( rshift > 113 ) return sign;
+    U kept = static_cast<U>(sig >> rshift);
+    const __tf_rep rem = sig & ((static_cast<__tf_rep>(1) << rshift) - 1);
+    const __tf_rep half = static_cast<__tf_rep>(1) << (rshift - 1);
+    if ( rem > half || (rem == half && (kept & 1)) ) ++kept;
+    const U base = te > 0 ? static_cast<U>(te - 1) << MBITS : 0;
+    return sign | (base + kept);
   }
-
-  if ( aExp >= static_cast<int>(__tf_einf) ) return __tf_from(resultSign | __tf_infrep);
-  if ( aExp <= 0 ) return __tf_from(resultSign);      // subnormal/underflow -> signed zero (FTZ)
-
-  const unsigned grs = static_cast<unsigned>(aSig & 7u);
-  const __tf_rep frac = (aSig >> 3) & __tf_mantmask;
-  __tf_rep result = resultSign | (static_cast<__tf_rep>(aExp) << __tf_mantbits) | frac;
-  if ( grs > 4u || (grs == 4u && ((aSig >> 3) & 1u)) ) result += 1;      // RNE; carry flows into exp/inf
-  return __tf_from(result);
-}
-
-[[gnu::always_inline]] inline void
-__tf_wide_mul(__tf_rep a, __tf_rep b, __tf_rep &hi, __tf_rep &lo) noexcept
-{
-  const unsigned long long al = static_cast<unsigned long long>(a), ah = static_cast<unsigned long long>(a >> 64);
-  const unsigned long long bl = static_cast<unsigned long long>(b), bh = static_cast<unsigned long long>(b >> 64);
-  const __tf_rep ll = static_cast<__tf_rep>(al) * bl;
-  const __tf_rep lh = static_cast<__tf_rep>(al) * bh;
-  const __tf_rep hl = static_cast<__tf_rep>(ah) * bl;
-  const __tf_rep hh = static_cast<__tf_rep>(ah) * bh;
-  const __tf_rep mid = (ll >> 64) + static_cast<unsigned long long>(lh) + static_cast<unsigned long long>(hl);
-  lo = static_cast<unsigned long long>(ll) | (mid << 64);
-  hi = hh + (lh >> 64) + (hl >> 64) + (mid >> 64);
-}
-
-// three-way ordered compare (callers handle NaN): -1/0/+1; +-0 compare equal
-[[gnu::always_inline]] inline int
-__tf_cmp3(__tf_rep a, __tf_rep b) noexcept
-{
-  const __tf_rep aAbs = a & __tf_absmask, bAbs = b & __tf_absmask;
-  if ( (aAbs | bAbs) == 0 ) return 0;
-  const bool aNeg = (a >> 127) != 0, bNeg = (b >> 127) != 0;
-  if ( aNeg != bNeg ) return aNeg ? -1 : 1;
-  if ( aAbs == bAbs ) return 0;
-  return ((aAbs < bAbs) != aNeg) ? -1 : 1;
-}
-
-[[gnu::always_inline]] inline bool
-__tf_either_nan(__tf_rep a, __tf_rep b) noexcept
-{
-  return (a & __tf_absmask) > __tf_infrep || (b & __tf_absmask) > __tf_infrep;
-}
-
-// round a binary128 to a narrower binary format
-template<typename U, int MBITS, int EBITS, int BIAS>
-[[gnu::always_inline]] inline U
-__tf_trunc_to(__tf_rep b) noexcept
-{
-  const U sign = static_cast<U>(b >> 127) << (MBITS + EBITS);
-  const int e = static_cast<int>((b >> __tf_mantbits) & __tf_einf);
-  const __tf_rep m = b & __tf_mantmask;
-  const U emax = (static_cast<U>(1) << EBITS) - 1;
-  if ( e == static_cast<int>(__tf_einf) ) {
-    if ( m == 0 ) return sign | (emax << MBITS);      // inf
-    U pay = static_cast<U>(m >> (__tf_mantbits - MBITS));
-    pay |= static_cast<U>(1) << (MBITS - 1);
-    return sign | (emax << MBITS) | pay;
-  }
-  int ue;
-  __tf_rep sig;
-  if ( e == 0 ) {
-    if ( m == 0 ) return sign;      // +-0
-    ue = 1 - __tf_bias;             // f128 subnormal: far below any double/float subnormal
-    sig = m;
-  } else {
-    ue = e - __tf_bias;
-    sig = __tf_implicit | m;
-  }
-  const int te = ue + BIAS;
-  if ( te >= static_cast<int>(emax) ) return sign | (emax << MBITS);      // overflow -> inf
-  int rshift = __tf_mantbits - MBITS;
-  if ( te <= 0 ) rshift += 1 - te;
-  if ( rshift > 113 ) return sign;
-  U kept = static_cast<U>(sig >> rshift);
-  const __tf_rep rem = sig & ((static_cast<__tf_rep>(1) << rshift) - 1);
-  const __tf_rep half = static_cast<__tf_rep>(1) << (rshift - 1);
-  if ( rem > half || (rem == half && (kept & 1)) ) ++kept;
-  const U base = te > 0 ? static_cast<U>(te - 1) << MBITS : 0;
-  return sign | (base + kept);
-}
 }      // namespace
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // arithmetic
 
-extern "C" __mc_libgcc_sym _Float128
-__addtf3(_Float128 fa, _Float128 fb) noexcept
+extern "C" __mc_libgcc_sym __tf_t
+__addtf3(__tf_t fa, __tf_t fb) noexcept
 {
   return __tf_addsub(__tf_bits(fa), __tf_bits(fb));
 }
 
-extern "C" __mc_libgcc_sym _Float128
-__subtf3(_Float128 fa, _Float128 fb) noexcept
+extern "C" __mc_libgcc_sym __tf_t
+__subtf3(__tf_t fa, __tf_t fb) noexcept
 {
   return __tf_addsub(__tf_bits(fa), __tf_bits(fb) ^ __tf_signbit);
 }
 
-extern "C" __mc_libgcc_sym _Float128
-__multf3(_Float128 fa, _Float128 fb) noexcept
+extern "C" __mc_libgcc_sym __tf_t
+__multf3(__tf_t fa, __tf_t fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
   const __tf_rep aAbs = a & __tf_absmask, bAbs = b & __tf_absmask;
@@ -279,15 +278,15 @@ __multf3(_Float128 fa, _Float128 fb) noexcept
   const bool sticky = (lo & ((static_cast<__tf_rep>(1) << (shift - 1)) - 1)) != 0;
 
   if ( exp >= static_cast<int>(__tf_einf) ) return __tf_from(sign | __tf_infrep);
-  if ( exp <= 0 ) return __tf_from(sign);      // subnormal/underflow -> signed zero (FTZ)
+  if ( exp <= 0 ) return __tf_underflow(sign, exp, sig);      // FTZ, unless RNE reaches the smallest normal
 
   __tf_rep result = sign | (static_cast<__tf_rep>(exp) << __tf_mantbits) | (sig & __tf_mantmask);
   if ( guard && (sticky || (sig & 1)) ) result += 1;      // RNE; carry flows into exp/inf
   return __tf_from(result);
 }
 
-extern "C" __mc_libgcc_sym _Float128
-__divtf3(_Float128 fa, _Float128 fb) noexcept
+extern "C" __mc_libgcc_sym __tf_t
+__divtf3(__tf_t fa, __tf_t fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
   const __tf_rep aAbs = a & __tf_absmask, bAbs = b & __tf_absmask;
@@ -341,15 +340,15 @@ __divtf3(_Float128 fa, _Float128 fb) noexcept
   const __tf_rep sig = q >> 1;      // 113-bit significand
 
   if ( exp >= static_cast<int>(__tf_einf) ) return __tf_from(sign | __tf_infrep);
-  if ( exp <= 0 ) return __tf_from(sign);      // subnormal/underflow -> signed zero (FTZ)
+  if ( exp <= 0 ) return __tf_underflow(sign, exp, sig);      // FTZ, unless RNE reaches the smallest normal
 
   __tf_rep result = sign | (static_cast<__tf_rep>(exp) << __tf_mantbits) | (sig & __tf_mantmask);
   if ( guard && (sticky || (sig & 1)) ) result += 1;      // RNE; carry flows into exp/inf
   return __tf_from(result);
 }
 
-extern "C" __mc_libgcc_sym _Float128
-__negtf2(_Float128 x) noexcept
+extern "C" __mc_libgcc_sym __tf_t
+__negtf2(__tf_t x) noexcept
 {
   return __tf_from(__tf_bits(x) ^ __tf_signbit);
 }
@@ -357,7 +356,7 @@ __negtf2(_Float128 x) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // integer -> binary128
 
-extern "C" __mc_libgcc_sym _Float128
+extern "C" __mc_libgcc_sym __tf_t
 __floatditf(long long i) noexcept      // signed 64-bit int -> binary128 (exact)
 {
   if ( i == 0 ) return __tf_from(0);
@@ -369,7 +368,7 @@ __floatditf(long long i) noexcept      // signed 64-bit int -> binary128 (exact)
   return __tf_from((neg ? __tf_signbit : 0) | (exp << __tf_mantbits) | (sig & __tf_mantmask));
 }
 
-extern "C" __mc_libgcc_sym _Float128
+extern "C" __mc_libgcc_sym __tf_t
 __floatunditf(unsigned long long u) noexcept      // unsigned 64-bit int -> binary128 (exact)
 {
   if ( u == 0 ) return __tf_from(0);
@@ -379,13 +378,13 @@ __floatunditf(unsigned long long u) noexcept      // unsigned 64-bit int -> bina
   return __tf_from((exp << __tf_mantbits) | (sig & __tf_mantmask));
 }
 
-extern "C" __mc_libgcc_sym _Float128
+extern "C" __mc_libgcc_sym __tf_t
 __floatsitf(int i) noexcept
 {
   return __floatditf(i);
 }
 
-extern "C" __mc_libgcc_sym _Float128
+extern "C" __mc_libgcc_sym __tf_t
 __floatunsitf(unsigned int u) noexcept
 {
   return __floatunditf(u);
@@ -396,7 +395,7 @@ __floatunsitf(unsigned int u) noexcept
 // sign-selected extreme, matching __fixtfdi's original convention)
 
 extern "C" __mc_libgcc_sym long long
-__fixtfdi(_Float128 fa) noexcept      // binary128 -> signed 64-bit int (truncate toward zero)
+__fixtfdi(__tf_t fa) noexcept      // binary128 -> signed 64-bit int (truncate toward zero)
 {
   const __tf_rep a = __tf_bits(fa);
   const bool neg = (a >> 127) != 0;
@@ -417,7 +416,7 @@ __fixtfdi(_Float128 fa) noexcept      // binary128 -> signed 64-bit int (truncat
 }
 
 extern "C" __mc_libgcc_sym unsigned long long
-__fixunstfdi(_Float128 fa) noexcept      // binary128 -> unsigned 64-bit int (truncate toward zero)
+__fixunstfdi(__tf_t fa) noexcept      // binary128 -> unsigned 64-bit int (truncate toward zero)
 {
   const __tf_rep a = __tf_bits(fa);
   const bool neg = (a >> 127) != 0;
@@ -432,7 +431,7 @@ __fixunstfdi(_Float128 fa) noexcept      // binary128 -> unsigned 64-bit int (tr
 }
 
 extern "C" __mc_libgcc_sym int
-__fixtfsi(_Float128 fa) noexcept
+__fixtfsi(__tf_t fa) noexcept
 {
   const long long v = __fixtfdi(fa);
   if ( v > 2147483647ll ) return 2147483647;
@@ -441,7 +440,7 @@ __fixtfsi(_Float128 fa) noexcept
 }
 
 extern "C" __mc_libgcc_sym unsigned int
-__fixunstfsi(_Float128 fa) noexcept
+__fixunstfsi(__tf_t fa) noexcept
 {
   const unsigned long long v = __fixunstfdi(fa);
   return v > 0xffffffffull ? 0xffffffffu : static_cast<unsigned int>(v);
@@ -450,7 +449,7 @@ __fixunstfsi(_Float128 fa) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // widening conversions
 
-extern "C" __mc_libgcc_sym _Float128
+extern "C" __mc_libgcc_sym __tf_t
 __extenddftf2(double x) noexcept
 {
   const unsigned long long db = __builtin_bit_cast(unsigned long long, x);
@@ -469,7 +468,7 @@ __extenddftf2(double x) noexcept
   return __tf_from(s | (static_cast<__tf_rep>(de - 1023 + __tf_bias) << __tf_mantbits) | (static_cast<__tf_rep>(dm) << 60));
 }
 
-extern "C" __mc_libgcc_sym _Float128
+extern "C" __mc_libgcc_sym __tf_t
 __extendsftf2(float x) noexcept
 {
   const unsigned int fb = __builtin_bit_cast(unsigned int, x);
@@ -491,13 +490,13 @@ __extendsftf2(float x) noexcept
 // narrowing conversions
 
 extern "C" __mc_libgcc_sym double
-__trunctfdf2(_Float128 x) noexcept
+__trunctfdf2(__tf_t x) noexcept
 {
   return __builtin_bit_cast(double, __tf_trunc_to<unsigned long long, 52, 11, 1023>(__tf_bits(x)));
 }
 
 extern "C" __mc_libgcc_sym float
-__trunctfsf2(_Float128 x) noexcept
+__trunctfsf2(__tf_t x) noexcept
 {
   return __builtin_bit_cast(float, __tf_trunc_to<unsigned int, 23, 8, 127>(__tf_bits(x)));
 }
@@ -506,7 +505,7 @@ __trunctfsf2(_Float128 x) noexcept
 // comparisons; libgcc style
 
 extern "C" __mc_libgcc_sym int
-__lttf2(_Float128 fa, _Float128 fb) noexcept      // <0 if a<b, 0 if a==b, >0 otherwise; unordered -> >0
+__lttf2(__tf_t fa, __tf_t fb) noexcept      // <0 if a<b, 0 if a==b, >0 otherwise; unordered -> >0
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
   if ( __tf_either_nan(a, b) ) return 1;
@@ -514,7 +513,7 @@ __lttf2(_Float128 fa, _Float128 fb) noexcept      // <0 if a<b, 0 if a==b, >0 ot
 }
 
 extern "C" __mc_libgcc_sym int
-__letf2(_Float128 fa, _Float128 fb) noexcept
+__letf2(__tf_t fa, __tf_t fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
   if ( __tf_either_nan(a, b) ) return 1;
@@ -522,7 +521,7 @@ __letf2(_Float128 fa, _Float128 fb) noexcept
 }
 
 extern "C" __mc_libgcc_sym int
-__gttf2(_Float128 fa, _Float128 fb) noexcept
+__gttf2(__tf_t fa, __tf_t fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
   if ( __tf_either_nan(a, b) ) return -1;
@@ -530,7 +529,7 @@ __gttf2(_Float128 fa, _Float128 fb) noexcept
 }
 
 extern "C" __mc_libgcc_sym int
-__getf2(_Float128 fa, _Float128 fb) noexcept
+__getf2(__tf_t fa, __tf_t fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
   if ( __tf_either_nan(a, b) ) return -1;
@@ -538,7 +537,7 @@ __getf2(_Float128 fa, _Float128 fb) noexcept
 }
 
 extern "C" __mc_libgcc_sym int
-__eqtf2(_Float128 fa, _Float128 fb) noexcept
+__eqtf2(__tf_t fa, __tf_t fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
   if ( __tf_either_nan(a, b) ) return 1;
@@ -546,7 +545,7 @@ __eqtf2(_Float128 fa, _Float128 fb) noexcept
 }
 
 extern "C" __mc_libgcc_sym int
-__netf2(_Float128 fa, _Float128 fb) noexcept
+__netf2(__tf_t fa, __tf_t fb) noexcept
 {
   const __tf_rep a = __tf_bits(fa), b = __tf_bits(fb);
   if ( __tf_either_nan(a, b) ) return 1;
@@ -554,7 +553,7 @@ __netf2(_Float128 fa, _Float128 fb) noexcept
 }
 
 extern "C" __mc_libgcc_sym int
-__unordtf2(_Float128 fa, _Float128 fb) noexcept
+__unordtf2(__tf_t fa, __tf_t fb) noexcept
 {
   return __tf_either_nan(__tf_bits(fa), __tf_bits(fb)) ? 1 : 0;
 }

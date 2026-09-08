@@ -77,6 +77,27 @@ transpose4x4_pd_inv(__m256d xs, __m256d ys, __m256d zs, __m256d ws, __m256d &v0,
   v3 = simd::avx::permute2f128_f64<0x31>(t01_hi, t23_hi);
 }
 
+[[nodiscard, gnu::always_inline]] inline __m256d
+normalizable_all() noexcept
+{
+  const __m256d z = simd::avx::splat_f64(0.0);
+  return simd::avx::cmp_f64<_CMP_EQ_OQ>(z, z);
+}
+
+[[nodiscard, gnu::always_inline]] inline __m256d
+keep_normalizable(__m256d acc, __m256d n2, double lo) noexcept
+{
+  const __m256d ok = simd::avx::and_f64(simd::avx::cmp_f64<_CMP_GT_OQ>(n2, simd::avx::splat_f64(lo)),
+                                        simd::avx::cmp_f64<_CMP_LT_OQ>(n2, simd::avx::splat_f64(ieee::inf_v<double>())));
+  return simd::avx::and_f64(acc, ok);
+}
+
+[[nodiscard, gnu::always_inline]] inline bool
+all_normalizable(__m256d acc) noexcept
+{
+  return simd::avx::movemask_f64(acc) == 0x0F;
+}
+
 };      // namespace __batched_detail
 #endif
 
@@ -114,6 +135,21 @@ transpose4x4_ps_inv(float32x4_t xs, float32x4_t ys, float32x4_t zs, float32x4_t 
   v3 = simd::neon::concat_hi_f32(t01_hi, t23_hi);
 }
 
+[[nodiscard, gnu::always_inline]] inline float32x4_t
+keep_normalizable(float32x4_t acc, float32x4_t n2, float lo) noexcept
+{
+  const uint32x4_t ok
+      = simd::neon::and_(simd::neon::gt(n2, simd::neon::splat_f32(lo)), simd::neon::lt(n2, simd::neon::splat_f32(ieee::inf_v<float>())));
+  return simd::neon::select(ok, acc, simd::neon::splat_f32(0.0f));
+}
+
+[[nodiscard, gnu::always_inline]] inline bool
+all_normalizable(float32x4_t acc) noexcept
+{
+  return simd::neon::get_lane_f32<0>(acc) != 0.0f && simd::neon::get_lane_f32<1>(acc) != 0.0f && simd::neon::get_lane_f32<2>(acc) != 0.0f
+         && simd::neon::get_lane_f32<3>(acc) != 0.0f;
+}
+
 #if defined(__micron_arch_arm64)
 // AoS->SoA transpose of 2 f64 quaternions packed as 4 float64x2_t (two halves per quat)
 [[gnu::always_inline]] inline void
@@ -134,6 +170,20 @@ transpose2x4_pd_inv(float64x2_t xs, float64x2_t ys, float64x2_t zs, float64x2_t 
   lo1 = simd::neon::zip_hi_f64(xs, ys);      // {q1.x, q1.y}
   hi0 = simd::neon::zip_lo_f64(zs, ws);      // {q0.z, q0.w}
   hi1 = simd::neon::zip_hi_f64(zs, ws);      // {q1.z, q1.w}
+}
+
+[[nodiscard, gnu::always_inline]] inline float64x2_t
+keep_normalizable(float64x2_t acc, float64x2_t n2, double lo) noexcept
+{
+  const uint64x2_t ok
+      = simd::neon::and_(simd::neon::gt(n2, simd::neon::splat_f64(lo)), simd::neon::lt(n2, simd::neon::splat_f64(ieee::inf_v<double>())));
+  return simd::neon::select(ok, acc, simd::neon::splat_f64(0.0));
+}
+
+[[nodiscard, gnu::always_inline]] inline bool
+all_normalizable(float64x2_t acc) noexcept
+{
+  return simd::neon::get_lane_f64<0>(acc) != 0.0 && simd::neon::get_lane_f64<1>(acc) != 0.0;
 }
 #endif
 
@@ -314,6 +364,7 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
 #if defined(__AVX2__) && defined(__FMA__)
   if constexpr ( sizeof(T) == 8 ) {
     const __m256d one = simd::avx::splat_f64(1.0);
+    __m256d ok = __batched_detail::normalizable_all();
     usize i = 0;
     for ( ; i + 4 <= n; i += 4 ) {
       const double *ip = reinterpret_cast<const double *>(in + i);
@@ -329,6 +380,7 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       n2 = simd::fma::fma_f64(ys, ys, n2);
       n2 = simd::fma::fma_f64(zs, zs, n2);
       n2 = simd::fma::fma_f64(ws, ws, n2);
+      ok = __batched_detail::keep_normalizable(ok, n2, __safe_min_n2<T>());
 
       const __m256d sq = simd::avx::sqrt_f64(n2);
       const __m256d inv = simd::avx::div_f64(one, sq);
@@ -346,6 +398,9 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       simd::avx::storeu_f64(op + 8, r2);
       simd::avx::storeu_f64(op + 12, r3);
     }
+    if ( !__batched_detail::all_normalizable(ok) ) {
+      for ( usize k = 0; k < i; ++k ) out[k] = normalize<T>(in[k]);
+    }
     for ( ; i < n; ++i ) out[i] = normalize<T>(in[i]);
     return;
   }
@@ -354,6 +409,7 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
   if constexpr ( sizeof(T) == 4 ) {
     // NOTE: we multiply by rsqrt(n**2) rather than dividing by sqrt(n**2)
     // NEON's vrsqrteq_f32 + one NR step lands at ~22 bits of mantissa, close enough to fp32 precision
+    float32x4_t ok = simd::neon::splat_f32(1.0f);
     usize i = 0;
     for ( ; i + 4 <= n; i += 4 ) {
       const float *ip = reinterpret_cast<const float *>(in + i);
@@ -369,6 +425,7 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       n2 = simd::neon::fma_f32(n2, ys, ys);
       n2 = simd::neon::fma_f32(n2, zs, zs);
       n2 = simd::neon::fma_f32(n2, ws, ws);
+      ok = __batched_detail::keep_normalizable(ok, n2, __safe_min_n2<T>());
 
       float32x4_t inv = simd::neon::rsqrt_est(n2);
       inv = simd::neon::mul(inv, simd::neon::rsqrt_step(simd::neon::mul(n2, inv), inv));
@@ -387,12 +444,16 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       simd::neon::store_f32(op + 8, r2);
       simd::neon::store_f32(op + 12, r3);
     }
+    if ( !__batched_detail::all_normalizable(ok) ) {
+      for ( usize k = 0; k < i; ++k ) out[k] = normalize<T>(in[k]);
+    }
     for ( ; i < n; ++i ) out[i] = normalize<T>(in[i]);
     return;
   }
 #if defined(__micron_arch_arm64)
   if constexpr ( sizeof(T) == 8 ) {
     const float64x2_t one = simd::neon::splat_f64(1.0);
+    float64x2_t ok = simd::neon::splat_f64(1.0);
     usize i = 0;
     for ( ; i + 2 <= n; i += 2 ) {
       const double *ip = reinterpret_cast<const double *>(in + i);
@@ -408,6 +469,7 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       n2 = simd::neon::fma_f64(n2, ys, ys);
       n2 = simd::neon::fma_f64(n2, zs, zs);
       n2 = simd::neon::fma_f64(n2, ws, ws);
+      ok = __batched_detail::keep_normalizable(ok, n2, __safe_min_n2<T>());
 
       const float64x2_t sq = simd::neon::sqrt(n2);
       const float64x2_t inv = simd::neon::div(one, sq);
@@ -424,6 +486,9 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       simd::neon::store_f64(op + 2, rhi0);
       simd::neon::store_f64(op + 4, rlo1);
       simd::neon::store_f64(op + 6, rhi1);
+    }
+    if ( !__batched_detail::all_normalizable(ok) ) {
+      for ( usize k = 0; k < i; ++k ) out[k] = normalize<T>(in[k]);
     }
     for ( ; i < n; ++i ) out[i] = normalize<T>(in[i]);
     return;

@@ -49,14 +49,13 @@ svd(const dynmat<F> &A) noexcept
 
   dynmat<F> W = A;
   constexpr int max_sweeps = 30;
-  const F eps = default_eps<F>();
   F *__restrict__ Wp = W.data();
   F *__restrict__ Vp = r.V.data();
   const usize ld_W = W.ld;
   const usize ld_V = r.V.ld;
 
   for ( int sweep = 0; sweep < max_sweeps; ++sweep ) {
-    F off = F(0);
+    usize rotations = 0;
     for ( usize p = 0; p + 1 < C; ++p ) {
       for ( usize q = p + 1; q < C; ++q ) {
         F *__restrict__ col_p = Wp + p;
@@ -69,8 +68,10 @@ svd(const dynmat<F> &A) noexcept
           b = math::fma<F>(wq, wq, b);
           c = math::fma<F>(wp, wq, c);
         }
-        off += math::fabs(c);
-        if ( math::fabs(c) < eps * math::fsqrt(a * b + F(1e-30)) ) continue;
+        // scale-free skip
+        const F dd = math::fsqrt(a) * math::fsqrt(b) * F(R);
+        if ( math::fabs(c) + dd == dd ) continue;
+        ++rotations;
         const F theta = (b - a) / (F(2) * c);
         const F t
             = (theta >= F(0)) ? F(1) / (theta + math::fsqrt(F(1) + theta * theta)) : F(1) / (theta - math::fsqrt(F(1) + theta * theta));
@@ -96,7 +97,7 @@ svd(const dynmat<F> &A) noexcept
         }
       }
     }
-    if ( off < eps ) {
+    if ( rotations == 0 ) {
       r.converged = true;
       break;
     }
@@ -308,22 +309,10 @@ template<ieee754_floating F>
 null(const dynmat<F> &A, F tol = F(0)) noexcept
 {
   if ( A.rows < A.cols ) {
-    dynmat<F> At(A.cols, A.rows);
+    dynmat<F> Ap(A.cols, A.cols, F(0));
     for ( usize i = 0; i < A.rows; ++i )
-      for ( usize j = 0; j < A.cols; ++j ) At.at(j, i) = A.at(i, j);
-    auto s = svd<F>(At);
-    F smax = F(0);
-    for ( usize i = 0; i < s.S.size(); ++i )
-      if ( s.S[i] > smax ) smax = s.S[i];
-    F use_tol = (tol > F(0)) ? tol : F((A.rows > A.cols) ? A.rows : A.cols) * smax * default_eps<F>();
-    usize rk = 0;
-    for ( usize i = 0; i < s.S.size(); ++i )
-      if ( s.S[i] > use_tol ) ++rk;
-    const usize ns = A.cols - rk;
-    dynmat<F> N(A.cols, ns);
-    for ( usize i = 0; i < A.cols; ++i )
-      for ( usize j = 0; j < ns; ++j ) N.at(i, j) = s.U.at(i, rk + j);
-    return N;
+      for ( usize j = 0; j < A.cols; ++j ) Ap.at(i, j) = A.at(i, j);
+    return null<F>(Ap, tol);
   }
   auto s = svd<F>(A);
   const usize K = (A.rows < A.cols) ? A.rows : A.cols;

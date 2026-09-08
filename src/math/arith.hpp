@@ -155,7 +155,10 @@ neg(T a) noexcept
 {
   auto r = checked::neg(a);
   if ( !r.overflow ) return r.value;
-  return numeric_limits<T>::max();
+  if constexpr ( micron::is_signed_v<T> )
+    return numeric_limits<T>::max();
+  else
+    return T{ 0 };
 }
 
 };      // namespace saturating

@@ -8,6 +8,8 @@
 #include "../../simd/aliases.hpp"
 #include "../../simd/intrin.hpp"
 #include "../../types.hpp"
+#include "../bits/sqrt.hpp"
+#include "../ieee.hpp"
 #include "_dispatch.hpp"
 
 __micron_diagnostic_push
@@ -89,9 +91,28 @@ sqrt(simd::f128 x) noexcept
 }
 #else
 
+[[gnu::flatten]] inline simd::f128
+__sqrt_f128_scalar(simd::f128 x) noexcept
+{
+  const f32 r[4] = {
+    mkbits::sqrt_ns::sqrt<f32>(simd::neon::get_lane_f32<0>(x)), mkbits::sqrt_ns::sqrt<f32>(simd::neon::get_lane_f32<1>(x)),
+    mkbits::sqrt_ns::sqrt<f32>(simd::neon::get_lane_f32<2>(x)), mkbits::sqrt_ns::sqrt<f32>(simd::neon::get_lane_f32<3>(x)),
+  };
+  return simd::neon::load_f32(r);
+}
+
 [[gnu::always_inline]] inline simd::f128
 sqrt(simd::f128 x) noexcept
 {
+  const float32x4_t ax = simd::neon::abs(x);
+  const int32x4_t odd = simd::neon::reinterpret_s32_from_u32(
+      simd::neon::or_(simd::neon::lt(ax, simd::neon::splat_f32(0x1.0p-126f)),
+                      simd::neon::ge(ax, simd::neon::splat_f32(ieee::inf_v<f32>(0)))));
+  if ( (simd::neon::get_lane_i32<0>(odd) | simd::neon::get_lane_i32<1>(odd) | simd::neon::get_lane_i32<2>(odd)
+        | simd::neon::get_lane_i32<3>(odd))
+       != 0 ) [[unlikely]]
+    return __sqrt_f128_scalar(x);
+
   const float32x4_t e = vrsqrteq_f32(x);
   const float32x4_t e1 = vmulq_f32(vrsqrtsq_f32(vmulq_f32(x, e), e), e);
   const float32x4_t e2 = vmulq_f32(vrsqrtsq_f32(vmulq_f32(x, e1), e1), e1);

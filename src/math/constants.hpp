@@ -75,6 +75,29 @@ template<typename T>
 inline constexpr T constant_phi = micron::enable_if_t<micron::is_floating_point_v<T>, T>(1.618033988749894848204586834365638118L);
 template<typename T> constexpr T pi_t() noexcept;
 
+#if defined(__micron_compiler_gcc) && defined(__micron_arch_amd64) && __cplusplus >= 202300L
+template<>
+constexpr _Float32
+pi_t<_Float32>() noexcept
+{
+  return 3.14159265358979323846f32;
+}
+
+template<>
+constexpr _Float64
+pi_t<_Float64>() noexcept
+{
+  return 3.14159265358979323846f64;
+}
+
+template<>
+constexpr _Float128
+pi_t<_Float128>() noexcept
+{
+  return 3.141592653589793238462643383279502884f128;
+}
+#endif
+
 template<>
 constexpr float
 pi_t<float>() noexcept
@@ -112,6 +135,13 @@ constexpr _Float64
 default_eps<_Float64>() noexcept
 {
   return 1e-12;
+}
+
+template<>
+constexpr _Float128
+default_eps<_Float128>() noexcept
+{
+  return 1e-15f128;
 }
 #endif
 

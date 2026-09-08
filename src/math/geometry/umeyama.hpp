@@ -21,6 +21,56 @@ namespace math
 namespace geometry
 {
 
+namespace __impl_umeyama
+{
+
+// svd3 forms u_j = H*v_j / sigma_j and simply skips the scaling when sigma_j == 0
+template<ieee754_floating F>
+inline void
+complete_u(mat<F, 3, 3> &U) noexcept
+{
+  vec<F, 3> u0{ U.data[0], U.data[3], U.data[6] };
+  vec<F, 3> u1{ U.data[1], U.data[4], U.data[7] };
+
+  F n0 = math::fsqrt(u0.data[0] * u0.data[0] + u0.data[1] * u0.data[1] + u0.data[2] * u0.data[2]);
+  if ( !(n0 > F(0.5)) ) {
+    u0 = vec<F, 3>{ F(1), F(0), F(0) };
+    n0 = F(1);
+  }
+  const F inv0 = F(1) / n0;
+  for ( usize i = 0; i < 3; ++i ) u0.data[i] *= inv0;
+
+  F d = u1.data[0] * u0.data[0] + u1.data[1] * u0.data[1] + u1.data[2] * u0.data[2];
+  for ( usize i = 0; i < 3; ++i ) u1.data[i] -= d * u0.data[i];
+  F n1 = math::fsqrt(u1.data[0] * u1.data[0] + u1.data[1] * u1.data[1] + u1.data[2] * u1.data[2]);
+  if ( !(n1 > F(0.5)) ) {
+    const F ax = math::fabs(u0.data[0]);
+    const F ay = math::fabs(u0.data[1]);
+    const F az = math::fabs(u0.data[2]);
+    u1 = vec<F, 3>{ F(0), F(0), F(0) };
+    if ( ax <= ay && ax <= az )
+      u1.data[0] = F(1);
+    else if ( ay <= az )
+      u1.data[1] = F(1);
+    else
+      u1.data[2] = F(1);
+    d = u1.data[0] * u0.data[0] + u1.data[1] * u0.data[1] + u1.data[2] * u0.data[2];
+    for ( usize i = 0; i < 3; ++i ) u1.data[i] -= d * u0.data[i];
+    n1 = math::fsqrt(u1.data[0] * u1.data[0] + u1.data[1] * u1.data[1] + u1.data[2] * u1.data[2]);
+  }
+  const F inv1 = F(1) / n1;
+  for ( usize i = 0; i < 3; ++i ) u1.data[i] *= inv1;
+
+  const vec<F, 3> u2 = linalg::ops::cross<F>(u0, u1);
+  for ( usize i = 0; i < 3; ++i ) {
+    U.data[i * 3 + 0] = u0.data[i];
+    U.data[i * 3 + 1] = u1.data[i];
+    U.data[i * 3 + 2] = u2.data[i];
+  }
+}
+
+};      // namespace __impl_umeyama
+
 template<ieee754_floating F>
 [[nodiscard]] inline transform<F, 3, transform_mode::affine>
 umeyama(const dynmat<F> &src, const dynmat<F> &dst, bool with_scaling = true) noexcept
@@ -69,6 +119,10 @@ umeyama(const dynmat<F> &src, const dynmat<F> &dst, bool with_scaling = true) no
 
   // det(U) * det(V) sign
   F detU = linalg::ops::det3<F>(sv.U);
+  if ( !(math::fabs(detU) > F(0.5)) ) {
+    __impl_umeyama::complete_u<F>(sv.U);
+    detU = linalg::ops::det3<F>(sv.U);
+  }
   F detV = linalg::ops::det3<F>(sv.V);
   F sgn = (detU * detV >= F(0)) ? F(1) : F(-1);
 

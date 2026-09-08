@@ -10,6 +10,7 @@
 #include "../../types.hpp"
 #include "../bits/coeff/log_f32.hpp"
 #include "../bits/coeff/log_f64.hpp"
+#include "../ieee.hpp"
 #include "_dispatch.hpp"
 
 __micron_diagnostic_push
@@ -29,18 +30,21 @@ log(simd::d256 x) noexcept
 {
   using namespace mkbits::coeff::log_f64_data;
 
-  const simd::i256 xi = simd::avx::cast_f64_to_i256(x);
+  const simd::d256 subn = simd::avx::cmp_f64<_CMP_LT_OQ>(x, simd::avx::splat_f64(0x1.0p-1022));
+  const simd::d256 xn = simd::avx::blendv_f64(x, simd::avx::mul_f64(x, simd::avx::splat_f64(0x1.0p54)), subn);
+  const simd::i256 xi = simd::avx::cast_f64_to_i256(xn);
 
   const simd::i256 exp_field = simd::avx2::shr_i64(xi, 52);
   simd::i256 k = simd::avx2::sub_i64(simd::avx2::and_i256(exp_field, simd::avx::splat_i64(0x7FF)), simd::avx::splat_i64(1023));
+  k = simd::avx2::sub_i64(k, simd::avx2::and_i256(simd::avx::cast_f64_to_i256(subn), simd::avx::splat_i64(54)));
   const simd::i256 mant_mask = simd::avx::splat_i64(0x000FFFFFFFFFFFFFLL);
   const simd::i256 bias_field = simd::avx::splat_i64(0x3FF0000000000000LL);
   simd::d256 m = simd::avx::cast_i256_to_f64(simd::avx2::or_i256(simd::avx2::and_i256(xi, mant_mask), bias_field));
 
-  const simd::d256 sqrt_half = simd::avx::splat_f64(0x1.6a09e667f3bcdp-1);
-  const simd::d256 mask = simd::avx::cmp_f64<_CMP_LT_OQ>(m, sqrt_half);
-  m = simd::avx::blendv_f64(m, simd::avx::add_f64(m, m), mask);
-  k = simd::avx2::sub_i64(k, simd::avx2::and_i256(simd::avx::cast_f64_to_i256(mask), simd::avx::splat_i64(1)));
+  const simd::d256 sqrt_two = simd::avx::splat_f64(0x1.6a09e667f3bcdp+0);
+  const simd::d256 mask = simd::avx::cmp_f64<_CMP_GE_OQ>(m, sqrt_two);
+  m = simd::avx::blendv_f64(m, simd::avx::mul_f64(m, simd::avx::splat_f64(0.5)), mask);
+  k = simd::avx2::add_i64(k, simd::avx2::and_i256(simd::avx::cast_f64_to_i256(mask), simd::avx::splat_i64(1)));
 
   const simd::d256 f = simd::avx::sub_f64(m, simd::avx::splat_f64(1.0));
   const simd::d256 s = simd::avx::div_f64(f, simd::avx::add_f64(simd::avx::splat_f64(2.0), f));
@@ -61,22 +65,32 @@ log(simd::d256 x) noexcept
 
   const simd::d256 fk = simd::avx::setr_f64(f64(simd::avx2::extract_i64<0>(k)), f64(simd::avx2::extract_i64<1>(k)),
                                             f64(simd::avx2::extract_i64<2>(k)), f64(simd::avx2::extract_i64<3>(k)));
-  return simd::fma::fma_f64(fk, simd::avx::splat_f64(ln2_hi), simd::fma::fma_f64(fk, simd::avx::splat_f64(ln2_lo), log_m));
+  simd::d256 y = simd::fma::fma_f64(fk, simd::avx::splat_f64(ln2_hi), simd::fma::fma_f64(fk, simd::avx::splat_f64(ln2_lo), log_m));
+
+  const simd::d256 zero = simd::avx::zero_f64();
+  y = simd::avx::blendv_f64(y, x, simd::avx::cmp_f64<_CMP_EQ_OQ>(x, simd::avx::splat_f64(ieee::inf_v<f64>(0))));
+  // NGE catches x < 0 and NaN in one compare; the or_f64 quiets a NaN input without losing its payload
+  y = simd::avx::blendv_f64(y, simd::avx::or_f64(x, simd::avx::splat_f64(ieee::qnan_v<f64>())),
+                            simd::avx::cmp_f64<_CMP_NGE_UQ>(x, zero));
+  return simd::avx::blendv_f64(y, simd::avx::splat_f64(ieee::inf_v<f64>(1)), simd::avx::cmp_f64<_CMP_EQ_OQ>(x, zero));
 }
 
 [[gnu::flatten]] inline simd::f256
 log(simd::f256 x) noexcept
 {
   using namespace mkbits::coeff::log_f32_data;
-  const simd::i256 xi = simd::avx::cast_f32_to_i256(x);
+  const simd::f256 subn = simd::avx::cmp_f32<_CMP_LT_OQ>(x, simd::avx::splat_f32(0x1.0p-126f));
+  const simd::f256 xn = simd::avx::blendv_f32(x, simd::avx::mul_f32(x, simd::avx::splat_f32(0x1.0p25f)), subn);
+  const simd::i256 xi = simd::avx::cast_f32_to_i256(xn);
   simd::i256 k
       = simd::avx2::sub_i32(simd::avx2::and_i256(simd::avx2::shr_i32(xi, 23), simd::avx::splat_i32(0xFF)), simd::avx::splat_i32(127));
+  k = simd::avx2::sub_i32(k, simd::avx2::and_i256(simd::avx::cast_f32_to_i256(subn), simd::avx::splat_i32(25)));
   simd::f256 m = simd::avx::cast_i256_to_f32(
       simd::avx2::or_i256(simd::avx2::and_i256(xi, simd::avx::splat_i32(0x007FFFFF)), simd::avx::splat_i32(0x3F800000)));
-  const simd::f256 sqrt_half = simd::avx::splat_f32(0x1.6a09e6p-1f);
-  const simd::f256 mask = simd::avx::cmp_f32<_CMP_LT_OQ>(m, sqrt_half);
-  m = simd::avx::blendv_f32(m, simd::avx::add_f32(m, m), mask);
-  k = simd::avx2::sub_i32(k, simd::avx2::and_i256(simd::avx::cast_f32_to_i256(mask), simd::avx::splat_i32(1)));
+  const simd::f256 sqrt_two = simd::avx::splat_f32(0x1.6a09e6p+0f);
+  const simd::f256 mask = simd::avx::cmp_f32<_CMP_GE_OQ>(m, sqrt_two);
+  m = simd::avx::blendv_f32(m, simd::avx::mul_f32(m, simd::avx::splat_f32(0.5f)), mask);
+  k = simd::avx2::add_i32(k, simd::avx2::and_i256(simd::avx::cast_f32_to_i256(mask), simd::avx::splat_i32(1)));
   const simd::f256 f = simd::avx::sub_f32(m, simd::avx::splat_f32(1.0f));
   const simd::f256 s = simd::avx::div_f32(f, simd::avx::add_f32(simd::avx::splat_f32(2.0f), f));
   const simd::f256 z = simd::avx::mul_f32(s, s);
@@ -89,7 +103,13 @@ log(simd::f256 x) noexcept
   const simd::f256 hfsq = simd::avx::mul_f32(simd::avx::splat_f32(0.5f), simd::avx::mul_f32(f, f));
   const simd::f256 log_m = simd::avx::add_f32(simd::avx::mul_f32(s, simd::avx::add_f32(hfsq, R)), simd::avx::sub_f32(f, hfsq));
   const simd::f256 fk = simd::avx::convert_i32_to_f32(k);
-  return simd::fma::fma_f32(fk, simd::avx::splat_f32(ln2_hi), simd::fma::fma_f32(fk, simd::avx::splat_f32(ln2_lo), log_m));
+  simd::f256 y = simd::fma::fma_f32(fk, simd::avx::splat_f32(ln2_hi), simd::fma::fma_f32(fk, simd::avx::splat_f32(ln2_lo), log_m));
+
+  const simd::f256 zero = simd::avx::zero_f32();
+  y = simd::avx::blendv_f32(y, x, simd::avx::cmp_f32<_CMP_EQ_OQ>(x, simd::avx::splat_f32(ieee::inf_v<f32>(0))));
+  y = simd::avx::blendv_f32(y, simd::avx::or_f32(x, simd::avx::splat_f32(ieee::qnan_v<f32>())),
+                            simd::avx::cmp_f32<_CMP_NGE_UQ>(x, zero));
+  return simd::avx::blendv_f32(y, simd::avx::splat_f32(ieee::inf_v<f32>(1)), simd::avx::cmp_f32<_CMP_EQ_OQ>(x, zero));
 }
 
 [[gnu::flatten]] inline simd::d256
@@ -160,19 +180,24 @@ log10(simd::f128 x) noexcept
 log(simd::f128 x) noexcept
 {
   using namespace mkbits::coeff::log_f32_data;
-  const int32x4_t xi = simd::neon::reinterpret_s32_from_f32(x);
+  const uint32x4_t subn = simd::neon::lt(x, simd::neon::splat_f32(0x1.0p-126f));
+  const float32x4_t xn = simd::neon::select(subn, simd::neon::mul(x, simd::neon::splat_f32(0x1.0p25f)), x);
+  const int32x4_t xi = simd::neon::reinterpret_s32_from_f32(xn);
 
   int32x4_t k
       = simd::neon::sub(simd::neon::and_(simd::neon::shr_arith_i32<23>(xi), simd::neon::splat_i32(0xFF)), simd::neon::splat_i32(127));
+  k = simd::neon::sub(k, simd::neon::and_(simd::neon::reinterpret_s32_from_u32(subn), simd::neon::splat_i32(25)));
 
   const int32x4_t mant_mask = simd::neon::splat_i32(0x007FFFFF);
   const int32x4_t bias = simd::neon::splat_i32(0x3F800000);
   float32x4_t m = simd::neon::reinterpret_f32_from_s32(simd::neon::or_(simd::neon::and_(xi, mant_mask), bias));
 
-  const float32x4_t sqrt_half = simd::neon::splat_f32(0x1.6a09e6p-1f);
-  const uint32x4_t lt = simd::neon::lt(m, sqrt_half);
-  m = simd::neon::select(lt, simd::neon::add(m, m), m);
-  k = simd::neon::sub(k, simd::neon::and_(simd::neon::reinterpret_s32_from_u32(lt), simd::neon::splat_i32(1)));
+  // m is rebuilt with the implicit bit forced on, so it lands in [1,2) and the split point the
+  // Lg1..Lg4 fit assumes is sqrt(2), not the sqrt(1/2) frexp() hands the scalar twin
+  const float32x4_t sqrt_two = simd::neon::splat_f32(0x1.6a09e6p+0f);
+  const uint32x4_t ge2 = simd::neon::ge(m, sqrt_two);
+  m = simd::neon::select(ge2, simd::neon::mul(m, simd::neon::splat_f32(0.5f)), m);
+  k = simd::neon::add(k, simd::neon::and_(simd::neon::reinterpret_s32_from_u32(ge2), simd::neon::splat_i32(1)));
   const float32x4_t f = simd::neon::sub(m, simd::neon::splat_f32(1.0f));
 #if defined(__micron_arch_arm64)
   const float32x4_t s = simd::neon::div(f, simd::neon::add(simd::neon::splat_f32(2.0f), f));
@@ -200,11 +225,18 @@ log(simd::f128 x) noexcept
   const float32x4_t log_m = simd::neon::add(simd::neon::mul(s, simd::neon::add(hfsq, R)), simd::neon::sub(f, hfsq));
   const float32x4_t fk = simd::neon::convert_i32_to_f32(k);
 #if defined(__micron_arm_fma) || defined(__micron_arch_arm64)
-  return simd::neon::fma_f32(simd::neon::fma_f32(log_m, fk, simd::neon::splat_f32(ln2_lo)), fk, simd::neon::splat_f32(ln2_hi));
+  float32x4_t y = simd::neon::fma_f32(simd::neon::fma_f32(log_m, fk, simd::neon::splat_f32(ln2_lo)), fk, simd::neon::splat_f32(ln2_hi));
 #else
-  return simd::neon::add(
+  float32x4_t y = simd::neon::add(
       simd::neon::add(simd::neon::mul(fk, simd::neon::splat_f32(ln2_hi)), simd::neon::mul(fk, simd::neon::splat_f32(ln2_lo))), log_m);
 #endif
+  const float32x4_t zero = simd::neon::splat_f32(0.0f);
+  y = simd::neon::select(simd::neon::eq(x, simd::neon::splat_f32(ieee::inf_v<f32>(0))), x, y);
+  // ge() is false for NaN, so the negative and NaN lanes fall through the same select
+  const float32x4_t qn = simd::neon::reinterpret_f32_from_u32(simd::neon::or_(
+      simd::neon::reinterpret_u32_from_f32(x), simd::neon::reinterpret_u32_from_f32(simd::neon::splat_f32(ieee::qnan_v<f32>()))));
+  y = simd::neon::select(simd::neon::ge(x, zero), y, qn);
+  return simd::neon::select(simd::neon::eq(x, zero), simd::neon::splat_f32(ieee::inf_v<f32>(1)), y);
 }
 
 [[gnu::flatten]] inline simd::f128
@@ -225,16 +257,19 @@ log10(simd::f128 x) noexcept
 log(simd::d128 x) noexcept
 {
   using namespace mkbits::coeff::log_f64_data;
-  const int64x2_t xi = simd::neon::reinterpret_s64_from_f64(x);
+  const uint64x2_t subn = simd::neon::lt(x, simd::neon::splat_f64(0x1.0p-1022));
+  const float64x2_t xn = simd::neon::select(subn, simd::neon::mul(x, simd::neon::splat_f64(0x1.0p54)), x);
+  const int64x2_t xi = simd::neon::reinterpret_s64_from_f64(xn);
   int64x2_t k
       = simd::neon::sub(simd::neon::and_(simd::neon::shr_arith_i64<52>(xi), simd::neon::splat_i64(0x7FF)), simd::neon::splat_i64(1023));
+  k = simd::neon::sub(k, simd::neon::and_(simd::neon::reinterpret_s64_from_u64(subn), simd::neon::splat_i64(54)));
   const int64x2_t mant_mask = simd::neon::splat_i64(0x000FFFFFFFFFFFFFLL);
   const int64x2_t bias = simd::neon::splat_i64(0x3FF0000000000000LL);
   float64x2_t m = simd::neon::reinterpret_f64_from_s64(simd::neon::or_(simd::neon::and_(xi, mant_mask), bias));
-  const float64x2_t sqrt_half = simd::neon::splat_f64(0x1.6a09e667f3bcdp-1);
-  const uint64x2_t lt = simd::neon::lt(m, sqrt_half);
-  m = simd::neon::select(lt, simd::neon::add(m, m), m);
-  k = simd::neon::sub(k, simd::neon::and_(simd::neon::reinterpret_s64_from_u64(lt), simd::neon::splat_i64(1)));
+  const float64x2_t sqrt_two = simd::neon::splat_f64(0x1.6a09e667f3bcdp+0);
+  const uint64x2_t ge2 = simd::neon::ge(m, sqrt_two);
+  m = simd::neon::select(ge2, simd::neon::mul(m, simd::neon::splat_f64(0.5)), m);
+  k = simd::neon::add(k, simd::neon::and_(simd::neon::reinterpret_s64_from_u64(ge2), simd::neon::splat_i64(1)));
   const float64x2_t f = simd::neon::sub(m, simd::neon::splat_f64(1.0));
   const float64x2_t s = simd::neon::div(f, simd::neon::add(simd::neon::splat_f64(2.0), f));
   const float64x2_t z = simd::neon::mul(s, s);
@@ -251,7 +286,16 @@ log(simd::d128 x) noexcept
   const float64x2_t log_m = simd::neon::add(simd::neon::mul(s, simd::neon::add(hfsq, R)), simd::neon::sub(f, hfsq));
 
   const float64x2_t fk = simd::neon::convert_i64_to_f64(k);
-  return simd::neon::fma_f64(simd::neon::fma_f64(log_m, fk, simd::neon::splat_f64(ln2_lo)), fk, simd::neon::splat_f64(ln2_hi));
+  float64x2_t y = simd::neon::fma_f64(simd::neon::fma_f64(log_m, fk, simd::neon::splat_f64(ln2_lo)), fk, simd::neon::splat_f64(ln2_hi));
+
+  const float64x2_t zero = simd::neon::splat_f64(0.0);
+  const uint64x2_t nneg = simd::neon::ge(x, zero);
+  // nothing exceeds +inf, so ge() against it IS the equality test; the alias layer has no eq() for f64 lanes
+  y = simd::neon::select(simd::neon::ge(x, simd::neon::splat_f64(ieee::inf_v<f64>(0))), x, y);
+  const float64x2_t qn = simd::neon::reinterpret_f64_from_u64(simd::neon::or_(
+      simd::neon::reinterpret_u64_from_f64(x), simd::neon::reinterpret_u64_from_f64(simd::neon::splat_f64(ieee::qnan_v<f64>()))));
+  y = simd::neon::select(nneg, y, qn);
+  return simd::neon::select(simd::neon::and_(nneg, simd::neon::le(x, zero)), simd::neon::splat_f64(ieee::inf_v<f64>(1)), y);
 }
 
 [[gnu::flatten]] inline simd::d128

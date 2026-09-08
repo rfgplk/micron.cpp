@@ -69,57 +69,65 @@ sign64(i64 x) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr i8
 min8(i8 a, i8 b) noexcept
 {
-  const i8 d = i8(a - b);
-  return i8(b + (d & i8(d >> 7)));
+  const i32 d = i32(a) - i32(b);
+  return i8(b + (d & (d >> 31)));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i8
 max8(i8 a, i8 b) noexcept
 {
-  const i8 d = i8(a - b);
-  return i8(a - (d & i8(d >> 7)));
+  const i32 d = i32(a) - i32(b);
+  return i8(a - (d & (d >> 31)));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i16
 min16(i16 a, i16 b) noexcept
 {
-  const i16 d = i16(a - b);
-  return i16(b + (d & i16(d >> 15)));
+  const i32 d = i32(a) - i32(b);
+  return i16(b + (d & (d >> 31)));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i16
 max16(i16 a, i16 b) noexcept
 {
-  const i16 d = i16(a - b);
-  return i16(a - (d & i16(d >> 15)));
+  const i32 d = i32(a) - i32(b);
+  return i16(a - (d & (d >> 31)));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 min32(i32 a, i32 b) noexcept
 {
-  const i32 d = a - b;
-  return b + (d & (d >> 31));
+  const i64 d = i64(a) - i64(b);
+  return i32(b + (d & (d >> 63)));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 max32(i32 a, i32 b) noexcept
 {
-  const i32 d = a - b;
-  return a - (d & (d >> 31));
+  const i64 d = i64(a) - i64(b);
+  return i32(a - (d & (d >> 63)));
+}
+
+// a - b overflows only when the operands differ in sign
+[[nodiscard, gnu::always_inline]] inline constexpr i64
+__lt_mask64(i64 a, i64 b) noexcept
+{
+  const i64 x = a ^ b;
+  return ((x & a) | (~x & i64(u64(a) - u64(b)))) >> 63;
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i64
 min64(i64 a, i64 b) noexcept
 {
-  const i64 d = a - b;
-  return b + (d & (d >> 63));
+  const i64 m = __lt_mask64(a, b);
+  return (a & m) | (b & ~m);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i64
 max64(i64 a, i64 b) noexcept
 {
-  const i64 d = a - b;
-  return a - (d & (d >> 63));
+  const i64 m = __lt_mask64(a, b);
+  return (b & m) | (a & ~m);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i8
@@ -149,25 +157,25 @@ clamp64(i64 x, i64 lo, i64 hi) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 lt8(i8 a, i8 b) noexcept
 {
-  return i32(u8(i8(a - b)) >> 7);
+  return i32(u32(i32(a) - i32(b)) >> 31);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 lt16(i16 a, i16 b) noexcept
 {
-  return i32(u16(i16(a - b)) >> 15);
+  return i32(u32(i32(a) - i32(b)) >> 31);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 lt32(i32 a, i32 b) noexcept
 {
-  return i32(u32(a - b) >> 31);
+  return i32(u64(i64(a) - i64(b)) >> 63);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 lt64(i64 a, i64 b) noexcept
 {
-  return i32(u64(a - b) >> 63);
+  return i32(__lt_mask64(a, b) & 1);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i32
@@ -329,13 +337,13 @@ mod_pow2_16(i16 x, int p) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 mod_pow2_32(i32 x, int p) noexcept
 {
-  return x & ((1 << p) - 1);
+  return i32(u32(x) & ~(~u32(0) << p));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i64
 mod_pow2_64(i64 x, int p) noexcept
 {
-  return x & ((i64(1) << p) - 1);
+  return i64(u64(x) & ~(~u64(0) << p));
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr u32
@@ -358,27 +366,28 @@ mod5(u32 a) noexcept
 mod7(u32 a) noexcept
 {
   constexpr u32 m = 0x24924925u;
-  const u32 q = u32((u64(a) * m) >> 35);
+  u32 q = u32((u64(a) * m) >> 32);
+  q += (a - q) >> 1;
+  q >>= 2;
   return a - q * 7u;
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr u32
 div_const(u32 a, u32 d) noexcept
 {
-  // if ( d == 1u ) return a;
-  const u32 m = u32((u64(1) << 32) / d + 1u);
-  return u32((u64(a) * m) >> 32);
+  const u64 m = (u64(1) << 32) / d;
+  const u32 q = u32((u64(a) * m) >> 32);
+  return q + u32((a - q * d) >= d);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr i32
 mul_const(i32 x, i32 k) noexcept
 {
-  i32 r = 0;
-  for ( int i = 0; k; ++i ) {
-    if ( k & 1 ) r += x << i;
-    k >>= 1;
+  u32 r = 0;
+  for ( u32 i = 0, uk = u32(k); uk; ++i, uk >>= 1 ) {
+    if ( uk & 1 ) r += u32(x) << i;
   }
-  return r;
+  return i32(r);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr u32

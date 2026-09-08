@@ -48,7 +48,7 @@ template<ieee754_floating T>
 [[nodiscard, gnu::always_inline]] inline constexpr T
 log_pade_cw_floor() noexcept
 {
-  return T(0.5);
+  return T(0.9);
 }
 
 template<ieee754_floating T>
@@ -154,7 +154,7 @@ log_map_pade(const quaternion<T> &q) noexcept
   const T sgn = (q.w >= T(0)) ? T(1) : T(-1);
   const T cx = q.x * sgn, cy = q.y * sgn, cz = q.z * sgn, cw = q.w * sgn;
   if ( cw < __impl_kinematics::log_pade_cw_floor<T>() ) {
-    const auto aa = to_axis_angle<T>(q);
+    const auto aa = to_axis_angle<T>(quaternion<T>{ cx, cy, cz, cw });
     return micron::vector_3<T>{ aa.axis.x * aa.angle, aa.axis.y * aa.angle, aa.axis.z * aa.angle };
   }
   const T s2 = cx * cx + cy * cy + cz * cz;

@@ -493,6 +493,9 @@ derivative(const cubic_spline_1d<F> &s, F x, u32 order = 1) noexcept
   if ( n < 2 ) return F(0);
   const F *__restrict__ xs = s.xs.data();
   const auto *__restrict__ seg = s.seg.data();
+  if ( order == 0 ) return evaluate<F>(s, x);
+  const bool outside = x < xs[0] || x > xs[n - 1];
+  if ( outside && (s.mode != extrap::linear_continue || order != 1) ) return F(0);
   if ( x <= xs[0] ) {
     if ( order == 1 ) return seg[0].data[1];
     if ( order == 2 ) return F(2) * seg[0].data[2];
@@ -507,7 +510,6 @@ derivative(const cubic_spline_1d<F> &s, F x, u32 order = 1) noexcept
   }
   const usize i = __impl_splines_bits::locate_segment<F>(xs, n, x, s.last_hit);
   const F t = x - xs[i];
-  if ( order == 0 ) return __impl_splines_bits::eval_cubic_local<F>(seg[i], t);
   if ( order == 1 ) return __impl_splines_bits::eval_cubic_deriv1_local<F>(seg[i], t);
   if ( order == 2 ) return __impl_splines_bits::eval_cubic_deriv2_local<F>(seg[i], t);
 
@@ -536,6 +538,8 @@ integral(const cubic_spline_1d<F> &s, F a, F b) noexcept
   ib = __impl_splines_bits::locate_segment<F>(xs, n, b > xs[n - 1] ? xs[n - 1] : b, s.last_hit);
 
   if ( a < xs[0] ) a = xs[0];
+  if ( a > xs[n - 1] ) a = xs[n - 1];
+  if ( b < xs[0] ) b = xs[0];
   if ( b > xs[n - 1] ) b = xs[n - 1];
 
   F sum = F(0);

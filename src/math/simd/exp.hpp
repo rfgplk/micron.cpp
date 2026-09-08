@@ -10,6 +10,7 @@
 #include "../../types.hpp"
 #include "../bits/coeff/exp_f32.hpp"
 #include "../bits/coeff/exp_f64.hpp"
+#include "../ieee.hpp"
 #include "_dispatch.hpp"
 
 __micron_diagnostic_push
@@ -34,7 +35,8 @@ exp(simd::d256 x) noexcept
 {
   using namespace mkbits::coeff::exp_f64_data;
 
-  const simd::d256 hi = simd::avx::splat_f64(709.78);
+  const simd::d256 x0 = x;
+  const simd::d256 hi = simd::avx::splat_f64(0x1.62e42fefa39efp+9);      // 709.7827128933840, largest finite exp
   const simd::d256 lo = simd::avx::splat_f64(-745.13);
   x = simd::avx::min_f64(simd::avx::max_f64(x, lo), hi);
 
@@ -64,14 +66,19 @@ exp(simd::d256 x) noexcept
   const simd::i256 bl = simd::avx2::add_i64(simd::avx2::widen_i32_to_i64(kl32), simd::avx::splat_i64(1023));
   const simd::d256 sh = simd::avx::cast_i256_to_f64(simd::avx2::shl_i64(bh, 52));
   const simd::d256 sl = simd::avx::cast_i256_to_f64(simd::avx2::shl_i64(bl, 52));
-  return simd::avx::mul_f64(simd::avx::mul_f64(simd::avx::mul_f64(tw, exp_r), sh), sl);
+  simd::d256 y = simd::avx::mul_f64(simd::avx::mul_f64(simd::avx::mul_f64(tw, exp_r), sh), sl);
+
+  y = simd::avx::blendv_f64(y, simd::avx::splat_f64(ieee::inf_v<f64>(0)), simd::avx::cmp_f64<_CMP_GT_OQ>(x0, hi));
+  y = simd::avx::blendv_f64(y, simd::avx::zero_f64(), simd::avx::cmp_f64<_CMP_LT_OQ>(x0, lo));
+  return simd::avx::blendv_f64(y, x0, simd::avx::cmp_f64<_CMP_UNORD_Q>(x0, x0));
 }
 
 [[gnu::flatten]] inline simd::f256
 exp(simd::f256 x) noexcept
 {
   using namespace mkbits::coeff::exp_f32_data;
-  const simd::f256 hi = simd::avx::splat_f32(88.722f);
+  const simd::f256 x0 = x;
+  const simd::f256 hi = simd::avx::splat_f32(88.72283935546875f);      // largest f32 with finite exp
   const simd::f256 lo = simd::avx::splat_f32(-103.972f);
   x = simd::avx::min_f32(simd::avx::max_f32(x, lo), hi);
   const simd::f256 fN
@@ -90,7 +97,11 @@ exp(simd::f256 x) noexcept
   const simd::i256 kl = simd::avx2::sub_i32(k, kh);
   const simd::f256 sh = simd::avx::cast_i256_to_f32(simd::avx2::shl_i32(simd::avx2::add_i32(kh, simd::avx::splat_i32(127)), 23));
   const simd::f256 sl = simd::avx::cast_i256_to_f32(simd::avx2::shl_i32(simd::avx2::add_i32(kl, simd::avx::splat_i32(127)), 23));
-  return simd::avx::mul_f32(simd::avx::mul_f32(simd::avx::mul_f32(tw, exp_r), sh), sl);
+  simd::f256 y = simd::avx::mul_f32(simd::avx::mul_f32(simd::avx::mul_f32(tw, exp_r), sh), sl);
+
+  y = simd::avx::blendv_f32(y, simd::avx::splat_f32(ieee::inf_v<f32>(0)), simd::avx::cmp_f32<_CMP_GT_OQ>(x0, hi));
+  y = simd::avx::blendv_f32(y, simd::avx::zero_f32(), simd::avx::cmp_f32<_CMP_LT_OQ>(x0, lo));
+  return simd::avx::blendv_f32(y, x0, simd::avx::cmp_f32<_CMP_UNORD_Q>(x0, x0));
 }
 
 [[gnu::flatten]] inline simd::d128
@@ -143,7 +154,8 @@ expm1(simd::f256 x) noexcept
 exp(simd::f128 x) noexcept
 {
   using namespace mkbits::coeff::exp_f32_data;
-  const float32x4_t cap_hi = simd::neon::splat_f32(88.722f);
+  const float32x4_t x0 = x;
+  const float32x4_t cap_hi = simd::neon::splat_f32(88.72283935546875f);      // largest f32 with finite exp
   const float32x4_t cap_lo = simd::neon::splat_f32(-103.972f);
   x = simd::neon::min(simd::neon::max(x, cap_lo), cap_hi);
 
@@ -197,7 +209,12 @@ exp(simd::f128 x) noexcept
   const int32x4_t kl = simd::neon::sub(k, kh);
   const float32x4_t sh = simd::neon::reinterpret_f32_from_s32(simd::neon::shl_i32<23>(simd::neon::add(kh, simd::neon::splat_i32(127))));
   const float32x4_t sl = simd::neon::reinterpret_f32_from_s32(simd::neon::shl_i32<23>(simd::neon::add(kl, simd::neon::splat_i32(127))));
-  return simd::neon::mul(simd::neon::mul(simd::neon::mul(tw, exp_r), sh), sl);
+  float32x4_t y = simd::neon::mul(simd::neon::mul(simd::neon::mul(tw, exp_r), sh), sl);
+
+  y = simd::neon::select(simd::neon::gt(x0, cap_hi), simd::neon::splat_f32(ieee::inf_v<f32>(0)), y);
+  y = simd::neon::select(simd::neon::lt(x0, cap_lo), simd::neon::splat_f32(0.0f), y);
+  // ge(x,x) is false only for NaN, which is what the alias layer offers in place of an unordered compare
+  return simd::neon::select(simd::neon::ge(x0, x0), y, x0);
 }
 
 #if defined(__micron_arch_arm64)
@@ -206,7 +223,8 @@ exp(simd::f128 x) noexcept
 exp(simd::d128 x) noexcept
 {
   using namespace mkbits::coeff::exp_f64_data;
-  const float64x2_t cap_hi = simd::neon::splat_f64(709.78);
+  const float64x2_t x0 = x;
+  const float64x2_t cap_hi = simd::neon::splat_f64(0x1.62e42fefa39efp+9);      // 709.7827128933840
   const float64x2_t cap_lo = simd::neon::splat_f64(-745.13);
   x = simd::neon::min(simd::neon::max(x, cap_lo), cap_hi);
   const float64x2_t fN = simd::neon::rint(simd::neon::mul(x, simd::neon::splat_f64(inv_ln2_32)));
@@ -232,7 +250,11 @@ exp(simd::d128 x) noexcept
   const int64x2_t kl = simd::neon::sub(k, kh);
   const float64x2_t sh = simd::neon::reinterpret_f64_from_s64(simd::neon::shl_i64<52>(simd::neon::add(kh, simd::neon::splat_i64(1023))));
   const float64x2_t sl = simd::neon::reinterpret_f64_from_s64(simd::neon::shl_i64<52>(simd::neon::add(kl, simd::neon::splat_i64(1023))));
-  return simd::neon::mul(simd::neon::mul(simd::neon::mul(tw, exp_r), sh), sl);
+  float64x2_t y = simd::neon::mul(simd::neon::mul(simd::neon::mul(tw, exp_r), sh), sl);
+
+  y = simd::neon::select(simd::neon::gt(x0, cap_hi), simd::neon::splat_f64(ieee::inf_v<f64>(0)), y);
+  y = simd::neon::select(simd::neon::lt(x0, cap_lo), simd::neon::splat_f64(0.0), y);
+  return simd::neon::select(simd::neon::ge(x0, x0), y, x0);
 }
 
 [[gnu::flatten]] inline simd::d128

@@ -9,6 +9,7 @@
 // N dimension rigid-body group
 
 #include "../../../concepts.hpp"
+#include "../../../except.hpp"
 #include "../../../types.hpp"
 #include "../../linalg/matfunc.hpp"
 #include "../../linalg/ops.hpp"
@@ -72,13 +73,13 @@ struct SEn {
   }
 
   [[nodiscard]] static SEn
-  exp_map(const mat<F, H, H> &Xi) noexcept
+  exp_map(const mat<F, H, H> &Xi) noexcept(!micron::except::__use_exceptions)
   {
     return SEn{ algebra_exp<F, H>(Xi) };
   }
 
   [[nodiscard]] static mat<F, H, H>
-  log_map(const SEn &g) noexcept
+  log_map(const SEn &g) noexcept(!micron::except::__use_exceptions)
   {
     return algebra_log<F, H>(g.T);
   }
@@ -120,7 +121,7 @@ struct SEn {
   }
 
   [[nodiscard]] static SEn
-  interpolate(const SEn &a, const SEn &b, F t) noexcept
+  interpolate(const SEn &a, const SEn &b, F t) noexcept(!micron::except::__use_exceptions)
   {
     return compose(a, exp_map(log_map(between(a, b)) * t));
   }

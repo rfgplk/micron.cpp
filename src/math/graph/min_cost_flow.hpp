@@ -151,8 +151,7 @@ supply_capacity(Supply value, Capacity &result) noexcept
 {
   if constexpr ( micron::is_signed_v<Supply> )
     if ( value < Supply{} ) return false;
-  const uint128_t wide = static_cast<uint128_t>(value);
-  if ( wide > static_cast<uint128_t>(micron::numeric_limits<Capacity>::max()) ) return false;
+  if ( static_cast<u64>(value) > static_cast<u64>(micron::numeric_limits<Capacity>::max()) ) return false;
   result = static_cast<Capacity>(value);
   return true;
 }
@@ -185,8 +184,7 @@ build_cost_residual(const G &graph, CapacityMap &capacity_map, CostMap &cost_map
   for ( auto edge : graph.edges() ) {
     const raw_capacity_type raw_capacity = __impl::weight(capacity_map, graph, edge.id);
     if ( __impl::invalid_weight(raw_capacity) ) return algorithm_status::invalid_weight;
-    if ( static_cast<uint128_t>(raw_capacity) > static_cast<uint128_t>(micron::numeric_limits<C>::max()) )
-      return algorithm_status::overflow;
+    if ( static_cast<u64>(raw_capacity) > static_cast<u64>(micron::numeric_limits<C>::max()) ) return algorithm_status::overflow;
     const C capacity = static_cast<C>(raw_capacity);
     const W cost = static_cast<W>(__impl::weight(cost_map, graph, edge.id));
     if ( __impl::nonfinite_weight(cost) ) return algorithm_status::invalid_weight;
@@ -195,7 +193,7 @@ build_cost_residual(const G &graph, CapacityMap &capacity_map, CostMap &cost_map
     const usize u = static_cast<usize>(edge.source.value);
     const usize v = static_cast<usize>(edge.target.value);
     const usize forward = workspace.residual.data()[u].size();
-    const usize reverse = workspace.residual.data()[v].size();
+    const usize reverse = u == v ? forward + 1 : workspace.residual.data()[v].size();
     workspace.residual.data()[u].push_back(arc_type{ edge.target.value, reverse, capacity, cost, edge.id, true, false });
     workspace.residual.data()[v].push_back(arc_type{ edge.source.value, forward, C{}, reverse_cost, edge.id, false, false });
     workspace.location.data()[static_cast<usize>(edge.id.value)] = { edge.source.value, forward };
@@ -213,7 +211,7 @@ add_residual_arc(min_cost_flow_workspace<I, C, W> &workspace, usize source, usiz
   W reverse_cost{};
   if ( !negate_cost(cost, reverse_cost) ) return algorithm_status::overflow;
   const usize forward = workspace.residual.data()[source].size();
-  const usize reverse = workspace.residual.data()[target].size();
+  const usize reverse = source == target ? forward + 1 : workspace.residual.data()[target].size();
   workspace.residual.data()[source].push_back(
       arc_type{ static_cast<I>(target), reverse, capacity, cost, edge_id<I>::invalid(), false, auxiliary });
   workspace.residual.data()[target].push_back(

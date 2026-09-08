@@ -95,10 +95,16 @@ __inv_sqrt_exact_s(F n2) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr f32
 __inv_sqrt_fast_s(f32 n2) noexcept
 {
-  // estimate + one NR step, ~2^-22 relative (consteval: exact)
+  // estimate + NR refinement, ~2^-22 relative (consteval: exact)
   f32 r = hw::rsqrt_approx_ss(n2);
-  f32 h = n2 * 0.5f;
-  return r * (1.5f - h * r * r);
+  const f32 h = n2 * 0.5f;
+  r = r * (1.5f - h * r * r);
+  if !consteval {
+#if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
+    r = r * (1.5f - h * r * r);
+#endif
+  }
+  return r;
 }
 
 #if defined(__micron_gfx_simd)

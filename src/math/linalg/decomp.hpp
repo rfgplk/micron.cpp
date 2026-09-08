@@ -195,11 +195,9 @@ eigen_sym3(const mat<F, 3, 3> &A) noexcept
   mat<F, 3, 3> M = A;
   mat<F, 3, 3> V = mat<F, 3, 3>::identity();
   constexpr int max_sweeps = 50;
-  constexpr F eps = F(1e-12);
 
   for ( int sweep = 0; sweep < max_sweeps; ++sweep ) {
-    F off = math::fabs(M.data[1]) + math::fabs(M.data[2]) + math::fabs(M.data[5]);
-    if ( off < eps ) break;
+    int rotations = 0;
 
     static constexpr int pq[3][2] = { { 0, 1 }, { 0, 2 }, { 1, 2 } };
     for ( int k = 0; k < 3; ++k ) {
@@ -207,7 +205,10 @@ eigen_sym3(const mat<F, 3, 3> &A) noexcept
       F app = M.data[p * 3 + p];
       F aqq = M.data[q * 3 + q];
       F apq = M.data[p * 3 + q];
-      if ( math::fabs(apq) < eps ) continue;
+      // scale-free skip, the tqli idiom: nothing left to annihilate at this precision
+      const F dd = math::fabs(app) + math::fabs(aqq);
+      if ( math::fabs(apq) + dd == dd ) continue;
+      ++rotations;
       F theta = (aqq - app) / (F(2) * apq);
       F t;
       if ( theta >= F(0) )
@@ -244,6 +245,8 @@ eigen_sym3(const mat<F, 3, 3> &A) noexcept
         V.data[r * 3 + q] = s * vrp + c * vrq;
       }
     }
+
+    if ( rotations == 0 ) break;
   }
 
   eigen_result3<F> res{};

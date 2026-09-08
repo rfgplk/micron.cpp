@@ -229,8 +229,14 @@ comb(int n, int k) noexcept
   if ( k > n - k ) k = n - k;
   T r{ 1 };
   for ( int i = 0; i < k; ++i ) {
-    r = r * T(n - i);
-    r = r / T(i + 1);
+    T p{};
+    if ( !__builtin_mul_overflow(r, T(n - i), &p) ) {
+      r = T(p / T(i + 1));
+      continue;
+    }
+    // C(n,i) * (n - i) can exceed T when C(n,i+1) does not; cancel the divisor before multiplying
+    const T g = math::gcd<T>(r, T(i + 1));
+    r = T(T(r / g) * T(T(n - i) / T(T(i + 1) / g)));
   }
   return r;
 }

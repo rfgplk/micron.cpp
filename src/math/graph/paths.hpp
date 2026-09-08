@@ -48,7 +48,8 @@ template<typename W>
 [[nodiscard]] constexpr bool
 invalid_weight(const W &weight) noexcept
 {
-  if constexpr ( micron::is_floating_point_v<W> ) return !micron::math::ieee::is_finite(weight);
+  if constexpr ( micron::is_floating_point_v<W> )
+    if ( !micron::math::ieee::is_finite(weight) ) return true;
   if constexpr ( micron::is_signed_v<W> ) return weight < W(0);
   return false;
 }

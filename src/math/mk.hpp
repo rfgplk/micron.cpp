@@ -18,6 +18,7 @@
 #include "generic.hpp"
 #include "ieee.hpp"
 #include "policy.hpp"
+#include "sqrt.hpp"
 
 #include "bits/cordic.hpp"
 #include "bits/exp.hpp"
@@ -1153,17 +1154,14 @@ __micron_math_export_fn(log10, log_ns);
 __micron_math_export_fn(log1p, log_ns);
 
 // pow
-__micron_math_export_fn(sqrt, pow_ns);
+// NOTE: sqrt, floor, ceil and round are NOT exported
 __micron_math_export_fn(cbrt, pow_ns);
 __micron_math_export_fn2(pow, pow_ns);
 __micron_math_export_fn2(hypot, pow_ns);
 __micron_math_export_fn(rsqrt, pow_ns);
 
 // round
-__micron_math_export_fn(floor, round_ns);
-__micron_math_export_fn(ceil, round_ns);
 __micron_math_export_fn(trunc, round_ns);
-__micron_math_export_fn(round, round_ns);
 __micron_math_export_fn(rint, round_ns);
 __micron_math_export_fn(nearbyint, round_ns);
 

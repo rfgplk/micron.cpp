@@ -23,10 +23,138 @@
 #include "bits/hyp.hpp"
 #include "bits/log.hpp"
 #include "bits/manip.hpp"
+#include "bits/rem.hpp"
+#include "bits/round.hpp"
 #include "bits/special.hpp"
 
-__micron_diagnostic_push// we are deliberately (re)defining functions the compiler knows as builtins
-__micron_diagnostic_ignored("-Wbuiltin-declaration-mismatch")
+namespace micron
+{
+namespace math
+{
+namespace __shim
+{
+
+#if defined(__micron_x86_fma) || (defined(__micron_arch_arm64) && defined(__micron_arm_neon))                                              \
+    || (defined(__micron_arch_arm32) && defined(__micron_arm_fma))
+#define __MC_SHIM_HW_FMA 1
+#endif
+
+// mkbits::rem::fmod ORs in the implicit one before its subnormal-normalisation loop
+template<ieee754_floating F>
+[[nodiscard]] inline F
+fmod(F x, F y) noexcept
+{
+  if ( !ieee::is_subnormal(y) ) return mkbits::rem::fmod<F>(x, y);
+  constexpr int k = ieee::traits<F>::mant_bits + 1;
+  const F ys = mkbits::manip::scalbn<F>(y, k);
+  const F r = mkbits::rem::fmod<F>(x, ys);
+  return mkbits::manip::scalbn<F>(mkbits::rem::fmod<F>(mkbits::manip::scalbn<F>(r, k), ys), -k);
+}
+
+template<ieee754_floating F>
+[[nodiscard]] inline F
+hypot(F x, F y) noexcept
+{
+  F ax = mkbits::manip::fabs(x);
+  F ay = mkbits::manip::fabs(y);
+  if ( ieee::is_inf(ax) || ieee::is_inf(ay) ) return ieee::inf_v<F>();
+  if ( ieee::is_nan(ax) || ieee::is_nan(ay) ) return ieee::qnan_v<F>();
+  if ( ax < ay ) {
+    const F t = ax;
+    ax = ay;
+    ay = t;
+  }
+  if ( ay == F(0) ) return ax;
+
+  const int e = mkbits::manip::ilogb<F>(ax);
+  const F sx = mkbits::manip::scalbn<F>(ax, -e);
+  const F sy = mkbits::manip::scalbn<F>(ay, -e);
+  const F q = F(sx * sx + sy * sy);
+  F r;
+  if constexpr ( sizeof(F) == 4 )
+    r = hw::sqrt_ss(q);
+  else
+    r = hw::sqrt_sd(q);
+  return mkbits::manip::scalbn<F>(r, e);
+}
+
+#if !defined(__MC_SHIM_HW_FMA)
+// s + e == a + b exactly
+template<ieee754_floating F>
+[[gnu::always_inline]] inline void
+two_sum(F a, F b, F &s, F &e) noexcept
+{
+  s = hw::fp_barrier(F(a + b));
+  const F bp = hw::fp_barrier(F(s - a));
+  const F lo = hw::fp_barrier(F(a - hw::fp_barrier(F(s - bp))));
+  e = hw::fp_barrier(F(lo + hw::fp_barrier(F(b - bp))));
+}
+#endif
+
+[[nodiscard]] inline f64
+fma(f64 a, f64 b, f64 c) noexcept
+{
+#if defined(__MC_SHIM_HW_FMA)
+  return hw::fmadd_sd(a, b, c);
+#else
+  const f64 p = hw::fp_barrier(f64(a * b));
+  const f64 pa = mkbits::manip::fabs(p);
+  // WARNING: dekker's split overflows above 2^996
+  if ( !(mkbits::manip::fabs(a) <= 0x1p996) || !(mkbits::manip::fabs(b) <= 0x1p996) || !(pa >= 0x1p-960) || !(pa <= 0x1p1000)
+       || !(mkbits::manip::fabs(c) <= 0x1p1000) )
+    return f64(p + c);
+
+  constexpr f64 split = 0x1.0p27 + 1.0;
+  const f64 at = hw::fp_barrier(f64(split * a));
+  const f64 ah = hw::fp_barrier(f64(at - hw::fp_barrier(f64(at - a))));
+  const f64 al = hw::fp_barrier(f64(a - ah));
+  const f64 bt = hw::fp_barrier(f64(split * b));
+  const f64 bh = hw::fp_barrier(f64(bt - hw::fp_barrier(f64(bt - b))));
+  const f64 bl = hw::fp_barrier(f64(b - bh));
+
+  f64 e = hw::fp_barrier(f64(hw::fp_barrier(f64(ah * bh)) - p));
+  e = hw::fp_barrier(f64(e + hw::fp_barrier(f64(ah * bl))));
+  e = hw::fp_barrier(f64(e + hw::fp_barrier(f64(al * bh))));
+  e = hw::fp_barrier(f64(e + hw::fp_barrier(f64(al * bl))));
+
+  f64 sh, sl, vh, vl, zh, zl;
+  two_sum<f64>(p, c, sh, sl);        // sh + sl == p + c
+  two_sum<f64>(sl, e, vh, vl);       // vh + vl == sl + e
+  two_sum<f64>(sh, vh, zh, zl);      // zh + zl + vl == a * b + c, exactly
+  return f64(zh + hw::fp_barrier(f64(zl + vl)));
+#endif
+}
+
+[[nodiscard]] inline f32
+fma(f32 a, f32 b, f32 c) noexcept
+{
+#if defined(__MC_SHIM_HW_FMA)
+  return hw::fmadd_ss(a, b, c);
+#else
+  // 24 + 24 significand bits, and f32's exponent range cannot over- or underflow f64, so the
+  // product is exact and the sum below rounds once -- into f64
+  const f64 p = hw::fp_barrier(f64(f64(a) * f64(b)));
+  if ( !ieee::is_finite(p) || !ieee::is_finite(f64(c)) ) return f32(p + f64(c));
+
+  f64 sh, sl;
+  two_sum<f64>(p, f64(c), sh, sl);
+  if ( sl != 0.0 && mkbits::manip::fabs(sh) >= 0x1p-126 ) {
+    // sh sits on an f32 halfway point, where the cast below would round on a tie the exact
+    // residual sl has already decided; step sh off it in sl's direction
+    u64 u = ieee::to_bits(sh);
+    if ( (u & 0x1fffffffULL) == 0x10000000ULL ) u += ((sl < 0.0) == (sh < 0.0)) ? u64(1) : ~u64(0);
+    sh = ieee::from_bits<f64>(u);
+  }
+  return f32(sh);
+#endif
+}
+
+};      // namespace __shim
+};      // namespace math
+};      // namespace micron
+
+__micron_diagnostic_push      // we are deliberately (re)defining functions the compiler knows as builtins
+    __micron_diagnostic_ignored("-Wbuiltin-declaration-mismatch")
 #define __MC_M1(NAME, DBODY, FBODY, LBODY)                                                                                                 \
   extern "C" __attribute__((weak)) double NAME(double x) noexcept { return (DBODY); }                                                      \
   extern "C" __attribute__((weak)) float NAME##f(float x) noexcept { return (FBODY); }                                                     \
@@ -37,64 +165,62 @@ __micron_diagnostic_ignored("-Wbuiltin-declaration-mismatch")
   extern "C" __attribute__((weak)) float NAME##f(float x, float y) noexcept { return (FBODY); }                                            \
   extern "C" __attribute__((weak)) long double NAME##l(long double x, long double y) noexcept { return (LBODY); }
 
-__MC_M1(sqrt, micron::math::hw::sqrt_sd(x), micron::math::hw::sqrt_ss(x),
-        static_cast<long double>(micron::math::hw::sqrt_sd(static_cast<double>(x))))
+        __MC_M1(sqrt, micron::math::hw::sqrt_sd(x), micron::math::hw::sqrt_ss(x),
+                static_cast<long double>(micron::math::hw::sqrt_sd(static_cast<double>(x))))
 
-// __builtin_fabs is a pure bit-op on every arch
-__MC_M1(cbrt, __builtin_copysign(micron::math::powerf(__builtin_fabs(x), 1.0 / 3.0), x),
-        __builtin_copysignf(micron::math::powerf32(__builtin_fabsf(x), static_cast<float>(1.0 / 3.0)), x),
-        static_cast<long double>(__builtin_copysign(micron::math::powerf(__builtin_fabs(static_cast<double>(x)), 1.0 / 3.0),
-                                                    static_cast<double>(x))))
+    // __builtin_fabs is a pure bit-op on every arch
+    __MC_M1(cbrt, __builtin_copysign(micron::math::powerf(__builtin_fabs(x), 1.0 / 3.0), x),
+            __builtin_copysignf(micron::math::powerf32(__builtin_fabsf(x), static_cast<float>(1.0 / 3.0)), x),
+            static_cast<long double>(__builtin_copysign(micron::math::powerf(__builtin_fabs(static_cast<double>(x)), 1.0 / 3.0),
+                                                        static_cast<double>(x))))
 
-__MC_M1(exp, micron::math::expf64(x), micron::math::expf32(x), micron::math::expf128(x))
-__MC_M1(exp2, micron::math::powerf(2.0, x), micron::math::powerf32(2.0f, x), micron::math::powerflong(2.0L, x))
+        __MC_M1(exp, micron::math::expf64(x), micron::math::expf32(x), micron::math::expf128(x))
+            __MC_M1(exp2, micron::math::powerf(2.0, x), micron::math::powerf32(2.0f, x), micron::math::powerflong(2.0L, x))
 
-__MC_M1(log, micron::math::logf64(x), micron::math::logf32(x), micron::math::logf128(x))
-__MC_M1(log2, micron::math::flog2(x), micron::math::flog2(x), micron::math::flog2(x))
-__MC_M1(log10, micron::math::log10f64(x), micron::math::log10f32(x), micron::math::log10f128(x))
+                __MC_M1(log, micron::math::logf64(x), micron::math::logf32(x), micron::math::logf128(x))
+                    __MC_M1(log2, micron::math::flog2(x), micron::math::flog2(x), micron::math::flog2(x))
+                        __MC_M1(log10, micron::math::log10f64(x), micron::math::log10f32(x), micron::math::log10f128(x))
 
-__MC_M1(sin, micron::math::cr::sin_f64(x), micron::math::cr::sin_f32(x),
-        static_cast<long double>(micron::math::cr::sin_f64(static_cast<double>(x))))
-__MC_M1(cos, micron::math::cr::cos_f64(x), micron::math::cr::cos_f32(x),
-        static_cast<long double>(micron::math::cr::cos_f64(static_cast<double>(x))))
-__MC_M1(tan, micron::math::cr::sin_f64(x) / micron::math::cr::cos_f64(x), micron::math::cr::sin_f32(x) / micron::math::cr::cos_f32(x),
-        static_cast<long double>(micron::math::cr::sin_f64(static_cast<double>(x)) / micron::math::cr::cos_f64(static_cast<double>(x))))
+                            __MC_M1(sin, micron::math::cr::sin_f64(x), micron::math::cr::sin_f32(x),
+                                    static_cast<long double>(micron::math::cr::sin_f64(static_cast<double>(x))))
+                                __MC_M1(cos, micron::math::cr::cos_f64(x), micron::math::cr::cos_f32(x),
+                                        static_cast<long double>(micron::math::cr::cos_f64(static_cast<double>(x))))
+                                    __MC_M1(tan, micron::math::cr::sin_f64(x) / micron::math::cr::cos_f64(x),
+                                            micron::math::cr::sin_f32(x) / micron::math::cr::cos_f32(x),
+                                            static_cast<long double>(micron::math::cr::sin_f64(static_cast<double>(x))
+                                                                     / micron::math::cr::cos_f64(static_cast<double>(x))))
 
-// these are libcalls on armv7-a (no vrintX)
-__MC_M1(ceil, micron::math::ceil(x), micron::math::ceil(x), micron::math::ceil(x))
-__MC_M1(floor, micron::math::floor(x), micron::math::floor(x), micron::math::floor(x))
-__MC_M1(round, micron::math::round(x), micron::math::round(x), micron::math::round(x))
-__MC_M1(trunc, (x < 0 ? micron::math::ceil(x) : micron::math::floor(x)), (x < 0 ? micron::math::ceil(x) : micron::math::floor(x)),
-        (x < 0 ? micron::math::ceil(x) : micron::math::floor(x)))
-__MC_M1(rint, micron::math::rint(x), micron::math::rint(x), static_cast<long double>(micron::math::rint(static_cast<double>(x))))
-__MC_M1(nearbyint, micron::math::nearbyint(x), micron::math::nearbyint(x),
-        static_cast<long double>(micron::math::nearbyint(static_cast<double>(x))))
+    // these are libcalls on armv7-a (no vrintX)
+    __MC_M1(ceil, micron::math::ceil(x), micron::math::ceil(x), micron::math::ceil(x))
+        __MC_M1(floor, micron::math::floor(x), micron::math::floor(x), micron::math::floor(x))
+            __MC_M1(round, micron::math::round(x), micron::math::round(x), micron::math::round(x))
+                __MC_M1(trunc, (x < 0 ? micron::math::ceil(x) : micron::math::floor(x)),
+                        (x < 0 ? micron::math::ceil(x) : micron::math::floor(x)), (x < 0 ? micron::math::ceil(x) : micron::math::floor(x)))
+                    __MC_M1(rint, micron::math::rint(x), micron::math::rint(x),
+                            static_cast<long double>(micron::math::rint(static_cast<double>(x))))
+                        __MC_M1(nearbyint, micron::math::nearbyint(x), micron::math::nearbyint(x),
+                                static_cast<long double>(micron::math::nearbyint(static_cast<double>(x))))
 
-// __builtin_fabs/copysign are pure bit-ops, never libcalls
-__MC_M1(fabs, __builtin_fabs(x), __builtin_fabsf(x), __builtin_fabsl(x))
-__MC_M2(copysign, __builtin_copysign(x, y), __builtin_copysignf(x, y), __builtin_copysignl(x, y))
+    // __builtin_fabs/copysign are pure bit-ops, never libcalls
+    __MC_M1(fabs, __builtin_fabs(x), __builtin_fabsf(x), __builtin_fabsl(x))
+        __MC_M2(copysign, __builtin_copysign(x, y), __builtin_copysignf(x, y), __builtin_copysignl(x, y))
 
-__MC_M2(pow, micron::math::powerf(x, y), micron::math::powerf32(x, y), micron::math::powerflong(x, y))
-__MC_M2(remainder, micron::math::remainder(x, y), micron::math::remainder(x, y),
-        static_cast<long double>(micron::math::remainder(static_cast<double>(x), static_cast<double>(y))))
-__MC_M2(hypot, micron::math::hw::sqrt_sd(x *x + y * y), micron::math::hw::sqrt_ss(x *x + y * y),
-        static_cast<long double>(micron::math::hw::sqrt_sd(static_cast<double>(x) * static_cast<double>(x)
-                                                           + static_cast<double>(y) * static_cast<double>(y))))
+            __MC_M2(pow, micron::math::powerf(x, y), micron::math::powerf32(x, y), micron::math::powerflong(x, y))
+                __MC_M2(remainder, micron::math::remainder(x, y), micron::math::remainder(x, y),
+                        static_cast<long double>(micron::math::remainder(static_cast<double>(x), static_cast<double>(y))))
+                    __MC_M2(hypot, micron::math::__shim::hypot<double>(x, y), micron::math::__shim::hypot<float>(x, y),
+                            static_cast<long double>(micron::math::hw::sqrt_sd(static_cast<double>(x) * static_cast<double>(x)
+                                                                               + static_cast<double>(y) * static_cast<double>(y))))
 
-extern "C" __attribute__((weak)) double
-fmod(double x, double y) noexcept
+                        extern "C" __attribute__((weak)) double fmod(double x, double y) noexcept
 {
-  double q = x / y;
-  double t = (q < 0 ? micron::math::ceil(q) : micron::math::floor(q));
-  return x - t * y;
+  return micron::math::__shim::fmod<double>(x, y);
 }
 
 extern "C" __attribute__((weak)) float
 fmodf(float x, float y) noexcept
 {
-  float q = x / y;
-  float t = (q < 0 ? micron::math::ceil(q) : micron::math::floor(q));
-  return x - t * y;
+  return micron::math::__shim::fmod<float>(x, y);
 }
 
 extern "C" __attribute__((weak)) long double
@@ -105,17 +231,16 @@ fmodl(long double x, long double y) noexcept
   return x - t * y;
 }
 
-// we're letting the optimizer deal with there
 extern "C" __attribute__((weak)) double
 fma(double a, double b, double c) noexcept
 {
-  return a * b + c;
+  return micron::math::__shim::fma(a, b, c);
 }
 
 extern "C" __attribute__((weak)) float
 fmaf(float a, float b, float c) noexcept
 {
-  return a * b + c;
+  return micron::math::__shim::fma(a, b, c);
 }
 
 extern "C" __attribute__((weak)) long double
@@ -207,6 +332,7 @@ static_assert(micron::math::mkbits::trig_ns::atan2<f64>(-1.0, 0.0) < -1.5707,
 
 #undef __MC_M1
 #undef __MC_M2
+#undef __MC_SHIM_HW_FMA
 
 __micron_diagnostic_pop
 // libgcc integer fns

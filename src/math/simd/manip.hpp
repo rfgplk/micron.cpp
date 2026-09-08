@@ -122,6 +122,32 @@ fabs(simd::f128 x) noexcept
 }
 
 [[gnu::always_inline]] inline simd::d128
+fneg(simd::d128 x) noexcept
+{
+  return simd::sse::xor_f64(x, simd::sse::splat_f64(-0.0));
+}
+
+[[gnu::always_inline]] inline simd::f128
+fneg(simd::f128 x) noexcept
+{
+  return simd::sse::xor_f32(x, simd::sse::splat_f32(-0.0f));
+}
+
+[[gnu::always_inline]] inline simd::d128
+copysign(simd::d128 mag, simd::d128 sgn) noexcept
+{
+  const simd::d128 sm = simd::sse::splat_f64(-0.0);
+  return simd::sse::or_f64(simd::sse::andnot_f64(sm, mag), simd::sse::and_f64(sm, sgn));
+}
+
+[[gnu::always_inline]] inline simd::f128
+copysign(simd::f128 mag, simd::f128 sgn) noexcept
+{
+  const simd::f128 sm = simd::sse::splat_f32(-0.0f);
+  return simd::sse::or_f32(simd::sse::andnot_f32(sm, mag), simd::sse::and_f32(sm, sgn));
+}
+
+[[gnu::always_inline]] inline simd::d128
 floor(simd::d128 x) noexcept
 {
   return simd::sse::round_f64<_MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC>(x);

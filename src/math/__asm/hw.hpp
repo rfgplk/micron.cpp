@@ -18,17 +18,58 @@ namespace math
 namespace hw
 {
 
+// the consteval body of sqrt_ss/sqrt_sd wherever __builtin_sqrt* is not a constant expression, so
+// it has to be the correctly-rounded root the hardware arms below deliver, over the whole range
 template<typename F>
 [[nodiscard]] inline constexpr F
 __constexpr_sqrt(F x) noexcept
 {
   if ( x == F(0) or x == F(1) ) return x;
-  F r = x > F(1) ? x : F(1);
-  for ( int i = 0; i < (sizeof(F) == sizeof(f32) ? 20 : 40); ++i ) {
-    const F next = (r + x / r) * F(0.5);
+  if ( !(x > F(0)) ) return x == x ? F(__builtin_nan("")) : x;      // negative -> NaN, NaN -> itself
+  if ( x >= F(__builtin_huge_val()) ) return x;                     // +inf; the reduction cannot end
+
+  constexpr bool single = sizeof(F) == sizeof(f32);
+  int e = 0;
+  F v = x;
+  for ( int i = 0; i < 20 && v >= F(0x1p+64); ++i ) {
+    v *= F(0x1p-64);
+    e += 32;
+  }
+  for ( int i = 0; i < 32 && v >= F(4); ++i ) {
+    v *= F(0.25);
+    e += 1;
+  }
+  for ( int i = 0; i < 20 && v < F(0x1p-64); ++i ) {
+    v *= F(0x1p+64);
+    e -= 32;
+  }
+  for ( int i = 0; i < 32 && v < F(1); ++i ) {
+    v *= F(4);
+    e -= 1;
+  }
+
+  F r = v;
+  for ( int i = 0; i < (single ? 20 : 40); ++i ) {
+    const F next = (r + v / r) * F(0.5);
     if ( next == r ) break;
     r = next;
   }
+
+  // heron settles on either neighbour of the root
+  const F split = single ? F(0x1p12) + F(1) : F(0x1p27) + F(1);
+  const F u = single ? F(0x1p-23) : F(0x1p-52);      // ulp of [1, 2), which is where r lives
+  const F c = split * r;
+  const F rh = c - (c - r);
+  const F rl = r - rh;
+  const F t = ((v - rh * rh) - (rh * rl + rh * rl)) - rl * rl;
+  const F h = u * u * F(0.25);
+  if ( t - r * u > h )
+    r += u;
+  else if ( t + r * u < h )
+    r -= u;
+
+  for ( int i = 0; i < e; ++i ) r *= F(2);
+  for ( int i = 0; i > e; --i ) r *= F(0.5);
   return r;
 }
 
@@ -57,9 +98,13 @@ sqrt_ss(f32 x) noexcept
     return __constexpr_sqrt(x);
 #endif
   }
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_x86_any) && defined(__micron_x86_sse)
   f32 r;
   __asm__("sqrtss %1, %0" : "=x"(r) : "x"(x));
+  return r;
+#elif defined(__micron_arch_x86_any) && defined(__FLT_EVAL_METHOD__) && __FLT_EVAL_METHOD__ == 2
+  f32 r;
+  __asm__("fsqrt" : "=t"(r) : "0"(x));
   return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   return simd::neon::get_lane_f32<0>(simd::neon::sqrt(simd::neon::splat_f32(x)));
@@ -67,6 +112,9 @@ sqrt_ss(f32 x) noexcept
   f32 r;
   __asm__("vsqrt.f32 %0, %1" : "=t"(r) : "t"(x));
   return r;
+#elif defined(__micron_arch_arm32) && !defined(__micron_arm_fp)
+  // no FPU at all, so the #else would call sqrtf
+  return __constexpr_sqrt(x);
 #else
   return f32(__builtin_sqrtf(x));
 #endif
@@ -86,12 +134,20 @@ sqrt_sd(f64 x) noexcept
   f64 r;
   __asm__("sqrtsd %1, %0" : "=x"(r) : "x"(x));
   return r;
+#elif defined(__micron_arch_x86_any) && defined(__FLT_EVAL_METHOD__) && __FLT_EVAL_METHOD__ == 2
+  // same as sqrt_ss
+  f64 r;
+  __asm__("fsqrt" : "=t"(r) : "0"(x));
+  return r;
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   return simd::neon::get_lane_f64<0>(simd::neon::sqrt(simd::neon::splat_f64(x)));
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
   f64 r;
   __asm__("vsqrt.f64 %P0, %P1" : "=w"(r) : "w"(x));
   return r;
+#elif defined(__micron_arch_arm32) && !defined(__micron_arm_fp)
+  // same as sqrt_ss
+  return __constexpr_sqrt(x);
 #else
   return f64(__builtin_sqrt(x));
 #endif
@@ -175,7 +231,7 @@ fmadd_sd(f64 a, f64 b, f64 c) noexcept
   f64 r = c;
   __asm__("vfma.f64 %P0, %P1, %P2" : "+w"(r) : "w"(a), "w"(b));
   return r;
-#elif defined(__micron_arch_arm32)
+#elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
   f64 r = c;
   __asm__("vmla.f64 %P0, %P1, %P2" : "+w"(r) : "w"(a), "w"(b));
   return r;

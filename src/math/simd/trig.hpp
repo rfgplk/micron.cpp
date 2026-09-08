@@ -12,6 +12,8 @@
 #include "../../types.hpp"
 #include "../bits/coeff/sin_f32.hpp"
 #include "../bits/coeff/sin_f64.hpp"
+#include "../bits/trig.hpp"
+#include "../ieee.hpp"
 #include "_dispatch.hpp"
 #include "manip.hpp"
 
@@ -62,16 +64,42 @@ kcos(simd::d256 r) noexcept
   return simd::fma::fma_f64(simd::avx::mul_f64(z, z), p, simd::avx::sub_f64(simd::avx::splat_f64(1.0), hz));
 }
 
+[[gnu::flatten]] inline simd::d256
+reduce_pio2_scalar(simd::d256 x, simd::i256 *q_out) noexcept
+{
+  alignas(32) f64 xs[4];
+  alignas(32) f64 rs[4];
+  alignas(32) i64 qs[4];
+  simd::avx::storeu_f64(reinterpret_cast<double *>(xs), x);
+  for ( usize i = 0; i < 4; ++i ) {
+    if ( !ieee::is_finite(xs[i]) ) [[unlikely]] {
+      rs[i] = ieee::qnan_v<f64>();
+      qs[i] = 0;
+      continue;
+    }
+    // cody_waite's leading x - fN * pio2_hi is exact only while fN fits in 20 bits
+    qs[i] = (mkbits::manip::fabs(xs[i]) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(xs[i], &rs[i])
+                                                    : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(xs[i], &rs[i]);
+  }
+  *q_out = simd::avx::loadu_i256(reinterpret_cast<const __m256i_u *>(qs));
+  return simd::avx::loadu_f64(reinterpret_cast<const double *>(rs));
+}
+
 [[gnu::always_inline]] inline simd::d256
 reduce_pio2(simd::d256 x, simd::i256 *q_out) noexcept
 {
+  const simd::d256 ax = simd::avx::andnot_f64(simd::avx::splat_f64(-0.0), x);
+  if ( simd::avx::movemask_f64(simd::avx::cmp_f64<_CMP_LT_OQ>(ax, simd::avx::splat_f64(0x1.0p33))) != 0xF ) [[unlikely]]
+    return reduce_pio2_scalar(x, q_out);
+
   const simd::d256 fN
       = simd::avx::round_f64<_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC>(simd::avx::mul_f64(x, simd::avx::splat_f64(inv_pio2)));
   simd::d256 t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_hi), x);
   t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_mid), t);
   t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_lo), t);
-  const simd::i256 N32 = simd::avx::cast_lo128_to_i256(simd::avx::convert_f64_to_i32(fN));
-  *q_out = simd::avx2::widen_i32_to_i64(simd::avx::cast_i256_to_lo128(N32));
+  // convert_f64_to_i32 returns INT_MIN for |fN| >= 2^31
+  *q_out = simd::avx2::and_i256(simd::avx::cast_f64_to_i256(simd::avx::add_f64(fN, simd::avx::splat_f64(0x1.8p52))),
+                                simd::avx::splat_i64(3));
   return t;
 }
 
@@ -222,12 +250,13 @@ inline constexpr f64 inv_pio2_d = 0x1.45f306dc9c883p-1;
 __reduce_lane_f64(f32 xf, int *q) noexcept
 {
   const f64 x = f64(xf);
-  const f64 fN = mkbits::round_ns::rint<f64>(x * inv_pio2_d);      // scalar round-to-nearest-even (arch-independent)
-  const i64 N = i64(fN);
-  f64 t = x - fN * pio2_hi_d;
-  t = t - fN * pio2_mid_d;
-  t = t - fN * pio2_lo_d;
-  *q = int(N & 3);
+  if ( !ieee::is_finite(x) ) [[unlikely]] {
+    *q = 0;
+    return f32(ieee::qnan_v<f64>());
+  }
+  f64 t;
+  *q = (mkbits::manip::fabs(x) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(x, &t)
+                                          : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(x, &t);
   return f32(t);
 }
 
@@ -384,9 +413,33 @@ kcos(simd::d128 r) noexcept
   return simd::neon::fma_f64(simd::neon::sub(simd::neon::splat_f64(1.0), hz), simd::neon::mul(z, z), p);
 }
 
+[[gnu::flatten]] inline simd::d128
+reduce_scalar(simd::d128 x, int64x2_t *q_out) noexcept
+{
+  f64 xs[2] = { simd::neon::get_lane_f64<0>(x), simd::neon::get_lane_f64<1>(x) };
+  f64 rs[2];
+  i64 qs[2];
+  for ( usize i = 0; i < 2; ++i ) {
+    if ( !ieee::is_finite(xs[i]) ) [[unlikely]] {
+      rs[i] = ieee::qnan_v<f64>();
+      qs[i] = 0;
+      continue;
+    }
+    qs[i] = (mkbits::manip::fabs(xs[i]) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(xs[i], &rs[i])
+                                                    : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(xs[i], &rs[i]);
+  }
+  *q_out = simd::neon::load_i64(qs);
+  return simd::neon::load_f64(rs);
+}
+
 [[gnu::always_inline]] inline simd::d128
 reduce(simd::d128 x, int64x2_t *q_out) noexcept
 {
+  const int64x2_t big
+      = simd::neon::reinterpret_s64_from_u64(simd::neon::ge(simd::neon::abs(x), simd::neon::splat_f64(0x1.0p33)));
+  if ( (simd::neon::get_lane_i64<0>(big) | simd::neon::get_lane_i64<1>(big)) != 0 ) [[unlikely]]
+    return reduce_scalar(x, q_out);
+
   const float64x2_t fN = simd::neon::rint(simd::neon::mul(x, simd::neon::splat_f64(inv_pio2)));
   float64x2_t t = simd::neon::fms_f64(x, fN, simd::neon::splat_f64(pio2_hi));
   t = simd::neon::fms_f64(t, fN, simd::neon::splat_f64(pio2_mid));

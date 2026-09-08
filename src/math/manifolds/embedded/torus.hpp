@@ -25,7 +25,7 @@ namespace manifolds
 {
 
 template<ieee754_floating F, usize N>
-  requires(N >= 1 && N <= 16)
+  requires(N >= 2 && N <= 16)
 struct torus {
   using value_type = F;
   static constexpr usize length = N;

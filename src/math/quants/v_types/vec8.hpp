@@ -201,9 +201,9 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   constexpr T
   linf_norm() const
   {
-    T lo = math::fabsmax(math::fabsmax(math::fabs(x), math::fabs(y)), math::fabsmax(math::fabs(z), math::fabs(w)));
-    T hi = math::fabsmax(math::fabsmax(math::fabs(a), math::fabs(b)), math::fabsmax(math::fabs(c), math::fabs(d)));
-    return math::fabsmax(lo, hi);
+    T lo = math::fmax(math::fmax(math::fabs(x), math::fabs(y)), math::fmax(math::fabs(z), math::fabs(w)));
+    T hi = math::fmax(math::fmax(math::fabs(a), math::fabs(b)), math::fmax(math::fabs(c), math::fabs(d)));
+    return math::fmax(lo, hi);
   }
 
   constexpr T
@@ -262,17 +262,17 @@ struct alignas(micron::math::vec_align_v<T, 8>) vector_8 {
   constexpr T
   cos_angle(const vector_8<T> &v) const
   {
-    T denom = squared_norm() * v.squared_norm();
-    if ( denom <= math::default_eps<T>() ) return T{ 0 };
-    return dot(v) * math::frsqrt(denom);
+    T denom = math::fsqrt(squared_norm()) * math::fsqrt(v.squared_norm());
+    if ( denom <= math::fsqrt(math::default_eps<T>()) ) return T{ 0 };
+    return dot(v) / denom;
   }
 
   constexpr T
   angle(const vector_8<T> &v) const
   {
-    T denom = squared_norm() * v.squared_norm();
-    if ( denom <= math::default_eps<T>() ) return T{ 0 };
-    return math::acos(math::fclamp(dot(v) * math::frsqrt(denom), T{ -1 }, T{ 1 }));
+    T denom = math::fsqrt(squared_norm()) * math::fsqrt(v.squared_norm());
+    if ( denom <= math::fsqrt(math::default_eps<T>()) ) return T{ 0 };
+    return math::acos(math::fclamp(dot(v) / denom, T{ -1 }, T{ 1 }));
   }
 
   constexpr T

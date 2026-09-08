@@ -39,16 +39,41 @@ struct dd64 {
 
 static_assert(sizeof(dd64) == 16, "dd64 must be 2 doubles wide");
 
+#if defined(__micron_compiler_clang)
+#pragma float_control(push)
+#pragma float_control(precise, on)
+#endif
+
 namespace dd
 {
+
+[[nodiscard, gnu::always_inline]] inline constexpr f64
+__keep(f64 x) noexcept
+{
+#if defined(__has_builtin) && __has_builtin(__builtin_assoc_barrier)
+  return __builtin_assoc_barrier(x);
+#else
+  return x;
+#endif
+}
+
+// dekker's split
+[[nodiscard, gnu::always_inline]] inline constexpr dd64
+__split(f64 a) noexcept
+{
+  constexpr f64 c = 0x1.0p27 + 1.0;
+  const f64 t = c * a;
+  const f64 h = t - (t - a);
+  return { h, a - h };
+}
 
 // Knuth's two sum (exact when a + b == s + e)
 [[nodiscard, gnu::always_inline]] inline constexpr dd64
 two_sum(f64 a, f64 b) noexcept
 {
-  f64 s = a + b;
-  f64 bp = s - a;
-  f64 e = (a - (s - bp)) + (b - bp);
+  f64 s = __keep(a + b);
+  f64 bp = __keep(s - a);
+  f64 e = __keep(__keep(a - __keep(s - bp)) + __keep(b - bp));
   return { s, e };
 }
 
@@ -56,8 +81,8 @@ two_sum(f64 a, f64 b) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr dd64
 fast_two_sum(f64 a, f64 b) noexcept
 {
-  f64 s = a + b;
-  f64 e = b - (s - a);
+  f64 s = __keep(a + b);
+  f64 e = __keep(b - __keep(s - a));
   return { s, e };
 }
 
@@ -65,17 +90,29 @@ fast_two_sum(f64 a, f64 b) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr dd64
 two_prod(f64 a, f64 b) noexcept
 {
-  f64 p = a * b;
+  f64 p = __keep(a * b);
   // clang doesn't support __builtin_fma in a constexpr somehow?!?!?
   if consteval {
 #if defined(__micron_compiler_gcc)
     f64 e = __builtin_fma(a, b, -p);
 #else
-    f64 e = (a * b) - p;
+    f64 sa = a, sb = b, k = 1.0;
+    if ( sa > 0x1.0p996 || sa < -0x1.0p996 ) {
+      sa *= 0x1.0p-64;
+      k *= 0x1.0p64;
+    }
+    if ( sb > 0x1.0p996 || sb < -0x1.0p996 ) {
+      sb *= 0x1.0p-64;
+      k *= 0x1.0p64;
+    }
+    const dd64 ah = __split(sa);
+    const dd64 bh = __split(sb);
+    const f64 sp = p / k;
+    f64 e = (((ah.hi * bh.hi - sp) + ah.hi * bh.lo + ah.lo * bh.hi) + ah.lo * bh.lo) * k;
 #endif
     return { p, e };
   }
-  f64 e = __builtin_fma(a, b, -p);
+  f64 e = __keep(__builtin_fma(a, b, -p));
   return { p, e };
 }
 
@@ -128,5 +165,10 @@ div(dd64 a, dd64 b) noexcept
 }
 
 };      // namespace dd
+
+#if defined(__micron_compiler_clang)
+#pragma float_control(pop)
+#endif
+
 };      // namespace math
 };      // namespace micron

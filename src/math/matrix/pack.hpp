@@ -568,6 +568,7 @@ micro_kernel_6x8_avx2_f64(const double *Ap, const double *Bp, usize k, double al
   }
 }
 
+#if defined(__micron_arch_amd64)
 // INLINE ASM
 // the above version hits a GCC register-allocation pathology where one accumulator
 // spills to stack via memory-source FMA, capping at ~7 fc/cy
@@ -1018,13 +1019,12 @@ micro_kernel_6x8_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in, 
       "vxorpd %%ymm14, %%ymm14, %%ymm14 \n\t"
       "vxorpd %%ymm15, %%ymm15, %%ymm15 \n\t"
 
-      // preload B for K-iter 0 of either the unrolled loop or the
-      // tail loop (whichever fires)
-      "vmovupd  0(%[bp]), %%ymm0 \n\t"
-      "vmovupd 32(%[bp]), %%ymm1 \n\t"
-
       "testq %[k4], %[k4] \n\t"
       "jz 5f \n\t"
+
+      // preload B for K-iter 0 of the unrolled loop
+      "vmovupd  0(%[bp]), %%ymm0 \n\t"
+      "vmovupd 32(%[bp]), %%ymm1 \n\t"
 
       // K-unroll-4 loop with end-of-iter B-preload
       ".p2align 4 \n\t"
@@ -1119,19 +1119,22 @@ micro_kernel_6x8_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in, 
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      // K=3: load B for NEXT OUTER-ITRs K=0 (offset 256 from current bp)
-      "vmovupd 256(%[bp]), %%ymm0 \n\t"
-      "vmovupd 288(%[bp]), %%ymm1 \n\t"
-
       "addq $192, %[ap] \n\t"
       "addq $256, %[bp] \n\t"
       "decq %[k4] \n\t"
-      "jne 1b \n\t"
+      "jz 5f \n\t"
+      // load B for the next block's K=0 -- only once we know there IS one, else
+      // this reads a whole B row past the end of the panel
+      "vmovupd  0(%[bp]), %%ymm0 \n\t"
+      "vmovupd 32(%[bp]), %%ymm1 \n\t"
+      "jmp 1b \n\t"
 
       "5: \n\t"
       // tail
       "testq %[ktail], %[ktail] \n\t"
       "jz 2f \n\t"
+      "vmovupd  0(%[bp]), %%ymm0 \n\t"
+      "vmovupd 32(%[bp]), %%ymm1 \n\t"
       ".p2align 4 \n\t"
       "6: \n\t"
       "vbroadcastsd  0(%[ap]), %%ymm2 \n\t"
@@ -1152,12 +1155,13 @@ micro_kernel_6x8_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in, 
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      "vmovupd 64(%[bp]), %%ymm0 \n\t"      // preload B for next tail iter
-      "vmovupd 96(%[bp]), %%ymm1 \n\t"
       "addq $48, %[ap] \n\t"
       "addq $64, %[bp] \n\t"
       "decq %[ktail] \n\t"
-      "jne 6b \n\t"
+      "jz 2f \n\t"
+      "vmovupd  0(%[bp]), %%ymm0 \n\t"      // preload B for next tail iter
+      "vmovupd 32(%[bp]), %%ymm1 \n\t"
+      "jmp 6b \n\t"
 
       "2: \n\t"
       "vbroadcastsd %[alpha], %%ymm0 \n\t"
@@ -1247,6 +1251,12 @@ micro_kernel_6x8_avx2_f64_asm_aligned(const double *Ap_in, const double *Bp_in, 
 {
   if ( cs_C != 1 ) {
     micro_kernel_scalar<6, 8, double>(Ap_in, Bp_in, k, alpha, beta, C, rs_C, cs_C);
+    return;
+  }
+  // the C epilogue below is vmovapd, so every one of r0..r5 has to be 32-byte
+  // aligned: an aligned base is not enough, rs_C must also be a multiple of 4 doubles
+  if ( ((reinterpret_cast<uintptr_t>(C) | (static_cast<uintptr_t>(rs_C) * sizeof(double))) & uintptr_t(31)) != 0 ) {
+    micro_kernel_6x8_avx2_f64(Ap_in, Bp_in, k, alpha, beta, C, rs_C, cs_C);
     return;
   }
   double *r0 = C + 0 * rs_C;
@@ -1417,12 +1427,12 @@ micro_kernel_6x8_avx2_f64_asm_relax(const double *Ap_in, const double *Bp_in, us
       "vxorpd %%ymm14, %%ymm14, %%ymm14 \n\t"
       "vxorpd %%ymm15, %%ymm15, %%ymm15 \n\t"
 
-      // initial B preload for K=0 of first iter (or first tail iter if k2==0)
-      "vmovupd  0(%[bp]), %%ymm0 \n\t"
-      "vmovupd 32(%[bp]), %%ymm1 \n\t"
-
       "testq %[k2], %[k2] \n\t"
       "jz 5f \n\t"
+
+      // initial B preload for K=0 of the first unrolled iter
+      "vmovupd  0(%[bp]), %%ymm0 \n\t"
+      "vmovupd 32(%[bp]), %%ymm1 \n\t"
 
       // K-unroll-2 loop body. No .p2align. No prefetcht0.
       "1: \n\t"
@@ -1468,20 +1478,22 @@ micro_kernel_6x8_avx2_f64_asm_relax(const double *Ap_in, const double *Bp_in, us
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      // K=1 end: SP B-preload for NEXT outer iter K=0 (offset 128 from current bp)
-      "vmovupd 128(%[bp]), %%ymm0 \n\t"
-      "vmovupd 160(%[bp]), %%ymm1 \n\t"
-
       "addq $96, %[ap] \n\t"       // 2 K-iters × 6 doubles × 8 bytes
       "addq $128, %[bp] \n\t"      // 2 K-iters × 8 doubles × 8 bytes
       "decq %[k2] \n\t"
-      "jne 1b \n\t"
+      "jz 5f \n\t"
+      // K=1 end: SP B-preload for the next iter's K=0, sunk under the loop test --
+      // fired unconditionally it reads a whole B row past the end of the panel
+      "vmovupd  0(%[bp]), %%ymm0 \n\t"
+      "vmovupd 32(%[bp]), %%ymm1 \n\t"
+      "jmp 1b \n\t"
 
       "5: \n\t"
-      // tail (one K-iter at most). ymm0/1 already contain the right B from
-      // either the initial preload (k2==0) or the loop's cross-iter preload.
+      // tail (one K-iter at most)
       "testq %[ktail], %[ktail] \n\t"
       "jz 2f \n\t"
+      "vmovupd  0(%[bp]), %%ymm0 \n\t"
+      "vmovupd 32(%[bp]), %%ymm1 \n\t"
       "vbroadcastsd  0(%[ap]), %%ymm2 \n\t"
       "vbroadcastsd  8(%[ap]), %%ymm3 \n\t"
       "vfmadd231pd %%ymm0, %%ymm2, %%ymm4 \n\t"
@@ -1615,13 +1627,13 @@ micro_kernel_4x12_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in,
                    "vxorpd %%ymm14, %%ymm14, %%ymm14 \n\t"
                    "vxorpd %%ymm15, %%ymm15, %%ymm15 \n\t"
 
+                   "testq %[k4], %[k4] \n\t"
+                   "jz 5f \n\t"
+
                    // initial B preload (3 vecs of 4 doubles = 12 cols)
                    "vmovupd  0(%[bp]), %%ymm0 \n\t"
                    "vmovupd 32(%[bp]), %%ymm1 \n\t"
                    "vmovupd 64(%[bp]), %%ymm2 \n\t"
-
-                   "testq %[k4], %[k4] \n\t"
-                   "jz 5f \n\t"
 
                    ".p2align 4 \n\t"
                    "1: \n\t"
@@ -1708,19 +1720,23 @@ micro_kernel_4x12_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in,
                    "vfmadd231pd %%ymm0, %%ymm3, %%ymm13 \n\t"
                    "vfmadd231pd %%ymm1, %%ymm3, %%ymm14 \n\t"
                    "vfmadd231pd %%ymm2, %%ymm3, %%ymm15 \n\t"
-                   // K=3 end: SP B-preload for NEXT outer iter K=0 (offset +384..+448)
-                   "vmovupd 384(%[bp]), %%ymm0 \n\t"
-                   "vmovupd 416(%[bp]), %%ymm1 \n\t"
-                   "vmovupd 448(%[bp]), %%ymm2 \n\t"
-
                    "addq $128, %[ap] \n\t"      // 4 K × 4 doubles × 8 bytes
                    "addq $384, %[bp] \n\t"      // 4 K × 12 doubles × 8 bytes
                    "decq %[k4] \n\t"
-                   "jne 1b \n\t"
+                   "jz 5f \n\t"
+                   // K=3 end: SP B-preload for the next block's K=0 -- only once we
+                   // know there IS one, else it reads 12 doubles past the panel
+                   "vmovupd  0(%[bp]), %%ymm0 \n\t"
+                   "vmovupd 32(%[bp]), %%ymm1 \n\t"
+                   "vmovupd 64(%[bp]), %%ymm2 \n\t"
+                   "jmp 1b \n\t"
 
                    "5: \n\t"
                    "testq %[ktail], %[ktail] \n\t"
                    "jz 2f \n\t"
+                   "vmovupd  0(%[bp]), %%ymm0 \n\t"
+                   "vmovupd 32(%[bp]), %%ymm1 \n\t"
+                   "vmovupd 64(%[bp]), %%ymm2 \n\t"
                    ".p2align 4 \n\t"
                    "6: \n\t"
                    // tail K-step with mid-step B-preload for the next tail iter
@@ -1740,13 +1756,14 @@ micro_kernel_4x12_avx2_f64_asm_unr4_sp(const double *Ap_in, const double *Bp_in,
                    "vfmadd231pd %%ymm0, %%ymm3, %%ymm13 \n\t"
                    "vfmadd231pd %%ymm1, %%ymm3, %%ymm14 \n\t"
                    "vfmadd231pd %%ymm2, %%ymm3, %%ymm15 \n\t"
-                   "vmovupd 96(%[bp]), %%ymm0 \n\t"
-                   "vmovupd 128(%[bp]), %%ymm1 \n\t"
-                   "vmovupd 160(%[bp]), %%ymm2 \n\t"
                    "addq $32, %[ap] \n\t"
                    "addq $96, %[bp] \n\t"
                    "decq %[ktail] \n\t"
-                   "jne 6b \n\t"
+                   "jz 2f \n\t"
+                   "vmovupd  0(%[bp]), %%ymm0 \n\t"
+                   "vmovupd 32(%[bp]), %%ymm1 \n\t"
+                   "vmovupd 64(%[bp]), %%ymm2 \n\t"
+                   "jmp 6b \n\t"
 
                    "2: \n\t"
                    "vbroadcastsd %[alpha], %%ymm0 \n\t"
@@ -1967,15 +1984,15 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
       "vfmadd231pd %%ymm1, %%ymm2, %%ymm13 \n\t"
       "vfmadd231pd %%ymm0, %%ymm3, %%ymm14 \n\t"
       "vfmadd231pd %%ymm1, %%ymm3, %%ymm15 \n\t"
-      // K=3 end: cross-iter SP B-preload
-      "vmovupd 128(%[bp]), %%ymm0 \n\t"
-      "vmovupd 160(%[bp]), %%ymm1 \n\t"
-
       "addq $192, %[ap] \n\t"
       "addq $256, %[bp] \n\t"
       "decq %[k4] \n\t"
-      "jne 1b \n\t"
+      "jz 8f \n\t"
+      "vmovupd -128(%[bp]), %%ymm0 \n\t"
+      "vmovupd  -96(%[bp]), %%ymm1 \n\t"
+      "jmp 1b \n\t"
 
+      "8: \n\t"
       // un-center for tail / fallthrough
       "subq $96, %[ap] \n\t"
       "subq $128, %[bp] \n\t"
@@ -2090,6 +2107,59 @@ micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap_in, const double *Bp_in, usi
   (void)k4;
   (void)ktail;
 }
+#else
+// The seven kernels above are amd64-only: they name %ymm8-%ymm15 and use 64-bit
+// operand encodings, both of which `as --32` refuses. i386 with AVX2+FMA gets the
+// intrinsic twin instead; the 4x12 shape has none, so it falls back to scalar.
+[[gnu::flatten, gnu::always_inline]] inline void
+micro_kernel_6x8_avx2_f64_asm(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
+                              ssize_t cs_C) noexcept
+{
+  micro_kernel_6x8_avx2_f64(Ap, Bp, k, alpha, beta, C, rs_C, cs_C);
+}
+
+[[gnu::flatten, gnu::always_inline]] inline void
+micro_kernel_6x8_avx2_f64_asm_unr4(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
+                                   ssize_t cs_C) noexcept
+{
+  micro_kernel_6x8_avx2_f64(Ap, Bp, k, alpha, beta, C, rs_C, cs_C);
+}
+
+[[gnu::flatten, gnu::always_inline]] inline void
+micro_kernel_6x8_avx2_f64_asm_unr4_sp(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
+                                      ssize_t cs_C) noexcept
+{
+  micro_kernel_6x8_avx2_f64(Ap, Bp, k, alpha, beta, C, rs_C, cs_C);
+}
+
+[[gnu::flatten, gnu::always_inline]] inline void
+micro_kernel_6x8_avx2_f64_asm_aligned(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
+                                      ssize_t cs_C) noexcept
+{
+  micro_kernel_6x8_avx2_f64(Ap, Bp, k, alpha, beta, C, rs_C, cs_C);
+}
+
+[[gnu::flatten, gnu::always_inline]] inline void
+micro_kernel_6x8_avx2_f64_asm_relax(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
+                                    ssize_t cs_C) noexcept
+{
+  micro_kernel_6x8_avx2_f64(Ap, Bp, k, alpha, beta, C, rs_C, cs_C);
+}
+
+[[gnu::flatten, gnu::always_inline]] inline void
+micro_kernel_6x8_avx2_f64_asm_roll(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
+                                   ssize_t cs_C) noexcept
+{
+  micro_kernel_6x8_avx2_f64(Ap, Bp, k, alpha, beta, C, rs_C, cs_C);
+}
+
+[[gnu::flatten, gnu::always_inline]] inline void
+micro_kernel_4x12_avx2_f64_asm_unr4_sp(const double *Ap, const double *Bp, usize k, double alpha, double beta, double *C, ssize_t rs_C,
+                                       ssize_t cs_C) noexcept
+{
+  micro_kernel_scalar<4, 12, double>(Ap, Bp, k, alpha, beta, C, rs_C, cs_C);
+}
+#endif      // __micron_arch_amd64
 
 [[gnu::flatten, gnu::always_inline]] inline void
 pack_b_panel_12_f64(const double *B, ssize_t rs_B, ssize_t cs_B, usize k, usize n, double *dst) noexcept
@@ -2655,8 +2725,8 @@ gemm_blocked(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize
   const usize Nc = (n < default_nc) ? n : default_nc;
 
   using buf_t = micron::vector<T, micron::allocator_serial<>, false>;
-  buf_t a_pack(Mc * Kc);
-  buf_t b_pack(Kc * Nc);
+  buf_t a_pack(((Mc + MR - 1) / MR) * MR * Kc);
+  buf_t b_pack(((Nc + NR - 1) / NR) * NR * Kc);
   T *Ap = a_pack.data();
   T *Bp = b_pack.data();
 

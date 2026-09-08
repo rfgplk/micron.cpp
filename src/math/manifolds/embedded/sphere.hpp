@@ -26,6 +26,20 @@ namespace math
 namespace manifolds
 {
 
+namespace __sphere_impl
+{
+
+template<ieee754_floating F>
+[[nodiscard, gnu::always_inline]] inline F
+half_chord_asin(F chord_sq) noexcept
+{
+  F h = math::fsqrt(chord_sq) * F(0.5);
+  if ( h > F(1) ) h = F(1);
+  return math::asin<F>(h);
+}
+
+};      // namespace __sphere_impl
+
 template<ieee754_floating F, usize N>
   requires(N >= 2 && N <= 16)
 struct sphere {
@@ -106,13 +120,20 @@ struct sphere {
     return project_to_tangent(p, diff);
   }
 
-  [[nodiscard, gnu::always_inline]] static F
+  // the chord: |p - q| = 2 sin(theta/2) below a right angle, |p + q| = 2 cos(theta/2) above
+  [[nodiscard, gnu::flatten]] static F
   distance(const vec<F, N> &p, const vec<F, N> &q) noexcept
   {
-    F dot_pq = linalg::ops::dot(p, q);
-    if ( dot_pq > F(1) ) dot_pq = F(1);
-    if ( dot_pq < F(-1) ) dot_pq = F(-1);
-    return math::acos<F>(dot_pq);
+    F sub = F(0), add = F(0);
+    for ( usize i = 0; i < N; ++i ) {
+      const F d = p.data[i] - q.data[i];
+      const F t = p.data[i] + q.data[i];
+      sub = math::fma<F>(d, d, sub);
+      add = math::fma<F>(t, t, add);
+    }
+    const bool acute = sub <= add;
+    const F theta = F(2) * __sphere_impl::half_chord_asin<F>(acute ? sub : add);
+    return acute ? theta : math::constant_pi<F> - theta;
   }
 
   [[nodiscard, gnu::always_inline]] static F

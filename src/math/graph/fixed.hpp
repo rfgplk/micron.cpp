@@ -371,6 +371,7 @@ private:
     vertex_descriptor __vertex{};
     usize __slot{};
     bool __incoming{};
+    bool __repeat_loop{};
 
     constexpr bool
     matches() const noexcept
@@ -383,7 +384,10 @@ private:
     constexpr void
     skip() noexcept
     {
+      __repeat_loop = false;
       while ( __slot < __graph->__edge_high && !matches() ) ++__slot;
+      if constexpr ( is_undirected && allows_loops )
+        if ( __slot < __graph->__edge_high ) __repeat_loop = __graph->__edges[__slot].source == __graph->__edges[__slot].target;
     }
 
   public:
@@ -402,6 +406,11 @@ private:
     constexpr incident_iterator &
     operator++() noexcept
     {
+      if constexpr ( is_undirected && allows_loops )
+        if ( __repeat_loop ) {
+          __repeat_loop = false;
+          return *this;
+        }
       ++__slot;
       skip();
       return *this;
@@ -410,7 +419,8 @@ private:
     friend constexpr bool
     operator==(incident_iterator a, incident_iterator b) noexcept
     {
-      return a.__graph == b.__graph && a.__vertex == b.__vertex && a.__slot == b.__slot && a.__incoming == b.__incoming;
+      return a.__graph == b.__graph && a.__vertex == b.__vertex && a.__slot == b.__slot && a.__incoming == b.__incoming
+             && a.__repeat_loop == b.__repeat_loop;
     }
 
     friend constexpr bool

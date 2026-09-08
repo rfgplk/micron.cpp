@@ -79,6 +79,27 @@ scalar_axpy_scatter(F alpha, const F *__restrict__ vals, const u32 *__restrict__
 
 #if defined(__micron_x86_avx2)
 
+// AVX2 does not imply FMA3
+[[gnu::always_inline]] inline __m256d
+avx2_fma_f64(__m256d acc, __m256d a, __m256d b) noexcept
+{
+#if defined(__micron_x86_fma)
+  return simd::fma::fma_f64(a, b, acc);
+#else
+  return simd::avx::add_f64(acc, simd::avx::mul_f64(a, b));
+#endif
+}
+
+[[gnu::always_inline]] inline __m256
+avx2_fma_f32(__m256 acc, __m256 a, __m256 b) noexcept
+{
+#if defined(__micron_x86_fma)
+  return simd::fma::fma_f32(a, b, acc);
+#else
+  return simd::avx::add_f32(acc, simd::avx::mul_f32(a, b));
+#endif
+}
+
 [[gnu::always_inline]] inline f64
 avx2_dot_f64(const f64 *__restrict__ a_in, const f64 *__restrict__ b_in, usize n) noexcept
 {
@@ -92,13 +113,13 @@ avx2_dot_f64(const f64 *__restrict__ a_in, const f64 *__restrict__ b_in, usize n
     __m256d vb0 = simd::avx::loadu_f64(b + i);
     __m256d va1 = simd::avx::loadu_f64(a + i + 4);
     __m256d vb1 = simd::avx::loadu_f64(b + i + 4);
-    acc0 = simd::fma::fma_f64(va0, vb0, acc0);
-    acc1 = simd::fma::fma_f64(va1, vb1, acc1);
+    acc0 = avx2_fma_f64(acc0, va0, vb0);
+    acc1 = avx2_fma_f64(acc1, va1, vb1);
   }
   for ( ; i + 4 <= n; i += 4 ) {
     __m256d va = simd::avx::loadu_f64(a + i);
     __m256d vb = simd::avx::loadu_f64(b + i);
-    acc0 = simd::fma::fma_f64(va, vb, acc0);
+    acc0 = avx2_fma_f64(acc0, va, vb);
   }
   __m256d acc = simd::avx::add_f64(acc0, acc1);
   alignas(32) double buf[4];
@@ -121,13 +142,13 @@ avx2_dot_f32(const f32 *__restrict__ a_in, const f32 *__restrict__ b_in, usize n
     __m256 vb0 = simd::avx::loadu_f32(b + i);
     __m256 va1 = simd::avx::loadu_f32(a + i + 8);
     __m256 vb1 = simd::avx::loadu_f32(b + i + 8);
-    acc0 = simd::fma::fma_f32(va0, vb0, acc0);
-    acc1 = simd::fma::fma_f32(va1, vb1, acc1);
+    acc0 = avx2_fma_f32(acc0, va0, vb0);
+    acc1 = avx2_fma_f32(acc1, va1, vb1);
   }
   for ( ; i + 8 <= n; i += 8 ) {
     __m256 va = simd::avx::loadu_f32(a + i);
     __m256 vb = simd::avx::loadu_f32(b + i);
-    acc0 = simd::fma::fma_f32(va, vb, acc0);
+    acc0 = avx2_fma_f32(acc0, va, vb);
   }
   __m256 acc = simd::avx::add_f32(acc0, acc1);
   alignas(32) float buf[8];
@@ -147,12 +168,12 @@ avx2_norm_sq_f64(const f64 *__restrict__ a_in, usize n) noexcept
   for ( ; i + 8 <= n; i += 8 ) {
     __m256d v0 = simd::avx::loadu_f64(a + i);
     __m256d v1 = simd::avx::loadu_f64(a + i + 4);
-    acc0 = simd::fma::fma_f64(v0, v0, acc0);
-    acc1 = simd::fma::fma_f64(v1, v1, acc1);
+    acc0 = avx2_fma_f64(acc0, v0, v0);
+    acc1 = avx2_fma_f64(acc1, v1, v1);
   }
   for ( ; i + 4 <= n; i += 4 ) {
     __m256d v = simd::avx::loadu_f64(a + i);
-    acc0 = simd::fma::fma_f64(v, v, acc0);
+    acc0 = avx2_fma_f64(acc0, v, v);
   }
   __m256d acc = simd::avx::add_f64(acc0, acc1);
   alignas(32) double buf[4];
@@ -172,12 +193,12 @@ avx2_norm_sq_f32(const f32 *__restrict__ a_in, usize n) noexcept
   for ( ; i + 16 <= n; i += 16 ) {
     __m256 v0 = simd::avx::loadu_f32(a + i);
     __m256 v1 = simd::avx::loadu_f32(a + i + 8);
-    acc0 = simd::fma::fma_f32(v0, v0, acc0);
-    acc1 = simd::fma::fma_f32(v1, v1, acc1);
+    acc0 = avx2_fma_f32(acc0, v0, v0);
+    acc1 = avx2_fma_f32(acc1, v1, v1);
   }
   for ( ; i + 8 <= n; i += 8 ) {
     __m256 v = simd::avx::loadu_f32(a + i);
-    acc0 = simd::fma::fma_f32(v, v, acc0);
+    acc0 = avx2_fma_f32(acc0, v, v);
   }
   __m256 acc = simd::avx::add_f32(acc0, acc1);
   alignas(32) float buf[8];
@@ -198,7 +219,7 @@ avx2_axpy_f64(f64 alpha_in, const f64 *__restrict__ x_in, f64 *__restrict__ y_in
   for ( ; i + 4 <= n; i += 4 ) {
     __m256d vx = simd::avx::loadu_f64(x + i);
     __m256d vy = simd::avx::loadu_f64(y + i);
-    vy = simd::fma::fma_f64(va, vx, vy);
+    vy = avx2_fma_f64(vy, va, vx);
     simd::avx::storeu_f64(y + i, vy);
   }
   for ( ; i < n; ++i ) y[i] = alpha * x[i] + y[i];
@@ -215,7 +236,7 @@ avx2_axpy_f32(f32 alpha_in, const f32 *__restrict__ x_in, f32 *__restrict__ y_in
   for ( ; i + 8 <= n; i += 8 ) {
     __m256 vx = simd::avx::loadu_f32(x + i);
     __m256 vy = simd::avx::loadu_f32(y + i);
-    vy = simd::fma::fma_f32(va, vx, vy);
+    vy = avx2_fma_f32(vy, va, vx);
     simd::avx::storeu_f32(y + i, vy);
   }
   for ( ; i < n; ++i ) y[i] = alpha * x[i] + y[i];

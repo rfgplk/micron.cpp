@@ -17,6 +17,8 @@ namespace micron
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bits
 
+inline constexpr int __word_bits = static_cast<int>(sizeof(unsigned long long) * 8);
+
 template<size_t N>
 constexpr inline word __attribute__((always_inline))
 repeat_bytes(void)
@@ -364,13 +366,20 @@ template<typename T>
 constexpr int
 bitcount(T x) noexcept
 {
-  if constexpr ( micron::is_same_v<T, int> || micron::is_same_v<T, char> || micron::is_same_v<T, unsigned char>
-                 || micron::is_same_v<T, unsigned int> || micron::is_same_v<T, short> || micron::is_same_v<T, unsigned short> )
-    return __builtin_popcount(static_cast<unsigned int>(x));
+  if constexpr ( micron::is_same_v<T, int> || micron::is_same_v<T, char> || micron::is_same_v<T, signed char>
+                 || micron::is_same_v<T, unsigned char> || micron::is_same_v<T, unsigned int> || micron::is_same_v<T, short>
+                 || micron::is_same_v<T, unsigned short> )
+    return __builtin_popcount(static_cast<unsigned int>(x) & (~0u >> ((sizeof(unsigned int) - sizeof(T)) * 8)));
   else if constexpr ( micron::is_same_v<T, long> || micron::is_same_v<T, unsigned long> )
     return __builtin_popcountl(static_cast<unsigned long>(x));
   else if constexpr ( micron::is_same_v<T, long long> || micron::is_same_v<T, unsigned long long> )
     return __builtin_popcountll(static_cast<unsigned long long>(x));
+  else if constexpr ( micron::is_integral_v<T> && sizeof(T) > sizeof(unsigned long long) ) {
+    const micron::make_unsigned_t<T> u = static_cast<micron::make_unsigned_t<T>>(x);
+    return __builtin_popcountll(static_cast<unsigned long long>(u))
+           + __builtin_popcountll(static_cast<unsigned long long>(u >> __word_bits));
+  } else if constexpr ( sizeof(T) < sizeof(unsigned long long) )
+    return __builtin_popcountll(static_cast<unsigned long long>(x) & (~0ULL >> ((sizeof(unsigned long long) - sizeof(T)) * 8)));
   else
     return __builtin_popcountll(static_cast<unsigned long long>(x));
 }
@@ -443,8 +452,16 @@ countl_zero(T x) noexcept
     return __builtin_clzl(static_cast<unsigned long>(x));
   else if constexpr ( micron::is_same_v<T, long long> || micron::is_same_v<T, unsigned long long> )
     return __builtin_clzll(static_cast<unsigned long long>(x));
-  else      // narrow types: promote then adjust for padding
-    return __builtin_clzll(static_cast<unsigned long long>(x)) - static_cast<int>((sizeof(unsigned long long) - sizeof(T)) * 8);
+  else if constexpr ( micron::is_integral_v<T> && sizeof(T) > sizeof(unsigned long long) ) {
+    const micron::make_unsigned_t<T> u = static_cast<micron::make_unsigned_t<T>>(x);
+    const unsigned long long hi = static_cast<unsigned long long>(u >> __word_bits);
+    return hi ? __builtin_clzll(hi) : __word_bits + __builtin_clzll(static_cast<unsigned long long>(u));
+  } else if constexpr ( sizeof(T) < sizeof(unsigned long long) ) {
+    // narrow types: mask off the widening's sign extension, then adjust for padding
+    constexpr int pad = static_cast<int>((sizeof(unsigned long long) - sizeof(T)) * 8);
+    return __builtin_clzll(static_cast<unsigned long long>(x) & (~0ULL >> pad)) - pad;
+  } else
+    return __builtin_clzll(static_cast<unsigned long long>(x));
 }
 
 template<typename T>
@@ -459,7 +476,11 @@ countr_zero(T x) noexcept
     return __builtin_ctzl(static_cast<unsigned long>(x));
   else if constexpr ( micron::is_same_v<T, long long> || micron::is_same_v<T, unsigned long long> )
     return __builtin_ctzll(static_cast<unsigned long long>(x));
-  else
+  else if constexpr ( micron::is_integral_v<T> && sizeof(T) > sizeof(unsigned long long) ) {
+    const micron::make_unsigned_t<T> u = static_cast<micron::make_unsigned_t<T>>(x);
+    const unsigned long long lo = static_cast<unsigned long long>(u);
+    return lo ? __builtin_ctzll(lo) : __word_bits + __builtin_ctzll(static_cast<unsigned long long>(u >> __word_bits));
+  } else
     return __builtin_ctzll(static_cast<unsigned long long>(x));
 }
 
@@ -529,7 +550,9 @@ constexpr T
 bit_ceil(T x) noexcept
 {
   if ( x <= 1 ) return 1;
-  return T(1) << log2_ceil(x);
+  const int s = log2_ceil(x);
+  if ( s >= static_cast<int>(sizeof(T) * 8) ) return 0;      // 2^w is not representable in T
+  return T(1) << s;
 }
 
 template<typename T>

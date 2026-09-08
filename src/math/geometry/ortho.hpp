@@ -50,17 +50,17 @@ unit_orthogonal(const vec<F, N> &v) noexcept
     }
     return c;
   } else {
-    usize idx_min = 0;
-    F amin = math::fabs(v.data[0]);
+    usize idx_max = 0;
+    F amax = math::fabs(v.data[0]);
     for ( usize i = 1; i < N; ++i ) {
       F a = math::fabs(v.data[i]);
-      if ( a < amin ) {
-        amin = a;
-        idx_min = i;
+      if ( a > amax ) {
+        amax = a;
+        idx_max = i;
       }
     }
-    usize idx_a = (idx_min + 1) % N;
-    usize idx_b = (idx_min + 2) % N;
+    usize idx_a = idx_max;
+    usize idx_b = (idx_max + 1) % N;
     vec<F, N> u{};
     for ( usize i = 0; i < N; ++i ) u.data[i] = F(0);
     u.data[idx_a] = -v.data[idx_b];
