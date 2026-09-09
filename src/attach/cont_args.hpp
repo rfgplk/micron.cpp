@@ -14,7 +14,7 @@
 
 extern "C" {
 
-inline constexpr u32 micron_cont_args_abi = 2u;
+inline constexpr u32 micron_cont_args_abi = 3u;
 
 inline constexpr u32 micron_cont_args_flag_graph = 1u << 0;        // ops names a real table
 inline constexpr u32 micron_cont_args_flag_replace = 1u << 1;      // this call does not return
@@ -25,6 +25,19 @@ inline constexpr i64 cont_ok = 0;
 inline constexpr i64 cont_efault = -1;            // null args
 inline constexpr i64 cont_ebadargs = -2;          // abi/flags/span
 inline constexpr i64 cont_enotattached = -3;      // the direct form was entered before _attach
+
+struct micron_graph_ops {
+  i32 (*find)(void *ctx, const char *name, u32 *out_id);
+  i32 (*find_hash)(void *ctx, const byte *hash, u32 *out_id);
+  i32 (*addr_of)(void *ctx, u32 id, u64 *out_addr, u64 *out_len);
+  i32 (*replace)(void *ctx, u32 id, u64 new_addr, u64 new_len);
+  i32 (*resolve_extern)(void *ctx, u32 row);
+  i32 (*select)(void *ctx, const char *name, u32 id);
+  i32 (*resolve)(void *ctx, const char *name, u64 *out_addr);
+  void *ctx;
+};
+
+static_assert(sizeof(micron_graph_ops) == 8 * sizeof(void *), "micron_graph_ops must mirror mx_graph_ops");
 
 // 64 bytes, 8-aligned, no interior padding
 struct micron_cont_args {
