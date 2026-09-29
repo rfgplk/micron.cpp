@@ -231,23 +231,33 @@ fmodl(long double x, long double y) noexcept
   return x - t * y;
 }
 
-extern "C" __attribute__((weak)) double
+// GCC 16 LTO can commute builtin operands after specializing these definitions,
+// leaving a constant-propagation clone with the wrong operand
+#if defined(__micron_compiler_gcc)
+#define __MC_SHIM_FMA_BOUNDARY __attribute__((weak, noipa))
+#else
+#define __MC_SHIM_FMA_BOUNDARY __attribute__((weak))
+#endif
+
+extern "C" __MC_SHIM_FMA_BOUNDARY double
 fma(double a, double b, double c) noexcept
 {
   return micron::math::__shim::fma(a, b, c);
 }
 
-extern "C" __attribute__((weak)) float
+extern "C" __MC_SHIM_FMA_BOUNDARY float
 fmaf(float a, float b, float c) noexcept
 {
   return micron::math::__shim::fma(a, b, c);
 }
 
-extern "C" __attribute__((weak)) long double
+extern "C" __MC_SHIM_FMA_BOUNDARY long double
 fmal(long double a, long double b, long double c) noexcept
 {
   return a * b + c;
 }
+
+#undef __MC_SHIM_FMA_BOUNDARY
 
 // missing __builtin_* symbols (these should be almost all of them, although these libm fns fmax fmin fdim ldexp frexp modf scalbn nextafter
 // ilogb remquo lrint llrint lround llround still don't exist in micron)
