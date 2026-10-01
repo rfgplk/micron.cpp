@@ -140,7 +140,8 @@ protected:
     if ( !wd ) throw except::logic_error("gfx::window: display is not wayland but backend says wayland");
     __wl.create(*wd, width, height, title);
 
-    if ( __hooks.wl_create_native ) __wl_native = __hooks.wl_create_native(__wl.surface(), width, height, __hooks.wl_user);
+    if ( __hooks.wl_create_native )
+      __wl_native = __hooks.wl_create_native(__wl.surface(), __wl.width(), __wl.height(), __hooks.wl_user);
   }
 
   void

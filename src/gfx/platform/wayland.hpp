@@ -270,6 +270,7 @@ private:
   xdg_toplevel *__toplevel = nullptr;
   i32 __width = 0;
   i32 __height = 0;
+  f32 __render_scale = 1.f;
   bool __should_close = false;
   bool __configured = false;
   u32 __last_serial = 0;
@@ -305,7 +306,7 @@ private:
     if ( w > 0 && h > 0 && (w != self->__width || h != self->__height) ) {
       self->__width = w;
       self->__height = h;
-      if ( self->__cb_resize ) self->__cb_resize(self->__owner, w, h);
+      if ( self->__cb_resize ) self->__cb_resize(self->__owner, self->width(), self->height());
     }
   }
 
@@ -361,13 +362,24 @@ public:
   i32
   width() const noexcept
   {
-    return __width;
+    return i32(f32(__width) * __render_scale + .5f);
   }
 
   i32
   height() const noexcept
   {
-    return __height;
+    return i32(f32(__height) * __render_scale + .5f);
+  }
+
+  i32 logical_width() const noexcept { return __width; }
+  i32 logical_height() const noexcept { return __height; }
+  f32 render_scale() const noexcept { return __render_scale; }
+
+  void set_render_scale(f32 scale) noexcept
+  {
+    if ( !(scale >= 1.f && scale <= 8.f) || scale == __render_scale ) return;
+    __render_scale = scale;
+    if ( __cb_resize ) __cb_resize(__owner, width(), height());
   }
 
   bool

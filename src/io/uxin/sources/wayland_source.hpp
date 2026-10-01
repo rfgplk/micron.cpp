@@ -88,10 +88,11 @@ class wayland_source
 
   // pointer callbacks
   static void
-  __on_p_enter(void *data, gfx::platform::wl_pointer *pointer, u32, gfx::platform::wl_surface *surface, i32 x, i32 y) noexcept
+  __on_p_enter(void *data, gfx::platform::wl_pointer *pointer, u32 serial, gfx::platform::wl_surface *surface, i32 x, i32 y) noexcept
   {
     auto *self = static_cast<wayland_source *>(data);
     self->__pointer_inside = !self->__surface || self->__surface == surface;
+    if ( self->on_serial ) self->on_serial(self->user, serial);
     if ( self->on_pointer_focus ) self->on_pointer_focus(self->user, self->__pointer_inside);
     if ( self->__pointer_inside ) __on_p_motion(data, pointer, 0, x, y);
   }
@@ -108,7 +109,9 @@ class wayland_source
   __on_p_motion(void *data, gfx::platform::wl_pointer *, u32 time, i32 sx_fixed, i32 sy_fixed) noexcept
   {
     auto *self = static_cast<wayland_source *>(data);
-    if ( !self->__pointer_inside || !self->on_motion ) return;
+    if ( !self->__pointer_inside ) return;
+    if ( self->on_position ) self->on_position(self->user, float(sx_fixed) / 256.f, float(sy_fixed) / 256.f);
+    if ( !self->on_motion ) return;
     input_event ev{};
     ev.time.tv_sec = static_cast<long>(time / 1000);
     ev.time.tv_usec = static_cast<long>((time % 1000) * 1000);
@@ -122,10 +125,12 @@ class wayland_source
   }
 
   static void
-  __on_p_button(void *data, gfx::platform::wl_pointer *, u32, u32 time, u32 button, u32 state) noexcept
+  __on_p_button(void *data, gfx::platform::wl_pointer *, u32 serial, u32 time, u32 button, u32 state) noexcept
   {
     auto *self = static_cast<wayland_source *>(data);
-    if ( !self->__pointer_inside || !self->on_button ) return;
+    if ( !self->__pointer_inside ) return;
+    if ( self->on_serial ) self->on_serial(self->user, serial);
+    if ( !self->on_button ) return;
     input_event ev{};
     ev.time.tv_sec = static_cast<long>(time / 1000);
     ev.time.tv_usec = static_cast<long>((time % 1000) * 1000);
@@ -139,7 +144,9 @@ class wayland_source
   __on_p_axis(void *data, gfx::platform::wl_pointer *, u32 time, u32 axis, i32 value_fixed) noexcept
   {
     auto *self = static_cast<wayland_source *>(data);
-    if ( !self->__pointer_inside || !self->on_axis ) return;
+    if ( !self->__pointer_inside ) return;
+    if ( self->on_scroll ) self->on_scroll(self->user, axis, float(value_fixed) / 256.f);
+    if ( !self->on_axis ) return;
     input_event ev{};
     ev.time.tv_sec = static_cast<long>(time / 1000);
     ev.time.tv_usec = static_cast<long>((time % 1000) * 1000);
@@ -225,11 +232,12 @@ class wayland_source
   }
 
   static void
-  __on_k_key(void *data, gfx::platform::wl_keyboard *, u32, u32 time, u32 key, u32 state) noexcept
+  __on_k_key(void *data, gfx::platform::wl_keyboard *, u32 serial, u32 time, u32 key, u32 state) noexcept
   {
     auto *self = static_cast<wayland_source *>(data);
     const bool pressed = (state == wl_keyboard_key_state_pressed);
     if ( !self->__keyboard_inside ) return;
+    if ( self->on_serial ) self->on_serial(self->user, serial);
 
     if ( self->on_key ) {
       input_event ev{};
@@ -259,8 +267,10 @@ class wayland_source
   }
 
   static void
-  __on_k_repeat_info(void *, gfx::platform::wl_keyboard *, i32, i32) noexcept
+  __on_k_repeat_info(void *data, gfx::platform::wl_keyboard *, i32 rate, i32 delay) noexcept
   {
+    auto *self = static_cast<wayland_source *>(data);
+    if ( self->on_repeat ) self->on_repeat(self->user, rate, delay);
   }
 
   gfx::platform::wayland_display_t *__dpy = nullptr;
@@ -332,6 +342,10 @@ public:
   void *user = nullptr;
   void (*on_pointer_focus)(void *, bool) = nullptr;
   void (*on_keyboard_focus)(void *, bool) = nullptr;
+  void (*on_position)(void *, float, float) = nullptr;
+  void (*on_scroll)(void *, u32, float) = nullptr;
+  void (*on_repeat)(void *, i32, i32) = nullptr;
+  void (*on_serial)(void *, u32) = nullptr;
 
   bool
   xkb_available() const noexcept
