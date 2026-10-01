@@ -43,6 +43,15 @@ using micron::math::matrix::tri_row_view;
 namespace __impl_level3
 {
 
+// NOTE: keep the general kernel's panel frame off rank-one calls, including runtime k
+template<blas_scalar T>
+[[gnu::noinline]] inline constexpr void
+gemm_row_general(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda,
+                 const T *B, usize ldb, T beta, T *C, usize ldc) noexcept
+{
+  bits::gemm_kernel<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}
+
 template<typename V>
 [[nodiscard, gnu::always_inline]] inline constexpr ssize_t
 rs_of(const V &v) noexcept
@@ -122,7 +131,20 @@ template<blas_scalar T>
 gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
          usize ldc) noexcept
 {
-  bits::gemm_kernel<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+  // NOTE: rank-one products need no panel packing or general GEMM frame
+  if ( k == 1 ) {
+    const usize a_step = trA ? 1 : lda, b_step = trB ? ldb : 1;
+    for ( usize i = 0; i < m; ++i ) {
+      const T a = alpha * A[i * a_step];
+      T *row = C + i * ldc;
+      for ( usize j = 0; j < n; ++j ) {
+        if ( beta == T(0) ) row[j] = a * B[j * b_step];
+        else row[j] = bits::fma_acc<T>(a, B[j * b_step], beta * row[j]);
+      }
+    }
+    return;
+  }
+  __impl_level3::gemm_row_general<T>(trA, trB, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 }
 
 // aligned variant of gemm
