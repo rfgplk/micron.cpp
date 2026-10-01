@@ -26,7 +26,7 @@ extern const wl_interface __xdg_toplevel_interface;
 extern const wl_interface __xdg_wm_base_interface;
 
 inline const wl_message __wl_callback_events[] = {
-  { "done", "u", nullptr },
+  { "done", "u", __wl_untyped_arguments },
 };
 inline constexpr wl_interface __wl_callback_interface = {
   "wl_callback", 1, 0, nullptr, 1, __wl_callback_events,
@@ -34,8 +34,8 @@ inline constexpr wl_interface __wl_callback_interface = {
 
 inline const wl_message __wl_region_methods[] = {
   { "destroy", "", nullptr },
-  { "add", "iiii", nullptr },
-  { "subtract", "iiii", nullptr },
+  { "add", "iiii", __wl_untyped_arguments },
+  { "subtract", "iiii", __wl_untyped_arguments },
 };
 inline constexpr wl_interface __wl_region_interface = {
   "wl_region", 1, 3, __wl_region_methods, 0, nullptr,
@@ -46,29 +46,29 @@ inline const wl_interface *__wl_surface_request_types[] = {
   &__wl_callback_interface,
 };
 
-inline const wl_interface *__wl_surface_types_buffer[] = { nullptr };
+inline const wl_interface *__wl_surface_types_buffer[] = { nullptr, nullptr, nullptr };
 inline const wl_interface *__wl_surface_types_callback[] = { &__wl_callback_interface };
 inline const wl_interface *__wl_surface_types_region[] = { &__wl_region_interface };
 
 inline const wl_message __wl_surface_methods[] = {
   { "destroy", "", nullptr },
   { "attach", "?oii", __wl_surface_types_buffer },
-  { "damage", "iiii", nullptr },
+  { "damage", "iiii", __wl_untyped_arguments },
   { "frame", "n", __wl_surface_types_callback },
   { "set_opaque_region", "?o", __wl_surface_types_region },
   { "set_input_region", "?o", __wl_surface_types_region },
   { "commit", "", nullptr },
-  { "set_buffer_transform", "2i", nullptr },
-  { "set_buffer_scale", "3i", nullptr },
-  { "damage_buffer", "4iiii", nullptr },
-  { "offset", "5ii", nullptr },
+  { "set_buffer_transform", "2i", __wl_untyped_arguments },
+  { "set_buffer_scale", "3i", __wl_untyped_arguments },
+  { "damage_buffer", "4iiii", __wl_untyped_arguments },
+  { "offset", "5ii", __wl_untyped_arguments },
 };
 
 inline const wl_message __wl_surface_events[] = {
-  { "enter", "o", nullptr },
-  { "leave", "o", nullptr },
-  { "preferred_buffer_scale", "6i", nullptr },
-  { "preferred_buffer_transform", "6u", nullptr },
+  { "enter", "o", __wl_untyped_arguments },
+  { "leave", "o", __wl_untyped_arguments },
+  { "preferred_buffer_scale", "6i", __wl_untyped_arguments },
+  { "preferred_buffer_transform", "6u", __wl_untyped_arguments },
 };
 
 inline constexpr wl_interface __wl_surface_interface = {
@@ -92,11 +92,11 @@ inline constexpr wl_interface __wl_compositor_interface = {
 };
 
 inline const wl_message __wl_registry_methods[] = {
-  { "bind", "usun", nullptr },
+  { "bind", "usun", __wl_untyped_arguments },
 };
 inline const wl_message __wl_registry_events[] = {
-  { "global", "usu", nullptr },
-  { "global_remove", "u", nullptr },
+  { "global", "usu", __wl_untyped_arguments },
+  { "global_remove", "u", __wl_untyped_arguments },
 };
 inline constexpr wl_interface __wl_registry_interface = {
   "wl_registry", 1, 1, __wl_registry_methods, 2, __wl_registry_events,
@@ -104,15 +104,15 @@ inline constexpr wl_interface __wl_registry_interface = {
 
 inline const wl_message __xdg_positioner_methods[] = {
   { "destroy", "", nullptr },
-  { "set_size", "ii", nullptr },
-  { "set_anchor_rect", "iiii", nullptr },
-  { "set_anchor", "u", nullptr },
-  { "set_gravity", "u", nullptr },
-  { "set_constraint_adjustment", "u", nullptr },
-  { "set_offset", "ii", nullptr },
-  { "set_reactive", "3", nullptr },
-  { "set_parent_size", "3ii", nullptr },
-  { "set_parent_configure", "3u", nullptr },
+  { "set_size", "ii", __wl_untyped_arguments },
+  { "set_anchor_rect", "iiii", __wl_untyped_arguments },
+  { "set_anchor", "u", __wl_untyped_arguments },
+  { "set_gravity", "u", __wl_untyped_arguments },
+  { "set_constraint_adjustment", "u", __wl_untyped_arguments },
+  { "set_offset", "ii", __wl_untyped_arguments },
+  { "set_reactive", "3", __wl_untyped_arguments },
+  { "set_parent_size", "3ii", __wl_untyped_arguments },
+  { "set_parent_configure", "3u", __wl_untyped_arguments },
 };
 inline constexpr wl_interface __xdg_positioner_interface = {
   "xdg_positioner", 6, 10, __xdg_positioner_methods, 0, nullptr,
@@ -126,9 +126,9 @@ inline const wl_message __xdg_popup_methods[] = {
   { "reposition", "3ou", __xdg_popup_types_reposition },
 };
 inline const wl_message __xdg_popup_events[] = {
-  { "configure", "iiii", nullptr },
+  { "configure", "iiii", __wl_untyped_arguments },
   { "popup_done", "", nullptr },
-  { "repositioned", "3u", nullptr },
+  { "repositioned", "3u", __wl_untyped_arguments },
 };
 inline constexpr wl_interface __xdg_popup_interface = {
   "xdg_popup", 6, 3, __xdg_popup_methods, 3, __xdg_popup_events,
@@ -143,13 +143,13 @@ inline const wl_interface *__xdg_toplevel_types_set_fullscreen[] = { nullptr /*w
 inline const wl_message __xdg_toplevel_methods[] = {
   { "destroy", "", nullptr },
   { "set_parent", "?o", __xdg_toplevel_types_set_parent },
-  { "set_title", "s", nullptr },
-  { "set_app_id", "s", nullptr },
+  { "set_title", "s", __wl_untyped_arguments },
+  { "set_app_id", "s", __wl_untyped_arguments },
   { "show_window_menu", "ouii", __xdg_toplevel_types_show_window_menu },
   { "move", "ou", __xdg_toplevel_types_move },
   { "resize", "ouu", __xdg_toplevel_types_resize },
-  { "set_max_size", "ii", nullptr },
-  { "set_min_size", "ii", nullptr },
+  { "set_max_size", "ii", __wl_untyped_arguments },
+  { "set_min_size", "ii", __wl_untyped_arguments },
   { "set_maximized", "", nullptr },
   { "unset_maximized", "", nullptr },
   { "set_fullscreen", "?o", __xdg_toplevel_types_set_fullscreen },
@@ -158,10 +158,10 @@ inline const wl_message __xdg_toplevel_methods[] = {
 };
 
 inline const wl_message __xdg_toplevel_events[] = {
-  { "configure", "iia", nullptr },
+  { "configure", "iia", __wl_untyped_arguments },
   { "close", "", nullptr },
-  { "configure_bounds", "4ii", nullptr },
-  { "wm_capabilities", "5a", nullptr },
+  { "configure_bounds", "4ii", __wl_untyped_arguments },
+  { "wm_capabilities", "5a", __wl_untyped_arguments },
 };
 
 inline constexpr wl_interface __xdg_toplevel_interface = {
@@ -176,11 +176,11 @@ inline const wl_message __xdg_surface_methods[] = {
   { "destroy", "", nullptr },
   { "get_toplevel", "n", __xdg_surface_types_get_toplevel },
   { "get_popup", "n?oo", __xdg_surface_types_get_popup },
-  { "set_window_geometry", "iiii", nullptr },
-  { "ack_configure", "u", nullptr },
+  { "set_window_geometry", "iiii", __wl_untyped_arguments },
+  { "ack_configure", "u", __wl_untyped_arguments },
 };
 inline const wl_message __xdg_surface_events[] = {
-  { "configure", "u", nullptr },
+  { "configure", "u", __wl_untyped_arguments },
 };
 inline constexpr wl_interface __xdg_surface_interface = {
   "xdg_surface", 6, 5, __xdg_surface_methods, 1, __xdg_surface_events,
@@ -193,10 +193,10 @@ inline const wl_message __xdg_wm_base_methods[] = {
   { "destroy", "", nullptr },
   { "create_positioner", "n", __xdg_wm_base_types_create_positioner },
   { "get_xdg_surface", "no", __xdg_wm_base_types_get_xdg_surface },
-  { "pong", "u", nullptr },
+  { "pong", "u", __wl_untyped_arguments },
 };
 inline const wl_message __xdg_wm_base_events[] = {
-  { "ping", "u", nullptr },
+  { "ping", "u", __wl_untyped_arguments },
 };
 inline constexpr wl_interface __xdg_wm_base_interface = {
   "xdg_wm_base", 6, 4, __xdg_wm_base_methods, 1, __xdg_wm_base_events,

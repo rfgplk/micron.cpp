@@ -88,20 +88,27 @@ class wayland_source
 
   // pointer callbacks
   static void
-  __on_p_enter(void *, gfx::platform::wl_pointer *, u32, gfx::platform::wl_surface *, i32, i32) noexcept
+  __on_p_enter(void *data, gfx::platform::wl_pointer *pointer, u32, gfx::platform::wl_surface *surface, i32 x, i32 y) noexcept
   {
+    auto *self = static_cast<wayland_source *>(data);
+    self->__pointer_inside = !self->__surface || self->__surface == surface;
+    if ( self->on_pointer_focus ) self->on_pointer_focus(self->user, self->__pointer_inside);
+    if ( self->__pointer_inside ) __on_p_motion(data, pointer, 0, x, y);
   }
 
   static void
-  __on_p_leave(void *, gfx::platform::wl_pointer *, u32, gfx::platform::wl_surface *) noexcept
+  __on_p_leave(void *data, gfx::platform::wl_pointer *, u32, gfx::platform::wl_surface *) noexcept
   {
+    auto *self = static_cast<wayland_source *>(data);
+    self->__pointer_inside = false;
+    if ( self->on_pointer_focus ) self->on_pointer_focus(self->user, false);
   }
 
   static void
   __on_p_motion(void *data, gfx::platform::wl_pointer *, u32 time, i32 sx_fixed, i32 sy_fixed) noexcept
   {
     auto *self = static_cast<wayland_source *>(data);
-    if ( !self->on_motion ) return;
+    if ( !self->__pointer_inside || !self->on_motion ) return;
     input_event ev{};
     ev.time.tv_sec = static_cast<long>(time / 1000);
     ev.time.tv_usec = static_cast<long>((time % 1000) * 1000);
@@ -118,7 +125,7 @@ class wayland_source
   __on_p_button(void *data, gfx::platform::wl_pointer *, u32, u32 time, u32 button, u32 state) noexcept
   {
     auto *self = static_cast<wayland_source *>(data);
-    if ( !self->on_button ) return;
+    if ( !self->__pointer_inside || !self->on_button ) return;
     input_event ev{};
     ev.time.tv_sec = static_cast<long>(time / 1000);
     ev.time.tv_usec = static_cast<long>((time % 1000) * 1000);
@@ -132,7 +139,7 @@ class wayland_source
   __on_p_axis(void *data, gfx::platform::wl_pointer *, u32 time, u32 axis, i32 value_fixed) noexcept
   {
     auto *self = static_cast<wayland_source *>(data);
-    if ( !self->on_axis ) return;
+    if ( !self->__pointer_inside || !self->on_axis ) return;
     input_event ev{};
     ev.time.tv_sec = static_cast<long>(time / 1000);
     ev.time.tv_usec = static_cast<long>((time % 1000) * 1000);
@@ -202,13 +209,19 @@ class wayland_source
   }
 
   static void
-  __on_k_enter(void *, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *, void *) noexcept
+  __on_k_enter(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *surface, void *) noexcept
   {
+    auto *self = static_cast<wayland_source *>(data);
+    self->__keyboard_inside = !self->__surface || self->__surface == surface;
+    if ( self->on_keyboard_focus ) self->on_keyboard_focus(self->user, self->__keyboard_inside);
   }
 
   static void
-  __on_k_leave(void *, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *) noexcept
+  __on_k_leave(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *) noexcept
   {
+    auto *self = static_cast<wayland_source *>(data);
+    self->__keyboard_inside = false;
+    if ( self->on_keyboard_focus ) self->on_keyboard_focus(self->user, false);
   }
 
   static void
@@ -216,6 +229,7 @@ class wayland_source
   {
     auto *self = static_cast<wayland_source *>(data);
     const bool pressed = (state == wl_keyboard_key_state_pressed);
+    if ( !self->__keyboard_inside ) return;
 
     if ( self->on_key ) {
       input_event ev{};
@@ -252,6 +266,10 @@ class wayland_source
   gfx::platform::wayland_display_t *__dpy = nullptr;
   gfx::platform::wayland_lib_t *__lib = nullptr;
   gfx::platform::wl_seat *__seat = nullptr;
+  gfx::platform::wl_registry *__registry = nullptr;
+  gfx::platform::wl_surface *__surface = nullptr;
+  bool __pointer_inside = false;
+  bool __keyboard_inside = false;
   gfx::platform::wl_pointer *pointer_ = nullptr;
   gfx::platform::wl_keyboard *keyboard_ = nullptr;
   u32 __seat_version = 0;
@@ -267,7 +285,7 @@ public:
 
   // NOTE: in terminal sessions that are run by a different user than host, this will fail, without reconfig
   void
-  bind(gfx::platform::display &dpy)
+  bind(gfx::platform::display &dpy, gfx::platform::wl_surface *surface = nullptr)
   {
     if ( dpy.backend() != gfx::platform::backend_tag_t::wayland ) {
       exc<except::logic_error>("wayland_source: gfx::platform::display is not Wayland");
@@ -275,15 +293,13 @@ public:
     __dpy = dpy.as_wayland();
     if ( !__dpy || !__dpy->lib() ) exc<except::logic_error>("wayland_source: wayland_display_t missing");
     __lib = __dpy->lib();
+    __surface = surface;
+    __registry = __lib->wl_display_get_registry(__dpy->display());
+    if ( !__registry ) exc<except::library_error>("wayland_source: registry unavailable");
 
     static gfx::platform::wl_registry_listener_t reg_listener{ &__on_global, &__on_global_remove };
-    __lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(__dpy->registry()),
-                                 reinterpret_cast<void (**)(void)>(&reg_listener), this);
-    __lib->wl_display_roundtrip(__dpy->display());
-    __lib->wl_display_roundtrip(__dpy->display());
-
-    if ( !__seat ) exc<except::library_error>("wayland_source: wl_seat missing — compositor advertises no input");
-
+    __lib->wl_proxy_add_listener(reinterpret_cast<gfx::platform::wl_proxy *>(__registry), reinterpret_cast<void (**)(void)>(&reg_listener),
+                                 this);
 #if !defined(__micron_freestanding) || defined(__micron_eh)
     try {
       (void)xkb::xkb_lib();
@@ -297,6 +313,10 @@ public:
     (void)xkb::xkb_lib();
     __xkb_available = true;
 #endif
+    __lib->wl_display_roundtrip(__dpy->display());
+    __lib->wl_display_roundtrip(__dpy->display());
+
+    if ( !__seat ) exc<except::library_error>("wayland_source: wl_seat missing — compositor advertises no input");
   }
 
   // raw evdev key event
@@ -310,6 +330,8 @@ public:
   // xkbcommon keysym
   void (*on_keysym)(void *user, u32 evdev_code, xkb::keysym_t keysym, u32 utf32, bool pressed) = nullptr;
   void *user = nullptr;
+  void (*on_pointer_focus)(void *, bool) = nullptr;
+  void (*on_keyboard_focus)(void *, bool) = nullptr;
 
   bool
   xkb_available() const noexcept
@@ -320,7 +342,7 @@ public:
   void
   poll() noexcept
   {
-    if ( __lib && __dpy ) __lib->wl_display_dispatch_pending(__dpy->display());
+    if ( __dpy ) __dpy->dispatch_pending();
   }
 
   void
@@ -328,20 +350,32 @@ public:
   {
     if ( !__lib ) return;
     if ( keyboard_ ) {
-      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(keyboard_), wl_seat_ops::wl_keyboard_release, nullptr,
-                                    __seat_version, 1 /*WL_MARSHAL_FLAG_DESTROY*/);
+      if ( __seat_version < 3 )
+        __lib->wl_proxy_destroy(reinterpret_cast<gfx::platform::wl_proxy *>(keyboard_));
+      else
+        __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(keyboard_), wl_seat_ops::wl_keyboard_release, nullptr,
+                                      __seat_version, 1 /*WL_MARSHAL_FLAG_DESTROY*/);
       keyboard_ = nullptr;
     }
     if ( pointer_ ) {
-      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(pointer_), wl_seat_ops::wl_pointer_release, nullptr,
-                                    __seat_version, 1);
+      if ( __seat_version < 3 )
+        __lib->wl_proxy_destroy(reinterpret_cast<gfx::platform::wl_proxy *>(pointer_));
+      else
+        __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(pointer_), wl_seat_ops::wl_pointer_release, nullptr,
+                                      __seat_version, 1);
       pointer_ = nullptr;
     }
     if ( __seat ) {
-      __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(__seat), wl_seat_ops::wl_seat_release, nullptr,
-                                    __seat_version, 1);
+      if ( __seat_version < 5 )
+        __lib->wl_proxy_destroy(reinterpret_cast<gfx::platform::wl_proxy *>(__seat));
+      else
+        __lib->wl_proxy_marshal_flags(reinterpret_cast<gfx::platform::wl_proxy *>(__seat), wl_seat_ops::wl_seat_release, nullptr,
+                                      __seat_version, 1);
       __seat = nullptr;
     }
+    if ( __registry ) __lib->wl_proxy_destroy(reinterpret_cast<gfx::platform::wl_proxy *>(__registry));
+    __registry = nullptr;
+    __lib = nullptr;
   }
 
   gfx::platform::wl_seat *

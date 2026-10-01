@@ -64,6 +64,8 @@ union wl_argument {
   i32 h;
 };
 
+inline const wl_interface *__wl_untyped_arguments[8]{};
+
 using PFN_wl_display_connect = wl_display *(*)(const char *name);
 using PFN_wl_display_connect_to_fd = wl_display *(*)(int fd);
 using PFN_wl_display_disconnect = void (*)(wl_display *display);
@@ -74,6 +76,7 @@ using PFN_wl_display_roundtrip = int (*)(wl_display *display);
 using PFN_wl_display_flush = int (*)(wl_display *display);
 using PFN_wl_display_prepare_read = int (*)(wl_display *display);
 using PFN_wl_display_read_events = int (*)(wl_display *display);
+using PFN_wl_display_cancel_read = void (*)(wl_display *display);
 using PFN_wl_display_get_registry = wl_registry *(*)(wl_display * display);
 
 using PFN_wl_proxy_marshal_flags = wl_proxy *(*)(wl_proxy * proxy, u32 opcode, const wl_interface *interface, u32 version, u32 flags, ...);

@@ -30,20 +30,20 @@ inline const gfx::platform::wl_interface *__wl_pointer_types_set_cursor[] = {
 };
 inline const gfx::platform::wl_message __wl_pointer_methods[] = {
   { "set_cursor", "u?oii", __wl_pointer_types_set_cursor },
-  { "release", "3", nullptr },
+  { "release", "3", gfx::platform::__wl_untyped_arguments },
 };
 inline const gfx::platform::wl_message __wl_pointer_events[] = {
-  { "enter", "uoff", nullptr },
-  { "leave", "uo", nullptr },
-  { "motion", "uff", nullptr },
-  { "button", "uuuu", nullptr },
-  { "axis", "uuf", nullptr },
-  { "frame", "5", nullptr },
-  { "axis_source", "5u", nullptr },
-  { "axis_stop", "5uu", nullptr },
-  { "axis_discrete", "5ui", nullptr },
-  { "axis_value120", "8ui", nullptr },
-  { "axis_relative_direction", "9uu", nullptr },
+  { "enter", "uoff", gfx::platform::__wl_untyped_arguments },
+  { "leave", "uo", gfx::platform::__wl_untyped_arguments },
+  { "motion", "uff", gfx::platform::__wl_untyped_arguments },
+  { "button", "uuuu", gfx::platform::__wl_untyped_arguments },
+  { "axis", "uuf", gfx::platform::__wl_untyped_arguments },
+  { "frame", "5", gfx::platform::__wl_untyped_arguments },
+  { "axis_source", "5u", gfx::platform::__wl_untyped_arguments },
+  { "axis_stop", "5uu", gfx::platform::__wl_untyped_arguments },
+  { "axis_discrete", "5ui", gfx::platform::__wl_untyped_arguments },
+  { "axis_value120", "8ui", gfx::platform::__wl_untyped_arguments },
+  { "axis_relative_direction", "9uu", gfx::platform::__wl_untyped_arguments },
 };
 inline constexpr gfx::platform::wl_interface __wl_pointer_interface = {
   "wl_pointer",
@@ -55,11 +55,12 @@ inline constexpr gfx::platform::wl_interface __wl_pointer_interface = {
 };
 
 inline const gfx::platform::wl_message __wl_keyboard_methods[] = {
-  { "release", "3", nullptr },
+  { "release", "3", gfx::platform::__wl_untyped_arguments },
 };
 inline const gfx::platform::wl_message __wl_keyboard_events[] = {
-  { "keymap", "uhu", nullptr }, { "enter", "uoa", nullptr },       { "leave", "uo", nullptr },
-  { "key", "uuuu", nullptr },   { "modifiers", "uuuuu", nullptr }, { "repeat_info", "4ii", nullptr },
+  { "keymap", "uhu", gfx::platform::__wl_untyped_arguments },      { "enter", "uoa", gfx::platform::__wl_untyped_arguments },
+  { "leave", "uo", gfx::platform::__wl_untyped_arguments },        { "key", "uuuu", gfx::platform::__wl_untyped_arguments },
+  { "modifiers", "uuuuu", gfx::platform::__wl_untyped_arguments }, { "repeat_info", "4ii", gfx::platform::__wl_untyped_arguments },
 };
 inline constexpr gfx::platform::wl_interface __wl_keyboard_interface = {
   "wl_keyboard",
@@ -72,11 +73,16 @@ inline constexpr gfx::platform::wl_interface __wl_keyboard_interface = {
 
 // TODO: expand
 inline const gfx::platform::wl_message __wl_touch_methods[] = {
-  { "release", "3", nullptr },
+  { "release", "3", gfx::platform::__wl_untyped_arguments },
 };
 inline const gfx::platform::wl_message __wl_touch_events[] = {
-  { "down", "uuoiff", nullptr }, { "up", "uui", nullptr },     { "motion", "uiff", nullptr },     { "frame", "", nullptr },
-  { "cancel", "", nullptr },     { "shape", "6iff", nullptr }, { "orientation", "6if", nullptr },
+  { "down", "uuoiff", gfx::platform::__wl_untyped_arguments },
+  { "up", "uui", gfx::platform::__wl_untyped_arguments },
+  { "motion", "uiff", gfx::platform::__wl_untyped_arguments },
+  { "frame", "", nullptr },
+  { "cancel", "", nullptr },
+  { "shape", "6iff", gfx::platform::__wl_untyped_arguments },
+  { "orientation", "6if", gfx::platform::__wl_untyped_arguments },
 };
 inline constexpr gfx::platform::wl_interface __wl_touch_interface = {
   "wl_touch", 9, 1, __wl_touch_methods, 7, __wl_touch_events,
@@ -90,11 +96,11 @@ inline const gfx::platform::wl_message __wl_seat_methods[] = {
   { "get_pointer", "n", __wl_seat_types_get_pointer },
   { "get_keyboard", "n", __wl_seat_types_get_keyboard },
   { "get_touch", "n", __wl_seat_types_get_touch },
-  { "release", "5", nullptr },
+  { "release", "5", gfx::platform::__wl_untyped_arguments },
 };
 inline const gfx::platform::wl_message __wl_seat_events[] = {
-  { "capabilities", "u", nullptr },
-  { "name", "2s", nullptr },
+  { "capabilities", "u", gfx::platform::__wl_untyped_arguments },
+  { "name", "2s", gfx::platform::__wl_untyped_arguments },
 };
 inline constexpr gfx::platform::wl_interface __wl_seat_interface = {
   "wl_seat",

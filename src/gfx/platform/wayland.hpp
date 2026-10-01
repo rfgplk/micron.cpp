@@ -7,6 +7,7 @@
 
 #include "../../except.hpp"
 #include "../../linux/dynamic.hpp"
+#include "../../linux/sys/poll.hpp"
 #include "../../memory/cstring.hpp"
 #include "../../types.hpp"
 
@@ -38,7 +39,7 @@ struct wayland_lib_t {
   PFN_wl_display_flush wl_display_flush = nullptr;
   PFN_wl_display_prepare_read wl_display_prepare_read = nullptr;
   PFN_wl_display_read_events wl_display_read_events = nullptr;
-  PFN_wl_display_get_registry wl_display_get_registry = nullptr;
+  PFN_wl_display_cancel_read wl_display_cancel_read = nullptr;
 
   PFN_wl_proxy_marshal_flags wl_proxy_marshal_flags = nullptr;
   PFN_wl_proxy_marshal_array_flags wl_proxy_marshal_array_flags = nullptr;
@@ -61,7 +62,7 @@ struct wayland_lib_t {
     wl_display_flush = host.sym_as<PFN_wl_display_flush>("wl_display_flush");
     wl_display_prepare_read = host.sym_as<PFN_wl_display_prepare_read>("wl_display_prepare_read");
     wl_display_read_events = host.sym_as<PFN_wl_display_read_events>("wl_display_read_events");
-    wl_display_get_registry = host.sym_as<PFN_wl_display_get_registry>("wl_display_get_registry");
+    wl_display_cancel_read = host.sym_as<PFN_wl_display_cancel_read>("wl_display_cancel_read");
 
     wl_proxy_marshal_flags = host.sym_as<PFN_wl_proxy_marshal_flags>("wl_proxy_marshal_flags");
     wl_proxy_marshal_array_flags = host.sym_as<PFN_wl_proxy_marshal_array_flags>("wl_proxy_marshal_array_flags");
@@ -72,14 +73,22 @@ struct wayland_lib_t {
     wl_proxy_get_version = host.sym_as<PFN_wl_proxy_get_version>("wl_proxy_get_version");
     wl_proxy_get_id = host.sym_as<PFN_wl_proxy_get_id>("wl_proxy_get_id");
 
-    if ( !wl_display_connect || !wl_display_disconnect || !wl_display_get_fd || !wl_display_roundtrip || !wl_display_get_registry
-         || !wl_proxy_add_listener || !wl_proxy_destroy ) {
+    if ( !wl_display_connect || !wl_display_disconnect || !wl_display_get_fd || !wl_display_roundtrip || !wl_proxy_add_listener
+         || !wl_proxy_destroy || !wl_display_dispatch_pending || !wl_display_flush || !wl_display_prepare_read || !wl_display_read_events
+         || !wl_display_cancel_read ) {
       throw except::library_error("wayland: required entry points missing in libwayland-client.so.0");
     }
 
     if ( !wl_proxy_marshal_flags ) {
       throw except::library_error("wayland: libwayland-client < 1.20 (no wl_proxy_marshal_flags)");
     }
+  }
+
+  wl_registry *
+  wl_display_get_registry(wl_display *display) noexcept
+  {
+    return reinterpret_cast<wl_registry *>(
+        wl_proxy_marshal_flags(reinterpret_cast<wl_proxy *>(display), 1u, &__wl_registry_interface, 1u, 0u, nullptr));
   }
 };
 
@@ -226,7 +235,16 @@ public:
   void
   dispatch_pending() noexcept
   {
-    if ( __lib && __display ) __lib->wl_display_dispatch_pending(__display);
+    if ( !__lib || !__display ) return;
+    while ( __lib->wl_display_prepare_read(__display) != 0 )
+      if ( __lib->wl_display_dispatch_pending(__display) < 0 ) return;
+    __lib->wl_display_flush(__display);
+    micron::posix::pollfd p{ __fd, micron::posix::poll_in, 0 };
+    if ( micron::posix::poll(p, 1, 0) > 0 && (p.revents & posix::poll_in) )
+      __lib->wl_display_read_events(__display);
+    else
+      __lib->wl_display_cancel_read(__display);
+    __lib->wl_display_dispatch_pending(__display);
   }
 
   void

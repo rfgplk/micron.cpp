@@ -195,9 +195,18 @@ private:
   void (*__cb_expose)(void *) noexcept = nullptr;
   void (*__cb_visibility)(void *, bool) noexcept = nullptr;
   void (*__cb_move)(void *, i32, i32) noexcept = nullptr;
+  void (*__event_handler)(void *, const XEvent &) noexcept = nullptr;
+  void *__event_user = nullptr;
 
 public:
   ~x11_window_t() { destroy(); }
+
+  void
+  set_event_handler(void (*fn)(void *, const XEvent &) noexcept, void *user) noexcept
+  {
+    __event_handler = fn;
+    __event_user = user;
+  }
 
   x11_window_t() = default;
 
@@ -328,6 +337,7 @@ public:
     while ( x.XPending(__disp->display()) ) {
       XEvent ev{};
       x.XNextEvent(__disp->display(), &ev);
+      if ( __event_handler ) __event_handler(__event_user, ev);
       switch ( ev.type ) {
       case ConfigureNotify:
         if ( ev.xconfigure.window == __window ) {
