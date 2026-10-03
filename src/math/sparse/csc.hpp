@@ -39,7 +39,7 @@ template<arith_scalar T, micron::integral I = u32> struct csc {
 
   csc() noexcept = default;
 
-  csc(usize r, usize c) : rows(r), cols(c), outer(c + 1, I(0)), inner(0), values(0) { }
+  csc(usize r, usize c) : rows(r), cols(c), outer(c + 1, I(0)) { }
 
   csc(const csc &) = default;
   csc(csc &&) noexcept = default;
@@ -79,6 +79,7 @@ template<arith_scalar T, micron::integral I = u32> struct csc {
   from_triplets_sorted(usize r, usize c, const I *rows_arr, const I *cols_arr, const T *vals_arr, usize n)
   {
     csc out(r, c);
+    if ( n == 0 ) return out;
     micron::vector<usize, micron::allocator_serial<>, false> counts(c, usize(0));
     for ( usize k = 0; k < n; ++k ) {
       const usize j = static_cast<usize>(cols_arr[k]);
@@ -87,6 +88,7 @@ template<arith_scalar T, micron::integral I = u32> struct csc {
     out.outer.data()[0] = I(0);
     for ( usize j = 0; j < c; ++j ) out.outer.data()[j + 1] = out.outer.data()[j] + static_cast<I>(counts.data()[j]);
     const usize total = static_cast<usize>(out.outer.data()[c]);
+    if ( total == 0 ) return out;
     out.inner = vec_i(total, I(0));
     out.values = vec_v(total, T(0));
     micron::vector<usize, micron::allocator_serial<>, false> pos(c, usize(0));

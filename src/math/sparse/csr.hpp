@@ -39,7 +39,7 @@ template<arith_scalar T, micron::integral I = u32> struct csr {
 
   csr() noexcept = default;
 
-  csr(usize r, usize c) : rows(r), cols(c), outer(r + 1, I(0)), inner(0), values(0) { }
+  csr(usize r, usize c) : rows(r), cols(c), outer(r + 1, I(0)) { }
 
   csr(const csr &) = default;
   csr(csr &&) noexcept = default;
@@ -79,6 +79,7 @@ template<arith_scalar T, micron::integral I>
 to_csc(const csr<T, I> &A) noexcept
 {
   csc<T, I> out(A.rows, A.cols);
+  if ( A.nnz() == 0 ) return out;
   micron::vector<usize, micron::allocator_serial<>, false> counts(A.cols, usize(0));
   for ( usize k = 0; k < A.nnz(); ++k ) {
     const usize j = static_cast<usize>(A.inner.data()[k]);
@@ -111,6 +112,7 @@ template<arith_scalar T, micron::integral I>
 to_csr(const csc<T, I> &A) noexcept
 {
   csr<T, I> out(A.rows, A.cols);
+  if ( A.nnz() == 0 ) return out;
   micron::vector<usize, micron::allocator_serial<>, false> counts(A.rows, usize(0));
   for ( usize k = 0; k < A.nnz(); ++k ) {
     const usize i = static_cast<usize>(A.inner.data()[k]);

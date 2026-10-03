@@ -57,7 +57,7 @@ spmv(T alpha, const csc<T, I> &A, const dynvec<T> &x, T beta, dynvec<T> &y) noex
     const usize b = static_cast<usize>(outer[j + 1]);
     // guard non-monotone outer
     const usize cnt = (b >= a) ? (b - a) : usize(0);
-    spmv_col_scatter<T, I>(alpha, xj, vals + a, inner + a, yp, cnt);
+    if ( cnt != 0 ) spmv_col_scatter<T, I>(alpha, xj, vals + a, inner + a, yp, cnt);
   }
 }
 
