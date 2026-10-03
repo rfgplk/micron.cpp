@@ -31,6 +31,7 @@
 #include "../dispatch.hpp"
 #include "../mk.hpp"
 #include "../quants/views.hpp"
+#include "bits/packed.hpp"
 
 #if defined(__AVX2__) && defined(__FMA__)
 #include "../../simd/aliases.hpp"
@@ -69,7 +70,7 @@ ref(T *p, usize i, ssize_t inc) noexcept
 #if defined(__AVX2__) && defined(__FMA__)
 
 [[nodiscard, gnu::flatten]] inline f64
-dot_packed_f64(const double *__restrict__ x, const double *__restrict__ y, usize n) noexcept
+dot_packed_f64(const __packed_f64 *__restrict__ x, const __packed_f64 *__restrict__ y, usize n) noexcept
 {
   __m256d s0 = simd::avx::zero_f64();
   __m256d s1 = simd::avx::zero_f64();
@@ -97,7 +98,7 @@ dot_packed_f64(const double *__restrict__ x, const double *__restrict__ y, usize
 }
 
 [[nodiscard, gnu::flatten]] inline f32
-dot_packed_f32(const float *__restrict__ x, const float *__restrict__ y, usize n) noexcept
+dot_packed_f32(const __packed_f32 *__restrict__ x, const __packed_f32 *__restrict__ y, usize n) noexcept
 {
   __m256 s0 = simd::avx::zero_f32();
   __m256 s1 = simd::avx::zero_f32();
@@ -123,7 +124,7 @@ dot_packed_f32(const float *__restrict__ x, const float *__restrict__ y, usize n
 }
 
 [[gnu::flatten]] inline void
-axpy_packed_f64(double alpha, const double *__restrict__ x, double *__restrict__ y, usize n) noexcept
+axpy_packed_f64(double alpha, const __packed_f64 *__restrict__ x, __packed_f64 *__restrict__ y, usize n) noexcept
 {
   const __m256d va = simd::avx::splat_f64(alpha);
   usize i = 0;
@@ -149,7 +150,7 @@ axpy_packed_f64(double alpha, const double *__restrict__ x, double *__restrict__
 }
 
 [[gnu::flatten]] inline void
-axpy_packed_f32(float alpha, const float *__restrict__ x, float *__restrict__ y, usize n) noexcept
+axpy_packed_f32(float alpha, const __packed_f32 *__restrict__ x, __packed_f32 *__restrict__ y, usize n) noexcept
 {
   const __m256 va = simd::avx::splat_f32(alpha);
   usize i = 0;
@@ -171,7 +172,7 @@ axpy_packed_f32(float alpha, const float *__restrict__ x, float *__restrict__ y,
 }
 
 [[nodiscard, gnu::flatten]] inline f64
-asum_packed_f64(const double *__restrict__ x, usize n) noexcept
+asum_packed_f64(const __packed_f64 *__restrict__ x, usize n) noexcept
 {
   // bit-mask 0x7FFFFFFFFFFFFFFF clears the sign bit (gives |x|).
   const __m256d sign_mask = simd::avx::cast_i256_to_f64(simd::avx::splat_i64(0x7FFFFFFFFFFFFFFFLL));
@@ -198,7 +199,7 @@ asum_packed_f64(const double *__restrict__ x, usize n) noexcept
 }
 
 [[nodiscard, gnu::flatten]] inline f32
-asum_packed_f32(const float *__restrict__ x, usize n) noexcept
+asum_packed_f32(const __packed_f32 *__restrict__ x, usize n) noexcept
 {
   const __m256 sign_mask = simd::avx::cast_i256_to_f32(simd::avx::splat_i32(0x7FFFFFFF));
   __m256 s0 = simd::avx::zero_f32();
@@ -229,7 +230,7 @@ asum_packed_f32(const float *__restrict__ x, usize n) noexcept
 // 4-chain unroll: 16 doubles / 32 floats per outer iteration
 
 [[gnu::flatten]] inline void
-scal_packed_f64(double alpha, double *__restrict__ x, usize n) noexcept
+scal_packed_f64(double alpha, __packed_f64 *__restrict__ x, usize n) noexcept
 {
   const __m256d va = simd::avx::splat_f64(alpha);
   usize i = 0;
@@ -250,7 +251,7 @@ scal_packed_f64(double alpha, double *__restrict__ x, usize n) noexcept
 }
 
 [[gnu::flatten]] inline void
-scal_packed_f32(float alpha, float *__restrict__ x, usize n) noexcept
+scal_packed_f32(float alpha, __packed_f32 *__restrict__ x, usize n) noexcept
 {
   const __m256 va = simd::avx::splat_f32(alpha);
   usize i = 0;
@@ -274,7 +275,7 @@ scal_packed_f32(float alpha, float *__restrict__ x, usize n) noexcept
 // nrm2_fast: sum-of-squares with a single sqrt at the end
 // WARNING: NOT overflow safe
 [[nodiscard, gnu::flatten]] inline f64
-nrm2_fast_packed_f64(const double *__restrict__ x, usize n) noexcept
+nrm2_fast_packed_f64(const __packed_f64 *__restrict__ x, usize n) noexcept
 {
   __m256d s0 = simd::avx::zero_f64();
   __m256d s1 = simd::avx::zero_f64();
@@ -306,7 +307,7 @@ nrm2_fast_packed_f64(const double *__restrict__ x, usize n) noexcept
 }
 
 [[nodiscard, gnu::flatten]] inline f32
-nrm2_fast_packed_f32(const float *__restrict__ x, usize n) noexcept
+nrm2_fast_packed_f32(const __packed_f32 *__restrict__ x, usize n) noexcept
 {
   __m256 s0 = simd::avx::zero_f32();
   __m256 s1 = simd::avx::zero_f32();
@@ -341,7 +342,7 @@ nrm2_fast_packed_f32(const float *__restrict__ x, usize n) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // iamax
 [[nodiscard, gnu::flatten]] inline usize
-iamax_packed_f64(const double *__restrict__ x, usize n) noexcept
+iamax_packed_f64(const __packed_f64 *__restrict__ x, usize n) noexcept
 {
   if ( n == 0 ) return 0;
   if ( n < 8 ) {
@@ -421,7 +422,7 @@ iamax_packed_f64(const double *__restrict__ x, usize n) noexcept
 }
 
 [[nodiscard, gnu::flatten]] inline usize
-iamax_packed_f32(const float *__restrict__ x, usize n) noexcept
+iamax_packed_f32(const __packed_f32 *__restrict__ x, usize n) noexcept
 {
   if ( n == 0 ) return 0;
   if ( n < 16 ) {
@@ -507,7 +508,7 @@ iamax_packed_f32(const float *__restrict__ x, usize n) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // NEON scal
 [[gnu::flatten]] inline void
-scal_packed_f32_neon(float alpha, float *__restrict__ x, usize n) noexcept
+scal_packed_f32_neon(float alpha, __packed_f32 *__restrict__ x, usize n) noexcept
 {
   const float32x4_t va = simd::neon::splat_f32(alpha);
   usize i = 0;
@@ -529,7 +530,7 @@ scal_packed_f32_neon(float alpha, float *__restrict__ x, usize n) noexcept
 
 #if defined(__micron_arch_arm64)
 [[gnu::flatten]] inline void
-scal_packed_f64_neon(double alpha, double *__restrict__ x, usize n) noexcept
+scal_packed_f64_neon(double alpha, __packed_f64 *__restrict__ x, usize n) noexcept
 {
   const float64x2_t va = simd::neon::splat_f64(alpha);
   usize i = 0;
@@ -554,7 +555,7 @@ scal_packed_f64_neon(double alpha, double *__restrict__ x, usize n) noexcept
 // NEON nrm2_fast
 
 [[nodiscard, gnu::flatten]] inline f32
-nrm2_fast_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
+nrm2_fast_packed_f32_neon(const __packed_f32 *__restrict__ x, usize n) noexcept
 {
   float32x4_t s0 = simd::neon::splat_f32(0.0f);
   float32x4_t s1 = simd::neon::splat_f32(0.0f);
@@ -594,7 +595,7 @@ nrm2_fast_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
 
 #if defined(__micron_arch_arm64)
 [[nodiscard, gnu::flatten]] inline f64
-nrm2_fast_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
+nrm2_fast_packed_f64_neon(const __packed_f64 *__restrict__ x, usize n) noexcept
 {
   float64x2_t s0 = simd::neon::splat_f64(0.0);
   float64x2_t s1 = simd::neon::splat_f64(0.0);
@@ -625,7 +626,7 @@ nrm2_fast_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // NEON iamax
 [[nodiscard, gnu::flatten]] inline usize
-iamax_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
+iamax_packed_f32_neon(const __packed_f32 *__restrict__ x, usize n) noexcept
 {
   if ( n == 0 ) return 0;
   if ( n < 8 ) {
@@ -705,7 +706,7 @@ iamax_packed_f32_neon(const float *__restrict__ x, usize n) noexcept
 
 #if defined(__micron_arch_arm64)
 [[nodiscard, gnu::flatten]] inline usize
-iamax_packed_f64_neon(const double *__restrict__ x, usize n) noexcept
+iamax_packed_f64_neon(const __packed_f64 *__restrict__ x, usize n) noexcept
 {
   if ( n == 0 ) return 0;
   if ( n < 4 ) {
@@ -797,10 +798,10 @@ axpy(T alpha, const T *__restrict__ x, const T *__restrict__ x_end, T *__restric
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 8 ) {
-        __impl_level1::axpy_packed_f64(double(alpha), reinterpret_cast<const double *>(x), reinterpret_cast<double *>(y), n);
+        __impl_level1::axpy_packed_f64(double(alpha), reinterpret_cast<const __packed_f64 *>(x), reinterpret_cast<__packed_f64 *>(y), n);
         return;
       } else if constexpr ( sizeof(T) == 4 ) {
-        __impl_level1::axpy_packed_f32(float(alpha), reinterpret_cast<const float *>(x), reinterpret_cast<float *>(y), n);
+        __impl_level1::axpy_packed_f32(float(alpha), reinterpret_cast<const __packed_f32 *>(x), reinterpret_cast<__packed_f32 *>(y), n);
         return;
       }
     }
@@ -908,10 +909,10 @@ scal(T alpha, T *first, T *last) noexcept
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 8 ) {
-        __impl_level1::scal_packed_f64(double(alpha), reinterpret_cast<double *>(first), n);
+        __impl_level1::scal_packed_f64(double(alpha), reinterpret_cast<__packed_f64 *>(first), n);
         return;
       } else if constexpr ( sizeof(T) == 4 ) {
-        __impl_level1::scal_packed_f32(float(alpha), reinterpret_cast<float *>(first), n);
+        __impl_level1::scal_packed_f32(float(alpha), reinterpret_cast<__packed_f32 *>(first), n);
         return;
       }
     }
@@ -920,10 +921,10 @@ scal(T alpha, T *first, T *last) noexcept
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 8 ) {
-        __impl_level1::scal_packed_f64_neon(double(alpha), reinterpret_cast<double *>(first), n);
+        __impl_level1::scal_packed_f64_neon(double(alpha), reinterpret_cast<__packed_f64 *>(first), n);
         return;
       } else if constexpr ( sizeof(T) == 4 ) {
-        __impl_level1::scal_packed_f32_neon(float(alpha), reinterpret_cast<float *>(first), n);
+        __impl_level1::scal_packed_f32_neon(float(alpha), reinterpret_cast<__packed_f32 *>(first), n);
         return;
       }
     }
@@ -932,7 +933,7 @@ scal(T alpha, T *first, T *last) noexcept
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 4 ) {
-        __impl_level1::scal_packed_f32_neon(float(alpha), reinterpret_cast<float *>(first), n);
+        __impl_level1::scal_packed_f32_neon(float(alpha), reinterpret_cast<__packed_f32 *>(first), n);
         return;
       }
     }
@@ -998,9 +999,9 @@ asum(const F *first, const F *last) noexcept
 #if defined(__AVX2__) && defined(__FMA__)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
-      return F(__impl_level1::asum_packed_f64(reinterpret_cast<const double *>(first), n));
+      return F(__impl_level1::asum_packed_f64(reinterpret_cast<const __packed_f64 *>(first), n));
     } else if constexpr ( sizeof(F) == 4 ) {
-      return F(__impl_level1::asum_packed_f32(reinterpret_cast<const float *>(first), n));
+      return F(__impl_level1::asum_packed_f32(reinterpret_cast<const __packed_f32 *>(first), n));
     }
   }
 #endif
@@ -1110,23 +1111,23 @@ nrm2_fast(const F *first, const F *last) noexcept
 #if defined(__AVX2__) && defined(__FMA__)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
-      return F(mk::pow_ns::sqrt<f64>(__impl_level1::nrm2_fast_packed_f64(reinterpret_cast<const double *>(first), n)));
+      return F(mk::pow_ns::sqrt<f64>(__impl_level1::nrm2_fast_packed_f64(reinterpret_cast<const __packed_f64 *>(first), n)));
     } else if constexpr ( sizeof(F) == 4 ) {
-      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32(reinterpret_cast<const float *>(first), n)));
+      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32(reinterpret_cast<const __packed_f32 *>(first), n)));
     }
   }
 #elif defined(__micron_arch_arm64) && defined(__micron_arm_neon)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
-      return F(mk::pow_ns::sqrt<f64>(__impl_level1::nrm2_fast_packed_f64_neon(reinterpret_cast<const double *>(first), n)));
+      return F(mk::pow_ns::sqrt<f64>(__impl_level1::nrm2_fast_packed_f64_neon(reinterpret_cast<const __packed_f64 *>(first), n)));
     } else if constexpr ( sizeof(F) == 4 ) {
-      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const float *>(first), n)));
+      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const __packed_f32 *>(first), n)));
     }
   }
 #elif defined(__micron_arch_arm32) && defined(__micron_arm_neon)
   if !consteval {
     if constexpr ( sizeof(F) == 4 ) {
-      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const float *>(first), n)));
+      return F(mk::pow_ns::sqrt<f32>(__impl_level1::nrm2_fast_packed_f32_neon(reinterpret_cast<const __packed_f32 *>(first), n)));
     }
   }
 #endif
@@ -1202,9 +1203,9 @@ iamax(const T *first, const T *last) noexcept
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 8 ) {
-        return __impl_level1::iamax_packed_f64(reinterpret_cast<const double *>(first), n);
+        return __impl_level1::iamax_packed_f64(reinterpret_cast<const __packed_f64 *>(first), n);
       } else if constexpr ( sizeof(T) == 4 ) {
-        return __impl_level1::iamax_packed_f32(reinterpret_cast<const float *>(first), n);
+        return __impl_level1::iamax_packed_f32(reinterpret_cast<const __packed_f32 *>(first), n);
       }
     }
   }
@@ -1212,9 +1213,9 @@ iamax(const T *first, const T *last) noexcept
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 8 ) {
-        return __impl_level1::iamax_packed_f64_neon(reinterpret_cast<const double *>(first), n);
+        return __impl_level1::iamax_packed_f64_neon(reinterpret_cast<const __packed_f64 *>(first), n);
       } else if constexpr ( sizeof(T) == 4 ) {
-        return __impl_level1::iamax_packed_f32_neon(reinterpret_cast<const float *>(first), n);
+        return __impl_level1::iamax_packed_f32_neon(reinterpret_cast<const __packed_f32 *>(first), n);
       }
     }
   }
@@ -1222,7 +1223,7 @@ iamax(const T *first, const T *last) noexcept
   if !consteval {
     if constexpr ( ieee754_floating<T> ) {
       if constexpr ( sizeof(T) == 4 ) {
-        return __impl_level1::iamax_packed_f32_neon(reinterpret_cast<const float *>(first), n);
+        return __impl_level1::iamax_packed_f32_neon(reinterpret_cast<const __packed_f32 *>(first), n);
       }
     }
   }
@@ -1311,9 +1312,9 @@ dot(const F *__restrict__ x, const F *__restrict__ x_end, const F *__restrict__ 
 #if defined(__AVX2__) && defined(__FMA__)
   if !consteval {
     if constexpr ( sizeof(F) == 8 ) {
-      return F(__impl_level1::dot_packed_f64(reinterpret_cast<const double *>(x), reinterpret_cast<const double *>(y), n));
+      return F(__impl_level1::dot_packed_f64(reinterpret_cast<const __packed_f64 *>(x), reinterpret_cast<const __packed_f64 *>(y), n));
     } else if constexpr ( sizeof(F) == 4 ) {
-      return F(__impl_level1::dot_packed_f32(reinterpret_cast<const float *>(x), reinterpret_cast<const float *>(y), n));
+      return F(__impl_level1::dot_packed_f32(reinterpret_cast<const __packed_f32 *>(x), reinterpret_cast<const __packed_f32 *>(y), n));
     }
   }
 #endif

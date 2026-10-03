@@ -1,0 +1,42 @@
+# Copyright (c) 2026 David Lucius Severus. Boost Software License 1.0.
+test tests/rigor/blas_typed_dot.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -o bin/typed-dot/native --timeout 180
+test tests/rigor/math_blas1.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -o bin/typed-dot/native --timeout 180
+test tests/rigor/math_blas_identities.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -o bin/typed-dot/native --timeout 180
+test tests/rigor/math_blas_dynamic.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -o bin/typed-dot/native --timeout 180
+test tests/rigor/blas_typed_dot.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --isa v3 -o bin/typed-dot/fast --timeout 180
+test tests/rigor/math_blas1.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --isa v3 -o bin/typed-dot/fast --timeout 180
+test tests/rigor/math_blas_identities.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --isa v3 -o bin/typed-dot/fast --timeout 180
+test tests/rigor/math_blas_dynamic.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --isa v3 -o bin/typed-dot/fast --timeout 180
+test tests/rigor/blas_typed_dot.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --isa base -o bin/typed-dot/base --timeout 180
+test tests/rigor/math_blas1.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --isa base -o bin/typed-dot/base --timeout 180
+test tests/rigor/math_blas_identities.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --isa base -o bin/typed-dot/base --timeout 180
+test tests/rigor/math_blas_dynamic.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --isa base -o bin/typed-dot/base --timeout 180
+test tests/rigor/blas_typed_dot.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm64 -o bin/typed-dot/arm64 --timeout 180
+test tests/rigor/math_blas1.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm64 -o bin/typed-dot/arm64 --timeout 180
+test tests/rigor/math_blas_identities.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm64 -o bin/typed-dot/arm64 --timeout 180
+test tests/rigor/math_blas_dynamic.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm64 -o bin/typed-dot/arm64 --timeout 180
+test tests/rigor/blas_typed_dot.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm -o bin/typed-dot/arm32 --timeout 180
+test tests/rigor/math_blas1.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm -o bin/typed-dot/arm32 --timeout 180
+test tests/rigor/math_blas_identities.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm -o bin/typed-dot/arm32 --timeout 180
+test tests/rigor/math_blas_dynamic.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm -o bin/typed-dot/arm32 --timeout 180
+test tests/rigor/blas_typed_dot.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --clang -o bin/typed-dot/clang --timeout 180
+test tests/rigor/math_blas1.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --clang -o bin/typed-dot/clang --timeout 180
+test tests/rigor/math_blas_identities.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --clang -o bin/typed-dot/clang --timeout 180
+test tests/rigor/math_blas_dynamic.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --clang -o bin/typed-dot/clang --timeout 180
+test tests/rigor/blas_typed_dot.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O1 --asan --ubsan -o bin/typed-dot/sanitize --timeout 180
+test tests/rigor/math_blas2.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -o bin/typed-dot/native --timeout 240
+test tests/rigor/math_blas3.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -o bin/typed-dot/native --timeout 240
+test tests/rigor/math_blas_gemm_blocked.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -o bin/typed-dot/native --timeout 240
+test tests/rigor/math_blas_rank_one.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -o bin/typed-dot/native --timeout 240
+test tests/rigor/math_blas2.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --isa v3 -o bin/typed-dot/fast --timeout 240
+test tests/rigor/math_blas3.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --isa v3 -o bin/typed-dot/fast --timeout 240
+test tests/rigor/math_blas_gemm_blocked.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --isa v3 -o bin/typed-dot/fast --timeout 240
+test tests/rigor/math_blas_rank_one.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --isa v3 -o bin/typed-dot/fast --timeout 240
+test tests/rigor/math_blas2.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm64 -o bin/typed-dot/arm64 --timeout 240
+test tests/rigor/math_blas3.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm64 -o bin/typed-dot/arm64 --timeout 240
+test tests/rigor/math_blas_gemm_blocked.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm64 -o bin/typed-dot/arm64 --timeout 240
+test tests/rigor/math_blas_rank_one.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm64 -o bin/typed-dot/arm64 --timeout 240
+test tests/rigor/math_blas2.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm -o bin/typed-dot/arm32 --timeout 240
+test tests/rigor/math_blas3.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm -o bin/typed-dot/arm32 --timeout 240
+test tests/rigor/math_blas_gemm_blocked.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm -o bin/typed-dot/arm32 --timeout 240
+test tests/rigor/math_blas_rank_one.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto -k --start ./start --arm -o bin/typed-dot/arm32 --timeout 240
