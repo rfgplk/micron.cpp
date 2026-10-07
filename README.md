@@ -291,7 +291,8 @@ Licensed under the Boost Software License, except the 'abcmalloc' memory allocat
 
 `math/float16.hpp` provides `micron::math::float16` (IEEE binary16) and `bfloat16`.
 Both are trivially copyable two-byte storage types containing a public `u16 bits` word.
-`from_bits` preserves the exact representation. Explicit construction accepts a 32-bit floating
+`from_bits` preserves the exact representation; `is_finite()` classifies the stored bits without
+a floating-point argument or return boundary. Explicit construction accepts a 32-bit floating
 value and rounds to nearest, ties to even; finite overflow becomes signed infinity, subnormals
 are preserved, and NaNs become a signed canonical quiet NaN. Wider sources must explicitly
 narrow to f32 first, so any double rounding is visible at the call site. `to_float()` and

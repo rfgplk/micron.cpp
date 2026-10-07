@@ -85,6 +85,12 @@ struct float16 {
 
   constexpr float16() noexcept = default;
 
+  constexpr bool
+  is_finite() const noexcept
+  {
+    return (bits & 0x7c00) != 0x7c00;
+  }
+
   template<class F>
     requires(micron::is_floating_point_v<F> && sizeof(F) == 4)
   explicit constexpr float16(const F &value) noexcept : bits(__compact::__encode16(__builtin_bit_cast(u32, value)))
@@ -116,6 +122,12 @@ struct bfloat16 {
   u16 bits{};
 
   constexpr bfloat16() noexcept = default;
+
+  constexpr bool
+  is_finite() const noexcept
+  {
+    return (bits & 0x7f80) != 0x7f80;
+  }
 
   template<class F>
     requires(micron::is_floating_point_v<F> && sizeof(F) == 4)

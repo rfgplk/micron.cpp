@@ -51,6 +51,7 @@ conversions()
   bool decode = true, roundtrip = true, midpoints = true, special = true;
   for ( u32 word = 0; word <= 65535; ++word ) {
     const H h = H::from_bits(u16(word));
+    special &= h.is_finite() == ((word & 0x7fff) < infinity);
     const f32 value = h.to_float();
     if ( (word & 0x7fff) < infinity ) {
       decode &= value == f32(reference(word, Mantissa, Bias)) && h.to_double() == reference(word, Mantissa, Bias);
