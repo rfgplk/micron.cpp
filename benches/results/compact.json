@@ -1,0 +1,1076 @@
+{
+  "build": [
+    "duck",
+    "build",
+    "benches/compact_bench.cpp",
+    "-i",
+    "/code/C++/micron",
+    "--std",
+    "c++23",
+    "-O3",
+    "--no-lto",
+    "--perf",
+    "--def",
+    "MICRON_ABC_STATS=1",
+    "--def",
+    "MICRON_ABC_ZERO_ON_ALLOC=true",
+    "--def",
+    "MICRON_ABC_ENFORCE_PROVENANCE=true",
+    "-o",
+    "/code/C++/micron/bin/compact/bench"
+  ],
+  "source_sha256": {
+    "src/math/float16.hpp": "db74814e39f3930a21248e3bac91ebb96dd54566fa0fea45b162b18a87604a77",
+    "src/math/blas/mixed.hpp": "2ede259dafe3d5f37af7f4bf179853b98f9dc9430587374dfeafd37abf546552",
+    "src/math/matrix/pack.hpp": "f0c0483c04c43b83ce8464778662bef293394ab7bd13b1a8d0f4c3a58e803614",
+    "benches/compact_bench.cpp": "49d845da7ac05d127cc72a767ff6868e281a82221e2d07528a9eb2fe3d5bc1bc",
+    "benches/compact.py": "4574a67fb8597cfc3d662deed121f99279bbe12f1fa9ee717d854a040b128463"
+  },
+  "micron_base": "8da2d9580cbc1dcadc17bc28b38ce75de45a1f1f",
+  "compiler": "g++ (GCC) 16.2.1 20260819 (Red Hat 16.2.1-2)\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "cpu_model": "model name\t: Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz",
+  "cpu": 0,
+  "milliseconds_per_case": 100,
+  "runs": [
+    {
+      "repetition": 0,
+      "command": [
+        "taskset",
+        "-c",
+        "0",
+        "/code/C++/micron/bin/compact/bench/compact_bench",
+        "100"
+      ],
+      "time_unix": 1791376036.6852303,
+      "competing_before": [],
+      "competing_after": [],
+      "stdout": "type=f32 rows=1 ns_per_call=2283.1906892851434 calls=43799 setup_ns=304397 storage_bytes=16384 allocs=0 frees=0 checksum=6.012382745742798\ntype=f16 rows=1 ns_per_call=7920.77023602091 calls=12626 setup_ns=42492 storage_bytes=8192 allocs=0 frees=0 checksum=6.013365268707275\ntype=bf16 rows=1 ns_per_call=3000.9568166131503 calls=33323 setup_ns=31577 storage_bytes=8192 allocs=0 frees=0 checksum=6.024388551712036\ntype=i8-i32 rows=1 ns_per_call=880.9157145499872 calls=113519 setup_ns=3137 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=i8-i64 rows=1 ns_per_call=1245.66882995553 calls=80279 setup_ns=2970 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=f32 rows=32 ns_per_call=5777.69540097065 calls=17308 setup_ns=67215 storage_bytes=16384 allocs=0 frees=0 checksum=1.3529400825500488\ntype=f16 rows=32 ns_per_call=242233.29055690073 calls=413 setup_ns=45571 storage_bytes=8192 allocs=0 frees=0 checksum=1.353259563446045\ntype=bf16 rows=32 ns_per_call=83783.83333333333 calls=1194 setup_ns=34872 storage_bytes=8192 allocs=0 frees=0 checksum=1.3570239543914795\ntype=i8-i32 rows=32 ns_per_call=16428.25591327201 calls=6088 setup_ns=4252 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=32 ns_per_call=28440.985214671597 calls=3517 setup_ns=21905 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=f32 rows=512 ns_per_call=68046.44421768708 calls=1470 setup_ns=413470 storage_bytes=16384 allocs=0 frees=0 checksum=5.139318108558655\ntype=f16 rows=512 ns_per_call=3867683.730769231 calls=26 setup_ns=113360 storage_bytes=8192 allocs=0 frees=0 checksum=5.140562534332275\ntype=bf16 rows=512 ns_per_call=1337905.6133333333 calls=75 setup_ns=104780 storage_bytes=8192 allocs=0 frees=0 checksum=5.149851202964783\ntype=i8-i32 rows=512 ns_per_call=257160.7146529563 calls=389 setup_ns=53969 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=512 ns_per_call=447309.66071428574 calls=224 setup_ns=32822 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\n",
+      "stderr": "",
+      "samples": [
+        {
+          "type": "f32",
+          "rows": 1,
+          "ns_per_call": 2283.1906892851434,
+          "calls": 43799,
+          "setup_ns": 304397,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.012382745742798
+        },
+        {
+          "type": "f16",
+          "rows": 1,
+          "ns_per_call": 7920.77023602091,
+          "calls": 12626,
+          "setup_ns": 42492,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.013365268707275
+        },
+        {
+          "type": "bf16",
+          "rows": 1,
+          "ns_per_call": 3000.9568166131503,
+          "calls": 33323,
+          "setup_ns": 31577,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.024388551712036
+        },
+        {
+          "type": "i8-i32",
+          "rows": 1,
+          "ns_per_call": 880.9157145499872,
+          "calls": 113519,
+          "setup_ns": 3137,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 1,
+          "ns_per_call": 1245.66882995553,
+          "calls": 80279,
+          "setup_ns": 2970,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "f32",
+          "rows": 32,
+          "ns_per_call": 5777.69540097065,
+          "calls": 17308,
+          "setup_ns": 67215,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3529400825500488
+        },
+        {
+          "type": "f16",
+          "rows": 32,
+          "ns_per_call": 242233.29055690073,
+          "calls": 413,
+          "setup_ns": 45571,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.353259563446045
+        },
+        {
+          "type": "bf16",
+          "rows": 32,
+          "ns_per_call": 83783.83333333333,
+          "calls": 1194,
+          "setup_ns": 34872,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3570239543914795
+        },
+        {
+          "type": "i8-i32",
+          "rows": 32,
+          "ns_per_call": 16428.25591327201,
+          "calls": 6088,
+          "setup_ns": 4252,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 32,
+          "ns_per_call": 28440.985214671597,
+          "calls": 3517,
+          "setup_ns": 21905,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "f32",
+          "rows": 512,
+          "ns_per_call": 68046.44421768708,
+          "calls": 1470,
+          "setup_ns": 413470,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.139318108558655
+        },
+        {
+          "type": "f16",
+          "rows": 512,
+          "ns_per_call": 3867683.730769231,
+          "calls": 26,
+          "setup_ns": 113360,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.140562534332275
+        },
+        {
+          "type": "bf16",
+          "rows": 512,
+          "ns_per_call": 1337905.6133333333,
+          "calls": 75,
+          "setup_ns": 104780,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.149851202964783
+        },
+        {
+          "type": "i8-i32",
+          "rows": 512,
+          "ns_per_call": 257160.7146529563,
+          "calls": 389,
+          "setup_ns": 53969,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 512,
+          "ns_per_call": 447309.66071428574,
+          "calls": 224,
+          "setup_ns": 32822,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        }
+      ]
+    },
+    {
+      "repetition": 1,
+      "command": [
+        "taskset",
+        "-c",
+        "0",
+        "/code/C++/micron/bin/compact/bench/compact_bench",
+        "100"
+      ],
+      "time_unix": 1791376038.2463357,
+      "competing_before": [],
+      "competing_after": [],
+      "stdout": "type=f32 rows=1 ns_per_call=2315.5931551891817 calls=43186 setup_ns=258957 storage_bytes=16384 allocs=0 frees=0 checksum=6.012382745742798\ntype=f16 rows=1 ns_per_call=7935.033563437277 calls=12603 setup_ns=42580 storage_bytes=8192 allocs=0 frees=0 checksum=6.013365268707275\ntype=bf16 rows=1 ns_per_call=3012.1508177957166 calls=33199 setup_ns=31432 storage_bytes=8192 allocs=0 frees=0 checksum=6.024388551712036\ntype=i8-i32 rows=1 ns_per_call=883.2842227993004 calls=113214 setup_ns=3417 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=i8-i64 rows=1 ns_per_call=1254.53963693844 calls=79711 setup_ns=2867 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=f32 rows=32 ns_per_call=5827.889445771898 calls=17159 setup_ns=70482 storage_bytes=16384 allocs=0 frees=0 checksum=1.3529400825500488\ntype=f16 rows=32 ns_per_call=242063.538647343 calls=414 setup_ns=45677 storage_bytes=8192 allocs=0 frees=0 checksum=1.353259563446045\ntype=bf16 rows=32 ns_per_call=84114.03952901598 calls=1189 setup_ns=44121 storage_bytes=8192 allocs=0 frees=0 checksum=1.3570239543914795\ntype=i8-i32 rows=32 ns_per_call=16399.761069203018 calls=6098 setup_ns=3965 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=32 ns_per_call=28353.31179138322 calls=3528 setup_ns=28924 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=f32 rows=512 ns_per_call=67478.44234659475 calls=1483 setup_ns=511814 storage_bytes=16384 allocs=0 frees=0 checksum=5.139318108558655\ntype=f16 rows=512 ns_per_call=3866208.1153846155 calls=26 setup_ns=113365 storage_bytes=8192 allocs=0 frees=0 checksum=5.140562534332275\ntype=bf16 rows=512 ns_per_call=1342048.6533333333 calls=75 setup_ns=102811 storage_bytes=8192 allocs=0 frees=0 checksum=5.149851202964783\ntype=i8-i32 rows=512 ns_per_call=258074.23969072165 calls=388 setup_ns=53491 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=512 ns_per_call=446577.28125 calls=224 setup_ns=34767 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\n",
+      "stderr": "",
+      "samples": [
+        {
+          "type": "f32",
+          "rows": 1,
+          "ns_per_call": 2315.5931551891817,
+          "calls": 43186,
+          "setup_ns": 258957,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.012382745742798
+        },
+        {
+          "type": "f16",
+          "rows": 1,
+          "ns_per_call": 7935.033563437277,
+          "calls": 12603,
+          "setup_ns": 42580,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.013365268707275
+        },
+        {
+          "type": "bf16",
+          "rows": 1,
+          "ns_per_call": 3012.1508177957166,
+          "calls": 33199,
+          "setup_ns": 31432,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.024388551712036
+        },
+        {
+          "type": "i8-i32",
+          "rows": 1,
+          "ns_per_call": 883.2842227993004,
+          "calls": 113214,
+          "setup_ns": 3417,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 1,
+          "ns_per_call": 1254.53963693844,
+          "calls": 79711,
+          "setup_ns": 2867,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "f32",
+          "rows": 32,
+          "ns_per_call": 5827.889445771898,
+          "calls": 17159,
+          "setup_ns": 70482,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3529400825500488
+        },
+        {
+          "type": "f16",
+          "rows": 32,
+          "ns_per_call": 242063.538647343,
+          "calls": 414,
+          "setup_ns": 45677,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.353259563446045
+        },
+        {
+          "type": "bf16",
+          "rows": 32,
+          "ns_per_call": 84114.03952901598,
+          "calls": 1189,
+          "setup_ns": 44121,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3570239543914795
+        },
+        {
+          "type": "i8-i32",
+          "rows": 32,
+          "ns_per_call": 16399.761069203018,
+          "calls": 6098,
+          "setup_ns": 3965,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 32,
+          "ns_per_call": 28353.31179138322,
+          "calls": 3528,
+          "setup_ns": 28924,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "f32",
+          "rows": 512,
+          "ns_per_call": 67478.44234659475,
+          "calls": 1483,
+          "setup_ns": 511814,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.139318108558655
+        },
+        {
+          "type": "f16",
+          "rows": 512,
+          "ns_per_call": 3866208.1153846155,
+          "calls": 26,
+          "setup_ns": 113365,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.140562534332275
+        },
+        {
+          "type": "bf16",
+          "rows": 512,
+          "ns_per_call": 1342048.6533333333,
+          "calls": 75,
+          "setup_ns": 102811,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.149851202964783
+        },
+        {
+          "type": "i8-i32",
+          "rows": 512,
+          "ns_per_call": 258074.23969072165,
+          "calls": 388,
+          "setup_ns": 53491,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 512,
+          "ns_per_call": 446577.28125,
+          "calls": 224,
+          "setup_ns": 34767,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        }
+      ]
+    },
+    {
+      "repetition": 2,
+      "command": [
+        "taskset",
+        "-c",
+        "0",
+        "/code/C++/micron/bin/compact/bench/compact_bench",
+        "100"
+      ],
+      "time_unix": 1791376039.8070138,
+      "competing_before": [],
+      "competing_after": [],
+      "stdout": "type=f32 rows=1 ns_per_call=2316.821606468503 calls=43163 setup_ns=253355 storage_bytes=16384 allocs=0 frees=0 checksum=6.012382745742798\ntype=f16 rows=1 ns_per_call=7936.489326243949 calls=12601 setup_ns=42943 storage_bytes=8192 allocs=0 frees=0 checksum=6.013365268707275\ntype=bf16 rows=1 ns_per_call=3005.5858379418128 calls=33272 setup_ns=31346 storage_bytes=8192 allocs=0 frees=0 checksum=6.024388551712036\ntype=i8-i32 rows=1 ns_per_call=883.8087708909649 calls=113147 setup_ns=3119 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=i8-i64 rows=1 ns_per_call=1254.2821628808308 calls=79727 setup_ns=3458 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=f32 rows=32 ns_per_call=5783.531259036493 calls=17291 setup_ns=74214 storage_bytes=16384 allocs=0 frees=0 checksum=1.3529400825500488\ntype=f16 rows=32 ns_per_call=242178.84745762713 calls=413 setup_ns=45774 storage_bytes=8192 allocs=0 frees=0 checksum=1.353259563446045\ntype=bf16 rows=32 ns_per_call=84036.02773109244 calls=1190 setup_ns=34860 storage_bytes=8192 allocs=0 frees=0 checksum=1.3570239543914795\ntype=i8-i32 rows=32 ns_per_call=16445.10639697418 calls=6081 setup_ns=4276 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=32 ns_per_call=28352.530612244896 calls=3528 setup_ns=32050 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=f32 rows=512 ns_per_call=68163.11307901908 calls=1468 setup_ns=395536 storage_bytes=16384 allocs=0 frees=0 checksum=5.139318108558655\ntype=f16 rows=512 ns_per_call=3869155.230769231 calls=26 setup_ns=113965 storage_bytes=8192 allocs=0 frees=0 checksum=5.140562534332275\ntype=bf16 rows=512 ns_per_call=1339085.7466666666 calls=75 setup_ns=103203 storage_bytes=8192 allocs=0 frees=0 checksum=5.149851202964783\ntype=i8-i32 rows=512 ns_per_call=257076.26992287918 calls=389 setup_ns=51328 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=512 ns_per_call=447481.69196428574 calls=224 setup_ns=33104 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\n",
+      "stderr": "",
+      "samples": [
+        {
+          "type": "f32",
+          "rows": 1,
+          "ns_per_call": 2316.821606468503,
+          "calls": 43163,
+          "setup_ns": 253355,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.012382745742798
+        },
+        {
+          "type": "f16",
+          "rows": 1,
+          "ns_per_call": 7936.489326243949,
+          "calls": 12601,
+          "setup_ns": 42943,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.013365268707275
+        },
+        {
+          "type": "bf16",
+          "rows": 1,
+          "ns_per_call": 3005.5858379418128,
+          "calls": 33272,
+          "setup_ns": 31346,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.024388551712036
+        },
+        {
+          "type": "i8-i32",
+          "rows": 1,
+          "ns_per_call": 883.8087708909649,
+          "calls": 113147,
+          "setup_ns": 3119,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 1,
+          "ns_per_call": 1254.2821628808308,
+          "calls": 79727,
+          "setup_ns": 3458,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "f32",
+          "rows": 32,
+          "ns_per_call": 5783.531259036493,
+          "calls": 17291,
+          "setup_ns": 74214,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3529400825500488
+        },
+        {
+          "type": "f16",
+          "rows": 32,
+          "ns_per_call": 242178.84745762713,
+          "calls": 413,
+          "setup_ns": 45774,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.353259563446045
+        },
+        {
+          "type": "bf16",
+          "rows": 32,
+          "ns_per_call": 84036.02773109244,
+          "calls": 1190,
+          "setup_ns": 34860,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3570239543914795
+        },
+        {
+          "type": "i8-i32",
+          "rows": 32,
+          "ns_per_call": 16445.10639697418,
+          "calls": 6081,
+          "setup_ns": 4276,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 32,
+          "ns_per_call": 28352.530612244896,
+          "calls": 3528,
+          "setup_ns": 32050,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "f32",
+          "rows": 512,
+          "ns_per_call": 68163.11307901908,
+          "calls": 1468,
+          "setup_ns": 395536,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.139318108558655
+        },
+        {
+          "type": "f16",
+          "rows": 512,
+          "ns_per_call": 3869155.230769231,
+          "calls": 26,
+          "setup_ns": 113965,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.140562534332275
+        },
+        {
+          "type": "bf16",
+          "rows": 512,
+          "ns_per_call": 1339085.7466666666,
+          "calls": 75,
+          "setup_ns": 103203,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.149851202964783
+        },
+        {
+          "type": "i8-i32",
+          "rows": 512,
+          "ns_per_call": 257076.26992287918,
+          "calls": 389,
+          "setup_ns": 51328,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 512,
+          "ns_per_call": 447481.69196428574,
+          "calls": 224,
+          "setup_ns": 33104,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        }
+      ]
+    },
+    {
+      "repetition": 3,
+      "command": [
+        "taskset",
+        "-c",
+        "0",
+        "/code/C++/micron/bin/compact/bench/compact_bench",
+        "100"
+      ],
+      "time_unix": 1791376041.3720088,
+      "competing_before": [],
+      "competing_after": [],
+      "stdout": "type=f32 rows=1 ns_per_call=2302.2299882588577 calls=43437 setup_ns=288305 storage_bytes=16384 allocs=0 frees=0 checksum=6.012382745742798\ntype=f16 rows=1 ns_per_call=7892.908918705603 calls=12670 setup_ns=42262 storage_bytes=8192 allocs=0 frees=0 checksum=6.013365268707275\ntype=bf16 rows=1 ns_per_call=3017.7338101273463 calls=33138 setup_ns=31319 storage_bytes=8192 allocs=0 frees=0 checksum=6.024388551712036\ntype=i8-i32 rows=1 ns_per_call=879.9661917793754 calls=113641 setup_ns=3690 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=i8-i64 rows=1 ns_per_call=1255.9127022003415 calls=79624 setup_ns=2864 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=f32 rows=32 ns_per_call=5786.24474917549 calls=17283 setup_ns=64242 storage_bytes=16384 allocs=0 frees=0 checksum=1.3529400825500488\ntype=f16 rows=32 ns_per_call=243049.64077669903 calls=412 setup_ns=45648 storage_bytes=8192 allocs=0 frees=0 checksum=1.353259563446045\ntype=bf16 rows=32 ns_per_call=83858.2103939648 calls=1193 setup_ns=34763 storage_bytes=8192 allocs=0 frees=0 checksum=1.3570239543914795\ntype=i8-i32 rows=32 ns_per_call=16435.03960558751 calls=6085 setup_ns=4160 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=32 ns_per_call=28229.57606548123 calls=3543 setup_ns=23657 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=f32 rows=512 ns_per_call=68224.98567530696 calls=1466 setup_ns=409423 storage_bytes=16384 allocs=0 frees=0 checksum=5.139318108558655\ntype=f16 rows=512 ns_per_call=3865259.0384615385 calls=26 setup_ns=113338 storage_bytes=8192 allocs=0 frees=0 checksum=5.140562534332275\ntype=bf16 rows=512 ns_per_call=1343125.4666666666 calls=75 setup_ns=102617 storage_bytes=8192 allocs=0 frees=0 checksum=5.149851202964783\ntype=i8-i32 rows=512 ns_per_call=257433.83290488433 calls=389 setup_ns=53756 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=512 ns_per_call=446859.21875 calls=224 setup_ns=31760 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\n",
+      "stderr": "",
+      "samples": [
+        {
+          "type": "f32",
+          "rows": 1,
+          "ns_per_call": 2302.2299882588577,
+          "calls": 43437,
+          "setup_ns": 288305,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.012382745742798
+        },
+        {
+          "type": "f16",
+          "rows": 1,
+          "ns_per_call": 7892.908918705603,
+          "calls": 12670,
+          "setup_ns": 42262,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.013365268707275
+        },
+        {
+          "type": "bf16",
+          "rows": 1,
+          "ns_per_call": 3017.7338101273463,
+          "calls": 33138,
+          "setup_ns": 31319,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.024388551712036
+        },
+        {
+          "type": "i8-i32",
+          "rows": 1,
+          "ns_per_call": 879.9661917793754,
+          "calls": 113641,
+          "setup_ns": 3690,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 1,
+          "ns_per_call": 1255.9127022003415,
+          "calls": 79624,
+          "setup_ns": 2864,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "f32",
+          "rows": 32,
+          "ns_per_call": 5786.24474917549,
+          "calls": 17283,
+          "setup_ns": 64242,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3529400825500488
+        },
+        {
+          "type": "f16",
+          "rows": 32,
+          "ns_per_call": 243049.64077669903,
+          "calls": 412,
+          "setup_ns": 45648,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.353259563446045
+        },
+        {
+          "type": "bf16",
+          "rows": 32,
+          "ns_per_call": 83858.2103939648,
+          "calls": 1193,
+          "setup_ns": 34763,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3570239543914795
+        },
+        {
+          "type": "i8-i32",
+          "rows": 32,
+          "ns_per_call": 16435.03960558751,
+          "calls": 6085,
+          "setup_ns": 4160,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 32,
+          "ns_per_call": 28229.57606548123,
+          "calls": 3543,
+          "setup_ns": 23657,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "f32",
+          "rows": 512,
+          "ns_per_call": 68224.98567530696,
+          "calls": 1466,
+          "setup_ns": 409423,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.139318108558655
+        },
+        {
+          "type": "f16",
+          "rows": 512,
+          "ns_per_call": 3865259.0384615385,
+          "calls": 26,
+          "setup_ns": 113338,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.140562534332275
+        },
+        {
+          "type": "bf16",
+          "rows": 512,
+          "ns_per_call": 1343125.4666666666,
+          "calls": 75,
+          "setup_ns": 102617,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.149851202964783
+        },
+        {
+          "type": "i8-i32",
+          "rows": 512,
+          "ns_per_call": 257433.83290488433,
+          "calls": 389,
+          "setup_ns": 53756,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 512,
+          "ns_per_call": 446859.21875,
+          "calls": 224,
+          "setup_ns": 31760,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        }
+      ]
+    },
+    {
+      "repetition": 4,
+      "command": [
+        "taskset",
+        "-c",
+        "0",
+        "/code/C++/micron/bin/compact/bench/compact_bench",
+        "100"
+      ],
+      "time_unix": 1791376042.9266138,
+      "competing_before": [],
+      "competing_after": [],
+      "stdout": "type=f32 rows=1 ns_per_call=2288.2583405793785 calls=43702 setup_ns=284573 storage_bytes=16384 allocs=0 frees=0 checksum=6.012382745742798\ntype=f16 rows=1 ns_per_call=7941.35988247439 calls=12593 setup_ns=42556 storage_bytes=8192 allocs=0 frees=0 checksum=6.013365268707275\ntype=bf16 rows=1 ns_per_call=3009.618533120655 calls=33227 setup_ns=31485 storage_bytes=8192 allocs=0 frees=0 checksum=6.024388551712036\ntype=i8-i32 rows=1 ns_per_call=879.6908785418334 calls=113677 setup_ns=3305 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=i8-i64 rows=1 ns_per_call=1251.559504887298 calls=79901 setup_ns=2893 storage_bytes=4096 allocs=0 frees=0 checksum=152448.0\ntype=f32 rows=32 ns_per_call=5784.100642026722 calls=17289 setup_ns=68993 storage_bytes=16384 allocs=0 frees=0 checksum=1.3529400825500488\ntype=f16 rows=32 ns_per_call=243578.4306569343 calls=411 setup_ns=45950 storage_bytes=8192 allocs=0 frees=0 checksum=1.353259563446045\ntype=bf16 rows=32 ns_per_call=84104.8629100084 calls=1189 setup_ns=34882 storage_bytes=8192 allocs=0 frees=0 checksum=1.3570239543914795\ntype=i8-i32 rows=32 ns_per_call=16412.195602231703 calls=6094 setup_ns=4148 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=32 ns_per_call=28353.653529912106 calls=3527 setup_ns=23750 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=f32 rows=512 ns_per_call=68175.71574642127 calls=1467 setup_ns=402097 storage_bytes=16384 allocs=0 frees=0 checksum=5.139318108558655\ntype=f16 rows=512 ns_per_call=3868828.076923077 calls=26 setup_ns=113766 storage_bytes=8192 allocs=0 frees=0 checksum=5.140562534332275\ntype=bf16 rows=512 ns_per_call=1340896.0666666667 calls=75 setup_ns=103910 storage_bytes=8192 allocs=0 frees=0 checksum=5.149851202964783\ntype=i8-i32 rows=512 ns_per_call=257370.3907455013 calls=389 setup_ns=57453 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\ntype=i8-i64 rows=512 ns_per_call=448213.9375 calls=224 setup_ns=31787 storage_bytes=4096 allocs=0 frees=0 checksum=203648.0\n",
+      "stderr": "",
+      "samples": [
+        {
+          "type": "f32",
+          "rows": 1,
+          "ns_per_call": 2288.2583405793785,
+          "calls": 43702,
+          "setup_ns": 284573,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.012382745742798
+        },
+        {
+          "type": "f16",
+          "rows": 1,
+          "ns_per_call": 7941.35988247439,
+          "calls": 12593,
+          "setup_ns": 42556,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.013365268707275
+        },
+        {
+          "type": "bf16",
+          "rows": 1,
+          "ns_per_call": 3009.618533120655,
+          "calls": 33227,
+          "setup_ns": 31485,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 6.024388551712036
+        },
+        {
+          "type": "i8-i32",
+          "rows": 1,
+          "ns_per_call": 879.6908785418334,
+          "calls": 113677,
+          "setup_ns": 3305,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 1,
+          "ns_per_call": 1251.559504887298,
+          "calls": 79901,
+          "setup_ns": 2893,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 152448.0
+        },
+        {
+          "type": "f32",
+          "rows": 32,
+          "ns_per_call": 5784.100642026722,
+          "calls": 17289,
+          "setup_ns": 68993,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3529400825500488
+        },
+        {
+          "type": "f16",
+          "rows": 32,
+          "ns_per_call": 243578.4306569343,
+          "calls": 411,
+          "setup_ns": 45950,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.353259563446045
+        },
+        {
+          "type": "bf16",
+          "rows": 32,
+          "ns_per_call": 84104.8629100084,
+          "calls": 1189,
+          "setup_ns": 34882,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 1.3570239543914795
+        },
+        {
+          "type": "i8-i32",
+          "rows": 32,
+          "ns_per_call": 16412.195602231703,
+          "calls": 6094,
+          "setup_ns": 4148,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 32,
+          "ns_per_call": 28353.653529912106,
+          "calls": 3527,
+          "setup_ns": 23750,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "f32",
+          "rows": 512,
+          "ns_per_call": 68175.71574642127,
+          "calls": 1467,
+          "setup_ns": 402097,
+          "storage_bytes": 16384,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.139318108558655
+        },
+        {
+          "type": "f16",
+          "rows": 512,
+          "ns_per_call": 3868828.076923077,
+          "calls": 26,
+          "setup_ns": 113766,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.140562534332275
+        },
+        {
+          "type": "bf16",
+          "rows": 512,
+          "ns_per_call": 1340896.0666666667,
+          "calls": 75,
+          "setup_ns": 103910,
+          "storage_bytes": 8192,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 5.149851202964783
+        },
+        {
+          "type": "i8-i32",
+          "rows": 512,
+          "ns_per_call": 257370.3907455013,
+          "calls": 389,
+          "setup_ns": 57453,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        },
+        {
+          "type": "i8-i64",
+          "rows": 512,
+          "ns_per_call": 448213.9375,
+          "calls": 224,
+          "setup_ns": 31787,
+          "storage_bytes": 4096,
+          "allocs": 0,
+          "frees": 0,
+          "checksum": 203648.0
+        }
+      ]
+    }
+  ],
+  "binary_sha256": "e9789407d767413296a08e30ce8f58deb5adf08ca72734d138a3c71b318064f2",
+  "summary": [
+    {
+      "rows": 1,
+      "type": "f32",
+      "median_ns": 2302.2299882588577,
+      "min_ns": 2283.1906892851434,
+      "max_ns": 2316.821606468503,
+      "weight_bytes": 16384
+    },
+    {
+      "rows": 1,
+      "type": "f16",
+      "median_ns": 7935.033563437277,
+      "min_ns": 7892.908918705603,
+      "max_ns": 7941.35988247439,
+      "weight_bytes": 8192
+    },
+    {
+      "rows": 1,
+      "type": "bf16",
+      "median_ns": 3009.618533120655,
+      "min_ns": 3000.9568166131503,
+      "max_ns": 3017.7338101273463,
+      "weight_bytes": 8192
+    },
+    {
+      "rows": 1,
+      "type": "i8-i32",
+      "median_ns": 880.9157145499872,
+      "min_ns": 879.6908785418334,
+      "max_ns": 883.8087708909649,
+      "weight_bytes": 4096
+    },
+    {
+      "rows": 1,
+      "type": "i8-i64",
+      "median_ns": 1254.2821628808308,
+      "min_ns": 1245.66882995553,
+      "max_ns": 1255.9127022003415,
+      "weight_bytes": 4096
+    },
+    {
+      "rows": 32,
+      "type": "f32",
+      "median_ns": 5784.100642026722,
+      "min_ns": 5777.69540097065,
+      "max_ns": 5827.889445771898,
+      "weight_bytes": 16384
+    },
+    {
+      "rows": 32,
+      "type": "f16",
+      "median_ns": 242233.29055690073,
+      "min_ns": 242063.538647343,
+      "max_ns": 243578.4306569343,
+      "weight_bytes": 8192
+    },
+    {
+      "rows": 32,
+      "type": "bf16",
+      "median_ns": 84036.02773109244,
+      "min_ns": 83783.83333333333,
+      "max_ns": 84114.03952901598,
+      "weight_bytes": 8192
+    },
+    {
+      "rows": 32,
+      "type": "i8-i32",
+      "median_ns": 16428.25591327201,
+      "min_ns": 16399.761069203018,
+      "max_ns": 16445.10639697418,
+      "weight_bytes": 4096
+    },
+    {
+      "rows": 32,
+      "type": "i8-i64",
+      "median_ns": 28353.31179138322,
+      "min_ns": 28229.57606548123,
+      "max_ns": 28440.985214671597,
+      "weight_bytes": 4096
+    },
+    {
+      "rows": 512,
+      "type": "f32",
+      "median_ns": 68163.11307901908,
+      "min_ns": 67478.44234659475,
+      "max_ns": 68224.98567530696,
+      "weight_bytes": 16384
+    },
+    {
+      "rows": 512,
+      "type": "f16",
+      "median_ns": 3867683.730769231,
+      "min_ns": 3865259.0384615385,
+      "max_ns": 3869155.230769231,
+      "weight_bytes": 8192
+    },
+    {
+      "rows": 512,
+      "type": "bf16",
+      "median_ns": 1340896.0666666667,
+      "min_ns": 1337905.6133333333,
+      "max_ns": 1343125.4666666666,
+      "weight_bytes": 8192
+    },
+    {
+      "rows": 512,
+      "type": "i8-i32",
+      "median_ns": 257370.3907455013,
+      "min_ns": 257076.26992287918,
+      "max_ns": 258074.23969072165,
+      "weight_bytes": 4096
+    },
+    {
+      "rows": 512,
+      "type": "i8-i64",
+      "median_ns": 447309.66071428574,
+      "min_ns": 446577.28125,
+      "max_ns": 448213.9375,
+      "weight_bytes": 4096
+    }
+  ],
+  "limitations": [
+    "Physical amd64 shared desktop; single pinned core, no perf counters or isolation claim.",
+    "Integer workload has different numerical values and outputs; it is not a model-quality comparison.",
+    "Half storage uses generic mixed arithmetic; f32 uses existing prepared GEMM.",
+    "Storage bytes count weight payload only; floating setup also constructs prepared panels.",
+    "ARM emulation is correctness evidence only; RAM model quality and inference measurement follow in Pond #33-35."
+  ]
+}

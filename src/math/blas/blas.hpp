@@ -15,4 +15,5 @@
 #include "level1.hpp"
 #include "level2.hpp"
 #include "level3.hpp"
+#include "mixed.hpp"
 #include "tags.hpp"

@@ -285,3 +285,53 @@ These modules build under both the hosted (`pthread`) and the freestanding backe
 
 #### License
 Licensed under the Boost Software License, except the 'abcmalloc' memory allocator, which is licensed under the MIT License
+
+
+## Compact storage and mixed products
+
+`math/float16.hpp` provides `micron::math::float16` (IEEE binary16) and `bfloat16`.
+Both are trivially copyable two-byte storage types containing a public `u16 bits` word.
+`from_bits` preserves the exact representation. Explicit construction accepts a 32-bit floating
+value and rounds to nearest, ties to even; finite overflow becomes signed infinity, subnormals
+are preserved, and NaNs become a signed canonical quiet NaN. Wider sources must explicitly
+narrow to f32 first, so any double rounding is visible at the call site. `to_float()` and
+`to_double()` widen exactly, including signed zero and subnormals; signaling NaNs are quieted.
+These bit conversions are independent of the FP rounding/flush mode. Native byte order is not
+a wire format. The older global `f16` compiler alias is unchanged and is not a portable storage
+contract. Storage types intentionally do not satisfy the floating arithmetic concepts.
+
+`math/blas/mixed.hpp`, also included by `math/blas/blas.hpp`, provides the
+`micron::math::blas::mixed` interface. `gemm_row<Acc>` accepts independent input types from
+f32/f64/float16/bfloat16 and produces f32 or f64 accumulators. Convert output storage explicitly
+afterwards. Products and sums use Acc, with the selected compiler/target FP policy; FP overflow,
+reassociation and arithmetic flush behavior follow that policy. Half/BF16 widening to f64 avoids
+an intermediate f32 arithmetic conversion. alpha==0 skips input reads and beta==0 skips output
+reads. All four transpose combinations, padded leading dimensions and zero inner dimension are
+supported. Shapes/strides and required pointers are checked before writing; buffers must be
+large enough and output must not overlap either input. Calls allocate nothing. The initial
+implementation is generic code with compile-time types; there is no runtime ISA probing or
+claim of a native half/BF16 instruction path.
+
+`gemm_i8_row<Acc>` accepts signed int8 inputs with one signed int8 zero point per matrix and
+returns exact i32/i64 sums of centered integer products. It rejects k above
+`mixed::max_i8_terms<Acc>` before writing, using the conservative worst-case bound 65025 per
+term (33025 terms for i32). No saturation, wrapping or scale conversion occurs in that sum.
+The model epilogue is explicitly `F(sum) * input_scale * weight_scale[column] + bias[column]`;
+it belongs to the caller. Positive finite scales, finite floating biases and output conversion
+must be specified by that model. `quantize_i8(value, scale, zero_point)` performs RNE before
+adding the zero point, then saturates to [-128,127]. NaNs map to zero_point and infinities
+saturate. Its preconditions are a positive finite scale and a zero point in [-128,127].
+Bit normalization preserves tiny valid scales under FTZ/DAZ. Invalid geometry/zero points and
+a conservative accumulator overflow risk have distinct `mixed::status` values.
+
+`tests/rigor/math_compact.cpp` covers every 16-bit encoding, midpoint neighbors, finite/nonfinite
+boundaries, transpose/tail/stride cases and exact widening limits. `crt_tls_boot.cpp` separately
+checks initialized/zero/aligned TLS before main, including the corrected i386 mmap2 branch.
+`benches/compact.py` builds and pins five 100 ms repetitions of each primitive case.
+`benches/results/compact.json` retains all 75 samples, binary/source hashes and compiler/CPU
+identity. On the measured Haswell core, the generic f16/bf16 paths halve weight bytes but are
+slower than prepared f32: at 512x64x64, 3.87/1.34 ms versus 0.0682 ms. Widened integer products
+take 0.257 ms (i32) or 0.447 ms (i64) there; their different-valued workload is not a model
+quality comparison. Every timed call allocates/frees zero blocks. Setup and weight-payload
+bytes are separate; the complete RAM model gate follows in Pond #33–35. ARM timings are not
+inferred from emulation.
