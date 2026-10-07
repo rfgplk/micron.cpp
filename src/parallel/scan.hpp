@@ -8,6 +8,7 @@
 #include "../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
 
 #include "engine.hpp"
+#include "scan_workspace.hpp"
 
 #include "../vector.hpp"
 

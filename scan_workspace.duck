@@ -1,0 +1,10 @@
+# Copyright (c) 2026 David Lucius Severus
+# Distributed under the Boost Software License, Version 1.0.
+test tests/rigor/parallel_scan_workspace.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --def MICRON_ABC_STATS=1 -o bin/scan_workspace/checked/native --timeout 120
+test tests/rigor/parallel_scan_workspace.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -Ofast --def MICRON_ABC_STATS=1 -o bin/scan_workspace/checked/fast --timeout 120
+test tests/rigor/parallel_scan_workspace.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O2 --no-lto --isa base --def MICRON_NO_SIMD=1 --def MICRON_ABC_STATS=1 -o bin/scan_workspace/checked/scalar --timeout 120
+test tests/rigor/parallel_scan_workspace.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true --clang -O2 --no-lto --def MICRON_ABC_STATS=1 -o bin/scan_workspace/checked/clang --timeout 120
+test tests/rigor/parallel_scan_workspace.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true -O1 --asan --ubsan -o bin/scan_workspace/checked/sanitize --timeout 120
+test tests/rigor/parallel_scan_workspace.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true --arm64 -k --start ./start -O2 --no-lto --def MICRON_ABC_STATS=1 -o bin/scan_workspace/checked/arm64 --timeout 120
+test tests/rigor/parallel_scan_workspace.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true --arm -k --start ./start -O2 --no-lto --def MICRON_ABC_STATS=1 -o bin/scan_workspace/checked/arm32 --timeout 120
+test tests/rigor/parallel_scan_workspace.cpp -i . --std c++23 --def MICRON_ABC_ZERO_ON_ALLOC=true --def MICRON_ABC_ENFORCE_PROVENANCE=true --i386 -k --start ./start -O2 --no-lto --def MICRON_ABC_STATS=1 -o bin/scan_workspace/checked/i386 --timeout 120

@@ -336,3 +336,31 @@ take 0.257 ms (i32) or 0.447 ms (i64) there; their different-valued workload is 
 quality comparison. Every timed call allocates/frees zero blocks. Setup and weight-payload
 bytes are separate; the complete RAM model gate follows in Pond #33–35. ARM timings are not
 inferred from emulation.
+
+### Reusable associative scan
+
+`parallel/scan_workspace.hpp` provides an inclusive `parallel::scan_workspace<T, Op>`
+with setup-owned block totals, carries and work items. Construct it with a positive logical
+block count, then call `scan_into(input, output, count, op, workspace, executor)`; zero means
+success, negative values are faults. Empty input succeeds without dispatch. Input and output
+must be disjoint or exactly identical; partial overlap and invalid spans return `-22`.
+`Op(left, right)` composes the earlier prefix with the later one, must be associative and
+`noexcept`, and must be safe for simultaneous const calls. T must support nonthrowing value
+copy/assignment. Floating-point regrouping follows the block count and can change rounding.
+
+An executor implements `template<auto Operation, class Work> max_t run(Work*, usize) noexcept`.
+It must join **every submitted item**, including on a fault, before returning zero or a negative
+error. The operation returns a signed status. The scan completes all local prefixes, computes
+block carries in index order, then applies those carries in a second joined dispatch. A fault
+leaves partial output to discard. Workspaces are single-caller objects and cannot be shared by
+simultaneous scans. `serial_scan_executor` supplies the same ordering without any thread or
+coroutine dependency; an application may adapt an existing worker arena. The older asynchronous
+`parallel/scan.hpp` API remains available and includes the new header.
+
+Calls allocate/free nothing after construction. `scan_workspace.duck` verifies noncommutative
+composition against an independent modular affine recurrence, ragged blocks, reverse job
+completion order, exact in-place operation, faults and allocation counters. All eight cells
+pass (native GCC/Clang, fast/scalar, ASan+UBSan, freestanding AArch64/ARMv7/i386 emulation).
+`benches/scan_workspace.py` records native serial-executor overhead, source/binary hashes and
+all repetitions in `benches/results/scan_workspace.json`. It does not measure parallel scaling;
+RAM measures the joined worker adapter with complete minGRU forward/backward calls.
