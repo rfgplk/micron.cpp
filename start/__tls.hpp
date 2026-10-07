@@ -85,7 +85,7 @@ __tls_round_up(u64 v, u64 a) noexcept
 inline __attribute__((always_inline)) byte *
 __tls_mmap(usize bytes) noexcept
 {
-#if defined(__micron_arch_arm32)
+#if defined(__micron_arch_arm32) || defined(__micron_arch_x86)
   const long ret = micron::syscall(SYS_mmap2, 0UL, bytes, __tls_prot_rw, __tls_map_flags, __tls_mmap_fd, 0L);
 #else
   const long ret = micron::syscall(SYS_mmap, 0UL, bytes, __tls_prot_rw, __tls_map_flags, __tls_mmap_fd, 0L);
