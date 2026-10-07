@@ -2713,22 +2713,50 @@ gemm_blocked_aligned_exp_c(usize m, usize n, usize k, T alpha, const T *A, ssize
   }
 }
 
+// Prepared panels belong to the caller; the thread-local slot only borrows them
+// during a synchronous BLAS call. Large TLS arrays consume hosted worker stacks.
+template<typename T> struct workspace {
+  static constexpr usize a_capacity = ((default_mc + gemm_mr_v<T> - 1) / gemm_mr_v<T>)*gemm_mr_v<T> * default_kc;
+  static constexpr usize b_capacity = ((default_nc + gemm_nr_v<T> - 1) / gemm_nr_v<T>)*gemm_nr_v<T> * default_kc;
+  using buffer = micron::vector<T, micron::allocator_serial<>, false>;
+  buffer a, b;
+
+  workspace() : a(a_capacity), b(b_capacity) { }
+
+  bool
+  ready() const noexcept
+  {
+    return a.size() >= a_capacity && b.size() >= b_capacity;
+  }
+};
+
+template<typename T> inline thread_local workspace<T> *__active_workspace = nullptr;
+
+template<typename T> class scoped_workspace
+{
+  workspace<T> *previous_;
+
+public:
+  explicit scoped_workspace(workspace<T> &w) noexcept : previous_(__active_workspace<T>) { __active_workspace<T> = &w; }
+
+  ~scoped_workspace() { __active_workspace<T> = previous_; }
+
+  scoped_workspace(const scoped_workspace &) = delete;
+  scoped_workspace(scoped_workspace &&) = delete;
+  scoped_workspace &operator=(const scoped_workspace &) = delete;
+  scoped_workspace &operator=(scoped_workspace &&) = delete;
+};
+
 template<typename T>
 [[gnu::flatten]] inline void
-gemm_blocked(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs, ssize_t b_cs, T beta,
-             T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+__gemm_blocked_into(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs, ssize_t b_cs,
+                    T beta, T *C, ssize_t rs_C, ssize_t cs_C, T *Ap, T *Bp) noexcept
 {
   constexpr usize MR = gemm_mr_v<T>;
   constexpr usize NR = gemm_nr_v<T>;
   const usize Mc = (m < default_mc) ? m : default_mc;
   const usize Kc = (k < default_kc) ? k : default_kc;
   const usize Nc = (n < default_nc) ? n : default_nc;
-
-  using buf_t = micron::vector<T, micron::allocator_serial<>, false>;
-  buf_t a_pack(((Mc + MR - 1) / MR) * MR * Kc);
-  buf_t b_pack(((Nc + NR - 1) / NR) * NR * Kc);
-  T *Ap = a_pack.data();
-  T *Bp = b_pack.data();
 
   for ( usize jc = 0; jc < n; jc += Nc ) {
     const usize nc = ((n - jc) < Nc) ? (n - jc) : Nc;
@@ -2776,6 +2804,23 @@ gemm_blocked(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize
       }
     }
   }
+}
+
+template<typename T>
+[[gnu::flatten]] inline void
+gemm_blocked(usize m, usize n, usize k, T alpha, const T *A, ssize_t a_rs, ssize_t a_cs, const T *B, ssize_t b_rs, ssize_t b_cs, T beta,
+             T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  if ( m == 0 || n == 0 || k == 0 ) return;
+  if ( auto *w = __active_workspace<T>; w && w->ready() ) {
+    __gemm_blocked_into(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C, w->a.data(), w->b.data());
+    return;
+  }
+  constexpr usize MR = gemm_mr_v<T>, NR = gemm_nr_v<T>;
+  const usize Mc = m < default_mc ? m : default_mc, Kc = k < default_kc ? k : default_kc, Nc = n < default_nc ? n : default_nc;
+  using buffer = micron::vector<T, micron::allocator_serial<>, false>;
+  buffer a(((Mc + MR - 1) / MR) * MR * Kc), b(((Nc + NR - 1) / NR) * NR * Kc);
+  __gemm_blocked_into(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C, a.data(), b.data());
 }
 
 // NOTE: pick the BLIS-style blocked path when the problem is large enough
