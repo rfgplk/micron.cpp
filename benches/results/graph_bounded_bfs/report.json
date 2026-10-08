@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "base_revision": "9c41547cb3801a792c958af9431d06367baf088e",
+  "qualification": "Focused amd64 GCC freestanding behavior and bbench; full include/link and other architectures not claimed.",
+  "inputs": {
+    "src/math/graph/bounded_bfs.hpp": "2872c39e4696ae9601b641e1b004c1916f757244415cfb6b253088b360fd2546",
+    "tests/rigor/graph_bounded_bfs.cpp": "1bb1600758961dfb20458b1383c6d08b19b20a89fe884b7be8f547f6ff5adbc8",
+    "tests/rigor/graph_bounded_bfs.duck": "c39f57aa13b4a97165c2de8fdc8ff32e7dcfc0a5e433087d02a8c846d3ae80ba",
+    "tests/compiletests/graph_bounded_bfs.cpp": "8999e89102afc135f0b3ce74f05655869186a50be43a2e2ec43f9da813c9d3a4",
+    "benches/graph_bounded_bfs.cpp": "37e54fec5adbd5f86678ee452e1a9b7f8dbe9a6e298fc135cfe97367f9d83d3e"
+  },
+  "checks": {
+    "base_snowball": 1,
+    "v3_snowball": 1,
+    "existing_graph_regression": 1,
+    "independent_header": true,
+    "seed": "0x626f756e64656431",
+    "oracle_graphs": 64,
+    "oracle_sources_per_graph": 31,
+    "allocation_denial": [
+      "mmap",
+      "brk"
+    ]
+  },
+  "workload": {
+    "vertices": 512,
+    "edges": 1536,
+    "edge_deltas": [
+      1,
+      7,
+      31
+    ],
+    "traversals_per_sample": 16,
+    "warmups": 2,
+    "samples": 7,
+    "fixed_workspace_bytes": 10792,
+    "setup": "Graph construction, CSR freeze and dynamic reserve excluded; workspace reset and traversal included.",
+    "hardware_counters": "available",
+    "timing": "bbench nanoseconds"
+  },
+  "machine": {
+    "cpu_model": "Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz",
+    "selected_cpu": 0,
+    "affinity_available": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "kernel": "7.2.8-200.fc44.x86_64"
+  },
+  "compiler": "g++ (GCC) 16.2.1 20260819 (Red Hat 16.2.1-2)",
+  "results": {
+    "base": {
+      "fixed_graph/dynamic": {
+        "samples_ns": [
+          7835479.0,
+          7781636.0,
+          7771086.0,
+          7793177.0,
+          7770885.0,
+          7864528.0,
+          7790107.0
+        ],
+        "median_ns": 7790107.0,
+        "min_ns": 7770885.0,
+        "max_ns": 7864528.0,
+        "stdev_ns": 32909.37476880212
+      },
+      "fixed_graph/fixed": {
+        "samples_ns": [
+          7876492.0,
+          7899301.0,
+          7866101.0,
+          7895020.0,
+          7940901.0,
+          7864722.0,
+          7894560.0
+        ],
+        "median_ns": 7894560.0,
+        "min_ns": 7864722.0,
+        "max_ns": 7940901.0,
+        "stdev_ns": 24227.56578438566
+      },
+      "csr/dynamic": {
+        "samples_ns": [
+          69883.0,
+          68404.0,
+          68036.0,
+          75023.0,
+          68680.0,
+          68107.0,
+          68179.0
+        ],
+        "median_ns": 68404.0,
+        "min_ns": 68036.0,
+        "max_ns": 75023.0,
+        "stdev_ns": 2340.5607037979735
+      },
+      "csr/fixed": {
+        "samples_ns": [
+          157662.0,
+          153809.0,
+          164909.0,
+          157072.0,
+          157022.0,
+          157099.0,
+          157907.0
+        ],
+        "median_ns": 157099.0,
+        "min_ns": 153809.0,
+        "max_ns": 164909.0,
+        "stdev_ns": 3117.0612402566308
+      }
+    },
+    "v3": {
+      "fixed_graph/dynamic": {
+        "samples_ns": [
+          7854009.0,
+          7781839.0,
+          7777970.0,
+          7835572.0,
+          7781859.0,
+          7745011.0,
+          7744855.0
+        ],
+        "median_ns": 7781839.0,
+        "min_ns": 7744855.0,
+        "max_ns": 7854009.0,
+        "stdev_ns": 38734.18849659556
+      },
+      "fixed_graph/fixed": {
+        "samples_ns": [
+          7926459.0,
+          7849587.0,
+          7944476.0,
+          7234928.0,
+          5886721.0,
+          5869665.0,
+          5863363.0
+        ],
+        "median_ns": 7234928.0,
+        "min_ns": 5863363.0,
+        "max_ns": 7944476.0,
+        "stdev_ns": 949478.204823565
+      },
+      "csr/dynamic": {
+        "samples_ns": [
+          49837.0,
+          49392.0,
+          49086.0,
+          49263.0,
+          49174.0,
+          49043.0,
+          49002.0
+        ],
+        "median_ns": 49174.0,
+        "min_ns": 49002.0,
+        "max_ns": 49837.0,
+        "stdev_ns": 267.69156787281156
+      },
+      "csr/fixed": {
+        "samples_ns": [
+          115185.0,
+          114333.0,
+          117442.0,
+          115045.0,
+          113760.0,
+          115125.0,
+          113630.0
+        ],
+        "median_ns": 115045.0,
+        "min_ns": 113630.0,
+        "max_ns": 117442.0,
+        "stdev_ns": 1185.7314628704157
+      }
+    }
+  }
+}
