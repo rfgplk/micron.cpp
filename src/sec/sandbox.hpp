@@ -197,10 +197,12 @@ private:
   landlock::access_net __ll_handled_net = landlock::access_net::none;
   landlock::scope __ll_scoped = landlock::scope::none;
   bool __ll_handled_explicit = false;
+  bool __ll_strict = false;
 
   struct ll_rule {
     const char *path;
     landlock::access_fs access;
+    i32 fd = -1;
   } __ll_rules[max_landlock_rules]{};
 
   usize __ll_count = 0;
@@ -245,11 +247,13 @@ private:
   [[nodiscard]] i32
   __close_extra(i32 ep, u64 ceiling) const noexcept
   {
-    i32 keep[8 + 1];
+    i32 keep[8 + 1 + max_landlock_rules];
     usize n = 0;
     for ( usize i = 0; i < __keep_count; ++i )
       if ( __keep_fds[i] >= 3 ) keep[n++] = __keep_fds[i];
     if ( ep >= 3 ) keep[n++] = ep;
+    for ( usize i = 0; i < __ll_count; ++i )
+      if ( __ll_rules[i].fd >= 3 ) keep[n++] = __ll_rules[i].fd;
     for ( usize i = 1; i < n; ++i ) {
       const i32 v = keep[i];
       usize j = i;
@@ -403,14 +407,24 @@ private:
 
     // landlock, also before seccomp
     if ( landlock::any(__ll_handled) || landlock::any(__ll_handled_net) || landlock::any(__ll_scoped) || __ll_count > 0 ) {
-      landlock::ruleset rs = landlock::try_ruleset(__ll_handled, __ll_handled_net, __ll_scoped);
+      landlock::ruleset rs = landlock::try_ruleset(__ll_handled, __ll_handled_net, __ll_scoped,
+                                                __ll_strict ? landlock::abi_policy::strict : landlock::abi_policy::narrow);
       if ( !rs.valid() ) __impl::__child_fail(ep, stage::landlock, rs.error());
       for ( usize i = 0; i < __ll_count; ++i ) {
-        const i32 a = rs.allow(__ll_rules[i].path, __ll_rules[i].access);
+        const auto &rule = __ll_rules[i];
+        const i32 a = rule.fd >= 0 ? rs.allow_fd(rule.fd, rule.access) : rs.allow(rule.path, rule.access);
         if ( a < 0 ) __impl::__child_fail(ep, stage::landlock, a);
       }
       const i32 e = rs.restrict_self();
       if ( e < 0 ) __impl::__child_fail(ep, stage::landlock, e);
+      // Rule descriptors are borrowed setup handles, not child authority.
+      for ( usize i = 0; i < __ll_count; ++i ) {
+        const i32 fd = __ll_rules[i].fd;
+        bool kept = false;
+        for ( usize j = 0; j < __keep_count; ++j )
+          if ( __keep_fds[j] == fd ) kept = true;
+        if ( fd >= 3 && !kept ) (void)posix::close(fd);
+      }
     }
 
     // capabilities; needs CAP_SETPCAP, and must precede seccomp
@@ -614,9 +628,29 @@ public:
     return *this;
   }
 
-  // Landlock's IPC scoping (ABI 6+): a scoped domain may not signal, or connect to an abstract unix
-  // socket of, a process outside it
-  //
+  // Borrow a pinned rule fd until launch; close the child's copy after applying
+  // Landlock unless it was also explicitly kept. The parent's fd is unchanged.
+  sandbox &
+  landlock_fd(i32 fd, landlock::access_fs access) noexcept
+  {
+    if ( fd < 3 || posix::fcntl(fd, posix::f_getfd, 0) < 0 )
+      return __config_fail(stage::landlock, -error::bad_file_number), *this;
+    if ( __ll_count >= max_landlock_rules ) return __config_fail(stage::landlock, -error::no_space), *this;
+    __ll_rules[__ll_count++] = ll_rule{ nullptr, access, fd };
+    if ( !__ll_handled_explicit ) __ll_handled = landlock::supported_fs();
+    return *this;
+  }
+
+  // Refuse unsupported requested rights instead of silently narrowing them.
+  sandbox &
+  landlock_strict(bool on = true) noexcept
+  {
+    __ll_strict = on;
+    return *this;
+  }
+
+  // Landlock's IPC scoping (ABI 6+): a scoped domain may not signal, or connect
+  // to an abstract unix socket of, a process outside it.
   // WARNING: see CVE-2026-72183
   sandbox &
   landlock_scope(landlock::scope scoped) noexcept
