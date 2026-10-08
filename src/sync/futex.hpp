@@ -66,6 +66,16 @@ __futex(u32 *addr, int futex, u32 val, timespec_t *timeout, u32 *addr2, u32 val2
   return micron::syscall(SYS_futex, addr, futex, val, timeout, addr2, val2);
 }
 
+// A single recoverable wait. Callers recheck their predicate after every
+// return, including interruptions, value changes and spurious wakeups.
+[[nodiscard]] inline int
+try_wait_futex(u32 *ptr, u32 expected, timespec_t *timeout = nullptr) noexcept
+{
+  if ( !ptr ) return -error::invalid_arg;
+  if ( atom::load(ptr, static_cast<int>(memory_order_acquire)) != expected ) return 0;
+  return static_cast<int>(__futex(ptr, futex_wait | futex_private_flag, expected, timeout, nullptr, 0));
+}
+
 template<typename T>
   requires(sizeof(T) == 4)
 void
