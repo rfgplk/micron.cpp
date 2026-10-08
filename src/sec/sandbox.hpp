@@ -69,6 +69,7 @@ enum class stage : i32 {
   caps_post = 12,
   signal_mask = 13,
   exec = 14,
+  parent_lifetime = 15,
 };
 
 [[nodiscard]] constexpr const char *
@@ -105,6 +106,8 @@ name_of(stage s) noexcept
     return "signal_mask";
   case stage::exec:
     return "exec";
+  case stage::parent_lifetime:
+    return "parent_lifetime";
   }
   return "?";
 }
@@ -184,6 +187,7 @@ public:
 
 private:
   ns::ns_kind __ns_kinds = ns::ns_kind::none;
+  bool __parent_death = false;
 
   const char *__new_root = nullptr;
   const char *__put_old = nullptr;
@@ -305,9 +309,14 @@ private:
 
   // child
   [[noreturn]] void
-  __child(i32 ep, const char *path, char *const *argv, char *const *envp, i32 (*body)(void)) const noexcept
+  __child(i32 ep, i32 parent, const char *path, char *const *argv, char *const *envp, i32 (*body)(void)) const noexcept
   {
     i32 r = 0;
+    if ( __parent_death ) {
+      r = micron::prctl(micron::PR_SET_PDEATHSIG, posix::sig_kill);
+      if ( r < 0 || posix::getppid() != parent )
+        __impl::__child_fail(ep, stage::parent_lifetime, r < 0 ? r : -error::no_process);
+    }
 
     // namespaces
     if ( ns::any(__ns_kinds) ) {
@@ -886,6 +895,14 @@ public:
     return __launch(path, argv, envp, nullptr);
   }
 
+  // Arm SIGKILL before namespace/filesystem setup. PID namespaces and explicit
+  // credential transitions require a different supervisor lifetime contract.
+  sandbox &
+  parent_death_signal() noexcept
+  {
+    __parent_death = true; return *this;
+  }
+
   [[nodiscard]] child
   run(i32 (*body)(void)) const noexcept
   {
@@ -909,6 +926,11 @@ private:
   {
     child out{};
 
+    if ( __parent_death && (__change_ids || ns::any(__ns_kinds & ns::ns_kind::pid)) ) {
+      out.fault = fault_t{ stage::parent_lifetime, -error::invalid_arg };
+      return out;
+    }
+
     // must refuse before the fork
     if ( __cfg_fault ) {
       out.fault = __cfg_fault;
@@ -921,6 +943,7 @@ private:
       return out;
     }
 
+    const int parent = posix::getpid();
     const int pid = micron::try_fork();
     if ( pid < 0 ) {
       (void)posix::close(pfd[0]);
@@ -931,7 +954,7 @@ private:
 
     if ( pid == 0 ) {
       (void)posix::close(pfd[0]);
-      __child(pfd[1], path, argv, envp, body);
+      __child(pfd[1], parent, path, argv, envp, body);
     }
 
     (void)posix::close(pfd[1]);
