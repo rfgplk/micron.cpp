@@ -1,0 +1,30 @@
+vertices=512 edges=1536 repetitions=16 samples=7 warmups=2 allocator=MT,zero,provenance fixed_workspace_bytes=10792
+hardware_counters=available
+representation=fixed_graph workspace=dynamic sample=0 ns=7835479.0 consumed=2093056
+representation=fixed_graph workspace=dynamic sample=1 ns=7781636.0 consumed=2093056
+representation=fixed_graph workspace=dynamic sample=2 ns=7771086.0 consumed=2093056
+representation=fixed_graph workspace=dynamic sample=3 ns=7793177.0 consumed=2093056
+representation=fixed_graph workspace=dynamic sample=4 ns=7770885.0 consumed=2093056
+representation=fixed_graph workspace=dynamic sample=5 ns=7864528.0 consumed=2093056
+representation=fixed_graph workspace=dynamic sample=6 ns=7790107.0 consumed=2093056
+representation=fixed_graph workspace=fixed sample=0 ns=7876492.0 consumed=2093056
+representation=fixed_graph workspace=fixed sample=1 ns=7899301.0 consumed=2093056
+representation=fixed_graph workspace=fixed sample=2 ns=7866101.0 consumed=2093056
+representation=fixed_graph workspace=fixed sample=3 ns=7895020.0 consumed=2093056
+representation=fixed_graph workspace=fixed sample=4 ns=7940901.0 consumed=2093056
+representation=fixed_graph workspace=fixed sample=5 ns=7864722.0 consumed=2093056
+representation=fixed_graph workspace=fixed sample=6 ns=7894560.0 consumed=2093056
+representation=csr workspace=dynamic sample=0 ns=69883.0 consumed=2093056
+representation=csr workspace=dynamic sample=1 ns=68404.0 consumed=2093056
+representation=csr workspace=dynamic sample=2 ns=68036.0 consumed=2093056
+representation=csr workspace=dynamic sample=3 ns=75023.0 consumed=2093056
+representation=csr workspace=dynamic sample=4 ns=68680.0 consumed=2093056
+representation=csr workspace=dynamic sample=5 ns=68107.0 consumed=2093056
+representation=csr workspace=dynamic sample=6 ns=68179.0 consumed=2093056
+representation=csr workspace=fixed sample=0 ns=157662.0 consumed=2093056
+representation=csr workspace=fixed sample=1 ns=153809.0 consumed=2093056
+representation=csr workspace=fixed sample=2 ns=164909.0 consumed=2093056
+representation=csr workspace=fixed sample=3 ns=157072.0 consumed=2093056
+representation=csr workspace=fixed sample=4 ns=157022.0 consumed=2093056
+representation=csr workspace=fixed sample=5 ns=157099.0 consumed=2093056
+representation=csr workspace=fixed sample=6 ns=157907.0 consumed=2093056

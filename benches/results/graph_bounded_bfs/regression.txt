@@ -1,0 +1,15 @@
+[1;34mBuilding and testing: [1;32m/code/C++/micron/tests/rigor/graph_bounded_bfs.cpp
+[1;39mTesting: bin/tests/base/graph-owner/graph_bounded_bfs
+Execution took: 5.66259765625 milliseconds
+[1;32m[ bin/tests/base/graph-owner/graph_bounded_bfs returned: 1  PASS ]
+[1;39m[1;34mBuilding and testing: [1;32m/code/C++/micron/tests/rigor/graph_bounded_bfs.cpp
+[1;39mTesting: bin/tests/v3/graph-owner/graph_bounded_bfs
+Execution took: 5.49658203125 milliseconds
+[1;32m[ bin/tests/v3/graph-owner/graph_bounded_bfs returned: 1  PASS ]
+[1;39m[1;34mBuilding and testing: [1;32m/code/C++/micron/tests/rigor/graph.cpp
+[1;39m[34msnowball msg:[0m === GRAPH TESTS ===
+[34msnowball msg:[0m === GRAPH TESTS COMPLETE ===
+Testing: bin/tests/base/graph-owner/graph
+Execution took: 15.505859375 milliseconds
+[1;32m[ bin/tests/base/graph-owner/graph returned: 1  PASS ]
+[1;39m

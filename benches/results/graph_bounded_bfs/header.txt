@@ -1,0 +1,4 @@
+[1;34mBuilding [1;32mtests/compiletests/graph_bounded_bfs.cpp[1;34m into [1;32mbin/headers/graph-bounded-bfs/graph_bounded_bfs.o
+[1;33mwith command: /usr/bin/g++ -std=c++23 -c -O2 -fmodulo-sched -fmodulo-sched-allow-regmoves -fgcse-sm -fgcse-las -march=x86-64 -ffreestanding -fno-stack-protector -fno-exceptions -fno-rtti -m64 -Wall -Wextra -Wpedantic -Wno-variadic-macros -Wno-inline -fext-numeric-literals -fno-lto -fno-omit-frame-pointer -fno-exceptions -fno-rtti -Wno-odr -Wno-lto-type-mismatch -fdiagnostics-color=always -fconcepts-diagnostics-depth=2 tests/compiletests/graph_bounded_bfs.cpp -DMICRON_ABC_MT=1 -DMICRON_ABC_ZERO_ON_ALLOC=true -DMICRON_ABC_ENFORCE_PROVENANCE=true -I. -I./tests -o bin/headers/graph-bounded-bfs/graph_bounded_bfs.o
+[1;39m[1;33mCompilation took: 5.425957907 seconds
+[1;39m
