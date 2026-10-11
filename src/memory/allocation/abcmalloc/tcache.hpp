@@ -52,12 +52,12 @@ __micron_gcc_unroll_8    for ( u32 i = _count; i > 0; --i ) {
   }
 
   [[nodiscard, gnu::always_inline]] inline i32
-  probe_ge(u32 sz) const noexcept
+  probe_ge(u32 sz, u32 maximum = ~u32{ 0 }) const noexcept
   {
     if ( _count == 0 ) [[unlikely]]
       return -1;
 __micron_gcc_unroll_8    for ( u32 i = _count; i > 0; --i ) {
-      if ( _size[i - 1] >= sz ) [[likely]]
+      if ( _size[i - 1] >= sz && _size[i - 1] <= maximum ) [[likely]]
         return static_cast<i32>(i - 1);
     }
     return -1;
@@ -258,7 +258,7 @@ template<> struct alignas(4) __tier_tcache<0> {
   }
 
   [[nodiscard, gnu::always_inline]] inline i32
-  probe_ge(u32) const noexcept
+  probe_ge(u32, u32 = ~u32{ 0 }) const noexcept
   {
     return -1;
   }

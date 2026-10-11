@@ -890,6 +890,12 @@ class __arena: private cache
       i32 hit;
       if constexpr ( __default_redzone ) {
         hit = tier.__cache.probe(static_cast<u32>(sz));
+      } else if constexpr ( TierT::sheet_t::__size_class >= __class_medium ) {
+        // NOTE: buddy payloads are powers of two minus the header,
+        // accept only the natural allocation order for this request;
+        // leave larger cached blocks parked for a matching request instead of amplifying every live grant
+        const u32 maximum = static_cast<u32>(2 * sz + __hdr_offset - 1);
+        hit = tier.__cache.probe_ge(static_cast<u32>(sz), maximum);
       } else {
         hit = tier.__cache.probe_ge(static_cast<u32>(sz));
       }
