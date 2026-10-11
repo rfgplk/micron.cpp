@@ -900,7 +900,7 @@ public:
   void
   fast_clear(void)
   {
-    if constexpr ( !micron::is_trivially_destructible_v<T> )
+    if constexpr ( micron::is_trivially_destructible_v<T> )
       __mem::length = 0;
     else
       clear();
@@ -1666,7 +1666,7 @@ public:
   void
   fast_clear(void)
   {
-    if constexpr ( !micron::is_trivially_destructible_v<T> )
+    if constexpr ( micron::is_trivially_destructible_v<T> )
       __mem::length = 0;
     else
       clear();

@@ -17,4 +17,5 @@ test rigor/vector_integrity.cpp
 test rigor/vector_self_assignment.cpp
 test rigor/vector_try_reserve.cpp
 test rigor/vector_defects.cpp
+test rigor/vector_fast_clear.cpp --std c++23 --timeout 180
 test rigor/simd_find_lanes.cpp

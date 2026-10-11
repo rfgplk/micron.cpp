@@ -1101,7 +1101,7 @@ public:
   fast_clear(void)
   {
     __hold __lock(__mtx);
-    if constexpr ( !micron::is_trivially_destructible_v<T> )
+    if constexpr ( micron::is_trivially_destructible_v<T> )
       __mem::length = 0;
     else
       __unlocked_clear();
