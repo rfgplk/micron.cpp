@@ -121,7 +121,7 @@ enum c1_code : usize {
 };
 
 constexpr const char *C1[] = {
-  "\x1bE",       // nel
+  "\033E",       // nel
   "\x1bH",       // hts
   "\x1bM",       // ri
   "\x1bN",       // ss2
@@ -172,8 +172,8 @@ constexpr const char *FE[] = {
   "\x1b L",      // ansi_level1 (ESC SP L)
   "\x1b M",      // ansi_level2 (ESC SP M)
   "\x1b N",      // ansi_level3 (ESC SP N)
-  "\x1b7",       // decsc
-  "\x1b8",       // decrc
+  "\0337",       // decsc
+  "\0338",       // decrc
   "\x1b#8",      // decaln
   "\x1b=",       // deckpam
   "\x1b>",       // deckpnm
@@ -182,8 +182,8 @@ constexpr const char *FE[] = {
   "\x1b~",       // ls1r
   "\x1b}",       // ls2r
   "\x1b|",       // ls3r
-  "\x1b6",       // back_index
-  "\x1b9"        // fwd_index
+  "\0336",       // back_index
+  "\0339"        // fwd_index
 };
 
 enum csi_code : usize {

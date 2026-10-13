@@ -378,7 +378,8 @@ __flags_warn_extra(const config_t &conf)
                     gcc::w_flags::flags::Wformat_security, gcc::w_flags::flags::Wmissing_noreturn, gcc::w_flags::flags::Wpacked,
                     gcc::w_flags::flags::Wnonnull, gcc::w_flags::flags::Wundef, gcc::w_flags::flags::Wtrampolines,
                     gcc::w_flags::flags::Warray_bounds, gcc::w_flags::flags::Wcast_align, gcc::w_flags::flags::Winit_self,
-                    gcc::w_flags::flags::Wnarrowing, gcc::w_flags::flags::Wregister, gcc::w_flags::flags::Wsequence_point);
+                    gcc::w_flags::flags::Wnarrowing, gcc::w_flags::flags::Wsequence_point)
+         + (conf.language == __languages::cpp ? string_type{" -Wregister"} : string_type{});
 }
 
 inline string_type

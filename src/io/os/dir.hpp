@@ -1121,7 +1121,7 @@ private:
     if ( !posix::is_dir(str) ) exc<except::io_error>("micron::dir, path isn't a directory.");
 
     __handle.fd = (posix::open(str, posix::o_rdonly | posix::o_directory | posix::o_cloexec));
-    if ( auto r = __handle.has_error() ) exc_e<except::io_error>(r, "micron::dir, failed to open.");
+    if ( auto r = __handle.has_error() ) exc_e<except::io_error>(static_cast<i32>(r), "micron::dir, failed to open.");
 
     fname = str;
     micron::zero(&sd);

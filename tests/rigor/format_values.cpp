@@ -28,13 +28,6 @@ template<usize N> using sstr = micron::sstring<N, schar>;
 
 // ============================================================
 // Helper: build an hstring from a raw literal
-// ============================================================
-static hstr
-h(const char *s)
-{
-  return hstr(s);
-}
-
 // equality between hstr and a literal: avoids having to build temporaries everywhere
 static bool
 eq(const hstr &lhs, const char *rhs)

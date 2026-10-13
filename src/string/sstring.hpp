@@ -1874,7 +1874,7 @@ public:
                                                                         cnt);
     __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
 
-    micron::memmove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
+    micron::memmove(itr, itr + (1 + (cnt - 1)), length - (static_cast<size_type>(itr - &memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&memory[length - cnt], 0x0, cnt);
     length -= cnt;
     return *this;
@@ -1888,7 +1888,7 @@ public:
     __safety_check<&sstring::__erase_iter_check, except::library_error>("micron::sstring erase() out of range", itr, cnt);
     __safety_check<&sstring::__capacity_exceed, except::library_error>("micron::sstring erase() count exceeds capacity", cnt);
 
-    micron::memmove(itr, itr + (1 + (cnt - 1)), length - ((itr - &memory[0]) + 1 + (cnt - 1)));
+    micron::memmove(itr, itr + (1 + (cnt - 1)), length - (static_cast<size_type>(itr - &memory[0]) + 1 + (cnt - 1)));
     micron::typeset<T>(&memory[length - cnt], 0x0, cnt);
     length -= cnt;
     return *this;

@@ -1575,7 +1575,7 @@ public:
   {
     if ( i32 __e = __check() ) [[unlikely]]
       return __e;
-    return micron::splice(__handle.fd, nullptr, dst.fd, nullptr, count, flags);
+    return micron::splice(__handle.fd, nullptr, dst.fd, nullptr, count, static_cast<u32>(flags));
   }
 
   max_t
@@ -1583,7 +1583,7 @@ public:
   {
     if ( i32 __e = __check() ) [[unlikely]]
       return __e;
-    return micron::splice(src.fd, nullptr, __handle.fd, nullptr, count, flags);
+    return micron::splice(src.fd, nullptr, __handle.fd, nullptr, count, static_cast<u32>(flags));
   }
 
   // cross-fs copies need >=5.3

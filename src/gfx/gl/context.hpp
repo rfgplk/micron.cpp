@@ -43,10 +43,12 @@ private:
     cr.debug = __hints.debug;
     if ( __hints.share_with ) cr.share = __hints.share_with->__glx.ctx();
 
-    __glx.bind(glx_lib(), *__win->dpy().as_x11(), __win->glx_fbconfig());
+    auto *xd = __win->dpy().as_x11();
+    if ( !xd ) throw except::logic_error("gl::context: x11 window/display missing");
+    __glx.bind(glx_lib(), *xd, __win->glx_fbconfig());
     __glx.create(cr);
 
-    __has_swap_tear = glx_lib().has_extension(*__win->dpy().as_x11(), "GLX_EXT_swap_control_tear");
+    __has_swap_tear = glx_lib().has_extension(*xd, "GLX_EXT_swap_control_tear");
   }
 
   void

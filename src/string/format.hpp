@@ -131,9 +131,11 @@ fmt_uint_to_buf(char *buf, usize buf_sz, u64 val, u32 base, bool upper)
     start = micron::__impl::uint_to_buf_backward(tend, val);
   else
     start = micron::__impl::uint_to_buf_base_backward(tend, val, base, upper);
-  usize len = static_cast<usize>(tend - start);
-  if ( len > buf_sz ) len = buf_sz;
-  micron::memcpy(buf, start, len);
+  const usize digits = static_cast<usize>(tend - start);
+  // A u64 has at most 64 digits in any supported radix (2..36).
+  if ( digits > 64 ) __builtin_unreachable();
+  const usize len = digits < buf_sz ? digits : buf_sz;
+  micron::memcpy(buf, tmp + sizeof(tmp) - digits, len);
   return len;
 }
 

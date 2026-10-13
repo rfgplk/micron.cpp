@@ -31,25 +31,25 @@ __pe_call(long r)
   return r;
 }
 
-static long
+static inline long
 perf_event(struct perf_event_attr &event, micron::pid_t pid, int cpu, int group_fd, unsigned long flags)
 {
   return __pe_call(micron::syscall(SYS_perf_event_open, &event, pid, cpu, group_fd, flags));
 };
 
-static long
+static inline long
 perf_event_this(struct perf_event_attr &event)
 {
   return __pe_call(micron::syscall(SYS_perf_event_open, &event, 0, -1, -1, 0));
 };
 
-static long
+static inline long
 perf_event_attach(int fd, struct perf_event_attr &event)
 {
   return __pe_call(micron::syscall(SYS_perf_event_open, &event, 0, -1, fd, 0));
 };
 
-static long
+static inline long
 perf_event_pid(struct perf_event_attr &event, micron::pid_t pid)
 {
   return __pe_call(micron::syscall(SYS_perf_event_open, &event, pid, -1, -1, 0));

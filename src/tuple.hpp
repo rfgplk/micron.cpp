@@ -246,7 +246,7 @@ template<typename T, typename F> struct pair {
 
   template<typename K, typename L>
     requires(micron::is_constructible_v<T, K &&> and micron::is_constructible_v<F, L &&>)
-  constexpr pair(K &&x, L &&y) : a(micron::forward<K>(x)), b(micron::forward<L>(y))
+  constexpr pair(K &&x, L &&y) : a(static_cast<T>(micron::forward<K>(x))), b(static_cast<F>(micron::forward<L>(y)))
   {
   }
 

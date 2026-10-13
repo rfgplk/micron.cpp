@@ -1415,7 +1415,6 @@ template<ieee754_floating F>
 cod(const dynmat<F> &A, F tol = F(0)) noexcept
 {
   auto qr = qr_householder_colpiv<F>(A, tol);
-  const usize R = A.rows;
   const usize C = A.cols;
   const usize K = qr.rank;
 

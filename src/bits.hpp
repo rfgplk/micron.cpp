@@ -242,8 +242,8 @@ constexpr T
 mask_low(int n) noexcept
 {
   if ( n == 0 ) return T(0);
-  if ( n >= static_cast<int>(sizeof(T) * 8) ) return ~T(0);
-  return (T(1) << n) - T(1);
+  if ( n >= static_cast<int>(sizeof(T) * 8) ) return static_cast<T>(~T(0));
+  return static_cast<T>((T(1) << n) - T(1));
 }
 
 template<typename T = word>
@@ -267,7 +267,7 @@ template<typename T>
 constexpr T
 deposit_range(T dst, T val, int lo, int len) noexcept
 {
-  T m = mask_low<T>(len) << lo;
+  T m = static_cast<T>(mask_low<T>(len) << lo);
   return (dst & ~m) | ((val << lo) & m);
 }
 

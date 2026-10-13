@@ -52,7 +52,7 @@ __write_unsigned(T n)
     buf[i++] = '0';
   } else {
     while ( n > 0 ) {
-      buf[i++] = '0' + (n % 10);
+      buf[i++] = static_cast<char>('0' + (n % 10));
       n /= 10;
     }
     // reverse
