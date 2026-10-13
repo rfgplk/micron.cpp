@@ -151,7 +151,7 @@ class wayland_source
     ev.time.tv_sec = static_cast<long>(time / 1000);
     ev.time.tv_usec = static_cast<long>((time % 1000) * 1000);
     ev.type = ev_rel;
-    ev.code = (axis == 0) ? rel_wheel : rel_hwheel;
+    ev.code = static_cast<u16>((axis == 0) ? rel_wheel : rel_hwheel);
     ev.value = value_fixed >> 8;
     self->on_axis(self->user, ev);
   }
