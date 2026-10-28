@@ -318,8 +318,8 @@ main(void)
 
   {
     sb::test_case("the type-level and imperative faces emit identical bytes");
-    using policy
-        = s::seccomp_policy_n<max_insns, s::errno_call<SYS_getpgid, eperm>, s::allow<g::baseline, g::signal>, s::allow_calls<SYS_prctl, SYS_capset>>;
+    using policy = s::seccomp_policy_n<max_insns, s::errno_call<SYS_getpgid, eperm>, s::allow<g::baseline, g::signal>,
+                                       s::allow_calls<SYS_prctl, SYS_capset>>;
     auto typed = policy::build(sc::act_errno(eperm));
     sb::require_true(typed.valid());
 

@@ -78,10 +78,10 @@ main(void)
     const u128 vals[] = {
       static_cast<u128>(0),
       static_cast<u128>(1),
-      static_cast<u128>(~0ull),                            // 2^64-1, the limb boundary
-      static_cast<u128>(~0ull) + static_cast<u128>(1),     // 2^64
+      static_cast<u128>(~0ull),                             // 2^64-1, the limb boundary
+      static_cast<u128>(~0ull) + static_cast<u128>(1),      // 2^64
       (static_cast<u128>(1) << 100) + static_cast<u128>(7),
-      static_cast<u128>(0) - static_cast<u128>(1),         // u128 max
+      static_cast<u128>(0) - static_cast<u128>(1),      // u128 max
     };
     for ( const u128 &v : vals )
       for ( u32 base = 2; base <= 36; ++base ) {

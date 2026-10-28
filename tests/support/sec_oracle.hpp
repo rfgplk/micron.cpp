@@ -150,14 +150,29 @@ run(const insn_t *prog, usize n, const probe &p) noexcept
 
     if ( cls == b::alu ) {
       switch ( in.code & 0xf0 ) {
-      case b::op_and: acc &= in.k; break;
-      case b::op_or: acc |= in.k; break;
-      case b::op_xor: acc ^= in.k; break;
-      case b::op_add: acc += in.k; break;
-      case b::op_sub: acc -= in.k; break;
-      case b::op_lsh: acc <<= (in.k & 31); break;
-      case b::op_rsh: acc >>= (in.k & 31); break;
-      default: return outcome{ 0, fault::bad_opcode };
+      case b::op_and:
+        acc &= in.k;
+        break;
+      case b::op_or:
+        acc |= in.k;
+        break;
+      case b::op_xor:
+        acc ^= in.k;
+        break;
+      case b::op_add:
+        acc += in.k;
+        break;
+      case b::op_sub:
+        acc -= in.k;
+        break;
+      case b::op_lsh:
+        acc <<= (in.k & 31);
+        break;
+      case b::op_rsh:
+        acc >>= (in.k & 31);
+        break;
+      default:
+        return outcome{ 0, fault::bad_opcode };
       }
       ++pc;
       continue;
@@ -173,11 +188,20 @@ run(const insn_t *prog, usize n, const probe &p) noexcept
 
     bool taken = false;
     switch ( op ) {
-    case b::op_jeq: taken = (acc == in.k); break;
-    case b::op_jgt: taken = (acc > in.k); break;
-    case b::op_jge: taken = (acc >= in.k); break;
-    case b::op_jset: taken = ((acc & in.k) != 0); break;
-    default: return outcome{ 0, fault::bad_opcode };
+    case b::op_jeq:
+      taken = (acc == in.k);
+      break;
+    case b::op_jgt:
+      taken = (acc > in.k);
+      break;
+    case b::op_jge:
+      taken = (acc >= in.k);
+      break;
+    case b::op_jset:
+      taken = ((acc & in.k) != 0);
+      break;
+    default:
+      return outcome{ 0, fault::bad_opcode };
     }
     pc += 1 + static_cast<usize>(taken ? in.jt : in.jf);
   }
@@ -195,13 +219,20 @@ enum class cmp_kind : u8 { eq, ne, lt, le, gt, ge, masked };
 predicate(cmp_kind k, u64 arg, u64 val, u64 mask = 0) noexcept
 {
   switch ( k ) {
-  case cmp_kind::eq: return arg == val;
-  case cmp_kind::ne: return arg != val;
-  case cmp_kind::lt: return arg < val;
-  case cmp_kind::le: return arg <= val;
-  case cmp_kind::gt: return arg > val;
-  case cmp_kind::ge: return arg >= val;
-  case cmp_kind::masked: return (arg & mask) == (val & mask);
+  case cmp_kind::eq:
+    return arg == val;
+  case cmp_kind::ne:
+    return arg != val;
+  case cmp_kind::lt:
+    return arg < val;
+  case cmp_kind::le:
+    return arg <= val;
+  case cmp_kind::gt:
+    return arg > val;
+  case cmp_kind::ge:
+    return arg >= val;
+  case cmp_kind::masked:
+    return (arg & mask) == (val & mask);
   }
   return false;
 }
@@ -235,16 +266,26 @@ struct rng {
   edgy(u64 around) noexcept
   {
     switch ( below(10) ) {
-    case 0: return 0;
-    case 1: return ~0ull;
-    case 2: return 0xffffffffull;
-    case 3: return 0x100000000ull;
-    case 4: return around;
-    case 5: return around ? around - 1 : 0;
-    case 6: return around + 1;
-    case 7: return around ^ 0xffffffffull;          // flip the low half only
-    case 8: return around ^ 0xffffffff00000000ull;  // flip the high half only
-    default: return next();
+    case 0:
+      return 0;
+    case 1:
+      return ~0ull;
+    case 2:
+      return 0xffffffffull;
+    case 3:
+      return 0x100000000ull;
+    case 4:
+      return around;
+    case 5:
+      return around ? around - 1 : 0;
+    case 6:
+      return around + 1;
+    case 7:
+      return around ^ 0xffffffffull;      // flip the low half only
+    case 8:
+      return around ^ 0xffffffff00000000ull;      // flip the high half only
+    default:
+      return next();
     }
   }
 };

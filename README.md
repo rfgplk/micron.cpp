@@ -12,7 +12,7 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 </div>
 
 [![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](#)
-![Version](https://img.shields.io/badge/version-1.9.15.1-green)
+![Version](https://img.shields.io/badge/version-1.10.0.0-green)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 [![C++23](https://img.shields.io/badge/C++-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 
@@ -26,8 +26,8 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
 > [!NOTE]
 > the baremetal micron implementation lives on the [`barebones` branch](https://github.com/rfgplk/micron.cpp/tree/barebones).
 
-> [!WARNING]
-> micron is still in active development, the ABI may change at any point, and without notice.
+> [!NOTE]
+> as of 1.10, micron has reached ABI stability.
 
 #### Features
   - a *fully functional*, templated C++ standard library implementation, designed from the **ground up** with modern principles in mind

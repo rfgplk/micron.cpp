@@ -912,7 +912,7 @@ rsctypeset_safe(F &s, const T in) noexcept
 // START WORDSET
 
 // BASIC WORDSET - RUNTIME COUNT
-word *
+inline word *
 wordset(word *src, const word in, const u64 cnt) noexcept
 {
   __memset_words(reinterpret_cast<byte *>(src), static_cast<u64>(in), cnt * sizeof(word));
@@ -920,7 +920,7 @@ wordset(word *src, const word in, const u64 cnt) noexcept
 };
 
 // WORDSET WITH REFERENCE RETURN
-word &
+inline word &
 rwordset(word &s, const word in, const u64 cnt) noexcept
 {
   __memset_words(reinterpret_cast<byte *>(&s), static_cast<u64>(in), cnt * sizeof(word));

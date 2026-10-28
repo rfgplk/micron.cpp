@@ -77,7 +77,8 @@ __apply_f32(const quat<f32> &q, const vec<f32, 3> &translation, const vec<f32, 3
   for ( ; i + 4 <= n; i += 4 ) {
     const float *ip = reinterpret_cast<const float *>(in + i);
     simd::f128 x, y, z;
-    __transpose4_f32(simd::neon::load_f32(ip), simd::neon::load_f32(ip + 4), simd::neon::load_f32(ip + 8), simd::neon::load_f32(ip + 12), x, y, z);
+    __transpose4_f32(simd::neon::load_f32(ip), simd::neon::load_f32(ip + 4), simd::neon::load_f32(ip + 8), simd::neon::load_f32(ip + 12), x,
+                     y, z);
 
     __rotate_f32(qx, qy, qz, qw, x, y, z);
     if constexpr ( Translate ) {
@@ -102,8 +103,8 @@ __apply_f32(const quat<f32> &q, const vec<f32, 3> &translation, const vec<f32, 3
 
 template<bool Translate>
 [[gnu::always_inline]] inline void
-__apply_soa_f32(const quat<f32> &q, const vec<f32, 3> &translation, const f32 *in_x, const f32 *in_y, const f32 *in_z, f32 *out_x, f32 *out_y,
-                f32 *out_z, usize n) noexcept
+__apply_soa_f32(const quat<f32> &q, const vec<f32, 3> &translation, const f32 *in_x, const f32 *in_y, const f32 *in_z, f32 *out_x,
+                f32 *out_y, f32 *out_z, usize n) noexcept
 {
   const simd::f128 qx = simd::neon::splat_f32(q.data[0]);
   const simd::f128 qy = simd::neon::splat_f32(q.data[1]);

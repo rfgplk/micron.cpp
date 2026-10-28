@@ -54,7 +54,8 @@ template<typename K, typename V, usize N, usize NH = N>
 class stack_swiss_map
 {
 public:
-  struct __emplace_tag { };
+  struct __emplace_tag {
+  };
 
   struct __swiss_entry {
     K key;
@@ -64,15 +65,9 @@ public:
 
     __swiss_entry(K &&k, V &&v) : key(micron::move(k)), value(micron::move(v)) { }
 
-    template<typename KK, typename VV>
-    __swiss_entry(KK &&k, VV &&v) : key(micron::forward<KK>(k)), value(micron::forward<VV>(v))
-    {
-    }
+    template<typename KK, typename VV> __swiss_entry(KK &&k, VV &&v) : key(micron::forward<KK>(k)), value(micron::forward<VV>(v)) { }
 
-    template<typename... Args>
-    __swiss_entry(__emplace_tag, const K &k, Args &&...args) : key(k), value(micron::forward<Args>(args)...)
-    {
-    }
+    template<typename... Args> __swiss_entry(__emplace_tag, const K &k, Args &&...args) : key(k), value(micron::forward<Args>(args)...) { }
   };
 
 private:
@@ -375,17 +370,11 @@ public:
 
   ~stack_swiss_map() { clear(); }
 
-  stack_swiss_map() : __size(0)
-  {
-    micron::memset(__control_bytes, __empty, N);
-  }
+  stack_swiss_map() : __size(0) { micron::memset(__control_bytes, __empty, N); }
 
   stack_swiss_map(const stack_swiss_map &other) { __copy_from(other); }
 
-  stack_swiss_map(stack_swiss_map &&other) noexcept(micron::is_nothrow_move_constructible_v<__swiss_entry>)
-  {
-    __move_from(other);
-  }
+  stack_swiss_map(stack_swiss_map &&other) noexcept(micron::is_nothrow_move_constructible_v<__swiss_entry>) { __move_from(other); }
 
   stack_swiss_map &
   operator=(const stack_swiss_map &other)

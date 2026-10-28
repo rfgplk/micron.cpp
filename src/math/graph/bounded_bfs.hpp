@@ -40,9 +40,9 @@ template<micron::integral I, usize Capacity> struct fixed_bfs_workspace {
 };
 
 struct bfs_limits {
-  usize depth = ~usize{0};
-  usize vertices = ~usize{0};
-  usize edges = ~usize{0};
+  usize depth = ~usize{ 0 };
+  usize vertices = ~usize{ 0 };
+  usize edges = ~usize{ 0 };
 };
 
 struct bounded_bfs_result {
@@ -60,8 +60,8 @@ struct bounded_bfs_result {
 // hidden work inside a representation's iterators (fixed_graph scans slots).
 template<graph_model G, usize Capacity, typename Visitor = null_visitor>
 [[nodiscard]] bounded_bfs_result
-bounded_bfs_into(const G &graph, typename G::vertex_descriptor source,
-                 fixed_bfs_workspace<typename G::index_type, Capacity> &workspace, bfs_limits limits = {}, Visitor visitor = {})
+bounded_bfs_into(const G &graph, typename G::vertex_descriptor source, fixed_bfs_workspace<typename G::index_type, Capacity> &workspace,
+                 bfs_limits limits = {}, Visitor visitor = {})
 {
   if ( !graph.has_vertex(source) ) return { algorithm_status::invalid_vertex, 0, false };
   if ( graph.vertex_slots() > Capacity || !limits.vertices ) return { algorithm_status::overflow, 0, false };

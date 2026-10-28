@@ -58,8 +58,8 @@ test_broken_down(void)
     require(tm.tm_hour, 23);
     require(tm.tm_min, 6);
     require(tm.tm_sec, 40);
-    require(tm.tm_wday, 5);        // Friday
-    require(tm.tm_yday, 8);        // Jan 1 is ZERO
+    require(tm.tm_wday, 5);      // Friday
+    require(tm.tm_yday, 8);      // Jan 1 is ZERO
     require(tm.tm_isdst, 0);
     require(tm.tm_gmtoff, 0L);
   }
@@ -81,7 +81,7 @@ test_broken_down(void)
     pp::tm_t tm{};
     tm.tm_year = 126;      // 2026
     tm.tm_mon = 0;
-    tm.tm_mday = 32;       // the 32nd of January is the 1st of February
+    tm.tm_mday = 32;      // the 32nd of January is the 1st of February
     const micron::time_t t = pp::timegm(&tm);
     require(tm.tm_mon, 1);
     require(tm.tm_mday, 1);

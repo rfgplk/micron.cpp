@@ -19,12 +19,10 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
 #if defined(__ARM_FP16_FORMAT_IEEE) || defined(__ARM_FP16_FORMAT_ALTERNATIVE) || defined(__micron_arm_fp16)
-using float16_t = __fp16;
+        using float16_t = __fp16;
 #endif
 using float32_t = float;
 using float64_t = double;

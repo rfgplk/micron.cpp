@@ -22,16 +22,13 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// 16-byte copy (VLD1.8 / VST1.8)
-__inline_g void
-__block_copy_16(u8 *__restrict d, const u8 *__restrict s) noexcept
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // 16-byte copy (VLD1.8 / VST1.8)
+    __inline_g void __block_copy_16(u8 *__restrict d, const u8 *__restrict s) noexcept
 {
   uint8x16_t t;
   __asm__("vld1.8 {%q0}, [%1]" : "=w"(t) : "r"(s), "m"(*reinterpret_cast<const u8(*)[16]>(s)));

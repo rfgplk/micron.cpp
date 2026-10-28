@@ -18,12 +18,10 @@ namespace simd
 namespace fma
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_fma [[gnu::always_inline, gnu::artificial, gnu::target("fma")]] static inline
 
-__inline_fma __m128
-fma_f32(__m128 a, __m128 b, __m128 c) noexcept
+    __inline_fma __m128 fma_f32(__m128 a, __m128 b, __m128 c) noexcept
 {
   return _mm_fmadd_ps(a, b, c);
 }

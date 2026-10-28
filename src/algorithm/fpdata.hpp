@@ -107,8 +107,7 @@ flat_map_c(Fn &&fn)
 // chunk  (split container into consecutive chunks of size n)
 template<is_iterable_container Out, is_iterable_container C>
   requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>
-micron::option<Out, empty_container_error>
-chunk(const C &c, usize n);
+micron::option<Out, empty_container_error> chunk(const C &c, usize n);
 
 template<is_iterable_container Out, is_iterable_container C>
   requires micron::is_same_v<typename Out::value_type::value_type, typename C::value_type>

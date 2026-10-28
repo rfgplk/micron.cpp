@@ -28,12 +28,10 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
-__inline_g void
-_mm_sfence() noexcept
+    __inline_g void _mm_sfence() noexcept
 {
   __builtin_ia32_sfence();
 }

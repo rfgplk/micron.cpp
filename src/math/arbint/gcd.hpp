@@ -90,8 +90,8 @@ gcd_dc_itch(usize un, usize vn) noexcept
 [[nodiscard]] inline constexpr usize
 gcd_dc(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept
 {
-  limb_t *a = scratch;             // un
-  limb_t *b = a + un;              // un
+  limb_t *a = scratch;      // un
+  limb_t *b = a + un;       // un
   limb_t *const work = b + un;
 
   copyi(a, up, un);
@@ -244,8 +244,8 @@ gcd(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *
   if ( un > vn ) {
     // one division levels the sizes, so the tier below sees a balanced pair. after it the operands
     // are (v, u mod v), both at most vn limbs, which is what gcd_itch charges the tier for.
-    limb_t *const b = scratch;                       // vn
-    limb_t *const q = b + vn;                        // un - vn + 1
+    limb_t *const b = scratch;      // vn
+    limb_t *const q = b + vn;       // un - vn + 1
     limb_t *const dwork = q + (un - vn + 1u);
     divrem(q, b, up, un, vp, vn, dwork);
     bn = normalize(b, vn);

@@ -23,13 +23,12 @@
 
 #include "types.hpp"
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wreturn-type")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wreturn-type")
 // raw arch specific asm clone trampolines
 
 #if defined(__micron_arch_amd64)
-[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
-__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+    [[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // entry: rdi=fn rsi=stack rdx=flags rcx=arg r8=ptid r9=tls 8(%rsp)=ctid
   asm volatile("xorl %eax, %eax\n\t"
@@ -58,8 +57,8 @@ __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void
                "ret\n\t");
 }
 #elif defined(__micron_arch_x86)
-[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
-__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+    [[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // all args on stack; +16 after pushing the 4 callee-saved regs
   asm volatile("pushl %ebp\n\t"
@@ -99,9 +98,9 @@ __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void
                "ret\n\t");
 }
 #elif defined(__micron_arch_arm64)
-// NOTE: aarch64 GCC __IGNORES__ __attribute__((naked)) (?!?!) which would wrap the body in a prologue/epilogue
-// and corrupt the child SP pivot
-extern "C" long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *);
+    // NOTE: aarch64 GCC __IGNORES__ __attribute__((naked)) (?!?!) which would wrap the body in a prologue/epilogue
+    // and corrupt the child SP pivot
+    extern "C" long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *);
 asm(".text\n\t"
     ".weak __micron_clone_entry\n\t"
     ".type __micron_clone_entry, %function\n\t"
@@ -124,8 +123,8 @@ asm(".text\n\t"
     "mov x8, #93\n\t"                // SYS_exit
     "svc #0\n\t");
 #elif defined(__micron_arch_arm32)
-[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
-__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+    [[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
 {
   // entry: r0=fn r1=stack r2=flags r3=arg; ptid@[sp,#0] tls@[sp,#4] ctid@[sp,#8] (+16 after push)
   asm volatile("stmfd sp!, {r4, r5, r6, r7}\n\t"
@@ -259,272 +258,271 @@ __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
 }
 #endif
 
-__micron_diagnostic_pop
-namespace micron
+__micron_diagnostic_pop namespace micron
 {
 
-/*
- *           long clone(unsigned long flags, void *stack,
- *                      int *parent_tid, int *child_tid,
- *                     unsigned long tls);
- */
+  /*
+   *           long clone(unsigned long flags, void *stack,
+   *                      int *parent_tid, int *child_tid,
+   *                     unsigned long tls);
+   */
 
-namespace posix
-{
+  namespace posix
+  {
 
-enum class clone_flags : u64 {      // u64: clone_io is 0x80000000 and clone3 admits 64-bit flags
-  clear_tid = clone_child_cleartid,
-  set_tid = clone_child_settid,
-  detached_obsolete = clone_detached,
-  new_cgroup = clone_newcgroup,
-  copy_files = clone_files,
-  same_io = clone_io,
-  newcgroup = clone_newcgroup,
-  newipc = clone_newipc,
-  newnet = clone_newnet,
-  newns = clone_newns,
-  newpid = clone_newpid,
-  newuser = clone_newuser,
-  parent_copy = clone_parent,
-  parent_settid = clone_parent_settid,
-  pid_pointer = clone_pidfd,
-  ptrace = clone_ptrace,
-  enable_tls = clone_settls,
-  share_signals = clone_sighand,
-  start_stopped_removed = 0,
-  share_semaphores = clone_sysvsem,
-  as_thread = clone_thread,
-  no_trace = clone_untraced,
-  vfork_obsolete = clone_vfork,
-  same_memory = clone_vm
-};
-
-enum class posix_process_flags {
-  reset_ids = 0x01,
-  set_pgroup = 0x02,
-  sig_def = 0x04,
-  sig_mask = 0x08,
-  sched_param = 0x10,
-  set_scheduler = 0x20,
-  use_vfork = 0x40,
-  new_session = 0x80,
-  set_cgroup = 0x100
-};
-
-auto
-clone_kernel(unsigned long flags, void *stack, int *parent_tid, int *child_tid, unsigned long tls)
-{
-#if defined(__micron_arch_arm32) || defined(__micron_arch_x86)
-  // WARNING: arm32 (and i386) are CLONE_BACKWARDS; tls and child_tid are swapped vs arm64/x86_64
-  return micron::syscall(SYS_clone, flags, stack, parent_tid, tls, child_tid);
-#else
-  return micron::syscall(SYS_clone, flags, stack, parent_tid, child_tid, tls);
-#endif
-}
-
-// NOTE: Linux 5.3+(5.7) req
-
-struct clone_args {
-  u64 flags;        /* Flags bit mask */
-  u64 pidfd;        /* Where to store PID file descriptor
-                       (int *) */
-  u64 child_tid;    /* Where to store child TID,
-                       in child's memory (posix::pid_t *) */
-  u64 parent_tid;   /* Where to store child TID,
-                       in parent's memory (posix::pid_t *) */
-  u64 exit_signal;  /* Signal to deliver to parent on
-                       child termination */
-  u64 stack;        /* Pointer to lowest byte of stack */
-  u64 stack_size;   /* Size of stack */
-  u64 tls;          /* Location of new TLS */
-  u64 set_tid;      /* Pointer to a posix::pid_t array
-                       (since Linux 5.5) */
-  u64 set_tid_size; /* Number of elements in set_tid
-                       (since Linux 5.5) */
-  u64 cgroup;       /* File descriptor for target cgroup
-                       of child (since Linux 5.7) */
-};
-
-auto
-clone3_kernel(clone_args &args)
-{
-  return micron::syscall(SYS_clone3, &args, sizeof(args));
-}
-
-inline constexpr unsigned long micthread_flags
-    = clone_vm | clone_fs | clone_files | clone_sighand | clone_thread | clone_sysvsem | clone_settls | clone_child_cleartid;
-
-// the value the spawner seeds into the CHILD_CLEARTID word
-inline constexpr int __micthread_ctid_alive = 1;
-
-// main clone3 spawn
-// >=5.3 (clone3)
-inline kernel::probe_gate __clone3_gate{};
-
-inline pid_t
-clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid, int *child_tid,
-             unsigned long flags = micthread_flags)
-{
-  if ( !thunk || !stack_low || stack_size == 0 ) return -EINVAL;
-  if ( child_tid ) *child_tid = __micthread_ctid_alive;
-  unsigned long tls_arg = tls;
-#if defined(__micron_arch_x86)
-  // i386 is the exception (WHY?!): CLONE_SETTLS expects a struct user_desc * not a raw TP (?!?!?!?!)
-  struct __i386_clone_user_desc {
-    unsigned int entry_number, base_addr, limit, flags;
+  enum class clone_flags : u64 {      // u64: clone_io is 0x80000000 and clone3 admits 64-bit flags
+    clear_tid = clone_child_cleartid,
+    set_tid = clone_child_settid,
+    detached_obsolete = clone_detached,
+    new_cgroup = clone_newcgroup,
+    copy_files = clone_files,
+    same_io = clone_io,
+    newcgroup = clone_newcgroup,
+    newipc = clone_newipc,
+    newnet = clone_newnet,
+    newns = clone_newns,
+    newpid = clone_newpid,
+    newuser = clone_newuser,
+    parent_copy = clone_parent,
+    parent_settid = clone_parent_settid,
+    pid_pointer = clone_pidfd,
+    ptrace = clone_ptrace,
+    enable_tls = clone_settls,
+    share_signals = clone_sighand,
+    start_stopped_removed = 0,
+    share_semaphores = clone_sysvsem,
+    as_thread = clone_thread,
+    no_trace = clone_untraced,
+    vfork_obsolete = clone_vfork,
+    same_memory = clone_vm
   };
 
-  __i386_clone_user_desc __i386_tls_desc{ 0xffffffffu, static_cast<unsigned int>(tls), 0xfffffu, 0x51u };
-  tls_arg = reinterpret_cast<unsigned long>(&__i386_tls_desc);
-#endif
-  long raw;
-  if ( __clone3_gate.open(kernel::feature::clone3) ) [[likely]] {
-    clone_args args{};
-    args.flags = flags;
-    args.exit_signal = 0;
-    args.stack = reinterpret_cast<u64>(stack_low);
-    args.stack_size = stack_size;
-    args.tls = tls_arg;
-    args.parent_tid = reinterpret_cast<u64>(parent_tid);
-    args.child_tid = reinterpret_cast<u64>(child_tid);
-    raw = ::__micron_clone3_entry(thunk, payload, &args, sizeof(args));
-    if ( !(micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS) ) [[likely]] {
-      if ( micron::syscall_failed(raw) && child_tid ) *child_tid = 0;      // no child ran
-      return static_cast<pid_t>(raw);
-    }
-    __clone3_gate.demote();
-  }
-  byte *top = reinterpret_cast<byte *>(stack_low) + stack_size;
-  raw = ::__micron_clone_entry(thunk, top, flags, payload, reinterpret_cast<int *>(parent_tid), reinterpret_cast<void *>(tls_arg),
-                               child_tid);
-  if ( micron::syscall_failed(raw) && child_tid ) *child_tid = 0;      // no child ran
-  return static_cast<pid_t>(raw);
-}
+  enum class posix_process_flags {
+    reset_ids = 0x01,
+    set_pgroup = 0x02,
+    sig_def = 0x04,
+    sig_mask = 0x08,
+    sched_param = 0x10,
+    set_scheduler = 0x20,
+    use_vfork = 0x40,
+    new_session = 0x80,
+    set_cgroup = 0x100
+  };
 
-auto
-fork_kernel(void)
-{
-#if defined(__micron_syscall_generic)
-  // arm64 has no fork
-  return micron::syscall(SYS_clone, static_cast<unsigned long>(sig_chld), 0, 0, 0, 0);
+  auto
+  clone_kernel(unsigned long flags, void *stack, int *parent_tid, int *child_tid, unsigned long tls)
+  {
+#if defined(__micron_arch_arm32) || defined(__micron_arch_x86)
+    // WARNING: arm32 (and i386) are CLONE_BACKWARDS; tls and child_tid are swapped vs arm64/x86_64
+    return micron::syscall(SYS_clone, flags, stack, parent_tid, tls, child_tid);
 #else
-  return micron::syscall(SYS_fork);
+    return micron::syscall(SYS_clone, flags, stack, parent_tid, child_tid, tls);
 #endif
-}
-
-inline __attribute__((always_inline)) unsigned long
-__micron_fold_exit_signal(unsigned long flags, int exit_signal) noexcept
-{
-  return (flags & ~0xffUL) | (static_cast<unsigned long>(exit_signal) & 0xffUL);
-}
-
-template<auto Fn, typename... Args> struct __clone_payload {
-  void *args[sizeof...(Args)];
-
-  static int
-  thunk(void *p)
-  {
-    auto *self = static_cast<__clone_payload *>(p);
-    int rc = __invoke(self, micron::make_index_sequence<sizeof...(Args)>{});
-    destroy(self);
-    return rc;
   }
 
-  static void
-  destroy(__clone_payload *self)
+  // NOTE: Linux 5.3+(5.7) req
+
+  struct clone_args {
+    u64 flags;        /* Flags bit mask */
+    u64 pidfd;        /* Where to store PID file descriptor
+                         (int *) */
+    u64 child_tid;    /* Where to store child TID,
+                         in child's memory (posix::pid_t *) */
+    u64 parent_tid;   /* Where to store child TID,
+                         in parent's memory (posix::pid_t *) */
+    u64 exit_signal;  /* Signal to deliver to parent on
+                         child termination */
+    u64 stack;        /* Pointer to lowest byte of stack */
+    u64 stack_size;   /* Size of stack */
+    u64 tls;          /* Location of new TLS */
+    u64 set_tid;      /* Pointer to a posix::pid_t array
+                         (since Linux 5.5) */
+    u64 set_tid_size; /* Number of elements in set_tid
+                         (since Linux 5.5) */
+    u64 cgroup;       /* File descriptor for target cgroup
+                         of child (since Linux 5.7) */
+  };
+
+  auto
+  clone3_kernel(clone_args &args)
   {
-    __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
-    delete self;
+    return micron::syscall(SYS_clone3, &args, sizeof(args));
   }
 
-private:
-  template<usize... I>
-  static int
-  __invoke(__clone_payload *self, micron::index_sequence<I...>)
+  inline constexpr unsigned long micthread_flags
+      = clone_vm | clone_fs | clone_files | clone_sighand | clone_thread | clone_sysvsem | clone_settls | clone_child_cleartid;
+
+  // the value the spawner seeds into the CHILD_CLEARTID word
+  inline constexpr int __micthread_ctid_alive = 1;
+
+  // main clone3 spawn
+  // >=5.3 (clone3)
+  inline kernel::probe_gate __clone3_gate{};
+
+  inline pid_t
+  clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid, int *child_tid,
+               unsigned long flags = micthread_flags)
   {
-    using ret_t = decltype(Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...));
-    if constexpr ( micron::is_same_v<ret_t, int> )
-      return Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
-    else {
-      Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
-      return 0;
+    if ( !thunk || !stack_low || stack_size == 0 ) return -EINVAL;
+    if ( child_tid ) *child_tid = __micthread_ctid_alive;
+    unsigned long tls_arg = tls;
+#if defined(__micron_arch_x86)
+    // i386 is the exception (WHY?!): CLONE_SETTLS expects a struct user_desc * not a raw TP (?!?!?!?!)
+    struct __i386_clone_user_desc {
+      unsigned int entry_number, base_addr, limit, flags;
+    };
+
+    __i386_clone_user_desc __i386_tls_desc{ 0xffffffffu, static_cast<unsigned int>(tls), 0xfffffu, 0x51u };
+    tls_arg = reinterpret_cast<unsigned long>(&__i386_tls_desc);
+#endif
+    long raw;
+    if ( __clone3_gate.open(kernel::feature::clone3) ) [[likely]] {
+      clone_args args{};
+      args.flags = flags;
+      args.exit_signal = 0;
+      args.stack = reinterpret_cast<u64>(stack_low);
+      args.stack_size = stack_size;
+      args.tls = tls_arg;
+      args.parent_tid = reinterpret_cast<u64>(parent_tid);
+      args.child_tid = reinterpret_cast<u64>(child_tid);
+      raw = ::__micron_clone3_entry(thunk, payload, &args, sizeof(args));
+      if ( !(micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS) ) [[likely]] {
+        if ( micron::syscall_failed(raw) && child_tid ) *child_tid = 0;      // no child ran
+        return static_cast<pid_t>(raw);
+      }
+      __clone3_gate.demote();
     }
-  }
-
-  template<usize... I>
-  static void
-  __cleanup([[maybe_unused]] __clone_payload *self, micron::index_sequence<I...>)
-  {
-    (delete static_cast<Args *>(self->args[I]), ...);
-  }
-};
-
-template<usize Sz, auto Fn, typename... Args>
-pid_t
-clone(addr_t *stack, int flags, Args &&...args)
-{
-  if ( !stack ) return -EINVAL;
-
-  using payload_t = __clone_payload<Fn, micron::decay_t<Args>...>;
-  auto *payload = new payload_t{ { reinterpret_cast<void *>(new micron::decay_t<Args>(static_cast<Args &&>(args)))... } };
-
-  unsigned long f = static_cast<unsigned long>(static_cast<unsigned>(flags));
-  int exit_signal = sig_chld;
-  if ( (f & clone_parent) or ((f & clone_sighand) and (f & clone_thread)) ) exit_signal = 0;      // kernel constraint otherwise -22
-  f = __micron_fold_exit_signal(f, exit_signal);
-
-  uintptr_t top = (reinterpret_cast<uintptr_t>(stack) + Sz) & ~uintptr_t(0xF);
-
-  long raw = ::__micron_clone_entry(&payload_t::thunk, reinterpret_cast<void *>(top), f, reinterpret_cast<void *>(payload), nullptr,
-                                    nullptr, nullptr);
-
-  if ( micron::syscall_failed(raw) ) {
-    payload_t::destroy(payload);      // clone failed, no child ran
+    byte *top = reinterpret_cast<byte *>(stack_low) + stack_size;
+    raw = ::__micron_clone_entry(thunk, top, flags, payload, reinterpret_cast<int *>(parent_tid), reinterpret_cast<void *>(tls_arg),
+                                 child_tid);
+    if ( micron::syscall_failed(raw) && child_tid ) *child_tid = 0;      // no child ran
     return static_cast<pid_t>(raw);
   }
-  if ( !(f & clone_vm) ) payload_t::destroy(payload);      // parent owns its independent (COW) copy
-  return static_cast<pid_t>(raw);
-}
 
-// special clone func
-pid_t
-__fork_clone(int exit_signal)
-{
-  // these should be exactly like this
-  posix::clone_args clone_args{};
-  clone_args.flags = 0;
-  clone_args.exit_signal = static_cast<u64>(exit_signal);      // should be sig_chld
-  clone_args.stack = 0;
-  clone_args.stack_size = 0;
-  clone_args.parent_tid = 0;
-  clone_args.child_tid = 0;
-  clone_args.tls = 0;
-
-  long raw = -ENOSYS;
-  if ( kernel::has(kernel::feature::clone3) ) [[likely]]
-    raw = posix::clone3_kernel(clone_args);
-  if ( micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS ) {
-    // clone3 unavailable (pre-5.3 kernel, or under qemu-user)
-    raw = posix::fork_kernel();
+  auto
+  fork_kernel(void)
+  {
+#if defined(__micron_syscall_generic)
+    // arm64 has no fork
+    return micron::syscall(SYS_clone, static_cast<unsigned long>(sig_chld), 0, 0, 0, 0);
+#else
+    return micron::syscall(SYS_fork);
+#endif
   }
-  return static_cast<pid_t>(raw);
-}
 
-// c-style entry
-pid_t
-clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stack_size, int *parent_tid = nullptr, int *child_tid = nullptr,
-      unsigned long tls = 0, int exit_signal = sig_chld)
-{
-  if ( !stack or !fn or stack_size == 0 ) return -EINVAL;
+  inline __attribute__((always_inline)) unsigned long
+  __micron_fold_exit_signal(unsigned long flags, int exit_signal) noexcept
+  {
+    return (flags & ~0xffUL) | (static_cast<unsigned long>(exit_signal) & 0xffUL);
+  }
 
-  if ( (flags & clone_parent) or ((flags & clone_sighand) and (flags & clone_thread)) )
-    exit_signal = 0;      // kernel constraint otherwise -22
-  unsigned long f = __micron_fold_exit_signal(flags, exit_signal);
+  template<auto Fn, typename... Args> struct __clone_payload {
+    void *args[sizeof...(Args)];
 
-  uintptr_t top = (reinterpret_cast<uintptr_t>(stack) + stack_size) & ~uintptr_t(0xF);
+    static int
+    thunk(void *p)
+    {
+      auto *self = static_cast<__clone_payload *>(p);
+      int rc = __invoke(self, micron::make_index_sequence<sizeof...(Args)>{});
+      destroy(self);
+      return rc;
+    }
 
-  long raw = ::__micron_clone_entry(fn, reinterpret_cast<void *>(top), f, arg, parent_tid, reinterpret_cast<void *>(tls), child_tid);
-  return static_cast<pid_t>(raw);
-}
-};      // namespace posix
+    static void
+    destroy(__clone_payload *self)
+    {
+      __cleanup(self, micron::make_index_sequence<sizeof...(Args)>{});
+      delete self;
+    }
+
+  private:
+    template<usize... I>
+    static int
+    __invoke(__clone_payload *self, micron::index_sequence<I...>)
+    {
+      using ret_t = decltype(Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...));
+      if constexpr ( micron::is_same_v<ret_t, int> )
+        return Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
+      else {
+        Fn(static_cast<Args &&>(*static_cast<Args *>(self->args[I]))...);
+        return 0;
+      }
+    }
+
+    template<usize... I>
+    static void
+    __cleanup([[maybe_unused]] __clone_payload *self, micron::index_sequence<I...>)
+    {
+      (delete static_cast<Args *>(self->args[I]), ...);
+    }
+  };
+
+  template<usize Sz, auto Fn, typename... Args>
+  pid_t
+  clone(addr_t *stack, int flags, Args &&...args)
+  {
+    if ( !stack ) return -EINVAL;
+
+    using payload_t = __clone_payload<Fn, micron::decay_t<Args>...>;
+    auto *payload = new payload_t{ { reinterpret_cast<void *>(new micron::decay_t<Args>(static_cast<Args &&>(args)))... } };
+
+    unsigned long f = static_cast<unsigned long>(static_cast<unsigned>(flags));
+    int exit_signal = sig_chld;
+    if ( (f & clone_parent) or ((f & clone_sighand) and (f & clone_thread)) ) exit_signal = 0;      // kernel constraint otherwise -22
+    f = __micron_fold_exit_signal(f, exit_signal);
+
+    uintptr_t top = (reinterpret_cast<uintptr_t>(stack) + Sz) & ~uintptr_t(0xF);
+
+    long raw = ::__micron_clone_entry(&payload_t::thunk, reinterpret_cast<void *>(top), f, reinterpret_cast<void *>(payload), nullptr,
+                                      nullptr, nullptr);
+
+    if ( micron::syscall_failed(raw) ) {
+      payload_t::destroy(payload);      // clone failed, no child ran
+      return static_cast<pid_t>(raw);
+    }
+    if ( !(f & clone_vm) ) payload_t::destroy(payload);      // parent owns its independent (COW) copy
+    return static_cast<pid_t>(raw);
+  }
+
+  // special clone func
+  pid_t
+  __fork_clone(int exit_signal)
+  {
+    // these should be exactly like this
+    posix::clone_args clone_args{};
+    clone_args.flags = 0;
+    clone_args.exit_signal = static_cast<u64>(exit_signal);      // should be sig_chld
+    clone_args.stack = 0;
+    clone_args.stack_size = 0;
+    clone_args.parent_tid = 0;
+    clone_args.child_tid = 0;
+    clone_args.tls = 0;
+
+    long raw = -ENOSYS;
+    if ( kernel::has(kernel::feature::clone3) ) [[likely]]
+      raw = posix::clone3_kernel(clone_args);
+    if ( micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS ) {
+      // clone3 unavailable (pre-5.3 kernel, or under qemu-user)
+      raw = posix::fork_kernel();
+    }
+    return static_cast<pid_t>(raw);
+  }
+
+  // c-style entry
+  pid_t
+  clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stack_size, int *parent_tid = nullptr,
+        int *child_tid = nullptr, unsigned long tls = 0, int exit_signal = sig_chld)
+  {
+    if ( !stack or !fn or stack_size == 0 ) return -EINVAL;
+
+    if ( (flags & clone_parent) or ((flags & clone_sighand) and (flags & clone_thread)) )
+      exit_signal = 0;      // kernel constraint otherwise -22
+    unsigned long f = __micron_fold_exit_signal(flags, exit_signal);
+
+    uintptr_t top = (reinterpret_cast<uintptr_t>(stack) + stack_size) & ~uintptr_t(0xF);
+
+    long raw = ::__micron_clone_entry(fn, reinterpret_cast<void *>(top), f, arg, parent_tid, reinterpret_cast<void *>(tls), child_tid);
+    return static_cast<pid_t>(raw);
+  }
+  };      // namespace posix
 };      // namespace micron

@@ -17,21 +17,14 @@ static_assert(__micron_compiler_gcc_major >= 1);
 #endif
 
 #if defined(__micron_arch_x86_any)
-__micron_push_options
-__micron_gcc_target_avx512
-__micron_pop_options
+__micron_push_options __micron_gcc_target_avx512 __micron_pop_options
 #endif
 
-__micron_optimize_no_fast_math
-__micron_optimize_no_unsafe_math
-__micron_optimize_no_tree_loop_distribute
-inline int
-__compiler_feature_function(int n) noexcept
+    __micron_optimize_no_fast_math __micron_optimize_no_unsafe_math __micron_optimize_no_tree_loop_distribute inline int
+    __compiler_feature_function(int n) noexcept
 {
   int result = 0;
-  __micron_loop_ivdep
-  __micron_gcc_unroll_4
-  for ( int i = 0; i < n; ++i ) result += i;
+  __micron_loop_ivdep __micron_gcc_unroll_4 for ( int i = 0; i < n; ++i ) result += i;
   return result;
 }
 

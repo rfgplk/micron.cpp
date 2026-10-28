@@ -13,14 +13,12 @@ namespace micron
 namespace simd
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// bitwise
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // bitwise
 
-template<is_simd_class T>
-inline T
-avx_and(T &o, T &b)
+    template<is_simd_class T>
+    inline T avx_and(T &o, T &b)
 {
   if constexpr ( micron::is_same_v<typename T::bit_width, i128> ) {
     return _mm_and_si128(o, b);

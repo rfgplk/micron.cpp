@@ -18,12 +18,10 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
-// internal "v" types
-typedef char __v8qi __attribute__((__vector_size__(8)));
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
+    // internal "v" types
+    typedef char __v8qi __attribute__((__vector_size__(8)));
 typedef short __v4hi __attribute__((__vector_size__(8)));
 typedef int __v2si __attribute__((__vector_size__(8)));
 typedef long long __v1di __attribute__((__vector_size__(8)));

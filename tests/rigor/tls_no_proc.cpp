@@ -18,8 +18,8 @@
 #include "../../src/sync/pause.hpp"
 #include "../../src/thread/cpu.hpp"
 #include "../../src/thread/thread.hpp"
-#include "../../src/thread/threads.hpp"
 #include "../../src/thread/thread_types/auto_thread.hpp"
+#include "../../src/thread/threads.hpp"
 
 #include "../snowball/snowball.hpp"
 
@@ -32,8 +32,8 @@ constexpr int __n_threads = 8;
 
 micron::atomic_token<u32> __ran{ 0 };
 
-// a thread_local the child has to touch: this is the whole point of the TLS template, and it faults if the frame is wrong rather than merely
-// absent, so it catches a bad load bias that a spawn-only test would sail past
+// a thread_local the child has to touch: this is the whole point of the TLS template, and it faults if the frame is wrong rather than
+// merely absent, so it catches a bad load bias that a spawn-only test would sail past
 thread_local u64 __tl_scratch = 0;
 
 int
@@ -80,8 +80,8 @@ main(int, char **)
 
   test_case("threads_available reports true with no /proc");
   {
-    // WARNING: this is the assertion that kills the old downstream workaround. gating a thread pool on open("/proc/self/auxv") reports false
-    // here, where threads in fact work perfectly well
+    // WARNING: this is the assertion that kills the old downstream workaround. gating a thread pool on open("/proc/self/auxv") reports
+    // false here, where threads in fact work perfectly well
     require_true(threads_available());
   }
   end_test_case();

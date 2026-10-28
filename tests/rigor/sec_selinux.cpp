@@ -281,8 +281,8 @@ main(void)
   // ---------------------------------------------------------------- //
   sb::test_case("every /proc/self/attr slot is reachable and prev/current agree on shape");
   {
-    for ( sl::attr a : { sl::attr::current, sl::attr::exec, sl::attr::fscreate, sl::attr::keycreate,
-                         sl::attr::sockcreate, sl::attr::prev } ) {
+    for ( sl::attr a :
+          { sl::attr::current, sl::attr::exec, sl::attr::fscreate, sl::attr::keycreate, sl::attr::sockcreate, sl::attr::prev } ) {
       mc::sec::result<sl::context> r = sl::get_attr(a);
       // an UNSET slot reads empty, which parses as invalid -- that is a legal answer, not an error
       sb::require_true(r.is_first());

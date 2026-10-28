@@ -74,8 +74,8 @@ static_assert(__is_same(std::common_comparison_category_t<std::strong_ordering>,
 static_assert(__is_same(std::common_comparison_category_t<std::strong_ordering, std::weak_ordering>, std::weak_ordering));
 static_assert(__is_same(std::common_comparison_category_t<std::strong_ordering, std::partial_ordering>, std::partial_ordering));
 static_assert(__is_same(std::common_comparison_category_t<std::weak_ordering, std::partial_ordering>, std::partial_ordering));
-static_assert(
-    __is_same(std::common_comparison_category_t<std::strong_ordering, std::weak_ordering, std::partial_ordering>, std::partial_ordering));
+static_assert(__is_same(std::common_comparison_category_t<std::strong_ordering, std::weak_ordering, std::partial_ordering>,
+                        std::partial_ordering));
 // anything that is not a comparison category poisons the whole pack to void
 static_assert(__is_same(std::common_comparison_category_t<std::strong_ordering, int>, void));
 

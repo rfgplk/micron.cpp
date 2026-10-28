@@ -10,7 +10,7 @@
 // and the per-thread isolation of the nodes -- sync/inlet.hpp's old adapter shared ONE node across
 // every thread, which is what made queuing_inlet<T> unsafe.
 
-#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+#define MICRON_ABC_MT 1          // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
 #define MICRON_LOCK_STATS 1      // queuing_mutex::enqueued() is the only observable that pins arrival order
 
 #include "../../src/mutex/locks/mcs_lock.hpp"

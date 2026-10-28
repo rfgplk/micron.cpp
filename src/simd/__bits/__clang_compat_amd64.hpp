@@ -20,9 +20,7 @@ namespace __bits
 
 // NOTE: clang deliberately exposes a smaller set of GCC-compatible __builtin_ia32_* spellings
 
-__micron_diagnostic_push
-__micron_diagnostic_nan
-template<typename V>
+__micron_diagnostic_push __micron_diagnostic_nan template<typename V>
 [[gnu::always_inline]] static inline V
 __clang_scalar_add(V a, V b) noexcept
 {
@@ -166,11 +164,12 @@ __clang_compare_mask(V a, V b, int predicate) noexcept
   }
   return mask;
 }
+
 __micron_diagnostic_pop
 
-template<bool High, typename V>
-[[gnu::always_inline]] static inline V
-__clang_unpack(V a, V b) noexcept
+    template<bool High, typename V>
+    [[gnu::always_inline]] static inline V
+    __clang_unpack(V a, V b) noexcept
 {
   V out{};
   constexpr unsigned lanes = sizeof(V) / sizeof(a[0]);
@@ -391,9 +390,9 @@ __clang_mulhi16(V a, V b) noexcept
   constexpr unsigned n = sizeof(V) / sizeof(a[0]);
   for ( unsigned i = 0; i < n; ++i ) {
     if constexpr ( Unsigned )
-      out[i] = static_cast<__typeof__(out[0])>((static_cast<unsigned int>(static_cast<unsigned short>(a[i]))
-                                                * static_cast<unsigned int>(static_cast<unsigned short>(b[i])))
-                                               >> 16);
+      out[i] = static_cast<__typeof__(out[0])>(
+          (static_cast<unsigned int>(static_cast<unsigned short>(a[i])) * static_cast<unsigned int>(static_cast<unsigned short>(b[i])))
+          >> 16);
     else
       out[i] = static_cast<__typeof__(out[0])>((static_cast<int>(a[i]) * static_cast<int>(b[i])) >> 16);
   }
@@ -422,8 +421,7 @@ __clang_madd16(V a, V b) noexcept
 {
   Out out{};
   constexpr unsigned n = sizeof(Out) / sizeof(out[0]);
-  for ( unsigned i = 0; i < n; ++i )
-    out[i] = static_cast<__typeof__(out[0])>(a[i * 2] * b[i * 2] + a[i * 2 + 1] * b[i * 2 + 1]);
+  for ( unsigned i = 0; i < n; ++i ) out[i] = static_cast<__typeof__(out[0])>(a[i * 2] * b[i * 2] + a[i * 2 + 1] * b[i * 2 + 1]);
   return out;
 }
 

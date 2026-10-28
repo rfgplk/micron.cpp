@@ -46,8 +46,8 @@ namespace __impl_level3
 // NOTE: keep the general kernel's panel frame off rank-one calls, including runtime k
 template<blas_scalar T>
 [[gnu::noinline]] inline constexpr void
-gemm_row_general(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda,
-                 const T *B, usize ldb, T beta, T *C, usize ldc) noexcept
+gemm_row_general(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept
 {
   bits::gemm_kernel<T>(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
 }
@@ -138,8 +138,10 @@ gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usi
       const T a = alpha * A[i * a_step];
       T *row = C + i * ldc;
       for ( usize j = 0; j < n; ++j ) {
-        if ( beta == T(0) ) row[j] = a * B[j * b_step];
-        else row[j] = bits::fma_acc<T>(a, B[j * b_step], beta * row[j]);
+        if ( beta == T(0) )
+          row[j] = a * B[j * b_step];
+        else
+          row[j] = bits::fma_acc<T>(a, B[j * b_step], beta * row[j]);
       }
     }
     return;

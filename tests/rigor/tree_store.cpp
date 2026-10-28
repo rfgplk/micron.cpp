@@ -122,9 +122,9 @@ sweep_scans(const char *what, Make make)
       }
       // the invariants the callers actually rely on
       if ( lb > n || ub > n || lb > ub ) return false;
-      if ( lb > 0 && !C::lt(keys[lb - 1], k) ) return false;          // everything before lb is < k
-      if ( lb < n && C::lt(keys[lb], k) ) return false;               // keys[lb] is not < k
-      if ( ub < n && !C::lt(k, keys[ub]) ) return false;              // keys[ub] is > k
+      if ( lb > 0 && !C::lt(keys[lb - 1], k) ) return false;      // everything before lb is < k
+      if ( lb < n && C::lt(keys[lb], k) ) return false;           // keys[lb] is not < k
+      if ( ub < n && !C::lt(k, keys[ub]) ) return false;          // keys[ub] is > k
     }
 
     // (b) duplicate-heavy: runs of three, so lb and ub straddle a run
@@ -283,10 +283,10 @@ main(void)
       for ( u16 i = 0; i < n; ++i ) keys[i] = (i + 1) * 4ULL;
       for ( u32 t = 0; t < 300; ++t ) {
         const u64 k = splitmix64(rng++) % 300;
-        sb::require((ts::lower_bound_scan<u64, less_policy<u64>>(keys, n, k)
-                     == ts::lower_bound_scan<u64, natural_less_policy<u64>>(keys, n, k)));
-        sb::require((ts::upper_bound_scan<u64, less_policy<u64>>(keys, n, k)
-                     == ts::upper_bound_scan<u64, natural_less_policy<u64>>(keys, n, k)));
+        sb::require(
+            (ts::lower_bound_scan<u64, less_policy<u64>>(keys, n, k) == ts::lower_bound_scan<u64, natural_less_policy<u64>>(keys, n, k)));
+        sb::require(
+            (ts::upper_bound_scan<u64, less_policy<u64>>(keys, n, k) == ts::upper_bound_scan<u64, natural_less_policy<u64>>(keys, n, k)));
       }
     }
     i32 sk[64];
@@ -294,10 +294,10 @@ main(void)
       // straddle zero: the unsigned bias in the vector path is exactly what this catches
       for ( u16 i = 0; i < n; ++i ) sk[i] = static_cast<i32>(i) * 4 - 128;
       for ( i32 k = -140; k <= 160; ++k ) {
-        sb::require((ts::lower_bound_scan<i32, less_policy<i32>>(sk, n, k)
-                     == ts::lower_bound_scan<i32, natural_less_policy<i32>>(sk, n, k)));
-        sb::require((ts::upper_bound_scan<i32, less_policy<i32>>(sk, n, k)
-                     == ts::upper_bound_scan<i32, natural_less_policy<i32>>(sk, n, k)));
+        sb::require(
+            (ts::lower_bound_scan<i32, less_policy<i32>>(sk, n, k) == ts::lower_bound_scan<i32, natural_less_policy<i32>>(sk, n, k)));
+        sb::require(
+            (ts::upper_bound_scan<i32, less_policy<i32>>(sk, n, k) == ts::upper_bound_scan<i32, natural_less_policy<i32>>(sk, n, k)));
       }
     }
     // and unsigned keys with the high bit set, where a signed compare would order them wrongly
@@ -305,10 +305,10 @@ main(void)
     for ( u16 i = 0; i < 16; ++i ) hi[i] = 0x7FFFFFFFFFFFFFF0ULL + i;      // crosses 2^63
     for ( u32 t = 0; t < 64; ++t ) {
       const u64 k = 0x7FFFFFFFFFFFFFE0ULL + t;
-      sb::require((ts::lower_bound_scan<u64, less_policy<u64>>(hi, 16, k)
-                   == ts::lower_bound_scan<u64, natural_less_policy<u64>>(hi, 16, k)));
-      sb::require((ts::upper_bound_scan<u64, less_policy<u64>>(hi, 16, k)
-                   == ts::upper_bound_scan<u64, natural_less_policy<u64>>(hi, 16, k)));
+      sb::require(
+          (ts::lower_bound_scan<u64, less_policy<u64>>(hi, 16, k) == ts::lower_bound_scan<u64, natural_less_policy<u64>>(hi, 16, k)));
+      sb::require(
+          (ts::upper_bound_scan<u64, less_policy<u64>>(hi, 16, k) == ts::upper_bound_scan<u64, natural_less_policy<u64>>(hi, 16, k)));
     }
   }
   sb::end_test_case();

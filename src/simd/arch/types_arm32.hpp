@@ -15,226 +15,225 @@
 // f128 / i128 are GCC `__attribute__((vector_size(16)))` types; passing them
 // to `same_as<T, f128>` strips type attributes, which GCC reports under
 // -Wignored-attributes. Suppression is purely cosmetic.
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-// aarch32 types
-// dispatched via ns
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // aarch32 types
+    // dispatched via ns
 
-namespace micron
+    namespace micron
 {
-namespace simd
-{
+  namespace simd
+  {
 
-using __vf = float;
+  using __vf = float;
 
-using __vd = double;
-using __v8 = i8;
-using __v16 = i16;
-using __v32 = i32;
-using __v64 = i64;
-using __uv8 = u8;
-using __uv16 = u16;
-using __uv32 = u32;
-using __uv64 = u64;
+  using __vd = double;
+  using __v8 = i8;
+  using __v16 = i16;
+  using __v32 = i32;
+  using __v64 = i64;
+  using __uv8 = u8;
+  using __uv16 = u16;
+  using __uv32 = u32;
+  using __uv64 = u64;
 
-using b64 = uint8x8_t;
+  using b64 = uint8x8_t;
 
-using f128 = float32x4_t;      // 4 × f32
-using i128 = int32x4_t;        // 4 × s32 (canonical integer view)
+  using f128 = float32x4_t;      // 4 × f32
+  using i128 = int32x4_t;        // 4 × s32 (canonical integer view)
 
-using f256 = float32x4x2_t;      // 8 × f32 (.val[0]=lo, .val[1]=hi)
-using i256 = int32x4x2_t;        // 8 × s32 view
+  using f256 = float32x4x2_t;      // 8 × f32 (.val[0]=lo, .val[1]=hi)
+  using i256 = int32x4x2_t;        // 8 × s32 view
 
-template<typename T>
-concept is_simd_128_type = micron::same_as<T, f128> || micron::same_as<T, i128>;
+  template<typename T>
+  concept is_simd_128_type = micron::same_as<T, f128> || micron::same_as<T, i128>;
 
-template<typename T>
-concept is_simd_256_type = micron::same_as<T, f256> || micron::same_as<T, i256>;
+  template<typename T>
+  concept is_simd_256_type = micron::same_as<T, f256> || micron::same_as<T, i256>;
 
-template<typename T>
-concept is_int_flag_type
-    = micron::same_as<T, __uv8> || micron::same_as<T, __uv16> || micron::same_as<T, __uv32> || micron::same_as<T, __uv64>
-      || micron::same_as<T, __v8> || micron::same_as<T, __v16> || micron::same_as<T, __v32> || micron::same_as<T, __v64>;
+  template<typename T>
+  concept is_int_flag_type
+      = micron::same_as<T, __uv8> || micron::same_as<T, __uv16> || micron::same_as<T, __uv32> || micron::same_as<T, __uv64>
+        || micron::same_as<T, __v8> || micron::same_as<T, __v16> || micron::same_as<T, __v32> || micron::same_as<T, __v64>;
 
-template<typename T>
-concept is_flag_type = micron::same_as<T, __vf> || micron::same_as<T, __v8> || micron::same_as<T, __v16> || micron::same_as<T, __v32>
-                       || micron::same_as<T, __v64>;
+  template<typename T>
+  concept is_flag_type = micron::same_as<T, __vf> || micron::same_as<T, __v8> || micron::same_as<T, __v16> || micron::same_as<T, __v32>
+                         || micron::same_as<T, __v64>;
 
-template<typename F>
-constexpr bool
-__is_64_wide(void)
-{
-  if constexpr ( micron::is_same_v<F, __v64> || micron::is_same_v<F, __uv64> ) return true;
-  return false;
-}
+  template<typename F>
+  constexpr bool
+  __is_64_wide(void)
+  {
+    if constexpr ( micron::is_same_v<F, __v64> || micron::is_same_v<F, __uv64> ) return true;
+    return false;
+  }
 
-template<typename F>
-constexpr bool
-__is_32_wide(void)
-{
-  if constexpr ( micron::is_same_v<F, __v32> || micron::is_same_v<F, __uv32> ) return true;
-  return false;
-}
+  template<typename F>
+  constexpr bool
+  __is_32_wide(void)
+  {
+    if constexpr ( micron::is_same_v<F, __v32> || micron::is_same_v<F, __uv32> ) return true;
+    return false;
+  }
 
-template<typename F>
-constexpr bool
-__is_16_wide(void)
-{
-  if constexpr ( micron::is_same_v<F, __v16> || micron::is_same_v<F, __uv16> ) return true;
-  return false;
-}
+  template<typename F>
+  constexpr bool
+  __is_16_wide(void)
+  {
+    if constexpr ( micron::is_same_v<F, __v16> || micron::is_same_v<F, __uv16> ) return true;
+    return false;
+  }
 
-template<typename F>
-constexpr bool
-__is_8_wide(void)
-{
-  if constexpr ( micron::is_same_v<F, __v8> || micron::is_same_v<F, __uv8> ) return true;
-  return false;
-}
+  template<typename F>
+  constexpr bool
+  __is_8_wide(void)
+  {
+    if constexpr ( micron::is_same_v<F, __v8> || micron::is_same_v<F, __uv8> ) return true;
+    return false;
+  }
 
-inline int
-neon_movemask_f32(float32x4_t v) noexcept
-{
-  const uint32x4_t m = vshrq_n_u32(vreinterpretq_u32_f32(v), 31);
-  return static_cast<int>(vgetq_lane_u32(m, 0) | (vgetq_lane_u32(m, 1) << 1) | (vgetq_lane_u32(m, 2) << 2) | (vgetq_lane_u32(m, 3) << 3));
-}
+  inline int
+  neon_movemask_f32(float32x4_t v) noexcept
+  {
+    const uint32x4_t m = vshrq_n_u32(vreinterpretq_u32_f32(v), 31);
+    return static_cast<int>(vgetq_lane_u32(m, 0) | (vgetq_lane_u32(m, 1) << 1) | (vgetq_lane_u32(m, 2) << 2) | (vgetq_lane_u32(m, 3) << 3));
+  }
 
-inline int
-neon_movemask_si128(int32x4_t v) noexcept
-{
-  const uint32x4_t m = vshrq_n_u32(vreinterpretq_u32_s32(v), 31);
-  return static_cast<int>(vgetq_lane_u32(m, 0) | (vgetq_lane_u32(m, 1) << 1) | (vgetq_lane_u32(m, 2) << 2) | (vgetq_lane_u32(m, 3) << 3));
-}
+  inline int
+  neon_movemask_si128(int32x4_t v) noexcept
+  {
+    const uint32x4_t m = vshrq_n_u32(vreinterpretq_u32_s32(v), 31);
+    return static_cast<int>(vgetq_lane_u32(m, 0) | (vgetq_lane_u32(m, 1) << 1) | (vgetq_lane_u32(m, 2) << 2) | (vgetq_lane_u32(m, 3) << 3));
+  }
 
-inline int
-neon_movemask_f32x2(float32x4x2_t v) noexcept
-{
-  return neon_movemask_f32(v.val[0]) | (neon_movemask_f32(v.val[1]) << 4);
-}
+  inline int
+  neon_movemask_f32x2(float32x4x2_t v) noexcept
+  {
+    return neon_movemask_f32(v.val[0]) | (neon_movemask_f32(v.val[1]) << 4);
+  }
 
-inline int
-neon_movemask_si256(int32x4x2_t v) noexcept
-{
-  return neon_movemask_si128(v.val[0]) | (neon_movemask_si128(v.val[1]) << 4);
-}
+  inline int
+  neon_movemask_si256(int32x4x2_t v) noexcept
+  {
+    return neon_movemask_si128(v.val[0]) | (neon_movemask_si128(v.val[1]) << 4);
+  }
 
-inline int32x4_t
-neon_all_ones_si128(void) noexcept
-{
-  return vdupq_n_s32(-1);
-}
+  inline int32x4_t
+  neon_all_ones_si128(void) noexcept
+  {
+    return vdupq_n_s32(-1);
+  }
 
-inline int32x4x2_t
-neon_all_ones_si256(void) noexcept
-{
-  int32x4x2_t r;
-  r.val[0] = vdupq_n_s32(-1);
-  r.val[1] = vdupq_n_s32(-1);
-  return r;
-}
+  inline int32x4x2_t
+  neon_all_ones_si256(void) noexcept
+  {
+    int32x4x2_t r;
+    r.val[0] = vdupq_n_s32(-1);
+    r.val[1] = vdupq_n_s32(-1);
+    return r;
+  }
 
-inline float32x4_t
-neon_v7_divq_f32(float32x4_t a, float32x4_t b) noexcept
-{
-  float32x4_t recip = vrecpeq_f32(b);
-  recip = vmulq_f32(vrecpsq_f32(b, recip), recip);
-  recip = vmulq_f32(vrecpsq_f32(b, recip), recip);
-  return vmulq_f32(a, recip);
-}
+  inline float32x4_t
+  neon_v7_divq_f32(float32x4_t a, float32x4_t b) noexcept
+  {
+    float32x4_t recip = vrecpeq_f32(b);
+    recip = vmulq_f32(vrecpsq_f32(b, recip), recip);
+    recip = vmulq_f32(vrecpsq_f32(b, recip), recip);
+    return vmulq_f32(a, recip);
+  }
 
-inline uint64x2_t
-neon_v7_ceqq_s64(int64x2_t a, int64x2_t b) noexcept
-{
-  uint32x4_t cmp = vceqq_u32(vreinterpretq_u32_s64(a), vreinterpretq_u32_s64(b));
+  inline uint64x2_t
+  neon_v7_ceqq_s64(int64x2_t a, int64x2_t b) noexcept
+  {
+    uint32x4_t cmp = vceqq_u32(vreinterpretq_u32_s64(a), vreinterpretq_u32_s64(b));
 
-  return vreinterpretq_u64_u32(vandq_u32(cmp, vrev64q_u32(cmp)));
-}
+    return vreinterpretq_u64_u32(vandq_u32(cmp, vrev64q_u32(cmp)));
+  }
 
-inline uint64x2_t
-neon_v7_cgtq_s64(int64x2_t a, int64x2_t b) noexcept
-{
+  inline uint64x2_t
+  neon_v7_cgtq_s64(int64x2_t a, int64x2_t b) noexcept
+  {
 
-  uint32x4_t hi_gt = vcgtq_s32(vreinterpretq_s32_s64(a), vreinterpretq_s32_s64(b));
-  uint32x4_t hi_eq = vceqq_s32(vreinterpretq_s32_s64(a), vreinterpretq_s32_s64(b));
-  uint32x4_t lo_gt = vcgtq_u32(vreinterpretq_u32_s64(a), vreinterpretq_u32_s64(b));
+    uint32x4_t hi_gt = vcgtq_s32(vreinterpretq_s32_s64(a), vreinterpretq_s32_s64(b));
+    uint32x4_t hi_eq = vceqq_s32(vreinterpretq_s32_s64(a), vreinterpretq_s32_s64(b));
+    uint32x4_t lo_gt = vcgtq_u32(vreinterpretq_u32_s64(a), vreinterpretq_u32_s64(b));
 
-  uint32x4_t hi_gt_r = vrev64q_u32(hi_gt);
-  uint32x4_t hi_eq_r = vrev64q_u32(hi_eq);
+    uint32x4_t hi_gt_r = vrev64q_u32(hi_gt);
+    uint32x4_t hi_eq_r = vrev64q_u32(hi_eq);
 
-  uint32x4_t r = vorrq_u32(hi_gt_r, vandq_u32(hi_eq_r, lo_gt));
+    uint32x4_t r = vorrq_u32(hi_gt_r, vandq_u32(hi_eq_r, lo_gt));
 
-  uint32x4x2_t z = vzipq_u32(r, r);
-  return vreinterpretq_u64_u32(vcombine_u32(vget_low_u32(z.val[0]), vget_low_u32(z.val[1])));
-}
+    uint32x4x2_t z = vzipq_u32(r, r);
+    return vreinterpretq_u64_u32(vcombine_u32(vget_low_u32(z.val[0]), vget_low_u32(z.val[1])));
+  }
 
-inline uint64x2_t
-neon_v7_cgeq_s64(int64x2_t a, int64x2_t b) noexcept
-{
-  return vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(neon_v7_cgtq_s64(b, a)), vdupq_n_u32(0xFFFFFFFFu)));
-}
+  inline uint64x2_t
+  neon_v7_cgeq_s64(int64x2_t a, int64x2_t b) noexcept
+  {
+    return vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(neon_v7_cgtq_s64(b, a)), vdupq_n_u32(0xFFFFFFFFu)));
+  }
 
-inline uint64x2_t
-neon_v7_cltq_s64(int64x2_t a, int64x2_t b) noexcept
-{
-  return neon_v7_cgtq_s64(b, a);
-}
+  inline uint64x2_t
+  neon_v7_cltq_s64(int64x2_t a, int64x2_t b) noexcept
+  {
+    return neon_v7_cgtq_s64(b, a);
+  }
 
-inline uint64x2_t
-neon_v7_cleq_s64(int64x2_t a, int64x2_t b) noexcept
-{
-  return vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(neon_v7_cgtq_s64(a, b)), vdupq_n_u32(0xFFFFFFFFu)));
-}
+  inline uint64x2_t
+  neon_v7_cleq_s64(int64x2_t a, int64x2_t b) noexcept
+  {
+    return vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(neon_v7_cgtq_s64(a, b)), vdupq_n_u32(0xFFFFFFFFu)));
+  }
 
-inline uint64x2_t
-neon_v7_cneq_s64(int64x2_t a, int64x2_t b) noexcept
-{
-  return vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(neon_v7_ceqq_s64(a, b)), vdupq_n_u32(0xFFFFFFFFu)));
-}
+  inline uint64x2_t
+  neon_v7_cneq_s64(int64x2_t a, int64x2_t b) noexcept
+  {
+    return vreinterpretq_u64_u32(veorq_u32(vreinterpretq_u32_u64(neon_v7_ceqq_s64(a, b)), vdupq_n_u32(0xFFFFFFFFu)));
+  }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// lane-mask expansion
-//
-// moved here (from math/shifts), used to be duplicated, causing TU compile include issues
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // lane-mask expansion
+  //
+  // moved here (from math/shifts), used to be duplicated, causing TU compile include issues
 
-__attribute__((always_inline)) static inline uint16x8_t
-__expand_mask_u16(uint8_t k) noexcept
-{
-  static const uint16_t bp[8] = { 1, 2, 4, 8, 16, 32, 64, 128 };
-  uint16x8_t m = vdupq_n_u16(k), p = vld1q_u16(bp);
-  return vceqq_u16(vandq_u16(m, p), p);
-}
+  __attribute__((always_inline)) static inline uint16x8_t
+  __expand_mask_u16(uint8_t k) noexcept
+  {
+    static const uint16_t bp[8] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+    uint16x8_t m = vdupq_n_u16(k), p = vld1q_u16(bp);
+    return vceqq_u16(vandq_u16(m, p), p);
+  }
 
-__attribute__((always_inline)) static inline uint8x16_t
-__expand_mask_u8(uint16_t k) noexcept
-{
-  static const uint8_t bp[16] = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
+  __attribute__((always_inline)) static inline uint8x16_t
+  __expand_mask_u8(uint16_t k) noexcept
+  {
+    static const uint8_t bp[16] = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
 
-  uint8x16_t sel = vld1q_u8(bp);
-  uint8x8_t lo = vdup_n_u8(static_cast<uint8_t>(k & 0xFFu));
-  uint8x8_t hi = vdup_n_u8(static_cast<uint8_t>((k >> 8) & 0xFFu));
-  uint8x16_t m = vcombine_u8(lo, hi);
-  return vceqq_u8(vandq_u8(m, sel), sel);
-}
+    uint8x16_t sel = vld1q_u8(bp);
+    uint8x8_t lo = vdup_n_u8(static_cast<uint8_t>(k & 0xFFu));
+    uint8x8_t hi = vdup_n_u8(static_cast<uint8_t>((k >> 8) & 0xFFu));
+    uint8x16_t m = vcombine_u8(lo, hi);
+    return vceqq_u8(vandq_u8(m, sel), sel);
+  }
 
-__attribute__((always_inline)) static inline uint32x4_t
-__expand_mask_u32(uint8_t k) noexcept
-{
-  static const uint32_t bp[4] = { 1, 2, 4, 8 };
-  uint32x4_t m = vdupq_n_u32(k), p = vld1q_u32(bp);
-  return vceqq_u32(vandq_u32(m, p), p);
-}
+  __attribute__((always_inline)) static inline uint32x4_t
+  __expand_mask_u32(uint8_t k) noexcept
+  {
+    static const uint32_t bp[4] = { 1, 2, 4, 8 };
+    uint32x4_t m = vdupq_n_u32(k), p = vld1q_u32(bp);
+    return vceqq_u32(vandq_u32(m, p), p);
+  }
 
-__attribute__((always_inline)) static inline uint64x2_t
-__expand_mask_u64(uint8_t k) noexcept
-{
-  uint64_t lanes[2];
-  lanes[0] = (k & 1) ? ~static_cast<uint64_t>(0) : 0;
-  lanes[1] = (k & 2) ? ~static_cast<uint64_t>(0) : 0;
-  return vld1q_u64(lanes);
-}
+  __attribute__((always_inline)) static inline uint64x2_t
+  __expand_mask_u64(uint8_t k) noexcept
+  {
+    uint64_t lanes[2];
+    lanes[0] = (k & 1) ? ~static_cast<uint64_t>(0) : 0;
+    lanes[1] = (k & 2) ? ~static_cast<uint64_t>(0) : 0;
+    return vld1q_u64(lanes);
+  }
 
-};      // namespace simd
+  };      // namespace simd
 };      // namespace micron
 
 __micron_diagnostic_pop

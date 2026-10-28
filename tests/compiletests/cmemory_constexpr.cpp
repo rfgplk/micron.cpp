@@ -109,6 +109,7 @@ __czero_zeroes(void)
     if ( b[i] != '\0' ) return false;
   return true;
 }
+
 static_assert(__czero_zeroes());
 
 consteval bool
@@ -118,6 +119,7 @@ __cbyteset_narrow(void)
   mc::cbyteset<4>(b, 0xAB);
   return b[0] == 0xAB && b[1] == 0xAB && b[2] == 0xAB && b[3] == 0xAB;
 }
+
 static_assert(__cbyteset_narrow());
 
 // a wide element must carry the fill in EVERY byte, the way __memset_bytes leaves it
@@ -128,6 +130,7 @@ __cbyteset_wide(void)
   mc::cbyteset<8>(b, 0xAB);
   return b[0] == 0xABABABABu && b[1] == 0xABABABABu;
 }
+
 static_assert(__cbyteset_wide());
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,6 +144,7 @@ __memcpy_copies(void)
   mc::memcpy(d, s, 4);
   return d[0] == 'w' && d[1] == 'x' && d[2] == 'y' && d[3] == 'z';
 }
+
 static_assert(__memcpy_copies());
 
 // constexpr_bytecpy could never be constant-evaluated before 2026-08-11 -- it opened with an
@@ -154,6 +158,7 @@ __constexpr_bytecpy_copies(void)
   mc::constexpr_bytecpy(d, s, 4);
   return d[0] == 'w' && d[3] == 'z';
 }
+
 static_assert(__constexpr_bytecpy_copies());
 
 int

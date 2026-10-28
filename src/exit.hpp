@@ -92,6 +92,7 @@ using __atexit_fn_t = void (*)(void *);
 struct __atexit_entry {
   __atexit_fn_t func;
   void *arg;
+  void *dso;
 };
 
 #ifndef MICRON_ATEXIT_CAP
@@ -127,7 +128,7 @@ __atexit_thunk(void *p) noexcept
 }
 
 inline int
-__push(__atexit_fn_t func, void *arg) noexcept
+__push(__atexit_fn_t func, void *arg, void *dso = nullptr) noexcept
 {
   u32 idx = micron::atom::load(&__atexit_count, micron::atomic_acquire);
   for ( ;; ) {
@@ -135,6 +136,7 @@ __push(__atexit_fn_t func, void *arg) noexcept
     if ( micron::atom::compare_exchange(&__atexit_count, &idx, idx + 1u, false, micron::atomic_acq_rel, __ATOMIC_ACQUIRE) ) break;
   }
   __atexit_table[idx].arg = arg;
+  __atexit_table[idx].dso = dso;
   __atomic_store_n(&__atexit_table[idx].func, func, __ATOMIC_RELAXED);
   __atomic_fetch_or(&__atexit_pub[idx / 64], 1ull << (idx % 64), __ATOMIC_ACQ_REL);      // releases both fields
   return 0;
@@ -146,6 +148,25 @@ __claim(u32 idx) noexcept
 {
   if ( !__published(idx) ) return nullptr;
   return __atomic_exchange_n(&__atexit_table[idx].func, static_cast<__atexit_fn_t>(nullptr), __ATOMIC_ACQ_REL);
+}
+
+// WARNING: claim destructors (of potential external libs/so/dlls/drivers) while the DSO is still mapped
+inline void
+__finalize_dso(void *dso) noexcept
+{
+  for ( ;; ) {
+    const u32 count = micron::atom::load(&__atexit_count, micron::atomic_acquire);
+    bool called = false;
+    for ( u32 i = count; i-- > 0; ) {
+      if ( !__published(i) || (dso && __atexit_table[i].dso != dso) ) continue;
+      if ( auto function = __claim(i); function ) {
+        function(__atexit_table[i].arg);
+        called = true;
+        break;      // NOTE: destructors registered by this callback precede the remaining older ones
+      }
+    }
+    if ( !called ) return;
+  }
 }
 
 };      // namespace __exit_internal

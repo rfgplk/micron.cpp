@@ -65,8 +65,8 @@ main(void)
     // re-checked, so a notify landing in between cannot be missed
     event_count ec;
     const u32 k = ec.prepare_wait();
-    ec.notify_one();          // arrives after prepare, before commit
-    ec.commit_wait(k);        // must not block
+    ec.notify_one();        // arrives after prepare, before commit
+    ec.commit_wait(k);      // must not block
     require_true(true);
   }
   end_test_case();
@@ -131,8 +131,7 @@ main(void)
 
     micron::timespec_t t1{};
     micron::clock_gettime(micron::clock_monotonic, t1);
-    const u64 dt_ms = (static_cast<u64>(t1.tv_sec - t0.tv_sec) * 1000ull)
-                      + static_cast<u64>((t1.tv_nsec - t0.tv_nsec) / 1000000);
+    const u64 dt_ms = (static_cast<u64>(t1.tv_sec - t0.tv_sec) * 1000ull) + static_cast<u64>((t1.tv_nsec - t0.tv_nsec) / 1000000);
     sb::print("     timed commit_wait returned after ~", static_cast<usize>(dt_ms), " ms (asked 80)");
     require_true(dt_ms >= 40ull);
     require_true(dt_ms < 4000ull);
@@ -171,8 +170,7 @@ main(void)
         if ( done.get(memory_order::acquire) and items.get(memory_order::acquire) == 0 ) return;
 
         const u32 k = ec.prepare_wait();
-        if ( items.get(memory_order::acquire) != 0
-             or (done.get(memory_order::acquire) and items.get(memory_order::acquire) == 0) ) {
+        if ( items.get(memory_order::acquire) != 0 or (done.get(memory_order::acquire) and items.get(memory_order::acquire) == 0) ) {
           ec.cancel_wait();      // the re-check the prepare/commit split makes safe
           continue;
         }

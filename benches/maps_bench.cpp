@@ -1902,8 +1902,7 @@ main(int argc, char **argv)
 
   if ( wanted_map("heap-swiss") ) {
     print_header("heap_swiss_map<u64,u64>");
-    for ( u64 N : SIZES_LARGE )
-      sweep_mutable_u64<typename heap_swiss_trait_u64::map_t, heap_swiss_trait_u64>("heap-swiss", N);
+    for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename heap_swiss_trait_u64::map_t, heap_swiss_trait_u64>("heap-swiss", N);
   }
 
   if ( wanted_map("conmap") ) {
@@ -1925,8 +1924,7 @@ main(int argc, char **argv)
 
   if ( wanted_map("hopscotch") ) {
     print_header("hopscotch_map<u64,u64>");
-    for ( u64 N : SIZES_LARGE )
-      sweep_mutable_u64<typename hopscotch_trait_u64::map_t, hopscotch_trait_u64>("hopscotch", N);
+    for ( u64 N : SIZES_LARGE ) sweep_mutable_u64<typename hopscotch_trait_u64::map_t, hopscotch_trait_u64>("hopscotch", N);
   }
 
   if ( wanted_map("swiss-2k") ) {
@@ -1937,8 +1935,7 @@ main(int argc, char **argv)
 
   if ( wanted_map("immutable") ) {
     print_header("immutable_map<u64,u64>");
-    for ( u64 N : SIZES_MED )
-      sweep_immutable_u64<typename immutable_trait_u64::map_t, immutable_trait_u64>("immutable", N);
+    for ( u64 N : SIZES_MED ) sweep_immutable_u64<typename immutable_trait_u64::map_t, immutable_trait_u64>("immutable", N);
   }
 
   if ( wanted_map("itable") ) {

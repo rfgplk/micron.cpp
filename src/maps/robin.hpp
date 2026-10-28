@@ -247,13 +247,13 @@ class robin_map: public __immutable_memory_resource<Nd, __maps::storage_allocato
   __attribute__((always_inline)) Nd *
   node_ptr(usize i) noexcept
   {
-    return micron::addressof(__mem::memory[i]);
+    return __mem::memory + i;
   }
 
   __attribute__((always_inline)) const Nd *
   node_ptr(usize i) const noexcept
   {
-    return micron::addressof(__mem::memory[i]);
+    return __mem::memory + i;
   }
 
   __attribute__((always_inline)) V *

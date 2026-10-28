@@ -11,8 +11,8 @@
 // __boot_abcmalloc() survives only as an empty compatibility stub for old start files.
 #define MICRON_ABC_MT 1      // spawns threads; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
 
-#include "../../src/memory/allocation/abcmalloc/tapi.hpp"
 #include "../../src/io/console.hpp"
+#include "../../src/memory/allocation/abcmalloc/tapi.hpp"
 #include "../../src/std.hpp"
 
 #include "../../src/thread/thread.hpp"
@@ -29,7 +29,9 @@ constexpr static const u32 N_THREADS = 4;
 // deterministic xorshift32; the seed is a fixed literal, never time-based
 struct xorshift32 {
   u32 s;
+
   constexpr xorshift32(u32 seed) noexcept : s(seed ? seed : 0xDEADBEEFu) { }
+
   u32
   next() noexcept
   {

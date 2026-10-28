@@ -84,30 +84,29 @@ template<typename V> using __fm = lz::transform_view<V, int (*)(int)>;
 template<typename V> using __fl = lz::filter_view<V, bool (*)(int)>;
 template<typename V> using __tw = lz::take_while_view<V, bool (*)(int)>;
 
-static_assert(lz::kind_of<__fm<__src>> == lz::size_kind::exact);            // fmap preserves
-static_assert(lz::kind_of<__fl<__src>> == lz::size_kind::bounded);          // filter degrades
+static_assert(lz::kind_of<__fm<__src>> == lz::size_kind::exact);        // fmap preserves
+static_assert(lz::kind_of<__fl<__src>> == lz::size_kind::bounded);      // filter degrades
 static_assert(lz::kind_of<lz::take_view<__src>> == lz::size_kind::exact);
 static_assert(lz::kind_of<lz::take_view<__fl<__src>>> == lz::size_kind::bounded);
-static_assert(lz::kind_of<lz::drop_view<__src>> == lz::size_kind::exact);   // drop preserves
+static_assert(lz::kind_of<lz::drop_view<__src>> == lz::size_kind::exact);      // drop preserves
 
 // a generator is endless, and only take / take_while make it collectable
 using __gen = lz::iota_view<int>;
 static_assert(lz::kind_of<__gen> == lz::size_kind::endless);
-static_assert(lz::kind_of<__fm<__gen>> == lz::size_kind::endless);          // fmap keeps it endless
-static_assert(lz::kind_of<__fl<__gen>> == lz::size_kind::endless);          // so does filter
-static_assert(lz::kind_of<lz::take_view<__gen>> == lz::size_kind::bounded); // take bounds it
-static_assert(lz::kind_of<__tw<__gen>> == lz::size_kind::unknown);          // take_while bounds it
+static_assert(lz::kind_of<__fm<__gen>> == lz::size_kind::endless);               // fmap keeps it endless
+static_assert(lz::kind_of<__fl<__gen>> == lz::size_kind::endless);               // so does filter
+static_assert(lz::kind_of<lz::take_view<__gen>> == lz::size_kind::bounded);      // take bounds it
+static_assert(lz::kind_of<__tw<__gen>> == lz::size_kind::unknown);               // take_while bounds it
 
 // plain function pointers, so the static_asserts above name a type rather than a closure
 inline bool (*const __gt0)(int) = [](int x) { return x > 0; };
 inline bool (*const __cmp_lt)(const int &, const int &) = [](const int &a, const int &b) { return a < b; };
 inline int (*const __add2)(int, int) = [](int a, int b) { return a + b; };
 inline micron::vector<int> (*const __wrap)(int) = [](int x) { return micron::vector<int>{ x }; };
-inline micron::option<micron::pair<int, int>, micron::fp::empty_container_error> (*const __step)(const int &)
-    = [](const int &s) {
-        using O = micron::option<micron::pair<int, int>, micron::fp::empty_container_error>;
-        return s < 3 ? O{ micron::pair<int, int>{ s, s + 1 } } : O{ micron::fp::empty_container_error{} };
-      };
+inline micron::option<micron::pair<int, int>, micron::fp::empty_container_error> (*const __step)(const int &) = [](const int &s) {
+  using O = micron::option<micron::pair<int, int>, micron::fp::empty_container_error>;
+  return s < 3 ? O{ micron::pair<int, int>{ s, s + 1 } } : O{ micron::fp::empty_container_error{} };
+};
 
 // flatten needs a range OF ranges
 using __nested = decltype(micron::declval<vector<int> &>() | lz::fmap(__wrap) | lz::flatten());
@@ -223,9 +222,9 @@ main()
   acc += static_cast<int>((v | lz::drop(2) | lz::collect<vector<int>>()).size());
   acc += static_cast<int>((v | lz::take_while([](int x) { return x < 4; }) | lz::collect<vector<int>>()).size());
   acc += static_cast<int>((v | lz::drop_while([](int x) { return x < 4; }) | lz::collect<vector<int>>()).size());
-  acc += static_cast<int>((l | lz::fmap([](int x) { return x + 1; }) | lz::filter([](int x) { return x > 0; })
-                             | lz::take(1) | lz::collect<vector<int>>())
-                              .size());
+  acc += static_cast<int>(
+      (l | lz::fmap([](int x) { return x + 1; }) | lz::filter([](int x) { return x > 0; }) | lz::take(1) | lz::collect<vector<int>>())
+          .size());
 
   // generators, which only terminate because take/take_while bound them
   acc += static_cast<int>((lz::counting(0) | lz::take(4) | lz::collect<vector<int>>()).size());
@@ -242,7 +241,8 @@ main()
   acc += static_cast<int>((micron::vector<int>{ 1, 2, 3 } | lz::fmap([](int x) { return x; }) | lz::collect<vector<int>>()).size());
   acc += static_cast<int>((micron::vector<int>{ 1, 2, 3 } | lz::filter([](int x) { return x > 1; }) | lz::collect<vector<int>>()).size());
   acc += static_cast<int>((micron::vector<int>{ 1, 2, 3 } | lz::take(2) | lz::collect<vector<int>>()).size());
-  acc += static_cast<int>((micron::vector<int>{ 1, 2, 3 } | lz::take_while([](int x) { return x < 3; }) | lz::collect<vector<int>>()).size());
+  acc += static_cast<int>(
+      (micron::vector<int>{ 1, 2, 3 } | lz::take_while([](int x) { return x < 3; }) | lz::collect<vector<int>>()).size());
 
   // an adaptor over a MAP source -- its cursor declares operator*() non-const and yields a prvalue
   // proxy, which is why the lazy cursors hold their upstream `mutable`

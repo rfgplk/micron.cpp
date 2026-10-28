@@ -7,8 +7,8 @@
 // micron::resources -- the sysinfo(2) snapshot abcmalloc's OOM policy reads
 // (src/memory/allocation/abcmalloc/oom.hpp:43-44).
 
-#include "../../src/memory/allocation/abcmalloc/oom.hpp"
 #include "../../src/io/console.hpp"
+#include "../../src/memory/allocation/abcmalloc/oom.hpp"
 #include "../../src/std.hpp"
 
 #include "../snowball/snowball.hpp"

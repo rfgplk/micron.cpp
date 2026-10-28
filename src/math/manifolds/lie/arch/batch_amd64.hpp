@@ -96,7 +96,8 @@ __apply_f32(const quat<f32> &q, const vec<f32, 3> &translation, const vec<f32, 3
   for ( ; i + 4 <= n; i += 4 ) {
     const float *ip = reinterpret_cast<const float *>(in + i);
     simd::f128 x, y, z;
-    __transpose4_f32(simd::sse::load_f32(ip), simd::sse::load_f32(ip + 4), simd::sse::load_f32(ip + 8), simd::sse::load_f32(ip + 12), x, y, z);
+    __transpose4_f32(simd::sse::load_f32(ip), simd::sse::load_f32(ip + 4), simd::sse::load_f32(ip + 8), simd::sse::load_f32(ip + 12), x, y,
+                     z);
 
     __rotate_f32(qx, qy, qz, qw, x, y, z);
     if constexpr ( Translate ) {
@@ -121,8 +122,8 @@ __apply_f32(const quat<f32> &q, const vec<f32, 3> &translation, const vec<f32, 3
 
 template<bool Translate>
 [[gnu::always_inline]] inline void
-__apply_soa_f32(const quat<f32> &q, const vec<f32, 3> &translation, const f32 *in_x, const f32 *in_y, const f32 *in_z, f32 *out_x, f32 *out_y,
-                f32 *out_z, usize n) noexcept
+__apply_soa_f32(const quat<f32> &q, const vec<f32, 3> &translation, const f32 *in_x, const f32 *in_y, const f32 *in_z, f32 *out_x,
+                f32 *out_y, f32 *out_z, usize n) noexcept
 {
   const simd::f128 qx = __vsimd::__splat(q.data[0]);
   const simd::f128 qy = __vsimd::__splat(q.data[1]);
@@ -231,7 +232,8 @@ __apply_f64(const quat<f64> &q, const vec<f64, 3> &translation, const vec<f64, 3
   for ( ; i + 4 <= n; i += 4 ) {
     const double *ip = reinterpret_cast<const double *>(in + i);
     simd::d256 x, y, z;
-    __transpose4_f64(simd::avx::load_f64(ip), simd::avx::load_f64(ip + 4), simd::avx::load_f64(ip + 8), simd::avx::load_f64(ip + 12), x, y, z);
+    __transpose4_f64(simd::avx::load_f64(ip), simd::avx::load_f64(ip + 4), simd::avx::load_f64(ip + 8), simd::avx::load_f64(ip + 12), x, y,
+                     z);
 
     __rotate_f64(qx, qy, qz, qw, x, y, z);
     if constexpr ( Translate ) {
@@ -256,8 +258,8 @@ __apply_f64(const quat<f64> &q, const vec<f64, 3> &translation, const vec<f64, 3
 
 template<bool Translate>
 [[gnu::always_inline]] inline void
-__apply_soa_f64(const quat<f64> &q, const vec<f64, 3> &translation, const f64 *in_x, const f64 *in_y, const f64 *in_z, f64 *out_x, f64 *out_y,
-                f64 *out_z, usize n) noexcept
+__apply_soa_f64(const quat<f64> &q, const vec<f64, 3> &translation, const f64 *in_x, const f64 *in_y, const f64 *in_z, f64 *out_x,
+                f64 *out_y, f64 *out_z, usize n) noexcept
 {
   const simd::d256 qx = simd::avx::splat_f64(q.data[0]);
   const simd::d256 qy = simd::avx::splat_f64(q.data[1]);

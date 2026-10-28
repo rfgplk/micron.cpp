@@ -188,8 +188,7 @@ class art
   void
   __release_all() noexcept
   {
-    if constexpr ( !(micron::is_trivially_destructible_v<K> && micron::is_trivially_destructible_v<V>) )
-      __destroy_leaves(__root);
+    if constexpr ( !(micron::is_trivially_destructible_v<K> && micron::is_trivially_destructible_v<V>)) __destroy_leaves(__root);
     __pleaf.release();
     __p4.release();
     __p16.release();
@@ -786,8 +785,8 @@ public:
   art &operator=(const art &) = delete;
 
   art(art &&o) noexcept
-      : __root(o.__root), __size(o.__size), __pleaf(micron::move(o.__pleaf)), __p4(micron::move(o.__p4)),
-        __p16(micron::move(o.__p16)), __p48(micron::move(o.__p48)), __p256(micron::move(o.__p256))
+      : __root(o.__root), __size(o.__size), __pleaf(micron::move(o.__pleaf)), __p4(micron::move(o.__p4)), __p16(micron::move(o.__p16)),
+        __p48(micron::move(o.__p48)), __p256(micron::move(o.__p256))
   {
     o.__root = nullptr;
     o.__size = 0;

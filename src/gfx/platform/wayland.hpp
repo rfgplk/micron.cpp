@@ -29,6 +29,12 @@ namespace platform
 struct wayland_lib_t {
   host_dso host;
 
+  struct supplied_api {
+  };
+
+  // Embedders may supply an already resolved ABI table without acquiring a host DSO.
+  explicit wayland_lib_t(supplied_api) noexcept { }
+
   PFN_wl_display_connect wl_display_connect = nullptr;
   PFN_wl_display_connect_to_fd wl_display_connect_to_fd = nullptr;
   PFN_wl_display_disconnect wl_display_disconnect = nullptr;
@@ -111,7 +117,7 @@ private:
   {
     auto *self = static_cast<wayland_display_t *>(data);
     if ( micron::strcmp(interface, "wl_compositor") == 0 ) {
-      const u32 use_ver = version < 4 ? version : 4u;
+      const u32 use_ver = version < 6 ? version : 6u;
       void *p = self->__lib->wl_proxy_marshal_flags(reinterpret_cast<wl_proxy *>(registry), xdg_shell_ops::wl_registry_bind,
                                                     &__wl_compositor_interface, use_ver, 0, name, "wl_compositor", use_ver, nullptr);
       self->__compositor = reinterpret_cast<wl_compositor *>(p);
@@ -314,8 +320,7 @@ private:
   __on_toplevel_close(void *data, xdg_toplevel *) noexcept
   {
     auto *self = static_cast<wayland_window_t *>(data);
-    self->__should_close = true;
-    if ( self->__cb_close ) self->__cb_close(self->__owner);
+    self->request_close();
   }
 
   static void
@@ -371,11 +376,26 @@ public:
     return i32(f32(__height) * __render_scale + .5f);
   }
 
-  i32 logical_width() const noexcept { return __width; }
-  i32 logical_height() const noexcept { return __height; }
-  f32 render_scale() const noexcept { return __render_scale; }
+  i32
+  logical_width() const noexcept
+  {
+    return __width;
+  }
 
-  void set_render_scale(f32 scale) noexcept
+  i32
+  logical_height() const noexcept
+  {
+    return __height;
+  }
+
+  f32
+  render_scale() const noexcept
+  {
+    return __render_scale;
+  }
+
+  void
+  set_render_scale(f32 scale) noexcept
   {
     if ( !(scale >= 1.f && scale <= 8.f) || scale == __render_scale ) return;
     __render_scale = scale;
@@ -386,6 +406,21 @@ public:
   should_close() const noexcept
   {
     return __should_close;
+  }
+
+  void
+  request_close() noexcept
+  {
+    __should_close = true;
+    if ( __cb_close ) __cb_close(__owner);
+  }
+
+  bool
+  take_close_request() noexcept
+  {
+    const bool requested = __should_close;
+    __should_close = false;
+    return requested;
   }
 
   void
@@ -442,6 +477,26 @@ public:
                                             &__wl_surface_interface, dpy.compositor_version(), 0, nullptr);
     __surface = reinterpret_cast<wl_surface *>(surf);
     if ( !__surface ) throw except::library_error("wayland: wl_compositor.create_surface returned null");
+
+    struct surface_listener {
+      void (*enter)(void *, wl_surface *, wl_output *);
+      void (*leave)(void *, wl_surface *, wl_output *);
+      void (*scale)(void *, wl_surface *, i32);
+      void (*transform)(void *, wl_surface *, u32);
+    };
+
+    static const surface_listener surface_events{ +[](void *, wl_surface *, wl_output *) { }, +[](void *, wl_surface *, wl_output *) { },
+                                                  +[](void *data, wl_surface *, i32 scale) {
+                                                    if ( scale < 1 || scale > 8 ) return;
+                                                    auto &self = *static_cast<wayland_window_t *>(data);
+                                                    self.__disp->lib()->wl_proxy_marshal_flags(reinterpret_cast<wl_proxy *>(self.__surface),
+                                                                                               8, nullptr,
+                                                                                               self.__disp->compositor_version(), 0, scale);
+                                                    self.set_render_scale(static_cast<f32>(scale));
+                                                  },
+                                                  +[](void *, wl_surface *, u32) { } };
+    lib.wl_proxy_add_listener(reinterpret_cast<wl_proxy *>(__surface),
+                              reinterpret_cast<void (**)(void)>(const_cast<surface_listener *>(&surface_events)), this);
 
     void *xsurf
         = lib.wl_proxy_marshal_flags(reinterpret_cast<wl_proxy *>(dpy.shell()), xdg_shell_ops::xdg_wm_base_get_xdg_surface,

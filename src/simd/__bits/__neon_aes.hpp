@@ -27,15 +27,13 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
 #if defined(__micron_compiler_gcc)
 #if defined(__micron_arch_arm32)
-// NOTE: aarch64 builtins __builtin_aarch64_crypto_aes* are not available on 32-bit targets
-__inline_g uint8x16_t
-vaeseq_u8(uint8x16_t d, uint8x16_t k) noexcept
+    // NOTE: aarch64 builtins __builtin_aarch64_crypto_aes* are not available on 32-bit targets
+    __inline_g uint8x16_t vaeseq_u8(uint8x16_t d, uint8x16_t k) noexcept
 {
   uint8x16_t r = d;
   __asm__("aese.8 %q0, %q1" : "+w"(r) : "w"(k));
@@ -66,8 +64,7 @@ vaesimcq_u8(uint8x16_t d) noexcept
   return r;
 }
 #else       // arm64
-__inline_g uint8x16_t
-vaeseq_u8(uint8x16_t d, uint8x16_t k) noexcept
+    __inline_g uint8x16_t vaeseq_u8(uint8x16_t d, uint8x16_t k) noexcept
 {
   return (uint8x16_t)__builtin_aarch64_crypto_aesev16qi_uuu(d, k);
 }
@@ -91,8 +88,7 @@ vaesimcq_u8(uint8x16_t d) noexcept
 }
 #endif      // arm32 vs arm64
 #elif defined(__micron_compiler_clang)
-__inline_g uint8x16_t
-vaeseq_u8(uint8x16_t d, uint8x16_t k) noexcept
+    __inline_g uint8x16_t vaeseq_u8(uint8x16_t d, uint8x16_t k) noexcept
 {
   return __builtin_neon_vaeseq_v(d, k, 48);
 }

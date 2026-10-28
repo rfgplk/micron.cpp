@@ -28,14 +28,12 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_pm [[gnu::always_inline, gnu::artificial]] static inline
 
 #if defined(__micron_arch_arm64)
 
-__inline_pm uint8x16_t
-vpmull_lo_p64(uint8x16_t a, uint8x16_t b) noexcept
+    __inline_pm uint8x16_t vpmull_lo_p64(uint8x16_t a, uint8x16_t b) noexcept
 {
   uint8x16_t r;
   __asm__("pmull %0.1q, %1.1d, %2.1d" : "=w"(r) : "w"(a), "w"(b));
@@ -52,8 +50,7 @@ vpmull_hi_p64(uint8x16_t a, uint8x16_t b) noexcept
 
 #else
 
-__inline_pm uint8x16_t
-vpmull_lo_p64(uint8x16_t a, uint8x16_t b) noexcept
+    __inline_pm uint8x16_t vpmull_lo_p64(uint8x16_t a, uint8x16_t b) noexcept
 {
   return vmull_p64((poly64x1_t)vget_low_u8(a), (poly64x1_t)vget_low_u8(b));
 }

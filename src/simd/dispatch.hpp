@@ -13,95 +13,92 @@
 
 #include "../attributes.hpp"
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpedantic")
-namespace micron
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpedantic") namespace micron
 {
 
-namespace simd
-{
+  namespace simd
+  {
 
 #if defined(__micron_arch_x86_any) && !defined(__micron_freestanding)
 
-struct __simd_flags {
-  char fma;
-  char fma3;
-  char fma4;
-  char sse;
-  char sse2;
-  char sse3;
-  char ssse3;
-  char sse4_1;
-  char sse4_2;
-  char avx;
-  char avx2;
-  char osxsave;
-};
+  struct __simd_flags {
+    char fma;
+    char fma3;
+    char fma4;
+    char sse;
+    char sse2;
+    char sse3;
+    char ssse3;
+    char sse4_1;
+    char sse4_2;
+    char avx;
+    char avx2;
+    char osxsave;
+  };
 
-inline unsigned long long
-__read_xcr0(void) noexcept
-{
-  unsigned eax, edx;
-  __asm__ volatile(".byte 0x0f, 0x01, 0xd0" : "=a"(eax), "=d"(edx) : "c"(0u));
-  return ((unsigned long long)edx << 32) | eax;
-}
+  inline unsigned long long
+  __read_xcr0(void) noexcept
+  {
+    unsigned eax, edx;
+    __asm__ volatile(".byte 0x0f, 0x01, 0xd0" : "=a"(eax), "=d"(edx) : "c"(0u));
+    return ((unsigned long long)edx << 32) | eax;
+  }
 
-inline __simd_flags
-__get_runtime_features(void)
-{
-  __simd_flags flags;
-  processor_t cpu;
-  info(&cpu);
-  flags.fma = cpu.features.fma;
-  flags.fma3 = cpu.features.fma3;
-  flags.fma4 = cpu.features.fma4;
-  flags.sse = cpu.features.sse;
-  flags.sse2 = cpu.features.sse2;
-  flags.sse3 = cpu.features.sse3;
-  flags.ssse3 = cpu.features.ssse3;
-  flags.sse4_1 = cpu.features.sse4_1;
-  flags.sse4_2 = cpu.features.sse4_2;
-  flags.avx = cpu.features.avx;
-  flags.avx2 = cpu.features.avx2;
-  flags.osxsave = cpu.features.osxsave;
-  return flags;
-}
+  inline __simd_flags
+  __get_runtime_features(void)
+  {
+    __simd_flags flags;
+    processor_t cpu;
+    info(&cpu);
+    flags.fma = cpu.features.fma;
+    flags.fma3 = cpu.features.fma3;
+    flags.fma4 = cpu.features.fma4;
+    flags.sse = cpu.features.sse;
+    flags.sse2 = cpu.features.sse2;
+    flags.sse3 = cpu.features.sse3;
+    flags.ssse3 = cpu.features.ssse3;
+    flags.sse4_1 = cpu.features.sse4_1;
+    flags.sse4_2 = cpu.features.sse4_2;
+    flags.avx = cpu.features.avx;
+    flags.avx2 = cpu.features.avx2;
+    flags.osxsave = cpu.features.osxsave;
+    return flags;
+  }
 
-// true iff the OS has enabled XSAVE (OSXSAVE) and XCR0 advertises SSE+AVX (YMM) state save (bits 1,2)
-inline bool
-__os_avx_enabled(const __simd_flags &flags)
-{
-  return flags.osxsave and ((__read_xcr0() & 0x6ull) == 0x6ull);
-}
+  // true iff the OS has enabled XSAVE (OSXSAVE) and XCR0 advertises SSE+AVX (YMM) state save (bits 1,2)
+  inline bool
+  __os_avx_enabled(const __simd_flags &flags)
+  {
+    return flags.osxsave and ((__read_xcr0() & 0x6ull) == 0x6ull);
+  }
 
-inline bool
-__has_fma(const __simd_flags &flags)
-{
-  return flags.fma;
-}
+  inline bool
+  __has_fma(const __simd_flags &flags)
+  {
+    return flags.fma;
+  }
 
-inline bool
-__has_sse(const __simd_flags &flags)
-{
-  return flags.sse and flags.sse2 and flags.sse3 and flags.ssse3 and flags.sse4_1 and flags.sse4_2;
-}
+  inline bool
+  __has_sse(const __simd_flags &flags)
+  {
+    return flags.sse and flags.sse2 and flags.sse3 and flags.ssse3 and flags.sse4_1 and flags.sse4_2;
+  }
 
-inline bool
-__has_avx128(const __simd_flags &flags)
-{
-  return flags.avx and __os_avx_enabled(flags);
-}
+  inline bool
+  __has_avx128(const __simd_flags &flags)
+  {
+    return flags.avx and __os_avx_enabled(flags);
+  }
 
-inline bool
-__has_avx256(const __simd_flags &flags)
-{
-  return flags.avx2 and __os_avx_enabled(flags);
-}
+  inline bool
+  __has_avx256(const __simd_flags &flags)
+  {
+    return flags.avx2 and __os_avx_enabled(flags);
+  }
 
 #endif      // __micron_arch_x86_any
 
-};      // namespace simd
+  };      // namespace simd
 };      // namespace micron
 
 __micron_diagnostic_pop

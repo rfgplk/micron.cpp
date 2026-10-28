@@ -152,9 +152,9 @@ main(void)
       reads.fetch_add(n, memory_order::acq_rel);
     });
 
-    sb::print("     reads=", static_cast<usize>(reads.get(memory_order::acquire)), " torn=",
-              static_cast<usize>(torn.get(memory_order::acquire)), " try_load retries=",
-              static_cast<usize>(retried.get(memory_order::acquire)));
+    sb::print("     reads=", static_cast<usize>(reads.get(memory_order::acquire)),
+              " torn=", static_cast<usize>(torn.get(memory_order::acquire)),
+              " try_load retries=", static_cast<usize>(retried.get(memory_order::acquire)));
 
     require(torn.get(memory_order::acquire) == 0ull);
     require_true(reads.get(memory_order::acquire) > 0ull);

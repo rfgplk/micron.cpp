@@ -16,14 +16,8 @@ namespace micron
 namespace simd
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-namespace __sm
-{
-__attribute__((always_inline)) static inline float
-sqrtf(float x) noexcept
-{
-  return math::mkbits::sqrt_ns::sqrt<float>(x);
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") namespace __sm{
+  __attribute__((always_inline)) static inline float sqrtf(float x) noexcept { return math::mkbits::sqrt_ns::sqrt<float>(x);
 }
 
 __attribute__((always_inline)) static inline float
@@ -127,7 +121,7 @@ nearbyintf(float x) noexcept
 {
   return math::mkbits::round_ns::nearbyint<float>(x);
 }
-};      // namespace __sm
+};      // namespace micron
 
 #define _ri8(x) vreinterpretq_s8_s32(x)
 #define _ri16(x) vreinterpretq_s16_s32(x)
@@ -1243,5 +1237,7 @@ svml_round(f128 &o)
 #undef _rf32u
 
 __micron_diagnostic_pop
-};      // namespace simd
-};      // namespace micron
+}
+;      // namespace simd
+}
+;      // namespace micron

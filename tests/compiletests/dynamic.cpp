@@ -93,7 +93,7 @@ instantiate_call()
   mc::dynamic_t d{};
   micron::sstring<64> lib, sym;
 
-  mc::dynamic_call(d, "v");                       // R defaults to void
+  mc::dynamic_call(d, "v");      // R defaults to void
   mc::dynamic_call<void>(d, "v");
   (void)mc::dynamic_call<int>(d, "i");
   (void)mc::dynamic_call<const char *>(d, "s");

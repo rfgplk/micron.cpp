@@ -10,7 +10,6 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // arm32 neon kernels
 
-
 namespace micron::math::graphs::kernels::__impl
 {
 using __graph_word_vector = u32 __attribute__((vector_size(16)));

@@ -72,8 +72,7 @@ main()
     require(v | lz::fold(0, [](int a, int x) { return a + x; }), 55);
     require(v | lz::foldl(1, [](int a, int x) { return a * x; }), 3628800);
     // the eager equivalent, written with the pointer predicate it insists on
-    require(v | lz::fold(0, [](int a, int x) { return a + x; }),
-            micron::fold_left(v, 0, [](int a, const int *x) { return a + *x; }));
+    require(v | lz::fold(0, [](int a, int x) { return a + x; }), micron::fold_left(v, 0, [](int a, const int *x) { return a + *x; }));
   }
   end_test_case();
 
@@ -121,8 +120,7 @@ main()
     require(v | lz::count(), usize(10));
     require(v | lz::filter([](int x) { return (x & 1) == 0; }) | lz::count(), usize(5));
     require(v | lz::count_if([](int x) { return x > 7; }), usize(3));
-    require(static_cast<umax_t>(v | lz::count_if([](int x) { return x > 7; })),
-            micron::count_if(v, [](const int *x) { return *x > 7; }));
+    require(static_cast<umax_t>(v | lz::count_if([](int x) { return x > 7; })), micron::count_if(v, [](const int *x) { return *x > 7; }));
     require(v | lz::count_of(4), usize(1));
     require(static_cast<umax_t>(v | lz::count_of(4)), micron::count(v, 4));
     vec_i e;
@@ -210,7 +208,10 @@ main()
   test_case("min / max / safe_min / safe_max against fp::safe_min / fp::safe_max");
   {
     vec_i v;
-    v.push_back(5); v.push_back(-3); v.push_back(9); v.push_back(0);
+    v.push_back(5);
+    v.push_back(-3);
+    v.push_back(9);
+    v.push_back(0);
     require(v | lz::min(), -3);
     require(v | lz::max(), 9);
     require((v | lz::safe_min()).cast<int>(), micron::fp::safe_min(v).cast<int>());
@@ -251,7 +252,8 @@ main()
     require_true((v | lz::safe_inner_product<f64>(v)).cast<f64>() == e);
 
     vec_i sh;
-    sh.push_back(1); sh.push_back(2);
+    sh.push_back(1);
+    sh.push_back(2);
     require_true((v | lz::inner_product<f64>(sh)) == 5.0);      // 1*1 + 2*2
     require_true((v | lz::safe_inner_product<f64>(sh)).is_second());
     require_true((sh | lz::safe_inner_product<f64>(v)).is_second());
@@ -310,7 +312,11 @@ main()
   test_case("find_first / find_last / find_index / find_of / elem against fp::");
   {
     vec_i v;
-    v.push_back(1); v.push_back(4); v.push_back(2); v.push_back(4); v.push_back(3);
+    v.push_back(1);
+    v.push_back(4);
+    v.push_back(2);
+    v.push_back(4);
+    v.push_back(3);
     auto pf = [](int x) { return x == 4; };
 
     require((v | lz::find_first(pf)).cast<int>(), micron::fp::find_first(v, pf).cast<int>());
@@ -329,7 +335,7 @@ main()
   {
     auto v = iota_vec(1, 30);
     auto p = [](int x) { return (x % 7) == 0; };
-    const auto rev = v | lz::find_last(p);              // walks backwards
+    const auto rev = v | lz::find_last(p);                                             // walks backwards
     const auto fwd = v | lz::filter([](int) { return true; }) | lz::find_last(p);      // full forward scan
     require_true(rev.is_first() && fwd.is_first());
     require(rev.cast<int>(), fwd.cast<int>());
@@ -425,9 +431,9 @@ main()
     auto v = iota_vec(1, 10);
     usize calls = 0;
     auto ok = v | lz::traverse<vec_i>([&](int x) {
-      ++calls;
-      return opt_i{ x * 2 };
-    });
+                ++calls;
+                return opt_i{ x * 2 };
+              });
     require_true(ok.is_first());
     require(ok.cast<vec_i>().size(), usize(10));
     require(ok.cast<vec_i>()[4], 10);
@@ -435,9 +441,9 @@ main()
 
     calls = 0;
     auto bad = v | lz::traverse<vec_i>([&](int x) {
-      ++calls;
-      return x >= 3 ? opt_i{ micron::fp::empty_container_error{} } : opt_i{ x };
-    });
+                 ++calls;
+                 return x >= 3 ? opt_i{ micron::fp::empty_container_error{} } : opt_i{ x };
+               });
     require_true(bad.is_second());
     // stopped ON the failure and pulled nothing after it. fp::traverse has already resized its
     // output to c.size() before it can do this.
@@ -536,7 +542,8 @@ main()
 
     // ragged: lazy yields min(n, m) elements, eager returns all of `a` with the overlap modified
     vec_i sh;
-    sh.push_back(100); sh.push_back(200);
+    sh.push_back(100);
+    sh.push_back(200);
     auto lr = a | lz::add_zip(sh) | lz::collect<vec_i>();
     auto er = micron::fp::add_zip(a, sh);
     require(lr.size(), usize(2));
@@ -626,10 +633,11 @@ main()
     require((lz::empty<int>() | lz::count()), usize(0));
 
     using op = micron::option<micron::pair<int, int>, micron::fp::empty_container_error>;
-    auto u = lz::unfold([](const int &s) { return s < 5 ? op{ micron::pair<int, int>{ s * s, s + 1 } }
-                                                        : op{ micron::fp::empty_container_error{} }; },
-                        0)
-             | lz::collect<vec_i>();
+    auto u
+        = lz::unfold(
+              [](const int &s) { return s < 5 ? op{ micron::pair<int, int>{ s * s, s + 1 } } : op{ micron::fp::empty_container_error{} }; },
+              0)
+          | lz::collect<vec_i>();
     require(u.size(), usize(5));
     require(u[4], 16);
 

@@ -195,8 +195,8 @@ main()
 
       // the boundary capacities plus a random interior one: below want_f it must refuse and write
       // nothing, at or above it must produce exactly the oracle bytes
-      const usize caps[] = { 0u, 1u, want_f / 2u, want_f - 1u, want_f, want_f + 1u, BIG - 1u,
-                             static_cast<usize>(rng.next() % (want_f + 2u)) };
+      const usize caps[]
+          = { 0u, 1u, want_f / 2u, want_f - 1u, want_f, want_f + 1u, BIG - 1u, static_cast<usize>(rng.next() % (want_f + 2u)) };
       for ( usize cap : caps ) {
         if ( cap >= BIG ) continue;
         char *b = cb.arm();

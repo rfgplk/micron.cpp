@@ -156,8 +156,7 @@ main(void)
           m.lock();
           const u64 s = g_stamp;
           // whoever acquires after a release must see ALL of that release's writes
-          if ( g_pub.a != s or g_pub.b != s * 2u or g_pub.c != s * 3u or g_pub.d != s * 4u )
-            seen_torn.fetch_add(1, memory_order::relaxed);
+          if ( g_pub.a != s or g_pub.b != s * 2u or g_pub.c != s * 3u or g_pub.d != s * 4u ) seen_torn.fetch_add(1, memory_order::relaxed);
           m.unlock();
           reads.fetch_add(1, memory_order::relaxed);
           wd.bump();
@@ -202,8 +201,7 @@ main(void)
         for ( u32 i = 0; i < pub_rounds; ++i ) {
           lock_guard<weak_mutex> g(m);
           const u64 s = g_stamp;
-          if ( g_pub.a != s or g_pub.b != s * 2u or g_pub.c != s * 3u or g_pub.d != s * 4u )
-            seen_torn.fetch_add(1, memory_order::relaxed);
+          if ( g_pub.a != s or g_pub.b != s * 2u or g_pub.c != s * 3u or g_pub.d != s * 4u ) seen_torn.fetch_add(1, memory_order::relaxed);
           wd.bump();
         }
       }

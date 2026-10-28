@@ -37,9 +37,9 @@ namespace posix = micron::posix;
 static int FAILS = 0;
 
 static constexpr const char *DIR = "/var/tmp/micron_wave_td";
-static constexpr const char *SUBDIR = "subdir";          // opens fine, reads -EISDIR
+static constexpr const char *SUBDIR = "subdir";      // opens fine, reads -EISDIR
 static constexpr i32 c_eisdir = -21;
-static constexpr u32 DIRS_PER_PASS = 8;                  // half the batch leaks, pre-fix
+static constexpr u32 DIRS_PER_PASS = 8;      // half the batch leaks, pre-fix
 static constexpr u32 PASSES = (micron::coro::__io_file_slots / DIRS_PER_PASS) + 8u;
 
 static void
@@ -149,7 +149,7 @@ teardown_handshake()
     micron::coro::__io_wave wv{};
     wv.__st.store(micron::coro::__io_st_suspended, micron::memory_order_release);
     if ( !micron::coro::io::__wave_abandon(wv) ) return -5100;
-    if ( dispatcher_claims(wv) ) return -5101;      // would have been the use-after-free
+    if ( dispatcher_claims(wv) ) return -5101;                     // would have been the use-after-free
     if ( !micron::coro::io::__wave_settle(wv) ) return -5102;      // nothing was handed out; no wait
   }
   {      // the completer gets there first: the owner must WAIT, not free
@@ -185,7 +185,7 @@ force_close_evicts()
   if ( !micron::coro::io::wave_slot_close(rid, slot) ) co_return -5302;      // empty slot: still a success
   micron::coro::io::wave_slot_release(rid, slot);
 
-  if ( micron::coro::io::wave_slot_close(rid, -1) ) co_return -5303;                                  // rejected
+  if ( micron::coro::io::wave_slot_close(rid, -1) ) co_return -5303;      // rejected
   if ( micron::coro::io::wave_slot_close(rid, static_cast<i32>(micron::coro::__io_file_slots)) ) co_return -5304;
   if ( micron::coro::io::wave_slot_close(-1, 0) ) co_return -5305;      // no such ring
   co_return 0;

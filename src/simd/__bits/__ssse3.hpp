@@ -22,12 +22,10 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("ssse3")]] static inline
 
-__inline_g __m128i
-_mm_abs_epi8(__m128i a) noexcept
+    __inline_g __m128i _mm_abs_epi8(__m128i a) noexcept
 {
   return (__m128i)__builtin_ia32_pabsb128((__v16qi)a);
 }

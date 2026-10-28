@@ -125,12 +125,14 @@ main(int, char **)
   test_case("a handler that registers another handler still gets drained");
   {
     static micron::atomic_token<u32> nested{ 0 };
+
     struct chain {
       static void
       inner(void *) noexcept
       {
         nested.fetch_add(1, micron::memory_order_acq_rel);
       }
+
       static void
       outer(void *) noexcept
       {
@@ -138,6 +140,7 @@ main(int, char **)
         (void)micron::__exit_internal::__push(&chain::inner, nullptr);
       }
     };
+
     (void)micron::__exit_internal::__push(&chain::outer, nullptr);
     micron::__drain_atexit_table();
     require(nested.get(micron::memory_order_acquire) == 2u);

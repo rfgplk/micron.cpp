@@ -114,7 +114,7 @@ micron::clh_lock g_clh;
 micron::futex_mutex g_futex;
 micron::shared_mutex g_shared;
 micron::null_lock g_null;
-micron::seqlock<pod> g_seq;                                 // now defaults to fast_mutex, not null_lock
+micron::seqlock<pod> g_seq;      // now defaults to fast_mutex, not null_lock
 micron::seqlock<pod, micron::ttas_lock> g_seq_locked;
 micron::seqlock<pod, micron::null_lock> g_seq_unlocked;      // still available, explicitly single-writer
 

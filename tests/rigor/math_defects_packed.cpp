@@ -211,8 +211,7 @@ main()
   test_case("packed exp — f256 lane path");
   {
     f32 of[8];
-    const simd::f256 v
-        = _mm256_setr_ps(mk_f(F_PINF), mk_f(F_NINF), mk_f(F_QNAN), 0.0f, 89.0f, -104.0f, 0.0f, 0.0f);
+    const simd::f256 v = _mm256_setr_ps(mk_f(F_PINF), mk_f(F_NINF), mk_f(F_QNAN), 0.0f, 89.0f, -104.0f, 0.0f, 0.0f);
     st8(mk::exp_ns::exp<simd::f256>(v), of);
     require_true(bits_f(of[0]) == F_PINF);
     require_true(bits_f(of[1]) == 0u);

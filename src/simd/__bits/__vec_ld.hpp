@@ -18,10 +18,8 @@ namespace micron
 namespace __ml
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wignored-attributes")
-typedef u16 __u16u __attribute__((aligned(1), may_alias));
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wpsabi") __micron_diagnostic_ignored("-Wignored-attributes") typedef u16 __u16u
+    __attribute__((aligned(1), may_alias));
 typedef u32 __u32u __attribute__((aligned(1), may_alias));
 typedef u64 __u64u __attribute__((aligned(1), may_alias));
 typedef u64 __v16 __attribute__((vector_size(16), may_alias));

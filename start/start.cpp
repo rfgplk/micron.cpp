@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include <micron/bits/__arch.hpp>
+#include <micron/bits/__compilers.hpp>
 #include <micron/bits/__pause.hpp>
 #include <micron/config.hpp>
 
@@ -227,10 +228,16 @@ __micron_mxc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noe
 extern "C" {
 
 int
-__cxa_atexit(void (*dtor)(void *), void *arg, void * /*dso_handle*/) noexcept
+__cxa_atexit(void (*dtor)(void *), void *arg, void *dso_handle) noexcept
 {
   if ( dtor == nullptr ) return -1;
-  return micron::__exit_internal::__push(dtor, arg);
+  return micron::__exit_internal::__push(dtor, arg, dso_handle);
+}
+
+void
+__cxa_finalize(void *dso_handle) noexcept
+{
+  micron::__exit_internal::__finalize_dso(dso_handle);
 }
 
 #if defined(__micron_freestanding) && !defined(__micron_tdtor_real)
@@ -298,7 +305,7 @@ __attribute__((used, visibility("hidden"))) void *__dso_handle = &__dso_handle;
 //
 // weak, wherever we include cmemory those fns will win over these, these are effectively shimmed on purpose
 
-extern "C" [[gnu::weak]] __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) void *
+extern "C" [[gnu::weak]] __micron_optimize_no_tree_loop_distribute void *
 memcpy(void *__restrict d, const void *__restrict s, __SIZE_TYPE__ n) noexcept
 {
   unsigned char *dp = static_cast<unsigned char *>(d);
@@ -307,7 +314,7 @@ memcpy(void *__restrict d, const void *__restrict s, __SIZE_TYPE__ n) noexcept
   return d;
 }
 
-extern "C" [[gnu::weak]] __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) void *
+extern "C" [[gnu::weak]] __micron_optimize_no_tree_loop_distribute void *
 memmove(void *d, const void *s, __SIZE_TYPE__ n) noexcept
 {
   unsigned char *dp = static_cast<unsigned char *>(d);
@@ -321,7 +328,7 @@ memmove(void *d, const void *s, __SIZE_TYPE__ n) noexcept
   return d;
 }
 
-extern "C" [[gnu::weak]] __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) void *
+extern "C" [[gnu::weak]] __micron_optimize_no_tree_loop_distribute void *
 memset(void *d, int c, __SIZE_TYPE__ n) noexcept
 {
   unsigned char *dp = static_cast<unsigned char *>(d);
@@ -329,7 +336,7 @@ memset(void *d, int c, __SIZE_TYPE__ n) noexcept
   return d;
 }
 
-extern "C" [[gnu::weak]] __attribute__((optimize("-fno-tree-loop-distribute-patterns"))) int
+extern "C" [[gnu::weak]] __micron_optimize_no_tree_loop_distribute int
 memcmp(const void *a, const void *b, __SIZE_TYPE__ n) noexcept
 {
   const unsigned char *ap = static_cast<const unsigned char *>(a);

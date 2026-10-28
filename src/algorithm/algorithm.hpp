@@ -527,18 +527,12 @@ rotate_right(C &c, usize n) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // sums/fills
 //
-__micron_push_options
-__micron_optimize_no_fast_math
-namespace __impl
-{
-[[gnu::always_inline]] constexpr void
-__neumaier_add(f64 &acc, f64 &comp, f64 v) noexcept
-{
-  const f64 t = acc + v;
-  // whichever operand is larger in magnitude keeps its bits; the other loses the low end
-  comp += (__builtin_fabs(acc) >= __builtin_fabs(v)) ? ((acc - t) + v) : ((v - t) + acc);
-  acc = t;
-}
+__micron_push_options __micron_optimize_no_fast_math namespace __impl{
+  [[gnu::always_inline]] constexpr void __neumaier_add(f64 & acc, f64 &comp, f64 v) noexcept { const f64 t = acc + v;
+// whichever operand is larger in magnitude keeps its bits; the other loses the low end
+comp += (__builtin_fabs(acc) >= __builtin_fabs(v)) ? ((acc - t) + v) : ((v - t) + acc);
+acc = t;
+}      // namespace micron
 
 [[gnu::always_inline]] constexpr bool
 __f64_finite(f64 v) noexcept
@@ -588,7 +582,8 @@ __sum_fp(const A &a, usize n) noexcept
   // overflowed an f64 lane
   return __sum_wide(a, n);
 }
-};      // namespace __impl
+}
+;      // namespace __impl
 
 template<is_iterable_container T>
   requires micron::is_floating_point_v<typename T::value_type>
@@ -601,26 +596,21 @@ sum(const T &src) noexcept
     return __impl::__sum_fp(src, src.size());
 }
 
-__micron_pop_options
-namespace __impl
-{
-template<typename A>
-constexpr umax_t
-__sum_int(const A &a, usize n) noexcept
-{
-  // four accumulators
-  umax_t w = 0, x = 0, y = 0, z = 0;
-  usize i = 0;
-  for ( ; i + 4 <= n; i += 4 ) {
-    w += static_cast<umax_t>(a[i + 0]);
-    x += static_cast<umax_t>(a[i + 1]);
-    y += static_cast<umax_t>(a[i + 2]);
-    z += static_cast<umax_t>(a[i + 3]);
-  }
-  for ( ; i < n; ++i ) w += static_cast<umax_t>(a[i]);
-  return (w + x) + (y + z);
+__micron_pop_options namespace __impl{ template<typename A>
+                                       constexpr umax_t __sum_int(const A &a, usize n) noexcept { // four accumulators
+                                                                                                  umax_t w = 0, x = 0, y = 0, z = 0;
+usize i = 0;
+for ( ; i + 4 <= n; i += 4 ) {
+  w += static_cast<umax_t>(a[i + 0]);
+  x += static_cast<umax_t>(a[i + 1]);
+  y += static_cast<umax_t>(a[i + 2]);
+  z += static_cast<umax_t>(a[i + 3]);
 }
-};      // namespace __impl
+for ( ; i < n; ++i ) w += static_cast<umax_t>(a[i]);
+return (w + x) + (y + z);
+}
+}
+;      // namespace __impl
 
 template<is_iterable_container T>
   requires micron::is_integral_v<typename T::value_type>
@@ -1046,5 +1036,5 @@ transform(M &m, Fn fn) noexcept
   __impl::visit_kv(m, [&](const auto &k, auto &v) { v = fn(k, v); });
   return m;
 }
-
-};      // namespace micron
+}
+;      // namespace micron

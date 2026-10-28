@@ -19,10 +19,8 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
 #define __neon_ldst(T, suffix, ETYPE)                                                                                                      \
@@ -43,7 +41,7 @@ __micron_diagnostic_ignored("-Wpedantic")
   }                                                                                                                                        \
   __inline_g void vst1_##suffix(ETYPE *p, T v) noexcept { __builtin_memcpy(p, &v, sizeof(T)); }
 
-__neon_ldst(int8x16_t, s8, signed char);
+        __neon_ldst(int8x16_t, s8, signed char);
 __neon_ldst(int16x8_t, s16, signed short);
 __neon_ldst(int32x4_t, s32, signed int);
 __neon_ldst(int64x2_t, s64, signed long);

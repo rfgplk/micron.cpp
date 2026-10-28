@@ -863,9 +863,7 @@ remquo(f64 x, f64 y, int *q)
   return f64(mkbits::rem::remquo<f64>(f64(x), f64(y), q));
 }
 
-__micron_diagnostic_push
-__micron_diagnostic_nan
-inline f32
+__micron_diagnostic_push __micron_diagnostic_nan inline f32
 nanf(const char *tag)
 {
   return __builtin_nanf(tag);
@@ -876,10 +874,11 @@ nan(const char *tag)
 {
   return __builtin_nan(tag);
 }
+
 __micron_diagnostic_pop
 
-constexpr i32
-abs(i32 x)
+    constexpr i32
+    abs(i32 x)
 {
   return __builtin_abs(x);
 }

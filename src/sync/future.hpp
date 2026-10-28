@@ -7,7 +7,7 @@
 
 #include "../atomic/atomic.hpp"
 #include "../memory/actions.hpp"
-#include "../mutex/locks.hpp"  
+#include "../mutex/locks.hpp"
 #include "../mutex/mutex.hpp"
 
 namespace micron

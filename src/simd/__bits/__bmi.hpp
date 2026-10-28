@@ -20,15 +20,12 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpedantic")
 // NOTE: most of this file (tzcnt/lzcnt/andn/blsr/blsi/blsmsk/mulx) is already pure portable C;
 // gcc lowers it to tzcnt/blsr/mulx on its own when -mbmi/-mbmi2 are on, and to bsf/and/mul when they are not
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
-__inline_g unsigned int
-_tzcnt_u32(unsigned int v) noexcept
+    __inline_g unsigned int _tzcnt_u32(unsigned int v) noexcept
 {
   return v ? (unsigned)__builtin_ctz(v) : 32u;
 }

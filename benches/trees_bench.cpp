@@ -520,7 +520,10 @@ owned_node_bytes(const T &t) noexcept
 {
   if constexpr ( requires { t.pool_bytes(); } )
     return t.pool_bytes();
-  else if constexpr ( requires { t.nodes_used(); T::node_bytes(); } )
+  else if constexpr ( requires {
+                        t.nodes_used();
+                        T::node_bytes();
+                      } )
     return t.nodes_used() * T::node_bytes();
   else
     return 0;
@@ -1169,8 +1172,7 @@ main(int argc, char **argv)
   if ( wanted_tree("b_tree<u64,u64>") ) {
     print_header("b_tree<u64,u64>  -- src/trees/b.hpp, auto degree (T=16, 31 keys/node)");
     for ( u64 N : SIZES ) {
-      sweep_map_u64<micron::b_tree<u64, u64>>("b_tree<u64,u64>", N,
-                                              [](micron::b_tree<u64, u64> &t, u64 k, u64 v) { t.insert(k, v); });
+      sweep_map_u64<micron::b_tree<u64, u64>>("b_tree<u64,u64>", N, [](micron::b_tree<u64, u64> &t, u64 k, u64 v) { t.insert(k, v); });
       sweep_btree_ordered<micron::b_tree<u64, u64>>("b_tree<u64,u64>", N);
     }
   }
@@ -1282,8 +1284,7 @@ main(int argc, char **argv)
         "quadtree<u32>", FN, [&] { return micron::quadtree<u32>{ uni2 }; },
         [](micron::quadtree<u32> &t, u64 n) {
           for ( u64 i = 0; i < n; ++i )
-            t.insert(vec2{ static_cast<float>(g_keys[i] % 4000u), static_cast<float>((g_keys[i] >> 20) % 4000u) },
-                     static_cast<u32>(i));
+            t.insert(vec2{ static_cast<float>(g_keys[i] % 4000u), static_cast<float>((g_keys[i] >> 20) % 4000u) }, static_cast<u32>(i));
         });
 
     box3 uni3;
@@ -1315,14 +1316,11 @@ main(int argc, char **argv)
         "quadtree<u32>", FN, [&] { return micron::quadtree<u32>{ uni2 }; },
         [](micron::quadtree<u32> &t, u64 n) {
           for ( u64 i = 0; i < n; ++i )
-            t.insert(vec2{ static_cast<float>(g_keys[i] % 4000u), static_cast<float>((g_keys[i] >> 20) % 4000u) },
-                     static_cast<u32>(i));
+            t.insert(vec2{ static_cast<float>(g_keys[i] % 4000u), static_cast<float>((g_keys[i] >> 20) % 4000u) }, static_cast<u32>(i));
           for ( u64 i = 0; i < n; ++i )
-            t.erase(vec2{ static_cast<float>(g_keys[i] % 4000u), static_cast<float>((g_keys[i] >> 20) % 4000u) },
-                    static_cast<u32>(i));
+            t.erase(vec2{ static_cast<float>(g_keys[i] % 4000u), static_cast<float>((g_keys[i] >> 20) % 4000u) }, static_cast<u32>(i));
           for ( u64 i = 0; i < n; ++i )
-            t.insert(vec2{ static_cast<float>(g_misses[i] % 4000u), static_cast<float>((g_misses[i] >> 20) % 4000u) },
-                     static_cast<u32>(i));
+            t.insert(vec2{ static_cast<float>(g_misses[i] % 4000u), static_cast<float>((g_misses[i] >> 20) % 4000u) }, static_cast<u32>(i));
         });
     footprint(
         "b_tree<u64,u64>", FN, [] { return micron::b_tree<u64, u64>{}; },

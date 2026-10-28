@@ -360,25 +360,25 @@ rscmemcmp_safe(const F &_src, const F &_dest) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // bytecmps
 
-__attribute__((nonnull)) i64
+inline __attribute__((nonnull)) i64
 bytecmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(src, dest, cnt);
 };
 
-__attribute__((nonnull)) i64
+inline __attribute__((nonnull)) i64
 bcmp(const byte *__restrict src, const byte *__restrict dest, const u64 cnt) noexcept
 {
   return bytecmp(src, dest, cnt);
 };
 
-i64
+inline i64
 rbytecmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(&src, &dest, cnt);
 };
 
-i64
+inline i64
 rbcmp(const byte &src, const byte &dest, const u64 cnt) noexcept
 {
   return rbytecmp(src, dest, cnt);
@@ -634,13 +634,13 @@ rsctypecmp_safe(const F &_src, const F &_dest) noexcept
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // wordcmps
 
-__attribute__((nonnull)) i64
+inline __attribute__((nonnull)) i64
 wordcmp(const word *__restrict src, const word *__restrict dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(src), reinterpret_cast<const byte *>(dest), cnt * sizeof(word));
 };
 
-i64
+inline i64
 rwordcmp(const word &src, const word &dest, const u64 cnt) noexcept
 {
   return __memcmp_bytes(reinterpret_cast<const byte *>(&src), reinterpret_cast<const byte *>(&dest), cnt * sizeof(word));

@@ -61,21 +61,25 @@ o_nan(u64 b) noexcept
 {
   return (b & e64) == e64 && (b & m64) != 0;
 }
+
 bool
 o_inf(u64 b) noexcept
 {
   return (b & e64) == e64 && (b & m64) == 0;
 }
+
 bool
 o_fin(u64 b) noexcept
 {
   return (b & e64) != e64;
 }
+
 bool
 o_norm(u64 b) noexcept
 {
   return (b & e64) != 0 && (b & e64) != e64;
 }
+
 bool
 o_sign(u64 b) noexcept
 {
@@ -87,16 +91,19 @@ o_nan32(u32 b) noexcept
 {
   return (b & e32) == e32 && (b & m32) != 0;
 }
+
 bool
 o_inf32(u32 b) noexcept
 {
   return (b & e32) == e32 && (b & m32) == 0;
 }
+
 bool
 o_fin32(u32 b) noexcept
 {
   return (b & e32) != e32;
 }
+
 bool
 o_norm32(u32 b) noexcept
 {

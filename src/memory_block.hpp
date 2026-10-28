@@ -85,7 +85,7 @@ public:
   memory_block &
   operator=(const byte &b)
   {
-    micron::memset(memory.ptr, b, memory.len);
+    if ( memory.len ) micron::memset(memory.ptr, b, memory.len);
     return *this;
   }
 

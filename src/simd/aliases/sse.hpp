@@ -19,9 +19,7 @@ namespace simd
 namespace sse
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpedantic")
 // dispatch according to sse class
 #define __inline_sse [[gnu::always_inline, gnu::artificial]] static inline
 #define __inline_sse3 [[gnu::always_inline, gnu::artificial, gnu::target("sse3")]] static inline
@@ -29,8 +27,7 @@ __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_sse41 [[gnu::always_inline, gnu::artificial, gnu::target("sse4.1")]] static inline
 #define __inline_sse42 [[gnu::always_inline, gnu::artificial, gnu::target("sse4.2")]] static inline
 
-__inline_sse __m128
-zero_f32() noexcept
+    __inline_sse __m128 zero_f32() noexcept
 {
   return _mm_setzero_ps();
 }

@@ -78,8 +78,7 @@ struct exclusion_probe {
   [[nodiscard]] bool
   clean() const noexcept
   {
-    return violations.get(micron::memory_order::acquire) == 0
-           and inside.get(micron::memory_order::acquire) == 0;
+    return violations.get(micron::memory_order::acquire) == 0 and inside.get(micron::memory_order::acquire) == 0;
   }
 
   void
@@ -215,7 +214,7 @@ inline constexpr usize max_graph_nodes = 32;
 struct order_graph {
   micron::atomic_token<usize> node[max_graph_nodes];      // lock addresses as integers; the bitset
                                                           // rows below want an integral key anyway
-  micron::atomic_token<u32> adj[max_graph_nodes];      // bitset row: node i was held while wanting j
+  micron::atomic_token<u32> adj[max_graph_nodes];         // bitset row: node i was held while wanting j
   micron::atomic_token<u32> nodes{ 0 };
   micron::atomic_token<u64> overflow{ 0 };
   micron::atomic_token<u64> edges{ 0 };
@@ -385,7 +384,8 @@ struct watchdog {
       stalled.store(1, micron::memory_order::release);
       snowball::print("     WATCHDOG: no progress for ", static_cast<usize>(quiet_ms), " ms after ", static_cast<usize>(now), " ops");
       for ( u32 i = 0; i < threads and i < max_probe_threads; ++i ) {
-        snowball::print("       t", static_cast<usize>(i), " ops=", static_cast<usize>(per_thread[i].ops.get(micron::memory_order::acquire)),
+        snowball::print("       t", static_cast<usize>(i),
+                        " ops=", static_cast<usize>(per_thread[i].ops.get(micron::memory_order::acquire)),
                         " holding=", reinterpret_cast<usize>(per_thread[i].holding.get(micron::memory_order::acquire)),
                         " wanting=", reinterpret_cast<usize>(per_thread[i].wanting.get(micron::memory_order::acquire)));
       }

@@ -24,14 +24,12 @@ namespace micron
 namespace simd
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// byteshifts
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // byteshifts
 
-template<int imm8, is_simd_class T>
-inline T
-byte_shift_left(T &o)
+    template<int imm8, is_simd_class T>
+    inline T byte_shift_left(T &o)
 {
   if constexpr ( micron::is_same_v<typename T::bit_width, i128> ) {
     return _mm_bslli_si128(o, imm8);

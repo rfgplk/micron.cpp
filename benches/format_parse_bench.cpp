@@ -149,7 +149,7 @@ build(corpus &c, kind k) noexcept
     }
     case kind::d2s_rt: {
       u64 b = rnd();
-      if (((b >> 52) & 0x7FF) == 0x7FF ) b &= ~(1ull << 62);
+      if ( ((b >> 52) & 0x7FF) == 0x7FF ) b &= ~(1ull << 62);
       f64 v;
       __builtin_memcpy(&v, &b, 8);
       n = micron::__impl::__fpconv::d2s_buffered(v, buf);
@@ -157,7 +157,7 @@ build(corpus &c, kind k) noexcept
     }
     case kind::f32_rt: {
       u32 b = static_cast<u32>(rnd() >> 32);
-      if (((b >> 23) & 0xFF) == 0xFF ) b &= ~(1u << 30);
+      if ( ((b >> 23) & 0xFF) == 0xFF ) b &= ~(1u << 30);
       f32 v;
       __builtin_memcpy(&v, &b, 4);
       n = micron::__impl::__fpconv::f2s_buffered(v, buf);
@@ -208,16 +208,26 @@ const char *
 kind_name(kind k) noexcept
 {
   switch ( k ) {
-  case kind::int_short: return "int-short";
-  case kind::pi_class: return "pi-class";
-  case kind::sig17: return "sig17";
-  case kind::sig19_tie: return "sig19-tie";
-  case kind::d2s_rt: return "d2s-rt";
-  case kind::subnormal: return "subnormal";
-  case kind::long768: return "long250";
-  case kind::hex: return "hex";
-  case kind::fail: return "fail";
-  case kind::f32_rt: return "f32-rt";
+  case kind::int_short:
+    return "int-short";
+  case kind::pi_class:
+    return "pi-class";
+  case kind::sig17:
+    return "sig17";
+  case kind::sig19_tie:
+    return "sig19-tie";
+  case kind::d2s_rt:
+    return "d2s-rt";
+  case kind::subnormal:
+    return "subnormal";
+  case kind::long768:
+    return "long250";
+  case kind::hex:
+    return "hex";
+  case kind::fail:
+    return "fail";
+  case kind::f32_rt:
+    return "f32-rt";
   }
   return "?";
 }
@@ -228,9 +238,12 @@ const char *
 tier_name(tier t) noexcept
 {
   switch ( t ) {
-  case tier::legacy: return "to_double";
-  case tier::try_bool: return "try_parse_double";
-  case tier::opt: return "parse_double";
+  case tier::legacy:
+    return "to_double";
+  case tier::try_bool:
+    return "try_parse_double";
+  case tier::opt:
+    return "parse_double";
   }
   return "?";
 }
@@ -306,8 +319,8 @@ main(int argc, char **argv)
   if ( !g_csv ) micron::io::println("=== format parse (text -> float) — ns per parse, median of ", K_MEASUREMENTS, " ===");
 
   static corpus c;
-  const kind kinds[] = { kind::int_short, kind::pi_class,  kind::sig17, kind::sig19_tie, kind::d2s_rt,
-                         kind::subnormal, kind::long768,   kind::hex,   kind::fail,      kind::f32_rt };
+  const kind kinds[] = { kind::int_short, kind::pi_class, kind::sig17, kind::sig19_tie, kind::d2s_rt,
+                         kind::subnormal, kind::long768,  kind::hex,   kind::fail,      kind::f32_rt };
   const tier tiers[] = { tier::legacy, tier::try_bool, tier::opt };
 
   for ( kind k : kinds ) {

@@ -16,14 +16,12 @@ namespace simd
 // #define __micron_simd_svml 1   // requires an SVML backend; OFF by default
 #endif
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// abs
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // abs
 
-template<is_simd_class T>
-inline T
-abs_8(T &o)
+    template<is_simd_class T>
+    inline T abs_8(T &o)
 {
   if constexpr ( micron::is_same_v<typename T::bit_width, i128> ) {
     return _mm_abs_epi8(o);

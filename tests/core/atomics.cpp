@@ -51,7 +51,7 @@ main(void)
     require_true(p != nullptr);
     require_true(*p == 10);
     *p = 20;
-    a.release();            // NOTE: get() without release() leaks the lock
+    a.release();      // NOTE: get() without release() leaks the lock
 
     require_true(a == static_cast<char>(20));
     require_true(a != static_cast<char>(10));
@@ -93,8 +93,8 @@ main(void)
   {
     g_counter.store(0, micron::memory_order_relaxed);
     {
-      micron::auto_thread<> th[N_THREADS] = { micron::auto_thread<>(bump), micron::auto_thread<>(bump), micron::auto_thread<>(bump),
-                                              micron::auto_thread<>(bump) };
+      micron::auto_thread<> th[N_THREADS]
+          = { micron::auto_thread<>(bump), micron::auto_thread<>(bump), micron::auto_thread<>(bump), micron::auto_thread<>(bump) };
       (void)th;
     }      // auto_thread joins in its destructor
     require_true(g_counter.get(micron::memory_order_acquire) == static_cast<u64>(N_THREADS) * N_BUMPS);

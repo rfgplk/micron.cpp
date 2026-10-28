@@ -115,8 +115,8 @@ test_frequency(void)
   test_case("tick_hz is a plausible counter rate");
   {
     const u64 hz = ch::tick_hz();
-    require_true(hz >= 1000000ull);            // no counter is slower than 1 MHz
-    require_true(hz <= 100000000000ull);       // and none is faster than 100 GHz
+    require_true(hz >= 1000000ull);           // no counter is slower than 1 MHz
+    require_true(hz <= 100000000000ull);      // and none is faster than 100 GHz
   }
   end_test_case();
 

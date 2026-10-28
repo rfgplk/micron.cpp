@@ -8,9 +8,9 @@
 //
 // push() reports failure as ptr == (byte *)-1 (chunk::invalid()), not as nullptr.
 
+#include "../../src/io/console.hpp"
 #include "../../src/memory/allocation/abcmalloc/arena.hpp"
 #include "../../src/memory/allocation/abcmalloc/book.hpp"
-#include "../../src/io/console.hpp"
 #include "../../src/std.hpp"
 
 #include "../snowball/snowball.hpp"
@@ -22,7 +22,9 @@ using sb::test_case;
 // deterministic xorshift32; the seed is a fixed literal, never time-based
 struct xorshift32 {
   u32 s;
+
   constexpr xorshift32(u32 seed) noexcept : s(seed ? seed : 0xDEADBEEFu) { }
+
   u32
   next() noexcept
   {

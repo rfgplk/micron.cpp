@@ -424,7 +424,7 @@ rscbytecpy(F &restrict _dest, const D &restrict _src) noexcept
   return true;
 };
 
-void *
+inline void *
 voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
 {
   __memcpy_bytes(reinterpret_cast<byte *>(_dest), reinterpret_cast<const byte *>(_src), cnt);

@@ -13,11 +13,11 @@
 // splitting goes wrong, and (b) longest_prefix_match must agree with a brute-force scan, which is
 // the operation the type exists for and the old file did not have.
 
+#include "../src/trees/radix.hpp"
 #include "../src/io/console.hpp"
 #include "../src/io/stdout.hpp"
 #include "../src/std.hpp"
 #include "../src/string/strings.hpp"
-#include "../src/trees/radix.hpp"
 
 #include "../snowball/snowball.hpp"
 
@@ -159,15 +159,16 @@ main(void)
     sb::require(t.insert(ms("ruber"), 5));        // splits at "rube"
     sb::require(t.insert(ms("rubicon"), 6));
     sb::require(t.insert(ms("rubicundus"), 7));
-    sb::require(t.insert(ms("rom"), 8));          // an interior node GAINS a value
-    sb::require(t.insert(ms("r"), 9));            // the root edge gains a value
+    sb::require(t.insert(ms("rom"), 8));      // an interior node GAINS a value
+    sb::require(t.insert(ms("r"), 9));        // the root edge gains a value
     sb::require(t.size() == 9ULL);
 
     struct {
       const char *k;
       int v;
-    } expect[] = { { "romane", 1 },  { "romanus", 2 }, { "romulus", 3 },    { "rubens", 4 }, { "ruber", 5 },
+    } expect[] = { { "romane", 1 },  { "romanus", 2 },    { "romulus", 3 }, { "rubens", 4 }, { "ruber", 5 },
                    { "rubicon", 6 }, { "rubicundus", 7 }, { "rom", 8 },     { "r", 9 } };
+
     for ( auto &e : expect ) {
       const int *p = t.find(ms(e.k));
       sb::require(p != nullptr);

@@ -6,10 +6,8 @@
 #pragma once
 #include "bits/__compilers.hpp"
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wall")
-__micron_diagnostic_ignored("-Wextra")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wall") __micron_diagnostic_ignored("-Wextra")
+    __micron_diagnostic_ignored("-Wpedantic")
 #include "bits/__arch.hpp"
 
 #if defined(__micron_arch_amd64)
@@ -29,4 +27,4 @@ __micron_diagnostic_ignored("-Wpedantic")
 
 #include "bits/__syscall_codes_arm64.hpp"
 #endif
-__micron_diagnostic_pop
+        __micron_diagnostic_pop

@@ -35,8 +35,8 @@
 namespace sb = snowball;
 namespace sbf = snowball::fuzzing;
 
-using mtest::fuzz::sweep;
 using mtest::prng;
+using mtest::fuzz::sweep;
 namespace fref = mtest::fuzz::fref;
 
 namespace
@@ -50,6 +50,7 @@ using vecvec = micron::vector<micron::vector<i32>>;
 // hashable == takes the hash-set path in nub; Opaque has only ==, so it takes the fallback
 struct Opaque {
   i32 v;
+
   bool
   operator==(const Opaque &o) const
   {
@@ -62,9 +63,7 @@ static_assert(!micron::fp::__impl::hash_dedupable<Opaque>, "Opaque must reach nu
 
 constexpr auto v_pos = []<typename U>(U x)
   requires(!micron::is_pointer_v<U>)
-{
-  return x > U(0);
-};
+{ return x > U(0); };
 
 template<typename T>
 micron::vector<T>
@@ -343,8 +342,7 @@ access_suite(u64 seed)
         // elem mirrors contains
         {
           const i32 needle = n ? buf[rng.next() % n] : i32(7);
-          FUZZ_FAIL_IF(micron::fp::elem(v, needle) != (micron::find(v.begin(), v.end(), needle) != nullptr),
-                       "elem disagrees with find");
+          FUZZ_FAIL_IF(micron::fp::elem(v, needle) != (micron::find(v.begin(), v.end(), needle) != nullptr), "elem disagrees with find");
         }
 
         // find_first / find_index agree with each other and with find_if

@@ -91,10 +91,10 @@ main(void)
     m.unlock();
 
     require_true(m.try_lock_shared());
-    require_true(m.try_lock_shared());       // readers share freely
-    require_false(m.try_lock());             // but a writer cannot get in
+    require_true(m.try_lock_shared());      // readers share freely
+    require_false(m.try_lock());            // but a writer cannot get in
     m.unlock_shared();
-    require_false(m.try_lock());             // still one reader
+    require_false(m.try_lock());      // still one reader
     m.unlock_shared();
     require_true(m.try_lock());
     m.unlock();
@@ -133,8 +133,7 @@ main(void)
       }
     });
 
-    sb::print("     peak concurrent readers: ", static_cast<usize>(peak.get(memory_order::acquire)), " of ",
-              static_cast<usize>(kT));
+    sb::print("     peak concurrent readers: ", static_cast<usize>(peak.get(memory_order::acquire)), " of ", static_cast<usize>(kT));
     require(inside.get(memory_order::acquire) == 0u);
     require_true(peak.get(memory_order::acquire) > 1u);      // else this is just an expensive mutex
     require(m.readers() == 0u);

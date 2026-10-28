@@ -271,23 +271,40 @@ const char *
 chain_name(chain c) noexcept
 {
   switch ( c ) {
-  case chain::fmap_collect: return "fmap|collect";
-  case chain::fmap2_collect: return "fmap|fmap|collect";
-  case chain::fmap_fold: return "fmap|fold";
-  case chain::sum_i32: return "sum<i32>";
-  case chain::sum_f64: return "sum<f64>";
-  case chain::count_if: return "count_if";
-  case chain::any_of_late: return "any_of (late hit)";
-  case chain::filter_collect: return "filter|collect";
-  case chain::filter_fmap_take: return "filter|fmap|take(k)";
-  case chain::add_scalar: return "add(y)|collect";
-  case chain::zip_fold: return "zip_with|fold";
-  case chain::enumerate_filter: return "enumerate|filter|collect";
-  case chain::reverse_sum: return "reverse|sum";
-  case chain::sort_collect: return "sort|collect";
-  case chain::chunk_count: return "chunk(16)|count";
-  case chain::flatten_sum: return "flatten|sum";
-  default: return "?";
+  case chain::fmap_collect:
+    return "fmap|collect";
+  case chain::fmap2_collect:
+    return "fmap|fmap|collect";
+  case chain::fmap_fold:
+    return "fmap|fold";
+  case chain::sum_i32:
+    return "sum<i32>";
+  case chain::sum_f64:
+    return "sum<f64>";
+  case chain::count_if:
+    return "count_if";
+  case chain::any_of_late:
+    return "any_of (late hit)";
+  case chain::filter_collect:
+    return "filter|collect";
+  case chain::filter_fmap_take:
+    return "filter|fmap|take(k)";
+  case chain::add_scalar:
+    return "add(y)|collect";
+  case chain::zip_fold:
+    return "zip_with|fold";
+  case chain::enumerate_filter:
+    return "enumerate|filter|collect";
+  case chain::reverse_sum:
+    return "reverse|sum";
+  case chain::sort_collect:
+    return "sort|collect";
+  case chain::chunk_count:
+    return "chunk(16)|count";
+  case chain::flatten_sum:
+    return "flatten|sum";
+  default:
+    return "?";
   }
 }
 
@@ -322,12 +339,10 @@ run(u64 n)
       for ( u64 i = 0; i < n; ++i ) d[i] = (a[i] * 3 + 1) ^ 0x5a;
       clobber(out.begin());
     } else if constexpr ( A == arm::lazy ) {
-      auto out = av | lz::fmap([](i32 x) { return x * 3 + 1; }) | lz::fmap([](i32 x) { return x ^ 0x5a; })
-                 | lz::collect<vec_i>();
+      auto out = av | lz::fmap([](i32 x) { return x * 3 + 1; }) | lz::fmap([](i32 x) { return x ^ 0x5a; }) | lz::collect<vec_i>();
       clobber(out.begin());
     } else {
-      auto out = micron::fp::fmap([](i32 x) { return x ^ 0x5a; },
-                                  micron::fp::fmap([](i32 x) { return x * 3 + 1; }, prefix(g_a, n)));
+      auto out = micron::fp::fmap([](i32 x) { return x ^ 0x5a; }, micron::fp::fmap([](i32 x) { return x * 3 + 1; }, prefix(g_a, n)));
       clobber(out.begin());
     }
   } else if constexpr ( C == chain::fmap_fold ) {
@@ -434,16 +449,13 @@ run(u64 n)
       out.resize(w);
       clobber(out.begin());
     } else if constexpr ( A == arm::lazy ) {
-      auto out = av | lz::filter([](i32 x) { return x > 0; }) | lz::fmap([](i32 x) { return x * 3; }) | lz::take(k)
-                 | lz::collect<vec_i>();
+      auto out = av | lz::filter([](i32 x) { return x > 0; }) | lz::fmap([](i32 x) { return x * 3; }) | lz::take(k) | lz::collect<vec_i>();
       clobber(out.begin());
     } else {
       // this is the shape the whole layer exists for: eager filters ALL n, maps ALL of them, then
       // throws away everything past k -- three containers for one eighth of an answer
-      auto out = micron::fp::take(micron::fp::fmap([](i32 x) { return x * 3; },
-                                                   micron::filter(prefix(g_a, n),
-                                                                  [](const i32 *x) { return *x > 0; })),
-                                  k);
+      auto out = micron::fp::take(
+          micron::fp::fmap([](i32 x) { return x * 3; }, micron::filter(prefix(g_a, n), [](const i32 *x) { return *x > 0; })), k);
       clobber(out.begin());
     }
   } else if constexpr ( C == chain::add_scalar ) {
@@ -467,9 +479,7 @@ run(u64 n)
     } else if constexpr ( A == arm::lazy ) {
       sink_u64 += static_cast<u64>(av | lz::inner_product<i64>(bv, static_cast<i64>(0)));
     } else {
-      sink_u64 += static_cast<u64>(micron::fp::inner_product<vec_i, i64>(prefix(g_a, n),
-                                                                         prefix(g_b, n),
-                                                                         static_cast<i64>(0)));
+      sink_u64 += static_cast<u64>(micron::fp::inner_product<vec_i, i64>(prefix(g_a, n), prefix(g_b, n), static_cast<i64>(0)));
     }
   } else if constexpr ( C == chain::enumerate_filter ) {
     if constexpr ( A == arm::hand ) {

@@ -119,7 +119,12 @@ main()
   test_case("sort / sort_by against fp::sort_c / fp::sort_by_c");
   {
     vec_i u;
-    u.push_back(5); u.push_back(1); u.push_back(4); u.push_back(1); u.push_back(9); u.push_back(2);
+    u.push_back(5);
+    u.push_back(1);
+    u.push_back(4);
+    u.push_back(1);
+    u.push_back(9);
+    u.push_back(2);
     auto s = u | lz::sort() | lz::collect<vec_i>();
     auto e = micron::fp::sort_c()(u);
     require(s.size(), e.size());
@@ -227,8 +232,7 @@ main()
   {
     auto a = iota_vec(1, 5);
     auto b = iota_vec(10, 5);
-    auto zt = a | lz::zip(b) | lz::fmap([](auto t) { return micron::get<0>(t) * 100 + micron::get<1>(t); })
-              | lz::collect<vec_i>();
+    auto zt = a | lz::zip(b) | lz::fmap([](auto t) { return micron::get<0>(t) * 100 + micron::get<1>(t); }) | lz::collect<vec_i>();
     require(zt.size(), usize(5));
     require(zt[0], 110);
 
@@ -256,8 +260,14 @@ main()
   test_case("unique drops CONSECUTIVE runs; nub drops all repeats -- against fp::");
   {
     vec_i d;
-    d.push_back(1); d.push_back(1); d.push_back(2); d.push_back(2); d.push_back(2);
-    d.push_back(1); d.push_back(3); d.push_back(3);
+    d.push_back(1);
+    d.push_back(1);
+    d.push_back(2);
+    d.push_back(2);
+    d.push_back(2);
+    d.push_back(1);
+    d.push_back(3);
+    d.push_back(3);
 
     auto u = d | lz::unique() | lz::collect<vec_i>();
     auto eu = micron::fp::unique(d);
@@ -398,7 +408,12 @@ main()
   test_case("group / group_by compare against the PREVIOUS element, matching fpdata.hpp");
   {
     vec_i g;
-    g.push_back(1); g.push_back(1); g.push_back(2); g.push_back(3); g.push_back(3); g.push_back(3);
+    g.push_back(1);
+    g.push_back(1);
+    g.push_back(2);
+    g.push_back(3);
+    g.push_back(3);
+    g.push_back(3);
     require(g | lz::group() | lz::count(), usize(3));
     auto lens = g | lz::group() | lz::fmap([](auto w) { return static_cast<int>(w.size()); }) | lz::collect<vec_i>();
     auto eg = micron::fp::group<vec_vi>(g);
@@ -413,9 +428,13 @@ main()
     // a NON-TRANSITIVE relation, which is the only way to tell the two comparisons apart:
     // "ascending run" groups differently under prev-vs-cur than under first-vs-cur
     vec_i asc;
-    asc.push_back(1); asc.push_back(2); asc.push_back(3); asc.push_back(1); asc.push_back(2);
-    auto runs = asc | lz::group_by([](int a, int b) { return a < b; })
-                | lz::fmap([](auto w) { return static_cast<int>(w.size()); }) | lz::collect<vec_i>();
+    asc.push_back(1);
+    asc.push_back(2);
+    asc.push_back(3);
+    asc.push_back(1);
+    asc.push_back(2);
+    auto runs = asc | lz::group_by([](int a, int b) { return a < b; }) | lz::fmap([](auto w) { return static_cast<int>(w.size()); })
+                | lz::collect<vec_i>();
     auto eruns = micron::fp::group_by<vec_vi>(asc, [](int a, int b) { return a < b; });
     require(runs.size(), eruns.size());
     for ( usize i = 0; i < runs.size(); ++i ) require(static_cast<usize>(runs[i]), eruns[i].size());

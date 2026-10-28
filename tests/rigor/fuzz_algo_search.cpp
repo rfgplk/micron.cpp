@@ -31,9 +31,9 @@
 namespace sb = snowball;
 namespace sbf = snowball::fuzzing;
 
+using mtest::prng;
 using mtest::fuzz::sweep;
 using mtest::fuzz::sweep2;
-using mtest::prng;
 namespace ref = mtest::rigor::ref;
 namespace fref = mtest::fuzz::fref;
 
@@ -48,9 +48,7 @@ constexpr usize MAXN = 1024;
 // the immediate context, which no amount of SFINAE can recover from.
 constexpr auto v_pos = []<typename U>(U x)
   requires(!micron::is_pointer_v<U>)
-{
-  return x > U(0);
-};
+{ return x > U(0); };
 constexpr auto p_pos = []<typename U>(const U *x) { return *x > U(0); };
 constexpr auto p_eq = []<typename U>(const U *a, const U *b) { return *a == *b; };
 
@@ -107,9 +105,12 @@ scan_suite(const char *tag, u64 seed)
         // -- quantifiers over a predicate -----------------------------------
         FUZZ_FAIL_IF(chk && micron::all_of(b, e, v_pos) != ref::naive_all_of_if(b, n, v_pos), "all_of[value-pred] disagrees with oracle");
         FUZZ_FAIL_IF(chk && micron::any_of(b, e, v_pos) != ref::naive_any_of_if(b, n, v_pos), "any_of[value-pred] disagrees with oracle");
-        FUZZ_FAIL_IF(chk && micron::all_of(b, e, p_pos) != ref::naive_all_of_if(b, n, v_pos), "all_of[ptr-pred] disagrees with the value form");
-        FUZZ_FAIL_IF(chk && micron::any_of(b, e, p_pos) != ref::naive_any_of_if(b, n, v_pos), "any_of[ptr-pred] disagrees with the value form");
-        FUZZ_FAIL_IF(chk && micron::none_of(b, e, p_pos) != !ref::naive_any_of_if(b, n, v_pos), "none_of[ptr-pred] disagrees with the value form");
+        FUZZ_FAIL_IF(chk && micron::all_of(b, e, p_pos) != ref::naive_all_of_if(b, n, v_pos),
+                     "all_of[ptr-pred] disagrees with the value form");
+        FUZZ_FAIL_IF(chk && micron::any_of(b, e, p_pos) != ref::naive_any_of_if(b, n, v_pos),
+                     "any_of[ptr-pred] disagrees with the value form");
+        FUZZ_FAIL_IF(chk && micron::none_of(b, e, p_pos) != !ref::naive_any_of_if(b, n, v_pos),
+                     "none_of[ptr-pred] disagrees with the value form");
 
         // -- find_if / find_if_not, both predicate flavours ------------------
         const T *wif = ref::naive_find_if(b, n, v_pos);
@@ -124,7 +125,8 @@ scan_suite(const char *tag, u64 seed)
         if ( n ) FUZZ_FAIL_IF(chk && (wif == b) == (win == b), "find_if and find_if_not both claim (or both disclaim) element 0");
 
         // -- find_last_if / find_last_if_not --------------------------------
-        FUZZ_FAIL_IF(chk && micron::find_last_if(b, e, p_pos) != fref::naive_find_last_if(b, n, v_pos), "find_last_if disagrees with oracle");
+        FUZZ_FAIL_IF(chk && micron::find_last_if(b, e, p_pos) != fref::naive_find_last_if(b, n, v_pos),
+                     "find_last_if disagrees with oracle");
         FUZZ_FAIL_IF(chk && micron::find_last_if_not(b, e, p_pos) != fref::naive_find_last_if_not(b, n, v_pos),
                      "find_last_if_not disagrees with oracle");
 
@@ -176,8 +178,9 @@ pair_suite(const char *tag, u64 seed)
         // the 4-pointer form additionally compares lengths
         FUZZ_FAIL_IF(chk && micron::equal(static_cast<const T *>(a), a + n, static_cast<const T *>(b), b + n) != eq,
                      "equal[4-ptr] disagrees with the 3-ptr form at equal length");
-        if ( n ) FUZZ_FAIL_IF(chk && micron::equal(static_cast<const T *>(a), a + n, static_cast<const T *>(b), b + n - 1),
-                              "equal[4-ptr] ignored a length difference");
+        if ( n )
+          FUZZ_FAIL_IF(chk && micron::equal(static_cast<const T *>(a), a + n, static_cast<const T *>(b), b + n - 1),
+                       "equal[4-ptr] ignored a length difference");
       },
       seed);
 }

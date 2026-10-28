@@ -14,13 +14,13 @@ namespace micron
 constexpr static const i32 nohang = 1;   /* Don't block waiting.  */
 constexpr static const i32 untraced = 2; /* Report status of stopped children.  */
 /* Bits in the fourth argument to `waitid'.  */
-constexpr static const i32 stopped = 2;             /* Report stopped child (same as WUNTRACED). */
-constexpr static const i32 exited = 4;              /* Report dead child.  */
-constexpr static const i32 continued = 8;           /* Report continued child.  */
-constexpr static const i32 nowait = 0x01000000;     /* Don't reap, just poll status.  */
-constexpr static const i32 nothread = 0x20000000;   /* Don't wait on children of other threads
-                                    in this group */
-constexpr static const i32 wait_all = 0x40000000;   /* Wait for any child.  */
+constexpr static const i32 stopped = 2;                                /* Report stopped child (same as WUNTRACED). */
+constexpr static const i32 exited = 4;                                 /* Report dead child.  */
+constexpr static const i32 continued = 8;                              /* Report continued child.  */
+constexpr static const i32 nowait = 0x01000000;                        /* Don't reap, just poll status.  */
+constexpr static const i32 nothread = 0x20000000;                      /* Don't wait on children of other threads
+                                                       in this group */
+constexpr static const i32 wait_all = 0x40000000;                      /* Wait for any child.  */
 constexpr static const i32 wait_clone = static_cast<i32>(0x80000000u); /* Wait for cloned process.  */
 constexpr static const clock_t clocks_per_sec = static_cast<i32>(1000000u);
 constexpr static const i32 clock_realtime = 0;

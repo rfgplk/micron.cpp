@@ -127,8 +127,8 @@ main(void)
     require(total == static_cast<u64>(kT) * kIters);
     require(pr.violations.get(memory_order::acquire) == 0ull);
     require_false(m.is_locked());
-    sb::print("     ", static_cast<usize>(kT), " threads x ", static_cast<usize>(kIters), "  parks=",
-              static_cast<usize>(m.stats().parks()), " spins=", static_cast<usize>(m.stats().spins()));
+    sb::print("     ", static_cast<usize>(kT), " threads x ", static_cast<usize>(kIters), "  parks=", static_cast<usize>(m.stats().parks()),
+              " spins=", static_cast<usize>(m.stats().spins()));
 
     if constexpr ( stats_live ) {
       require(m.stats().acquires() == static_cast<u64>(kT) * kIters);

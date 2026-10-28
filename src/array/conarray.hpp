@@ -73,12 +73,12 @@ class conarray
   {
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
-__micron_loop_ivdep      for ( size_type i = 0; i < N; i++ ) dst[i] += v;
+      __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] += v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
-__micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] += src[i];
+      __micron_loop_ivdep for ( size_type i = 0; i < bound; i++ ) dst[i] += src[i];
     }
   }
 
@@ -88,12 +88,12 @@ __micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] += src[i
   {
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
-__micron_loop_ivdep      for ( size_type i = 0; i < N; i++ ) dst[i] -= v;
+      __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] -= v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
-__micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] -= src[i];
+      __micron_loop_ivdep for ( size_type i = 0; i < bound; i++ ) dst[i] -= src[i];
     }
   }
 
@@ -103,12 +103,12 @@ __micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] -= src[i
   {
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
-__micron_loop_ivdep      for ( size_type i = 0; i < N; i++ ) dst[i] *= v;
+      __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] *= v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
-__micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] *= src[i];
+      __micron_loop_ivdep for ( size_type i = 0; i < bound; i++ ) dst[i] *= src[i];
     }
   }
 
@@ -118,12 +118,12 @@ __micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] *= src[i
   {
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
-__micron_loop_ivdep      for ( size_type i = 0; i < N; i++ ) dst[i] /= v;
+      __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] /= v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
-__micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] /= src[i];
+      __micron_loop_ivdep for ( size_type i = 0; i < bound; i++ ) dst[i] /= src[i];
     }
   }
 
@@ -133,12 +133,12 @@ __micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] /= src[i
   {
     if constexpr ( micron::is_arithmetic_v<micron::remove_cv_t<U>> ) {
       T *__restrict dst = stack;
-__micron_loop_ivdep      for ( size_type i = 0; i < N; i++ ) dst[i] %= v;
+      __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] %= v;
     } else {
       T *__restrict dst = stack;
       const auto *__restrict src = v.data();
       const size_type bound = v.size() < N ? v.size() : N;
-__micron_loop_ivdep      for ( size_type i = 0; i < bound; i++ ) dst[i] %= src[i];
+      __micron_loop_ivdep for ( size_type i = 0; i < bound; i++ ) dst[i] %= src[i];
     }
   }
 
@@ -475,7 +475,7 @@ public:
     __hold __lock(__mtx);
     if constexpr ( N <= A::static_size )
       __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o[0]));
-    else
+    else if constexpr ( A::static_size > 0 )
       __impl_container::copy_assign<A::static_size, T>(micron::addr(stack[0]), micron::addr(o[0]));
     return *this;
   }
@@ -487,6 +487,7 @@ public:
   operator=(const A &o)
   {
     __hold __lock(__mtx);
+    if ( o.size() == 0 ) return *this;
     if ( N <= o.size() )
       __impl_container::copy_assign<N, T>(micron::addr(stack[0]), micron::addr(o[0]));
     else
@@ -530,7 +531,7 @@ public:
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] + src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] + src[i];
     return arr;
   }
 
@@ -545,7 +546,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] + src[
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] - src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] - src[i];
     return arr;
   }
 
@@ -560,7 +561,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] - src[
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] * src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] * src[i];
     return arr;
   }
 
@@ -575,7 +576,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] * src[
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] / src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] / src[i];
     return arr;
   }
 
@@ -590,7 +591,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] / src[
     T *__restrict dst = arr.stack;
     const T *__restrict me = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] % src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] % src[i];
     return arr;
   }
 
@@ -603,7 +604,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] = me[i] % src[
     __hold __lock(__mtx);
     const T *__restrict src = stack;
     T sm = T{};
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) sm += src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) sm += src[i];
     return sm;
   }
 
@@ -613,7 +614,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) sm += src[i];
     __hold __lock(__mtx);
     const T *__restrict src = stack;
     T m = src[0];
-__micron_loop_ivdep    for ( size_type i = 1; i < N; i++ ) m *= src[i];
+    __micron_loop_ivdep for ( size_type i = 1; i < N; i++ ) m *= src[i];
     return m;
   }
 
@@ -625,7 +626,7 @@ __micron_loop_ivdep    for ( size_type i = 1; i < N; i++ ) m *= src[i];
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] += o;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] += o;
     return *this;
   }
 
@@ -634,7 +635,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] += o;
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] -= o;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] -= o;
     return *this;
   }
 
@@ -643,7 +644,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] -= o;
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] *= o;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] *= o;
     return *this;
   }
 
@@ -652,7 +653,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] *= o;
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] /= o;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] /= o;
     return *this;
   }
 
@@ -662,7 +663,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] /= o;
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
     return *this;
   }
 
@@ -677,7 +678,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] %= o;
     __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
     return *this;
   }
 
@@ -689,7 +690,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] += src[i];
     __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
     return *this;
   }
 
@@ -701,7 +702,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] -= src[i];
     __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
     return *this;
   }
 
@@ -713,7 +714,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] *= src[i];
     __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     return *this;
   }
 
@@ -725,7 +726,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] /= src[i];
     __hold __lock(__mtx);
     T *__restrict dst = stack;
     const T *__restrict src = o.stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
+    __micron_loop_ivdep for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
     return *this;
   }
 
@@ -790,7 +791,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < M; i++ ) dst[i] %= src[i];
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
   }
 
   void
@@ -798,7 +799,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] *= n;
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
   }
 
   void
@@ -806,7 +807,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] /= n;
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
   }
 
   void
@@ -814,7 +815,7 @@ __micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] -= n;
   {
     __hold __lock(__mtx);
     T *__restrict dst = stack;
-__micron_loop_ivdep    for ( size_type i = 0; i < N; i++ ) dst[i] += n;
+    __micron_loop_ivdep for ( size_type i = 0; i < N; i++ ) dst[i] += n;
   }
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

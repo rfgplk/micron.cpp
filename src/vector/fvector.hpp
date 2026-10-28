@@ -104,7 +104,7 @@ public:
 
   fvector(const size_type n) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
   }
 
@@ -113,7 +113,7 @@ public:
              and not(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>))
   fvector(const size_type n, Fn &&fn) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
     micron::generate(begin(), end(), fn);
   }
@@ -122,7 +122,7 @@ public:
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   fvector(const size_type n, Fn &&fn) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
     micron::transform(begin(), end(), fn);
   }
@@ -148,7 +148,7 @@ public:
 
   fvector(size_type n, const T &init_value) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), init_value, n);
+    __impl_container::construct(__mem::memory, init_value, n);
     __mem::length = n;
   }
 
@@ -285,7 +285,7 @@ public:
   {
     if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) __grow_reserve(allocation_add_or_throw(__mem::length, o.length));
-    __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
+    __impl_container::copy(__mem::memory + __mem::length, o.memory, o.length);
     __mem::length += o.length;
     return *this;
   }
@@ -297,7 +297,7 @@ public:
   {
     if ( o.empty() ) return *this;
     if ( !__mem::has_space(o.length) ) __grow_reserve(allocation_add_or_throw(__mem::length, o.length));
-    __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), o.length);
+    __impl_container::move(__mem::memory + __mem::length, o.memory, o.length);
     __mem::length += o.length;
     o.length = 0;
     return *this;
@@ -398,7 +398,7 @@ public:
       return;
     }
     if ( n > __mem::capacity ) reserve(n);
-    __impl_container::construct(micron::addr(__mem::memory[__mem::length]), v, n - __mem::length);
+    __impl_container::construct(__mem::memory + __mem::length, v, n - __mem::length);
     __mem::length = n;
   }
 
@@ -631,7 +631,7 @@ public:
   {
     if ( cnt > __mem::capacity ) reserve(cnt);
     clear();
-    __impl_container::construct(micron::addr(__mem::memory[0]), val, cnt);      // rollback-safe fill
+    __impl_container::construct(__mem::memory, val, cnt);      // rollback-safe fill
     __mem::length = cnt;
     return *this;
   }
@@ -732,7 +732,7 @@ public:
   clear(void)
   {
     if ( !__mem::length ) return;
-    __impl_container::destroy_fast(micron::addr(__mem::memory[0]), __mem::length);
+    __impl_container::destroy_fast(__mem::memory, __mem::length);
     __mem::length = 0;
   }
 

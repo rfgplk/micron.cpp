@@ -266,9 +266,11 @@ struct process {
   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);
 };
 
-// SYS_clone3 is absent and SYS_clone is present; clone3 passes a struct which bpf cannot read through; see CVE-2022-0185 and CVE-2026-63917/63921
+// SYS_clone3 is absent and SYS_clone is present; clone3 passes a struct which bpf cannot read through; see CVE-2022-0185 and
+// CVE-2026-63917/63921
 //
-// WARNING: micron's freestanding threads use clone3, enabling this means you can't use them, opt for groups:process and concede that it can create namespaces arbitrarily
+// WARNING: micron's freestanding threads use clone3, enabling this means you can't use them, opt for groups:process and concede that it can
+// create namespaces arbitrarily
 struct process_no_ns {
   using policy_tag = syscall_group_tag;
   static constexpr i32 calls[] = {

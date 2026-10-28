@@ -18,12 +18,10 @@ namespace simd
 namespace bmi
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
-__inline_g unsigned int
-trailing_zeros_u32(unsigned int v) noexcept
+    __inline_g unsigned int trailing_zeros_u32(unsigned int v) noexcept
 {
   return _tzcnt_u32(v);
 }

@@ -120,8 +120,7 @@ child_confines_to_subtree(void)
   // outside it: EACCES, and specifically EACCES rather than ENOENT
   if ( open_errno(outside_file) != -13 ) mc::sys_group_exit(bad_code);
   // a right the ruleset HANDLES but never granted is denied even inside the subtree
-  const i32 wfd
-      = static_cast<i32>(mc::posix::open(inside_file, mc::posix::o_wronly, 0));
+  const i32 wfd = static_cast<i32>(mc::posix::open(inside_file, mc::posix::o_wronly, 0));
   if ( wfd >= 0 ) {
     (void)mc::posix::close(wfd);
     mc::sys_group_exit(bad_code);

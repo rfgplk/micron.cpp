@@ -100,8 +100,7 @@ measure(const char *name, u64 ops_per_rep, u64 reps, Kernel &&kernel) noexcept
     ipo[m] = ins / total;
     ipc[m] = cyc > 0 ? ins / cyc : 0.0;
   }
-  return cell{ name, ops_per_rep, median_f64(cpo, K_MEASUREMENTS), median_f64(ipo, K_MEASUREMENTS),
-               median_f64(ipc, K_MEASUREMENTS) };
+  return cell{ name, ops_per_rep, median_f64(cpo, K_MEASUREMENTS), median_f64(ipo, K_MEASUREMENTS), median_f64(ipc, K_MEASUREMENTS) };
 }
 
 void
@@ -156,8 +155,7 @@ void
 build_functional(void) noexcept
 {
   auto fb = sc::policy<cap_n>() | sc::arch_native() | sc::allow_group<g::baseline, g::io>()
-            | sc::deny_group<g::network>(static_cast<u16>(runtime_errno))
-            | sc::deny_all(static_cast<u16>(runtime_errno)) | sc::build();
+            | sc::deny_group<g::network>(static_cast<u16>(runtime_errno)) | sc::deny_all(static_cast<u16>(runtime_errno)) | sc::build();
   sink_count = fb.count;
 }
 
@@ -169,8 +167,7 @@ build_predicates(void) noexcept
   fb.require_native_arch();
   const i32 base = runtime_base;
   for ( i32 i = 0; i < 32; ++i ) {
-    fb.action_if(base + i, sc::arg_lt(0, 0x1'0000'0000ull + static_cast<u64>(i)),
-                 sc::act_errno(static_cast<u16>(runtime_errno)));
+    fb.action_if(base + i, sc::arg_lt(0, 0x1'0000'0000ull + static_cast<u64>(i)), sc::act_errno(static_cast<u16>(runtime_errno)));
   }
   fb.__seal(sc::act_allow());
   sink_count = fb.count;
@@ -202,8 +199,8 @@ int
 main(void)
 {
   micron::console("=== micron::sec bench ===\n");
-  micron::console("landlock abi=", static_cast<i64>(s::landlock::abi_level()), "  selinux present=",
-                  static_cast<u64>(sl::present()), "\n\n");
+  micron::console("landlock abi=", static_cast<i64>(s::landlock::abi_level()), "  selinux present=", static_cast<u64>(sl::present()),
+                  "\n\n");
 
   micron::console("[encode] one policy of ", static_cast<u64>(type_policy::build(0).count), " instructions\n");
   print_cell(measure("build: imperative chain", 1, 20000, build_imperative));

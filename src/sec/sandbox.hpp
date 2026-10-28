@@ -314,8 +314,7 @@ private:
     i32 r = 0;
     if ( __parent_death ) {
       r = micron::prctl(micron::PR_SET_PDEATHSIG, posix::sig_kill);
-      if ( r < 0 || posix::getppid() != parent )
-        __impl::__child_fail(ep, stage::parent_lifetime, r < 0 ? r : -error::no_process);
+      if ( r < 0 || posix::getppid() != parent ) __impl::__child_fail(ep, stage::parent_lifetime, r < 0 ? r : -error::no_process);
     }
 
     // namespaces
@@ -417,7 +416,7 @@ private:
     // landlock, also before seccomp
     if ( landlock::any(__ll_handled) || landlock::any(__ll_handled_net) || landlock::any(__ll_scoped) || __ll_count > 0 ) {
       landlock::ruleset rs = landlock::try_ruleset(__ll_handled, __ll_handled_net, __ll_scoped,
-                                                __ll_strict ? landlock::abi_policy::strict : landlock::abi_policy::narrow);
+                                                   __ll_strict ? landlock::abi_policy::strict : landlock::abi_policy::narrow);
       if ( !rs.valid() ) __impl::__child_fail(ep, stage::landlock, rs.error());
       for ( usize i = 0; i < __ll_count; ++i ) {
         const auto &rule = __ll_rules[i];
@@ -642,8 +641,7 @@ public:
   sandbox &
   landlock_fd(i32 fd, landlock::access_fs access) noexcept
   {
-    if ( fd < 3 || posix::fcntl(fd, posix::f_getfd, 0) < 0 )
-      return __config_fail(stage::landlock, -error::bad_file_number), *this;
+    if ( fd < 3 || posix::fcntl(fd, posix::f_getfd, 0) < 0 ) return __config_fail(stage::landlock, -error::bad_file_number), *this;
     if ( __ll_count >= max_landlock_rules ) return __config_fail(stage::landlock, -error::no_space), *this;
     __ll_rules[__ll_count++] = ll_rule{ nullptr, access, fd };
     if ( !__ll_handled_explicit ) __ll_handled = landlock::supported_fs();
@@ -900,7 +898,8 @@ public:
   sandbox &
   parent_death_signal() noexcept
   {
-    __parent_death = true; return *this;
+    __parent_death = true;
+    return *this;
   }
 
   [[nodiscard]] child

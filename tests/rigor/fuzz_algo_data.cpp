@@ -43,8 +43,8 @@
 namespace sb = snowball;
 namespace sbf = snowball::fuzzing;
 
-using mtest::fuzz::sweep;
 using mtest::prng;
+using mtest::fuzz::sweep;
 namespace fref = mtest::fuzz::fref;
 
 namespace
@@ -243,8 +243,7 @@ block_suite(const char *tag, u64 seed)
 
           // compare_n / equal_n, including a single altered element
           for ( usize i = 0; i < n; ++i ) dst[i] = buf[i];
-          FUZZ_FAIL_IF(!micron::equal_n(static_cast<const T *>(buf), static_cast<const T *>(dst), n),
-                       "equal_n says an exact copy differs");
+          FUZZ_FAIL_IF(!micron::equal_n(static_cast<const T *>(buf), static_cast<const T *>(dst), n), "equal_n says an exact copy differs");
           FUZZ_FAIL_IF(micron::compare_n(static_cast<const T *>(buf), static_cast<const T *>(dst), n) != 0,
                        "compare_n is nonzero for an exact copy");
           {
@@ -305,8 +304,7 @@ main(void)
         micron::sort_heap(v);
         for ( usize i = 1; i < v.size(); ++i )
           if ( v[i] < v[i - 1] ) FUZZ_FAIL("sort_heap did not sort ascending");
-        if ( !fref::naive_is_permutation(v.begin(), v.size(), orig.begin(), orig.size()) )
-          FUZZ_FAIL("heapsort is not a permutation");
+        if ( !fref::naive_is_permutation(v.begin(), v.size(), orig.begin(), orig.size()) ) FUZZ_FAIL("heapsort is not a permutation");
       },
       { .seed = 0x4EA95024, .count = 20000 }, sbf::vector_of(sbf::spec<i32>{}).len(0, 64));
 

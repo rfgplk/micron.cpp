@@ -12,9 +12,7 @@
 
 // -Wshadow reports this as "shadowing library function 'operator new'", which is exactly what this
 // header is for
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wshadow")
-template<typename P>
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wshadow") template<typename P>
 void *
 operator new(usize size, P *ptr)
 {

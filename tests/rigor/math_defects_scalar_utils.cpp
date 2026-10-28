@@ -102,8 +102,8 @@ o_pascal(void)
         continue;
       }
       u64 s = 0;
-      const bool ok = __pascal_ok[n - 1][k - 1] && __pascal_ok[n - 1][k]
-                      && !__builtin_add_overflow(__pascal[n - 1][k - 1], __pascal[n - 1][k], &s);
+      const bool ok
+          = __pascal_ok[n - 1][k - 1] && __pascal_ok[n - 1][k] && !__builtin_add_overflow(__pascal[n - 1][k - 1], __pascal[n - 1][k], &s);
       __pascal[n][k] = s;
       __pascal_ok[n][k] = ok;
     }

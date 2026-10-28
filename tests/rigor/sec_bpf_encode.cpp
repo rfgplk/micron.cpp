@@ -64,13 +64,20 @@ so::cmp_kind
 kind_of(sc::cmp c)
 {
   switch ( c ) {
-  case sc::cmp::eq: return so::cmp_kind::eq;
-  case sc::cmp::ne: return so::cmp_kind::ne;
-  case sc::cmp::lt: return so::cmp_kind::lt;
-  case sc::cmp::le: return so::cmp_kind::le;
-  case sc::cmp::gt: return so::cmp_kind::gt;
-  case sc::cmp::ge: return so::cmp_kind::ge;
-  case sc::cmp::masked_eq: return so::cmp_kind::masked;
+  case sc::cmp::eq:
+    return so::cmp_kind::eq;
+  case sc::cmp::ne:
+    return so::cmp_kind::ne;
+  case sc::cmp::lt:
+    return so::cmp_kind::lt;
+  case sc::cmp::le:
+    return so::cmp_kind::le;
+  case sc::cmp::gt:
+    return so::cmp_kind::gt;
+  case sc::cmp::ge:
+    return so::cmp_kind::ge;
+  case sc::cmp::masked_eq:
+    return so::cmp_kind::masked;
   }
   return so::cmp_kind::eq;
 }
@@ -136,11 +143,7 @@ main(void)
   sb::test_case("allow / deny_errno / trap_syscall each reach exactly their own syscall");
   {
     sc::filter_builder<64> fb;
-    fb.require_native_arch()
-        .allow(test_nr)
-        .deny_errno(other_nr, 7)
-        .trap_syscall(333)
-        .default_kill();
+    fb.require_native_arch().allow(test_nr).deny_errno(other_nr, 7).trap_syscall(333).default_kill();
 
     sb::require(exec(fb, make_probe(test_nr, 0, 0)).action, sc::act_allow());
     sb::require(exec(fb, make_probe(other_nr, 0, 0)).action, sc::act_errno(7));
@@ -190,8 +193,7 @@ main(void)
   {
     so::rng rg{ seed };
 
-    const sc::cmp ops[] = { sc::cmp::eq, sc::cmp::ne, sc::cmp::lt, sc::cmp::le,
-                            sc::cmp::gt, sc::cmp::ge, sc::cmp::masked_eq };
+    const sc::cmp ops[] = { sc::cmp::eq, sc::cmp::ne, sc::cmp::lt, sc::cmp::le, sc::cmp::gt, sc::cmp::ge, sc::cmp::masked_eq };
 
     usize checked = 0;
     for ( usize trial = 0; trial < 3000; ++trial ) {
@@ -200,8 +202,7 @@ main(void)
       const u64 val = rg.edgy(rg.next());
       const u64 mask = rg.edgy(0xffffffffull);
 
-      sc::arg_cmp_t ac = (op == sc::cmp::masked_eq) ? sc::arg_masked(argn, mask, val)
-                                                    : sc::arg_cmp_t{ argn, op, val, 0 };
+      sc::arg_cmp_t ac = (op == sc::cmp::masked_eq) ? sc::arg_masked(argn, mask, val) : sc::arg_cmp_t{ argn, op, val, 0 };
 
       sc::filter_builder<64> fb;
       fb.require_native_arch();
@@ -426,12 +427,13 @@ main(void)
     sb::require_false(after_seal.valid());
 
     // and prove the danger was real: the gate the old builder appended is dead code
-    sb::require(so::run(after_seal.insns, after_seal.count, [] {
-                  so::probe p{};
-                  p.nr = test_nr;
-                  p.arch = 0xDEADBEEFu;      // an arch that is emphatically not ours
-                  return p;
-                }())
+    sb::require(so::run(after_seal.insns, after_seal.count,
+                        [] {
+                          so::probe p{};
+                          p.nr = test_nr;
+                          p.arch = 0xDEADBEEFu;      // an arch that is emphatically not ours
+                          return p;
+                        }())
                     .action,
                 sc::act_allow());
 

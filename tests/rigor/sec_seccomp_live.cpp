@@ -120,8 +120,8 @@ child_arg_discrimination(void)
   fb.default_errno(1);
   if ( sc::load(fb) < 0 ) mc::sys_group_exit(setup_failed);
 
-  const long with_zero = mc::syscall(probe_nr, 0);       // matches the predicate -> allowed
-  const long with_one = mc::syscall(probe_nr, 12345);    // same syscall, wrong arg -> default
+  const long with_zero = mc::syscall(probe_nr, 0);         // matches the predicate -> allowed
+  const long with_one = mc::syscall(probe_nr, 12345);      // same syscall, wrong arg -> default
   mc::sys_group_exit((with_zero >= 0 && with_one == -1) ? ok_code : bad_code);
 }
 
@@ -191,8 +191,8 @@ child_residual_truncation_refused(void)
   for ( usize i = 0; i < g::network::count; ++i ) fb.deny_errno(g::network::calls[i], 1);
   fb.default_allow();
 
-  if ( !fb.overflowed ) mc::sys_group_exit(bad_code);      // rules were dropped and nothing said so
-  if ( sc::load(fb) >= 0 ) mc::sys_group_exit(bad_code);   // it installed a policy nobody wrote
+  if ( !fb.overflowed ) mc::sys_group_exit(bad_code);         // rules were dropped and nothing said so
+  if ( sc::load(fb) >= 0 ) mc::sys_group_exit(bad_code);      // it installed a policy nobody wrote
 
   // prove the program really would have been accepted, so the refusal is the only thing that
   // stopped it: hand the same instructions to the kernel through the unchecked raw path
@@ -214,8 +214,8 @@ child_load_notif_refuses_ungated(void)
   if ( fb.valid() ) mc::sys_group_exit(bad_code);
 
   const int r = sc::load_notif(fb);
-  if ( r >= 0 ) mc::sys_group_exit(bad_code);      // it installed, and handed back a listener fd
-  if ( r != -22 ) mc::sys_group_exit(bad_code);    // -EINVAL, the same answer load() gives
+  if ( r >= 0 ) mc::sys_group_exit(bad_code);        // it installed, and handed back a listener fd
+  if ( r != -22 ) mc::sys_group_exit(bad_code);      // -EINVAL, the same answer load() gives
 
   // refusing must have left this process unconfined
   mc::sys_group_exit(mc::prctl(mc::PR_GET_SECCOMP) == 0 ? ok_code : bad_code);

@@ -18,12 +18,10 @@ namespace simd
 namespace neon_crypto
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_nc [[gnu::always_inline, gnu::artificial]] static inline
 
-__inline_nc uint8x16_t
-load_u8q(const u8 *p) noexcept
+    __inline_nc uint8x16_t load_u8q(const u8 *p) noexcept
 {
   return __bits::vld1q_u8(reinterpret_cast<const unsigned char *>(p));
 }

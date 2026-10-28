@@ -30,7 +30,8 @@ template<typename K, typename V>
   requires micron::totally_ordered<K> && micron::is_movable_object<V>
 class immutable_map
 {
-  struct __emplace_tag { };
+  struct __emplace_tag {
+  };
 
   //  Layout on 64-bit:
   //    [0]  __packed_left

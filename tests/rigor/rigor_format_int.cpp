@@ -564,11 +564,11 @@ main()
   {
     u64 out = 7;
     require_false(micron::try_parse_uint64("xyz", 3, out));
-    require_false(micron::try_parse_uint64("-1", 2, out));                       // no sign
-    require_false(micron::try_parse_uint64("12a", 3, out));                      // trailing junk
-    require_false(micron::try_parse_uint64("", 0, out));                         // empty
+    require_false(micron::try_parse_uint64("-1", 2, out));       // no sign
+    require_false(micron::try_parse_uint64("12a", 3, out));      // trailing junk
+    require_false(micron::try_parse_uint64("", 0, out));         // empty
     require_false(micron::try_parse_uint64(static_cast<const char *>(nullptr), 4, out));
-    require_false(micron::try_parse_uint64("18446744073709551616", 20, out));    // overflow
+    require_false(micron::try_parse_uint64("18446744073709551616", 20, out));      // overflow
   }
   end_test_case();
 
@@ -607,10 +607,10 @@ main()
     require(out, u64(0xDEAD));
     require_true(micron::try_parse_hex64("FFFFFFFFFFFFFFFF", 16, out));
     require(out, u64(0xFFFFFFFFFFFFFFFFull));
-    require_false(micron::try_parse_hex64("1g", 2, out));                     // bad digit
-    require_false(micron::try_parse_hex64("0x", 2, out));                     // prefix only
+    require_false(micron::try_parse_hex64("1g", 2, out));      // bad digit
+    require_false(micron::try_parse_hex64("0x", 2, out));      // prefix only
     require_false(micron::try_parse_hex64("", 0, out));
-    require_false(micron::try_parse_hex64("10000000000000000", 17, out));     // overflow
+    require_false(micron::try_parse_hex64("10000000000000000", 17, out));      // overflow
   }
   end_test_case();
 
@@ -624,10 +624,10 @@ main()
     require(buf[3], u8(0x00));
     require_true(micron::try_parse_hex_bytes("0A1BFF00", 8, buf, 4));      // case insensitive
     require(buf[1], u8(0x1b));
-    require_false(micron::try_parse_hex_bytes("0a1bff", 6, buf, 4));       // too short
-    require_false(micron::try_parse_hex_bytes("0a1bff0000", 10, buf, 4));  // too long
-    require_false(micron::try_parse_hex_bytes("0a1bffzz", 8, buf, 4));     // bad digit
-    require(buf[3], u8(0x00));                                             // untouched on reject
+    require_false(micron::try_parse_hex_bytes("0a1bff", 6, buf, 4));           // too short
+    require_false(micron::try_parse_hex_bytes("0a1bff0000", 10, buf, 4));      // too long
+    require_false(micron::try_parse_hex_bytes("0a1bffzz", 8, buf, 4));         // bad digit
+    require(buf[3], u8(0x00));                                                 // untouched on reject
   }
   end_test_case();
 

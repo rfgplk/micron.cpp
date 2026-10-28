@@ -13,9 +13,7 @@ namespace micron
 namespace simd
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-template<typename T>
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") template<typename T>
 concept is_neon_simd_class = requires {
   typename T::bit_width;
   typename T::lane_width;

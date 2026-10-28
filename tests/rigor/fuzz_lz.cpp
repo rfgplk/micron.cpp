@@ -42,8 +42,8 @@
 
 namespace sb = snowball;
 namespace lz = micron::lz;
-using mtest::fuzz::sweep;
 using mtest::prng;
+using mtest::fuzz::sweep;
 
 using vec_i = micron::vector<i32>;
 using vec_vi = micron::vector<vec_i>;
@@ -82,15 +82,11 @@ same_multiset(vec_i a, vec_i b)
 // the eager pointer arm and compares POINTERS. constraining it away makes the intent load-bearing.
 constexpr auto v_pos = []<typename U>(U x)
   requires(!micron::is_pointer_v<U>)
-{
-  return x > U(0);
-};
+{ return x > U(0); };
 
 constexpr auto v_even = []<typename U>(U x)
   requires(!micron::is_pointer_v<U>)
-{
-  return (x & U(1)) == U(0);
-};
+{ return (x & U(1)) == U(0); };
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // slicing: take/drop, take_while/drop_while, filter/reject
@@ -370,8 +366,7 @@ scan_dedup_suite(u64 seed)
         }
         FUZZ_FAIL_IF((v | lz::sum()) != micron::sum(v), "sum != micron::sum");
         // the streaming arm, reached through an identity fmap, must be bit-identical
-        FUZZ_FAIL_IF((v | lz::fmap([](i32 x) { return x; }) | lz::sum()) != micron::sum(v),
-                     "the streaming sum diverges from the flat one");
+        FUZZ_FAIL_IF((v | lz::fmap([](i32 x) { return x; }) | lz::sum()) != micron::sum(v), "the streaming sum diverges from the flat one");
         FUZZ_FAIL_IF((v | lz::safe_max()).cast<i32>() != micron::fp::safe_max(v).cast<i32>(), "max != fp::safe_max");
         FUZZ_FAIL_IF((v | lz::safe_min()).cast<i32>() != micron::fp::safe_min(v).cast<i32>(), "min != fp::safe_min");
         FUZZ_FAIL_IF((v | lz::count_if(v_pos)) != micron::fp::count(v, v_pos), "count_if != fp::count");

@@ -605,9 +605,26 @@ main(int, char **)
   test_case("d2s round-trip – f64 bit-equal across the whole exponent range");
   {
     // d2s emits fixed format for sciExp ∈ [-3, 7] and scientific outside it; both round-trip.
-    f64 vals[] = { 0.0,     1.0,   -1.0,     0.5,        3.14,       3.14159265358979,        0.1,
-                   0.2,     0.1 + 0.2,       12345.6789, -273.15,    100.0,                   1000000.0,
-                   1e-10,   1e10,  1e100,    -1e-100,    5e-324,     2.2250738585072014e-308, 1.7976931348623157e308 };
+    f64 vals[] = { 0.0,
+                   1.0,
+                   -1.0,
+                   0.5,
+                   3.14,
+                   3.14159265358979,
+                   0.1,
+                   0.2,
+                   0.1 + 0.2,
+                   12345.6789,
+                   -273.15,
+                   100.0,
+                   1000000.0,
+                   1e-10,
+                   1e10,
+                   1e100,
+                   -1e-100,
+                   5e-324,
+                   2.2250738585072014e-308,
+                   1.7976931348623157e308 };
     char buf[32];
     for ( f64 v : vals ) {
       usize n = micron::__impl::__ryu::d2s_buffered(v, buf);

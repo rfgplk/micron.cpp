@@ -1,0 +1,12 @@
+# Empty storage must not form element references or reach nonnull memory intrinsics.
+test tests/rigor/vector_zero.cpp --std c++23 -O2 -i . --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/native
+test tests/rigor/vector_zero.cpp --std c++23 -O2 --isa base -i . --timeout 120 -o bin/vector-zero/base
+test tests/rigor/vector_zero.cpp --std c++23 -O2 --ubsan -i . --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/ubsan
+test tests/rigor/slice_zero.cpp --std c++23 -O2 -i . --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/native
+test tests/rigor/slice_zero.cpp --std c++23 -O2 --ubsan -i . --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/ubsan
+test tests/rigor/container_zero.cpp --std c++23 -O2 -i . --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/native
+test tests/rigor/container_zero.cpp --std c++23 -O2 --ubsan -i . --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/ubsan
+test tests/rigor/empty_other_containers.cpp --std c++26 -O2 -i . -i src --isa v3 --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/native
+test tests/rigor/empty_other_containers.cpp --std c++26 -O2 --ubsan -i . -i src --isa v3 --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/ubsan
+test tests/rigor/memory_block_zero.cpp --std c++23 -O2 -i . --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/native
+test tests/rigor/memory_block_zero.cpp --std c++23 -O2 --ubsan -i . --def MICRON_ABC_MT --timeout 120 -o bin/vector-zero/ubsan

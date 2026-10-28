@@ -27,9 +27,7 @@ v_eq(T a, T b) noexcept
   return true;
 }
 
-__micron_push_options
-__micron_gcc_target_avx512
-[[gnu::noinline]] static int
+__micron_push_options __micron_gcc_target_avx512 [[gnu::noinline]] static int
 kernel_f32(const float *in)
 {
   __m512 a = mz::loadu_f32(in);
@@ -78,12 +76,10 @@ kernel_bitwise(const int *in)
   return v_eq(a, a2) ? 1 : 0;
 }
 
-__micron_pop_options
-__micron_push_options
-__micron_gcc_target_avx512
+__micron_pop_options __micron_push_options __micron_gcc_target_avx512
 
-[[gnu::noinline]] static int
-kernel_bw(const char *in)
+    [[gnu::noinline]] static int
+    kernel_bw(const char *in)
 {
   __m512i a = mz::loadu_i512(in);
   __m512i b = mz::splat_i8(7);
@@ -100,8 +96,7 @@ kernel_bw(const char *in)
   return 1;
 }
 
-__micron_pop_options
-int
+__micron_pop_options int
 main()
 {
   print("=== TEST AVX-512 ===");

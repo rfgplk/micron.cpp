@@ -40,8 +40,8 @@ constexpr u16 deny_e = static_cast<u16>(mc::error::permissions);
 constexpr sc::filter_builder<cap_n>
 functional_build(void) noexcept
 {
-  return sc::policy<cap_n>() | sc::arch_native() | sc::allow_group<g::baseline, g::io>()
-         | sc::deny_group<g::network>(deny_e) | sc::deny_all(deny_e) | sc::build();
+  return sc::policy<cap_n>() | sc::arch_native() | sc::allow_group<g::baseline, g::io>() | sc::deny_group<g::network>(deny_e)
+         | sc::deny_all(deny_e) | sc::build();
 }
 
 // (b) imperative
@@ -78,10 +78,8 @@ constexpr auto from_type = type_policy::build(sc::act_errno(deny_e));
 
 static_assert(from_fp.count > 0, "the functional pipeline emitted nothing");
 static_assert(from_fp.valid(), "the functional pipeline is not installable");
-static_assert(same_program(from_fp, from_imp),
-              "micron::sec: the functional pipeline and the imperative chain no longer agree");
-static_assert(same_program(from_fp, from_type),
-              "micron::sec: the functional pipeline and the type-level policy no longer agree");
+static_assert(same_program(from_fp, from_imp), "micron::sec: the functional pipeline and the imperative chain no longer agree");
+static_assert(same_program(from_fp, from_type), "micron::sec: the functional pipeline and the type-level policy no longer agree");
 
 // a stage must hand back the SAME object, not a copy -- this is what keeps an 8 KB builder from
 // being memcpy'd once per link in the chain
@@ -131,10 +129,8 @@ main(void)
   // ---------------------------------------------------------------- //
   sb::test_case("the argument-predicate stages lower the same way through both faces");
   {
-    constexpr auto fp = sc::policy<64>() | sc::arch_native()
-                        | sc::allow_when(SYS_ioctl, sc::arg_eq(1, 0x5401))
-                        | sc::deny_when(SYS_openat, sc::arg_masked(1, 0x3, 0x1), 30) | sc::deny_all(deny_e)
-                        | sc::build();
+    constexpr auto fp = sc::policy<64>() | sc::arch_native() | sc::allow_when(SYS_ioctl, sc::arg_eq(1, 0x5401))
+                        | sc::deny_when(SYS_openat, sc::arg_masked(1, 0x3, 0x1), 30) | sc::deny_all(deny_e) | sc::build();
 
     sc::filter_builder<64> imp;
     imp.require_native_arch();
@@ -245,8 +241,7 @@ main(void)
     sb::require_false(dead.valid());
     const i32 first = dead.error();
 
-    mc::sec::result<mc::sec::unit_t> r
-        = ll::confine(ll::access_fs::none) | ll::beneath("/usr", ll::read_only) | ll::enforce();
+    mc::sec::result<mc::sec::unit_t> r = ll::confine(ll::access_fs::none) | ll::beneath("/usr", ll::read_only) | ll::enforce();
     sb::require_true(r.is_second());      // NOT has_value(): that is true for both branches
     sb::require(r.cast<mc::sec::error_t>().code, static_cast<i32>(-first));
   }
@@ -302,9 +297,8 @@ main(void)
   // ---------------------------------------------------------------- //
   sb::test_case("in_namespace runs a body inside fresh namespaces, in a child");
   {
-    auto r = s::in_namespace(s::ns::ns_kind::user | s::ns::ns_kind::uts, []() -> i32 {
-      return s::ns::open_self(s::ns::ns_kind::uts).is_host() ? 3 : 4;
-    });
+    auto r = s::in_namespace(s::ns::ns_kind::user | s::ns::ns_kind::uts,
+                             []() -> i32 { return s::ns::open_self(s::ns::ns_kind::uts).is_host() ? 3 : 4; });
     sb::require_true(r.is_first());
     sb::require_true(r.cast<s::sandbox::exit_status>().exited());
     sb::require(r.cast<s::sandbox::exit_status>().code(), 4);

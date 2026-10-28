@@ -29,8 +29,7 @@ rotate(const quat<f32> &q, const vec<f32, 3> &v) noexcept
   const simd::f128 vv = __vsimd::__setr(v.data[0], v.data[1], v.data[2], 0.0f);
   const simd::f128 t = __vsimd::__cross3(qv, vv);
   const simd::f128 u = __vsimd::__cross3(qv, t);
-  const simd::f128 r
-      = __vsimd::__fma(__vsimd::__splat(2.0f), __vsimd::__fma(__vsimd::__splat(q.data[3]), t, u), vv);
+  const simd::f128 r = __vsimd::__fma(__vsimd::__splat(2.0f), __vsimd::__fma(__vsimd::__splat(q.data[3]), t, u), vv);
   vec<f32, 3> out{};
   __vsimd::__store(reinterpret_cast<float *>(out.data), r);
   return out;

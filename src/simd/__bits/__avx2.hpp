@@ -21,17 +21,14 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("avx2")]] static inline
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// arith
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // arith
 
-__inline_g __m256i
-_mm256_add_epi8(__m256i a, __m256i b) noexcept
+    __inline_g __m256i _mm256_add_epi8(__m256i a, __m256i b) noexcept
 {
   return (__m256i)((__v32qu)a + (__v32qu)b);
 }
@@ -928,7 +925,7 @@ __micron_diagnostic_pop
 #if defined(MICRON_SIMD_INJECT_INTRIN_SYMS)
 #define __inject_i(name) using ::micron::simd::__bits::name
 
-__inject_i(_mm256_add_epi8);
+    __inject_i(_mm256_add_epi8);
 __inject_i(_mm256_add_epi16);
 __inject_i(_mm256_add_epi32);
 __inject_i(_mm256_add_epi64);

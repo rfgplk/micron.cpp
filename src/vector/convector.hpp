@@ -188,7 +188,7 @@ class convector: public __mutable_memory_resource<T, Alloc>,
   __unlocked_clear(void)
   {
     if ( !__mem::length ) return;
-    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __impl_container::destroy(__mem::memory, __mem::length);
     __mem::length = 0;
   }
 
@@ -231,7 +231,7 @@ public:
   ~convector(void)
   {
     if ( __mem::is_zero() ) return;
-    if ( __mem::length ) __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    if ( __mem::length ) __impl_container::destroy(__mem::memory, __mem::length);
     __mem::length = 0;
   }
 
@@ -267,7 +267,7 @@ public:
 
   convector(const size_type n) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
   }
 
@@ -291,14 +291,14 @@ public:
 
   convector(size_type n, const T &init_value) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), init_value, n);
+    __impl_container::construct(__mem::memory, init_value, n);
     __mem::length = n;
   }
 
   convector(size_type n, T &&init_value) : __mem(n)
   {
     T tmp = micron::move(init_value);
-    __impl_container::construct(micron::addr(__mem::memory[0]), tmp, n);
+    __impl_container::construct(__mem::memory, tmp, n);
     __mem::length = n;
   }
 
@@ -711,7 +711,7 @@ public:
     const size_type on = o.length;
     if ( on == 0 ) return *this;
     if ( !__mem::has_space(on) ) __unlocked_grow(allocation_add_or_throw(__mem::length, on));
-    __impl_container::copy(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), on);
+    __impl_container::copy(__mem::memory + __mem::length, o.memory, on);
     __mem::length += on;
     return *this;
   }
@@ -726,7 +726,7 @@ public:
     const size_type on = o.length;
     if ( on == 0 ) return *this;
     if ( !__mem::has_space(on) ) __unlocked_grow(allocation_add_or_throw(__mem::length, on));
-    __impl_container::move(micron::addr(__mem::memory[__mem::length]), micron::addr(o.memory[0]), on);
+    __impl_container::move(__mem::memory + __mem::length, o.memory, on);
     __mem::length += on;
     o.length = 0;
     return *this;
@@ -747,7 +747,7 @@ public:
   fill(const T &v)
   {
     __hold __lock(__mtx);
-    __impl_container::set(micron::addr(__mem::memory[0]), v, __mem::length);
+    __impl_container::set(__mem::memory, v, __mem::length);
   }
 
   void
@@ -1093,7 +1093,7 @@ public:
   {
     __hold __lock(__mtx);
     if ( !__mem::length ) return;
-    __impl_container::destroy_fast(micron::addr(__mem::memory[0]), __mem::length);
+    __impl_container::destroy_fast(__mem::memory, __mem::length);
     __mem::length = 0;
   }
 

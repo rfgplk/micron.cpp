@@ -39,9 +39,9 @@ class pmap
   static constexpr usize __log2B = 5;
   static constexpr usize __B = 1u << __log2B;      // 32-way branching
   static constexpr u32 __mask32 = static_cast<u32>(__B - 1u);
-  static constexpr usize __natural_depth = 12;           // 12 * 5 = 60 natural hash bits
-  static constexpr usize __max_depth = 24;               // one re-mix grants 60 more bits
-  static constexpr u32 __split_threshold = 8;            // grow leaf entries up to this, then split
+  static constexpr usize __natural_depth = 12;                            // 12 * 5 = 60 natural hash bits
+  static constexpr usize __max_depth = 24;                                // one re-mix grants 60 more bits
+  static constexpr u32 __split_threshold = 8;                             // grow leaf entries up to this, then split
   static constexpr u32 __immortal_refs = numeric_limits<u32>::max();      // saturating immortal sentinel
 
   //   bit 0 = 1 -> leaf

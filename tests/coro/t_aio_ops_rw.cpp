@@ -372,9 +372,11 @@ main()
     sa.sigaction_handler.sa_handler = &alarm_noop;
     micron::posix::sigaction_t old{};
     sb::require(micron::posix::sigaction(14 /*SIGALRM*/, sa, &old) == 0);
+
     struct itv {
       long isec, iusec, vsec, vusec;
     } timer{ 0, 1000, 0, 1000 };
+
     micron::syscall(SYS_setitimer, 0 /*ITIMER_REAL*/, &timer, nullptr);
     int pfd[2];
     sb::require(micron::syscall(SYS_pipe2, pfd, 0) == 0);

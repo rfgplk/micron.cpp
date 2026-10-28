@@ -86,7 +86,7 @@ main()
 #if defined(__micron_hash_zzz)
     { "zzzf64", h_zzzf },
 #endif
-    { "murmur", h_murmur }, { "xxhash64", h_xxh }, { "rapidhash", h_rapid },
+    { "murmur", h_murmur },   { "xxhash64", h_xxh }, { "rapidhash", h_rapid },
 #if defined(__micron_arch_x86_any)
     { "meowhash64", h_meow },
 #endif

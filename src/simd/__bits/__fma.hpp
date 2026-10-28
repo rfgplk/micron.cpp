@@ -22,15 +22,12 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("fma")]] static inline
 
-// 128bits
-__inline_g __m128
-_mm_fmadd_ps(__m128 a, __m128 b, __m128 c) noexcept
+    // 128bits
+    __inline_g __m128 _mm_fmadd_ps(__m128 a, __m128 b, __m128 c) noexcept
 {
   return (__m128)__builtin_ia32_vfmaddps((__v4sf)a, (__v4sf)b, (__v4sf)c);
 }

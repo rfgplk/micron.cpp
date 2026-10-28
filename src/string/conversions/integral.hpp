@@ -14,7 +14,6 @@
 namespace micron
 {
 
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // range parsers; hstring mid alloc free
 
@@ -158,8 +157,8 @@ try_parse_bool(const T *p, usize n, bool &out)
     out = true;
     return true;
   }
-  if ( n == 5 && p[0] == static_cast<T>('f') && p[1] == static_cast<T>('a') && p[2] == static_cast<T>('l')
-       && p[3] == static_cast<T>('s') && p[4] == static_cast<T>('e') )
+  if ( n == 5 && p[0] == static_cast<T>('f') && p[1] == static_cast<T>('a') && p[2] == static_cast<T>('l') && p[3] == static_cast<T>('s')
+       && p[4] == static_cast<T>('e') )
     return true;
   return false;
 }

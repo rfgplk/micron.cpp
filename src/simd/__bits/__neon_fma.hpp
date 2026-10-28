@@ -22,17 +22,14 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
 #if defined(__micron_compiler_gcc)
 
 #if defined(__micron_arch_arm32)
-__inline_g float32x4_t
-vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+        __inline_g float32x4_t vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
 {
   float32x4_t r = a;
   __asm__("vfma.f32 %q0, %q1, %q2" : "+w"(r) : "w"(b), "w"(c));
@@ -65,8 +62,7 @@ vfms_f32(float32x2_t a, float32x2_t b, float32x2_t c) noexcept
 
 #else      // arm64
 
-__inline_g float32x4_t
-vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+        __inline_g float32x4_t vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
 {
   return __builtin_aarch64_fmav4sf(b, c, a);
 }
@@ -119,8 +115,7 @@ vfms_f64(float64x1_t a, float64x1_t b, float64x1_t c) noexcept
 
 #elif defined(__micron_compiler_clang)
 
-__inline_g float32x4_t
-vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
+        __inline_g float32x4_t vfmaq_f32(float32x4_t a, float32x4_t b, float32x4_t c) noexcept
 {
   return __builtin_neon_vfmaq_v(a, b, c, 41);
 }

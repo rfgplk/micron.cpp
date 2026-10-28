@@ -7,13 +7,15 @@
 
 #include "types.hpp"
 
-thread_local i32 __micron_errno = 0;
+// needs to be inline
+inline thread_local i32 __micron_errno = 0;
 
-i32 *
+inline i32 *
 __micron_errno_location(void)
 {
   return &__micron_errno;
 }
+
 #ifndef errno
 #define errno (*__micron_errno_location())
 #endif

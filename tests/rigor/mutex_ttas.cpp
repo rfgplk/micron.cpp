@@ -9,7 +9,7 @@
 // never contended grades PASS and proves nothing), and that spin_only never escalates while
 // spin_yield does.
 
-#define MICRON_ABC_MT 1      // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
+#define MICRON_ABC_MT 1          // spawns threads/coroutines; abcmalloc's -k gate must be MT (bits/__abc_mt.hpp)
 #define MICRON_LOCK_STATS 1      // the whole point here is to read the escalation counters
 
 #include "../../src/mutex/locks/ttas_lock.hpp"
@@ -36,7 +36,7 @@ namespace
 {
 constexpr u64 SEED_TTAS = 0xA5A5A5A50F0FULL;
 constexpr u32 kHoldPauses = 4000;      // must outlast the ladder, or nothing escalates
-}
+}      // namespace
 
 static_assert(micron::is_mutex<micron::ttas_lock>, "ttas_lock must satisfy is_mutex");
 static_assert(micron::is_mutex<micron::ttas_spin_lock>, "ttas_spin_lock must satisfy is_mutex");

@@ -6,7 +6,7 @@
 int
 main()
 {
-  u64 *sentinel = (u64*)abc::alloc(sizeof(u64));
+  u64 *sentinel = (u64 *)abc::alloc(sizeof(u64));
   *sentinel = 0xAAAABBBB;
   mc::string a = { "Whatever " };
   mc::string b = { "May " };

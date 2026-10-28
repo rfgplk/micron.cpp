@@ -14,8 +14,8 @@
 //   c++ -std=c++23 -g -O0 -Wall -Wextra -o test_chrono_precision \
 //       test_chrono_precision.cpp && ./test_chrono_precision
 
-#include "../snowball/snowball.hpp"
 #include "../../src/chrono.hpp"
+#include "../snowball/snowball.hpp"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers

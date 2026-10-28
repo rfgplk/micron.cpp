@@ -19,7 +19,6 @@ namespace gfx
 namespace vk
 {
 
-
 struct instance_deleter {
   const VkAllocationCallbacks *alloc = host_allocation_callbacks();
 

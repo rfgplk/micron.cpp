@@ -76,8 +76,8 @@ main()
     coro::stop_coroutine_runtime();
     const u64 took = mono_ns() - t0;
 
-    sb::print("teardown with a parked timer took ", took / 1000000ull, " ms (grace is ",
-              MICRON_CORO_TIMER_DRAIN_GRACE_NS / 1000000ull, " ms)");
+    sb::print("teardown with a parked timer took ", took / 1000000ull, " ms (grace is ", MICRON_CORO_TIMER_DRAIN_GRACE_NS / 1000000ull,
+              " ms)");
     // generous: the grace plus scheduling slop, and nowhere near the 10 minutes it used to take
     sb::check(took < 5000000000ull);
     sb::require(coro::__global_engine == nullptr);

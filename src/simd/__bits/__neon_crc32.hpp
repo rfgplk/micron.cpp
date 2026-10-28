@@ -23,14 +23,12 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
 #if defined(__micron_compiler_gcc)
 #if defined(__micron_arch_arm32)
-__inline_g ::u32
-__crc32b(::u32 a, ::u8 b) noexcept
+    __inline_g ::u32 __crc32b(::u32 a, ::u8 b) noexcept
 {
   ::u32 r;
   __asm__("crc32b %0, %1, %2" : "=r"(r) : "r"(a), "r"((::u32)b));
@@ -91,8 +89,7 @@ __crc32cd(::u32 a, ::u64 b) noexcept
   return __crc32cw(r, (::u32)(b >> 32));
 }
 #else       // arm64
-__inline_g ::u32
-__crc32b(::u32 a, ::u8 b) noexcept
+    __inline_g ::u32 __crc32b(::u32 a, ::u8 b) noexcept
 {
   return __builtin_aarch64_crc32b(a, b);
 }
@@ -140,8 +137,7 @@ __crc32cd(::u32 a, ::u64 b) noexcept
 }
 #endif      // arm32 vs arm64
 #elif defined(__micron_compiler_clang)
-__inline_g ::u32
-__crc32b(::u32 a, ::u8 b) noexcept
+    __inline_g ::u32 __crc32b(::u32 a, ::u8 b) noexcept
 {
   return __builtin_arm_crc32b(a, b);
 }

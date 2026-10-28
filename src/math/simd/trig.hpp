@@ -17,492 +17,488 @@
 #include "_dispatch.hpp"
 #include "manip.hpp"
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wpedantic")
-__micron_diagnostic_ignored("-Wignored-attributes")
-namespace micron
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic") __micron_diagnostic_ignored("-Wignored-attributes") namespace micron
 {
-namespace math
-{
-namespace mk
-{
+  namespace math
+  {
+  namespace mk
+  {
 
 #if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 
-namespace __trig_simd
-{
-inline constexpr f64 pio2_hi = 0x1.921fb54400000p+0;
-inline constexpr f64 pio2_mid = 0x1.0b4611a626000p-34;
-inline constexpr f64 pio2_lo = 0x1.9880000000000p-77;
-inline constexpr f64 inv_pio2 = 0x1.45f306dc9c883p-1;
+  namespace __trig_simd
+  {
+  inline constexpr f64 pio2_hi = 0x1.921fb54400000p+0;
+  inline constexpr f64 pio2_mid = 0x1.0b4611a626000p-34;
+  inline constexpr f64 pio2_lo = 0x1.9880000000000p-77;
+  inline constexpr f64 inv_pio2 = 0x1.45f306dc9c883p-1;
 
-[[gnu::always_inline]] inline simd::d256
-ksin(simd::d256 r) noexcept
-{
-  using namespace mkbits::coeff::sin_f64_data;
-  const simd::d256 z = simd::avx::mul_f64(r, r);
-  const simd::d256 r3 = simd::avx::mul_f64(z, r);
-  simd::d256 p = simd::fma::fma_f64(simd::avx::splat_f64(S6), z, simd::avx::splat_f64(S5));
-  p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(S4));
-  p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(S3));
-  p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(S2));
-  p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(S1));
-  return simd::fma::fma_f64(r3, p, r);
-}
-
-[[gnu::always_inline]] inline simd::d256
-kcos(simd::d256 r) noexcept
-{
-  using namespace mkbits::coeff::sin_f64_data;
-  const simd::d256 z = simd::avx::mul_f64(r, r);
-  const simd::d256 hz = simd::avx::mul_f64(simd::avx::splat_f64(0.5), z);
-  simd::d256 p = simd::fma::fma_f64(simd::avx::splat_f64(C6), z, simd::avx::splat_f64(C5));
-  p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(C4));
-  p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(C3));
-  p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(C2));
-  p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(C1));
-  return simd::fma::fma_f64(simd::avx::mul_f64(z, z), p, simd::avx::sub_f64(simd::avx::splat_f64(1.0), hz));
-}
-
-[[gnu::flatten]] inline simd::d256
-reduce_pio2_scalar(simd::d256 x, simd::i256 *q_out) noexcept
-{
-  alignas(32) f64 xs[4];
-  alignas(32) f64 rs[4];
-  alignas(32) i64 qs[4];
-  simd::avx::storeu_f64(reinterpret_cast<double *>(xs), x);
-  for ( usize i = 0; i < 4; ++i ) {
-    if ( !ieee::is_finite(xs[i]) ) [[unlikely]] {
-      rs[i] = ieee::qnan_v<f64>();
-      qs[i] = 0;
-      continue;
-    }
-    // cody_waite's leading x - fN * pio2_hi is exact only while fN fits in 20 bits
-    qs[i] = (mkbits::manip::fabs(xs[i]) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(xs[i], &rs[i])
-                                                    : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(xs[i], &rs[i]);
+  [[gnu::always_inline]] inline simd::d256
+  ksin(simd::d256 r) noexcept
+  {
+    using namespace mkbits::coeff::sin_f64_data;
+    const simd::d256 z = simd::avx::mul_f64(r, r);
+    const simd::d256 r3 = simd::avx::mul_f64(z, r);
+    simd::d256 p = simd::fma::fma_f64(simd::avx::splat_f64(S6), z, simd::avx::splat_f64(S5));
+    p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(S4));
+    p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(S3));
+    p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(S2));
+    p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(S1));
+    return simd::fma::fma_f64(r3, p, r);
   }
-  *q_out = simd::avx::loadu_i256(reinterpret_cast<const __m256i_u *>(qs));
-  return simd::avx::loadu_f64(reinterpret_cast<const double *>(rs));
-}
 
-[[gnu::always_inline]] inline simd::d256
-reduce_pio2(simd::d256 x, simd::i256 *q_out) noexcept
-{
-  const simd::d256 ax = simd::avx::andnot_f64(simd::avx::splat_f64(-0.0), x);
-  if ( simd::avx::movemask_f64(simd::avx::cmp_f64<_CMP_LT_OQ>(ax, simd::avx::splat_f64(0x1.0p33))) != 0xF ) [[unlikely]]
-    return reduce_pio2_scalar(x, q_out);
+  [[gnu::always_inline]] inline simd::d256
+  kcos(simd::d256 r) noexcept
+  {
+    using namespace mkbits::coeff::sin_f64_data;
+    const simd::d256 z = simd::avx::mul_f64(r, r);
+    const simd::d256 hz = simd::avx::mul_f64(simd::avx::splat_f64(0.5), z);
+    simd::d256 p = simd::fma::fma_f64(simd::avx::splat_f64(C6), z, simd::avx::splat_f64(C5));
+    p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(C4));
+    p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(C3));
+    p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(C2));
+    p = simd::fma::fma_f64(p, z, simd::avx::splat_f64(C1));
+    return simd::fma::fma_f64(simd::avx::mul_f64(z, z), p, simd::avx::sub_f64(simd::avx::splat_f64(1.0), hz));
+  }
 
-  const simd::d256 fN
-      = simd::avx::round_f64<_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC>(simd::avx::mul_f64(x, simd::avx::splat_f64(inv_pio2)));
-  simd::d256 t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_hi), x);
-  t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_mid), t);
-  t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_lo), t);
-  // convert_f64_to_i32 returns INT_MIN for |fN| >= 2^31
-  *q_out = simd::avx2::and_i256(simd::avx::cast_f64_to_i256(simd::avx::add_f64(fN, simd::avx::splat_f64(0x1.8p52))),
-                                simd::avx::splat_i64(3));
-  return t;
-}
+  [[gnu::flatten]] inline simd::d256
+  reduce_pio2_scalar(simd::d256 x, simd::i256 *q_out) noexcept
+  {
+    alignas(32) f64 xs[4];
+    alignas(32) f64 rs[4];
+    alignas(32) i64 qs[4];
+    simd::avx::storeu_f64(reinterpret_cast<double *>(xs), x);
+    for ( usize i = 0; i < 4; ++i ) {
+      if ( !ieee::is_finite(xs[i]) ) [[unlikely]] {
+        rs[i] = ieee::qnan_v<f64>();
+        qs[i] = 0;
+        continue;
+      }
+      // cody_waite's leading x - fN * pio2_hi is exact only while fN fits in 20 bits
+      qs[i] = (mkbits::manip::fabs(xs[i]) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(xs[i], &rs[i])
+                                                      : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(xs[i], &rs[i]);
+    }
+    *q_out = simd::avx::loadu_i256(reinterpret_cast<const __m256i_u *>(qs));
+    return simd::avx::loadu_f64(reinterpret_cast<const double *>(rs));
+  }
 
-};      // namespace __trig_simd
+  [[gnu::always_inline]] inline simd::d256
+  reduce_pio2(simd::d256 x, simd::i256 *q_out) noexcept
+  {
+    const simd::d256 ax = simd::avx::andnot_f64(simd::avx::splat_f64(-0.0), x);
+    if ( simd::avx::movemask_f64(simd::avx::cmp_f64<_CMP_LT_OQ>(ax, simd::avx::splat_f64(0x1.0p33))) != 0xF ) [[unlikely]]
+      return reduce_pio2_scalar(x, q_out);
 
-[[gnu::flatten]] inline simd::d256
-sin(simd::d256 x) noexcept
-{
-  simd::i256 q;
-  const simd::d256 r = __trig_simd::reduce_pio2(x, &q);
-  const simd::d256 s = __trig_simd::ksin(r);
-  const simd::d256 c = __trig_simd::kcos(r);
-  //   q=0: s
-  //   q=1: c
-  //   q=2: -s
-  //   q=3: -c
-  const simd::i256 q_and1 = simd::avx2::and_i256(q, simd::avx::splat_i64(1));
-  const simd::d256 m_odd = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(q_and1, simd::avx::splat_i64(1)));
-  const simd::d256 m_neg
-      = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(simd::avx2::and_i256(q, simd::avx::splat_i64(2)), simd::avx::splat_i64(2)));
-  simd::d256 result = simd::avx::blendv_f64(s, c, m_odd);
-  result = simd::avx::blendv_f64(result, fneg(result), m_neg);
-  return result;
-}
+    const simd::d256 fN
+        = simd::avx::round_f64<_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC>(simd::avx::mul_f64(x, simd::avx::splat_f64(inv_pio2)));
+    simd::d256 t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_hi), x);
+    t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_mid), t);
+    t = simd::fma::fnma_f64(fN, simd::avx::splat_f64(pio2_lo), t);
+    // convert_f64_to_i32 returns INT_MIN for |fN| >= 2^31
+    *q_out = simd::avx2::and_i256(simd::avx::cast_f64_to_i256(simd::avx::add_f64(fN, simd::avx::splat_f64(0x1.8p52))),
+                                  simd::avx::splat_i64(3));
+    return t;
+  }
 
-[[gnu::flatten]] inline simd::d256
-cos(simd::d256 x) noexcept
-{
-  simd::i256 q;
-  const simd::d256 r = __trig_simd::reduce_pio2(x, &q);
-  const simd::d256 s = __trig_simd::ksin(r);
-  const simd::d256 c = __trig_simd::kcos(r);
-  // q=0: c, q=1: -s, q=2: -c, q=3: s
-  // equivalent to sin(x + pi/2)
-  const simd::i256 q_shift = simd::avx2::add_i64(q, simd::avx::splat_i64(1));
-  const simd::i256 q_and1 = simd::avx2::and_i256(q_shift, simd::avx::splat_i64(1));
-  const simd::d256 m_odd = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(q_and1, simd::avx::splat_i64(1)));
-  const simd::d256 m_neg
-      = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(simd::avx2::and_i256(q_shift, simd::avx::splat_i64(2)), simd::avx::splat_i64(2)));
-  simd::d256 result = simd::avx::blendv_f64(s, c, m_odd);
-  result = simd::avx::blendv_f64(result, fneg(result), m_neg);
-  return result;
-}
+  };      // namespace __trig_simd
 
-[[gnu::flatten]] inline void
-sincos(simd::d256 x, simd::d256 *sn, simd::d256 *cs) noexcept
-{
-  *sn = sin(x);
-  *cs = cos(x);
-}
+  [[gnu::flatten]] inline simd::d256
+  sin(simd::d256 x) noexcept
+  {
+    simd::i256 q;
+    const simd::d256 r = __trig_simd::reduce_pio2(x, &q);
+    const simd::d256 s = __trig_simd::ksin(r);
+    const simd::d256 c = __trig_simd::kcos(r);
+    //   q=0: s
+    //   q=1: c
+    //   q=2: -s
+    //   q=3: -c
+    const simd::i256 q_and1 = simd::avx2::and_i256(q, simd::avx::splat_i64(1));
+    const simd::d256 m_odd = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(q_and1, simd::avx::splat_i64(1)));
+    const simd::d256 m_neg
+        = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(simd::avx2::and_i256(q, simd::avx::splat_i64(2)), simd::avx::splat_i64(2)));
+    simd::d256 result = simd::avx::blendv_f64(s, c, m_odd);
+    result = simd::avx::blendv_f64(result, fneg(result), m_neg);
+    return result;
+  }
 
-[[gnu::flatten]] inline simd::d256
-tan(simd::d256 x) noexcept
-{
-  simd::i256 q;
-  const simd::d256 r = __trig_simd::reduce_pio2(x, &q);
-  const simd::d256 s = __trig_simd::ksin(r);
-  const simd::d256 c = __trig_simd::kcos(r);
-  const simd::d256 ratio = simd::avx::div_f64(s, c);
-  const simd::d256 cot = simd::avx::div_f64(fneg(c), s);
-  const simd::i256 q_and1 = simd::avx2::and_i256(q, simd::avx::splat_i64(1));
-  const simd::d256 m_odd = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(q_and1, simd::avx::splat_i64(1)));
-  return simd::avx::blendv_f64(ratio, cot, m_odd);
-}
+  [[gnu::flatten]] inline simd::d256
+  cos(simd::d256 x) noexcept
+  {
+    simd::i256 q;
+    const simd::d256 r = __trig_simd::reduce_pio2(x, &q);
+    const simd::d256 s = __trig_simd::ksin(r);
+    const simd::d256 c = __trig_simd::kcos(r);
+    // q=0: c, q=1: -s, q=2: -c, q=3: s
+    // equivalent to sin(x + pi/2)
+    const simd::i256 q_shift = simd::avx2::add_i64(q, simd::avx::splat_i64(1));
+    const simd::i256 q_and1 = simd::avx2::and_i256(q_shift, simd::avx::splat_i64(1));
+    const simd::d256 m_odd = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(q_and1, simd::avx::splat_i64(1)));
+    const simd::d256 m_neg
+        = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(simd::avx2::and_i256(q_shift, simd::avx::splat_i64(2)), simd::avx::splat_i64(2)));
+    simd::d256 result = simd::avx::blendv_f64(s, c, m_odd);
+    result = simd::avx::blendv_f64(result, fneg(result), m_neg);
+    return result;
+  }
 
-[[gnu::flatten]] inline simd::f256
-sin(simd::f256 x) noexcept
-{
-  const simd::d256 lo_d = simd::avx::convert_f32_to_f64(simd::avx::cast_f32_to_lo128(x));
-  const simd::d256 hi_d = simd::avx::convert_f32_to_f64(simd::avx::extract_f128_f32<1>(x));
-  const simd::f128 lo = simd::avx::convert_f64_to_f32(sin(lo_d));
-  const simd::f128 hi = simd::avx::convert_f64_to_f32(sin(hi_d));
-  return simd::avx::insert_f128_f32<1>(simd::avx::cast_lo128_to_f32(lo), hi);
-}
+  [[gnu::flatten]] inline void
+  sincos(simd::d256 x, simd::d256 *sn, simd::d256 *cs) noexcept
+  {
+    *sn = sin(x);
+    *cs = cos(x);
+  }
 
-[[gnu::flatten]] inline simd::f256
-tan(simd::f256 x) noexcept
-{
-  const simd::d256 lo_d = simd::avx::convert_f32_to_f64(simd::avx::cast_f32_to_lo128(x));
-  const simd::d256 hi_d = simd::avx::convert_f32_to_f64(simd::avx::extract_f128_f32<1>(x));
-  const simd::f128 lo = simd::avx::convert_f64_to_f32(tan(lo_d));
-  const simd::f128 hi = simd::avx::convert_f64_to_f32(tan(hi_d));
-  return simd::avx::insert_f128_f32<1>(simd::avx::cast_lo128_to_f32(lo), hi);
-}
+  [[gnu::flatten]] inline simd::d256
+  tan(simd::d256 x) noexcept
+  {
+    simd::i256 q;
+    const simd::d256 r = __trig_simd::reduce_pio2(x, &q);
+    const simd::d256 s = __trig_simd::ksin(r);
+    const simd::d256 c = __trig_simd::kcos(r);
+    const simd::d256 ratio = simd::avx::div_f64(s, c);
+    const simd::d256 cot = simd::avx::div_f64(fneg(c), s);
+    const simd::i256 q_and1 = simd::avx2::and_i256(q, simd::avx::splat_i64(1));
+    const simd::d256 m_odd = simd::avx::cast_i256_to_f64(simd::avx2::eq_i64(q_and1, simd::avx::splat_i64(1)));
+    return simd::avx::blendv_f64(ratio, cot, m_odd);
+  }
 
-[[gnu::flatten]] inline simd::f256
-cos(simd::f256 x) noexcept
-{
-  const simd::d256 lo_d = simd::avx::convert_f32_to_f64(simd::avx::cast_f32_to_lo128(x));
-  const simd::d256 hi_d = simd::avx::convert_f32_to_f64(simd::avx::extract_f128_f32<1>(x));
-  const simd::f128 lo = simd::avx::convert_f64_to_f32(cos(lo_d));
-  const simd::f128 hi = simd::avx::convert_f64_to_f32(cos(hi_d));
-  return simd::avx::insert_f128_f32<1>(simd::avx::cast_lo128_to_f32(lo), hi);
-}
+  [[gnu::flatten]] inline simd::f256
+  sin(simd::f256 x) noexcept
+  {
+    const simd::d256 lo_d = simd::avx::convert_f32_to_f64(simd::avx::cast_f32_to_lo128(x));
+    const simd::d256 hi_d = simd::avx::convert_f32_to_f64(simd::avx::extract_f128_f32<1>(x));
+    const simd::f128 lo = simd::avx::convert_f64_to_f32(sin(lo_d));
+    const simd::f128 hi = simd::avx::convert_f64_to_f32(sin(hi_d));
+    return simd::avx::insert_f128_f32<1>(simd::avx::cast_lo128_to_f32(lo), hi);
+  }
 
-[[gnu::flatten]] inline simd::d128
-sin(simd::d128 x) noexcept
-{
-  return simd::avx::cast_f64_to_lo128(sin(simd::avx::cast_lo128_to_f64(x)));
-}
+  [[gnu::flatten]] inline simd::f256
+  tan(simd::f256 x) noexcept
+  {
+    const simd::d256 lo_d = simd::avx::convert_f32_to_f64(simd::avx::cast_f32_to_lo128(x));
+    const simd::d256 hi_d = simd::avx::convert_f32_to_f64(simd::avx::extract_f128_f32<1>(x));
+    const simd::f128 lo = simd::avx::convert_f64_to_f32(tan(lo_d));
+    const simd::f128 hi = simd::avx::convert_f64_to_f32(tan(hi_d));
+    return simd::avx::insert_f128_f32<1>(simd::avx::cast_lo128_to_f32(lo), hi);
+  }
 
-[[gnu::flatten]] inline simd::f128
-sin(simd::f128 x) noexcept
-{
-  return simd::avx::cast_f32_to_lo128(sin(simd::avx::cast_lo128_to_f32(x)));
-}
+  [[gnu::flatten]] inline simd::f256
+  cos(simd::f256 x) noexcept
+  {
+    const simd::d256 lo_d = simd::avx::convert_f32_to_f64(simd::avx::cast_f32_to_lo128(x));
+    const simd::d256 hi_d = simd::avx::convert_f32_to_f64(simd::avx::extract_f128_f32<1>(x));
+    const simd::f128 lo = simd::avx::convert_f64_to_f32(cos(lo_d));
+    const simd::f128 hi = simd::avx::convert_f64_to_f32(cos(hi_d));
+    return simd::avx::insert_f128_f32<1>(simd::avx::cast_lo128_to_f32(lo), hi);
+  }
 
-[[gnu::flatten]] inline simd::d128
-cos(simd::d128 x) noexcept
-{
-  return simd::avx::cast_f64_to_lo128(cos(simd::avx::cast_lo128_to_f64(x)));
-}
+  [[gnu::flatten]] inline simd::d128
+  sin(simd::d128 x) noexcept
+  {
+    return simd::avx::cast_f64_to_lo128(sin(simd::avx::cast_lo128_to_f64(x)));
+  }
 
-[[gnu::flatten]] inline simd::f128
-cos(simd::f128 x) noexcept
-{
-  return simd::avx::cast_f32_to_lo128(cos(simd::avx::cast_lo128_to_f32(x)));
-}
+  [[gnu::flatten]] inline simd::f128
+  sin(simd::f128 x) noexcept
+  {
+    return simd::avx::cast_f32_to_lo128(sin(simd::avx::cast_lo128_to_f32(x)));
+  }
 
-[[gnu::flatten]] inline simd::d128
-tan(simd::d128 x) noexcept
-{
-  return simd::avx::cast_f64_to_lo128(tan(simd::avx::cast_lo128_to_f64(x)));
-}
+  [[gnu::flatten]] inline simd::d128
+  cos(simd::d128 x) noexcept
+  {
+    return simd::avx::cast_f64_to_lo128(cos(simd::avx::cast_lo128_to_f64(x)));
+  }
 
-[[gnu::flatten]] inline simd::f128
-tan(simd::f128 x) noexcept
-{
-  return simd::avx::cast_f32_to_lo128(tan(simd::avx::cast_lo128_to_f32(x)));
-}
+  [[gnu::flatten]] inline simd::f128
+  cos(simd::f128 x) noexcept
+  {
+    return simd::avx::cast_f32_to_lo128(cos(simd::avx::cast_lo128_to_f32(x)));
+  }
+
+  [[gnu::flatten]] inline simd::d128
+  tan(simd::d128 x) noexcept
+  {
+    return simd::avx::cast_f64_to_lo128(tan(simd::avx::cast_lo128_to_f64(x)));
+  }
+
+  [[gnu::flatten]] inline simd::f128
+  tan(simd::f128 x) noexcept
+  {
+    return simd::avx::cast_f32_to_lo128(tan(simd::avx::cast_lo128_to_f32(x)));
+  }
 
 #endif      // AVX2 + FMA
 
 #if defined(__micron_arch_arm_any) && defined(__micron_arm_neon)
 
-namespace __trig_simd_neon
-{
-inline constexpr f32 pio2_hi_f = 0x1.921fb4p+0f;
-inline constexpr f32 pio2_lo_f = 0x1.4442d18p-23f;      // residual to f32 precision
-inline constexpr f32 inv_pio2_f = 0x1.45f306p-1f;
+  namespace __trig_simd_neon
+  {
+  inline constexpr f32 pio2_hi_f = 0x1.921fb4p+0f;
+  inline constexpr f32 pio2_lo_f = 0x1.4442d18p-23f;      // residual to f32 precision
+  inline constexpr f32 inv_pio2_f = 0x1.45f306p-1f;
 
-inline constexpr f64 pio2_hi_d = 0x1.921fb54400000p+0;
-inline constexpr f64 pio2_mid_d = 0x1.0b4611a626000p-34;
-inline constexpr f64 pio2_lo_d = 0x1.9880000000000p-77;
-inline constexpr f64 inv_pio2_d = 0x1.45f306dc9c883p-1;
+  inline constexpr f64 pio2_hi_d = 0x1.921fb54400000p+0;
+  inline constexpr f64 pio2_mid_d = 0x1.0b4611a626000p-34;
+  inline constexpr f64 pio2_lo_d = 0x1.9880000000000p-77;
+  inline constexpr f64 inv_pio2_d = 0x1.45f306dc9c883p-1;
 
-[[gnu::always_inline]] inline f32
-__reduce_lane_f64(f32 xf, int *q) noexcept
-{
-  const f64 x = f64(xf);
-  if ( !ieee::is_finite(x) ) [[unlikely]] {
-    *q = 0;
-    return f32(ieee::qnan_v<f64>());
-  }
-  f64 t;
-  *q = (mkbits::manip::fabs(x) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(x, &t)
-                                          : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(x, &t);
-  return f32(t);
-}
-
-[[gnu::always_inline]] inline simd::f128
-ksin_f128(simd::f128 r) noexcept
-{
-  using namespace mkbits::coeff::sin_f32_data;
-  const float32x4_t z = simd::neon::mul(r, r);
-  const float32x4_t r3 = simd::neon::mul(z, r);
-#if defined(__micron_arm_fma) || defined(__micron_arch_arm64)
-  float32x4_t p = simd::neon::fma_f32(simd::neon::splat_f32(S3), simd::neon::splat_f32(S4), z);
-  p = simd::neon::fma_f32(simd::neon::splat_f32(S2), p, z);
-  p = simd::neon::fma_f32(simd::neon::splat_f32(S1), p, z);
-  return simd::neon::fma_f32(r, r3, p);
-#else
-  float32x4_t p = simd::neon::add(simd::neon::splat_f32(S3), simd::neon::mul(simd::neon::splat_f32(S4), z));
-  p = simd::neon::add(simd::neon::splat_f32(S2), simd::neon::mul(p, z));
-  p = simd::neon::add(simd::neon::splat_f32(S1), simd::neon::mul(p, z));
-  return simd::neon::add(r, simd::neon::mul(r3, p));
-#endif
-}
-
-[[gnu::always_inline]] inline simd::f128
-kcos_f128(simd::f128 r) noexcept
-{
-  using namespace mkbits::coeff::sin_f32_data;
-  const float32x4_t z = simd::neon::mul(r, r);
-  const float32x4_t hz = simd::neon::mul(simd::neon::splat_f32(0.5f), z);
-#if defined(__micron_arm_fma) || defined(__micron_arch_arm64)
-  float32x4_t p = simd::neon::fma_f32(simd::neon::splat_f32(C3), simd::neon::splat_f32(C4), z);
-  p = simd::neon::fma_f32(simd::neon::splat_f32(C2), p, z);
-  p = simd::neon::fma_f32(simd::neon::splat_f32(C1), p, z);
-  return simd::neon::fma_f32(simd::neon::sub(simd::neon::splat_f32(1.0f), hz), simd::neon::mul(z, z), p);
-#else
-  float32x4_t p = simd::neon::add(simd::neon::splat_f32(C3), simd::neon::mul(simd::neon::splat_f32(C4), z));
-  p = simd::neon::add(simd::neon::splat_f32(C2), simd::neon::mul(p, z));
-  p = simd::neon::add(simd::neon::splat_f32(C1), simd::neon::mul(p, z));
-  return simd::neon::add(simd::neon::sub(simd::neon::splat_f32(1.0f), hz), simd::neon::mul(simd::neon::mul(z, z), p));
-#endif
-}
-
-[[gnu::always_inline]] inline simd::f128
-reduce_pio2_f128(simd::f128 x, int32x4_t *q_out) noexcept
-{
-  int q0, q1, q2, q3;
-  const f32 r0 = __reduce_lane_f64(simd::neon::get_lane_f32<0>(x), &q0);
-  const f32 r1 = __reduce_lane_f64(simd::neon::get_lane_f32<1>(x), &q1);
-  const f32 r2 = __reduce_lane_f64(simd::neon::get_lane_f32<2>(x), &q2);
-  const f32 r3 = __reduce_lane_f64(simd::neon::get_lane_f32<3>(x), &q3);
-  const f32 r_arr[4] = { r0, r1, r2, r3 };
-  const int32_t q_arr[4] = { q0, q1, q2, q3 };
-  *q_out = simd::neon::load_i32(q_arr);
-  return simd::neon::load_f32(r_arr);
-}
-
-};      // namespace __trig_simd_neon
-
-[[gnu::flatten]] inline simd::f128
-sin(simd::f128 x) noexcept
-{
-  int32x4_t q;
-  const float32x4_t r = __trig_simd_neon::reduce_pio2_f128(x, &q);
-  const float32x4_t s = __trig_simd_neon::ksin_f128(r);
-  const float32x4_t c = __trig_simd_neon::kcos_f128(r);
-  const uint32x4_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i32(1)), simd::neon::splat_i32(1));
-  const uint32x4_t neg = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i32(2)), simd::neon::splat_i32(2));
-  float32x4_t result = simd::neon::select(odd, c, s);
-  result = simd::neon::select(neg, simd::neon::neg(result), result);
-  return result;
-}
-
-[[gnu::flatten]] inline simd::f128
-cos(simd::f128 x) noexcept
-{
-  int32x4_t q;
-  const float32x4_t r = __trig_simd_neon::reduce_pio2_f128(x, &q);
-  const float32x4_t s = __trig_simd_neon::ksin_f128(r);
-  const float32x4_t c = __trig_simd_neon::kcos_f128(r);
-  // cos = sin(x + π/2)
-  const int32x4_t qs = simd::neon::add(q, simd::neon::splat_i32(1));
-  const uint32x4_t odd = simd::neon::eq(simd::neon::and_(qs, simd::neon::splat_i32(1)), simd::neon::splat_i32(1));
-  const uint32x4_t neg = simd::neon::eq(simd::neon::and_(qs, simd::neon::splat_i32(2)), simd::neon::splat_i32(2));
-  float32x4_t result = simd::neon::select(odd, c, s);
-  result = simd::neon::select(neg, simd::neon::neg(result), result);
-  return result;
-}
-
-[[gnu::flatten]] inline void
-sincos(simd::f128 x, simd::f128 *sn, simd::f128 *cs) noexcept
-{
-  *sn = sin(x);
-  *cs = cos(x);
-}
-
-[[gnu::flatten]] inline simd::f128
-tan(simd::f128 x) noexcept
-{
-  int32x4_t q;
-  const float32x4_t r = __trig_simd_neon::reduce_pio2_f128(x, &q);
-  const float32x4_t s = __trig_simd_neon::ksin_f128(r);
-  const float32x4_t c = __trig_simd_neon::kcos_f128(r);
-#if defined(__micron_arch_arm64)
-  const float32x4_t ratio = simd::neon::div(s, c);
-  const float32x4_t cot = simd::neon::div(simd::neon::neg(c), s);
-#else
-  // arm32 lacks hw vdivq_f32; refine vrecpeq via two Newton-Raphson steps.
-  float32x4_t rc = simd::neon::rcp_est(c);
-  rc = simd::neon::mul(rc, simd::neon::rcp_step(c, rc));
-  rc = simd::neon::mul(rc, simd::neon::rcp_step(c, rc));
-  const float32x4_t ratio = simd::neon::mul(s, rc);
-  float32x4_t rs = simd::neon::rcp_est(s);
-  rs = simd::neon::mul(rs, simd::neon::rcp_step(s, rs));
-  rs = simd::neon::mul(rs, simd::neon::rcp_step(s, rs));
-  const float32x4_t cot = simd::neon::mul(simd::neon::neg(c), rs);
-#endif
-  const uint32x4_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i32(1)), simd::neon::splat_i32(1));
-  return simd::neon::select(odd, cot, ratio);
-}
-
-#if defined(__micron_arch_arm64)
-namespace __trig_simd_neon_d
-{
-// f64 Cody-Waite 3-word pi/2 words (same as the x86 __trig_simd set, compiled out on arm)
-inline constexpr f64 pio2_hi = 0x1.921fb54400000p+0;
-inline constexpr f64 pio2_mid = 0x1.0b4611a626000p-34;
-inline constexpr f64 pio2_lo = 0x1.9880000000000p-77;
-inline constexpr f64 inv_pio2 = 0x1.45f306dc9c883p-1;
-
-[[gnu::always_inline]] inline simd::d128
-ksin(simd::d128 r) noexcept
-{
-  using namespace mkbits::coeff::sin_f64_data;
-  const float64x2_t z = simd::neon::mul(r, r);
-  const float64x2_t r3 = simd::neon::mul(z, r);
-  float64x2_t p = simd::neon::fma_f64(simd::neon::splat_f64(S5), simd::neon::splat_f64(S6), z);
-  p = simd::neon::fma_f64(simd::neon::splat_f64(S4), p, z);
-  p = simd::neon::fma_f64(simd::neon::splat_f64(S3), p, z);
-  p = simd::neon::fma_f64(simd::neon::splat_f64(S2), p, z);
-  p = simd::neon::fma_f64(simd::neon::splat_f64(S1), p, z);
-  return simd::neon::fma_f64(r, r3, p);
-}
-
-[[gnu::always_inline]] inline simd::d128
-kcos(simd::d128 r) noexcept
-{
-  using namespace mkbits::coeff::sin_f64_data;
-  const float64x2_t z = simd::neon::mul(r, r);
-  const float64x2_t hz = simd::neon::mul(simd::neon::splat_f64(0.5), z);
-  float64x2_t p = simd::neon::fma_f64(simd::neon::splat_f64(C5), simd::neon::splat_f64(C6), z);
-  p = simd::neon::fma_f64(simd::neon::splat_f64(C4), p, z);
-  p = simd::neon::fma_f64(simd::neon::splat_f64(C3), p, z);
-  p = simd::neon::fma_f64(simd::neon::splat_f64(C2), p, z);
-  p = simd::neon::fma_f64(simd::neon::splat_f64(C1), p, z);
-  return simd::neon::fma_f64(simd::neon::sub(simd::neon::splat_f64(1.0), hz), simd::neon::mul(z, z), p);
-}
-
-[[gnu::flatten]] inline simd::d128
-reduce_scalar(simd::d128 x, int64x2_t *q_out) noexcept
-{
-  f64 xs[2] = { simd::neon::get_lane_f64<0>(x), simd::neon::get_lane_f64<1>(x) };
-  f64 rs[2];
-  i64 qs[2];
-  for ( usize i = 0; i < 2; ++i ) {
-    if ( !ieee::is_finite(xs[i]) ) [[unlikely]] {
-      rs[i] = ieee::qnan_v<f64>();
-      qs[i] = 0;
-      continue;
+  [[gnu::always_inline]] inline f32
+  __reduce_lane_f64(f32 xf, int *q) noexcept
+  {
+    const f64 x = f64(xf);
+    if ( !ieee::is_finite(x) ) [[unlikely]] {
+      *q = 0;
+      return f32(ieee::qnan_v<f64>());
     }
-    qs[i] = (mkbits::manip::fabs(xs[i]) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(xs[i], &rs[i])
-                                                    : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(xs[i], &rs[i]);
+    f64 t;
+    *q = (mkbits::manip::fabs(x) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(x, &t)
+                                             : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(x, &t);
+    return f32(t);
   }
-  *q_out = simd::neon::load_i64(qs);
-  return simd::neon::load_f64(rs);
-}
 
-[[gnu::always_inline]] inline simd::d128
-reduce(simd::d128 x, int64x2_t *q_out) noexcept
-{
-  const int64x2_t big
-      = simd::neon::reinterpret_s64_from_u64(simd::neon::ge(simd::neon::abs(x), simd::neon::splat_f64(0x1.0p33)));
-  if ( (simd::neon::get_lane_i64<0>(big) | simd::neon::get_lane_i64<1>(big)) != 0 ) [[unlikely]]
-    return reduce_scalar(x, q_out);
+  [[gnu::always_inline]] inline simd::f128
+  ksin_f128(simd::f128 r) noexcept
+  {
+    using namespace mkbits::coeff::sin_f32_data;
+    const float32x4_t z = simd::neon::mul(r, r);
+    const float32x4_t r3 = simd::neon::mul(z, r);
+#if defined(__micron_arm_fma) || defined(__micron_arch_arm64)
+    float32x4_t p = simd::neon::fma_f32(simd::neon::splat_f32(S3), simd::neon::splat_f32(S4), z);
+    p = simd::neon::fma_f32(simd::neon::splat_f32(S2), p, z);
+    p = simd::neon::fma_f32(simd::neon::splat_f32(S1), p, z);
+    return simd::neon::fma_f32(r, r3, p);
+#else
+    float32x4_t p = simd::neon::add(simd::neon::splat_f32(S3), simd::neon::mul(simd::neon::splat_f32(S4), z));
+    p = simd::neon::add(simd::neon::splat_f32(S2), simd::neon::mul(p, z));
+    p = simd::neon::add(simd::neon::splat_f32(S1), simd::neon::mul(p, z));
+    return simd::neon::add(r, simd::neon::mul(r3, p));
+#endif
+  }
 
-  const float64x2_t fN = simd::neon::rint(simd::neon::mul(x, simd::neon::splat_f64(inv_pio2)));
-  float64x2_t t = simd::neon::fms_f64(x, fN, simd::neon::splat_f64(pio2_hi));
-  t = simd::neon::fms_f64(t, fN, simd::neon::splat_f64(pio2_mid));
-  t = simd::neon::fms_f64(t, fN, simd::neon::splat_f64(pio2_lo));
-  *q_out = simd::neon::convert_f64_to_i64(fN);
-  return t;
-}
-};      // namespace __trig_simd_neon_d
+  [[gnu::always_inline]] inline simd::f128
+  kcos_f128(simd::f128 r) noexcept
+  {
+    using namespace mkbits::coeff::sin_f32_data;
+    const float32x4_t z = simd::neon::mul(r, r);
+    const float32x4_t hz = simd::neon::mul(simd::neon::splat_f32(0.5f), z);
+#if defined(__micron_arm_fma) || defined(__micron_arch_arm64)
+    float32x4_t p = simd::neon::fma_f32(simd::neon::splat_f32(C3), simd::neon::splat_f32(C4), z);
+    p = simd::neon::fma_f32(simd::neon::splat_f32(C2), p, z);
+    p = simd::neon::fma_f32(simd::neon::splat_f32(C1), p, z);
+    return simd::neon::fma_f32(simd::neon::sub(simd::neon::splat_f32(1.0f), hz), simd::neon::mul(z, z), p);
+#else
+    float32x4_t p = simd::neon::add(simd::neon::splat_f32(C3), simd::neon::mul(simd::neon::splat_f32(C4), z));
+    p = simd::neon::add(simd::neon::splat_f32(C2), simd::neon::mul(p, z));
+    p = simd::neon::add(simd::neon::splat_f32(C1), simd::neon::mul(p, z));
+    return simd::neon::add(simd::neon::sub(simd::neon::splat_f32(1.0f), hz), simd::neon::mul(simd::neon::mul(z, z), p));
+#endif
+  }
 
-[[gnu::flatten]] inline simd::d128
-sin(simd::d128 x) noexcept
-{
-  int64x2_t q;
-  const float64x2_t r = __trig_simd_neon_d::reduce(x, &q);
-  const float64x2_t s = __trig_simd_neon_d::ksin(r);
-  const float64x2_t c = __trig_simd_neon_d::kcos(r);
-  const uint64x2_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i64(1)), simd::neon::splat_i64(1));
-  const uint64x2_t neg = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i64(2)), simd::neon::splat_i64(2));
-  float64x2_t result = simd::neon::select(odd, c, s);
-  result = simd::neon::select(neg, simd::neon::neg(result), result);
-  return result;
-}
+  [[gnu::always_inline]] inline simd::f128
+  reduce_pio2_f128(simd::f128 x, int32x4_t *q_out) noexcept
+  {
+    int q0, q1, q2, q3;
+    const f32 r0 = __reduce_lane_f64(simd::neon::get_lane_f32<0>(x), &q0);
+    const f32 r1 = __reduce_lane_f64(simd::neon::get_lane_f32<1>(x), &q1);
+    const f32 r2 = __reduce_lane_f64(simd::neon::get_lane_f32<2>(x), &q2);
+    const f32 r3 = __reduce_lane_f64(simd::neon::get_lane_f32<3>(x), &q3);
+    const f32 r_arr[4] = { r0, r1, r2, r3 };
+    const int32_t q_arr[4] = { q0, q1, q2, q3 };
+    *q_out = simd::neon::load_i32(q_arr);
+    return simd::neon::load_f32(r_arr);
+  }
 
-[[gnu::flatten]] inline simd::d128
-cos(simd::d128 x) noexcept
-{
-  int64x2_t q;
-  const float64x2_t r = __trig_simd_neon_d::reduce(x, &q);
-  const float64x2_t s = __trig_simd_neon_d::ksin(r);
-  const float64x2_t c = __trig_simd_neon_d::kcos(r);
-  const int64x2_t qs = simd::neon::add(q, simd::neon::splat_i64(1));
-  const uint64x2_t odd = simd::neon::eq(simd::neon::and_(qs, simd::neon::splat_i64(1)), simd::neon::splat_i64(1));
-  const uint64x2_t neg = simd::neon::eq(simd::neon::and_(qs, simd::neon::splat_i64(2)), simd::neon::splat_i64(2));
-  float64x2_t result = simd::neon::select(odd, c, s);
-  result = simd::neon::select(neg, simd::neon::neg(result), result);
-  return result;
-}
+  };      // namespace __trig_simd_neon
 
-[[gnu::flatten]] inline void
-sincos(simd::d128 x, simd::d128 *sn, simd::d128 *cs) noexcept
-{
-  *sn = sin(x);
-  *cs = cos(x);
-}
+  [[gnu::flatten]] inline simd::f128
+  sin(simd::f128 x) noexcept
+  {
+    int32x4_t q;
+    const float32x4_t r = __trig_simd_neon::reduce_pio2_f128(x, &q);
+    const float32x4_t s = __trig_simd_neon::ksin_f128(r);
+    const float32x4_t c = __trig_simd_neon::kcos_f128(r);
+    const uint32x4_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i32(1)), simd::neon::splat_i32(1));
+    const uint32x4_t neg = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i32(2)), simd::neon::splat_i32(2));
+    float32x4_t result = simd::neon::select(odd, c, s);
+    result = simd::neon::select(neg, simd::neon::neg(result), result);
+    return result;
+  }
 
-[[gnu::flatten]] inline simd::d128
-tan(simd::d128 x) noexcept
-{
-  int64x2_t q;
-  const float64x2_t r = __trig_simd_neon_d::reduce(x, &q);
-  const float64x2_t s = __trig_simd_neon_d::ksin(r);
-  const float64x2_t c = __trig_simd_neon_d::kcos(r);
-  const float64x2_t ratio = simd::neon::div(s, c);
-  const float64x2_t cot = simd::neon::div(simd::neon::neg(c), s);
-  const uint64x2_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i64(1)), simd::neon::splat_i64(1));
-  return simd::neon::select(odd, cot, ratio);
-}
+  [[gnu::flatten]] inline simd::f128
+  cos(simd::f128 x) noexcept
+  {
+    int32x4_t q;
+    const float32x4_t r = __trig_simd_neon::reduce_pio2_f128(x, &q);
+    const float32x4_t s = __trig_simd_neon::ksin_f128(r);
+    const float32x4_t c = __trig_simd_neon::kcos_f128(r);
+    // cos = sin(x + π/2)
+    const int32x4_t qs = simd::neon::add(q, simd::neon::splat_i32(1));
+    const uint32x4_t odd = simd::neon::eq(simd::neon::and_(qs, simd::neon::splat_i32(1)), simd::neon::splat_i32(1));
+    const uint32x4_t neg = simd::neon::eq(simd::neon::and_(qs, simd::neon::splat_i32(2)), simd::neon::splat_i32(2));
+    float32x4_t result = simd::neon::select(odd, c, s);
+    result = simd::neon::select(neg, simd::neon::neg(result), result);
+    return result;
+  }
+
+  [[gnu::flatten]] inline void
+  sincos(simd::f128 x, simd::f128 *sn, simd::f128 *cs) noexcept
+  {
+    *sn = sin(x);
+    *cs = cos(x);
+  }
+
+  [[gnu::flatten]] inline simd::f128
+  tan(simd::f128 x) noexcept
+  {
+    int32x4_t q;
+    const float32x4_t r = __trig_simd_neon::reduce_pio2_f128(x, &q);
+    const float32x4_t s = __trig_simd_neon::ksin_f128(r);
+    const float32x4_t c = __trig_simd_neon::kcos_f128(r);
+#if defined(__micron_arch_arm64)
+    const float32x4_t ratio = simd::neon::div(s, c);
+    const float32x4_t cot = simd::neon::div(simd::neon::neg(c), s);
+#else
+    // arm32 lacks hw vdivq_f32; refine vrecpeq via two Newton-Raphson steps.
+    float32x4_t rc = simd::neon::rcp_est(c);
+    rc = simd::neon::mul(rc, simd::neon::rcp_step(c, rc));
+    rc = simd::neon::mul(rc, simd::neon::rcp_step(c, rc));
+    const float32x4_t ratio = simd::neon::mul(s, rc);
+    float32x4_t rs = simd::neon::rcp_est(s);
+    rs = simd::neon::mul(rs, simd::neon::rcp_step(s, rs));
+    rs = simd::neon::mul(rs, simd::neon::rcp_step(s, rs));
+    const float32x4_t cot = simd::neon::mul(simd::neon::neg(c), rs);
+#endif
+    const uint32x4_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i32(1)), simd::neon::splat_i32(1));
+    return simd::neon::select(odd, cot, ratio);
+  }
+
+#if defined(__micron_arch_arm64)
+  namespace __trig_simd_neon_d
+  {
+  // f64 Cody-Waite 3-word pi/2 words (same as the x86 __trig_simd set, compiled out on arm)
+  inline constexpr f64 pio2_hi = 0x1.921fb54400000p+0;
+  inline constexpr f64 pio2_mid = 0x1.0b4611a626000p-34;
+  inline constexpr f64 pio2_lo = 0x1.9880000000000p-77;
+  inline constexpr f64 inv_pio2 = 0x1.45f306dc9c883p-1;
+
+  [[gnu::always_inline]] inline simd::d128
+  ksin(simd::d128 r) noexcept
+  {
+    using namespace mkbits::coeff::sin_f64_data;
+    const float64x2_t z = simd::neon::mul(r, r);
+    const float64x2_t r3 = simd::neon::mul(z, r);
+    float64x2_t p = simd::neon::fma_f64(simd::neon::splat_f64(S5), simd::neon::splat_f64(S6), z);
+    p = simd::neon::fma_f64(simd::neon::splat_f64(S4), p, z);
+    p = simd::neon::fma_f64(simd::neon::splat_f64(S3), p, z);
+    p = simd::neon::fma_f64(simd::neon::splat_f64(S2), p, z);
+    p = simd::neon::fma_f64(simd::neon::splat_f64(S1), p, z);
+    return simd::neon::fma_f64(r, r3, p);
+  }
+
+  [[gnu::always_inline]] inline simd::d128
+  kcos(simd::d128 r) noexcept
+  {
+    using namespace mkbits::coeff::sin_f64_data;
+    const float64x2_t z = simd::neon::mul(r, r);
+    const float64x2_t hz = simd::neon::mul(simd::neon::splat_f64(0.5), z);
+    float64x2_t p = simd::neon::fma_f64(simd::neon::splat_f64(C5), simd::neon::splat_f64(C6), z);
+    p = simd::neon::fma_f64(simd::neon::splat_f64(C4), p, z);
+    p = simd::neon::fma_f64(simd::neon::splat_f64(C3), p, z);
+    p = simd::neon::fma_f64(simd::neon::splat_f64(C2), p, z);
+    p = simd::neon::fma_f64(simd::neon::splat_f64(C1), p, z);
+    return simd::neon::fma_f64(simd::neon::sub(simd::neon::splat_f64(1.0), hz), simd::neon::mul(z, z), p);
+  }
+
+  [[gnu::flatten]] inline simd::d128
+  reduce_scalar(simd::d128 x, int64x2_t *q_out) noexcept
+  {
+    f64 xs[2] = { simd::neon::get_lane_f64<0>(x), simd::neon::get_lane_f64<1>(x) };
+    f64 rs[2];
+    i64 qs[2];
+    for ( usize i = 0; i < 2; ++i ) {
+      if ( !ieee::is_finite(xs[i]) ) [[unlikely]] {
+        rs[i] = ieee::qnan_v<f64>();
+        qs[i] = 0;
+        continue;
+      }
+      qs[i] = (mkbits::manip::fabs(xs[i]) < 0x1.0p20) ? mkbits::trig_ns::__rr::cody_waite(xs[i], &rs[i])
+                                                      : mkbits::trig_ns::__rr::__paynehanek::payne_hanek(xs[i], &rs[i]);
+    }
+    *q_out = simd::neon::load_i64(qs);
+    return simd::neon::load_f64(rs);
+  }
+
+  [[gnu::always_inline]] inline simd::d128
+  reduce(simd::d128 x, int64x2_t *q_out) noexcept
+  {
+    const int64x2_t big = simd::neon::reinterpret_s64_from_u64(simd::neon::ge(simd::neon::abs(x), simd::neon::splat_f64(0x1.0p33)));
+    if ( (simd::neon::get_lane_i64<0>(big) | simd::neon::get_lane_i64<1>(big)) != 0 ) [[unlikely]]
+      return reduce_scalar(x, q_out);
+
+    const float64x2_t fN = simd::neon::rint(simd::neon::mul(x, simd::neon::splat_f64(inv_pio2)));
+    float64x2_t t = simd::neon::fms_f64(x, fN, simd::neon::splat_f64(pio2_hi));
+    t = simd::neon::fms_f64(t, fN, simd::neon::splat_f64(pio2_mid));
+    t = simd::neon::fms_f64(t, fN, simd::neon::splat_f64(pio2_lo));
+    *q_out = simd::neon::convert_f64_to_i64(fN);
+    return t;
+  }
+  };      // namespace __trig_simd_neon_d
+
+  [[gnu::flatten]] inline simd::d128
+  sin(simd::d128 x) noexcept
+  {
+    int64x2_t q;
+    const float64x2_t r = __trig_simd_neon_d::reduce(x, &q);
+    const float64x2_t s = __trig_simd_neon_d::ksin(r);
+    const float64x2_t c = __trig_simd_neon_d::kcos(r);
+    const uint64x2_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i64(1)), simd::neon::splat_i64(1));
+    const uint64x2_t neg = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i64(2)), simd::neon::splat_i64(2));
+    float64x2_t result = simd::neon::select(odd, c, s);
+    result = simd::neon::select(neg, simd::neon::neg(result), result);
+    return result;
+  }
+
+  [[gnu::flatten]] inline simd::d128
+  cos(simd::d128 x) noexcept
+  {
+    int64x2_t q;
+    const float64x2_t r = __trig_simd_neon_d::reduce(x, &q);
+    const float64x2_t s = __trig_simd_neon_d::ksin(r);
+    const float64x2_t c = __trig_simd_neon_d::kcos(r);
+    const int64x2_t qs = simd::neon::add(q, simd::neon::splat_i64(1));
+    const uint64x2_t odd = simd::neon::eq(simd::neon::and_(qs, simd::neon::splat_i64(1)), simd::neon::splat_i64(1));
+    const uint64x2_t neg = simd::neon::eq(simd::neon::and_(qs, simd::neon::splat_i64(2)), simd::neon::splat_i64(2));
+    float64x2_t result = simd::neon::select(odd, c, s);
+    result = simd::neon::select(neg, simd::neon::neg(result), result);
+    return result;
+  }
+
+  [[gnu::flatten]] inline void
+  sincos(simd::d128 x, simd::d128 *sn, simd::d128 *cs) noexcept
+  {
+    *sn = sin(x);
+    *cs = cos(x);
+  }
+
+  [[gnu::flatten]] inline simd::d128
+  tan(simd::d128 x) noexcept
+  {
+    int64x2_t q;
+    const float64x2_t r = __trig_simd_neon_d::reduce(x, &q);
+    const float64x2_t s = __trig_simd_neon_d::ksin(r);
+    const float64x2_t c = __trig_simd_neon_d::kcos(r);
+    const float64x2_t ratio = simd::neon::div(s, c);
+    const float64x2_t cot = simd::neon::div(simd::neon::neg(c), s);
+    const uint64x2_t odd = simd::neon::eq(simd::neon::and_(q, simd::neon::splat_i64(1)), simd::neon::splat_i64(1));
+    return simd::neon::select(odd, cot, ratio);
+  }
 #endif      // arm64 d128
 
 #endif      // arm_any && neon
 
-};      // namespace mk
-};      // namespace math
+  };      // namespace mk
+  };      // namespace math
 };      // namespace micron
 
 __micron_diagnostic_pop

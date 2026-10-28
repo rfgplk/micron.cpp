@@ -144,7 +144,7 @@ public:
 
   vector(const size_type n) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
   }
 
@@ -153,7 +153,7 @@ public:
              and not(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>))
   vector(const size_type n, Fn &&fn) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
     micron::generate(begin(), end(), fn);
   }
@@ -162,7 +162,7 @@ public:
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   vector(const size_type n, Fn &&fn) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
     micron::transform(begin(), end(), fn);
   }
@@ -187,7 +187,7 @@ public:
 
   vector(size_type n, const T &init_value) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), init_value, n);
+    __impl_container::construct(__mem::memory, init_value, n);
     __mem::length = n;
   }
 
@@ -780,7 +780,7 @@ public:
   {
     if ( cnt > __mem::capacity ) reserve(cnt);
     clear();
-    __impl_container::construct(micron::addr(__mem::memory[0]), val, cnt);      // rollback-safe fill
+    __impl_container::construct(__mem::memory, val, cnt);      // rollback-safe fill
     __mem::length = cnt;
     return *this;
   }
@@ -884,7 +884,7 @@ public:
   clear(void)
   {
     if ( !__mem::length ) return;
-    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __impl_container::destroy(__mem::memory, __mem::length);
     __mem::length = 0;
   }
 
@@ -893,7 +893,7 @@ public:
   drop(void)
   {
     if ( !__mem::length ) return;
-    __impl_container::destroy_fast(micron::addr(__mem::memory[0]), __mem::length);
+    __impl_container::destroy_fast(__mem::memory, __mem::length);
     __mem::length = 0;
   }
 
@@ -1066,7 +1066,7 @@ public:
 
   vector(const size_type n) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
   }
 
@@ -1075,7 +1075,7 @@ public:
              and not(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>))
   vector(const size_type n, Fn &&fn) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
     micron::generate(begin(), end(), fn);
   }
@@ -1084,7 +1084,7 @@ public:
     requires(micron::is_invocable_v<Fn, T *> or micron::is_invocable_v<Fn, T>)
   vector(const size_type n, Fn &&fn) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), T{}, n);
+    __impl_container::construct(__mem::memory, T{}, n);
     __mem::length = n;
     micron::transform(begin(), end(), fn);
   }
@@ -1109,7 +1109,7 @@ public:
 
   vector(size_type n, const T &init_value) : __mem(n)
   {
-    __impl_container::construct(micron::addr(__mem::memory[0]), init_value, n);
+    __impl_container::construct(__mem::memory, init_value, n);
     __mem::length = n;
   }
 
@@ -1651,7 +1651,7 @@ public:
   clear(void)
   {
     if ( !__mem::length ) return;
-    __impl_container::destroy(micron::addr(__mem::memory[0]), __mem::length);
+    __impl_container::destroy(__mem::memory, __mem::length);
     __mem::length = 0;
   }
 
@@ -1659,7 +1659,7 @@ public:
   drop(void)
   {
     if ( !__mem::length ) return;
-    __impl_container::destroy_fast(micron::addr(__mem::memory[0]), __mem::length);
+    __impl_container::destroy_fast(__mem::memory, __mem::length);
     __mem::length = 0;
   }
 

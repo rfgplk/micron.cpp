@@ -463,8 +463,8 @@ main()
     sink += static_cast<umax_t>((src | lz::last()).cast<int>());
     sink += static_cast<umax_t>((src | lz::at(300)).cast<int>());
     // and the same through a stack of adaptors, which is where a per-stage buffer would show up
-    sink += static_cast<umax_t>(src | lz::fmap([](int x) { return x * 2; }) | lz::filter([](int x) { return x > 0; })
-                                | lz::take(100) | lz::count());
+    sink += static_cast<umax_t>(src | lz::fmap([](int x) { return x * 2; }) | lz::filter([](int x) { return x > 0; }) | lz::take(100)
+                                | lz::count());
     sink += static_cast<umax_t>(src | lz::reverse() | lz::step_by(3) | lz::count());
     sink += static_cast<umax_t>(src | lz::enumerate() | lz::count());
     sink += static_cast<umax_t>(src | lz::unique() | lz::count());
@@ -510,8 +510,7 @@ main()
     // to assert. what can be asserted is the shape: nub does not materialize, and it terminates over
     // an endless source -- which it could not do if it buffered the input.
     static_assert(!decltype(micron::declval<micron::vector<int> &>() | lz::nub())::__is_materializing);
-    auto ne = lz::counting(0) | lz::fmap([](int x) { return x % 6; }) | lz::nub() | lz::take(6)
-              | lz::collect<micron::vector<int>>();
+    auto ne = lz::counting(0) | lz::fmap([](int x) { return x % 6; }) | lz::nub() | lz::take(6) | lz::collect<micron::vector<int>>();
     require(ne.size(), usize(6));
     require(ne[0], 0);
     require(ne[5], 5);

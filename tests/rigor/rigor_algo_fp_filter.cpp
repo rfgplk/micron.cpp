@@ -417,12 +417,14 @@ main()
     // Opaque has operator== and nothing else, so micron::hash rejects it and it takes the fallback
     struct Opaque {
       int v;
+
       bool
       operator==(const Opaque &o) const
       {
         return v == o.v;
       }
     };
+
     static_assert(micron::fp::__impl::hash_dedupable<int>, "int must take the hash path");
     static_assert(!micron::fp::__impl::hash_dedupable<Opaque>, "Opaque must take the quadratic path");
 
@@ -658,42 +660,50 @@ main()
       using iterator = char *;
       using const_iterator = const char *;
       char b[2];
+
       pointer
       data()
       {
         return b;
       }
+
       iterator
       begin()
       {
         return b;
       }
+
       iterator
       end()
       {
         return b + 2;
       }
+
       const_iterator
       cbegin() const
       {
         return b;
       }
+
       const_iterator
       cend() const
       {
         return b + 2;
       }
+
       usize
       size() const
       {
         return 2;
       }
+
       bool
       operator==(const Duo &o) const
       {
         return b[0] == o.b[0];
       }
     };
+
     static_assert(requires(const Duo &d) { micron::hash<micron::hash64_t>(d); }, "Duo is hashable -- the exclusion is the rule, not a gap");
     static_assert(!micron::fp::__impl::hash_dedupable<Duo>, "a hash that disagrees with == must not take the hash path");
 
@@ -710,12 +720,14 @@ main()
     // and the opt-in hands the O(n) path back to a type that promises the two agree
     struct Twin: Duo {
       using hash_equality_consistent = micron::true_type;
+
       bool
       operator==(const Twin &o) const
       {
         return b[0] == o.b[0] && b[1] == o.b[1];
       }
     };
+
     static_assert(micron::fp::__impl::hash_dedupable<Twin>, "the opt-in must reach the hash path");
 
     micron::fvector<Twin> t;

@@ -22,17 +22,14 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("avx512f")]] static inline
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// sets
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // sets
 
-__inline_g __m512
-_mm512_setzero_ps() noexcept
+    __inline_g __m512 _mm512_setzero_ps() noexcept
 {
   return __extension__(__m512){ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 }

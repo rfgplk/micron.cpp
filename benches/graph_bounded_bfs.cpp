@@ -4,17 +4,18 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
+#include "../external/bbench/bench.hpp"
+#include "../src/io/console.hpp"
 #include "../src/math/graph/bounded_bfs.hpp"
 #include "../src/math/graph/fixed.hpp"
 #include "../src/math/graph/representations.hpp"
-#include "../src/io/console.hpp"
-#include "../external/bbench/bench.hpp"
 
 namespace mg = micron::math::graphs;
-using graph_type = micron::math::fixed_graph<512, 1536, micron::math::empty_property,
-    micron::math::empty_property, micron::math::empty_property, u32, mg::directed_t>;
+using graph_type = micron::math::fixed_graph<512, 1536, micron::math::empty_property, micron::math::empty_property,
+                                             micron::math::empty_property, u32, mg::directed_t>;
 
-template<class G> bool
+template<class G>
+bool
 measure(const G &graph, const char *representation)
 {
   mg::fixed_bfs_workspace<u32, 512> fixed;
@@ -45,8 +46,8 @@ measure(const G &graph, const char *representation)
     for ( unsigned sample = 0; sample < 7; ++sample ) {
       const auto result = bbench::benchmark_batch<bbench::time_resolution::ns, bbench::event_group<bbench::hardware_cycles>>(run);
       if ( !valid || consumed != expected ) return false;
-      micron::console("representation=", representation, " workspace=", mode ? "fixed" : "dynamic",
-          " sample=", sample, " ns=", result.time, " consumed=", consumed);
+      micron::console("representation=", representation, " workspace=", mode ? "fixed" : "dynamic", " sample=", sample, " ns=", result.time,
+                      " consumed=", consumed);
     }
   }
   return true;
@@ -57,12 +58,16 @@ main()
 {
   graph_type graph;
   for ( u32 i = 0; i < 512; ++i )
-    for ( u32 delta : {1u, 7u, 31u} ) if ( !graph.add_edge(i, (i + delta) % 512).inserted() ) return 2;
+    for ( u32 delta : { 1u, 7u, 31u } )
+      if ( !graph.add_edge(i, (i + delta) % 512).inserted() ) return 2;
   auto csr = mg::freeze(graph);
-  bbench::hardware_cycles counter(bbench::quiet{}); counter.open();
+  bbench::hardware_cycles counter(bbench::quiet{});
+  counter.open();
   micron::console("vertices=512 edges=1536 repetitions=16 samples=7 warmups=2 allocator=MT,zero,provenance fixed_workspace_bytes=",
-      sizeof(mg::fixed_bfs_workspace<u32, 512>));
-  if ( counter.e_fd < 0 ) micron::console("hardware_counters=unavailable errno=", counter.open_error());
-  else micron::console("hardware_counters=available");
+                  sizeof(mg::fixed_bfs_workspace<u32, 512>));
+  if ( counter.e_fd < 0 )
+    micron::console("hardware_counters=unavailable errno=", counter.open_error());
+  else
+    micron::console("hardware_counters=available");
   return measure(graph, "fixed_graph") && measure(csr.value, "csr") ? 0 : 2;
 }

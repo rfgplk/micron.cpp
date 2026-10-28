@@ -20,13 +20,11 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
-// POPCNT only exists after SSE4.2); SWAR workarounds
-__inline_g int
-_mm_popcnt_u32(unsigned int v) noexcept
+    // POPCNT only exists after SSE4.2); SWAR workarounds
+    __inline_g int _mm_popcnt_u32(unsigned int v) noexcept
 {
 #if defined(__micron_x86_popcnt)
   return __builtin_popcount(v);

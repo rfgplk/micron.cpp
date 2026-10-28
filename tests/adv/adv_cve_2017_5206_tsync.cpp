@@ -269,9 +269,8 @@ main(void)
     // errno-default case above is what proves TSYNC for both, and this proves the strict face is
     // wired to that loader at all rather than to something else.
     const adv::child_result r = adv::run_child([]() -> i32 {
-      using strict_policy
-          = s::seccomp_strict_policy_n<1024, s::errno_call<probe_nr, static_cast<u16>(mc::error::no_entry)>,
-                                       s::allow<g::baseline, g::signal, g::process, g::memory, g::time>>;
+      using strict_policy = s::seccomp_strict_policy_n<1024, s::errno_call<probe_nr, static_cast<u16>(mc::error::no_entry)>,
+                                                       s::allow<g::baseline, g::signal, g::process, g::memory, g::time>>;
       if ( strict_policy::apply() < 0 ) return install_failed;
 
       // the rule landed: the probe is ENOENT rather than a real pgid...

@@ -44,7 +44,7 @@ __read_from(S &buf, const fd_t &handle)
 void
 copy_to([[maybe_unused]] const fd_t &handle)
 {
-      // TODO: unimplemented
+  // TODO: unimplemented
 }
 };      // namespace io
 

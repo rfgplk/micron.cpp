@@ -233,39 +233,32 @@ count_of(T __val)
   return __count_of_fn<T>{ __val };
 }
 
-__micron_push_options
-__micron_optimize_no_fast_math
-namespace __impl
-{
+__micron_push_options __micron_optimize_no_fast_math namespace __impl{
 
-template<typename V>
-constexpr f64
-__sum_lanes_stream(const V &__v) noexcept
-{
-  f64 __s[4] = { 0, 0, 0, 0 };
-  f64 __c[4] = { 0, 0, 0, 0 };
-  f64 __stage[4];
-  usize __have = 0;
+  template<typename V> constexpr f64 __sum_lanes_stream(const V &__v) noexcept { f64 __s[4] = { 0, 0, 0, 0 };
+f64 __c[4] = { 0, 0, 0, 0 };
+f64 __stage[4];
+usize __have = 0;
 
-  __each(__v, [&](auto &&__x) {
-    __stage[__have++] = static_cast<f64>(__x);
-    if ( __have == 4 ) {
-      micron::__impl::__neumaier_add(__s[0], __c[0], __stage[0]);
-      micron::__impl::__neumaier_add(__s[1], __c[1], __stage[1]);
-      micron::__impl::__neumaier_add(__s[2], __c[2], __stage[2]);
-      micron::__impl::__neumaier_add(__s[3], __c[3], __stage[3]);
-      __have = 0;
-    }
-  });
-  for ( usize __k = 0; __k < __have; ++__k ) micron::__impl::__neumaier_add(__s[0], __c[0], __stage[__k]);
-
-  f64 __acc = 0, __comp = 0;
-  for ( usize __k = 0; __k < 4; ++__k ) {
-    micron::__impl::__neumaier_add(__acc, __comp, __s[__k]);
-    __comp += __c[__k];
+__each(__v, [&](auto &&__x) {
+  __stage[__have++] = static_cast<f64>(__x);
+  if ( __have == 4 ) {
+    micron::__impl::__neumaier_add(__s[0], __c[0], __stage[0]);
+    micron::__impl::__neumaier_add(__s[1], __c[1], __stage[1]);
+    micron::__impl::__neumaier_add(__s[2], __c[2], __stage[2]);
+    micron::__impl::__neumaier_add(__s[3], __c[3], __stage[3]);
+    __have = 0;
   }
-  return __acc + __comp;
+});
+for ( usize __k = 0; __k < __have; ++__k ) micron::__impl::__neumaier_add(__s[0], __c[0], __stage[__k]);
+
+f64 __acc = 0, __comp = 0;
+for ( usize __k = 0; __k < 4; ++__k ) {
+  micron::__impl::__neumaier_add(__acc, __comp, __s[__k]);
+  __comp += __c[__k];
 }
+return __acc + __comp;
+}      // namespace lz
 
 template<typename V>
 constexpr f128
@@ -276,7 +269,7 @@ __sum_wide_stream(const V &__v) noexcept
   return __sm;
 }
 
-};      // namespace __impl
+};      // namespace micron
 
 template<typename V>
 constexpr f128
@@ -297,35 +290,29 @@ sum_fp_into(V &&__v) noexcept
   }
 }
 
-__micron_pop_options
-namespace __impl
-{
+__micron_pop_options namespace __impl{
 
-template<typename V>
-constexpr umax_t
-__sum_int_stream(const V &__v) noexcept
-{
-  umax_t __w = 0, __x = 0, __y = 0, __z = 0;
-  auto __i = micron::ranges::begin(__v);
-  const auto __e = micron::ranges::end(__v);
-  for ( ;; ) {
-    if ( __i == __e ) break;
-    __w += static_cast<umax_t>(*__i);
-    ++__i;
-    if ( __i == __e ) break;
-    __x += static_cast<umax_t>(*__i);
-    ++__i;
-    if ( __i == __e ) break;
-    __y += static_cast<umax_t>(*__i);
-    ++__i;
-    if ( __i == __e ) break;
-    __z += static_cast<umax_t>(*__i);
-    ++__i;
-  }
-  return (__w + __x) + (__y + __z);
+  template<typename V> constexpr umax_t __sum_int_stream(const V &__v) noexcept { umax_t __w = 0, __x = 0, __y = 0, __z = 0;
+auto __i = micron::ranges::begin(__v);
+const auto __e = micron::ranges::end(__v);
+for ( ;; ) {
+  if ( __i == __e ) break;
+  __w += static_cast<umax_t>(*__i);
+  ++__i;
+  if ( __i == __e ) break;
+  __x += static_cast<umax_t>(*__i);
+  ++__i;
+  if ( __i == __e ) break;
+  __y += static_cast<umax_t>(*__i);
+  ++__i;
+  if ( __i == __e ) break;
+  __z += static_cast<umax_t>(*__i);
+  ++__i;
 }
-
-};      // namespace __impl
+return (__w + __x) + (__y + __z);
+}
+}
+;      // namespace __impl
 
 template<typename V>
 constexpr umax_t
@@ -723,6 +710,7 @@ safe_inner_product(Other &&__o, R __init = R{})
   auto __w = __as_view(micron::forward<Other>(__o));
   return __safe_inner_product_fn<R, decltype(__w)>{ micron::move(__w), __init };
 }
-
-};      // namespace lz
-};      // namespace micron
+}
+;      // namespace lz
+}
+;      // namespace micron

@@ -18,13 +18,10 @@ namespace simd
 namespace avx2
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_avx [[gnu::always_inline, gnu::artificial, gnu::target("avx2")]] static inline
 
-__inline_avx __m256i
-splat_i64(long long v) noexcept
+    __inline_avx __m256i splat_i64(long long v) noexcept
 {
   return _mm256_set1_epi64x(v);
 }

@@ -106,6 +106,7 @@ template<int __sz> class __inline_block
 
 public:
   constexpr __inline_block() noexcept = default;
+
   // matches the pointer<buffer>(__sz) form so stream's ctor is spelled the same either way
   constexpr explicit __inline_block(int) noexcept { }
 

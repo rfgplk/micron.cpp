@@ -20,11 +20,8 @@ namespace simd
 namespace fma
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-template<is_simd_class T>
-inline typename T::bit_width
-__unwrap(const T &o) noexcept
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") template<is_simd_class T>
+inline typename T::bit_width __unwrap(const T &o) noexcept
 {
   static_assert(__is_standard_layout(T) && sizeof(T) == sizeof(typename T::bit_width),
                 "fma: wrapper must be standard-layout with a sole register member");

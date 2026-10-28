@@ -6,8 +6,8 @@
 //
 // compile-validity gate: micron::string surface compiles on every arch/opt. Not run.
 
-#include "../../src/string/string_view.hpp"
 #include "../../src/strings.hpp"
+#include "../../src/string/string_view.hpp"
 #include "../../src/vector.hpp"
 
 int

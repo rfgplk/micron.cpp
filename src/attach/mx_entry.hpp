@@ -19,26 +19,25 @@ inline constexpr u32 micron_mx_entry_abi = 1u;
 inline constexpr u32 micron_mx_entry_f_have_stack = 1u << 0;      // stack_lo/hi are real
 inline constexpr u32 micron_mx_entry_f_have_tls = 1u << 1;        // tls_base is real
 inline constexpr u32 micron_mx_entry_f_have_user = 1u << 2;       // user/user_len are real
-inline constexpr u32 micron_mx_entry_f_all
-    = micron_mx_entry_f_have_stack | micron_mx_entry_f_have_tls | micron_mx_entry_f_have_user;
+inline constexpr u32 micron_mx_entry_f_all = micron_mx_entry_f_have_stack | micron_mx_entry_f_have_tls | micron_mx_entry_f_have_user;
 
 // 128 bytes, 8-aligned, no interior padding
 struct alignas(8) micron_mx_entry_args {
-  u32 abi;             // 0    == micron_mx_entry_abi
-  u32 size;            // 4    == sizeof(micron_mx_entry_args) as the CRT compiled it
-  u32 flags;           // 8    micron_mx_entry_f_*
-  u32 argc;            // 12
-  u64 argv;            // 16   char **
-  u64 envp;            // 24   char **
-  u64 auxv;            // 32   const micron::auxv_t *
-  u64 self_base;       // 40   where the image was mapped (at_base); 0 when the loader gave none
-  u64 page_size;       // 48   at_pagesz
-  u64 stack_lo;        // 56   iff micron_mx_entry_f_have_stack
-  u64 stack_hi;        // 64
-  u64 tls_base;        // 72   the seated thread pointer; iff micron_mx_entry_f_have_tls
-  u64 user;            // 80   loader-opaque; iff micron_mx_entry_f_have_user
-  u64 user_len;        // 88
-  u64 reserved[4];     // 96   must be zero
+  u32 abi;              // 0    == micron_mx_entry_abi
+  u32 size;             // 4    == sizeof(micron_mx_entry_args) as the CRT compiled it
+  u32 flags;            // 8    micron_mx_entry_f_*
+  u32 argc;             // 12
+  u64 argv;             // 16   char **
+  u64 envp;             // 24   char **
+  u64 auxv;             // 32   const micron::auxv_t *
+  u64 self_base;        // 40   where the image was mapped (at_base); 0 when the loader gave none
+  u64 page_size;        // 48   at_pagesz
+  u64 stack_lo;         // 56   iff micron_mx_entry_f_have_stack
+  u64 stack_hi;         // 64
+  u64 tls_base;         // 72   the seated thread pointer; iff micron_mx_entry_f_have_tls
+  u64 user;             // 80   loader-opaque; iff micron_mx_entry_f_have_user
+  u64 user_len;         // 88
+  u64 reserved[4];      // 96   must be zero
 };      // 128
 
 static_assert(sizeof(micron_mx_entry_args) == 128, "micron_mx_entry_args must be 128 bytes");

@@ -274,7 +274,8 @@ main(void)
     constexpr int N = 4000;
     u64 rng = 0x0C7EE501ULL;
     vec3 pts[N];
-    for ( int i = 0; i < N; ++i ) pts[i] = vec3{ static_cast<float>(splitmix64(rng++) % 900), static_cast<float>(splitmix64(rng++) % 900),
+    for ( int i = 0; i < N; ++i )
+      pts[i] = vec3{ static_cast<float>(splitmix64(rng++) % 900), static_cast<float>(splitmix64(rng++) % 900),
                      static_cast<float>(splitmix64(rng++) % 900) };
 
     for ( int i = 0; i < N; ++i ) t.insert(pts[i], static_cast<u32>(i));

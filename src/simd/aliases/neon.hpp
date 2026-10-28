@@ -18,12 +18,10 @@ namespace simd
 namespace neon
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_neon [[gnu::always_inline, gnu::artificial]] static inline
 
-__inline_neon int8x16_t
-load_i8(const signed char *p) noexcept
+    __inline_neon int8x16_t load_i8(const signed char *p) noexcept
 {
   return vld1q_s8(p);
 }

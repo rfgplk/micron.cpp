@@ -6,8 +6,8 @@
 #pragma once
 
 #include "../../concepts.hpp"
-#include "../../type_traits.hpp"
 #include "../../tags.hpp"
+#include "../../type_traits.hpp"
 #include "../../types.hpp"
 #include "storage.hpp"
 #include "tags.hpp"

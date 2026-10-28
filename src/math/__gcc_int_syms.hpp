@@ -124,10 +124,8 @@ __popcountdi2(unsigned long long v) noexcept
 }
 
 #if defined(__SIZEOF_INT128__)
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wpedantic")
-extern "C" __mc_libgcc_sym __micron_optimize_no_tree_loop_distribute unsigned __int128
-__udivti3(unsigned __int128 n, unsigned __int128 d) noexcept
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic") extern "C" __mc_libgcc_sym __micron_optimize_no_tree_loop_distribute
+    unsigned __int128 __udivti3(unsigned __int128 n, unsigned __int128 d) noexcept
 {
   if ( d == 0 ) __builtin_trap();
   unsigned __int128 q = 0;

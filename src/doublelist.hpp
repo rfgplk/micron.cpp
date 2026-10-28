@@ -8,8 +8,8 @@
 #include "algorithm/algorithm.hpp"
 #include "algorithm/memory.hpp"
 #include "except.hpp"
-#include "tags.hpp"
 #include "memory/addr.hpp"
+#include "tags.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
 

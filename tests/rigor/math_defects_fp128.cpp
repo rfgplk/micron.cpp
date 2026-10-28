@@ -33,11 +33,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic")
   constexpr rep implicit_bit = static_cast<rep>(1) << mantbits;      // also the smallest normal, 2^-16382
   constexpr rep signbit = static_cast<rep>(1) << 127;
 
-  constexpr rep
-  bits(u64 hi, u64 lo) noexcept
-  {
-    return (static_cast<rep>(hi) << 64) | lo;
-  }
+  constexpr rep bits(u64 hi, u64 lo) noexcept { return (static_cast<rep>(hi) << 64) | lo; }
 
   struct tcase {
     u64 ahi, alo, bhi, blo;
@@ -62,29 +58,21 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic")
       0x0000000000000000 },      // guard = 0, sticky = 1
     { 0x828601c080134a65, 0xb3f00ac4bd7581d1, 0x3d79fc8518abf513, 0xcef665bf9820a786, '*', 0x8001000000000000,
       0x0000000000000000 },      // the same, negative
-    { 0x0007ffffffffffff, 0xffffffffffffffff, 0x4006000000000000, 0x0000000000000000, '/', 0x0001000000000000,
-      0x0000000000000000 },
-    { 0xa329ffffffffffff, 0xffffffffffffffff, 0x6328000000000000, 0x0000000000000000, '/', 0x8001000000000000,
-      0x0000000000000000 },
-    { 0x3fffffffffffffff, 0xffffffffffffffff, 0x7ffe000000000000, 0x0000000000000000, '/', 0x0001000000000000,
-      0x0000000000000000 },
+    { 0x0007ffffffffffff, 0xffffffffffffffff, 0x4006000000000000, 0x0000000000000000, '/', 0x0001000000000000, 0x0000000000000000 },
+    { 0xa329ffffffffffff, 0xffffffffffffffff, 0x6328000000000000, 0x0000000000000000, '/', 0x8001000000000000, 0x0000000000000000 },
+    { 0x3fffffffffffffff, 0xffffffffffffffff, 0x7ffe000000000000, 0x0000000000000000, '/', 0x0001000000000000, 0x0000000000000000 },
   };
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // one grid step down: the exact result IS a subnormal, so the documented FTZ owns it
   constexpr tcase flushed[] = {
-    { 0x03426f8804e8b6ea, 0x3fb4c0d483a9133e, 0x3cbd64a0cb807aca, 0x1374d6d6f45412a3, '*', 0x0000000000000000,
-      0x0000000000000000 },
-    { 0x8238b81240a48c59, 0x6ed19b45dd57dac3, 0x3dc729d7b7a2be59, 0xc172fa02c26940f4, '*', 0x8000000000000000,
-      0x0000000000000000 },
-    { 0x02f3eea0971fc71c, 0xb058a16cd4e2debf, 0x3d0c08fdcebcbab1, 0xbb8ff2db2ab5d935, '*', 0x0000000000000000,
-      0x0000000000000000 },
-    { 0x892dc62c0f8f9439, 0xc6ceb6cfafa5cd41, 0x36d220986eaa657c, 0xe5b41e5f2a57581f, '*', 0x8000000000000000,
-      0x0000000000000000 },
+    { 0x03426f8804e8b6ea, 0x3fb4c0d483a9133e, 0x3cbd64a0cb807aca, 0x1374d6d6f45412a3, '*', 0x0000000000000000, 0x0000000000000000 },
+    { 0x8238b81240a48c59, 0x6ed19b45dd57dac3, 0x3dc729d7b7a2be59, 0xc172fa02c26940f4, '*', 0x8000000000000000, 0x0000000000000000 },
+    { 0x02f3eea0971fc71c, 0xb058a16cd4e2debf, 0x3d0c08fdcebcbab1, 0xbb8ff2db2ab5d935, '*', 0x0000000000000000, 0x0000000000000000 },
+    { 0x892dc62c0f8f9439, 0xc6ceb6cfafa5cd41, 0x36d220986eaa657c, 0xe5b41e5f2a57581f, '*', 0x8000000000000000, 0x0000000000000000 },
     { 0x000bffffffffffff, 0xfffffffffffffffe, 0x400a000000000000, 0x0000000000000000, '/', 0x0000000000000000,
       0x0000000000000000 },      // one ulp short of the tie
-    { 0x1388ffffffffffff, 0xfffffffffffffffe, 0x5387000000000000, 0x0000000000000000, '/', 0x0000000000000000,
-      0x0000000000000000 },
+    { 0x1388ffffffffffff, 0xfffffffffffffffe, 0x5387000000000000, 0x0000000000000000, '/', 0x0000000000000000, 0x0000000000000000 },
     { 0x0001ffffffffffff, 0xffffffffffffffff, 0x4001000000000000, 0x0000000000000000, '/', 0x0000000000000000,
       0x0000000000000000 },      // exp == -1: half the above, nothing can reach the boundary
   };
@@ -104,8 +92,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic")
 
   // the table is read through a volatile pointer so no operand can be constant-folded away and the
   // shim is actually entered
-  rep
-  run(const tcase &t) noexcept
+  rep run(const tcase &t) noexcept
   {
     volatile const tcase *v = &t;
     const _Float128 a = __builtin_bit_cast(_Float128, bits(v->ahi, v->alo));
@@ -113,9 +100,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic")
     return __builtin_bit_cast(rep, v->op == '*' ? __multf3(a, b) : __divtf3(a, b));
   }
 
-  template<usize N>
-  bool
-  all_match(const tcase (&ts)[N]) noexcept
+  template<usize N> bool all_match(const tcase(&ts)[N]) noexcept
   {
     for ( usize i = 0; i < N; ++i )
       if ( run(ts[i]) != bits(ts[i].whi, ts[i].wlo) ) return false;
@@ -124,8 +109,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic")
 
   // a / 2 and 2^-16382 * b over significands 2^113-1-k: k == 0 is the tie that rounds to the
   // smallest normal, every k >= 1 lands strictly inside the subnormals
-  tcase
-  swept(int k, char op) noexcept
+  tcase swept(int k, char op) noexcept
   {
     const rep sig = ((implicit_bit << 1) - 1) - static_cast<rep>(k);
     const rep operand = (static_cast<rep>(op == '/' ? 1 : 16382) << mantbits) | (sig & (implicit_bit - 1));

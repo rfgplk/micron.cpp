@@ -55,8 +55,8 @@ test_readers(void)
   test_case("the realtime clock is somewhere sane -- past 2024, before 2100");
   {
     const i64 s = ch::now_s();
-    require_true(s > 1704067200L);       // 2024-01-01
-    require_true(s < 4102444800L);       // 2100-01-01
+    require_true(s > 1704067200L);      // 2024-01-01
+    require_true(s < 4102444800L);      // 2100-01-01
   }
   end_test_case();
 
@@ -345,9 +345,9 @@ test_eintr_resume(void)
     micron::setitimer(micron::itimer_real, off);
 
     require(static_cast<long>(r), 0L);
-    require_true(g_signals > 2);                  // it really was interrupted, repeatedly
-    require_true(t1 - t0 >= 95000000ll);          // and it really did wait
-    require_true(t1 - t0 < 400000000ll);          // but nothing like ten times over
+    require_true(g_signals > 2);              // it really was interrupted, repeatedly
+    require_true(t1 - t0 >= 95000000ll);      // and it really did wait
+    require_true(t1 - t0 < 400000000ll);      // but nothing like ten times over
   }
   end_test_case();
 

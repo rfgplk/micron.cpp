@@ -19,9 +19,7 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 
 #define __neon32_ldst(T, suffix, ETYPE)                                                                                                    \
@@ -43,7 +41,8 @@ __micron_diagnostic_ignored("-Wpedantic")
     __builtin_memcpy(p, &v, sizeof(v));                                                                                                    \
   }
 
-template<typename> struct __halfof32;
+    template<typename>
+    struct __halfof32;
 
 template<> struct __halfof32<int8x16_t> {
   using type = int8x8_t;

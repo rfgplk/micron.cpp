@@ -185,6 +185,9 @@ template<typename T>
 inline void
 shallow_copy(T *__restrict dest, const T *__restrict src, usize cnt) noexcept
 {
+  // avoid zero count UB
+  if ( cnt == 0 ) [[unlikely]]
+    return;
   micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<const byte *>(src),
                  cnt * (sizeof(T)));      // always is page aligned, 256 is
                                           // fine, just realign back to bytes
@@ -194,6 +197,9 @@ template<typename T>
 inline void
 shallow_copy(T *__restrict dest, T *__restrict src, usize cnt) noexcept
 {
+  // avoid zero count UB
+  if ( cnt == 0 ) [[unlikely]]
+    return;
   micron::memcpy(reinterpret_cast<byte *>(dest), reinterpret_cast<byte *>(src),
                  cnt * (sizeof(T)));      // always is page aligned, 256 is
                                           // fine, just realign back to bytes
@@ -263,6 +269,9 @@ template<typename T>
 inline void
 shallow_move(T *__restrict dest, T *__restrict src, usize cnt)
 {
+  // avoid zero count UB
+  if ( cnt == 0 ) [[unlikely]]
+    return;
   micron::memcpy(dest, src, cnt);
   // micron::byteset(reinterpret_cast<byte *>(src), 0x0, cnt * sizeof(T));
 };
@@ -366,6 +375,8 @@ template<usize N, typename T>
 inline void
 shallow_move(T *__restrict dest, T *__restrict src)
 {
+  // avoid zero count UB
+  if constexpr ( N == 0 ) return;
   micron::cmemcpy<N, T, T>(dest, src);
   // micron::cbyteset<N * sizeof(T)>(reinterpret_cast<byte *>(src), 0x0);
 };
@@ -434,6 +445,8 @@ template<usize N, typename T>
 inline void
 shallow_copy(T *__restrict dest, const T *__restrict src) noexcept
 {
+  // avoid zero count UB
+  if constexpr ( N == 0 ) return;
   micron::cmemcpy<N * sizeof(T)>(reinterpret_cast<byte *>(dest),
                                  reinterpret_cast<const byte *>(src));      // always is page aligned, 256 is
                                                                             // fine, just realign back to bytes
@@ -443,6 +456,8 @@ template<usize N, typename T>
 inline void
 shallow_copy(T *__restrict dest, T *__restrict src) noexcept
 {
+  // avoid zero count UB
+  if constexpr ( N == 0 ) return;
   micron::cmemcpy<N * sizeof(T)>(reinterpret_cast<byte *>(dest),
                                  reinterpret_cast<const byte *>(src));      // always is page aligned, 256 is
                                                                             // fine, just realign back to bytes
@@ -688,6 +703,8 @@ template<usize N, typename T>
 inline void
 destroy(T *src)
 {
+  // avoid zero count UB
+  if constexpr ( N == 0 ) return;
   if constexpr ( !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
     if constexpr ( N % 4 == 0 ) {
       for ( usize i = 0; i < N; i += 4 ) {
@@ -714,6 +731,7 @@ template<typename T>
 inline void
 destroy(T *__restrict src, usize cnt)
 {
+  if ( cnt == 0 ) return;
   if constexpr ( !micron::is_trivially_destructible_v<micron::remove_cv_t<T>> ) {
     for ( usize i = 0; i < cnt; ++i ) src[i].~T();
     // WARNING: after calling destructors, manually zero it out, wasteful but necessary for edge case correctness
@@ -758,6 +776,7 @@ template<usize N, typename T>
 void
 zero(T *src)
 {
+  if constexpr ( N == 0 ) return;
   micron::cbyteset<N * sizeof(T)>(src, 0x0);
 }
 
@@ -765,6 +784,7 @@ template<usize N, typename T>
 void
 set(T *__restrict src, const T &val)
 {
+  if constexpr ( N == 0 ) return;
   if constexpr ( !micron::is_trivially_assignable_v<T &, const T &> ) {
     if constexpr ( N % 4 == 0 ) {
       for ( usize i = 0; i < N; i += 4 ) {
@@ -799,6 +819,7 @@ template<usize N, typename T>
 void
 construct(T *__restrict src, const T &val)
 {
+  if constexpr ( N == 0 ) return;
   if constexpr ( !micron::is_trivially_constructible_v<T, const T &> ) {
     if constexpr ( noexcept(T(micron::declval<const T &>())) ) {
       if constexpr ( N % 4 == 0 ) {
@@ -834,6 +855,8 @@ template<typename T>
 void
 construct(T *__restrict src, const T &val, usize cnt)
 {
+  // avoid zero count UB
+  if ( cnt == 0 ) return;
   if constexpr ( !micron::is_trivially_constructible_v<T, const T &> ) {
     if constexpr ( noexcept(T(micron::declval<const T &>())) ) {
       for ( usize i = 0; i < cnt; ++i ) new (addr(src[i])) T(val);

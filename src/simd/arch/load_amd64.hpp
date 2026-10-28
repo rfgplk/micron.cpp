@@ -11,15 +11,12 @@ namespace micron
 namespace simd
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpedantic")
-__micron_diagnostic_ignored("-Wpsabi")
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// load/aligned loads
-template<is_simd_type B>
-inline B
-load(B *ptr)
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpedantic")
+    __micron_diagnostic_ignored("-Wpsabi")
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // load/aligned loads
+    template<is_simd_type B>
+    inline B load(B *ptr)
 {
   if constexpr ( micron::is_same_v<B, i128> ) {
     return _mm_load_si128(static_cast<i128 *>(__builtin_assume_aligned(ptr, 16)));

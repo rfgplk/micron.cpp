@@ -156,7 +156,7 @@ main(void)
     usize checked = 0;
     for ( usize i = 0; i < N_RT64; ++i ) {
       const u64 b = r.next();
-      if (((b >> 52) & 0x7FF) == 0x7FF ) continue;      // inf/nan get their own case
+      if ( ((b >> 52) & 0x7FF) == 0x7FF ) continue;      // inf/nan get their own case
       const usize n = micron::__impl::__ryu::d2s_buffered(f64_from_bits(b), buf);
       f64 back = 0.0;
       const bool ok = micron::try_parse_double(static_cast<const char *>(buf), n, back);
@@ -192,7 +192,7 @@ main(void)
     usize checked = 0;
     for ( usize i = 0; i < N_RT32; ++i ) {
       const u32 b = static_cast<u32>(r.next() >> 32);
-      if (((b >> 23) & 0xFF) == 0xFF ) continue;
+      if ( ((b >> 23) & 0xFF) == 0xFF ) continue;
       const usize n = micron::__impl::__ryu::__f32::f2s_buffered(f32_from_bits(b), buf);
       f32 back = 0.0f;
       const bool ok = micron::try_parse_float(static_cast<const char *>(buf), n, back);
@@ -372,33 +372,34 @@ main(void)
       u64 bits;
       bool ok;
     } cases[] = {
-      { "4.9406564584124654e-324", 0x0000000000000001ull, true  },      // min subnormal
-      { "5e-324", 0x0000000000000001ull, true  },      // its shortest form
+      { "4.9406564584124654e-324", 0x0000000000000001ull, true },       // min subnormal
+      { "5e-324", 0x0000000000000001ull, true },                        // its shortest form
       { "2.4703282292062327e-324", 0x0000000000000000ull, false },      // below half-min: to zero
-      { "2.4703282292062328e-324", 0x0000000000000001ull, true  },      // just above
-      { "1e-323", 0x0000000000000002ull, true  },
-      { "2.2250738585072014e-308", 0x0010000000000000ull, true  },      // DBL_MIN
-      { "2.2250738585072011e-308", 0x000FFFFFFFFFFFFFull, true  },      // the php/java hang case
-      { "2.2250738585072013e-308", 0x0010000000000000ull, true  },
-      { "1.7976931348623157e308", 0x7FEFFFFFFFFFFFFFull, true  },      // DBL_MAX
-      { "1.7976931348623158e308", 0x7FEFFFFFFFFFFFFFull, true  },
+      { "2.4703282292062328e-324", 0x0000000000000001ull, true },       // just above
+      { "1e-323", 0x0000000000000002ull, true },
+      { "2.2250738585072014e-308", 0x0010000000000000ull, true },      // DBL_MIN
+      { "2.2250738585072011e-308", 0x000FFFFFFFFFFFFFull, true },      // the php/java hang case
+      { "2.2250738585072013e-308", 0x0010000000000000ull, true },
+      { "1.7976931348623157e308", 0x7FEFFFFFFFFFFFFFull, true },      // DBL_MAX
+      { "1.7976931348623158e308", 0x7FEFFFFFFFFFFFFFull, true },
       { "1.7976931348623159e308", 0x7FF0000000000000ull, false },      // overflow
-      { "9007199254740993", 0x4340000000000000ull, true  },      // 2^53+1, exact tie
-      { "1.0000000000000002", 0x3FF0000000000001ull, true  },
-      { "8.98846567431158e307", 0x7FE0000000000000ull, true  },
-      { "5.708990770823839e33", 0x46F19799812DEA11ull, true  },
-      { "0.500000000000000166533453693773481063544750213623046875", 0x3FE0000000000002ull, true  },
-      { "0.5000000000000000000000000000001", 0x3FE0000000000000ull, true  },
-      { "9.999999999999999999e22", 0x44B52D02C7E14AF6ull, true  },
-      { "1e23", 0x44B52D02C7E14AF6ull, true  },      // the classic double-rounding pair
-      { "1e22", 0x4480F0CF064DD592ull, true  },
-      { "0.1", 0x3FB999999999999Aull, true  },
-      { "0.3", 0x3FD3333333333333ull, true  },
-      { "123456789012345678901234567890", 0x45F8EE90FF6C373Eull, true  },
-      { "3.14159265358979323846264338327950288", 0x400921FB54442D18ull, true  },
-      { "4.450147717014403e-308", 0x0020000000000000ull, true  },
-      { "0000000000000000000000001e0", 0x3FF0000000000000ull, true  },      // leading zeros
+      { "9007199254740993", 0x4340000000000000ull, true },             // 2^53+1, exact tie
+      { "1.0000000000000002", 0x3FF0000000000001ull, true },
+      { "8.98846567431158e307", 0x7FE0000000000000ull, true },
+      { "5.708990770823839e33", 0x46F19799812DEA11ull, true },
+      { "0.500000000000000166533453693773481063544750213623046875", 0x3FE0000000000002ull, true },
+      { "0.5000000000000000000000000000001", 0x3FE0000000000000ull, true },
+      { "9.999999999999999999e22", 0x44B52D02C7E14AF6ull, true },
+      { "1e23", 0x44B52D02C7E14AF6ull, true },      // the classic double-rounding pair
+      { "1e22", 0x4480F0CF064DD592ull, true },
+      { "0.1", 0x3FB999999999999Aull, true },
+      { "0.3", 0x3FD3333333333333ull, true },
+      { "123456789012345678901234567890", 0x45F8EE90FF6C373Eull, true },
+      { "3.14159265358979323846264338327950288", 0x400921FB54442D18ull, true },
+      { "4.450147717014403e-308", 0x0020000000000000ull, true },
+      { "0000000000000000000000001e0", 0x3FF0000000000000ull, true },      // leading zeros
     };
+
     for ( auto &c : cases ) {
       f64 v = 0.0;
       const bool ok = micron::try_parse_double(c.s, cstr_len(c.s), v);
@@ -440,15 +441,12 @@ main(void)
       u64 bits;
       bool ok;
     } cases[] = {
-      { "0x1.8p3", 0x4028000000000000ull, true  },
-      { "0X1P-1", 0x3FE0000000000000ull, true  },
-      { "-0x0p0", 0x8000000000000000ull, true  },
-      { "0x1.fffffffffffffp1023", 0x7FEFFFFFFFFFFFFFull, true  },
-      { "0x1p1024", 0x7FF0000000000000ull, false },
-      { "0x1p-1074", 0x0000000000000001ull, true  },
-      { "0x1p-1075", 0x0000000000000000ull, false },
-      { "0x10", 0x4030000000000000ull, true  },
+      { "0x1.8p3", 0x4028000000000000ull, true },    { "0X1P-1", 0x3FE0000000000000ull, true },
+      { "-0x0p0", 0x8000000000000000ull, true },     { "0x1.fffffffffffffp1023", 0x7FEFFFFFFFFFFFFFull, true },
+      { "0x1p1024", 0x7FF0000000000000ull, false },  { "0x1p-1074", 0x0000000000000001ull, true },
+      { "0x1p-1075", 0x0000000000000000ull, false }, { "0x10", 0x4030000000000000ull, true },
     };
+
     for ( auto &c : cases ) {
       f64 v = 0.0;
       const bool ok = micron::try_parse_double(c.s, cstr_len(c.s), v);
@@ -468,6 +466,7 @@ main(void)
       { "-inf", 0xFFF0000000000000ull },     { "-Inf", 0xFFF0000000000000ull },      { "infinity", 0x7FF0000000000000ull },
       { "INFINITY", 0x7FF0000000000000ull }, { "+Infinity", 0x7FF0000000000000ull },
     };
+
     for ( auto &c : infs ) {
       f64 v = 0.0;
       require_true(micron::try_parse_double(c.s, cstr_len(c.s), v));
@@ -491,14 +490,11 @@ main(void)
       u32 bits;
       bool ok;
     } cases[] = {
-      { "5E-1", 0x3F000000u, true  },
-      { "0E0", 0x00000000u, true  },
-      { "1e-45", 0x00000001u, true  },
-      { "3.4028235e38", 0x7F7FFFFFu, true  },
-      { "1e39", 0x7F800000u, false },
-      { "1e-46", 0x00000000u, false },
-      { "16777217", 0x4B800000u, true  },
+      { "5E-1", 0x3F000000u, true },         { "0E0", 0x00000000u, true },   { "1e-45", 0x00000001u, true },
+      { "3.4028235e38", 0x7F7FFFFFu, true }, { "1e39", 0x7F800000u, false }, { "1e-46", 0x00000000u, false },
+      { "16777217", 0x4B800000u, true },
     };
+
     for ( auto &c : cases ) {
       f32 v = 0.0f;
       const bool ok = micron::try_parse_float(c.s, cstr_len(c.s), v);
@@ -515,7 +511,8 @@ main(void)
 
   test_case("malformed input is rejected outright");
   {
-    const char *bad[] = { "", "+", "-", ".", "+.", "e5", "E5", ".e5", "1e", "1e+", "1.5abc", "abc", "--1", "1..2", "0x", "0x1p", "1e5 x", " ", "\t" };
+    const char *bad[]
+        = { "", "+", "-", ".", "+.", "e5", "E5", ".e5", "1e", "1e+", "1.5abc", "abc", "--1", "1..2", "0x", "0x1p", "1e5 x", " ", "\t" };
     for ( const char *s : bad ) {
       f64 v = 1.0;
       require_true(!micron::try_parse_double(s, cstr_len(s), v));
@@ -535,9 +532,10 @@ main(void)
       const char *s;
       f64 v;
     } good[] = {
-      { "1e5", 100000.0 },  { "5E-1", 0.5 },   { " \t1.5", 1.5 }, { "+1e5", 100000.0 },
+      { "1e5", 100000.0 },  { "5E-1", 0.5 },     { " \t1.5", 1.5 }, { "+1e5", 100000.0 },
       { "1E+5", 100000.0 }, { "0x1.8p3", 12.0 }, { "-2.5", -2.5 },  { "1.", 1.0 },
     };
+
     for ( auto &c : good ) {
       f64 v = 0.0;
       require_true(micron::try_parse_double(c.s, cstr_len(c.s), v));

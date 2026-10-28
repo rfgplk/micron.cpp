@@ -336,7 +336,8 @@ use_legacy(void)
   g_sink_f = micron::time_of_day_now().to_duration();
   g_sink_f = micron::elapsed<micron::unit::seconds>(micron::now_ts(), micron::now_ts());
   g_sink_f = micron::timediff(0, 1);
-  micron::time_point<micron::system_clock<>, micron::fduration_t> tp = micron::time_point<micron::system_clock<>, micron::fduration_t>::now();
+  micron::time_point<micron::system_clock<>, micron::fduration_t> tp
+      = micron::time_point<micron::system_clock<>, micron::fduration_t>::now();
   g_sink_f = tp.as<micron::unit::seconds>();
   g_sink_f = (tp + 1.0).time_since_epoch();
   micron::year_month_day ymd = micron::year_month_day::from_unix(0);

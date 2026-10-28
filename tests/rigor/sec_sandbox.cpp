@@ -178,15 +178,7 @@ main(void)
     sb::require_true(fb.valid());
 
     s::sandbox box;
-    box.user()
-        .mount_ns()
-        .pid_ns()
-        .net()
-        .uts()
-        .ipc()
-        .landlock(work_dir, s::landlock::read_only)
-        .no_new_privs()
-        .seccomp(fb);
+    box.user().mount_ns().pid_ns().net().uts().ipc().landlock(work_dir, s::landlock::read_only).no_new_privs().seccomp(fb);
 
     sb::require_true(s::ns::any(box.kinds() & s::ns::ns_kind::user));
     sb::require_true(box.has_seccomp());
@@ -200,12 +192,11 @@ main(void)
 
     // EXACT equality: an extra bit would mean a stage fired that was not asked for, a missing one
     // that a stage was silently skipped
-    const i32 want = bit_userns | bit_uid_root | bit_nnp | bit_seccomp | bit_landlock_in | bit_landlock_out
-                     | bit_pidns | bit_mask_clear;
+    const i32 want = bit_userns | bit_uid_root | bit_nnp | bit_seccomp | bit_landlock_in | bit_landlock_out | bit_pidns | bit_mask_clear;
     const i32 got = mc::wexitstatus(st);
     if ( got != want )
-      sb::print("  probe bits got=", static_cast<i64>(got), " want=", static_cast<i64>(want),
-                " missing=", static_cast<i64>(want & ~got), " extra=", static_cast<i64>(got & ~want));
+      sb::print("  probe bits got=", static_cast<i64>(got), " want=", static_cast<i64>(want), " missing=", static_cast<i64>(want & ~got),
+                " extra=", static_cast<i64>(got & ~want));
     sb::require(got, want);
   }
   sb::end_test_case();

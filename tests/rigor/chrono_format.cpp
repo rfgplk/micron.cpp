@@ -40,17 +40,17 @@ str_eq(const char *buf, usize n, const char *want)
 #define CHECK_W(expr_write, expr_size, want)                                                                                               \
   do {                                                                                                                                     \
     char __b[256];                                                                                                                         \
-    for ( usize __i = 0; __i < sizeof(__b); ++__i ) __b[__i] = '\xAB';                                                                      \
-    const usize __n = (expr_write)(__b, sizeof(__b));                                                                                       \
-    require_true(str_eq(__b, __n, (want)));                                                                                                 \
-    require(static_cast<long>((expr_size)()), static_cast<long>(__n));                                                                      \
-    if ( __n > 0 ) {                                                                                                                        \
+    for ( usize __i = 0; __i < sizeof(__b); ++__i ) __b[__i] = '\xAB';                                                                     \
+    const usize __n = (expr_write)(__b, sizeof(__b));                                                                                      \
+    require_true(str_eq(__b, __n, (want)));                                                                                                \
+    require(static_cast<long>((expr_size)()), static_cast<long>(__n));                                                                     \
+    if ( __n > 0 ) {                                                                                                                       \
       char __s[256];                                                                                                                       \
-      for ( usize __i = 0; __i < sizeof(__s); ++__i ) __s[__i] = '\xAB';                                                                    \
-      require(static_cast<long>((expr_write)(__s, __n - 1)), 0L);                                                                           \
-      /* refusing means writing nothing past what it was given */                                                                           \
-      require_true(__s[__n - 1] == '\xAB');                                                                                                 \
-    }                                                                                                                                       \
+      for ( usize __i = 0; __i < sizeof(__s); ++__i ) __s[__i] = '\xAB';                                                                   \
+      require(static_cast<long>((expr_write)(__s, __n - 1)), 0L);                                                                          \
+      /* refusing means writing nothing past what it was given */                                                                          \
+      require_true(__s[__n - 1] == '\xAB');                                                                                                \
+    }                                                                                                                                      \
   } while ( 0 )
 
 static ch::civil
@@ -242,8 +242,8 @@ test_strftime(void)
 
   test_case("%F %T is the ISO date and time");
   {
-    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%F %T", utc); },
-            [&]() { return ch::strftime_size("%F %T", utc); }, "2026-01-09 23:06:40");
+    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%F %T", utc); }, [&]() { return ch::strftime_size("%F %T", utc); },
+            "2026-01-09 23:06:40");
   }
   end_test_case();
 
@@ -259,8 +259,8 @@ test_strftime(void)
     CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%I %p %P %r", utc); },
             [&]() { return ch::strftime_size("%I %p %P %r", utc); }, "11 PM pm 11:06:40 PM");
     const ch::civil noon = mk(2026, 1, 9, 12, 0, 0);
-    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%I %p", noon); },
-            [&]() { return ch::strftime_size("%I %p", noon); }, "12 PM");
+    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%I %p", noon); }, [&]() { return ch::strftime_size("%I %p", noon); },
+            "12 PM");
     const ch::civil midnight = mk(2026, 1, 9, 0, 0, 0);
     CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%I %p", midnight); },
             [&]() { return ch::strftime_size("%I %p", midnight); }, "12 AM");
@@ -279,18 +279,18 @@ test_strftime(void)
 
   test_case("%z and %Z");
   {
-    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%z %Z", utc); },
-            [&]() { return ch::strftime_size("%z %Z", utc); }, "+0000 UTC");
+    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%z %Z", utc); }, [&]() { return ch::strftime_size("%z %Z", utc); },
+            "+0000 UTC");
     const ch::civil off = ch::to_civil(1768000000L, -19800);
-    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%z %Z", off); },
-            [&]() { return ch::strftime_size("%z %Z", off); }, "-0530 -0530");
+    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "%z %Z", off); }, [&]() { return ch::strftime_size("%z %Z", off); },
+            "-0530 -0530");
   }
   end_test_case();
 
   test_case("literals, %% and an unknown specifier passing through");
   {
-    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "x%%y%Qz", utc); },
-            [&]() { return ch::strftime_size("x%%y%Qz", utc); }, "x%y%Qz");
+    CHECK_W([&](char *b, usize k) { return ch::write_strftime(b, k, "x%%y%Qz", utc); }, [&]() { return ch::strftime_size("x%%y%Qz", utc); },
+            "x%y%Qz");
   }
   end_test_case();
 
@@ -326,13 +326,10 @@ test_durations(void)
   test_case("hms: under a day is HH:MM:SS, past one is Dd HH:MM");
   {
     const u64 a = 2 * 3600 + 11 * 60 + 33;
-    CHECK_W([&](char *b, usize k) { return ch::write_duration_hms(b, k, a); }, [&]() { return ch::duration_hms_size(a); },
-            "02:11:33");
+    CHECK_W([&](char *b, usize k) { return ch::write_duration_hms(b, k, a); }, [&]() { return ch::duration_hms_size(a); }, "02:11:33");
     const u64 c = 4 * 86400 + 2 * 3600 + 11 * 60;
-    CHECK_W([&](char *b, usize k) { return ch::write_duration_hms(b, k, c); }, [&]() { return ch::duration_hms_size(c); },
-            "4d 02:11");
-    CHECK_W([&](char *b, usize k) { return ch::write_duration_hms(b, k, 0); }, [&]() { return ch::duration_hms_size(0); },
-            "00:00:00");
+    CHECK_W([&](char *b, usize k) { return ch::write_duration_hms(b, k, c); }, [&]() { return ch::duration_hms_size(c); }, "4d 02:11");
+    CHECK_W([&](char *b, usize k) { return ch::write_duration_hms(b, k, 0); }, [&]() { return ch::duration_hms_size(0); }, "00:00:00");
   }
   end_test_case();
 
@@ -352,12 +349,9 @@ test_durations(void)
   test_case("units: whole components only, largest first");
   {
     const u64 v = 3600ull * ch::ns_per_s + 23ull * ch::ns_per_min + 4ull * ch::ns_per_s;
-    CHECK_W([&](char *b, usize k) { return ch::write_duration_units(b, k, v); }, [&]() { return ch::duration_units_size(v); },
-            "1h23m4s");
-    CHECK_W([&](char *b, usize k) { return ch::write_duration_units(b, k, 0); }, [&]() { return ch::duration_units_size(0); },
-            "0s");
-    CHECK_W([&](char *b, usize k) { return ch::write_duration_units(b, k, 1); }, [&]() { return ch::duration_units_size(1); },
-            "1ns");
+    CHECK_W([&](char *b, usize k) { return ch::write_duration_units(b, k, v); }, [&]() { return ch::duration_units_size(v); }, "1h23m4s");
+    CHECK_W([&](char *b, usize k) { return ch::write_duration_units(b, k, 0); }, [&]() { return ch::duration_units_size(0); }, "0s");
+    CHECK_W([&](char *b, usize k) { return ch::write_duration_units(b, k, 1); }, [&]() { return ch::duration_units_size(1); }, "1ns");
     CHECK_W([&](char *b, usize k) { return ch::write_duration_units(b, k, 1500ull * ch::ns_per_ms); },
             [&]() { return ch::duration_units_size(1500ull * ch::ns_per_ms); }, "1s500ms");
   }

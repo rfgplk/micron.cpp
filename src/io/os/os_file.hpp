@@ -601,12 +601,19 @@ public:
     return *this;
   }
 
+  max_t
+  try_close(void)
+  {
+    if ( __handle.closed() ) return 0;
+    const auto fd = __handle.fd;
+    __handle.fd = posix::invalid_fd.fd;
+    return posix::close(fd);
+  }
+
   void
   close(void)
   {
-    if ( __handle.closed() ) return;
-    posix::close(__handle.fd);
-    __handle.fd = posix::invalid_fd.fd;
+    (void)try_close();
   }
 
   // NOTE: paths are trusted; we do not defend against path swapping/TOCTOU

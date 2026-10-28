@@ -290,8 +290,7 @@ main(void)
     static_assert(N::has_user);
     static_assert(!s::namespace_policy_none::has_user);
 
-    using L = s::landlock_policy<s::beneath<"/usr", s::landlock::read_execute>,
-                                 s::beneath<"/var/tmp", s::landlock::read_write>>;
+    using L = s::landlock_policy<s::beneath<"/usr", s::landlock::read_execute>, s::beneath<"/var/tmp", s::landlock::read_write>>;
     static_assert(s::landlock::bits(L::handled)
                   == (s::landlock::bits(s::landlock::read_execute) | s::landlock::bits(s::landlock::read_write)));
 

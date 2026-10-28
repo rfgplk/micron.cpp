@@ -266,9 +266,10 @@ main()
     // restartable afterward
     coro::start_coroutine_runtime(2);
     sb::check(coro::sync_wait([]() -> micron::task<i32> {
-      i32 r = co_await coro::io::nop();
-      co_return r;
-    }()) == 0);
+                i32 r = co_await coro::io::nop();
+                co_return r;
+              }())
+              == 0);
     coro::stop_coroutine_runtime();
     const i32 wm1 = devnull_watermark();
     sb::check(wm0 == wm1);

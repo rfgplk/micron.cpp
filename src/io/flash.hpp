@@ -1456,7 +1456,7 @@ __fill(F &f, T &buf, usize &got, usize cap) noexcept
 
 template<typename F, typename T>
 inline i32
-__finish_large(F &f, T &buf, usize &got, usize cap, engine &eng) noexcept
+__finish_large(F &f, T &buf, usize &got, usize cap, engine &eng)
 {
   posix::statx_t sx{};
   const max_t st = flash::statx(f.raw_fd(), sx, eng);

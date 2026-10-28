@@ -1,0 +1,9 @@
+test tests/rigor/stable_vectors.cpp --std c++23 --isa base -O2 -i . --timeout 120 -o bin/validation/stable-vectors
+test tests/rigor/iterative_scc.cpp --std c++23 --isa base -O2 -i . --timeout 120 -o bin/validation/stable-vectors
+build benches/stable_vectors_bench.cpp --std c++23 --isa v3 -O2 -i . -o bin/validation/stable-vectors
+compile tests/compiletests/stable_storage.cpp --std c++23 --isa base -O2 --raw-obj -i . -o bin/validation/stable-vectors/gcc-base
+compile tests/compiletests/stable_storage.cpp --clang --std c++23 --isa base -O2 --raw-obj -i . -o bin/validation/stable-vectors/clang-base
+compile tests/compiletests/stable_storage.cpp --std c++23 --isa base -O2 -k --no-eh --raw-obj -i . -o bin/validation/stable-vectors/no-eh
+compile tests/compiletests/stable_storage.cpp --std c++23 --i386 -O2 --raw-obj -i . -o bin/validation/stable-vectors/i386
+compile tests/compiletests/stable_storage.cpp --std c++23 --arm -O2 --raw-obj -i . -o bin/validation/stable-vectors/arm32
+compile tests/compiletests/stable_storage.cpp --std c++23 --arm64 -O2 --raw-obj -i . -o bin/validation/stable-vectors/arm64

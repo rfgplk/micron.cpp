@@ -1129,8 +1129,8 @@ constexpr u32 in_cloexec = 02000000;
 
 __micron_diagnostic_push
 __micron_diagnostic_ignored("-Wpedantic")
-// TODO: fix ISO c++ pedantry
-struct inotify_event_t {
+    // TODO: fix ISO c++ pedantry
+    struct inotify_event_t {
   i32 wd;
   u32 mask;
   u32 cookie;
@@ -1139,11 +1139,11 @@ struct inotify_event_t {
 };
 
 __micron_diagnostic_pop
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// attrs
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // attrs
 
-max_t
-getxattr(const char *path, const char *name, void *value, usize size)
+    max_t
+    getxattr(const char *path, const char *name, void *value, usize size)
 {
   return micron::syscall(SYS_getxattr, path, name, value, size);
 }

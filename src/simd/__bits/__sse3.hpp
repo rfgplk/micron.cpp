@@ -21,12 +21,10 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #define __inline_g [[gnu::always_inline, gnu::artificial, gnu::target("sse3")]] static inline
 
-__inline_g __m128
-_mm_addsub_ps(__m128 a, __m128 b) noexcept
+    __inline_g __m128 _mm_addsub_ps(__m128 a, __m128 b) noexcept
 {
   return (__m128)__builtin_ia32_addsubps((__v4sf)a, (__v4sf)b);
 }

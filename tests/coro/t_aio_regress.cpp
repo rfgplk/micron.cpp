@@ -100,7 +100,7 @@ fixed_write_timed(i32 fd, i32 slot, bool timed)
   byte *p = coro::fixed_ptr(slot);
   if ( p == nullptr ) co_return -1;
   for ( u32 i = 0; i < 4096; ++i ) p[i] = static_cast<byte>(i & 0xff);
-  i32 r = timed ? co_await(coro::io::write_fixed(fd, p, 4096, 0, static_cast<u16>(slot)) | coro::io::after(2'000'000'000ull))
+  i32 r = timed ? co_await (coro::io::write_fixed(fd, p, 4096, 0, static_cast<u16>(slot)) | coro::io::after(2'000'000'000ull))
                 : co_await coro::io::write_fixed(fd, p, 4096, 0, static_cast<u16>(slot));
   co_return r;
 }
@@ -285,8 +285,7 @@ main()
     sb::check(coro::sync_wait(cio::exists(b)));
     // cross-device takes the copy+unlink fallback; it must report 0 too, not 12
     micron::stat_t st_tmp{}, st_var{};
-    const bool have_two_fs
-        = mp::exists("/tmp", st_tmp) && mp::exists("/var/tmp", st_var) && st_tmp.st_dev != st_var.st_dev;
+    const bool have_two_fs = mp::exists("/tmp", st_tmp) && mp::exists("/var/tmp", st_var) && st_tmp.st_dev != st_var.st_dev;
     if ( have_two_fs ) {
       micron::io::path_t x = mkpath("mv_x.dat");
       micron::io::path_t y("/var/tmp/micron_regress_mv.dat");
@@ -415,8 +414,7 @@ main()
       p += ".dat";
       paths.push_back(p);
     }
-    for ( u32 i = 0; i < paths.size(); ++i )
-      specs.push_back(cio::write_spec{ paths[i], reinterpret_cast<const byte *>(big.c_str()), N });
+    for ( u32 i = 0; i < paths.size(); ++i ) specs.push_back(cio::write_spec{ paths[i], reinterpret_cast<const byte *>(big.c_str()), N });
     auto rs = coro::sync_wait(cio::write_files(specs));
     sb::require(rs.size() == paths.size());
     for ( usize i = 0; i < rs.size(); ++i ) {

@@ -180,13 +180,13 @@ main()
     U u;
     require_true(!from_chars(u, "12x4", 4, 10));
     require_true(!from_chars(u, "", 0, 10));
-    require_true(!from_chars(u, "9", 1, 8));         // 9 is not an octal digit
-    require_true(!from_chars(u, "2", 1, 2));         // nor 2 a binary one
-    require_true(!from_chars(u, "z", 1, 35));        // one past the top of base 35
-    require_true(!from_chars(u, "1", 1, 1));         // base 1 is not a base
+    require_true(!from_chars(u, "9", 1, 8));       // 9 is not an octal digit
+    require_true(!from_chars(u, "2", 1, 2));       // nor 2 a binary one
+    require_true(!from_chars(u, "z", 1, 35));      // one past the top of base 35
+    require_true(!from_chars(u, "1", 1, 1));       // base 1 is not a base
     require_true(!from_chars(u, "1", 1, 37));
-    require_true(!from_chars(u, " 1", 2, 10));       // no leading whitespace is accepted
-    require_true(!from_chars(u, "-1", 2, 10));       // the unsigned form takes no sign
+    require_true(!from_chars(u, " 1", 2, 10));      // no leading whitespace is accepted
+    require_true(!from_chars(u, "-1", 2, 10));      // the unsigned form takes no sign
 
     Z z;
     require_true(!from_chars(z, "-", 1, 10));

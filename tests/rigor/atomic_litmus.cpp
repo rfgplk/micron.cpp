@@ -267,6 +267,7 @@ main(void)
     struct block {
       u64 w[8];
     };
+
     block shared{};
     atomic_token<u32> gen(0);
     atomic_token<u64> torn(0);

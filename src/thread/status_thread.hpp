@@ -34,15 +34,22 @@ template<usize Stack_Size = auto_thread_stack_size, usize TLS_Limit = 1024 * 102
   void
   __release() noexcept
   {
-    micron::try_unmap(__stack, Stack_Size); __stack = nullptr;
-    micron::__tls_release_frame(__tls); __tls = {};
-    __ctid = 0; __tid = 0; __callback = nullptr; __context = nullptr;
+    micron::try_unmap(__stack, Stack_Size);
+    __stack = nullptr;
+    micron::__tls_release_frame(__tls);
+    __tls = {};
+    __ctid = 0;
+    __tid = 0;
+    __callback = nullptr;
+    __context = nullptr;
     __payload.clear();
   }
 
 public:
   status_thread() = default;
+
   ~status_thread() { (void)join(); }
+
   status_thread(const status_thread &) = delete;
   status_thread &operator=(const status_thread &) = delete;
   status_thread(status_thread &&) = delete;
@@ -66,17 +73,31 @@ public:
     // The frame adds at most two pages for its TCB, alignment and rounding.
     if ( t.pagesz > TLS_Limit / 2 || t.memsz > TLS_Limit - 2 * t.pagesz ) return -error::out_of_memory;
     __stack = micron::addrmap(Stack_Size);
-    if ( !__stack || micron::mmap_failed(__stack) ) { __stack = nullptr; return -error::out_of_memory; }
+    if ( !__stack || micron::mmap_failed(__stack) ) {
+      __stack = nullptr;
+      return -error::out_of_memory;
+    }
     const int guarded = micron::mprotect(__stack, t.pagesz, micron::prot_none);
-    if ( guarded < 0 ) { __release(); return guarded; }
+    if ( guarded < 0 ) {
+      __release();
+      return guarded;
+    }
     __tls = micron::__tls_make_child_frame();
-    if ( !__tls.base || __tls.size > TLS_Limit ) { __release(); return -error::out_of_memory; }
-    __callback = callback; __context = context;
+    if ( !__tls.base || __tls.size > TLS_Limit ) {
+      __release();
+      return -error::out_of_memory;
+    }
+    __callback = callback;
+    __context = context;
     __payload.alive.store(true, memory_order_release);
-    const auto id = posix::clone3_spawn(__entry, this, reinterpret_cast<byte *>(__stack) + t.pagesz,
-        Stack_Size - t.pagesz, reinterpret_cast<unsigned long>(__tls.tp), nullptr, &__ctid);
-    if ( id < 0 ) { __release(); return id; }
-    __tid = id; return 0;
+    const auto id = posix::clone3_spawn(__entry, this, reinterpret_cast<byte *>(__stack) + t.pagesz, Stack_Size - t.pagesz,
+                                        reinterpret_cast<unsigned long>(__tls.tp), nullptr, &__ctid);
+    if ( id < 0 ) {
+      __release();
+      return id;
+    }
+    __tid = id;
+    return 0;
 #else
     (void)context;
     return -error::op_not_supported;
@@ -88,17 +109,30 @@ public:
   {
     if ( !__tid ) return 0;
     if ( micthread::try_join(&__ctid) != 0 ) return -error::busy;
-    __release(); return 0;
+    __release();
+    return 0;
   }
 
   int
   join() noexcept
   {
-    if ( __tid ) { micthread::join(&__ctid); __release(); }
+    if ( __tid ) {
+      micthread::join(&__ctid);
+      __release();
+    }
     return 0;
   }
 
-  pid_t id() const noexcept { return __tid; }
-  usize mapped_bytes() const noexcept { return __stack ? Stack_Size + __tls.size : 0; }
+  pid_t
+  id() const noexcept
+  {
+    return __tid;
+  }
+
+  usize
+  mapped_bytes() const noexcept
+  {
+    return __stack ? Stack_Size + __tls.size : 0;
+  }
 };
-}
+}      // namespace micron

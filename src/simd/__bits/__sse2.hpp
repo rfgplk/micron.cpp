@@ -21,18 +21,15 @@ namespace simd
 namespace __bits
 {
 
-__micron_diagnostic_push
-__micron_diagnostic_ignored("-Wignored-attributes")
-__micron_diagnostic_ignored("-Wpsabi")
-__micron_diagnostic_ignored("-Wpedantic")
+__micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpsabi")
+    __micron_diagnostic_ignored("-Wpedantic")
 #define __inline_g [[gnu::always_inline, gnu::artificial]] static inline
 #define __inline_g_T(...) [[gnu::always_inline, gnu::artificial, gnu::target(__VA_ARGS__)]] static inline
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// SSEs
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // SSEs
 
-__inline_g __m128
-_mm_setzero_ps() noexcept
+    __inline_g __m128 _mm_setzero_ps() noexcept
 {
   return __extension__(__m128){ 0.0f, 0.0f, 0.0f, 0.0f };
 }

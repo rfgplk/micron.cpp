@@ -32,9 +32,9 @@
 namespace mtest::fuzz
 {
 
+using mtest::prng;
 using mtest::rigor::kAdversarialSizes;
 using mtest::rigor::kAdversarialSizesCount;
-using mtest::prng;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // failure reporting
@@ -49,30 +49,29 @@ using mtest::prng;
 // input shapes
 
 enum class shape : u8 {
-  random,             // full-width random
-  random_small,       // small alphabet, so hits are dense
-  two_valued,         // {0,1} only -- every window partially matches
-  periodic,           // a short cell repeated; the KMP worst case
-  run_heavy,          // long runs of one value; the search_n worst case
-  sorted,             //
-  reverse_sorted,     //
-  all_equal,          //
-  alternating,        //
-  sawtooth,           //
-  zeros,              //
-  single_spike,       // exactly one distinguished element
-  near_max,           // saturated at the type's ceiling
-  near_min,           // saturated at the type's floor
-  with_nan,           // float only
-  with_inf,           // float only
-  signed_zero,        // float only: +0 and -0 interleaved, which compare equal but differ in bits
+  random,              // full-width random
+  random_small,        // small alphabet, so hits are dense
+  two_valued,          // {0,1} only -- every window partially matches
+  periodic,            // a short cell repeated; the KMP worst case
+  run_heavy,           // long runs of one value; the search_n worst case
+  sorted,              //
+  reverse_sorted,      //
+  all_equal,           //
+  alternating,         //
+  sawtooth,            //
+  zeros,               //
+  single_spike,        // exactly one distinguished element
+  near_max,            // saturated at the type's ceiling
+  near_min,            // saturated at the type's floor
+  with_nan,            // float only
+  with_inf,            // float only
+  signed_zero,         // float only: +0 and -0 interleaved, which compare equal but differ in bits
 };
 
-inline constexpr shape kShapes[] = { shape::random,     shape::random_small, shape::two_valued,   shape::periodic,
-                                    shape::run_heavy,  shape::sorted,       shape::reverse_sorted, shape::all_equal,
-                                    shape::alternating, shape::sawtooth,    shape::zeros,        shape::single_spike,
-                                    shape::near_max,   shape::near_min,     shape::with_nan,     shape::with_inf,
-                                    shape::signed_zero };
+inline constexpr shape kShapes[]
+    = { shape::random,         shape::random_small, shape::two_valued,  shape::periodic, shape::run_heavy,  shape::sorted,
+        shape::reverse_sorted, shape::all_equal,    shape::alternating, shape::sawtooth, shape::zeros,      shape::single_spike,
+        shape::near_max,       shape::near_min,     shape::with_nan,    shape::with_inf, shape::signed_zero };
 inline constexpr usize kShapeCount = sizeof(kShapes) / sizeof(kShapes[0]);
 
 inline const char *

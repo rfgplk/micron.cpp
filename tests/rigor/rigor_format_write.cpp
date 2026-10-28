@@ -179,18 +179,14 @@ main(void)
   test_case("exact halves round to even");
   {
     char b[64];
+
     struct {
       f64 v;
       const char *want;
     } cases[] = {
-      { 0.5, "0"  },
-      { 1.5, "2"  },
-      { 2.5, "2"  },
-      { 3.5, "4"  },
-      { 4.5, "4"  },
-      { -0.5, "-0" },
-      { -1.5, "-2" },
+      { 0.5, "0" }, { 1.5, "2" }, { 2.5, "2" }, { 3.5, "4" }, { 4.5, "4" }, { -0.5, "-0" }, { -1.5, "-2" },
     };
+
     for ( auto &c : cases ) {
       const usize n = ry::d2f_buffered(c.v, b, 64, 0);
       require_true(same(b, n, c.want, cstr_len(c.want)));

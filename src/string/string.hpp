@@ -665,7 +665,7 @@ public:
   inline void
   clear()
   {
-    zero(__mem::memory, __mem::capacity);
+    if ( __mem::memory ) zero(__mem::memory, __mem::capacity);
     __mem::length = 0;
   }
 
@@ -1259,7 +1259,7 @@ public:
 
   template<typename I, typename F = T>
     requires micron::convertible_to<I, size_type> && micron::integral<I> && (!micron::is_pointer_v<I>)
-  inline hstring<F> &
+  inline hstring &
   truncate(I n)
   {
     if ( n >= __mem::length ) return *this;
@@ -1273,7 +1273,7 @@ public:
   }
 
   template<typename F = T>
-  inline hstring<F> &
+  inline hstring &
   truncate(iterator itr)
   {
     using self = hstring<T, Sf, Alloc>;
@@ -1290,7 +1290,7 @@ public:
   }
 
   template<typename F = T>
-  inline hstring<F> &
+  inline hstring &
   truncate(const_iterator itr)
   {
     using self = hstring<T, Sf, Alloc>;
@@ -1347,7 +1347,7 @@ public:
 
   template<typename F = T, typename I = usize>
     requires micron::is_arithmetic_v<I>
-  inline hstring<F> &
+  inline hstring &
   erase(I __ind, usize cnt = 1)
   {
     usize ind = static_cast<usize>(__ind);
@@ -1364,7 +1364,7 @@ public:
   }
 
   template<typename F = T>
-  inline hstring<F> &
+  inline hstring &
   erase(iterator itr, usize cnt = 1)
   {
     __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring erase() invalid count", cnt);
@@ -1380,7 +1380,7 @@ public:
   }
 
   template<typename F = T>
-  inline hstring<F> &
+  inline hstring &
   erase(const_iterator itr, usize cnt = 1)
   {
     __safety_check<&hstring::__valid_cnt, except::library_error>("micron::hstring erase() invalid count", cnt);
@@ -1409,7 +1409,7 @@ public:
   }
 
   template<typename F = T>
-  inline hstring<F> &
+  inline hstring &
   remove(const char *needle)
   {
     __safety_check<&hstring::__null_check, except::library_error>("micron::hstring remove() null needle",
@@ -1428,7 +1428,7 @@ public:
   }
 
   template<typename F = T, usize M, typename G>
-  inline hstring<F> &
+  inline hstring &
   remove(const micron::sstring<M, G> &needle)
   {
     if ( needle.empty() ) return *this;
@@ -1443,7 +1443,7 @@ public:
   }
 
   template<typename F = T, typename G>
-  inline hstring<F> &
+  inline hstring &
   remove(const hstring<G> &needle)
   {
     if ( needle.empty() ) return *this;
@@ -1458,7 +1458,7 @@ public:
   }
 
   template<typename F = T>
-  inline hstring<F> &
+  inline hstring &
   remove_all(const char *needle)
   {
     __safety_check<&hstring::__null_check, except::library_error>("micron::hstring remove_all() null needle",
@@ -1477,7 +1477,7 @@ public:
   }
 
   template<typename F = T, usize M, typename G>
-  inline hstring<F> &
+  inline hstring &
   remove_all(const micron::sstring<M, G> &needle)
   {
     if ( needle.empty() ) return *this;
@@ -1492,7 +1492,7 @@ public:
   }
 
   template<typename F = T, typename G>
-  inline hstring<F> &
+  inline hstring &
   remove_all(const hstring<G> &needle)
   {
     if ( needle.empty() ) return *this;

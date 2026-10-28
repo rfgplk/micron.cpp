@@ -117,8 +117,7 @@ main(void)
       const math::vec<f32, 3> v3{ f32(a), f32(b), f32(c) };
       const math::vec<f32, 4> v4{ f32(a), f32(b), f32(c), f32(d) };
 
-      const f64 n3 = math::fsqrt(f64(v3.data[0]) * f64(v3.data[0]) + f64(v3.data[1]) * f64(v3.data[1])
-                                 + f64(v3.data[2]) * f64(v3.data[2]));
+      const f64 n3 = math::fsqrt(f64(v3.data[0]) * f64(v3.data[0]) + f64(v3.data[1]) * f64(v3.data[1]) + f64(v3.data[2]) * f64(v3.data[2]));
       const auto r3 = lops::normalize<f32, 3>(v3);
       if ( n3 == 0.0 ) {
         require_true(r3.data[0] == v3.data[0] && r3.data[1] == v3.data[1] && r3.data[2] == v3.data[2]);
@@ -128,8 +127,8 @@ main(void)
         require_true(near_abs(rn, 1.0, 1e-5));
       }
 
-      const f64 n4 = math::fsqrt(f64(v4.data[0]) * f64(v4.data[0]) + f64(v4.data[1]) * f64(v4.data[1])
-                                 + f64(v4.data[2]) * f64(v4.data[2]) + f64(v4.data[3]) * f64(v4.data[3]));
+      const f64 n4 = math::fsqrt(f64(v4.data[0]) * f64(v4.data[0]) + f64(v4.data[1]) * f64(v4.data[1]) + f64(v4.data[2]) * f64(v4.data[2])
+                                 + f64(v4.data[3]) * f64(v4.data[3]));
       const auto r4 = lops::normalize<f32, 4>(v4);
       if ( n4 != 0.0 ) {
         for ( int k = 0; k < 4; ++k ) require_true(near_abs(f64(r4.data[k]), f64(v4.data[k]) / n4, 1e-6));
@@ -163,8 +162,7 @@ main(void)
     for ( int it = 0; it < 20000; ++it ) {
       const f64 a = rnd_sym(100.0), b = rnd_sym(100.0), c = rnd_sym(100.0);
       const math::vec<f32, 3> v{ f32(a), f32(b), f32(c) };
-      const f64 n = math::fsqrt(f64(v.data[0]) * f64(v.data[0]) + f64(v.data[1]) * f64(v.data[1])
-                                + f64(v.data[2]) * f64(v.data[2]));
+      const f64 n = math::fsqrt(f64(v.data[0]) * f64(v.data[0]) + f64(v.data[1]) * f64(v.data[1]) + f64(v.data[2]) * f64(v.data[2]));
       if ( n == 0.0 ) continue;
       const auto r = lops::normalize(v, math::policy::fast);
       for ( int k = 0; k < 3; ++k ) require_true(near_abs(f64(r.data[k]), f64(v.data[k]) / n, 1e-4));
@@ -241,8 +239,7 @@ main(void)
       const f64 ox = f64(a.data[1]) * f64(b.data[2]) - f64(a.data[2]) * f64(b.data[1]);
       const f64 oy = f64(a.data[2]) * f64(b.data[0]) - f64(a.data[0]) * f64(b.data[2]);
       const f64 oz = f64(a.data[0]) * f64(b.data[1]) - f64(a.data[1]) * f64(b.data[0]);
-      require_true(near_abs(f64(c.data[0]), ox, 1e-6) && near_abs(f64(c.data[1]), oy, 1e-6)
-                   && near_abs(f64(c.data[2]), oz, 1e-6));
+      require_true(near_abs(f64(c.data[0]), ox, 1e-6) && near_abs(f64(c.data[1]), oy, 1e-6) && near_abs(f64(c.data[2]), oz, 1e-6));
 
       // member form agrees with the linalg form
       micron::vector_3<f32> ma{ f32(ax), f32(ay), f32(az) };
@@ -283,7 +280,8 @@ main(void)
       for ( usize r = 0; r < 4; ++r )
         for ( usize c = 0; c < 4; ++c ) require_true(near_abs(f64(pf.data[r * 4 + c]), (r == c) ? 1.0 : 0.0, 1e-3));
       // f32 inverse tracks the f64 inverse
-      for ( usize k = 0; k < 16; ++k ) require_true(near_abs(f64(mif.data[k]), mid.data[k], 1e-2 + 1e-3 * (mid.data[k] < 0 ? -mid.data[k] : mid.data[k])));
+      for ( usize k = 0; k < 16; ++k )
+        require_true(near_abs(f64(mif.data[k]), mid.data[k], 1e-2 + 1e-3 * (mid.data[k] < 0 ? -mid.data[k] : mid.data[k])));
     }
   }
 

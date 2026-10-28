@@ -251,9 +251,10 @@ constexpr static const byte __default_poison_byte = 0x7B;
 #ifndef MICRON_ABC_REDZONE
 #define MICRON_ABC_REDZONE false
 #endif
-constexpr static const bool __default_redzone = MICRON_ABC_REDZONE;      // insert canary bytes before/after user region on TLSF allocs
-                                                                         // NOTE: uses 2 * __default_redzone_size bytes per alloc
-                                                                         // (verified in __vmap_remove*, which the remote-free drain also goes through)
+constexpr static const bool __default_redzone
+    = MICRON_ABC_REDZONE;      // insert canary bytes before/after user region on TLSF allocs
+                               // NOTE: uses 2 * __default_redzone_size bytes per alloc
+                               // (verified in __vmap_remove*, which the remote-free drain also goes through)
 
 constexpr static const byte __default_redzone_byte = 0xC1;
 // must be a multiple of __rz_min_align

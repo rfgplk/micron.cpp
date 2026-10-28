@@ -71,7 +71,7 @@ rdseed64(u64 &out) noexcept
 
 // fallback method
 
-#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm64) \
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm64)                                             \
     || (defined(__micron_arch_arm32) && defined(MICRON_CHRONO_ARM32_CNTVCT))
 inline constexpr bool rdtsc64_available = true;
 #else

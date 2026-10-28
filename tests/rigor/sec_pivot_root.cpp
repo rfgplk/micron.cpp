@@ -143,10 +143,9 @@ static_assert(same(__rel_put_old("/var/tmp/jail", "/var/tmp/jail/old"), "/old"))
 static_assert(same(__rel_put_old("/j", "/j/a/b/c"), "/a/b/c"));
 static_assert(same(__rel_put_old("/", "/old"), "/old"));
 
-
 static_assert(__rel_put_old("/jail", "/jailhouse/old") == nullptr);
 static_assert(__rel_put_old("/jail", "/other/old") == nullptr);
-static_assert(__rel_put_old("/jail", "/jail") == nullptr);      
+static_assert(__rel_put_old("/jail", "/jail") == nullptr);
 static_assert(__rel_put_old("/jail/deep", "/jail") == nullptr);
 static_assert(__rel_put_old(nullptr, "/old") == nullptr);
 static_assert(__rel_put_old("/jail", nullptr) == nullptr);

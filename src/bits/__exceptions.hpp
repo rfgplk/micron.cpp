@@ -23,20 +23,20 @@ namespace except
 {
 
 // so we don't rely on io
-void
+inline void
 __write_n(const char *str_err)
 {
   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
   micron::syscall(SYS_write, 2, micron::voidify("\n"), 1);
 }
 
-void
+inline void
 __write(const char *str_err, usize sz)
 {
   micron::syscall(SYS_write, 2, micron::voidify(str_err), sz);
 }
 
-void
+inline void
 __write(const char *str_err)
 {
   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));

@@ -22,9 +22,7 @@ abort_state(void)
   micron::sys_exit(__MICRON_ABCMALLOC_CRITICAL_EXIT);
 }
 
-__micron_diagnostic_push
-__micron_diagnostic_suggest_noreturn
-bool
+__micron_diagnostic_push __micron_diagnostic_suggest_noreturn bool
 fail_state(void)
 {
   if constexpr ( __default_fail_result == 0 ) {
@@ -42,10 +40,7 @@ fail_state(void)
   return true;
 }
 
-__micron_diagnostic_pop
-__micron_diagnostic_push
-__micron_diagnostic_suggest_noreturn
-inline __attribute__((always_inline)) bool
+__micron_diagnostic_pop __micron_diagnostic_push __micron_diagnostic_suggest_noreturn inline __attribute__((always_inline)) bool
 handle_double_free([[maybe_unused]] byte *addr)
 {
   ABC_DOCTOR(if ( doctor::on_double_free(addr, __FILE__, __LINE__) ) return true;)
@@ -68,8 +63,7 @@ handle_double_free(const byte *addr)
   return handle_double_free(const_cast<byte *>(addr));
 }
 
-__micron_diagnostic_pop
-inline __attribute__((always_inline)) auto
+__micron_diagnostic_pop inline __attribute__((always_inline)) auto
 check_constraint(const usize sz) -> bool
 {
   if constexpr ( __is_constrained ) {
