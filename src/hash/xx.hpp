@@ -40,16 +40,28 @@ struct xxhash64_stream {
 
   constexpr explicit xxhash64_stream(u64 initial = 0) noexcept { reset(initial); }
 
-  static constexpr u64 rotate(u64 x, u32 n) noexcept { return (x << n) | (x >> (64 - n)); }
-  static constexpr u64 round(u64 a, u64 x) noexcept { return rotate(a + x * xxprime64b, 31) * xxprime64a; }
-  static constexpr u64 load(const byte *p, usize n) noexcept
+  static constexpr u64
+  rotate(u64 x, u32 n) noexcept
+  {
+    return (x << n) | (x >> (64 - n));
+  }
+
+  static constexpr u64
+  round(u64 a, u64 x) noexcept
+  {
+    return rotate(a + x * xxprime64b, 31) * xxprime64a;
+  }
+
+  static constexpr u64
+  load(const byte *p, usize n) noexcept
   {
     u64 x = 0;
     for ( usize i = 0; i < n; ++i ) x |= u64(p[i]) << (8 * i);
     return x;
   }
 
-  constexpr void reset(u64 initial = 0) noexcept
+  constexpr void
+  reset(u64 initial = 0) noexcept
   {
     total = 0;
     seed = initial;
@@ -60,12 +72,14 @@ struct xxhash64_stream {
     lanes[3] = seed - xxprime64a;
   }
 
-  constexpr void stripe(const byte *p) noexcept
+  constexpr void
+  stripe(const byte *p) noexcept
   {
     for ( usize i = 0; i < 4; ++i ) lanes[i] = round(lanes[i], load(p + 8 * i, 8));
   }
 
-  constexpr void update(const byte *p, usize n) noexcept
+  constexpr void
+  update(const byte *p, usize n) noexcept
   {
     total += n;
     usize i = 0;
@@ -79,7 +93,8 @@ struct xxhash64_stream {
     while ( i < n ) tail[buffered++] = p[i++];
   }
 
-  constexpr u64 digest() const noexcept
+  constexpr u64
+  digest() const noexcept
   {
     u64 h = seed + xxprime64e;
     if ( total >= 32 ) {
@@ -102,7 +117,8 @@ struct xxhash64_stream {
   }
 };
 
-constexpr u64 xxhash64_bytes(const byte *p, usize n, u64 seed = 0) noexcept
+constexpr u64
+xxhash64_bytes(const byte *p, usize n, u64 seed = 0) noexcept
 {
   xxhash64_stream s(seed);
   s.update(p, n);
