@@ -2363,7 +2363,7 @@ inline micron::atomic_token<u32> __leak_reported{ 0 };
 // _dl_fini walks the executable's .fini_array after every __cxa_atexit handler -- so this sees the
 // blocks that ordinary static destructors free, which an inline-object destructor in the executable
 // could not (its registration is the most recent, so LIFO fires it first). Freestanding matches:
-// __drain_atexit_table() drains the atexit table and only then walks __fini_array_* in reverse.
+// __run_exit_sequence() settles exit callbacks and TLS destructors before walking __fini_array_* in reverse.
 // What still cannot be seen is DSO teardown, which _dl_fini reaches after us -- hence the pre-exe
 // bucket in leaks(), and the note below.
 [[maybe_unused]] __attribute__((destructor(101))) static void

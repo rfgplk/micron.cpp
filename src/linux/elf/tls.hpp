@@ -13,6 +13,10 @@
 #include "../sys/types.hpp"
 #include "bits.hpp"
 
+#if !defined(__micron_freestanding)
+#include "../../__special/pthread_key"
+#endif
+
 namespace micron
 {
 namespace elf
@@ -60,12 +64,11 @@ struct tls_thread_block_t {
 };
 
 inline tls_thread_block_t *__tls_thread_head = nullptr;
-inline thread_local tls_thread_block_t *__tls_thread = nullptr;
 
 inline void
-__tls_release_thread() noexcept
+__tls_release_block(void *ptr) noexcept
 {
-  auto *block = __tls_thread;
+  auto *block = static_cast<tls_thread_block_t *>(ptr);
   if ( !block ) return;
   __tls_lock();
   auto **link = &__tls_thread_head;
@@ -74,27 +77,58 @@ __tls_release_thread() noexcept
   for ( usize i = 0; i < tls_max_modules; ++i )
     if ( block->blocks[i].map ) micron::munmap(reinterpret_cast<addr_t *>(block->blocks[i].map), block->blocks[i].map_sz);
   micron::munmap(reinterpret_cast<addr_t *>(block), sizeof(tls_thread_block_t));
-  __tls_thread = nullptr;
-  micron::__dynamic_tls_exit_hook = nullptr;
   __tls_unlock();
 }
 
-#if !defined(__micron_tdtor_real)
-struct __tls_thread_owner {
-  ~__tls_thread_owner()
-  {
-    auto *block = __tls_thread;
-    if ( !block ) return;
-    // Process finalizers may still read C TLS after C++ TLS destructors have run.
-    if ( micron::__micron_thread_alive_word || __atomic_load_n(&micron::__exit_internal::__exit_in_progress, __ATOMIC_ACQUIRE)
-         || block->tid == static_cast<i32>(micron::syscall(SYS_getpid)) )
-      return;
-    __tls_release_thread();
-  }
-};
+#if defined(__micron_freestanding)
+inline constinit thread_local tls_thread_block_t *__tls_thread = nullptr;
+#else
+inline pthread_key_t __tls_thread_key{};
+inline int __tls_key_state = 0;      // 0: empty, 1: creating, 2: ready
 
-inline thread_local __tls_thread_owner __tls_owner;
+inline void
+__tls_release_key(void *ptr) noexcept
+{
+#if defined(__micron_tdtor_real)
+  // A native TLS destructor can append guest callbacks after the worker's first sweep.
+  // pthreads cleared the key before calling us; those callbacks must still see this record.
+  (void)pthread_setspecific(__tls_thread_key, ptr);
+  micron::__run_thread_dtors();
+  (void)pthread_setspecific(__tls_thread_key, nullptr);
 #endif
+  __tls_release_block(ptr);
+}
+
+inline bool
+__tls_ensure_key() noexcept
+{
+  for ( ;; ) {
+    int state = __atomic_load_n(&__tls_key_state, __ATOMIC_ACQUIRE);
+    if ( state == 2 ) return true;
+    if ( state == 0 && __atomic_compare_exchange_n(&__tls_key_state, &state, 1, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) ) {
+      const bool ready = pthread_key_create(&__tls_thread_key, __tls_release_key) == 0;
+      __atomic_store_n(&__tls_key_state, ready ? 2 : 0, __ATOMIC_RELEASE);
+      return ready;
+    }
+    __cpu_pause();
+  }
+}
+#endif
+
+inline void
+__tls_release_thread() noexcept
+{
+#if defined(__micron_freestanding)
+  auto *block = __tls_thread;
+  __tls_thread = nullptr;
+#else
+  if ( __atomic_load_n(&__tls_key_state, __ATOMIC_ACQUIRE) != 2 ) return;
+  auto *block = static_cast<tls_thread_block_t *>(pthread_getspecific(__tls_thread_key));
+  if ( pthread_setspecific(__tls_thread_key, nullptr) != 0 ) return;
+#endif
+  micron::__dynamic_tls_exit_hook = nullptr;
+  __tls_release_block(block);
+}
 
 inline i32
 __current_tid() noexcept
@@ -105,26 +139,26 @@ __current_tid() noexcept
 inline tls_thread_block_t *
 __tls_get_thread() noexcept
 {
-#if !defined(__micron_tdtor_real)
-  (void)&__tls_owner;
-#endif
+#if defined(__micron_freestanding)
   if ( __tls_thread ) return __tls_thread;
-  const i32 me = __current_tid();
-  __tls_lock();
-  for ( tls_thread_block_t *t = __tls_thread_head; t; t = t->next ) {
-    if ( t->tid == me ) {
-      __tls_unlock();
-      return t;
-    }
-  }
-  __tls_unlock();
+#else
+  if ( !__tls_ensure_key() ) return nullptr;
+  if ( auto *t = static_cast<tls_thread_block_t *>(pthread_getspecific(__tls_thread_key)); t ) return t;
+#endif
   tls_thread_block_t *t = reinterpret_cast<tls_thread_block_t *>(
       micron::mmap(nullptr, sizeof(tls_thread_block_t), prot_read | prot_write, map_private | map_anonymous, -1, 0));
   if ( mmap_failed(t) ) return nullptr;
-  t->tid = me;
-  __tls_thread = t;
-  micron::__dynamic_tls_exit_hook = &__tls_release_thread;
+  t->tid = __current_tid();
   for ( usize i = 0; i < tls_max_modules; ++i ) t->blocks[i] = tls_block_t{};
+#if defined(__micron_freestanding)
+  __tls_thread = t;
+#else
+  if ( pthread_setspecific(__tls_thread_key, t) != 0 ) {
+    micron::munmap(reinterpret_cast<addr_t *>(t), sizeof(tls_thread_block_t));
+    return nullptr;
+  }
+#endif
+  micron::__dynamic_tls_exit_hook = &__tls_release_thread;
   __tls_lock();
   t->next = __tls_thread_head;
   __tls_thread_head = t;

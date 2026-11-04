@@ -1,0 +1,13 @@
+//  Copyright (c) 2026- David Lucius Severus
+//
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt
+#pragma once
+
+typedef unsigned int pthread_key_t;
+
+extern "C" int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) noexcept;
+extern "C" int pthread_key_delete(pthread_key_t key) noexcept;
+extern "C" void *pthread_getspecific(pthread_key_t key) noexcept;
+extern "C" int pthread_setspecific(pthread_key_t key, const void *value) noexcept;

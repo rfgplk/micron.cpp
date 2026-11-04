@@ -193,7 +193,9 @@ __thread_kernel(__thread_payload *payload, Fn fn, Args... args)
   // NOTE: run any registered per-thread cleanup (abcmalloc releasing this thread's arena slot) on the exiting thread while its TLS is still
   // valid. thread_local C++ dtors (guest modules) run first, while the arena is still live
   micron::__run_thread_dtors();
+#if defined(__micron_freestanding)
   if ( micron::__dynamic_tls_exit_hook ) micron::__dynamic_tls_exit_hook();
+#endif
   if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();
   posix::getrusage(posix::rusage_thread, payload->usage);
   payload->alive.store(false, memory_order_seq_cst);
@@ -245,7 +247,9 @@ __worker_kernel(__worker_payload *payload)
   // mapped. Without it a worker's thread_local RAII objects (a uring ring, a buffered file, a socket)
   // are simply munmap'd with the frame and their fds leak for the life of the process
   micron::__run_thread_dtors();
+#if defined(__micron_freestanding)
   if ( micron::__dynamic_tls_exit_hook ) micron::__dynamic_tls_exit_hook();
+#endif
   if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();
   return rc;
 }

@@ -44,8 +44,6 @@ run
 - **`--tsan` / `--asan` cannot compile ANY TU that reaches `src/thread/thread.hpp`** — 26
 - **`duck` rejects a multi-token flag string passed as one argv entry**
 - certain heavy abc tests need `vm.overcommit_memory=0|1` otherwise they'll fail at RUNTIME with `critical_error` (mmap refused)
-- micron splits static and main-thread thread_local destruction into two phases in __run_exit_sequence, where [basic.start.term] interleaves them by
-  construction order.
 
 ## Bugs / Limitations you should know
 - **`external/bbench` can only be built against the working tree with `-i .`.**
@@ -91,6 +89,9 @@ run
   `cap * 2 * sizeof(void*)` of `.tbss` per thread.
 - freestanding: nothing joins `__global_threadpool` at process exit, so a pool worker's
   `thread_local`s are never destroyed
+- hosted cooperative cancellation exits abruptly and skips native C++ `thread_local`
+  destructors and automatic-object unwinding. Normal worker return runs native TLS
+  destructors before reclaiming dynamic TLS mappings.
 
 ## Concurrency / locking
 

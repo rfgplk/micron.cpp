@@ -80,7 +80,7 @@ _detach(void) noexcept
   if ( micron::__global_threadpool != nullptr ) micron::__global_threadpool->join_all(500);
 
   micron::__run_thread_dtors();             // the attaching thread's thread_local dtors (LIFO)
-  micron::__drain_atexit_table();           // module __cxa_atexit registrations + fini array
+  micron::__drain_atexit_table();           // module __cxa_atexit registrations
   micron::io::__shutdown_io_buffers();      // flush module stdio (no-op if never booted); never closes fd 0/1/2
 
   // WARNING: the hooks stay installed on purpose

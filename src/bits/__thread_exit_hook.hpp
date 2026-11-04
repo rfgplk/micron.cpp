@@ -15,7 +15,7 @@
 namespace micron
 {
 inline void (*__thread_exit_hook)() noexcept = nullptr;
-inline thread_local void (*__dynamic_tls_exit_hook)() noexcept = nullptr;
+inline constinit thread_local void (*__dynamic_tls_exit_hook)() noexcept = nullptr;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // per-thread C++ dtor list (attach only)

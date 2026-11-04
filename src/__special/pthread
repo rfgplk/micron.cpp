@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pthread_key"
+
 #include "../linux/sys/types.hpp"
 #include "../bits-types.hpp"
 
@@ -95,7 +97,6 @@ union pthread_condattr_t {
 };
 typedef union pthread_condattr_t pthread_condattr_t;
 
-typedef unsigned int pthread_key_t;
 typedef int pthread_once_t;
 
 union pthread_rwlock_t {

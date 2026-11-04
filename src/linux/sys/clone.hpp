@@ -367,12 +367,14 @@ __micron_diagnostic_pop namespace micron
     if ( child_tid ) *child_tid = __micthread_ctid_alive;
     unsigned long tls_arg = tls;
 #if defined(__micron_arch_x86)
-    // i386 is the exception (WHY?!): CLONE_SETTLS expects a struct user_desc * not a raw TP (?!?!?!?!)
+    // CLONE_SETTLS replaces the inherited %gs slot; unlike set_thread_area it cannot allocate one.
     struct __i386_clone_user_desc {
       unsigned int entry_number, base_addr, limit, flags;
     };
 
-    __i386_clone_user_desc __i386_tls_desc{ 0xffffffffu, static_cast<unsigned int>(tls), 0xfffffu, 0x51u };
+    unsigned short selector;
+    asm volatile("movw %%gs, %0" : "=r"(selector));
+    __i386_clone_user_desc __i386_tls_desc{ static_cast<unsigned int>(selector >> 3), static_cast<unsigned int>(tls), 0xfffffu, 0x51u };
     tls_arg = reinterpret_cast<unsigned long>(&__i386_tls_desc);
 #endif
     long raw;
@@ -380,11 +382,11 @@ __micron_diagnostic_pop namespace micron
       clone_args args{};
       args.flags = flags;
       args.exit_signal = 0;
-      args.stack = reinterpret_cast<u64>(stack_low);
+      args.stack = static_cast<u64>(reinterpret_cast<uintptr_t>(stack_low));
       args.stack_size = stack_size;
       args.tls = tls_arg;
-      args.parent_tid = reinterpret_cast<u64>(parent_tid);
-      args.child_tid = reinterpret_cast<u64>(child_tid);
+      args.parent_tid = static_cast<u64>(reinterpret_cast<uintptr_t>(parent_tid));
+      args.child_tid = static_cast<u64>(reinterpret_cast<uintptr_t>(child_tid));
       raw = ::__micron_clone3_entry(thunk, payload, &args, sizeof(args));
       if ( !(micron::syscall_failed(raw) && micron::syscall_errno(raw) == ENOSYS) ) [[likely]] {
         if ( micron::syscall_failed(raw) && child_tid ) *child_tid = 0;      // no child ran

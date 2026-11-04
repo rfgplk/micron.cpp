@@ -1,0 +1,55 @@
+# Exit callback ordering and dynamic TLS lifecycle regressions.
+# Run from the repository root: duck tests/rigor/exit_tls.duck
+# CRT and headers always come from this checkout.
+
+# gcc: optimized v3 and unoptimized base, including both exception gates.
+test tests/rigor/exit_unwind.cpp --gcc --std c++26 -O2 --isa v3 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/amd64_O2_k
+test tests/rigor/atexit_order.cpp --gcc --std c++26 -O2 --isa v3 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/amd64_O2_k
+test tests/rigor/exit_tls_late.cpp --gcc --std c++26 -O2 --isa v3 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/amd64_O2_k
+test tests/rigor/dynamic_tls_lifetime.cpp --gcc --std c++26 -O2 --isa v3 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/amd64_O2_k
+test tests/rigor/dynamic_tls_lifetime.cpp --gcc --std c++26 -O2 --isa v3 -i . --timeout 60 -o bin/exit-tls/gcc/amd64_O2_hosted
+test tests/rigor/dynamic_tls_keys.cpp --gcc --std c++26 -O2 --isa v3 -i . --timeout 60 -o bin/exit-tls/gcc/amd64_O2_hosted
+test tests/rigor/exit_unwind.cpp --gcc --std c++26 -O0 --isa base -ke -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/amd64_O0_ke
+test tests/rigor/atexit_order.cpp --gcc --std c++26 -O0 --isa base -ke -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/amd64_O0_ke
+test tests/rigor/exit_tls_late.cpp --gcc --std c++26 -O0 --isa base -ke -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/amd64_O0_ke
+test tests/rigor/dynamic_tls_lifetime.cpp --gcc --std c++26 -O0 --isa base -ke -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/amd64_O0_ke
+test tests/rigor/dynamic_tls_lifetime.cpp --gcc --std c++26 -O0 --isa base -i . --timeout 60 -o bin/exit-tls/gcc/amd64_O0_hosted
+test tests/rigor/dynamic_tls_keys.cpp --gcc --std c++26 -O0 --isa base -i . --timeout 60 -o bin/exit-tls/gcc/amd64_O0_hosted
+test tests/rigor/atexit_order.cpp --gcc --std c++26 -O2 --isa v3 -i . --timeout 60 -o bin/exit-tls/gcc/amd64_O2_hosted
+test tests/rigor/dynamic_tls_lifetime.cpp --gcc --std c++26 -O2 --isa v3 -i . --def MICRON_ENABLE_ATTACH --timeout 60 -o bin/exit-tls/gcc/amd64_attach_hosted
+
+# clang: optimized v3 and unoptimized base, including both exception gates.
+test tests/rigor/exit_unwind.cpp --clang --std c++26 -O2 --isa v3 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/amd64_O2_k
+test tests/rigor/atexit_order.cpp --clang --std c++26 -O2 --isa v3 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/amd64_O2_k
+test tests/rigor/exit_tls_late.cpp --clang --std c++26 -O2 --isa v3 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/amd64_O2_k
+test tests/rigor/dynamic_tls_lifetime.cpp --clang --std c++26 -O2 --isa v3 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/amd64_O2_k
+test tests/rigor/dynamic_tls_lifetime.cpp --clang --std c++26 -O2 --isa v3 -i . --timeout 60 -o bin/exit-tls/clang/amd64_O2_hosted
+test tests/rigor/dynamic_tls_keys.cpp --clang --std c++26 -O2 --isa v3 -i . --timeout 60 -o bin/exit-tls/clang/amd64_O2_hosted
+test tests/rigor/exit_unwind.cpp --clang --std c++26 -O0 --isa base -ke -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/amd64_O0_ke
+test tests/rigor/atexit_order.cpp --clang --std c++26 -O0 --isa base -ke -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/amd64_O0_ke
+test tests/rigor/exit_tls_late.cpp --clang --std c++26 -O0 --isa base -ke -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/amd64_O0_ke
+test tests/rigor/dynamic_tls_lifetime.cpp --clang --std c++26 -O0 --isa base -ke -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/amd64_O0_ke
+test tests/rigor/dynamic_tls_lifetime.cpp --clang --std c++26 -O0 --isa base -i . --timeout 60 -o bin/exit-tls/clang/amd64_O0_hosted
+test tests/rigor/dynamic_tls_keys.cpp --clang --std c++26 -O0 --isa base -i . --timeout 60 -o bin/exit-tls/clang/amd64_O0_hosted
+test tests/rigor/atexit_order.cpp --clang --std c++26 -O2 --isa v3 -i . --timeout 60 -o bin/exit-tls/clang/amd64_O2_hosted
+test tests/rigor/dynamic_tls_lifetime.cpp --clang --std c++26 -O2 --isa v3 -i . --def MICRON_ENABLE_ATTACH --timeout 60 -o bin/exit-tls/clang/amd64_attach_hosted
+
+# GCC: link and run the remaining Linux targets, including native pthread teardown.
+test tests/rigor/exit_unwind.cpp --std c++26 --i386 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/i386_k
+test tests/rigor/atexit_order.cpp --std c++26 --i386 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/i386_k
+test tests/rigor/exit_tls_late.cpp --std c++26 --i386 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/i386_k
+test tests/rigor/dynamic_tls_lifetime.cpp --std c++26 --i386 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/i386_k
+test tests/rigor/dynamic_tls_lifetime.cpp --std c++26 --i386 -O2 -i . --timeout 60 -o bin/exit-tls/gcc/i386_hosted
+test tests/rigor/dynamic_tls_lifetime.cpp --std c++26 --i386 -O2 -k -s -i . --start ./start --def MICRON_TEST_LEGACY_CLONE --timeout 60 -o bin/exit-tls/gcc/i386_legacy
+test tests/rigor/dynamic_tls_lifetime.cpp --clang --std c++26 --i386 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/clang/i386_k
+test tests/rigor/dynamic_tls_lifetime.cpp --clang --std c++26 --i386 -O2 -k -s -i . --start ./start --def MICRON_TEST_LEGACY_CLONE --timeout 60 -o bin/exit-tls/clang/i386_legacy
+test tests/rigor/exit_unwind.cpp --std c++26 --arm -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/arm_k
+test tests/rigor/atexit_order.cpp --std c++26 --arm -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/arm_k
+test tests/rigor/exit_tls_late.cpp --std c++26 --arm -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/arm_k
+test tests/rigor/dynamic_tls_lifetime.cpp --std c++26 --arm -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/arm_k
+test tests/rigor/dynamic_tls_lifetime.cpp --std c++26 --arm -O2 -i . --timeout 60 -o bin/exit-tls/gcc/arm_hosted
+test tests/rigor/exit_unwind.cpp --std c++26 --arm64 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/arm64_k
+test tests/rigor/atexit_order.cpp --std c++26 --arm64 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/arm64_k
+test tests/rigor/exit_tls_late.cpp --std c++26 --arm64 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/arm64_k
+test tests/rigor/dynamic_tls_lifetime.cpp --std c++26 --arm64 -O2 -k -s -i . --start ./start --timeout 60 -o bin/exit-tls/gcc/arm64_k
+test tests/rigor/dynamic_tls_lifetime.cpp --std c++26 --arm64 -O2 -i . --timeout 60 -o bin/exit-tls/gcc/arm64_hosted

@@ -31,6 +31,84 @@ constexpr u64 xxprime64c = 0x165667B19E3779F9ULL;
 constexpr u64 xxprime64d = 0x85EBCA77C2B2AE63ULL;
 constexpr u64 xxprime64e = 0x27D4EB2F165667C5ULL;
 
+// Bounded incremental XXH64. The byte tail also makes the state usable during
+// constant evaluation; no pointer punning or caller-provided padding is needed.
+struct xxhash64_stream {
+  u64 total = 0, seed = 0, lanes[4]{};
+  byte tail[32]{};
+  usize buffered = 0;
+
+  constexpr explicit xxhash64_stream(u64 initial = 0) noexcept { reset(initial); }
+
+  static constexpr u64 rotate(u64 x, u32 n) noexcept { return (x << n) | (x >> (64 - n)); }
+  static constexpr u64 round(u64 a, u64 x) noexcept { return rotate(a + x * xxprime64b, 31) * xxprime64a; }
+  static constexpr u64 load(const byte *p, usize n) noexcept
+  {
+    u64 x = 0;
+    for ( usize i = 0; i < n; ++i ) x |= u64(p[i]) << (8 * i);
+    return x;
+  }
+
+  constexpr void reset(u64 initial = 0) noexcept
+  {
+    total = 0;
+    seed = initial;
+    buffered = 0;
+    lanes[0] = seed + xxprime64a + xxprime64b;
+    lanes[1] = seed + xxprime64b;
+    lanes[2] = seed;
+    lanes[3] = seed - xxprime64a;
+  }
+
+  constexpr void stripe(const byte *p) noexcept
+  {
+    for ( usize i = 0; i < 4; ++i ) lanes[i] = round(lanes[i], load(p + 8 * i, 8));
+  }
+
+  constexpr void update(const byte *p, usize n) noexcept
+  {
+    total += n;
+    usize i = 0;
+    if ( buffered ) {
+      while ( buffered < 32 && i < n ) tail[buffered++] = p[i++];
+      if ( buffered < 32 ) return;
+      stripe(tail);
+      buffered = 0;
+    }
+    for ( ; n - i >= 32; i += 32 ) stripe(p + i);
+    while ( i < n ) tail[buffered++] = p[i++];
+  }
+
+  constexpr u64 digest() const noexcept
+  {
+    u64 h = seed + xxprime64e;
+    if ( total >= 32 ) {
+      h = rotate(lanes[0], 1) + rotate(lanes[1], 7) + rotate(lanes[2], 12) + rotate(lanes[3], 18);
+      for ( auto v : lanes ) h = (h ^ round(0, v)) * xxprime64a + xxprime64d;
+    }
+    h += total;
+    usize i = 0;
+    for ( ; buffered - i >= 8; i += 8 ) h = rotate(h ^ round(0, load(tail + i, 8)), 27) * xxprime64a + xxprime64d;
+    if ( buffered - i >= 4 ) {
+      h = rotate(h ^ (load(tail + i, 4) * xxprime64a), 23) * xxprime64b + xxprime64c;
+      i += 4;
+    }
+    while ( i < buffered ) h = rotate(h ^ (u64(tail[i++]) * xxprime64e), 11) * xxprime64a;
+    h ^= h >> 33;
+    h *= xxprime64b;
+    h ^= h >> 29;
+    h *= xxprime64c;
+    return h ^ (h >> 32);
+  }
+};
+
+constexpr u64 xxhash64_bytes(const byte *p, usize n, u64 seed = 0) noexcept
+{
+  xxhash64_stream s(seed);
+  s.update(p, n);
+  return s.digest();
+}
+
 struct xxhash64_state {
   u64 len;
   u64 v[4];

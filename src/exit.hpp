@@ -109,7 +109,7 @@ inline u32 __atexit_count = 0;
 inline u64 __atexit_pub[(__atexit_cap + 63) / 64] = {};
 inline u32 __atexit_dropped = 0;      // reserved but never published entries the drain gave up on; should stay 0
 inline bool __exit_in_progress = false;
-inline bool __fini_fired = false;      // .fini_array is one shot, even across concurrent drainers
+inline bool __fini_fired = false;      // .fini_array is one shot
 
 // how many no progress passes the drain will make waiting on a publication before giving up
 inline constexpr u32 __atexit_publish_rounds = 1u << 16;
@@ -193,6 +193,7 @@ __drain_atexit_table() noexcept
   while ( lo != hi ) {
     u32 pending = hi;      // lowest index seen reserved but unpublished this pass
     bool progress = false;
+    bool restart = false;
     for ( u32 i = hi; i-- != lo; ) {
       if ( !__published(i) ) {
         pending = i;
@@ -202,6 +203,16 @@ __drain_atexit_table() noexcept
       if ( f == nullptr ) continue;      // another drainer got there first
       progress = true;
       f(__atexit_table[i].arg);      // arg is safe to read
+      const u32 next = micron::atom::load(&__atexit_count, micron::atomic_acquire);
+      if ( next != hi ) {
+        hi = next;
+        restart = true;
+        break;      // new registrations precede the remaining older callbacks
+      }
+    }
+    if ( restart ) {
+      stall = 0;
+      continue;
     }
     const u32 next = micron::atom::load(&__atexit_count, micron::atomic_acquire);
     if ( pending == hi ) {      // everything below hi is accounted for
@@ -224,7 +235,13 @@ __drain_atexit_table() noexcept
     lo = pending;
     hi = next;
   }
+}
+
+inline void
+__run_fini_array() noexcept
+{
 #if !defined(MICRON_ATTACH_MODULE)
+  using namespace __exit_internal;
   bool __fini_expected = false;
   if ( !micron::atom::compare_exchange(&__fini_fired, &__fini_expected, true, false, micron::atomic_seq_cst, __ATOMIC_RELAXED) ) return;
   if ( __fini_array_start && __fini_array_end ) {
@@ -234,6 +251,19 @@ __drain_atexit_table() noexcept
     }
   }
 #endif
+}
+
+inline void
+__settle_exit_callbacks() noexcept
+{
+  for ( ;; ) {
+    const u32 before = micron::atom::load(&__exit_internal::__atexit_count, micron::atomic_acquire);
+    __drain_atexit_table();
+#if !defined(MICRON_ATTACH_MODULE)
+    micron::__run_thread_dtors();
+#endif
+    if ( micron::atom::load(&__exit_internal::__atexit_count, micron::atomic_acquire) == before ) return;
+  }
 }
 
 // WARNING: a guest module must not do this; its __run_thread_dtors() forwards to the hosts list, so a guest calling exit() would destroy
@@ -246,9 +276,10 @@ __run_exit_sequence(void) noexcept
 #if !defined(MICRON_ATTACH_MODULE)
   micron::__run_thread_dtors();
 #endif
-  __drain_atexit_table();
+  __settle_exit_callbacks();
+  __run_fini_array();
+  __settle_exit_callbacks();
 #if !defined(MICRON_ATTACH_MODULE)
-  micron::__run_thread_dtors();
   if ( micron::__dynamic_tls_exit_hook ) micron::__dynamic_tls_exit_hook();
 #endif
 }
