@@ -88,3 +88,8 @@ for f in "$out"/*.so.1; do
   readelf -dW "$f" 2>/dev/null | grep -oE 'NEEDED.*\[[^]]*\]|SONAME.*\[[^]]*\]' | tr '\n' ' '
   echo
 done
+
+# Freestanding host resolver and dynamic TLS fixture.
+if [ "$arch" = x64 ] || [ "$arch" = amd64 ] || [ "$arch" = x86_64 ]; then
+  "$CC" $FLAGS -shared -fPIC -ffreestanding -nostdlib -fno-stack-protector -mtls-dialect=gnu "$here/host.c" -o "$out/libmc_dl_host.so"
+fi

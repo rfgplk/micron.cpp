@@ -61,6 +61,16 @@ pattern(int i) noexcept
 int
 main()
 {
+  test_case("128-bit signed division and full-width unsigned remainders");
+  {
+    const u128 high = u128{1} << 127;
+    require(__udivti3(~u128{0}, high + 1) == 1);
+    require(__umodti3(~u128{0}, high + 1) == high - 2);
+    require(__divti3(-42, 5) == -8 && __modti3(-42, 5) == -2);
+    require(__divti3(-42, -5) == 8 && __modti3(-42, -5) == -2);
+    require(__divti3(static_cast<i128>(high), 1) == static_cast<i128>(high));
+  }
+  end_test_case();
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   test_case("__ashlti3 matches a native << at every distance 0..127");
   {

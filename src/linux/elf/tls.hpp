@@ -51,8 +51,7 @@ struct tls_block_t {
   usize map_sz = 0;         // mmap length
 };
 
-// NOTE: per-thread TLS blocks are keyed on gettid() and NOT reclaimed on thread exit (no thread-exit hook)
-// they leak for the process lifetime
+// The native TLS owner removes its dynamic blocks before the thread exits.
 struct tls_thread_block_t {
   i32 tid;
   tls_block_t blocks[tls_max_modules] = {};
@@ -60,6 +59,25 @@ struct tls_thread_block_t {
 };
 
 inline tls_thread_block_t *__tls_thread_head = nullptr;
+
+struct __tls_thread_owner {
+  tls_thread_block_t *block = nullptr;
+  ~__tls_thread_owner()
+  {
+    if ( !block ) return;
+    __tls_lock();
+    auto **link = &__tls_thread_head;
+    while ( *link && *link != block ) link = &(*link)->next;
+    if ( *link ) *link = block->next;
+    for ( usize i = 0; i < tls_max_modules; ++i )
+      if ( block->blocks[i].map )
+        micron::munmap(reinterpret_cast<addr_t *>(block->blocks[i].map), block->blocks[i].map_sz);
+    micron::munmap(reinterpret_cast<addr_t *>(block), sizeof(tls_thread_block_t));
+    block = nullptr;
+    __tls_unlock();
+  }
+};
+inline thread_local __tls_thread_owner __tls_owner;
 
 inline i32
 __current_tid() noexcept
@@ -70,6 +88,7 @@ __current_tid() noexcept
 inline tls_thread_block_t *
 __tls_get_thread() noexcept
 {
+  if ( __tls_owner.block ) return __tls_owner.block;
   const i32 me = __current_tid();
   __tls_lock();
   for ( tls_thread_block_t *t = __tls_thread_head; t; t = t->next ) {
@@ -83,6 +102,7 @@ __tls_get_thread() noexcept
       micron::mmap(nullptr, sizeof(tls_thread_block_t), prot_read | prot_write, map_private | map_anonymous, -1, 0));
   if ( mmap_failed(t) ) return nullptr;
   t->tid = me;
+  __tls_owner.block = t;
   for ( usize i = 0; i < tls_max_modules; ++i ) t->blocks[i] = tls_block_t{};
   __tls_lock();
   t->next = __tls_thread_head;

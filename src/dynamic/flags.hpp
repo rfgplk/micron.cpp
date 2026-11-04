@@ -11,6 +11,15 @@
 namespace micron
 {
 
+namespace elf { struct module_t; }
+
+// The callbacks and their context must outlive the loaded dependency closure.
+struct dynamic_options {
+  void *(*resolve)(void *, const char *, const char *) = nullptr;
+  const char *(*validate)(void *, const elf::module_t &) = nullptr;
+  void *context = nullptr;
+};
+
 // dlopen style constants
 enum class rtld : u32 {
   none = 0x00000,

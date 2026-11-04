@@ -18,8 +18,8 @@
 #define __micron_eh_dwarf 1
 #endif
 
-// freestanding currently runs single threaded only at startup, remove this once we do TLS proper
-#ifndef __micron_eh_single_threaded
+// Targets without TLS must explicitly select process-wide exception state.
+#if defined(MICRON_NO_TLS) && !defined(__micron_eh_single_threaded)
 #define __micron_eh_single_threaded 1
 #endif
 

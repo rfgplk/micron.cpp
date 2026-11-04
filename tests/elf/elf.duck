@@ -79,3 +79,6 @@ build tests/compiletests/dynamic.cpp -k -o bin/elf/free
 build tests/compiletests/dynamic.cpp -ke -o bin/elf/free
 build tests/compiletests/dynamic.cpp --i386 -k -o bin/elf/free_i386
 build tests/compiletests/dynamic.cpp --i386 -ke -o bin/elf/free_i386
+
+# Run tests/support/dl/build.sh x64 first.
+test tests/rigor/dl_freestanding_host.cpp --std c++26 -O2 -ke -s -i . --timeout 120 -o bin/elf/x64

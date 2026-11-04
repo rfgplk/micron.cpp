@@ -19,6 +19,7 @@ namespace dl
 inline constexpr usize max_depth = 32;
 
 struct load_state {
+  dynamic_options options{};
   u32 created[max_modules] = {};
   usize created_n = 0;
   bool failed = false;
@@ -37,6 +38,12 @@ __map_dependency(dl_module *parent, const char *soname, rtld flags, load_state &
 {
 
   if ( dl_module *hit = __find_by_soname(soname) ) {
+    if ( hit->options.resolve != st.options.resolve || hit->options.validate != st.options.validate
+         || hit->options.context != st.options.context ) {
+      __err_set_once("dynamic_open: incompatible host resolver for existing dependency");
+      st.failed = true;
+      return nullptr;
+    }
     ++hit->refcount;
     if ( has(flags, rtld::global) ) hit->global = true;
     if ( has(flags, rtld::nodelete) ) hit->nodelete = true;
@@ -68,6 +75,12 @@ __map_recursive(const char *path, rtld flags, load_state &st, usize depth) noexc
   }
 
   if ( dl_module *hit = __find_by_path(path) ) {
+    if ( hit->options.resolve != st.options.resolve || hit->options.validate != st.options.validate
+         || hit->options.context != st.options.context ) {
+      __err_set_once("dynamic_open: incompatible host resolver for existing dependency");
+      st.failed = true;
+      return nullptr;
+    }
     ++hit->refcount;
     if ( has(flags, rtld::global) ) hit->global = true;
     if ( has(flags, rtld::nodelete) ) hit->nodelete = true;
@@ -82,6 +95,12 @@ __map_recursive(const char *path, rtld flags, load_state &st, usize depth) noexc
   }
 
   if ( dl_module *hit = __find_by_ident(dev, ino) ) {
+    if ( hit->options.resolve != st.options.resolve || hit->options.validate != st.options.validate
+         || hit->options.context != st.options.context ) {
+      __err_set_once("dynamic_open: incompatible host resolver for existing dependency");
+      st.failed = true;
+      return nullptr;
+    }
     ++hit->refcount;
     if ( has(flags, rtld::global) ) hit->global = true;
     if ( has(flags, rtld::nodelete) ) hit->nodelete = true;
@@ -94,6 +113,7 @@ __map_recursive(const char *path, rtld flags, load_state &st, usize depth) noexc
     st.failed = true;
     return nullptr;
   }
+  m->options = st.options;
   m->dev = dev;
   m->ino = ino;
   m->refcount = 1;
@@ -107,7 +127,21 @@ __map_recursive(const char *path, rtld flags, load_state &st, usize depth) noexc
   opts.reloc = reloc_mode_t::defer;
   opts.run_init = false;
   opts.apply_relro = false;
+#if defined(__EXCEPTIONS)
+  try {
+    m->mod = __load_module_from_path(path, opts);
+  } catch ( const except::__base_exception &e ) {
+    __err_set_once(e.what(), path);
+    st.failed = true;
+    return nullptr;
+  } catch ( ... ) {
+    __err_set_once("dynamic_open: failed to map module", path);
+    st.failed = true;
+    return nullptr;
+  }
+#else
   m->mod = __load_module_from_path(path, opts);
+#endif
 
   if ( !m->mod.load_base ) {
     __err_set_once("dynamic_open: map failed", path);
@@ -115,9 +149,16 @@ __map_recursive(const char *path, rtld flags, load_state &st, usize depth) noexc
     return nullptr;
   }
 
+  if ( m->options.validate ) {
+    if ( const char *error = m->options.validate(m->options.context, m->mod) ) {
+      __err_set_once(error, path);
+      st.failed = true;
+      return nullptr;
+    }
+  }
   const dyn_info_t &d = m->mod.dyn;
-  // a module with more DT_NEEDED entries than the table holds still loads
-  if ( d.needed_truncated ) __err_set_once("dynamic_open: DT_NEEDED list truncated", path);
+  // A truncated dependency closure cannot be relocated reliably.
+  if ( d.needed_truncated ) { __err_set_once("dynamic_open: DT_NEEDED list truncated", path); st.failed = true; return nullptr; }
   for ( usize i = 0; i < d.needed_count && !st.failed; ++i ) {
     if ( !d.strtab ) break;
     const char *dep_name = d.strtab + d.needed[i];
@@ -145,6 +186,15 @@ __relocate_closure(dl_module *m) noexcept
   __apply_relr(m->mod);
   __apply_relro_now(m->mod);
   return true;
+}
+
+inline void
+__finalize_closure(dl_module *m) noexcept
+{
+  if ( !m || !m->initialized ) return;
+  m->initialized = false;
+  __run_finalizers(m->mod);
+  for ( u32 k = m->dep_count; k-- > 0; ) __finalize_closure(__slots[m->deps[k]]);
 }
 
 inline void
@@ -189,7 +239,7 @@ __close_module(dl_module *m) noexcept
 
   for ( usize i = 0; i < n; ++i ) {
     dl_module *d = __slots[doomed[i]];
-    if ( d && d->in_use ) __run_finalizers(d->mod);
+    if ( d && d->in_use && d->initialized ) { d->initialized = false; __run_finalizers(d->mod); }
   }
   for ( usize i = 0; i < n; ++i ) {
     dl_module *d = __slots[doomed[i]];

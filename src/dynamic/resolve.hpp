@@ -116,6 +116,9 @@ __resolve_for_module(void *user, const char *name, u32 sym_index) noexcept
   const dyn_info_t &d = self->mod.dyn;
   const char *want = wanted_version(d, sym_index);
 
+  if ( self->options.resolve )
+    if ( void *p = self->options.resolve(self->options.context, name, want) ) return p;
+
   const bool symbolic = self->deepbind || (d.flags & df_symbolic) != 0;
   if ( symbolic ) {
     if ( found_t f = __lookup_one(self, name, want) ) return f.addr;
@@ -130,6 +133,8 @@ __resolve_for_module(void *user, const char *name, u32 sym_index) noexcept
     if ( found_t f = __lookup_global(name, nullptr) ) return f.addr;
     if ( found_t f = __lookup_closure(self, name, nullptr) ) return f.addr;
   }
+  if ( sym_index < d.symcount && elf_st_bind(d.symtab[sym_index].info) != stb_weak )
+    __err_set_once("dynamic_open: unresolved symbol", name);
   return nullptr;
 }
 

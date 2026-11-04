@@ -45,7 +45,7 @@ dynamic_lazy_supported() noexcept
 }
 
 inline dynamic_t
-dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local)
+dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local, dynamic_options options = {})
 {
   using namespace micron::elf::dl;
   __err_clear();
@@ -55,6 +55,8 @@ dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local)
   micron::lock_guard __lk(__registry_mtx);
 
   if ( dl_module *hit = __find_by_path(soname_or_path) ) {
+    if ( hit->options.resolve != options.resolve || hit->options.validate != options.validate || hit->options.context != options.context )
+      exc<except::library_error>("dynamic_open: incompatible host resolver for existing module");
     ++hit->refcount;
     if ( has(flags, rtld::global) ) hit->global = true;
     if ( has(flags, rtld::nodelete) ) hit->nodelete = true;
@@ -78,6 +80,7 @@ dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local)
   }
 
   load_state st;
+  st.options = options;
   dl_module *root = __map_recursive(p.c_str(), flags, st, 0);
   if ( !root || st.failed ) {
     __unwind(st);
@@ -100,9 +103,21 @@ dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local)
 
 template<is_string T>
 inline dynamic_t
-dynamic_open(const T &name, rtld flags = rtld::now | rtld::local)
+dynamic_open(const T &name, rtld flags = rtld::now | rtld::local, dynamic_options options = {})
 {
-  return dynamic_open(name.c_str(), flags);
+  return dynamic_open(name.c_str(), flags, options);
+}
+
+// Run finalizers once, retaining mappings for callbacks used during host shutdown.
+inline bool
+dynamic_finalize(dynamic_t d) noexcept
+{
+  using namespace micron::elf::dl;
+  micron::lock_guard __lk(__registry_mtx);
+  auto *m = __slot_at(d.index, d.generation);
+  if ( !m ) return false;
+  __finalize_closure(m);
+  return true;
 }
 
 inline bool

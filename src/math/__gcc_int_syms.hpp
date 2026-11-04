@@ -131,10 +131,11 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic") extern "C" __
   unsigned __int128 q = 0;
   unsigned __int128 r = 0;
   for ( int i = 0; i < 128; ++i ) {
+    const bool carry = (r >> 127) != 0;
     r = (r << 1) | static_cast<unsigned __int128>(n >> 127);
     n <<= 1;
     q <<= 1;
-    if ( r >= d ) {
+    if ( carry || r >= d ) {
       r -= d;
       q |= 1;
     }
@@ -148,11 +149,30 @@ __umodti3(unsigned __int128 n, unsigned __int128 d) noexcept
   if ( d == 0 ) __builtin_trap();
   unsigned __int128 r = 0;
   for ( int i = 0; i < 128; ++i ) {
+    const bool carry = (r >> 127) != 0;
     r = (r << 1) | static_cast<unsigned __int128>(n >> 127);
     n <<= 1;
-    if ( r >= d ) r -= d;
+    if ( carry || r >= d ) r -= d;
   }
   return r;
+}
+
+extern "C" __mc_libgcc_sym __int128
+__divti3(__int128 n, __int128 d) noexcept
+{
+  const auto un = static_cast<unsigned __int128>(n);
+  const auto ud = static_cast<unsigned __int128>(d);
+  const auto q = __udivti3(n < 0 ? 0 - un : un, d < 0 ? 0 - ud : ud);
+  return static_cast<__int128>((n < 0) != (d < 0) ? 0 - q : q);
+}
+
+extern "C" __mc_libgcc_sym __int128
+__modti3(__int128 n, __int128 d) noexcept
+{
+  const auto un = static_cast<unsigned __int128>(n);
+  const auto ud = static_cast<unsigned __int128>(d);
+  const auto r = __umodti3(n < 0 ? 0 - un : un, d < 0 ? 0 - ud : ud);
+  return static_cast<__int128>(n < 0 ? 0 - r : r);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

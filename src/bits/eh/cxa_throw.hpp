@@ -77,8 +77,8 @@ __cxa_allocate_exception(usize thrown_size) noexcept
     // mmap failed: fall back to a static emergency slot if it fits
     if ( need <= __emergency_slot_size ) {
       for ( usize i = 0; i < __emergency_slots; ++i ) {
-        if ( !__emergency_used[i] ) {
-          __emergency_used[i] = true;
+        bool expected = false;
+        if ( __atomic_compare_exchange_n(&__emergency_used[i], &expected, true, false, __ATOMIC_ACQUIRE, __ATOMIC_RELAXED) ) {
           base = __emergency_pool[i];
           map_size = 0;      // 0 marks an emergency (non-mapped) allocation
           break;
@@ -103,7 +103,7 @@ __cxa_free_exception(void *thrown_object) noexcept
   const usize map_size = *reinterpret_cast<usize *>(base);
   if ( __is_emergency(base) ) {
     const usize idx = static_cast<usize>(base - &__emergency_pool[0][0]) / __emergency_slot_size;
-    if ( idx < __emergency_slots ) __emergency_used[idx] = false;
+    if ( idx < __emergency_slots ) __atomic_store_n(&__emergency_used[idx], false, __ATOMIC_RELEASE);
   } else if ( map_size ) {
     __eh_raw_unmap(base, map_size);
   }

@@ -19,6 +19,7 @@
 // WARNING: freestanding libm symbols; needed otherwise all __builtin calls will fail if you compile at a low enough optimization level
 // (where the fallback isn't inlined)
 #include <micron/math/__gcc_math_syms.hpp>
+#include <micron/memory/cstring_c.hpp>
 
 #if !defined(MICRON_MX_START)
 // call user declared main from out __micron_user_main

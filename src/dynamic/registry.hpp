@@ -27,6 +27,7 @@ inline constexpr usize max_deps = dyn_info_t::max_needed;
 
 struct dl_module {
   module_t mod{};
+  dynamic_options options{};
 
   u32 index = 0;
   u32 generation = 0;

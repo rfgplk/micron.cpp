@@ -17,7 +17,7 @@
 
 namespace __cxxabiv1
 {
-// undef once we do TLS
+// Explicit single-thread fallback for targets without TLS.
 #if defined(__micron_eh_single_threaded)
 inline __cxa_eh_globals __micron_eh_globals_storage{};
 #else
