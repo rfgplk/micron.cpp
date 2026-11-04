@@ -95,18 +95,17 @@ __close_stderr(void)
   stderr.reset();
 }
 
-// WARNING: (for the nth time) these two __MUST__ stay strong so they
-// reliably override starts __attribute__((weak)) noop stubs __regardless__ of link
-// order; SOMEHOW?! an inline/weak def can lose to the weak stub when it is linked first
-extern "C" void
+// The CRT uses weak undefined references, so retained inline definitions work in either link order.
+extern "C" [[gnu::used, gnu::retain]] inline void
 __boot_io_buffers(void)
 {
+  if ( __global_buffer_stdout && __global_buffer_stderr ) return;
   __load_stdfd();
   if ( !__global_buffer_stdout ) __global_buffer_stdout = &__global_buffer_stdout_store;
   if ( !__global_buffer_stderr ) __global_buffer_stderr = &__global_buffer_stderr_store;
 }
 
-extern "C" void
+extern "C" [[gnu::used, gnu::retain]] inline void
 __shutdown_io_buffers(void)
 {
   if ( __global_buffer_stdout && stdout.open() && !stdout.has_error() ) __global_buffer_stdout->flush_to(stdout);

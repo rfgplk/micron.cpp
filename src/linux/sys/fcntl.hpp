@@ -24,7 +24,7 @@ fcntl(i32 fd, i32 cmd, Args &&...args) -> i32
   return static_cast<i32>(micron::syscall(SYS_fcntl, fd, cmd, args...));
 }
 
-auto
+inline auto
 fadvise(i32 fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
 {
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
@@ -38,7 +38,7 @@ fadvise(i32 fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
 #endif
 }
 
-auto
+inline auto
 fadvise(fd_t fd, posix::off_t offset, posix::off_t len, i32 advice) -> i32
 {
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)

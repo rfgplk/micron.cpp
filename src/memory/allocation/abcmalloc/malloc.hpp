@@ -38,7 +38,7 @@ __is_sentinel(const byte *ptr) noexcept
 }
 
 // checks if pointer has been alloc.
-bool
+inline bool
 is_present(addr_t *ptr)
 {
   if ( external_is_present(reinterpret_cast<byte *>(ptr)) ) return true;
@@ -46,7 +46,7 @@ is_present(addr_t *ptr)
   return __query_arena(ptr)->present(ptr);
 }
 
-bool
+inline bool
 is_present(byte *ptr)
 {
   return is_present(micron::ptr_cast<addr_t *>(ptr));
@@ -61,26 +61,26 @@ is_present(T *ptr)
 }
 
 // checks if pointer is addressable at any known page of the allocator, if it is it's valid
-bool
+inline bool
 within(const addr_t *ptr)
 {
   if ( external_within(reinterpret_cast<const byte *>(ptr)) ) return true;
   return __query_arena(ptr)->has_provenance(const_cast<addr_t *>(ptr));
 }
 
-bool
+inline bool
 within(addr_t *ptr)
 {
   return within(static_cast<const addr_t *>(ptr));
 }
 
-bool
+inline bool
 within(byte *ptr)
 {
   return within(micron::ptr_cast<addr_t *>(ptr));
 }
 
-void
+inline void
 relinquish(byte *ptr)      // unmaps entire sheet at which ptr lives, resets arena entirely
 {
   if ( !ptr ) [[unlikely]]
@@ -100,7 +100,7 @@ relinquish(T *__ptr)      // unmaps entire sheet at which ptr lives, resets aren
 // these bypass the normal allocation path and directly push/pop the given {ptr, size} chunk used for externally-mapped memory that the
 // allocator needs to track for provenance or freeze operations
 
-byte *
+inline byte *
 mark_at(byte *ptr, usize size)
 {
   if ( !ptr or size == 0 ) [[unlikely]]
@@ -115,7 +115,7 @@ mark_at(byte *ptr, usize size)
   return ptr;
 }
 
-byte *
+inline byte *
 unmark_at(byte *ptr, usize size)
 {
   if ( !ptr or size == 0 ) [[unlikely]]
@@ -136,7 +136,7 @@ unmark_at(byte *ptr, usize size)
   return ptr;
 }
 
-micron::__chunk<byte>
+inline micron::__chunk<byte>
 balloc(usize size)      // allocates memory, returns entire memory chunk
 {
   if ( size == 0 ) [[unlikely]]
@@ -149,7 +149,7 @@ balloc(usize size)      // allocates memory, returns entire memory chunk
   return mem;
 }
 
-micron::__chunk<byte>
+inline micron::__chunk<byte>
 fetch(usize size)
 {
   if ( size == 0 ) [[unlikely]]
@@ -176,7 +176,7 @@ fetch(void)
 }
 
 // tombstone
-void
+inline void
 retire(byte *ptr)
 {
   if ( !ptr ) [[unlikely]]
@@ -199,7 +199,7 @@ retire(T *__ptr)
   retire(ptr);
 }
 
-__attribute__((malloc, alloc_size(1))) auto
+inline __attribute__((malloc, alloc_size(1))) auto
 alloc(usize size) -> byte *      // allocates memory, near iden. func. to malloc
 {
   if ( size == 0 ) [[unlikely]]
@@ -209,7 +209,7 @@ alloc(usize size) -> byte *      // allocates memory, near iden. func. to malloc
   return ptr;      // balloc already converts sentinel to nullptr
 }
 
-__attribute__((malloc, alloc_size(1))) byte *
+inline __attribute__((malloc, alloc_size(1))) byte *
 salloc(usize size)
 {
   if ( size == 0 ) [[unlikely]]
@@ -226,7 +226,7 @@ salloc(usize size)
   return mem.ptr;
 }
 
-void
+inline void
 dealloc(byte *ptr)
 {
   if ( !ptr ) [[unlikely]]
@@ -245,7 +245,7 @@ dealloc(byte *ptr)
   }
 }
 
-void
+inline void
 dealloc(byte *ptr, usize len)
 {
   if ( !ptr ) [[unlikely]]
@@ -283,7 +283,7 @@ dealloc(T *__ptr, usize len)
   dealloc(ptr, len);
 }
 
-void
+inline void
 freeze_sheet(byte *ptr)
 {
   if ( !ptr ) [[unlikely]]
@@ -305,7 +305,7 @@ freeze_sheet(T *__ptr)
   freeze_sheet(ptr);
 }
 
-void
+inline void
 freeze(byte *ptr)
 {
   freeze_sheet(ptr);
@@ -319,7 +319,7 @@ freeze(T *__ptr)
   freeze_sheet(__ptr);
 }
 
-void
+inline void
 which(void)
 {
   // walk every tier's index and report live (non-tombstoned) sheets
@@ -345,7 +345,7 @@ which(void)
   __debug_print("which(): arena metadata remaining: ", tot_meta_avail);
 }
 
-micron::__chunk<byte>
+inline micron::__chunk<byte>
 launder_chunk(usize size)
 {
   if ( size == 0 ) [[unlikely]]
@@ -359,7 +359,7 @@ launder_chunk(usize size)
   return mem;
 }
 
-byte *
+inline byte *
 launder(usize size)
 {
   return launder_chunk(size).ptr;
@@ -403,7 +403,7 @@ __aligned_base_of(byte *ptr) noexcept
   return __aligned_verify(raw);
 }
 
-[[nodiscard]] micron::__chunk<byte>
+[[nodiscard]] inline micron::__chunk<byte>
 aligned_balloc(usize alignment, usize size)
 {
   if ( alignment == 0 || (alignment & (alignment - 1)) != 0 || size == 0 ) return { nullptr, 0 };
@@ -424,7 +424,7 @@ aligned_balloc(usize alignment, usize size)
   return { reinterpret_cast<byte *>(aligned), raw.len - displacement };
 }
 
-[[nodiscard]] micron::__chunk<byte>
+[[nodiscard]] inline micron::__chunk<byte>
 aligned_launder(usize alignment, usize size)
 {
   if ( alignment == 0 || (alignment & (alignment - 1)) != 0 || size == 0 ) return { nullptr, 0 };
@@ -481,7 +481,7 @@ aligned_retire(micron::__chunk<byte> memory, usize alignment)
   aligned_retire(memory.ptr, alignment);
 }
 
-[[nodiscard]] micron::__chunk<byte>
+[[nodiscard]] inline micron::__chunk<byte>
 resize_chunk(micron::__chunk<byte> old, usize size, usize preserve_bytes)
 {
   if ( old.ptr == nullptr ) return balloc(size);
@@ -505,7 +505,7 @@ resize_chunk(micron::__chunk<byte> old, usize size, usize preserve_bytes)
   return { ptr, __query_arena(ptr)->__size_of_alloc(micron::ptr_cast<addr_t *>(ptr)) };
 }
 
-[[nodiscard]] micron::__chunk<byte>
+[[nodiscard]] inline micron::__chunk<byte>
 aligned_resize(micron::__chunk<byte> old, usize size, usize preserve_bytes, usize alignment)
 {
   if ( old.ptr == nullptr ) return aligned_balloc(alignment, size);
@@ -576,7 +576,7 @@ query_size(T *ptr)
 // inject
 // make_at
 
-usize
+inline usize
 musage(void)
 {
   usize total = 0;
@@ -593,13 +593,13 @@ musage(void)
   return total;
 }
 
-__attribute__((malloc, alloc_size(1))) void *
+inline __attribute__((malloc, alloc_size(1))) void *
 malloc(usize size)      // alloc memory of size 'size', prefer using alloc
 {
   return reinterpret_cast<void *>(abc::alloc(size));
 }
 
-void *
+inline void *
 calloc(usize num, usize size)      // alloc's zero'd out memory, prefer using salloc()
 {
   if ( num == 0 or size == 0 ) return nullptr;
@@ -614,7 +614,7 @@ calloc(usize num, usize size)      // alloc's zero'd out memory, prefer using sa
   return mem;
 }
 
-void *
+inline void *
 realloc(void *ptr, usize size)      // reallocates memory
 {
   if ( !ptr ) return reinterpret_cast<void *>(abc::alloc(size));
@@ -653,7 +653,7 @@ realloc(void *ptr, usize size)      // reallocates memory
   return reinterpret_cast<void *>(result.ptr);
 }
 
-void
+inline void
 free(void *ptr)      // frees memory, prefer abc::dealloc always
 {
   if ( !ptr ) [[unlikely]]
@@ -670,7 +670,7 @@ free(void *ptr)      // frees memory, prefer abc::dealloc always
 
 // NOTE: when alignment > __hdr_offset (32) the returned pointer differs from the allocator's block start
 
-void *
+inline void *
 aligned_alloc(usize alignment, usize size)
 {
   // !alignment must be power of two
@@ -687,7 +687,7 @@ aligned_alloc(usize alignment, usize size)
   return reinterpret_cast<void *>(aligned_balloc(alignment, size).ptr);
 }
 
-void
+inline void
 aligned_free(void *ptr)
 {
   if ( !ptr ) [[unlikely]]
@@ -710,7 +710,7 @@ aligned_free(void *ptr)
       "aligned_free(): stashed raw pointer is invalid, this pointer was not allocated by aligned_alloc");
 }
 
-void
+inline void
 aligned_free(void *ptr, usize alignment)
 {
   aligned_dealloc(reinterpret_cast<byte *>(ptr), alignment);

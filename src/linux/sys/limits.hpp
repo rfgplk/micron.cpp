@@ -95,7 +95,7 @@ struct rlimit64_t {
   u64 rlim_max;
 };
 
-auto
+inline auto
 getrlimit(limits lm, rlimit_t &rl)
 {
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
@@ -106,13 +106,13 @@ getrlimit(limits lm, rlimit_t &rl)
 #endif
 }
 
-auto
+inline auto
 setrlimit(limits lm, rlimit_t &rl)
 {
   return micron::syscall(SYS_setrlimit, static_cast<i32>(lm), &rl);
 }
 
-auto
+inline auto
 get_limits(limits lm, rlimit_t &rl)
 {
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
@@ -123,45 +123,45 @@ get_limits(limits lm, rlimit_t &rl)
 #endif
 }
 
-auto
+inline auto
 set_limits(limits lm, rlimit_t &rl)
 {
   return micron::syscall(SYS_setrlimit, static_cast<i32>(lm), &rl);
 }
 
-auto
+inline auto
 get_process_limits(pid_t pid, rlim_t lm, rlimit64_t &out)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), nullptr, &out);
 }
 
-auto
+inline auto
 set_process_limits(pid_t pid, rlim_t lm, rlimit64_t &in)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, nullptr);
 }
 
 // with the out
-auto
+inline auto
 set_process_limits(pid_t pid, rlim_t lm, rlimit64_t &in, rlimit64_t &out)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, &out);
 }
 
-auto
+inline auto
 prlimit_out(pid_t pid, rlim_t lm, rlimit64_t &out)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), nullptr, &out);
 }
 
-auto
+inline auto
 prlimit_in(pid_t pid, rlim_t lm, rlimit64_t &in)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, nullptr);
 }
 
 // with the out
-auto
+inline auto
 prlimit(pid_t pid, rlim_t lm, rlimit64_t &in, rlimit64_t &out)
 {
   return micron::syscall(SYS_prlimit64, pid, static_cast<i32>(lm), &in, &out);

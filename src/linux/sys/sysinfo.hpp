@@ -81,7 +81,7 @@ getpagesizelive(void) noexcept
   return ps;
 }
 
-long int
+inline long int
 get_phys_pages(void)
 {
   sysinfo sys;

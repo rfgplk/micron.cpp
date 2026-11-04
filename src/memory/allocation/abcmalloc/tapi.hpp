@@ -277,10 +277,9 @@ __for_each_live_arena(Fn &&fn) noexcept
 
 // NOTE: __boot_abcmalloc was the old entry point, keeping it around in case old start files are still used
 // new threading api is fully lazy (created on first alloc)
-extern "C" void
+extern "C" [[gnu::used, gnu::retain]] inline void
 __boot_abcmalloc(void) noexcept
 {
-  // don't inline otherwise the linkers doesn't see
 }
 
 };      // namespace abc

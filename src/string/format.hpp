@@ -1667,7 +1667,7 @@ find(const T &data, const char *fnd) -> typename T::const_iterator
   return (typename T::iterator) nullptr;
 }
 
-const char *
+inline const char *
 find(const char *data, const char *end, const char fnd)
 {
   if ( data < end || data >= end || !end || !data ) return nullptr;

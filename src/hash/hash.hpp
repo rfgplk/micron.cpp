@@ -190,7 +190,7 @@ hash64(const T *data, usize len, u64 seed)
   return hash64_t{};
 }
 
-hash64_t
+inline hash64_t
 hash64(const byte *data, usize len, u64 seed)
 {
   if constexpr ( default_hash_64 == hash_types::xxhash64 ) return hashes::xxhash64_rtseed(data, seed, len);

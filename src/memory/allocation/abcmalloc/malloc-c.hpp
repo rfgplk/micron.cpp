@@ -29,14 +29,16 @@
 #if !defined(ABCMALLOC_DISABLE) && !defined(__micron_sanitizer_owns_heap)
 
 // NOTE: these should be noexcept so we avoid conflicting declarations
+// Keep every C allocator entry point exported while coalescing the header definitions across TUs.
+#define __MICRON_C_ALLOC_INTERPOSE __attribute__((weak, used, retain))
 
-extern "C" __attribute__((malloc, alloc_size(1))) void *
+extern "C" __MICRON_C_ALLOC_INTERPOSE __attribute__((malloc, alloc_size(1))) void *
 malloc(usize size) noexcept      // alloc memory of size 'size', prefer using alloc
 {
   return reinterpret_cast<void *>(abc::alloc(size));
 }
 
-extern "C" void *
+extern "C" __MICRON_C_ALLOC_INTERPOSE void *
 calloc(usize num, usize size) noexcept      // alloc's zero'd out memory, prefer using salloc()
 {
   if ( size != 0 && (size * num) / size != num ) return nullptr;
@@ -47,7 +49,7 @@ calloc(usize num, usize size) noexcept      // alloc's zero'd out memory, prefer
   return mem;
 }
 
-extern "C" void *
+extern "C" __MICRON_C_ALLOC_INTERPOSE void *
 realloc(void *ptr, usize size) noexcept      // reallocates memory
 {
   if ( !ptr ) return reinterpret_cast<void *>(abc::alloc(size));
@@ -79,7 +81,7 @@ realloc(void *ptr, usize size) noexcept      // reallocates memory
   return new_block;
 }
 
-extern "C" void
+extern "C" __MICRON_C_ALLOC_INTERPOSE void
 free(void *ptr) noexcept      // frees memory, prefer abc::dealloc always
 {
   abc::free(ptr);
@@ -94,13 +96,13 @@ free(void *ptr) noexcept      // frees memory, prefer abc::dealloc always
 //
 // NOTE: abc::aligned_balloc is used rather than abc::aligned_alloc
 
-extern "C" void *
+extern "C" __MICRON_C_ALLOC_INTERPOSE void *
 aligned_alloc(usize alignment, usize size) noexcept
 {
   return reinterpret_cast<void *>(abc::aligned_balloc(alignment, size).ptr);
 }
 
-extern "C" int
+extern "C" __MICRON_C_ALLOC_INTERPOSE int
 posix_memalign(void **out, usize alignment, usize size) noexcept
 {
   if ( out == nullptr ) return 22;      // EINVAL
@@ -116,23 +118,24 @@ posix_memalign(void **out, usize alignment, usize size) noexcept
   return 0;
 }
 
-extern "C" void *
+extern "C" __MICRON_C_ALLOC_INTERPOSE void *
 memalign(usize alignment, usize size) noexcept
 {
   return reinterpret_cast<void *>(abc::aligned_balloc(alignment, size).ptr);
 }
 
-extern "C" void *
+extern "C" __MICRON_C_ALLOC_INTERPOSE void *
 valloc(usize size) noexcept
 {
   return reinterpret_cast<void *>(abc::aligned_balloc(abc::__system_pagesize, size).ptr);
 }
 
-extern "C" void *
+extern "C" __MICRON_C_ALLOC_INTERPOSE void *
 pvalloc(usize size) noexcept
 {
   const usize rounded = (size + abc::__system_pagesize - 1) & ~(abc::__system_pagesize - 1);
   return reinterpret_cast<void *>(abc::aligned_balloc(abc::__system_pagesize, rounded).ptr);
 }
 
+#undef __MICRON_C_ALLOC_INTERPOSE
 #endif

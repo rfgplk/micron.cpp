@@ -14,7 +14,7 @@
 namespace abc
 {
 
-__attribute__((noreturn)) void
+inline __attribute__((noreturn)) void
 abort_state(void)
 {
   __debug_print("abort_state(): fatal allocator error, aborting", 0);
@@ -22,7 +22,7 @@ abort_state(void)
   micron::sys_exit(__MICRON_ABCMALLOC_CRITICAL_EXIT);
 }
 
-__micron_diagnostic_push __micron_diagnostic_suggest_noreturn bool
+__micron_diagnostic_push __micron_diagnostic_suggest_noreturn inline bool
 fail_state(void)
 {
   if constexpr ( __default_fail_result == 0 ) {

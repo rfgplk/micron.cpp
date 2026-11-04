@@ -163,7 +163,7 @@ __calculate_space_saturated(usize sz)
   return sz;
 }
 
-void *
+inline void *
 __get_kernel_memory(u64 sz)
 {
   return micron::sys_allocator<byte>::alloc(static_cast<usize>(sz));

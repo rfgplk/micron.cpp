@@ -92,7 +92,7 @@ z(const u8 *__restrict data, usize sz, u64 *__restrict out)
   simd::avx::store_i256(reinterpret_cast<__m256i *>(out), S);
 }
 
-void
+inline void
 z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 {
   const __m256i IV = simd::avx::set_i64(iv64_3, iv64_2, iv64_1, iv64_0);
@@ -222,7 +222,7 @@ zz(const u8 *__restrict data, usize sz, u64 *__restrict out)
 }
 
 // rt seed version
-void
+inline void
 zz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 {
   const __m256i shift_vec = simd::avx::set_i64(13, 29, 7, 19);
@@ -299,7 +299,7 @@ zz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 }
 
 // rt seed version
-void
+inline void
 zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
 {
   const __m256i IV = simd::avx::set_i64(iv64_3, iv64_2, iv64_1, iv64_0);
@@ -463,7 +463,7 @@ zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
   simd::avx::store_i256(reinterpret_cast<__m256i *>(out), S);
 }
 
-u64
+inline u64
 z64(const u8 *data, i64 seed, usize sz)
 {
   alignas(32) u64 out[4];
@@ -480,7 +480,7 @@ z64(const u8 *data, usize sz)
   return out[0] ^ out[1] ^ out[2] ^ out[3];
 }
 
-u64
+inline u64
 zz64(const u8 *data, i64 seed, usize sz)
 {
   alignas(32) u64 out[4];
@@ -498,7 +498,7 @@ zz64(const u8 *data, usize sz)
 }
 
 // 64-bit helper for the rt seed version
-u64
+inline u64
 zzz64(const u8 *data, i64 seed, usize sz)
 {
   alignas(32) u64 out[4];
@@ -517,7 +517,7 @@ zzz64(const u8 *data, usize sz)
 }
 
 // 128-bit helper for the rt seed version
-micron::pair<u64, u64>
+inline micron::pair<u64, u64>
 zzz128(const u8 *data, i64 seed, usize sz)
 {
   alignas(32) u64 out[4];

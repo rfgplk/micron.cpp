@@ -28,13 +28,13 @@ namespace micron
 namespace posix
 {
 
-int
+inline int
 getcpu(u32 *cpu, u32 *node)
 {
   return static_cast<int>(micron::syscall(SYS_getcpu, cpu, node, nullptr));
 }
 
-int
+inline int
 getcpu(void)
 {
   int cpu = 0;

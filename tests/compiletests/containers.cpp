@@ -8,6 +8,7 @@
 // surface on every arch/opt combo (see verify_compile_*.duck). Not run.
 
 #include "../../src/array.hpp"
+#include "../../src/array/constarray.hpp"
 #include "../../src/list.hpp"
 #include "../../src/map.hpp"
 #include "../../src/queue.hpp"
@@ -18,6 +19,8 @@
 #include "../../src/stack.hpp"
 #include "../../src/tuple.hpp"
 #include "../../src/vector.hpp"
+
+static_assert(micron::is_same_v<micron::constarray<int>, micron::constexpr_array<int, 64>>);
 
 // static_mpmc is the one container meant to live at namespace scope with no allocator behind it;
 // this is what would break first in a freestanding (-k/-ke) cell

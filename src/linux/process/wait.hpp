@@ -162,25 +162,25 @@ wait4(posix::pid_t pid, int *stat, int options, posix::rusage_t *usage)
   return (posix::pid_t)r;
 }
 
-posix::pid_t
+inline posix::pid_t
 wait(int *status)
 {
   return wait4(-1, status, 0, nullptr);
 }
 
-posix::pid_t
+inline posix::pid_t
 waitpid(posix::pid_t pid, int *status, int options)
 {
   return wait4(pid, status, options, nullptr);
 }
 
-posix::pid_t
+inline posix::pid_t
 waitpid(status_t &status)
 {
   return wait4(status.pid, &status.status, 0, nullptr);
 }
 
-auto
+inline auto
 waitid(idtype_t idtype, posix::id_t id, posix::siginfo_t &info, int options)
 {
   info = posix::siginfo_t{};

@@ -40,10 +40,7 @@ extern "C" int __micron_mx_user_entry(const micron_mx_entry_args *args) __asm__(
 
 // microns entry/exit points
 // __boot_io_buffers is optional
-extern "C" __attribute__((weak)) void
-__boot_io_buffers(void)
-{
-}
+extern "C" __attribute__((weak)) void __boot_io_buffers(void);
 
 extern "C" __attribute__((weak)) void
 __boot_io_sigpipe(void)
@@ -55,10 +52,7 @@ __boot_threadpool(void)
 {
 }
 
-extern "C" __attribute__((weak)) void
-__shutdown_io_buffers(void)
-{
-}
+extern "C" __attribute__((weak)) void __shutdown_io_buffers(void);
 
 // mem* tunables probe
 // resolves to null when the binary never pulls in cmemory
@@ -130,7 +124,7 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
 
   // NOTE: we must register shutdown io first so it lands at the bottom of the atexit stack,
   // ensuring it runs last
-  micron::atexit([] { __shutdown_io_buffers(); });
+  micron::atexit([] { if ( __shutdown_io_buffers ) __shutdown_io_buffers(); });
 
   // threading and sig pipes
   __boot_threadpool();      // __global_threadpool ready before any user micron::go()
@@ -141,7 +135,7 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
   for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p ) (*p)();
 
   // io buffer init MUST fire AFTER .init_array
-  __boot_io_buffers();
+  if ( __boot_io_buffers ) __boot_io_buffers();
 
   if constexpr ( micron::config::fast_math_x86 ) enable_fast_fp();
 
@@ -190,7 +184,7 @@ __micron_mxc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noe
 
   if ( __micron_mem_init ) __micron_mem_init();
 
-  micron::atexit([] { __shutdown_io_buffers(); });
+  micron::atexit([] { if ( __shutdown_io_buffers ) __shutdown_io_buffers(); });
 
   __boot_threadpool();
   __boot_io_sigpipe();
@@ -198,7 +192,7 @@ __micron_mxc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noe
   for ( void (**p)(void) = __preinit_array_start; p < __preinit_array_end; ++p ) (*p)();
   for ( void (**p)(void) = __init_array_start; p < __init_array_end; ++p ) (*p)();
 
-  __boot_io_buffers();
+  if ( __boot_io_buffers ) __boot_io_buffers();
 
   if constexpr ( micron::config::fast_math_x86 ) enable_fast_fp();
 

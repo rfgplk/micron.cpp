@@ -41,7 +41,7 @@ struct rusage_t {
 
 // for arb process look at process/resource
 
-auto
+inline auto
 getrusage(i32 who, rusage_t &rusage)
 {
   return micron::syscall(SYS_getrusage, who, &rusage);

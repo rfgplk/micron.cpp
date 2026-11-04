@@ -68,13 +68,13 @@ __stat64_via_statx(int dirfd, const char *path, int flags, stat64_t &buf)
 #endif
 
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
-auto
+inline auto
 fstatat(posix::fd_t dirfd, const char *__restrict name, stat_t &__restrict buf, int flags) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_newfstatat, dirfd.fd, name, &buf, flags));
 }
 #elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
-auto
+inline auto
 fstatat(posix::fd_t dirfd, const char *__restrict name, stat64_t &__restrict buf, int flags) -> i32
 {
   return __stat64_via_statx(dirfd.fd, name, flags, buf);
@@ -82,13 +82,13 @@ fstatat(posix::fd_t dirfd, const char *__restrict name, stat64_t &__restrict buf
 #endif
 
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
-auto
+inline auto
 fstatat(int dirfd, const char *__restrict name, stat_t &__restrict buf, int flags) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_newfstatat, dirfd, name, &buf, flags));
 }
 #elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
-auto
+inline auto
 fstatat(int dirfd, const char *__restrict name, stat64_t &__restrict buf, int flags) -> i32
 {
   return __stat64_via_statx(dirfd, name, flags, buf);
@@ -96,13 +96,13 @@ fstatat(int dirfd, const char *__restrict name, stat64_t &__restrict buf, int fl
 #endif
 
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
-auto
+inline auto
 fstat(posix::fd_t fd, stat_t &buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_fstat, fd.fd, &buf));
 }
 #elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
-auto
+inline auto
 fstat(posix::fd_t fd, stat64_t &buf) -> i32
 {
   return __stat64_via_statx(fd.fd, "", at_empty_path, buf);
@@ -110,13 +110,13 @@ fstat(posix::fd_t fd, stat64_t &buf) -> i32
 #endif
 
 #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)
-auto
+inline auto
 fstat(int fd, stat_t &buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_fstat, fd, &buf));
 }
 #elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
-auto
+inline auto
 fstat(int fd, stat64_t &buf) -> i32
 {
   return __stat64_via_statx(fd, "", at_empty_path, buf);
@@ -124,19 +124,19 @@ fstat(int fd, stat64_t &buf) -> i32
 #endif
 
 #if defined(__micron_arch_amd64)
-auto
+inline auto
 lstat(const char *path, stat_t &buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_lstat, path, &buf));
 }
 #elif defined(__micron_arch_arm64)
-auto
+inline auto
 lstat(const char *path, stat_t &buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_newfstatat, at_fdcwd, path, &buf, at_symlink_nofollow));
 }
 #elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
-auto
+inline auto
 lstat(const char *path, stat64_t &buf) -> i32
 {
   return __stat64_via_statx(at_fdcwd, path, at_symlink_nofollow, buf);
@@ -144,32 +144,32 @@ lstat(const char *path, stat64_t &buf) -> i32
 #endif
 
 #if defined(__micron_arch_amd64)
-auto
+inline auto
 stat(const char *path, stat_t &buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_stat, path, &buf));
 }
 #elif defined(__micron_arch_arm64)
-auto
+inline auto
 stat(const char *path, stat_t &buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_newfstatat, at_fdcwd, path, &buf, 0));
 }
 #elif defined(__micron_arch_arm32) || defined(__micron_arch_x86)
-auto
+inline auto
 stat(const char *path, stat64_t &buf) -> i32
 {
   return __stat64_via_statx(at_fdcwd, path, at_statx_sync_as_stat, buf);
 }
 #endif
 
-auto
+inline auto
 statx(int dirfd, const char *__restrict path, int flags, unsigned int req_mask, statx_t &__restrict buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_statx, dirfd, path, flags, req_mask, &buf));
 }
 
-auto
+inline auto
 statx(posix::fd_t dirfd, const char *__restrict path, int flags, unsigned int req_mask, statx_t &__restrict buf) -> i32
 {
   return static_cast<i32>(micron::syscall(SYS_statx, dirfd.fd, path, flags, req_mask, &buf));

@@ -29,13 +29,15 @@ enum class align_val_t : __SIZE_TYPE__;
 };
 #if !defined(__micron_sanitizer_owns_heap)
 
+// Replaceable allocation functions cannot be inline. ELF weak definitions coalesce across TUs;
+// retain keeps the complete replacement family available to foreign allocation callers.
 // A hosted allocator interposer must see the matching replaceable new/delete pair. When the
 // standard backend is libc, inlining only delete turns Valgrind's new allocation into a direct
 // free and defeats that pairing. The abc-native path keeps its normal optimizer visibility.
 #if !defined(__micron_abcmalloc_std_backend)
-#define __MICRON_ALLOC_INTERPOSE __attribute__((noinline))
+#define __MICRON_ALLOC_INTERPOSE __attribute__((weak, used, retain, noinline))
 #else
-#define __MICRON_ALLOC_INTERPOSE
+#define __MICRON_ALLOC_INTERPOSE __attribute__((weak, used, retain))
 #endif
 
 // §17.6.3 — scalar new/delete
