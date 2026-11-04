@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../exit.hpp"
 #include "../../memory/cmemory.hpp"
 #include "../../memory/mman.hpp"
 #include "../../memory/mmap_bits.hpp"
@@ -51,7 +52,7 @@ struct tls_block_t {
   usize map_sz = 0;         // mmap length
 };
 
-// The native TLS owner removes its dynamic blocks before the thread exits.
+// Dynamic blocks outlive the thread's C++ destructors and process finalizers.
 struct tls_thread_block_t {
   i32 tid;
   tls_block_t blocks[tls_max_modules] = {};
@@ -59,25 +60,41 @@ struct tls_thread_block_t {
 };
 
 inline tls_thread_block_t *__tls_thread_head = nullptr;
+inline thread_local tls_thread_block_t *__tls_thread = nullptr;
 
+inline void
+__tls_release_thread() noexcept
+{
+  auto *block = __tls_thread;
+  if ( !block ) return;
+  __tls_lock();
+  auto **link = &__tls_thread_head;
+  while ( *link && *link != block ) link = &(*link)->next;
+  if ( *link ) *link = block->next;
+  for ( usize i = 0; i < tls_max_modules; ++i )
+    if ( block->blocks[i].map ) micron::munmap(reinterpret_cast<addr_t *>(block->blocks[i].map), block->blocks[i].map_sz);
+  micron::munmap(reinterpret_cast<addr_t *>(block), sizeof(tls_thread_block_t));
+  __tls_thread = nullptr;
+  micron::__dynamic_tls_exit_hook = nullptr;
+  __tls_unlock();
+}
+
+#if !defined(__micron_tdtor_real)
 struct __tls_thread_owner {
-  tls_thread_block_t *block = nullptr;
   ~__tls_thread_owner()
   {
+    auto *block = __tls_thread;
     if ( !block ) return;
-    __tls_lock();
-    auto **link = &__tls_thread_head;
-    while ( *link && *link != block ) link = &(*link)->next;
-    if ( *link ) *link = block->next;
-    for ( usize i = 0; i < tls_max_modules; ++i )
-      if ( block->blocks[i].map )
-        micron::munmap(reinterpret_cast<addr_t *>(block->blocks[i].map), block->blocks[i].map_sz);
-    micron::munmap(reinterpret_cast<addr_t *>(block), sizeof(tls_thread_block_t));
-    block = nullptr;
-    __tls_unlock();
+    // Process finalizers may still read C TLS after C++ TLS destructors have run.
+    if ( micron::__micron_thread_alive_word || __atomic_load_n(&micron::__exit_internal::__exit_in_progress, __ATOMIC_ACQUIRE)
+         || block->tid == static_cast<i32>(micron::syscall(SYS_getpid)) )
+      return;
+    __tls_release_thread();
   }
 };
+
 inline thread_local __tls_thread_owner __tls_owner;
+#endif
 
 inline i32
 __current_tid() noexcept
@@ -88,7 +105,10 @@ __current_tid() noexcept
 inline tls_thread_block_t *
 __tls_get_thread() noexcept
 {
-  if ( __tls_owner.block ) return __tls_owner.block;
+#if !defined(__micron_tdtor_real)
+  (void)&__tls_owner;
+#endif
+  if ( __tls_thread ) return __tls_thread;
   const i32 me = __current_tid();
   __tls_lock();
   for ( tls_thread_block_t *t = __tls_thread_head; t; t = t->next ) {
@@ -102,7 +122,8 @@ __tls_get_thread() noexcept
       micron::mmap(nullptr, sizeof(tls_thread_block_t), prot_read | prot_write, map_private | map_anonymous, -1, 0));
   if ( mmap_failed(t) ) return nullptr;
   t->tid = me;
-  __tls_owner.block = t;
+  __tls_thread = t;
+  micron::__dynamic_tls_exit_hook = &__tls_release_thread;
   for ( usize i = 0; i < tls_max_modules; ++i ) t->blocks[i] = tls_block_t{};
   __tls_lock();
   t->next = __tls_thread_head;

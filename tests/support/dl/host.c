@@ -24,5 +24,5 @@ init(void)
 __attribute__((destructor)) static void
 fini(void)
 {
-  host_event(99);
+  host_event(counter);
 }

@@ -19,7 +19,9 @@ A subsequent close does not run the finalizers again. `rtld::nodelete` retains t
 mapping through host callbacks and destruction.
 
 Module-local general-dynamic TLS works without a system loader. Its per-thread
-mappings are reclaimed by native TLS destructors. Initial-exec TLS, TLSDESC, and
+mappings are reclaimed after C++ TLS destructors on Micron worker exit, and after
+process finalizers under Micron startup. A hosted main thread retains its mappings
+until the kernel reclaims them at process exit. Initial-exec TLS, TLSDESC, and
 cross-module TLS references are rejected. On x86-64, build compatible libraries
 with `-fPIC -mtls-dialect=gnu` and no hosted-runtime dependencies.
 

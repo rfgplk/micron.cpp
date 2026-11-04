@@ -8,9 +8,18 @@
 namespace
 {
 int event = 0;
-u32 ready = 0, failed = 0, prepared = 0, released = 0;
+u32 ready = 0, failed = 0, prepared = 0, released = 0, destroyed = 0;
 uintptr_t globals[2]{};
 int (*next_value)();
+micron::dynamic_t finalizer_module;
+
+struct tls_finalizer {
+  ~tls_finalizer()
+  {
+    if ( next_value() != 43 ) __atomic_fetch_add(&failed, 1u, __ATOMIC_SEQ_CST);
+    __atomic_fetch_add(&destroyed, 1u, __ATOMIC_SEQ_CST);
+  }
+};
 
 int
 answer()
@@ -42,6 +51,8 @@ refuse(void *, const micron::elf::module_t &)
 void
 worker(unsigned id)
 {
+  thread_local tls_finalizer final_call;
+  (void)&final_call;
   globals[id] = reinterpret_cast<uintptr_t>(__cxa_get_globals());
   if ( next_value() != 41 || next_value() != 42 ) __atomic_fetch_add(&failed, 1u, __ATOMIC_SEQ_CST);
   __atomic_fetch_add(&prepared, 1u, __ATOMIC_SEQ_CST);
@@ -58,11 +69,26 @@ worker(unsigned id)
     }
   }
 }
+
+void
+check_finalizers()
+{
+  sb::test_case("process finalizers retain dynamic TLS values");
+  sb::require(next_value(), 42);
+  sb::require(micron::dynamic_finalize(finalizer_module));
+  sb::require(event, 42);
+  event = 0;
+  sb::require(micron::dynamic_finalize(finalizer_module));
+  sb::require(event, 0);
+  sb::require(micron::dynamic_close(finalizer_module));
+  sb::require(event, 0);
+}
 }      // namespace
 
 int
 main()
 {
+  sb::test_case("host resolution and validation before constructors");
   constexpr const char *path = "tests/support/dl/x64/libmc_dl_host.so";
   bool rejected = false;
   try {
@@ -77,6 +103,7 @@ main()
   next_value = micron::dynamic_sym_as<int (*)()>(module, "tls_next");
   sb::require(call && next_value && call() == 42);
   for ( unsigned emergency = 0; emergency < 2; ++emergency ) {
+    sb::test_case(emergency ? "emergency exceptions and worker TLS destruction" : "exceptions and worker TLS destruction");
     ready = prepared = released = 0;
     auto a = micron::solo::spawn(worker, 0u);
     auto b = micron::solo::spawn(worker, 1u);
@@ -90,12 +117,14 @@ main()
     micron::solo::join(a);
     micron::solo::join(b);
     if ( emergency ) sb::require(micron::posix::setrlimit(micron::posix::limits::virtual_memory, old) == 0);
-    sb::require(failed == 0 && globals[0] && globals[1] && globals[0] != globals[1]);
+    sb::require(failed, 0u);
+    sb::require(globals[0] && globals[1] && globals[0] != globals[1]);
+    sb::require(destroyed, 2 * (emergency + 1));
     sb::require(micron::elf::__tls_thread_head == nullptr);
   }
-  sb::require(micron::dynamic_finalize(module) && event == 99);
-  event = 0;
-  sb::require(micron::dynamic_finalize(module) && event == 0);
-  sb::require(micron::dynamic_close(module) && event == 0);
+  sb::test_case("main thread starts with its own dynamic TLS");
+  sb::require(next_value(), 41);
+  finalizer_module = module;
+  sb::require(micron::atexit(check_finalizers) == 0);
   return 1;
 }

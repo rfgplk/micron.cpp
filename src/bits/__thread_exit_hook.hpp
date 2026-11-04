@@ -15,6 +15,7 @@
 namespace micron
 {
 inline void (*__thread_exit_hook)() noexcept = nullptr;
+inline thread_local void (*__dynamic_tls_exit_hook)() noexcept = nullptr;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // per-thread C++ dtor list (attach only)
@@ -49,8 +50,8 @@ inline constexpr u32 __tdtor_cap = MICRON_TDTOR_CAP;
 static_assert(__tdtor_cap >= 8, "micron: MICRON_TDTOR_CAP must leave room for the runtime's own thread_locals.");
 
 // WARNING: thread_local, so this costs __tdtor_cap * 2 * sizeof(void*) of PT_TLS p_memsz on every thread (2 KiB)
-inline thread_local __tdtor_node __tdtors[__tdtor_cap];
-inline thread_local u32 __tdtor_n = 0;
+inline constinit thread_local __tdtor_node __tdtors[__tdtor_cap]{};
+inline constinit thread_local u32 __tdtor_n = 0;
 
 // registrations lost to a full list; Itanium ABI doesn't provide for a way to see/recover dropped dtors
 inline u32 __tdtor_dropped = 0;

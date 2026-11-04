@@ -249,6 +249,7 @@ __run_exit_sequence(void) noexcept
   __drain_atexit_table();
 #if !defined(MICRON_ATTACH_MODULE)
   micron::__run_thread_dtors();
+  if ( micron::__dynamic_tls_exit_hook ) micron::__dynamic_tls_exit_hook();
 #endif
 }
 
