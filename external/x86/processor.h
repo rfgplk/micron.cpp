@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <unistd.h>
-
 #include "features.h"
 #include "macros.h"
 
