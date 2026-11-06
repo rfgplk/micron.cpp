@@ -25,6 +25,12 @@
 
 #pragma once
 
+#ifdef __cplusplus
+#include <micron/linux/sys/time.hpp>
+#else
+#include <unistd.h>
+#endif
+
 #include "features.h"
 #include "macros.h"
 
@@ -185,7 +191,11 @@ frequency_user(core_t (*ptr)[256])
   unsigned int rax, rdx, aux;
   __rdtscp(rax, rdx, aux);
   start = ((unsigned long long)rdx << 32) + rax;
+#ifdef __cplusplus
+  (void)micron::nanosleep(micron::timespec_t{ 1, 0 });
+#else
   sleep(1);
+#endif
   __rdtscp(rax, rdx, aux);
   end = ((unsigned long long)rdx << 32) + rax;
   unsigned long long freq = (end - start);
