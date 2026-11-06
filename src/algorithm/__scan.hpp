@@ -92,7 +92,8 @@ scan_equal(const T *a, const T *b, usize n) noexcept
   usize i = 0;
   if constexpr ( lane_scannable<T> ) {
     if ( !__builtin_is_constant_evaluated() ) {
-      for ( ; i + 8 <= n; i += 8 ) {
+      const usize bulk_end = n - n % 8;
+      for ( ; i < bulk_end; i += 8 ) {
         bool same = true;
         for ( usize k = 0; k < 8; ++k ) same &= (a[i + k] == b[i + k]);
         if ( !same ) return false;

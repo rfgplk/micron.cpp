@@ -154,7 +154,9 @@ fma(f32 a, f32 b, f32 c) noexcept
 };      // namespace micron
 
 __micron_diagnostic_push      // we are deliberately (re)defining functions the compiler knows as builtins
+#if !defined(__clang__)
     __micron_diagnostic_ignored("-Wbuiltin-declaration-mismatch")
+#endif
 #define __MC_M1(NAME, DBODY, FBODY, LBODY)                                                                                                 \
   extern "C" __attribute__((weak)) double NAME(double x) noexcept { return (DBODY); }                                                      \
   extern "C" __attribute__((weak)) float NAME##f(float x) noexcept { return (FBODY); }                                                     \

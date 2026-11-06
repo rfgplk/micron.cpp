@@ -29,6 +29,7 @@
 #if defined(ABCMALLOC_DOCTOR_HELP)
 #include "doctor.hpp"
 #endif
+#include "inspect_detail.hpp"
 #include "sheet_header.hpp"
 #include "tapi.hpp"
 #include "va_reserve.hpp"
@@ -52,6 +53,18 @@ struct __ins_probe {
   static constexpr usize off_huge = __builtin_offsetof(__arena, _huge);
   static constexpr usize off_internal = __builtin_offsetof(__arena, _arena_tier);
   static constexpr usize off_remote_free = __builtin_offsetof(__arena, __remote_free);
+  static constexpr usize off_remote_overflow = __builtin_offsetof(__arena, __remote_ovf);
+  static constexpr usize off_busy = __builtin_offsetof(__arena, __struct_mtx);
+  using queue = __mpsc_free_queue<64>;
+  using cell = queue::__cell;
+  static constexpr usize remote_cells = __builtin_offsetof(queue, __cells);
+  static constexpr usize remote_tail = __builtin_offsetof(queue, __tail);
+  static constexpr usize remote_head = __builtin_offsetof(queue, __head);
+  static constexpr usize remote_cell_size = sizeof(cell);
+  static constexpr usize remote_seq = __builtin_offsetof(cell, seq);
+  static constexpr usize remote_payload = __builtin_offsetof(cell, payload);
+  static constexpr usize remote_overflow_next = __builtin_offsetof(__arena::__remote_ovf_node, next);
+  static constexpr usize remote_overflow_size = __builtin_offsetof(__arena::__remote_ovf_node, sz);
 
   using precise_sheet = tlsf_sheet<__class_precise>;
   using medium_sheet = sheet<__class_medium>;
@@ -79,6 +92,8 @@ inline constexpr u32 abc_f_guard_pages = 1u << 4;
 inline constexpr u32 abc_f_persistent = 1u << 5;
 inline constexpr u32 abc_f_provenance = 1u << 6;
 inline constexpr u32 abc_f_poison_free = 1u << 7;
+inline constexpr u32 abc_f_details = 1u << 8;
+inline constexpr u32 abc_f_history = 1u << 9;
 
 // tier's kind, which decides how its sheets are walked
 inline constexpr u8 abc_tier_tlsf = 1;
@@ -107,7 +122,7 @@ struct abc_tier_desc {
 };
 
 // WARNING: this struct's layout is fixed, only aeppend
-struct abc_inspect_desc {
+struct alignas(8) abc_inspect_desc {
   u32 magic;         // abc_inspect_magic
   u16 version;       // abc_inspect_version
   u16 abi;           // MICRON_ABI
@@ -194,6 +209,7 @@ struct abc_inspect_desc {
   u64 remote_capacity;
 
   abc_tier_desc tiers[abc_n_tiers];
+  const inspection::detail_descriptor *details;
 };
 
 namespace __ins
@@ -226,6 +242,12 @@ constexpr u32
 flags(void)
 {
   u32 f = 0;
+#if defined(MICRON_ABC_INSPECT_DETAILS)
+  f |= abc_f_details;
+#endif
+#if defined(MICRON_ABC_INSPECT_HISTORY) && defined(ABCMALLOC_DOCTOR_HELP)
+  f |= abc_f_history;
+#endif
   if constexpr ( __default_multithread_safe ) f |= abc_f_multithread;
 #if defined(ABCMALLOC_DOCTOR_HELP)
   f |= abc_f_doctor;
@@ -298,6 +320,88 @@ tier(u64 off, u64 cls, u32 sheets, u32 slots, u8 kind, u8 user)
   return t;
 }
 
+#if defined(MICRON_ABC_INSPECT_DETAILS)
+constexpr inspection::detail_descriptor
+build_details()
+{
+  using namespace inspection;
+  inspection::detail_descriptor d{};
+  d.features = free_lists | pending | quiescence | (__default_redzone ? redzones : 0);
+  d.values[inspection::arena_busy] = __ins_probe::off_busy;
+  d.values[inspection::buddy_heads] = __builtin_offsetof(buddy_book, free_lists);
+  d.values[inspection::buddy_mask] = __builtin_offsetof(buddy_book, free_mask);
+  d.values[inspection::buddy_next] = __builtin_offsetof(buddy_book::free_block, next);
+  d.values[inspection::buddy_prev] = __builtin_offsetof(buddy_book::free_block, prev);
+  d.values[inspection::tlsf_heads] = __builtin_offsetof(tlsf_book, heads);
+  d.values[inspection::tlsf_fl] = __builtin_offsetof(tlsf_book, fl_bitmap);
+  d.values[inspection::tlsf_sl] = __builtin_offsetof(tlsf_book, sl_bitmap);
+  d.values[inspection::tlsf_prev_phys] = __builtin_offsetof(tlsf_book::tlsf_hdr, prev_phys);
+  d.values[inspection::tlsf_next] = __builtin_offsetof(tlsf_book::tlsf_hdr, next_free);
+  d.values[inspection::tlsf_prev] = __builtin_offsetof(tlsf_book::tlsf_hdr, prev_free);
+  d.values[inspection::tlsf_fl_count] = tlsf_book::__fl_count;
+  d.values[inspection::tlsf_sl_count] = tlsf_book::__sl_count;
+  d.values[inspection::tlsf_fl_shift] = tlsf_book::__fl_shift;
+  d.values[inspection::tlsf_sl_log2] = tlsf_book::__sl_log2;
+  d.values[inspection::redzone_byte] = __default_redzone_byte;
+  d.values[inspection::remote_cells] = __ins_probe::remote_cells;
+  d.values[inspection::remote_tail] = __ins_probe::remote_tail;
+  d.values[inspection::remote_head] = __ins_probe::remote_head;
+  d.values[inspection::remote_cell_size] = __ins_probe::remote_cell_size;
+  d.values[inspection::remote_seq] = __ins_probe::remote_seq;
+  d.values[inspection::remote_payload] = __ins_probe::remote_payload;
+  d.values[inspection::remote_payload_ptr] = __builtin_offsetof(__mpsc_free_payload, ptr);
+  d.values[inspection::remote_payload_size] = __builtin_offsetof(__mpsc_free_payload, size);
+  d.values[inspection::remote_overflow] = __ins_probe::off_remote_overflow;
+  d.values[inspection::remote_overflow_next] = __ins_probe::remote_overflow_next;
+  d.values[inspection::remote_overflow_size] = __ins_probe::remote_overflow_size;
+#if defined(ABCMALLOC_DOCTOR_HELP)
+  d.features |= ledger;
+  d.values[inspection::doctor_busy] = __builtin_offsetof(doctor::__doctor_state, lock);
+  d.values[inspection::doctor_slots] = __builtin_offsetof(doctor::__doctor_state, slots);
+  d.values[inspection::doctor_cap] = __builtin_offsetof(doctor::__doctor_state, cap);
+  d.values[inspection::doctor_mask] = __builtin_offsetof(doctor::__doctor_state, mask);
+  d.values[inspection::doctor_occupied] = __builtin_offsetof(doctor::__doctor_state, occupied);
+  d.values[inspection::doctor_live] = __builtin_offsetof(doctor::__doctor_state, n_live);
+  d.values[inspection::doctor_freed] = __builtin_offsetof(doctor::__doctor_state, n_freed);
+  d.values[inspection::doctor_events] = __builtin_offsetof(doctor::__doctor_state, ev);
+  d.values[inspection::doctor_event_total] = __builtin_offsetof(doctor::__doctor_state, ev_total);
+  d.values[inspection::doctor_corruption] = __builtin_offsetof(doctor::__doctor_state, corruption_events);
+  d.values[inspection::record_size] = sizeof(doctor::__rec);
+  d.values[inspection::record_key] = __builtin_offsetof(doctor::__rec, key);
+  d.values[inspection::record_requested] = __builtin_offsetof(doctor::__rec, req_size);
+  d.values[inspection::record_granted] = __builtin_offsetof(doctor::__rec, blk_size);
+  d.values[inspection::record_owner] = __builtin_offsetof(doctor::__rec, owner);
+  d.values[inspection::record_state] = __builtin_offsetof(doctor::__rec, state);
+  d.values[inspection::record_flags] = __builtin_offsetof(doctor::__rec, flags);
+  d.values[inspection::record_alloc_op] = __builtin_offsetof(doctor::__rec, alloc_op);
+  d.values[inspection::record_free_op] = __builtin_offsetof(doctor::__rec, free_op);
+  d.values[inspection::record_alloc_tid] = __builtin_offsetof(doctor::__rec, alloc_tid);
+  d.values[inspection::record_free_tid] = __builtin_offsetof(doctor::__rec, free_tid);
+  d.values[inspection::record_alloc_bt] = __builtin_offsetof(doctor::__rec, alloc_bt);
+  d.values[inspection::event_size] = sizeof(doctor::__event);
+  d.values[inspection::event_op] = __builtin_offsetof(doctor::__event, op);
+  d.values[inspection::event_key] = __builtin_offsetof(doctor::__event, key);
+  d.values[inspection::event_length] = __builtin_offsetof(doctor::__event, size);
+  d.values[inspection::event_tid] = __builtin_offsetof(doctor::__event, tid);
+  d.values[inspection::event_kind] = __builtin_offsetof(doctor::__event, kind);
+  d.values[inspection::bt_depth] = doctor::__doctor_bt_depth;
+  d.values[inspection::event_capacity] = doctor::__doctor_event_ring_cap;
+  d.values[inspection::doctor_canary] = __default_doctor_canary;
+  d.values[inspection::doctor_canary_byte] = __default_doctor_canary_byte;
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+  d.features |= history;
+  d.values[inspection::record_free_bt] = __builtin_offsetof(doctor::__rec, free_bt);
+  d.values[inspection::event_bt] = __builtin_offsetof(doctor::__event, bt);
+  d.values[inspection::doctor_record_losses] = __builtin_offsetof(doctor::__doctor_state, record_losses);
+  d.values[inspection::doctor_event_losses] = __builtin_offsetof(doctor::__doctor_state, event_losses);
+#endif
+#endif
+  return d;
+}
+
+inline constexpr auto details = build_details();
+#endif
+
 constexpr abc_inspect_desc
 build(void)
 {
@@ -314,6 +418,9 @@ build(void)
   d.arch = arch_id();
   d.n_tiers = static_cast<u8>(abc_n_tiers);
   d.config_fp = config_fp();
+#if defined(MICRON_ABC_INSPECT_DETAILS)
+  d.details = &details;
+#endif
 
   d.va_base = &__va_base;
   d.va_offset = &__va_offset;
@@ -413,7 +520,7 @@ abc_inspect_valid(const abc_inspect_desc *d)
   if ( d->magic != abc_inspect_magic ) return false;
   if ( d->version != abc_inspect_version ) return false;
   if ( d->abi != static_cast<u16>(MICRON_ABI) ) return false;
-  if ( d->size < sizeof(abc_inspect_desc) ) return false;
+  if ( d->size < __builtin_offsetof(abc_inspect_desc, details) ) return false;
   if ( d->ptr_width != sizeof(void *) ) return false;
   if ( d->n_tiers != abc_n_tiers ) return false;
   return true;

@@ -43,6 +43,8 @@ template<usize N>
 class __mpsc_free_queue
 {
 
+  friend struct __ins_probe;
+
   static constexpr u64 __cache_line = micron::cache_line_size();
   static constexpr usize __capacity = N;
   static constexpr usize __mask = N - 1;

@@ -454,6 +454,9 @@ struct __rec {
   u32 hdr_shadow;
   usize free_len;
   void *alloc_bt[__doctor_bt_depth];
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+  void *free_bt[__doctor_bt_depth];
+#endif
 };
 
 struct __event {
@@ -462,9 +465,12 @@ struct __event {
   usize size;         // req_size for alloc, free len for free
   i32 tid;            // kernel tid
   u8 kind;            // 0 alloc, 1 free, 2 tombstone, 3 realloc (in-place)
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+  void *bt[__doctor_bt_depth];
+#endif
 };
 
-constexpr static const usize __doctor_event_ring_cap = (1u << 16);      // 64K events (~2 MB), power of two
+constexpr static const usize __doctor_event_ring_cap = (1u << 16);      // 64k events, power of two
 
 // NOTE: this is highly inefficient but irrelevant, only to be used in hard debug scenarios
 struct __doctor_state {
@@ -482,6 +488,9 @@ struct __doctor_state {
   usize n_freed{ 0 };
 
   __event *ev{ nullptr };
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+  u64 record_losses{ 0 }, event_losses{ 0 };
+#endif
   u64 ev_total{ 0 };      // total events pushed; head index == ev_total & (cap-1)
 
   [[gnu::always_inline]] u64
@@ -495,9 +504,23 @@ struct __doctor_state {
   {
     if ( !ev ) {
       ev = reinterpret_cast<__event *>(__mmap_bytes(__doctor_event_ring_cap * sizeof(__event)));
-      if ( !ev ) return;      // best-effort: no timeline if the mmap fails
+      if ( !ev ) {
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+        ++event_losses;
+#endif
+        return;
+      }
     }
-    ev[ev_total & (__doctor_event_ring_cap - 1)] = __event{ op, key, size, tid, kind };
+    auto &entry = ev[ev_total & (__doctor_event_ring_cap - 1)];
+    entry = __event{};
+    entry.op = op;
+    entry.key = key;
+    entry.size = size;
+    entry.tid = tid;
+    entry.kind = kind;
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+    __capture_backtrace(entry.bt, __doctor_bt_depth);
+#endif
     ++ev_total;
   }
 
@@ -759,10 +782,23 @@ record_alloc(byte *ptr, usize req_size) noexcept
   if ( !re ) return;
   __scoped_lock g;
   __dr.__ensure();
-  if ( !__dr.slots ) return;      // ledger mmap failed: degrade to no-op, never deref a null table
+  if ( !__dr.slots ) {
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+    ++__dr.record_losses;
+#endif
+    return;
+  }
   __dr.__grow_if_needed();
   __rec *s = __dr.__slot_for(reinterpret_cast<uintptr_t>(ptr));
-  if ( !s ) return;
+  if ( !s ) {
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+    ++__dr.record_losses;
+#endif
+    return;
+  }
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+  for ( usize i = 0; i < __doctor_bt_depth; ++i ) s->free_bt[i] = nullptr;
+#endif
   if ( s->state == __rec_state::empty )
     ++__dr.occupied;
   else if ( s->state == __rec_state::freed || s->state == __rec_state::tombstoned ) {
@@ -825,6 +861,9 @@ __mark_free_locked(byte *ptr, __rec_state to, usize len) noexcept
   s->free_op = __dr.next_op();
   s->free_tid = __gettid();
   s->free_len = len;
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+  __capture_backtrace(s->free_bt, __doctor_bt_depth);
+#endif
   __dr.__push_event(to == __rec_state::tombstoned ? 2 : 1, s->key, len, s->free_op, s->free_tid);
 }
 
@@ -2136,6 +2175,10 @@ on_double_free(byte *ptr, const char *file, int line) noexcept
   __reentry re;
   if ( !re ) return false;      // nested fault: don't recurse; let the existing handler proceed
   __scoped_lock g;
+#if defined(MICRON_ABC_INSPECT_HISTORY)
+  const auto *prior = __dr.__find(reinterpret_cast<uintptr_t>(ptr));
+  if ( prior && prior->state != __rec_state::live ) __dr.__push_event(4, prior->key, prior->free_len, __dr.next_op(), __gettid());
+#endif
   __fault_head("double free / free of non-live block", file, line);
   __forensics(ptr, false);
   __run_sweep_locked("double-free");

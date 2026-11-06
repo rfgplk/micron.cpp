@@ -455,7 +455,9 @@ ehabi_scan_lsda(const byte *lsda, usize ip, usize func_start, _Unwind_Exception 
       if ( sz == 0 ) sz = sizeof(void *);
       const byte *ent = ttype_base - static_cast<u64>(ar_filter) * sz;
       const byte *q = ent;
-      std::type_info *catch_type = reinterpret_cast<std::type_info *>(read_encoded(ttype_enc, q, dctx));
+      // ARM TARGET2 references are indirect place-relative offsets; Clang labels that table as absptr
+      const u8 pointer_enc = ttype_enc == DW_EH_PE_absptr ? (DW_EH_PE_pcrel | DW_EH_PE_sdata4 | DW_EH_PE_indirect) : ttype_enc;
+      std::type_info *catch_type = reinterpret_cast<std::type_info *>(read_encoded(pointer_enc, q, dctx));
       if ( catch_type == nullptr ) {
         is_handler = true;
         landing_pad = lp;
@@ -587,6 +589,9 @@ ehabi_phase2(_Unwind_Exception *ue, _Unwind_Context ctx) noexcept
 
 extern "C" {
 
+#if defined(__GNUC__) && !defined(__clang__)
+[[gnu::noipa]]
+#endif
 inline _Unwind_Reason_Code
 _Unwind_RaiseException(_Unwind_Exception *ucbp)
 {

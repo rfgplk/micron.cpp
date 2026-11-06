@@ -17,6 +17,8 @@
 #include "../../src/cmalloc.hpp"
 
 static_assert(abc::abc_inspect_valid(&abc::__ins::__self), "the descriptor must satisfy its own handshake");
+static_assert(alignof(abc::abc_inspect_desc) >= 8 && sizeof(abc::abc_inspect_desc) % 8 == 0,
+              "inspection descriptors need whole, aligned 64-bit words on ILP32 too");
 static_assert(abc::__ins::__self.tiers[0].off_count == abc::__ins::__self.tiers[3].off_count,
               "this gate is pointless unless the two tiers actually collide");
 

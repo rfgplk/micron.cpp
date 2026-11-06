@@ -155,7 +155,12 @@ class art
   {
     if ( !n ) return;
     if ( n->kind == __node_kind::leaf ) {
-      for ( __leaf *cur = static_cast<__leaf *>(n); cur; cur = cur->next ) cur->~__leaf();
+      __leaf *cur = static_cast<__leaf *>(n);
+      while ( cur ) {
+        __leaf *next = cur->next;
+        cur->~__leaf();
+        cur = next;
+      }
       return;
     }
     switch ( n->kind ) {
