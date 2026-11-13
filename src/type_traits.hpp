@@ -74,7 +74,7 @@ template<typename _Type> struct __type_identity {
 
 template<typename T> using __type_identity_t = typename __type_identity<T>::type;
 
-namespace __detail
+namespace __impl
 {
 
 template<typename T, typename...> using __first_t = T;
@@ -86,12 +86,12 @@ template<typename... B> auto __or_fn(...) -> true_type;
 template<typename... B> auto __and_fn(int) -> __first_t<true_type, __enable_if_t<bool(B::value)>...>;
 
 template<typename... B> auto __and_fn(...) -> false_type;
-}      // namespace __detail
+}      // namespace __impl
 
-template<typename... B> struct __or_: decltype(__detail::__or_fn<B...>(0)) {
+template<typename... B> struct __or_: decltype(__impl::__or_fn<B...>(0)) {
 };
 
-template<typename... B> struct __and_: decltype(__detail::__and_fn<B...>(0)) {
+template<typename... B> struct __and_: decltype(__impl::__and_fn<B...>(0)) {
 };
 
 template<typename P> struct __not_: __bool_constant<!bool(P::value)> {
@@ -100,7 +100,7 @@ template<typename P> struct __not_: __bool_constant<!bool(P::value)> {
 template<typename... B> inline constexpr bool __or_v = __or_<B...>::value;
 template<typename... B> inline constexpr bool __and_v = __and_<B...>::value;
 
-namespace __detail
+namespace __impl
 {
 template<typename, typename _B1, typename... B> struct __disjunction_impl {
   using type = _B1;
@@ -117,15 +117,15 @@ template<typename, typename _B1, typename... B> struct __conjunction_impl {
 template<typename _B1, typename _B2, typename... B> struct __conjunction_impl<__enable_if_t<bool(_B1::value)>, _B1, _B2, B...> {
   using type = typename __conjunction_impl<void, _B2, B...>::type;
 };
-}      // namespace __detail
+}      // namespace __impl
 
-template<typename... B> struct conjunction: __detail::__conjunction_impl<void, B...>::type {
+template<typename... B> struct conjunction: __impl::__conjunction_impl<void, B...>::type {
 };
 
 template<> struct conjunction<>: true_type {
 };
 
-template<typename... B> struct disjunction: __detail::__disjunction_impl<void, B...>::type {
+template<typename... B> struct disjunction: __impl::__disjunction_impl<void, B...>::type {
 };
 
 template<> struct disjunction<>: false_type {
@@ -231,7 +231,7 @@ template<> struct __is_integral_helper<long long>: public true_type {
 
 template<> struct __is_integral_helper<unsigned long long>: public true_type {
 };
-#if defined(__micron_arch_amd64)
+#if defined(__micron_has_int128)
 __extension__ template<> struct __is_integral_helper<__int128>: public true_type {
 };
 
@@ -357,7 +357,7 @@ template<typename, typename> struct is_same;
 
 template<typename T, typename... _Types> using __is_one_of = __or_<is_same<T, _Types>...>;
 
-#if defined(__micron_arch_amd64)
+#if defined(__micron_has_int128)
 __extension__ template<typename T>
 using __is_signed_integer = __is_one_of<__remove_cv_t<T>, signed char, signed short, signed int, signed long, signed long long
 
@@ -859,7 +859,7 @@ template<> struct __mc_make_unsigned<long long> {
   using __type = unsigned long long;
 };
 
-#if defined(__micron_arch_amd64)
+#if defined(__micron_has_int128)
 __extension__ template<> struct __mc_make_unsigned<__int128> {
   using __type = unsigned __int128;
 };
@@ -962,7 +962,7 @@ template<> struct __mc_make_signed<float> {
 template<> struct __mc_make_signed<double> {
   using __type = double;
 };
-#if defined(__micron_arch_amd64)
+#if defined(__micron_has_int128)
 __extension__ template<> struct __mc_make_signed<unsigned __int128> {
   using __type = __int128;
 };
@@ -1369,7 +1369,7 @@ template<typename T, __tt_size_t _Nm>
 
 inline __enable_if_t<__is_swappable<T>::value> swap(T (&__a)[_Nm], T (&__b)[_Nm]) noexcept(__is_nothrow_swappable<T>::value);
 
-namespace __swappable_details
+namespace __impl
 {
 using micron::swap;
 
@@ -1385,13 +1385,13 @@ struct __do_is_nothrow_swappable_impl {
   template<typename> static false_type __test(...);
 };
 
-}      // namespace __swappable_details
+}      // namespace __impl
 
-template<typename T> struct __is_swappable_impl: public __swappable_details::__do_is_swappable_impl {
+template<typename T> struct __is_swappable_impl: public __impl::__do_is_swappable_impl {
   using type = decltype(__test<T>(0));
 };
 
-template<typename T> struct __is_nothrow_swappable_impl: public __swappable_details::__do_is_nothrow_swappable_impl {
+template<typename T> struct __is_nothrow_swappable_impl: public __impl::__do_is_nothrow_swappable_impl {
   using type = decltype(__test<T>(0));
 };
 
@@ -1419,7 +1419,7 @@ template<typename T>
 
 inline constexpr bool is_nothrow_swappable_v = is_nothrow_swappable<T>::value;
 
-namespace __swappable_with_details
+namespace __impl
 {
 using micron::swap;
 
@@ -1440,22 +1440,22 @@ struct __do_is_nothrow_swappable_with_impl {
   template<typename, typename> static false_type __test(...);
 };
 
-}      // namespace __swappable_with_details
+}      // namespace __impl
 
-template<typename T, typename Uxp> struct __is_swappable_with_impl: public __swappable_with_details::__do_is_swappable_with_impl {
+template<typename T, typename Uxp> struct __is_swappable_with_impl: public __impl::__do_is_swappable_with_impl {
   using type = decltype(__test<T, Uxp>(0));
 };
 
-template<typename T> struct __is_swappable_with_impl<T &, T &>: public __swappable_details::__do_is_swappable_impl {
+template<typename T> struct __is_swappable_with_impl<T &, T &>: public __impl::__do_is_swappable_impl {
   using type = decltype(__test<T &>(0));
 };
 
 template<typename T, typename Uxp>
-struct __is_nothrow_swappable_with_impl: public __swappable_with_details::__do_is_nothrow_swappable_with_impl {
+struct __is_nothrow_swappable_with_impl: public __impl::__do_is_nothrow_swappable_with_impl {
   using type = decltype(__test<T, Uxp>(0));
 };
 
-template<typename T> struct __is_nothrow_swappable_with_impl<T &, T &>: public __swappable_details::__do_is_nothrow_swappable_impl {
+template<typename T> struct __is_nothrow_swappable_with_impl<T &, T &>: public __impl::__do_is_nothrow_swappable_impl {
   using type = decltype(__test<T &>(0));
 };
 

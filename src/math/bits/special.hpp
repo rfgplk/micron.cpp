@@ -23,6 +23,9 @@
 #include "sqrt.hpp"
 #include "trig.hpp"
 
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/special.hpp"
+#endif
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
 __micron_push_options __micron_optimize_no_fast_math namespace micron
 {
@@ -419,6 +422,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   j0(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::j0(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(j0_f64(f64(x)));
     else
@@ -429,6 +435,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   j1(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::j1(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(j1_f64(f64(x)));
     else
@@ -439,6 +448,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   y0(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::y0(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(y0_f64(f64(x)));
     else
@@ -449,6 +461,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   y1(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::y1(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(y1_f64(f64(x)));
     else
@@ -483,6 +498,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   erf(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::erf(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(erf_f32(f32(x)));
     else
@@ -493,6 +511,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   erfc(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::erfc(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(erfc_f32(f32(x)));
     else
@@ -503,6 +524,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   tgamma(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::tgamma(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(tgamma_f32(f32(x)));
     else
@@ -513,6 +537,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   lgamma(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::lgamma(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(lgamma_f32(f32(x)));
     else

@@ -37,7 +37,7 @@ namespace micron
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 128-bit SIMD memory primitives
 
-#if defined(__micron_arch_x86_any) || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
+#if defined(__micron_arch_wasm32) || defined(__micron_arch_x86_any) || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
 
 // memcpy
 using simd::amemcpy128;
@@ -72,7 +72,7 @@ using simd::wordset128;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 256-bit + 512-bit SIMD memory primitives x86 only
 
-#if defined(__micron_arch_x86_any)
+#if defined(__micron_arch_wasm32) || defined(__micron_arch_x86_any)
 
 // memcpy
 using simd::amemcpy256;

@@ -8,6 +8,9 @@
 #include "../../concepts.hpp"
 #include "../../types.hpp"
 #include "../ieee.hpp"
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/real.hpp"
+#endif
 
 #if defined(__micron_arch_arm32)
 #include "../__asm/hw.hpp"
@@ -65,7 +68,9 @@ template<ieee754_floating F>
 fma(F a, F b, F c) noexcept
 {
   if consteval {
-#if defined(__micron_compiler_clang)
+#if defined(__micron_arch_wasm_any)
+    return micron::wasm::math::fma(a, b, c);
+#elif defined(__micron_compiler_clang)
     return F(a * b + c);
 #endif
   }

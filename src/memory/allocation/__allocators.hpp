@@ -27,16 +27,20 @@ concept is_policy = requires {
 #include "allocator_types/bits.hpp"
 #include "allocator_types/__scheme.hpp"
 #include "allocator_types/abc_policy_allocator.hpp"
+#if !defined(__micron_arch_wasm32)
 #include "allocator_types/advanced_abc_allocators.hpp"
+#endif
 
 #include "allocator_types/constrained_allocator.hpp"
 #include "allocator_types/exact_allocator.hpp"
+#if !defined(__micron_arch_wasm32)
 #include "allocator_types/fixed_map_allocator.hpp"
 #include "allocator_types/guarded_allocator.hpp"
 #include "allocator_types/huge_allocator.hpp"
 #include "allocator_types/map_allocator.hpp"
 #include "allocator_types/immutable_allocator.hpp"
 #include "allocator_types/secure_allocator.hpp"
+#endif
 #include "allocator_types/serial_allocator.hpp"
 #include "allocator_types/small_allocator.hpp"
 #include "allocator_types/static_allocator.hpp"

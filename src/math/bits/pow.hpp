@@ -18,6 +18,9 @@
 #include "round.hpp"
 #include "sqrt.hpp"
 
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/extended.hpp"
+#endif
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
 __micron_push_options __micron_optimize_no_fast_math namespace micron
 {
@@ -72,6 +75,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::flatten]] inline constexpr F
   pow(F x, F y) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::pow(x, y);
+#endif
     if ( y == F(0) ) return F(1);
     if ( x == F(1) ) return F(1);
     if ( ieee::is_nan(x) || ieee::is_nan(y) ) return ieee::qnan_v<F>();

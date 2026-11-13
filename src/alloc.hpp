@@ -5,6 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "memory/addr.hpp"
 #include "memory/allocation/__internal.hpp"
 #include "types.hpp"
 

@@ -8,9 +8,14 @@
 #include "../types.hpp"
 
 #include "../errno.hpp"
+#if defined(__micron_arch_wasm32)
+#include "../bits/wasm/futex.hpp"
+#include "../bits/wasm/time.hpp"
+#else
 #include "../kernel.hpp"
 #include "../linux/sys/time.hpp"
 #include "../syscall.hpp"
+#endif
 #include "../type_traits.hpp"
 
 #include "../atomic/atomic.hpp"
@@ -37,6 +42,13 @@ constexpr static const u32 futex_futex_lock_pi2 = 13;      // >=5.14
 constexpr static const u32 futex_private_flag = 128;
 constexpr static const u32 futex_clock_realtime = 256;
 
+#if defined(__micron_arch_wasm32)
+inline long
+__futex(u32 *addr, int op, u32 val, timespec_t *timeout, u32 *addr2, u32 val2) noexcept
+{
+  return wasm::futex(addr, op, val, timeout, addr2, val2);
+}
+#else
 #if defined(__micron_arch_width_32)
 struct __futex_old_ts {
   i32 tv_sec;
@@ -65,6 +77,8 @@ __futex(u32 *addr, int futex, u32 val, timespec_t *timeout, u32 *addr2, u32 val2
 #endif
   return micron::syscall(SYS_futex, addr, futex, val, timeout, addr2, val2);
 }
+
+#endif
 
 // A single recoverable wait. Callers recheck their predicate after every
 // return, including interruptions, value changes and spurious wakeups.

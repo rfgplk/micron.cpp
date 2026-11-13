@@ -12,6 +12,7 @@
 #include "../recipes/gnu/config.hh"
 
 #include "../recipes/gnu/batch.hh"
+#include "../recipes/gnu/qemu.hh"
 
 template <typename T = void>
 __attribute__((noreturn)) void
@@ -33,7 +34,7 @@ build_and_run(const recipes::gnu::config_t &conf)
     auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
-    r = mc::wexitstatus(mc::execute<mc::exec_wait>(conf.compiler_path, command));
+    r = mc::wexitstatus(recipes::gnu::execute_batch<mc::exec_wait>(conf, command));
   };
   auto end = mc::now();
   mc::set_color(mc::color::yellow);
@@ -51,5 +52,10 @@ build_and_run(const recipes::gnu::config_t &conf)
   }
   mc::set_color(mc::color::reset);
   mc::console("Running: ", conf.target_out);
+  if ( conf.arch == recipes::gnu::__arch::wasm32 ) {
+    if ( !recipes::gnu::target_runnable(conf) ) mc::cerror("missing WASM runner: ", recipes::gnu::__missing_for(conf));
+    const auto result = recipes::gnu::run_target_timed(conf);
+    mc::proc_exit(recipes::gnu::verdict_of(result.status));
+  }
   mc::rexecute(conf.target_out);
 }

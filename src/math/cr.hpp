@@ -187,6 +187,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   log(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    static_assert(sizeof(F) != 16, "micron: certified binary128 transcendental rounding is unavailable; select the extended policy");
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(log_f32(f32(x)));
     else
@@ -223,6 +226,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   exp(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    static_assert(sizeof(F) != 16, "micron: certified binary128 transcendental rounding is unavailable; select the extended policy");
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(exp_f32(f32(x)));
     else
@@ -259,6 +265,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   sin(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    static_assert(sizeof(F) != 16, "micron: certified binary128 transcendental rounding is unavailable; select the extended policy");
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(sin_f32(f32(x)));
     else
@@ -293,6 +302,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   cos(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    static_assert(sizeof(F) != 16, "micron: certified binary128 transcendental rounding is unavailable; select the extended policy");
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(cos_f32(f32(x)));
     else

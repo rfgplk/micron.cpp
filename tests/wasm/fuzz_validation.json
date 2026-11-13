@@ -1,0 +1,916 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "validated_utc": "2026-11-13T19:39:09.376965+00:00",
+  "repository": {
+    "path": "/code/C++/micron",
+    "base_commit": "71a3d16f9127d2d46a993ee5ae72833fe5cda0da",
+    "changes": "uncommitted",
+    "scope": "Micron Wasm backend review fixes and regression/fuzz coverage; Canvas deferred; abcmalloc unchanged"
+  },
+  "review": {
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "max",
+    "agents": [
+      "review_wasm_spec",
+      "review_wasm_memory",
+      "review_wasm_browser"
+    ],
+    "findings_fixed": [
+      {
+        "id": "WASM-REV-01",
+        "fix": "Permanently stop the local runtime when finalization traps.",
+        "tests": [
+          "runtime_lifecycle.cpp",
+          "runtime_host_lifecycle.mjs"
+        ]
+      },
+      {
+        "id": "WASM-REV-02",
+        "fix": "Reject new RPCs during shared shutdown, share its promise and settle pending calls on termination.",
+        "tests": [
+          "runtime_lifecycle.mjs",
+          "runtime_host_lifecycle.mjs"
+        ]
+      },
+      {
+        "id": "WASM-REV-03",
+        "fix": "Public cancellation wakes checkpoints, parks and replaces the worker, cleans up TLS/hooks and reaps before returning.",
+        "tests": [
+          "runtime_cancel.cpp",
+          "runtime_cancel_eh.cpp",
+          "runtime_thread_fuzz.cpp",
+          "runtime_host_lifecycle.mjs"
+        ]
+      },
+      {
+        "id": "WASM-REV-04",
+        "fix": "Bound join waits and revalidate slot generation after waking, including copied competing handles.",
+        "tests": [
+          "runtime_join_reuse.cpp",
+          "runtime_thread_fuzz.cpp"
+        ]
+      },
+      {
+        "id": "WASM-REV-05",
+        "fix": "Exclude bool and unsupported integer lane types before arbitrary SIMD bit representations are constructed.",
+        "tests": [
+          "simd.cpp",
+          "fuzz_simd.cpp"
+        ]
+      },
+      {
+        "id": "WASM-REV-06",
+        "fix": "Preserve quotient parity for binary128 halfway remainder when twice the divisor overflows.",
+        "tests": [
+          "math_edges.cpp",
+          "numeric_oracle.mjs"
+        ]
+      },
+      {
+        "id": "WASM-REV-07",
+        "fix": "Preserve gamma overflow classification and avoid intermediate overflow when lgamma remains finite.",
+        "tests": [
+          "math_edges.cpp",
+          "fuzz_math_reference.json"
+        ]
+      },
+      {
+        "id": "WASM-REV-08",
+        "fix": "Check integer scaling and floating duration range before signed arithmetic or conversion.",
+        "tests": [
+          "fuzz_chrono.cpp"
+        ]
+      }
+    ]
+  },
+  "additional_fixes": [
+    "Track live EH allocations through cancellation and destroy eligible exception objects before TLS cleanup; do not restart incomplete construction or an entered destructor.",
+    "Improve binary128 gamma near roots/poles, erfc tails, Bessel tiny arguments and near-unity large integer powers; preserve the existing 128 ULP extended-policy limit.",
+    "Make Wasm 128-bit shift helpers tolerate compiler-speculated discarded poison values while preserving frontend UBSan checks for invalid source operations.",
+    "Replace inactive-union punning in the Wasm multiply helper with bit_cast.",
+    "Reject empty/duplicate test selections and malformed coverage exports; correctly grade unsigned high-bit assertion counts."
+  ],
+  "toolchain": {
+    "clang": "clang version 22.1.8 (Fedora 22.1.8-4.fc44)",
+    "lld": "LLD 22.1.8",
+    "node": "v22.23.1",
+    "python": "Python 3.14.10"
+  },
+  "runtime_matrix": {
+    "target": "wasm32-unknown-unknown",
+    "optimization": "O2",
+    "lto": "ThinLTO",
+    "dimensions": [
+      "scalar/SIMD128",
+      "ordinary/shared memory",
+      "no-EH/native standardized EH"
+    ],
+    "passed": 242,
+    "failed": 0,
+    "profiles": {
+      "scalar": 21,
+      "scalar-eh": 31,
+      "scalar-threads": 29,
+      "scalar-threads-eh": 40,
+      "simd": 21,
+      "simd-eh": 31,
+      "simd-threads": 29,
+      "simd-threads-eh": 40
+    },
+    "source_inputs_frozen": 132,
+    "frozen_inputs_changed": [],
+    "source_snapshot": {
+      "path": "bin/wasm-fixes-complete/source-start.json",
+      "sha256": "9b2aa461090aa594b8123c013e992170a9131099a29b7083c75c3227caa03caf"
+    },
+    "coverage": "Allocator/C ABI/new/OOM, startup/TLS/guards/EH/RTTI, memory/SIMD, numeric/math oracles, cancellation/join/lifecycle fuzz, and selected existing container/format suites."
+  },
+  "browser_matrix": {
+    "passed": 729,
+    "failed": 0,
+    "engines": [
+      {
+        "engine": "chromium",
+        "version": "158.0.8127.18",
+        "modules": 242,
+        "passed": 243,
+        "failed": 0,
+        "isolation_negative_controls": 1,
+        "reported_cpp_assertions": 154888288,
+        "host_assertions": 98412,
+        "host_seeded_rounds": 288,
+        "evidence": {
+          "path": "bin/wasm-fixes-complete/browser-chromium.json",
+          "sha256": "5536ced7fab96548dd6605c70b02b592805865c4b2f4ad5e6ca235d014085010"
+        }
+      },
+      {
+        "engine": "firefox",
+        "version": "159.0",
+        "modules": 242,
+        "passed": 243,
+        "failed": 0,
+        "isolation_negative_controls": 1,
+        "reported_cpp_assertions": 154888288,
+        "host_assertions": 98412,
+        "host_seeded_rounds": 288,
+        "evidence": {
+          "path": "bin/wasm-fixes-complete/browser-firefox.json",
+          "sha256": "6da0b44100c65b5cd83fd14f74ec94980dfc67767695fb08c1cac5d0ddf2f44f"
+        }
+      },
+      {
+        "engine": "webkit",
+        "version": "27.2",
+        "modules": 242,
+        "passed": 243,
+        "failed": 0,
+        "isolation_negative_controls": 1,
+        "reported_cpp_assertions": 154888288,
+        "host_assertions": 98412,
+        "host_seeded_rounds": 288,
+        "evidence": {
+          "path": "bin/wasm-fixes-complete/browser-webkit.json",
+          "sha256": "8368ede1e1bc19daf4497f16aa790124b65fdbe706954a999513b942f28533d1"
+        }
+      }
+    ],
+    "contract": "All 242 final module files, same SHA-256 hashes as the Node manifest; one isolation negative control per engine; no skips."
+  },
+  "fuzz_replays": {
+    "optimization": "O3",
+    "lto": "ThinLTO",
+    "sanitizer": "Actual wasm32 -fsanitize=undefined -fsanitize-trap=all -fno-sanitize=vptr",
+    "profiles": [
+      "scalar",
+      "simd-threads-eh"
+    ],
+    "passed": 30,
+    "failed": 0,
+    "seeds": [
+      {
+        "seed": "0x243f6a88",
+        "cells": 10,
+        "failed": 0,
+        "assertions": [
+          {
+            "name": "scalar/fuzz_memory",
+            "assertions": 443435,
+            "seed": "0x243f6a88",
+            "steps": 20000
+          },
+          {
+            "name": "scalar/fuzz_simd",
+            "assertions": 18082848,
+            "seed": "0x243f6a88",
+            "steps": 4096
+          },
+          {
+            "name": "scalar/fuzz_chrono",
+            "assertions": 537639,
+            "seed": "0x243f6a88",
+            "steps": 65536
+          },
+          {
+            "name": "simd-threads-eh/fuzz_memory",
+            "assertions": 568097,
+            "seed": "0x243f6a88",
+            "steps": 20000
+          },
+          {
+            "name": "simd-threads-eh/fuzz_simd",
+            "assertions": 18082848,
+            "seed": "0x243f6a88",
+            "steps": 4096
+          },
+          {
+            "name": "simd-threads-eh/fuzz_chrono",
+            "assertions": 537647,
+            "seed": "0x243f6a88",
+            "steps": 65536
+          },
+          {
+            "name": "simd-threads-eh/fuzz_eh",
+            "assertions": 460634,
+            "seed": "0x243f6a88",
+            "steps": 4096
+          },
+          {
+            "name": "simd-threads-eh/runtime_thread_fuzz",
+            "assertions": 13476,
+            "seed": "0x243f6a88",
+            "steps": 512
+          }
+        ],
+        "evidence": {
+          "path": "bin/wasm-fixes-fuzz-fixed/243f6a88/results.json",
+          "sha256": "c36bb00bfe1523be5f1cd0cd8736b1ca935b23fb220eced12b89cfce3f666bd5"
+        }
+      },
+      {
+        "seed": "0x9e3779b9",
+        "cells": 10,
+        "failed": 0,
+        "assertions": [
+          {
+            "name": "scalar/fuzz_memory",
+            "assertions": 441478,
+            "seed": "0x9e3779b9",
+            "steps": 20000
+          },
+          {
+            "name": "scalar/fuzz_simd",
+            "assertions": 18082848,
+            "seed": "0x9e3779b9",
+            "steps": 4096
+          },
+          {
+            "name": "scalar/fuzz_chrono",
+            "assertions": 537639,
+            "seed": "0x9e3779b9",
+            "steps": 65536
+          },
+          {
+            "name": "simd-threads-eh/fuzz_memory",
+            "assertions": 566750,
+            "seed": "0x9e3779b9",
+            "steps": 20000
+          },
+          {
+            "name": "simd-threads-eh/fuzz_simd",
+            "assertions": 18082848,
+            "seed": "0x9e3779b9",
+            "steps": 4096
+          },
+          {
+            "name": "simd-threads-eh/fuzz_chrono",
+            "assertions": 537647,
+            "seed": "0x9e3779b9",
+            "steps": 65536
+          },
+          {
+            "name": "simd-threads-eh/fuzz_eh",
+            "assertions": 461414,
+            "seed": "0x9e3779b9",
+            "steps": 4096
+          },
+          {
+            "name": "simd-threads-eh/runtime_thread_fuzz",
+            "assertions": 13162,
+            "seed": "0x9e3779b9",
+            "steps": 512
+          }
+        ],
+        "evidence": {
+          "path": "bin/wasm-fixes-fuzz-fixed/9e3779b9/results.json",
+          "sha256": "fecde6bbdb08090830f1ab843608d336aeaf354f12c7fc867337e010d1d7732e"
+        }
+      },
+      {
+        "seed": "0xb7e15162",
+        "cells": 10,
+        "failed": 0,
+        "assertions": [
+          {
+            "name": "scalar/fuzz_memory",
+            "assertions": 435080,
+            "seed": "0xb7e15162",
+            "steps": 20000
+          },
+          {
+            "name": "scalar/fuzz_simd",
+            "assertions": 18082848,
+            "seed": "0xb7e15162",
+            "steps": 4096
+          },
+          {
+            "name": "scalar/fuzz_chrono",
+            "assertions": 537639,
+            "seed": "0xb7e15162",
+            "steps": 65536
+          },
+          {
+            "name": "simd-threads-eh/fuzz_memory",
+            "assertions": 560140,
+            "seed": "0xb7e15162",
+            "steps": 20000
+          },
+          {
+            "name": "simd-threads-eh/fuzz_simd",
+            "assertions": 18082848,
+            "seed": "0xb7e15162",
+            "steps": 4096
+          },
+          {
+            "name": "simd-threads-eh/fuzz_chrono",
+            "assertions": 537647,
+            "seed": "0xb7e15162",
+            "steps": 65536
+          },
+          {
+            "name": "simd-threads-eh/fuzz_eh",
+            "assertions": 465701,
+            "seed": "0xb7e15162",
+            "steps": 4096
+          },
+          {
+            "name": "simd-threads-eh/runtime_thread_fuzz",
+            "assertions": 13130,
+            "seed": "0xb7e15162",
+            "steps": 512
+          }
+        ],
+        "evidence": {
+          "path": "bin/wasm-fixes-fuzz-fixed/b7e15162/results.json",
+          "sha256": "448a4629095abaa15d090d57f6c43a89009063815e7925255d45c18bbdbf7dc5"
+        }
+      }
+    ],
+    "domains": [
+      "memory allocation/growth/alignment/ownership",
+      "SIMD arithmetic and memory",
+      "duration conversion",
+      "EH/RTTI lifetimes",
+      "thread lifecycle",
+      "exact numeric operations"
+    ]
+  },
+  "focused_checks": {
+    "o0_no_lto": {
+      "passed": 10,
+      "failed": 0
+    },
+    "o3_ubsan_transcendentals": {
+      "passed": 4,
+      "failed": 0
+    },
+    "numeric_profile_checks": {
+      "passed": 10,
+      "details": "Eight O3 UBSan profiles at 6000 iterations; scalar EH/no-EH O0/no-LTO at 512 iterations."
+    },
+    "source_shift_ubsan": [
+      {
+        "status": "PASS",
+        "threads": false,
+        "checks": 4892,
+        "validCases": 2304,
+        "guardedCases": 2574,
+        "trapCases": 12
+      },
+      {
+        "status": "PASS",
+        "threads": true,
+        "checks": 4892,
+        "validCases": 2304,
+        "guardedCases": 2574,
+        "trapCases": 12
+      }
+    ]
+  },
+  "numeric_oracles": {
+    "exact": {
+      "status": "PASS",
+      "checks": 223326,
+      "seed": "0x9e3779b97f4a7c15",
+      "iterations": 6000,
+      "operations": [
+        6196,
+        6196,
+        6196,
+        6196,
+        6196,
+        6196,
+        6000,
+        6000,
+        6000,
+        6000,
+        6000,
+        6000,
+        6196,
+        6196,
+        6196,
+        6196,
+        6000,
+        6000,
+        6000,
+        6000,
+        6000,
+        6000,
+        6000,
+        6000,
+        6000,
+        6000,
+        6196,
+        6256,
+        6036,
+        6000,
+        6000,
+        6000,
+        6000,
+        6768,
+        6768,
+        6768,
+        858,
+        858,
+        858
+      ]
+    },
+    "transcendental": [
+      {
+        "status": "PASS",
+        "checks": 435,
+        "limit": "128",
+        "operations": [
+          18,
+          17,
+          16,
+          13,
+          13,
+          14,
+          20,
+          20,
+          20,
+          16,
+          7,
+          7,
+          16,
+          16,
+          16,
+          16,
+          9,
+          5,
+          18,
+          12,
+          16,
+          16,
+          17,
+          17,
+          12,
+          12,
+          16,
+          16,
+          12,
+          12
+        ],
+        "worst": [
+          "3",
+          "1",
+          "5",
+          "1",
+          "2",
+          "2",
+          "2",
+          "3",
+          "3",
+          "2",
+          "2",
+          "2",
+          "8",
+          "8",
+          "5",
+          "1",
+          "0",
+          "2",
+          "0",
+          "2",
+          "0",
+          "1",
+          "3",
+          "12",
+          "2",
+          "0",
+          "53",
+          "4",
+          "3",
+          "52"
+        ],
+        "failed": 0,
+        "failures": []
+      },
+      {
+        "status": "PASS",
+        "checks": 11541,
+        "seeds": [
+          "0x6d617468",
+          "0x9e3779b9",
+          "0xb7e15162"
+        ],
+        "limit": "128",
+        "operations": [
+          320,
+          320,
+          320,
+          320,
+          320,
+          320,
+          380,
+          380,
+          380,
+          320,
+          320,
+          320,
+          320,
+          320,
+          320,
+          320,
+          320,
+          320,
+          320,
+          704,
+          320,
+          320,
+          320,
+          320,
+          725,
+          809,
+          437,
+          437,
+          437,
+          452
+        ],
+        "worst": [
+          "4",
+          "4",
+          "6",
+          "0",
+          "0",
+          "6",
+          "3",
+          "3",
+          "5",
+          "0",
+          "5",
+          "5",
+          "8",
+          "10",
+          "0",
+          "1",
+          "1",
+          "4",
+          "1",
+          "20",
+          "1",
+          "0",
+          "6",
+          "33",
+          "4",
+          "4",
+          "108",
+          "33",
+          "65",
+          "127"
+        ],
+        "failed": 0,
+        "failures": []
+      }
+    ],
+    "policy": "Exact BigInt/rational grading for arithmetic; mpmath-generated references for all 30 transcendental operations with unchanged 128 ULP extended-policy bound. Nonfinite classifications must match."
+  },
+  "controls": {
+    "configuration": 54,
+    "runner": 24,
+    "host_abi": 9,
+    "oracle_assertions": 9,
+    "oracle_negative_controls": 6,
+    "grading_records": 31,
+    "grading_failed": 0,
+    "grading_browser_cells": 4,
+    "compile_manifest_cells": 21,
+    "policy_and_header_controls": 22,
+    "header_inventory": {
+      "total": 238,
+      "passed": 190,
+      "expected_native_boundaries": 48,
+      "mismatches": 0
+    },
+    "coefficients": "Gamma table exactly regenerated at 256-bit precision; Payne-Hanek limbs independently reproduced at 5300/5500 decimal digits.",
+    "formatting": "24 handwritten C++ files pass clang-format; generated coefficient table uses its generator format and passes --check.",
+    "provenance": "wasmalloc sync --check passes; abcmalloc git diff is empty."
+  },
+  "before_fix_evidence": [
+    {
+      "finding": "Shutdown traps and unresolved shared RPCs",
+      "evidence": "bin/wasm-review-browser/browser-lifecycle-results.json"
+    },
+    {
+      "finding": "Copied join waits on a reused slot",
+      "evidence": "bin/wasm-fix-thread/join-mutant.json",
+      "observed": "124 watchdog with infinite state-only wait restored"
+    },
+    {
+      "finding": "Cancelled caught exceptions leak lifetime cleanup",
+      "evidence": "bin/wasm-fix-thread/eh-before/evidence-lifetime.json",
+      "observed": "6 assertion failure with missing destruction"
+    },
+    {
+      "finding": "Binary128 edge failures",
+      "evidence": "bin/wasm-math-fix-v1/fuzz-math-results.json",
+      "additional": "bin/wasm-review-browser/math-edge-v4-results.json"
+    },
+    {
+      "finding": "Source duration UB and bool lane admission",
+      "evidence": "bin/wasm-review-memory/fix-controls/results.json",
+      "qualification": "Old chrono returned70 while its control expected6; the original aggregate remains false. Fixed chrono passes UBSan."
+    },
+    {
+      "finding": "Speculated compiler helper shift",
+      "evidence": "bin/wasm-review-spec-numeric/old-helper-evidence.json",
+      "observed": "70 with only old helpers restored; directed volatile sqrt(1) regression catches it"
+    },
+    {
+      "finding": "Grading false passes",
+      "evidence": "bin/wasm-review-memory/grading-review/before-results.json",
+      "observed": "Old NaN, i64 and out-of-range coverage values passed; old high-bit unsigned counts failed."
+    },
+    {
+      "finding": "Sanitizer controls require instrumentation",
+      "evidence": "bin/wasm-review-spec-numeric/reusable-controls-results.json",
+      "observed": "Unsanitized fixed module fails negative-control script after 4880 positive checks with zero traps"
+    }
+  ],
+  "historical_run_notes": [
+    "tests/wasm/validation.json records the initial port and remains historical.",
+    "First integrated run had234/238 passes: four EH lifecycle fixture assertions incorrectly expected57; panic crossing noexcept correctly terminates134. The test now queries an EH flag and asserts the exact profile status.",
+    "First O3 UBSan replay had six numeric failures caused by a compiler-speculated shift; preserved under bin/wasm-fixes-fuzz. All three seeds passed after the helper fix.",
+    "Earlier core-only browser runs passed218 modules per engine. The final browser matrix above rebuilds and reruns all242 modules after source freeze."
+  ],
+  "native_regression_evidence": {
+    "codegen_compilers": [
+      "GCC",
+      "Clang22"
+    ],
+    "control": "O2 object generation for shared cancellation headers plus22 policy/header controls",
+    "limitation": "The complete native four-architecture compile/rigor matrices were not rerun; native branches of the final common-helper change are unchanged."
+  },
+  "benchmarks": [
+    {
+      "path": "benches/results/wasm_math_simd.json",
+      "sha256": "cf02ba4a53ac5e8a15789e8072b79764647ff68d8aa683eec94f3d4ddda68e6b"
+    },
+    {
+      "path": "benches/results/wasm_allocator_baseline.json",
+      "sha256": "4237bdbefb533494e45b8dd28ba4aaf21400c4be4e2b7bf120616f7f4a341da0"
+    }
+  ],
+  "source_snapshots": [
+    {
+      "directory": "src/bits/wasm",
+      "files": 43,
+      "sha256": "1c6395bf890e8244c79c0900c86a55a9c2325fbdeb60fb74894f488ecbbfd378",
+      "encoding": "sorted repository-relative path + NUL + file SHA-256 + newline",
+      "excluded_names": []
+    },
+    {
+      "directory": "src/memory/allocation/wasmalloc",
+      "files": 25,
+      "sha256": "c2b574844818bca16a7d10e8b10d031463ac13363a4f14ab59906df222cd96c9",
+      "encoding": "sorted repository-relative path + NUL + file SHA-256 + newline",
+      "excluded_names": []
+    },
+    {
+      "directory": "tests/wasm",
+      "files": 60,
+      "sha256": "eb2c9c90f37c6add076cf3e787d89e5fe3d6f8a69ee4544085e3c144598f0c86",
+      "encoding": "sorted repository-relative path + NUL + file SHA-256 + newline",
+      "excluded_names": [
+        "validation.json",
+        "fuzz_validation.json"
+      ]
+    }
+  ],
+  "critical_files": [
+    {
+      "path": "src/bits/__arch.hpp",
+      "sha256": "cff756fc525d3ae2f034fe915f9023d69354c0603ae0bb8a9ca020dae40add0d"
+    },
+    {
+      "path": "src/bits/__thread_exit_hook.hpp",
+      "sha256": "5120e938ae97f6ab51f8186f9686e51876dcd2178f3d30a1a5513ab8de46544d"
+    },
+    {
+      "path": "src/math/__gcc_int_syms.hpp",
+      "sha256": "ee4ad7499b4a3ad30a0c670baa5c69822c1139f508b7b4d644468735e10d32b1"
+    },
+    {
+      "path": "src/bits/wasm/host.mjs",
+      "sha256": "7f038c0d8a41ceea41c834ac499f25d4eeebbbfe798dc4fbd1ee29126d79d4c8"
+    },
+    {
+      "path": "src/bits/wasm/worker.mjs",
+      "sha256": "6b6a2b292c9f27289749e79c19a89aacf38a1df5cc1548e98d5e7b261680556b"
+    },
+    {
+      "path": "src/bits/wasm/node.mjs",
+      "sha256": "ee32f2aecf13b0cf3b7a6f160c78dd396930971c1d749cec83b62887bc001fa1"
+    },
+    {
+      "path": "src/bits/wasm/eh.hpp",
+      "sha256": "d3f0230a6ba54f7884029e3c45afe7b4ca5eddfd183c0afd62028d9cb4fc0ac8"
+    },
+    {
+      "path": "src/bits/wasm/threads.hpp",
+      "sha256": "496ac0339cbd26cef149d5428907c92b02068646cc0efce9ba6434037260d199"
+    },
+    {
+      "path": "src/bits/wasm/pause.hpp",
+      "sha256": "d2a08b3cedef81dc41197b149fc507dbb1f3c133c2415b6504a34a9af2877f4d"
+    },
+    {
+      "path": "src/bits/wasm/math/special.hpp",
+      "sha256": "24105f55a1fcb5a15d797f87141bc3eaa1771b29c8d2be7f2c67279e42a21757"
+    },
+    {
+      "path": "src/bits/wasm/math/extended.hpp",
+      "sha256": "94e6994ad05b35da2af40700793cfdc849eb8f2eff72ad369113c831d4d9e408"
+    },
+    {
+      "path": "tools/src/recipes/gnu/config.hh",
+      "sha256": "783f83a4d822a65364a334ad79b88365f4e463cd511ec081fdb8c6512c38f85f"
+    },
+    {
+      "path": "tools/src/recipes/gnu/batch.hh",
+      "sha256": "e7eed1ce0a75980e17f49c248e86b8e63248550a7fab704768a7dc4ff19f61f9"
+    },
+    {
+      "path": "tests/wasm/fuzz.py",
+      "sha256": "b2c6d35a3eee78adca5d2f8e8c06721e16d5607032cd868833e5b1b16c5c1a9c"
+    },
+    {
+      "path": "tests/wasm/suite.py",
+      "sha256": "21cb2f9379cdbf598333e7fdd80473027a7acc9dab8fa4b517ff439aaf531472"
+    },
+    {
+      "path": "tests/wasm/browser.mjs",
+      "sha256": "4943454e0fe5c165b4707113f71f9e324ff16a41758c7c725b68b957b54648e4"
+    },
+    {
+      "path": "tests/wasm/numeric_ubsan_controls.mjs",
+      "sha256": "4b688a3ab612f4748cd7480a5aa8c9777ffe9f29ad0c29fba167d6157273fd16"
+    },
+    {
+      "path": "tests/wasm/grading_controls.py",
+      "sha256": "00cdd264bad480712491475aba0776e26af6bc6197a3c7ad979dbb9196738642"
+    },
+    {
+      "path": "tests/wasm/fuzz_math_reference.json",
+      "sha256": "60b0a3e06fd43883e6654936686c29b8930cd683e74138d79ef72747be4b4ce9"
+    },
+    {
+      "path": "references/wasm/manifest.json",
+      "sha256": "1dcc8c6fbf698809ddbb03b665e900269da1acf0b4a9f99569ef111ad59a4cfc"
+    },
+    {
+      "path": "WASM.rst",
+      "sha256": "6a1dfb9e6b97915465d5e06895410d741cfc11d8a6eeb1861f4c68395da99770"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "bin/wasm-fixes-complete/results.json",
+      "sha256": "d0b3e2e536b520547482c0c1672f65e1ddb81ed408e4c70f31fd2442e9b80ac9"
+    },
+    {
+      "path": "bin/wasm-fixes-complete/modules.json",
+      "sha256": "767ab9b1633747c68c068c68f7a6d5ed561fd73047feb5bc3392c7ed06e97513"
+    },
+    {
+      "path": "bin/wasm-fixes-complete/source-start.json",
+      "sha256": "9b2aa461090aa594b8123c013e992170a9131099a29b7083c75c3227caa03caf"
+    },
+    {
+      "path": "bin/wasm-fixes-fuzz-fixed/results.json",
+      "sha256": "fdf89eaa6185168a456f39611b1db1866f25bc53bb2ae4e070fd44b962086c7d"
+    },
+    {
+      "path": "bin/wasm-fixes-o0/results.json",
+      "sha256": "22afe7b676a82201449060c45373ff122d0e5ddd09d111391a7ef473de06c7d6"
+    },
+    {
+      "path": "bin/wasm-fixes-math-ubsan/results.json",
+      "sha256": "ba84fc83a0f15a3433cc0d9d2f371b6ef24f906492893841923da7a8837def8b"
+    },
+    {
+      "path": "bin/wasm-review-spec-numeric/summary.json",
+      "sha256": "0165206d2b01fac2ab37022f42f1ccbc5d8067aa32b96a6bff305e2ab1dbd714"
+    },
+    {
+      "path": "bin/wasm-review-spec-numeric/reusable-controls-results.json",
+      "sha256": "d94e2de7fd02560b2898554f041a20bd84b6ddc12812f401ce16f7d3eff779f9"
+    },
+    {
+      "path": "bin/wasm-review-spec-numeric/old-helper-evidence.json",
+      "sha256": "628fecd5c76294d2054ba281521e4bb817a5d680bac85ea3904865eb5b4c1367"
+    },
+    {
+      "path": "bin/wasm-fix-thread/final/summary.json",
+      "sha256": "2082f3bd5450b4527c7db517be49a2f8101eba7fca10a1e9592537ea2b840559"
+    },
+    {
+      "path": "bin/wasm-review-memory/fix-validation.json",
+      "sha256": "1a4bb4d58523e46771ac3cc519343b7589904505950f068b3a2b628e676b7c19"
+    },
+    {
+      "path": "bin/wasm-review-memory/grading-review/review.json",
+      "sha256": "13e371006d30a734fc9fe658b05dfeff6e72426aa63308edc00cd6ac24664c5d"
+    },
+    {
+      "path": "bin/wasm-fixes-lifecycle/lifecycle-proof.json",
+      "sha256": "f77c30cd9c9f3078329a19f2a99bb2d56a6d7f1da00348fd74dec3a42310f42a"
+    },
+    {
+      "path": "bin/wasm-fixes-final/config.log",
+      "sha256": "978ec39be8eb5e6c98dc034eb7b8e56c067620fdb610d0103eea7c6eb622c373"
+    },
+    {
+      "path": "bin/wasm-fixes-final/runner-controls.log",
+      "sha256": "c9dc4775cf8a54c27b81c2c12d4b48906250f39d330fed88d39e8188995a957e"
+    },
+    {
+      "path": "bin/wasm-fixes-final/host-controls.log",
+      "sha256": "8cdb9b672f3d462d4ed0325151fe2076c3f45d0ae32e35d1469ac3fc5fe944dc"
+    },
+    {
+      "path": "bin/wasm-fixes-final/oracle-controls.log",
+      "sha256": "16a8e06080b368d0ee2a3ab075e360728d6b61af93c8b3f5b5f8fec277084276"
+    },
+    {
+      "path": "bin/wasm-fixes-final/headers.json",
+      "sha256": "c31a85fe6225162747bce860e1697ba16a4e7847a8ef2c87f9e7fbe20950d3e2"
+    },
+    {
+      "path": "bin/wasm-fixes-final/compile-manifest.log",
+      "sha256": "65cd64a465f8ffff7ad5bc991d691ce402ef4f9149bb16b698c5d7644f1293a0"
+    },
+    {
+      "path": "bin/wasm-fixes-policy-final.log",
+      "sha256": "b678ce6b172d77d82e15c7487fc7ac584c949ba1b565a2131937f0e1e65211b9"
+    },
+    {
+      "path": "bin/wasm-fix-native-controls.json",
+      "sha256": "b91b734266a685975d858807864d432151e2b74b557645c537fe327a49c60776"
+    },
+    {
+      "path": "bin/wasm-fixes-complete/format-handwritten.log",
+      "sha256": "7db25eb4929e1323cbd57e01409ddf802c3546c188c755ca143853371e468b54"
+    }
+  ],
+  "limitations": [
+    "Finite fixed-seed tests do not prove absence of C++ UB, aliasing errors, within-heap corruption or data races. Wasm bounds checks alone cannot detect those classes.",
+    "Browser claims cover the listed Playwright engine versions, not every deployed browser or shipping Safari configuration. Shared memory requires cross-origin isolation.",
+    "UBSan vptr instrumentation is excluded because the micron-only runtime does not provide that sanitizer ABI. No ASan/TSan runtime is linked.",
+    "Cancellation has explicit thread-exit semantics and does not unwind abandoned automatic objects. Caller-managed stack resources remain the caller responsibility; guarded initialization, EH allocations, TLS and exit hooks are cleaned up.",
+    "Binary128 transcendental functions retain the documented extended approximation policy, not a universal correctly-rounded guarantee.",
+    "No Canvas implementation, WASI/Emscripten/Memory64 support, native filesystem/process/GPU emulation, or abcmalloc changes are part of this work."
+  ],
+  "reproduce": [
+    "python3 tests/wasm/suite.py --jobs 4 --oracles --output bin/wasm-fixes-complete",
+    "node tests/wasm/browser.mjs --manifest=bin/wasm-fixes-complete/modules.json --output=bin/wasm-fixes-complete/browsers.json",
+    "python3 tests/wasm/fuzz.py --profiles scalar,simd-threads-eh --seeds 0x243f6a88,0x9e3779b9,0xb7e15162 --select fuzz_memory,fuzz_simd,fuzz_chrono,fuzz_eh,runtime_thread_fuzz,numeric --jobs 3 --optimization O3 --ubsan-traps --output bin/wasm-fixes-fuzz-fixed",
+    "python3 tests/wasm/grading_controls.py --browsers",
+    "node tests/wasm/numeric_ubsan_controls.mjs bin/wasm-fixes-fuzz-fixed/243f6a88/scalar/numeric.wasm",
+    "python3 tests/wasm/fuzz.py --jobs 4 --browsers",
+    "node tests/wasm/simd_math_benchmark.mjs --build > benches/results/wasm_math_simd.json"
+  ],
+  "artifact_notes": "Detailed local modules/logs under bin are ignored build artifacts. This report, tests, references, documentation and benchmark baselines remain reviewable repository files. Assertion totals are observed counts, not counts of independent properties."
+}

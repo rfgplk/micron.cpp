@@ -12,7 +12,9 @@
 // unwinder backend select
 //   DWARF  (.eh_frame / .gcc_except_table / __gxx_personality_v0) -> amd64, i386, arm64
 //   EHABI  (.ARM.exidx / .ARM.extab / __aeabi_unwind_cpp_pr*)     -> arm32
-#if defined(__micron_arch_arm32)
+#if defined(__micron_arch_wasm32)
+#define __micron_eh_wasm 1
+#elif defined(__micron_arch_arm32)
 #define __micron_eh_ehabi 1
 #else
 #define __micron_eh_dwarf 1

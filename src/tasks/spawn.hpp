@@ -31,7 +31,7 @@ template<class I, class T>
 [[nodiscard]] auto
 fork_task(I *__ret, micron::task<T> &&__t)
 {
-  constexpr u8 __m = __cf_detail::__is_eventual<I>::value ? __rm_eventual : __rm_lvalue;
+  constexpr u8 __m = __impl::__is_eventual<I>::value ? __rm_eventual : __rm_lvalue;
   auto __make = [__tk = micron::move(__t)]() mutable -> micron::task<T> { return micron::move(__tk); };
   return __fork_awaitable<T, decltype(__make)>{ static_cast<void *>(__ret), __m, micron::move(__make) };
 }

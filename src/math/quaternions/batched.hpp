@@ -19,7 +19,7 @@
 #include "algebra.hpp"
 #include "rotations.hpp"
 
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
 #include "../../simd/aliases.hpp"
 #include "../../simd/arch/types_amd64.hpp"
 #endif
@@ -41,8 +41,8 @@ namespace math
 namespace quaternions
 {
 
-#if defined(__AVX2__) && defined(__FMA__)
-namespace __batched_detail
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
+namespace __impl
 {
 
 // AoS->SoA transpose of 4 vectors of 4 doubles each. After this call:
@@ -98,11 +98,11 @@ all_normalizable(__m256d acc) noexcept
   return simd::avx::movemask_f64(acc) == 0x0F;
 }
 
-};      // namespace __batched_detail
+};      // namespace __impl
 #endif
 
 #if defined(__micron_quat_batched_neon)
-namespace __batched_detail
+namespace __impl
 {
 
 // AoS->SoA transpose of 4 f32 quaternions packed as 4 float32x4_t
@@ -187,7 +187,7 @@ all_normalizable(float64x2_t acc) noexcept
 }
 #endif
 
-};      // namespace __batched_detail
+};      // namespace __impl
 #endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -196,7 +196,7 @@ template<ieee754_floating T>
 inline void
 batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *out, usize n) noexcept
 {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if constexpr ( sizeof(T) == 8 ) {
     usize i = 0;
     for ( ; i + 4 <= n; i += 4 ) {
@@ -212,8 +212,8 @@ batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *
       const __m256d b3 = simd::avx::loadu_f64(bp + 12);
 
       __m256d axs, ays, azs, aws, bxs, bys, bzs, bws;
-      __batched_detail::transpose4x4_pd(a0, a1, a2, a3, axs, ays, azs, aws);
-      __batched_detail::transpose4x4_pd(b0, b1, b2, b3, bxs, bys, bzs, bws);
+      __impl::transpose4x4_pd(a0, a1, a2, a3, axs, ays, azs, aws);
+      __impl::transpose4x4_pd(b0, b1, b2, b3, bxs, bys, bzs, bws);
 
       // 16 FMAs = 8 cyc on 2 FMA ports; transposes add ~6 cyc; ~14 cyc/4-quats = 3.5 cyc/quat
       __m256d rxs = simd::avx::mul_f64(aws, bxs);
@@ -237,7 +237,7 @@ batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *
       rws = simd::fma::fnma_f64(azs, bzs, rws);
 
       __m256d r0, r1, r2, r3;
-      __batched_detail::transpose4x4_pd_inv(rxs, rys, rzs, rws, r0, r1, r2, r3);
+      __impl::transpose4x4_pd_inv(rxs, rys, rzs, rws, r0, r1, r2, r3);
       double *op = reinterpret_cast<double *>(out + i);
       simd::avx::storeu_f64(op + 0, r0);
       simd::avx::storeu_f64(op + 4, r1);
@@ -265,8 +265,8 @@ batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *
       const float32x4_t b3 = simd::neon::load_f32(bp + 12);
 
       float32x4_t axs, ays, azs, aws, bxs, bys, bzs, bws;
-      __batched_detail::transpose4x4_ps(a0, a1, a2, a3, axs, ays, azs, aws);
-      __batched_detail::transpose4x4_ps(b0, b1, b2, b3, bxs, bys, bzs, bws);
+      __impl::transpose4x4_ps(a0, a1, a2, a3, axs, ays, azs, aws);
+      __impl::transpose4x4_ps(b0, b1, b2, b3, bxs, bys, bzs, bws);
 
       float32x4_t rxs = simd::neon::mul(aws, bxs);
       rxs = simd::neon::fma_f32(rxs, axs, bws);
@@ -289,7 +289,7 @@ batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *
       rws = simd::neon::fms_f32(rws, azs, bzs);
 
       float32x4_t r0, r1, r2, r3;
-      __batched_detail::transpose4x4_ps_inv(rxs, rys, rzs, rws, r0, r1, r2, r3);
+      __impl::transpose4x4_ps_inv(rxs, rys, rzs, rws, r0, r1, r2, r3);
       float *op = reinterpret_cast<float *>(out + i);
       simd::neon::store_f32(op + 0, r0);
       simd::neon::store_f32(op + 4, r1);
@@ -316,8 +316,8 @@ batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *
       const float64x2_t bhi1 = simd::neon::load_f64(bp + 6);
 
       float64x2_t axs, ays, azs, aws, bxs, bys, bzs, bws;
-      __batched_detail::transpose2x4_pd(alo0, ahi0, alo1, ahi1, axs, ays, azs, aws);
-      __batched_detail::transpose2x4_pd(blo0, bhi0, blo1, bhi1, bxs, bys, bzs, bws);
+      __impl::transpose2x4_pd(alo0, ahi0, alo1, ahi1, axs, ays, azs, aws);
+      __impl::transpose2x4_pd(blo0, bhi0, blo1, bhi1, bxs, bys, bzs, bws);
 
       float64x2_t rxs = simd::neon::mul(aws, bxs);
       rxs = simd::neon::fma_f64(rxs, axs, bws);
@@ -340,7 +340,7 @@ batched_multiply(const quaternion<T> *a, const quaternion<T> *b, quaternion<T> *
       rws = simd::neon::fms_f64(rws, azs, bzs);
 
       float64x2_t rlo0, rhi0, rlo1, rhi1;
-      __batched_detail::transpose2x4_pd_inv(rxs, rys, rzs, rws, rlo0, rhi0, rlo1, rhi1);
+      __impl::transpose2x4_pd_inv(rxs, rys, rzs, rws, rlo0, rhi0, rlo1, rhi1);
       double *op = reinterpret_cast<double *>(out + i);
       simd::neon::store_f64(op + 0, rlo0);
       simd::neon::store_f64(op + 2, rhi0);
@@ -361,10 +361,10 @@ template<ieee754_floating T>
 inline void
 batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
 {
-#if defined(__AVX2__) && defined(__FMA__)
+#if defined(__micron_x86_avx2) && defined(__micron_x86_fma)
   if constexpr ( sizeof(T) == 8 ) {
     const __m256d one = simd::avx::splat_f64(1.0);
-    __m256d ok = __batched_detail::normalizable_all();
+    __m256d ok = __impl::normalizable_all();
     usize i = 0;
     for ( ; i + 4 <= n; i += 4 ) {
       const double *ip = reinterpret_cast<const double *>(in + i);
@@ -374,13 +374,13 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       const __m256d q3 = simd::avx::loadu_f64(ip + 12);
 
       __m256d xs, ys, zs, ws;
-      __batched_detail::transpose4x4_pd(q0, q1, q2, q3, xs, ys, zs, ws);
+      __impl::transpose4x4_pd(q0, q1, q2, q3, xs, ys, zs, ws);
 
       __m256d n2 = simd::avx::mul_f64(xs, xs);
       n2 = simd::fma::fma_f64(ys, ys, n2);
       n2 = simd::fma::fma_f64(zs, zs, n2);
       n2 = simd::fma::fma_f64(ws, ws, n2);
-      ok = __batched_detail::keep_normalizable(ok, n2, __safe_min_n2<T>());
+      ok = __impl::keep_normalizable(ok, n2, __safe_min_n2<T>());
 
       const __m256d sq = simd::avx::sqrt_f64(n2);
       const __m256d inv = simd::avx::div_f64(one, sq);
@@ -391,14 +391,14 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       ws = simd::avx::mul_f64(ws, inv);
 
       __m256d r0, r1, r2, r3;
-      __batched_detail::transpose4x4_pd_inv(xs, ys, zs, ws, r0, r1, r2, r3);
+      __impl::transpose4x4_pd_inv(xs, ys, zs, ws, r0, r1, r2, r3);
       double *op = reinterpret_cast<double *>(out + i);
       simd::avx::storeu_f64(op + 0, r0);
       simd::avx::storeu_f64(op + 4, r1);
       simd::avx::storeu_f64(op + 8, r2);
       simd::avx::storeu_f64(op + 12, r3);
     }
-    if ( !__batched_detail::all_normalizable(ok) ) {
+    if ( !__impl::all_normalizable(ok) ) {
       for ( usize k = 0; k < i; ++k ) out[k] = normalize<T>(in[k]);
     }
     for ( ; i < n; ++i ) out[i] = normalize<T>(in[i]);
@@ -419,13 +419,13 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       const float32x4_t q3 = simd::neon::load_f32(ip + 12);
 
       float32x4_t xs, ys, zs, ws;
-      __batched_detail::transpose4x4_ps(q0, q1, q2, q3, xs, ys, zs, ws);
+      __impl::transpose4x4_ps(q0, q1, q2, q3, xs, ys, zs, ws);
 
       float32x4_t n2 = simd::neon::mul(xs, xs);
       n2 = simd::neon::fma_f32(n2, ys, ys);
       n2 = simd::neon::fma_f32(n2, zs, zs);
       n2 = simd::neon::fma_f32(n2, ws, ws);
-      ok = __batched_detail::keep_normalizable(ok, n2, __safe_min_n2<T>());
+      ok = __impl::keep_normalizable(ok, n2, __safe_min_n2<T>());
 
       float32x4_t inv = simd::neon::rsqrt_est(n2);
       inv = simd::neon::mul(inv, simd::neon::rsqrt_step(simd::neon::mul(n2, inv), inv));
@@ -437,14 +437,14 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       ws = simd::neon::mul(ws, inv);
 
       float32x4_t r0, r1, r2, r3;
-      __batched_detail::transpose4x4_ps_inv(xs, ys, zs, ws, r0, r1, r2, r3);
+      __impl::transpose4x4_ps_inv(xs, ys, zs, ws, r0, r1, r2, r3);
       float *op = reinterpret_cast<float *>(out + i);
       simd::neon::store_f32(op + 0, r0);
       simd::neon::store_f32(op + 4, r1);
       simd::neon::store_f32(op + 8, r2);
       simd::neon::store_f32(op + 12, r3);
     }
-    if ( !__batched_detail::all_normalizable(ok) ) {
+    if ( !__impl::all_normalizable(ok) ) {
       for ( usize k = 0; k < i; ++k ) out[k] = normalize<T>(in[k]);
     }
     for ( ; i < n; ++i ) out[i] = normalize<T>(in[i]);
@@ -463,13 +463,13 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       const float64x2_t hi1 = simd::neon::load_f64(ip + 6);
 
       float64x2_t xs, ys, zs, ws;
-      __batched_detail::transpose2x4_pd(lo0, hi0, lo1, hi1, xs, ys, zs, ws);
+      __impl::transpose2x4_pd(lo0, hi0, lo1, hi1, xs, ys, zs, ws);
 
       float64x2_t n2 = simd::neon::mul(xs, xs);
       n2 = simd::neon::fma_f64(n2, ys, ys);
       n2 = simd::neon::fma_f64(n2, zs, zs);
       n2 = simd::neon::fma_f64(n2, ws, ws);
-      ok = __batched_detail::keep_normalizable(ok, n2, __safe_min_n2<T>());
+      ok = __impl::keep_normalizable(ok, n2, __safe_min_n2<T>());
 
       const float64x2_t sq = simd::neon::sqrt(n2);
       const float64x2_t inv = simd::neon::div(one, sq);
@@ -480,14 +480,14 @@ batched_normalize(const quaternion<T> *in, quaternion<T> *out, usize n) noexcept
       ws = simd::neon::mul(ws, inv);
 
       float64x2_t rlo0, rhi0, rlo1, rhi1;
-      __batched_detail::transpose2x4_pd_inv(xs, ys, zs, ws, rlo0, rhi0, rlo1, rhi1);
+      __impl::transpose2x4_pd_inv(xs, ys, zs, ws, rlo0, rhi0, rlo1, rhi1);
       double *op = reinterpret_cast<double *>(out + i);
       simd::neon::store_f64(op + 0, rlo0);
       simd::neon::store_f64(op + 2, rhi0);
       simd::neon::store_f64(op + 4, rlo1);
       simd::neon::store_f64(op + 6, rhi1);
     }
-    if ( !__batched_detail::all_normalizable(ok) ) {
+    if ( !__impl::all_normalizable(ok) ) {
       for ( usize k = 0; k < i; ++k ) out[k] = normalize<T>(in[k]);
     }
     for ( ; i < n; ++i ) out[i] = normalize<T>(in[i]);

@@ -1,0 +1,83 @@
+{
+  "headers": {
+    "__bb.hpp": {
+      "generated_sha256": "c93f9c43e9fcf425ba293cf91fff827160f612382cf50e706ab7357ce2db0f67",
+      "source_sha256": "098ad8159a4955d0d610b9ff642b09506ace9e739b16ae2ea7c3e6cc1b76fba3"
+    },
+    "bbmalloc.hpp": {
+      "generated_sha256": "86f940e3cced14dd1a55044e43b8ee3106bb571fff6da1d72be5b65fe82d0edd",
+      "source_sha256": "86f940e3cced14dd1a55044e43b8ee3106bb571fff6da1d72be5b65fe82d0edd"
+    },
+    "cache_list.hpp": {
+      "generated_sha256": "6643182b838a20b5a55af2c8b657b3de80cfef4b9b82f5ffdf7da0edd6dcc314",
+      "source_sha256": "2954567cbf9bd3e172f59ad64718964d9c48cf6b3ade6f0ae98d54a340ff72f9"
+    },
+    "config.hpp": {
+      "generated_sha256": "8010c8e463b63fb93aecc8a6ece41a9941ba159165b0b7049e9eab49e645e4aa",
+      "source_sha256": "0191b6245161ae37a07844a775913cf4d466a5bd64c44ca0f626cfb05ccf32dc"
+    },
+    "config_kernel.hpp": {
+      "generated_sha256": "c9ce9e89e08476dff70888bfc7b72e4bb60526a495b367f3db96a3f0392e3051",
+      "source_sha256": "c9ce9e89e08476dff70888bfc7b72e4bb60526a495b367f3db96a3f0392e3051"
+    },
+    "config_small.hpp": {
+      "generated_sha256": "01f08c3fab0ee733d2a1654bb1f8a99b7cb9504c4bb1e93bdff75291f09d6370",
+      "source_sha256": "01f08c3fab0ee733d2a1654bb1f8a99b7cb9504c4bb1e93bdff75291f09d6370"
+    },
+    "config_tiny.hpp": {
+      "generated_sha256": "8a53a128b5f276feca48326c7dc054784a6ff2e335abcd94e0c35add1a10950b",
+      "source_sha256": "8a53a128b5f276feca48326c7dc054784a6ff2e335abcd94e0c35add1a10950b"
+    },
+    "free_list.hpp": {
+      "generated_sha256": "01b5f0977333ff48bf0d65052620aae6bcb2a5f6f3a9dabdc1a6a5f093c206f2",
+      "source_sha256": "33c8f20d949a83856dced443a9b3cc5b70fb0be2103cdc4c52f3e0fec4c7b619"
+    },
+    "harden.hpp": {
+      "generated_sha256": "7d555aa9b077dd1b8e3c1a2ed9dca33139f70e84a1587a9a4c09c579dec1b9b9",
+      "source_sha256": "fc1c5d62fa23c7c158f7d7a75c29ee3f6bc437f09448792da09052024be97d75"
+    },
+    "heap.hpp": {
+      "generated_sha256": "40dbca5d9c3170534d7b15a025badfc77fb099bd33de4080f7c42dd6c9b1305f",
+      "source_sha256": "55b59072100fd980d7883558e52bcd45f359de68d33534965d0930375e76e00b"
+    },
+    "malloc-c.hpp": {
+      "generated_sha256": "f7e744e484519f388d893a06d5f63ce0214437bf25ce48b8d1dd7bcf2022f8de",
+      "source_sha256": "9026ba89e4344a4045bc1cc153565ca0549eb04528d81c310b67562a9f52f55f"
+    },
+    "malloc.hpp": {
+      "generated_sha256": "670be62c7a921ae319ea3063a7f1dde36058fed6b62f1c8f2497598bf2c803f2",
+      "source_sha256": "a00d157a5480d9efe9be34a8c3df4d2495d0631bcb61ee6f9c56ef8ff97aae8b"
+    },
+    "malloc_forward.hpp": {
+      "generated_sha256": "af0c4f97a24bea3445150e0be3d87d791590a3e6996efc1912ece5d111a05da8",
+      "source_sha256": "8a7ccc0f7b3ffb829857f386ee0d58e6969d9af46a9984f034a2c9d3a9547fa7"
+    },
+    "metadata.hpp": {
+      "generated_sha256": "c1c61be39772161d11b46128fc1cf0e38367b75aa961d5de8b7466240ac33f48",
+      "source_sha256": "4a9a9f4de2ff3851b5564d41fc955eb41f12b9aedfffb77cc53a90e206e6e2f7"
+    },
+    "pool.hpp": {
+      "generated_sha256": "1284532f302b725e7310dfd2df9936234990537dbfee5dd1e50a1613b8edd3e0",
+      "source_sha256": "d65cf372fc0976ef6392fc92204c0e7b0b445a4df0948327f55ab3203b9ae483"
+    },
+    "printing.hpp": {
+      "generated_sha256": "b403199309ed3e8db6cd8497ec14e2abec983ff3905e62c67e0d673b38898519",
+      "source_sha256": "9eeada80c3b7dbb465dafcfd86d4040316e11c562dff86794d55ac8a5f824a57"
+    },
+    "region.hpp": {
+      "generated_sha256": "2cac744754946e5d95d65e50e48651be07646027108b5262c88030dec8bd42dc",
+      "source_sha256": "c17ad367f63cd538865296b1aa4b821e9ed473cf4e383345c7c1e29c01bbc0f5"
+    },
+    "stats.hpp": {
+      "generated_sha256": "0082ff7019845a29c3f22f750b8e1655f0e8e8709033f9678134f49eb6a5d34f",
+      "source_sha256": "b7a2e4aad835a5814e811294b54f3eb1c47309eb500c4959141a7019fd1ecd09"
+    },
+    "version.hpp": {
+      "generated_sha256": "372cc9cec237c71ed2fa3e80119252e5fe6193756599a8f54be25472d33578e0",
+      "source_sha256": "372cc9cec237c71ed2fa3e80119252e5fe6193756599a8f54be25472d33578e0"
+    }
+  },
+  "revision": "224ecfd62df165b5bf39cad02773f940a0bbbfae",
+  "transformation": "<micron/X> includes become \"../../../../X\"",
+  "upstream": "bbmalloc"
+}

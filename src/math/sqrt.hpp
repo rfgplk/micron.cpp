@@ -56,7 +56,11 @@ fsqrt(double x) noexcept
 constexpr long double
 fsqrt(long double x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::sqrt_ns::sqrt<flong>(x);
+#else
   return static_cast<long double>(mkbits::sqrt_ns::sqrt<f64>(f64(x)));
+#endif
 }
 
 constexpr float
@@ -74,7 +78,11 @@ frsqrt(double x) noexcept
 constexpr long double
 frsqrt(long double x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::sqrt_ns::rsqrt<flong>(x);
+#else
   return static_cast<long double>(mkbits::sqrt_ns::rsqrt<f64>(f64(x)));
+#endif
 }
 
 constexpr u32

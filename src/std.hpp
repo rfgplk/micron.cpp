@@ -49,8 +49,8 @@
 */
 
 // types FIRST
+#include "bits/__posix_types.hpp"
 #include "concepts.hpp"
-#include "linux/sys/types.hpp"
 #include "type_traits.hpp"
 #include "types.hpp"
 
@@ -77,13 +77,17 @@
 #include "errno.hpp"
 #include "except.hpp"
 
+#if !defined(__micron_arch_wasm32)
 #include "io/__std.hpp"
 #include "linux/sys/signal.hpp"
+#endif
 
 #include "version.hpp"
 
 // syscall
+#if !defined(__micron_arch_wasm32)
 #include "syscall.hpp"
+#endif
 
 #if defined(__clang__)
 #define COMPILER "Clang/LLVM"
@@ -107,9 +111,10 @@
 #error "The micron standard library wasn't made for Windows."
 #endif
 
-#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)             \
+    || defined(__micron_arch_wasm32)
 #else
-#error "This version of the Micron standard library is designed for amd64 and ARM."
+#error "micron: supported targets are amd64, i386, armv7-a, aarch64 and wasm32"
 #endif
 #if !defined(__GNUC__) && !defined(__clang__)
 #error "Only gcc or clang are currently supported compilers. Remove this if you're willing to take risks."

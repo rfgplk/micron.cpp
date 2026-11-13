@@ -8,7 +8,11 @@
 #include "__arch.hpp"
 #include "__attach_hook.hpp"
 
+#if defined(__micron_arch_wasm32)
+#include "wasm/runtime.hpp"
+#else
 #include "../syscall.hpp"
+#endif
 #include "../types.hpp"
 
 // per-thread exit hooks
@@ -112,7 +116,11 @@ inline constexpr u32 __park_dying = 2;       // terminate()/cancel(): exit at th
 
 // the running thread's control word (== &__thread_payload::park)
 inline thread_local u32 *__micron_thread_park = nullptr;
+#if defined(__micron_arch_wasm32)
+inline thread_local void (*__micron_thread_die)() noexcept = nullptr;
+#else
 inline thread_local void (*__micron_thread_die)() = nullptr;
+#endif
 
 inline __attribute__((always_inline)) void
 __micron_park_checkpoint() noexcept
@@ -122,7 +130,11 @@ __micron_park_checkpoint() noexcept
   u32 v = __atomic_load_n(p, __ATOMIC_ACQUIRE);
   while ( v == __park_parked ) {
     // NOTE: deliberately the RAW syscall, not micron::__futex, abcmalloc pulls this in
+#if defined(__micron_arch_wasm32)
+    (void)wasm::wait32(p, __park_parked);
+#else
     micron::syscall(SYS_futex, p, 128 /*FUTEX_WAIT|FUTEX_PRIVATE_FLAG*/, __park_parked, nullptr, nullptr, 0);
+#endif
     v = __atomic_load_n(p, __ATOMIC_ACQUIRE);
   }
   if ( v == __park_dying && __micron_thread_die ) __micron_thread_die();

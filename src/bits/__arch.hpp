@@ -20,11 +20,19 @@
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100)
 #endif
 
-// NOTE: ARM checks come before the x86/ILP32 fallback because clang on
-// armv7 defines `__ILP32__` (pointers are 32-bit) in addition to `__arm__`.
-// If x86/ILP32 was checked first, clang arm32 would misroute as 32-bit x86
-// and never reach the arm32 branch below.
-#if defined(__x86_64__) || defined(_M_X64) || defined(__amd64__)
+// Pointer width is not an architecture: ARM and WebAssembly also define ILP32.
+#if defined(__wasm64__)
+#error "micron: wasm64 is not supported; target wasm32-unknown-unknown"
+#elif defined(__wasm32__)
+#define __micron_arch_wasm32 5
+#define __micron_arch_wasm_any 1
+#define __micron_arch_width_32 1
+#define __wordsize 32
+#define __syscall_wordsize 32
+inline constexpr unsigned __micron_arch = __micron_arch_wasm32;
+inline constexpr unsigned __micron_width = __wordsize;
+#include "wasm/features.hpp"
+#elif defined(__x86_64__) || defined(_M_X64) || defined(__amd64__)
 #define __micron_arch_amd64 1
 #define __micron_arch_width_64 1
 #define __wordsize 64
@@ -46,7 +54,7 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __syscall_wordsize 32
 inline constexpr unsigned __micron_arch = __micron_arch_arm32;
 inline constexpr unsigned __micron_width = __wordsize;
-#elif defined(__i386__) || defined(_M_IX86) || defined(__ILP32__)
+#elif defined(__i386__) || defined(_M_IX86)
 #define __micron_arch_x86 2
 #define __micron_arch_width_32 1
 #define __wordsize 32
@@ -113,7 +121,7 @@ inline constexpr unsigned __micron_width = __wordsize;
 #endif
 
 // default kernel base page size; arm64 kernels run 4KB, 16KB, or 64KB base pages
-#if defined(__micron_arch_arm64)
+#if defined(__micron_arch_arm64) || defined(__micron_arch_wasm32)
 #define __micron_page_size_default 65536
 #else
 #define __micron_page_size_default 4096
@@ -521,7 +529,9 @@ inline constexpr unsigned __micron_width = __wordsize;
 // %%%%%%%%%%%%%%%%%%%%%%%
 // again, linux only but good to have all just in case
 
-#if defined(__linux__)
+#if defined(__micron_arch_wasm32)
+#define __micron_os_wasm 1
+#elif defined(__linux__)
 #define __micron_os_linux 1
 #elif defined(__APPLE__) && defined(__MACH__)
 #define __micron_os_macos 1
@@ -564,6 +574,11 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_fast_math
 #endif
 
+#if defined(__micron_arch_wasm32) || (defined(__micron_x86_avx2) && defined(__micron_x86_fma))                                             \
+    || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
+#define __micron_math_packed 1
+#endif
+
 #if !defined(__STDC_HOSTED__) || __STDC_HOSTED__ == 0
 #define __micron_freestanding 1
 #endif
@@ -572,7 +587,7 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_attach_capable 1
 #endif
 
-#if defined(__micron_arch_arm32)
+#if defined(__micron_arch_arm32) || defined(__micron_arch_wasm32)
 using __micron_guard_t = int;
 #else
 using __micron_guard_t = long long int;

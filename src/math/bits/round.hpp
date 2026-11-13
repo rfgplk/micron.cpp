@@ -42,6 +42,9 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 trunc(F x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return micron::wasm::math::trunc(x);
+#endif
   if ( ieee::is_nan(x) || ieee::is_inf(x) || x == F(0) ) return x;
   F m = _impl::magic<F>();
   F a = manip::fabs(x);
@@ -56,6 +59,9 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 floor(F x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return micron::wasm::math::floor(x);
+#endif
   if ( ieee::is_nan(x) || ieee::is_inf(x) || x == F(0) ) return x;
   F t = trunc<F>(x);
   if ( t == x ) return x;
@@ -66,6 +72,9 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 ceil(F x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return micron::wasm::math::ceil(x);
+#endif
   if ( ieee::is_nan(x) || ieee::is_inf(x) || x == F(0) ) return x;
   F t = trunc<F>(x);
   if ( t == x ) return x;
@@ -76,6 +85,9 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 round(F x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return micron::wasm::math::round(x);
+#endif
   if ( ieee::is_nan(x) || ieee::is_inf(x) || x == F(0) ) return x;
   F a = manip::fabs(x);
   if ( a >= _impl::magic<F>() ) return x;
@@ -87,6 +99,9 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 rint(F x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return micron::wasm::math::nearest(x);
+#endif
   if ( ieee::is_nan(x) || ieee::is_inf(x) || x == F(0) ) return x;
   F a = manip::fabs(x);
   F m = _impl::magic<F>();

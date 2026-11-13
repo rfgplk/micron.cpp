@@ -6,6 +6,9 @@
 #pragma once
 
 #include "../../bits/__arch.hpp"
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/random.hpp"
+#else
 #include "../../linux/sys/time.hpp"
 #include "../../types.hpp"
 #include "../__asm/rdrand.hpp"
@@ -59,3 +62,5 @@ seed_from_hw() noexcept
 };      // namespace rng
 };      // namespace math
 };      // namespace micron
+
+#endif      // __micron_arch_wasm_any

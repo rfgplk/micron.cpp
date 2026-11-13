@@ -45,7 +45,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // 256-bit (x86 only; no NEON v256 implementation)
 
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx)
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_avx) ) || defined(__micron_simd_wide_composite)
   using wfloat = v256<f256, __vf>;
   using wdouble = v256<d256, __vd>;
 
@@ -53,7 +53,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
   using packet4d = v256<d256, __vd>;
 #endif
 
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx2)
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_avx2) ) || defined(__micron_simd_wide_composite)
   using w8 = v256<i256, __v8>;
   using w16 = v256<i256, __v16>;
   using w32 = v256<i256, __v32>;
@@ -68,7 +68,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // 512-bit (x86 only)
 
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx512f)
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_avx512f) ) || defined(__micron_simd_wide_composite)
   using z8 = v512<i512, __v8>;
   using z16 = v512<i512, __v16>;
   using z32 = v512<i512, __v32>;
@@ -88,16 +88,20 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
   // concept: only members that actually exist on this arch
 
   template<typename T>
-  concept is_simd_class = micron::same_as<T, v8> or micron::same_as<T, v16> or micron::same_as<T, v32> or micron::same_as<T, v64>
-                          or micron::same_as<T, vfloat>
+  concept is_simd_class = micron::is_same_v<T, v8> or micron::is_same_v<T, v16> or micron::is_same_v<T, v32> or micron::is_same_v<T, v64>
+                          or micron::is_same_v<T, vfloat>
 #if !defined(__micron_arch_arm32)
-                          or micron::same_as<T, vdouble>
+                          or micron::is_same_v<T, vdouble>
 #endif
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx)
-                          or micron::same_as<T, wfloat> or micron::same_as<T, wdouble>
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_avx) ) || defined(__micron_simd_wide_composite)
+                          or micron::is_same_v<T, wfloat> or micron::is_same_v<T, wdouble>
 #endif
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx2)
-                          or micron::same_as<T, w8> or micron::same_as<T, w16> or micron::same_as<T, w32> or micron::same_as<T, w64>
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_avx2) ) || defined(__micron_simd_wide_composite)
+                          or micron::is_same_v<T, w8> or micron::is_same_v<T, w16> or micron::is_same_v<T, w32> or micron::is_same_v<T, w64>
+#endif
+#if defined(__micron_simd_wide_composite)
+                          or micron::is_same_v<T, z8> or micron::is_same_v<T, z16> or micron::is_same_v<T, z32> or micron::is_same_v<T, z64>
+                          or micron::is_same_v<T, zfloat> or micron::is_same_v<T, zdouble>
 #endif
       ;
 
@@ -126,7 +130,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
 #endif
 
 // these must carry the SAME gates as the definitions above, or they name types that do not exist
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx)
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_avx) ) || defined(__micron_simd_wide_composite)
   using wfloat = simd::wfloat;
   using wdouble = simd::wdouble;
 
@@ -134,7 +138,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
   using packet4d = simd::packet4d;
 #endif
 
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx2)
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_avx2) ) || defined(__micron_simd_wide_composite)
   using w8 = simd::w8;
   using w16 = simd::w16;
   using w32 = simd::w32;
@@ -146,7 +150,7 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes")
   using packet4l = simd::packet4l;
 #endif
 
-#if defined(__micron_arch_x86_any) && defined(__micron_x86_avx512f)
+#if ( defined(__micron_arch_x86_any) && defined(__micron_x86_avx512f) ) || defined(__micron_simd_wide_composite)
   using z8 = simd::z8;
   using z16 = simd::z16;
   using z32 = simd::z32;

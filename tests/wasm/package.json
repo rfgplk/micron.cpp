@@ -1,0 +1,6 @@
+{
+  "name": "micron-wasm-browser-tests",
+  "private": true,
+  "type": "module",
+  "devDependencies": { "playwright": "1.65.0" }
+}

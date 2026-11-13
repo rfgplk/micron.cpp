@@ -22,6 +22,9 @@
 #include "../policy.hpp"
 #include "manip.hpp"
 
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/extended.hpp"
+#endif
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
 __micron_push_options __micron_optimize_no_fast_math namespace micron
 {
@@ -36,16 +39,25 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   sqrt(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::sqrt(x);
+#endif
     if ( ieee::is_nan(x) ) return x;
     if ( x < F(0) ) return ieee::qnan_v<F>();
     if ( x == F(0) ) return x;
     return hw::sqrt<F>(x);
   }
 
-  template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+  template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
   [[nodiscard, gnu::always_inline]] inline constexpr F
   rsqrt(F x, P = {}) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    policy::__validate_extended<F, P>();
+#endif
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return F(1) / micron::wasm::math::sqrt(x);
+#endif
     if ( ieee::is_nan(x) ) return x;
     if ( x < F(0) ) return ieee::qnan_v<F>();
     if ( x == F(0) ) return ieee::inf_v<F>(0);
@@ -88,6 +100,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard]] inline constexpr F
   cbrt(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::cbrt(x);
+#endif
     if ( ieee::is_nan(x) || ieee::is_inf(x) || x == F(0) ) return x;
     // NOTE: the iteration forms a**3, so the argument is first pulled into [1,8)
     const int ex = manip::ilogb<F>(x);
@@ -111,6 +126,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard]] inline constexpr F
   hypot(F a, F b) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::hypot(a, b);
+#endif
     if ( ieee::is_inf(a) || ieee::is_inf(b) ) return ieee::inf_v<F>(0);
     if ( ieee::is_nan(a) || ieee::is_nan(b) ) return ieee::qnan_v<F>();
     a = manip::fabs(a);

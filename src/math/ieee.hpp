@@ -11,6 +11,9 @@
 #include "../type_traits.hpp"
 #include "../types.hpp"
 #include "bits.hpp"
+#if defined(__micron_arch_wasm_any)
+#include "../bits/wasm/math/ieee.hpp"
+#endif
 
 namespace micron
 {
@@ -51,6 +54,11 @@ template<> struct traits_n<8> {
   static constexpr u64 implicit_one = 0x0010000000000000ULL;
   static constexpr u64 quiet_nan_bit = 0x0008000000000000ULL;
 };
+
+#if defined(__micron_arch_wasm_any)
+template<> struct traits_n<16>: micron::wasm::math::ieee128_traits {
+};
+#endif
 
 template<typename F> struct traits: traits_n<sizeof(F)> {
 };

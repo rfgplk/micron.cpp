@@ -10,10 +10,9 @@
 #include "../../simd/types.hpp"
 #include "../../types.hpp"
 
-// a packed vector backend exists only for these defined ISA extenstions
-#if ( defined(__micron_x86_avx2) && defined(__micron_x86_fma) ) || (defined(__micron_arch_arm_any) && defined(__micron_arm_neon))
-#define __micron_math_packed 1
-#endif
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/packed_types.hpp"
+#else
 
 __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __micron_diagnostic_ignored("-Wpedantic") namespace micron
 {
@@ -106,3 +105,4 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wignored-attributes") __m
 };      // namespace micron
 
 __micron_diagnostic_pop
+#endif      // __micron_arch_wasm_any

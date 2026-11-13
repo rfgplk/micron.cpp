@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#include "echo.hpp"
+#else
+
 #include "__std.hpp"
 
 #include "../except.hpp"
@@ -259,3 +264,5 @@ console_bin(const T &...str)
   io::bin(str...);
 }
 };      // namespace micron
+
+#endif      // __micron_arch_wasm32

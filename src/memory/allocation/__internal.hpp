@@ -7,13 +7,20 @@
 
 #include "../../cmalloc.hpp"
 #include "../../types.hpp"
+#include "__seam.hpp"
 
-#if !defined(__micron_abcmalloc_std_backend)
+#if !defined(__micron_abcmalloc_std_backend) && !defined(__micron_wasmalloc_backend)
 /*permitted*/ #include<cstdlib>
 #endif
 namespace micron
 {
-#if defined(__micron_abcmalloc_std_backend)
+#if defined(__micron_abcmalloc_std_backend) || defined(__micron_wasmalloc_backend)
+inline bool
+__heap_owns(const void *ptr) noexcept
+{
+  return abc::within(reinterpret_cast<const addr_t *>(ptr));
+}
+
 inline __attribute__((always_inline)) byte *
 __alloc(usize sz)
 {
@@ -41,6 +48,12 @@ __free_aligned(void *ptr, usize alignment)
   abc::aligned_free(ptr, alignment);
 }
 #else
+inline bool
+__heap_owns(const void *) noexcept
+{
+  return false;
+}
+
 inline __attribute__((always_inline)) void *
 __alloc(usize sz)
 {

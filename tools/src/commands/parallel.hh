@@ -114,6 +114,10 @@ cicd_test_parallel(const auto &cfs)
   using namespace recipes::gnu;
   if ( cfs.empty() ) return 0;
   if ( !target_runnable(cfs[0]) ) {
+    if ( cfs[0].arch == __arch::wasm32 ) {
+      mc::console("WASM test failed: missing ", __missing_for(cfs[0]));
+      return static_cast<int>(cfs.size());
+    }
     mc::set_color(mc::color::yellow);
     mc::console("Skipping ", cfs.size(), " target(s): missing ", __missing_for(cfs[0]));
     mc::set_color(mc::color::reset);

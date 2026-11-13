@@ -60,7 +60,8 @@ splat_dispatch(__modes mode, int argc, char **argv)
   requires(recipes::__using_gnu)
 {
   using namespace recipes::gnu;
-  auto emit = [](const string_type &command) { mc::console(command); };
+  auto emit = [](const string_type &command) { if ( !command.empty() ) mc::console(command); };
+  auto emit_build = [&](const config_t &conf) { emit(batch_prerequisite(conf)); emit(batch(conf)); };
 
   switch ( mode ) {
   case __modes::build:
@@ -68,7 +69,7 @@ splat_dispatch(__modes mode, int argc, char **argv)
     const int fi = (argc > 2 and mc::strcmp(argv[2], "parallel") == 0) ? 3 : 2;
     if ( argc <= fi ) mc::cerror("splat requires at least one source");
     for ( auto &conf : parse_argv_build(argc - fi, argv + fi) ) {
-      emit(batch(conf));
+      emit_build(conf);
       // test compiles each target and then runs it; splat shows both, in that order
       if ( mode == __modes::test ) emit(run_command(conf));
     }
@@ -78,32 +79,32 @@ splat_dispatch(__modes mode, int argc, char **argv)
   case __modes::link: {
     const int fi = (argc > 2 and mc::strcmp(argv[2], "parallel") == 0) ? 3 : 2;
     if ( argc <= fi ) mc::cerror("splat requires at least one source");
-    for ( auto &conf : parse_argv_build(argc - fi, argv + fi) ) emit(batch(conf));
+    for ( auto &conf : parse_argv_build(argc - fi, argv + fi) ) emit_build(conf);
     break;
   }
   case __modes::debug: {
     for ( auto &conf : parse_argv_build(argc - 2, argv + 2) ) {
       recipe_debug(conf);
-      emit(batch(conf));
+      emit_build(conf);
     }
     break;
   }
   case __modes::doctor: {
     for ( auto &conf : parse_argv_build(argc - 2, argv + 2) ) {
       recipe_doctor(conf);
-      emit(batch(conf));
+      emit_build(conf);
     }
     break;
   }
   case __modes::run: {
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
-    emit(batch(conf));
-    emit(conf.target_out);      // run execs the binary directly, never under qemu
+    emit_build(conf);
+    emit(conf.arch == __arch::wasm32 ? run_command(conf) : conf.target_out);
     break;
   }
   case __modes::emulate: {
     config_t conf = parse_argv_build_single(argc - 2, argv + 2);
-    emit(batch(conf));
+    emit_build(conf);
     emit(run_command(conf));
     break;
   }

@@ -30,6 +30,10 @@ cicd_test(const auto &cfs)
 
   // a cross target we can't build or launch here is skipped, not failed
   if ( !target_runnable(cfs[0]) ) {
+    if ( cfs[0].arch == __arch::wasm32 ) {
+      mc::console("WASM test failed: missing ", __missing_for(cfs[0]));
+      return static_cast<int>(cfs.size());
+    }
     mc::set_color(mc::color::yellow);
     mc::console("Skipping ", cfs.size(), " target(s): missing ", __missing_for(cfs[0]));
     mc::set_color(mc::color::reset);
@@ -48,7 +52,7 @@ cicd_test(const auto &cfs)
 
     {
       auto command = recipes::gnu::batch(conf);
-      if ( int r = mc::wexitstatus(mc::execute<mc::exec_wait>(conf.compiler_path, command)); r != 0 ) {
+      if ( int r = mc::wexitstatus(recipes::gnu::execute_batch<mc::exec_wait>(conf, command)); r != 0 ) {
         mc::set_color(mc::color::red);
         mc::console("[ ", conf.target, " failed to compile ]");
         mc::set_color(mc::color::reset);

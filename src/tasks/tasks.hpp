@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#error "micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend"
+#else
+
 #include "../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
 
 // don't let clang format reorder this
@@ -48,3 +53,5 @@
 #include "unbounded_channel.hpp"
 
 #include "waiter_list.hpp"
+
+#endif

@@ -87,6 +87,9 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 frexp(F x, int *e) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return micron::wasm::math::frexp(x, e);
+#endif
   using T = ieee::traits<F>;
   using U = typename T::uint_type;
   U bits = ieee::to_bits(x);
@@ -121,6 +124,9 @@ template<ieee754_floating F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 ldexp(F x, int n) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return micron::wasm::math::scalbn(x, n);
+#endif
   using T = ieee::traits<F>;
   using U = typename T::uint_type;
   if ( x == F(0) || ieee::is_nan(x) || ieee::is_inf(x) ) return x;

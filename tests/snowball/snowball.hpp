@@ -17,8 +17,10 @@
 #include "../../src/string/strings.hpp"
 
 #include "../../src/io/console.hpp"
+#if !defined(__micron_arch_wasm32)
 #include "../../src/io/io.hpp"
 #include "../../src/io/stdout.hpp"
+#endif
 
 #include "../../src/except.hpp"
 #include "../../src/exit.hpp"
@@ -35,6 +37,7 @@ inline string_type __global_test_case{};
 inline void (*__global_on_require)() = nullptr;
 inline void (*__global_on_check)() = nullptr;
 inline usize __global_skips = 0;
+inline usize __global_cases = 0;
 
 namespace config
 {
@@ -94,6 +97,7 @@ __print_error(const T &...args)
 // end out functions
 
 // WARNING: at -Ofast the frame-pointer register is omitted and reallocated as a general-purpose register
+#if !defined(__micron_arch_wasm32)
 inline bool
 __addr_readable(const void *p) noexcept
 {
@@ -107,11 +111,14 @@ __addr_readable(const void *p) noexcept
   if ( hi != lo && micron::syscall(SYS_mincore, reinterpret_cast<void *>(hi), 1, &v) != 0 ) return false;
   return true;
 }
+#endif
 
 inline void
 __print_stack()
 {
-#if defined(__micron_arch_arm32)
+#if defined(__micron_arch_wasm32)
+  __print("(native call-stack addresses are unavailable in WebAssembly)\n\r");
+#elif defined(__micron_arch_arm32)
   // arm32 thumb pins r7 as FP, but -Ofast omits the FP and frees r7 for
   // general allocation. Lowering __builtin_frame_address(0) under LTO then
   // emits an r7 reference into contexts where r7 is busy, producing
@@ -288,6 +295,7 @@ template<typename T>
 string_type
 test_case(const T &str)
 {
+  ++__global_cases;
   __global_test_case = str;
   return __global_test_case;
 }
@@ -295,6 +303,7 @@ test_case(const T &str)
 inline string_type
 test_case(const char *str)
 {
+  ++__global_cases;
   __global_test_case = str;
   return __global_test_case;
 }
@@ -662,6 +671,7 @@ require_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected
 };
 
 // throw variants
+#if defined(__EXCEPTIONS) || defined(__cpp_exceptions)
 template<typename Fn>
 void
 require_throw(Fn &&fn)
@@ -762,6 +772,7 @@ require_nothrow(Fn &&fn, Args &&...args)
   }
 };
 
+#endif
 // end requires
 // start checks
 // the only difference between a require and a check is that checks don't abort
@@ -899,6 +910,7 @@ check_false(Object &object, Fn &&fn, const Dt_In &input, const Dt_Ex &expected_o
 };
 
 // throw variants
+#if defined(__EXCEPTIONS) || defined(__cpp_exceptions)
 
 template<typename Fn>
   requires((micron::is_function_v<micron::remove_pointer_t<Fn>> or micron::is_function_v<Fn>) && micron::is_invocable_v<Fn>)
@@ -999,6 +1011,7 @@ check_nothrow(Fn &&fn, Args &&...args)
   }
 };
 
+#endif
 namespace __impl
 {
 inline u64
@@ -1055,3 +1068,17 @@ fuzz(Fn &&fn, size_t cnt)
 };      // namespace snowball
 
 namespace sb = snowball;
+
+#if defined(__micron_arch_wasm32)
+extern "C" __attribute__((export_name("__micron_wasm_test_cases"))) inline unsigned
+__micron_wasm_test_cases()
+{
+  return static_cast<unsigned>(snowball::__global_cases);
+}
+
+extern "C" __attribute__((export_name("__micron_wasm_test_skips"))) inline unsigned
+__micron_wasm_test_skips()
+{
+  return static_cast<unsigned>(snowball::__global_skips);
+}
+#endif

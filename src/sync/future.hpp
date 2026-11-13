@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../atomic/atomic.hpp"
+#include "../chrono/clock.hpp"
 #include "../memory/actions.hpp"
 #include "../mutex/locks.hpp"
 #include "../mutex/mutex.hpp"

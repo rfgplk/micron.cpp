@@ -147,10 +147,13 @@ namespace mk
 // trigs
 namespace trig
 {
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 sin(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_sin<F>(x);
   }
@@ -160,10 +163,13 @@ sin(F x, P = {}) noexcept
     return mkbits::trig_ns::sin<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 cos(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_cos<F>(x);
   }
@@ -173,10 +179,13 @@ cos(F x, P = {}) noexcept
     return mkbits::trig_ns::cos<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr F
 tan(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_tan<F>(x);
   }
@@ -195,40 +204,52 @@ sincos(F x, F &s, F &c) noexcept
   mkbits::trig_ns::sincos<F>(x, s, c);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 asin(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_asin<F>(x);
   }
   return mkbits::trig_ns::asin<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 acos(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_acos<F>(x);
   }
   return mkbits::trig_ns::acos<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_atan<F>(x);
   }
   return mkbits::trig_ns::atan<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atan2(F y, F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_atan2<F>(y, x);
   }
@@ -362,60 +383,78 @@ sincos(V x, V &s, V &c) noexcept
 namespace hyp
 {
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sinh(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_sinh<F>(x);
   }
   return mkbits::hyp_ns::sinh<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 cosh(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_cosh<F>(x);
   }
   return mkbits::hyp_ns::cosh<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 tanh(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_tanh<F>(x);
   }
   return mkbits::hyp_ns::tanh<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 asinh(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_asinh<F>(x);
   }
   return mkbits::hyp_ns::asinh<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 acosh(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_acosh<F>(x);
   }
   return mkbits::hyp_ns::acosh<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 atanh(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_atanh<F>(x);
   }
@@ -428,10 +467,13 @@ atanh(F x, P = {}) noexcept
 // exponents
 namespace exp_ns
 {
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_exp<F>(x);
   }
@@ -441,30 +483,39 @@ exp(F x, P = {}) noexcept
     return mkbits::exp_ns::exp<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp2(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_exp2<F>(x);
   }
   return mkbits::exp_ns::exp2<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 exp10(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_exp<F>(F(x * constant_ln10<F>));
   }
   return mkbits::exp_ns::exp10<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 expm1(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_expm1<F>(x);
   }
@@ -477,10 +528,13 @@ expm1(F x, P = {}) noexcept
 // logs
 namespace log_ns
 {
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_log<F>(x);
   }
@@ -490,30 +544,39 @@ log(F x, P = {}) noexcept
     return mkbits::log_ns::log<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log2(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_log2<F>(x);
   }
   return mkbits::log_ns::log2<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log10(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_log10<F>(x);
   }
   return mkbits::log_ns::log10<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 log1p(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_log1p<F>(x);
   }
@@ -567,10 +630,13 @@ hypot(F x, F y) noexcept
   return mkbits::sqrt_ns::hypot<F>(x, y);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 rsqrt(F x, P p = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return F(1) / mkbits::bi_sqrt<F>(x);
   }
@@ -732,80 +798,104 @@ nextafter(F a, F b) noexcept
 
 namespace special
 {
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 erf(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_erf<F>(x);
   }
   return mkbits::special_ns::erf<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 erfc(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_erfc<F>(x);
   }
   return mkbits::special_ns::erfc<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 tgamma(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_tgamma<F>(x);
   }
   return mkbits::special_ns::tgamma<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 lgamma(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_lgamma<F>(x);
   }
   return mkbits::special_ns::lgamma<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 j0(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_j0<F>(x);
   }
   return mkbits::special_ns::j0<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 j1(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_j1<F>(x);
   }
   return mkbits::special_ns::j1<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 y0(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_y0<F>(x);
   }
   return mkbits::special_ns::y0<F>(x);
 }
 
-template<ieee754_floating F, policy::policy_tag P = policy::faithful_tag>
+template<ieee754_floating F, policy::policy_tag P = policy::default_tag<F>>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 y1(F x, P = {}) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  policy::__validate_extended<F, P>();
+#endif
   if consteval {
     return mkbits::bi_y1<F>(x);
   }

@@ -10,7 +10,9 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wall") __micron_diagnosti
     __micron_diagnostic_ignored("-Wpedantic")
 #include "bits/__arch.hpp"
 
-#if defined(__micron_arch_amd64)
+#if defined(__micron_arch_wasm32)
+#error "micron: Linux syscalls are unavailable in the native WebAssembly backend"
+#elif defined(__micron_arch_amd64)
 #include "linux/sys/syscall_x86_64.hpp"
 
 #include "bits/__syscall_codes_amd64.hpp"

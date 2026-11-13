@@ -39,7 +39,7 @@ build(const recipes::gnu::config_t &conf)
     auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
-    status = mc::execute<Wait>(conf.compiler_path, command);
+    status = recipes::gnu::execute_batch<Wait>(conf, command);
   };
   if constexpr ( Wait == mc::exec_continue ) return status;
   auto end = mc::now();
@@ -82,7 +82,7 @@ build_debug(recipes::gnu::config_t &conf)
     auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
-    status = mc::execute<mc::exec_wait>(conf.compiler_path, command);
+    status = recipes::gnu::execute_batch<mc::exec_wait>(conf, command);
   };
   auto end = mc::now();
   mc::set_color(mc::color::yellow);

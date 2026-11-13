@@ -8,6 +8,10 @@
 #include "../../bits/__arch.hpp"
 #include "../../types.hpp"
 
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/simd/vec_ld.hpp"
+#else
+
 // WARNING: (!!!!!!) CPP UNALIGNED MAY_ALIAS LOADS/STORES
 // these ____MUST____ stay ordinary loads/stores, NEVER asm
 // non-volatile asm whose only effect is a "=m" output is DCE eligible and
@@ -114,3 +118,5 @@ __pin4(__v32 &a, __v32 &b, __v32 &c, __v32 &e) noexcept
 __micron_diagnostic_pop
 };      // namespace __ml
 };      // namespace micron
+
+#endif      // __micron_arch_wasm_any

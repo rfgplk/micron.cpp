@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#error "micron: the task-based parallel engine is unavailable in WebAssembly; use worker threads"
+#else
+
 #include "../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
 
 #include "../tasks/tasks.hpp"
@@ -72,3 +77,5 @@ __pmapreduce(It __first, It __last, Leaf __leaf, Comb __comb, usize __grain)
 
 };      // namespace parallel
 };      // namespace micron
+
+#endif

@@ -6,8 +6,12 @@
 #pragma once
 
 #include "../errno.hpp"
+#if defined(__micron_arch_wasm32)
+#include "../bits/wasm/time.hpp"
+#else
 #include "../linux/elf/auxval.hpp"
 #include "../linux/sys/time.hpp"
+#endif
 
 #include "calendar.hpp"
 #include "civil.hpp"
@@ -443,8 +447,12 @@ inline constexpr int _sc_nprocessors_onln = 84;
 inline long
 clk_tck(void) noexcept
 {
+#if defined(__micron_arch_wasm32)
+  return -1;
+#else
   const unsigned long v = micron::getauxval(micron::at_clktck);
   return v != 0 ? static_cast<long>(v) : 100l;
+#endif
 }
 
 inline long
@@ -454,8 +462,12 @@ sysconf(int name) noexcept
   case _sc_clk_tck:
     return clk_tck();
   case _sc_pagesize: {
+#if defined(__micron_arch_wasm32)
+    return 65536;
+#else
     const unsigned long v = micron::getauxval(micron::at_pagesz);
     return v != 0 ? static_cast<long>(v) : static_cast<long>(__micron_page_size_default);
+#endif
   }
   default:
     return -1l;

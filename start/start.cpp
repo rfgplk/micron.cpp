@@ -5,6 +5,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 
 #include <micron/bits/__arch.hpp>
+#if defined(__micron_arch_wasm32)
+#include <micron/bits/wasm/start.hpp>
+#else
 #include <micron/bits/__compilers.hpp>
 #include <micron/bits/__pause.hpp>
 #include <micron/config.hpp>
@@ -548,3 +551,5 @@ __aeabi_f2lz(float x) noexcept
 }      // extern "C"
 
 #endif      // __micron_arch_arm32
+
+#endif      // __micron_arch_wasm32

@@ -5,7 +5,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
-#include "../mutex.hpp"
+#include "../locks.hpp"
 
 #include "../../atomic/atomic.hpp"
 #include "../../sync/yield.hpp"

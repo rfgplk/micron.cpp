@@ -1,0 +1,346 @@
+{
+  "schema_version": 1,
+  "validated_utc": "2026-11-13T18:04:52.243936+00:00",
+  "repository": {
+    "branch": "master",
+    "base_commit": "71a3d16f9127d2d46a993ee5ae72833fe5cda0da",
+    "state": "Uncommitted implementation; this record describes the tested working tree, not the base commit."
+  },
+  "target": "wasm32-unknown-unknown",
+  "host_abi": 1,
+  "toolchain": {
+    "clang": "clang version 22.1.8 (Fedora 22.1.8-4.fc44)",
+    "linker": "LLD 22.1.8",
+    "node": "v22.23.1",
+    "playwright": "1.65.0"
+  },
+  "runtime_matrix": {
+    "profiles": [
+      "scalar",
+      "scalar-eh",
+      "scalar-threads",
+      "scalar-threads-eh",
+      "simd",
+      "simd-eh",
+      "simd-threads",
+      "simd-threads-eh"
+    ],
+    "optimization": "O2",
+    "lto": "ThinLTO; EH runtime compiled as a regular object",
+    "passed": 192,
+    "failed": 0,
+    "skips_allowed": 0,
+    "evidence": {
+      "path": "bin/wasm-verified/results.json",
+      "sha256": "5235f20deb80768c2747b57d76a6b7e4fcd25abd44f7065e3ffb55ab6ccab048"
+    },
+    "module_manifest": {
+      "path": "bin/wasm-verified/modules.json",
+      "sha256": "df28a1d22a8c1d260c9931585da3cdeae2e72bc3596aef0c2a75121dc94273d4"
+    },
+    "source_reports": [
+      {
+        "path": "bin/wasm-final/results.json",
+        "sha256": "3c1a4bdf4daece20c5ea9d2da0ffb91dd06d2e20cc05ea634f6b472319e3039c"
+      },
+      {
+        "path": "bin/wasm-grading-final/results.json",
+        "sha256": "e619cd61b43ae7fcd138902e533a338daf94e93efa1f1589e4d2193e8ccc032f"
+      },
+      {
+        "path": "bin/wasm-supplement-final/results.json",
+        "sha256": "4205207cdeb029232e68389f7db10f3baa0e886a2fe5ebb0b8fd1468e4e4c251"
+      },
+      {
+        "path": "bin/wasm-host-final/results.json",
+        "sha256": "4c26ab3597f51fea8ca26dd77bd36841d649c85caa6029a67567a8f27d2401df"
+      }
+    ],
+    "notes": [
+      "Formatting suite case expectation corrected from 90 to its actual 50 test cases and all four cells rerun.",
+      "Final exact constexpr FMA and retryable host lifecycle covered by supplemental eight-profile runs.",
+      "All eight host_probe and lifecycle profiles rebuilt for streaming UTF-8 checks; Node host checks rerun after the shared-buffer decoder fix. See bin/wasm-host-final/node-after-shared-copy.log."
+    ]
+  },
+  "browser_matrix": {
+    "passed": 579,
+    "failed": 0,
+    "engines": {
+      "chromium": {
+        "version": "158.0.8127.18",
+        "module_runs": 192,
+        "isolation_negative_controls": 1,
+        "failed": 0
+      },
+      "firefox": {
+        "version": "159.0",
+        "module_runs": 192,
+        "isolation_negative_controls": 1,
+        "failed": 0
+      },
+      "webkit": {
+        "version": "27.2",
+        "module_runs": 192,
+        "isolation_negative_controls": 1,
+        "failed": 0
+      }
+    },
+    "evidence": {
+      "path": "bin/wasm-verified/browser-results.json",
+      "sha256": "02a30eb4312358223c38b3d17c7aef44f2c861ee5f210bfed6d312810f0768e4"
+    },
+    "source_reports": [
+      {
+        "path": "bin/wasm-verified/browser-chromium.json",
+        "sha256": "1d8c07453f59dc813a58902ff93df9c662387b010d323b9244ad5fe9671d7e03"
+      },
+      {
+        "path": "bin/wasm-verified/browser-firefox.json",
+        "sha256": "50f8a91042bfd7bf104c3a6aa02a3980420fe433c155a22d8ee9ad65639ff706"
+      },
+      {
+        "path": "bin/wasm-verified/browser-webkit.json",
+        "sha256": "07a572633a85e8da03a90503952be8ec4038169329c3cf101aacdd92c828f403"
+      },
+      {
+        "path": "bin/wasm-host-final/browser-results.json",
+        "sha256": "cdff532fb1ff32d8e67dcf620cda15bba0322615ebcb3975d659e8265a8ec672"
+      }
+    ],
+    "notes": [
+      "The complete matrix passed before the incremental UTF-8 fix. All eight host_probe and lifecycle profiles plus isolation controls were rerun in every engine after that fix, including shared-byte decoding and worker reuse."
+    ]
+  },
+  "optimization_spots": [
+    {
+      "optimization": "O0",
+      "lto": false,
+      "passed": 19,
+      "failed": 0,
+      "evidence": {
+        "path": "bin/wasm-o0/results.json",
+        "sha256": "cd1f63fe329c5ff9b8752b860ff1897aecae01ae52f2f9dbb44b9315341ad3cd"
+      }
+    },
+    {
+      "optimization": "O3",
+      "lto": true,
+      "passed": 7,
+      "failed": 0,
+      "evidence": {
+        "path": "bin/wasm-o3/results.json",
+        "sha256": "148f8effb424fc8c95f12c25881f62bd7e37dc450c4494423c183272ff09b4ff"
+      }
+    }
+  ],
+  "numerics": {
+    "profiles": [
+      {
+        "profile": "scalar",
+        "exact_oracle_checks": 157960,
+        "transcendental_reference_cases": 435,
+        "observed_max_transcendental_ulp": 118,
+        "transcendental_acceptance_ulp": 128,
+        "exact_evidence": {
+          "path": "bin/wasm-numeric-final.log",
+          "sha256": "a74777ff4ba8ca73d00c50a7a6b56041e4917c9ed293f9f378cce7cb78b73a12"
+        },
+        "transcendental_evidence": {
+          "path": "bin/wasm-math-final.log",
+          "sha256": "5a875d9d701c68dd5885da8faeb41788dbdcbf70a42df862f66a4280223eed2d"
+        }
+      },
+      {
+        "profile": "simd-threads-eh",
+        "exact_oracle_checks": 157960,
+        "transcendental_reference_cases": 435,
+        "observed_max_transcendental_ulp": 118,
+        "transcendental_acceptance_ulp": 128,
+        "exact_evidence": {
+          "path": "bin/wasm-numeric-shared-final.log",
+          "sha256": "a74777ff4ba8ca73d00c50a7a6b56041e4917c9ed293f9f378cce7cb78b73a12"
+        },
+        "transcendental_evidence": {
+          "path": "bin/wasm-math-shared-final.log",
+          "sha256": "5a875d9d701c68dd5885da8faeb41788dbdcbf70a42df862f66a4280223eed2d"
+        }
+      }
+    ],
+    "contract": "Exact round-to-nearest/ties-to-even arithmetic, FMA, sqrt and defined conversions. Binary128 transcendental functions use policy::extended; corpus bounds are observations, not universal rounding guarantees."
+  },
+  "header_inventory": {
+    "headers": 132,
+    "cells": 264,
+    "supported_cells": 214,
+    "expected_boundary_cells": 50,
+    "unexpected_changes": 0,
+    "evidence": {
+      "path": "bin/wasm-headers/results.json",
+      "sha256": "595ef14a6b7a40bce7b97d29d2ad55928a9f5c6876193175c228727ceb68a487"
+    },
+    "scope": "119 Micron entry headers and 13 read-only Canvas seams, each scalar/SIMD with native EH. Header parsing is not exhaustive template instantiation or Canvas rendering."
+  },
+  "controls": {
+    "configuration_and_reference_integrity": {
+      "passed": 52,
+      "evidence": {
+        "path": "bin/wasm-config-final.log",
+        "sha256": "723e3f3acc9a3d35a813ad2df999fb10376e592abd0b54d91d5513232fd967fe"
+      }
+    },
+    "runner_grading_and_watchdog": {
+      "passed": 24,
+      "evidence": {
+        "path": "bin/wasm-runner-final.log",
+        "sha256": "c9dc4775cf8a54c27b81c2c12d4b48906250f39d330fed88d39e8188995a957e"
+      }
+    },
+    "post_fix_host": {
+      "utf8_and_lifecycle_profiles": 16,
+      "abi_and_bounds_assertions": 9,
+      "evidence": {
+        "path": "bin/wasm-host-final/node-after-shared-copy.log",
+        "sha256": "140324e96df4a6ebe15aac3639a96ba1ab98e60be96aece679bed6963936342a"
+      }
+    },
+    "compile_manifest": {
+      "cells": 16,
+      "evidence": {
+        "path": "bin/wasm-manifest-final.log",
+        "sha256": "054b651ea21110a69ffa79f10b2e19e3f58a4036b8598b4348b90603abd75074"
+      }
+    }
+  },
+  "native_regression_evidence": [
+    {
+      "path": "bin/wasm-native-gcc.log",
+      "sha256": "7b7eb31a7a09412c7317e9f7d8437f523b2a58201cedb49db339f5c52c621a0a"
+    },
+    {
+      "path": "bin/wasm-native-clang.log",
+      "sha256": "bd838055ed736612be218990407a2faf35f9bce5bef1dc2914f0610b3927863c"
+    }
+  ],
+  "benchmarks": [
+    {
+      "path": "benches/results/wasm_allocator_baseline.json",
+      "sha256": "4237bdbefb533494e45b8dd28ba4aaf21400c4be4e2b7bf120616f7f4a341da0"
+    },
+    {
+      "path": "benches/results/wasm_math_simd.json",
+      "sha256": "19715cc3b999ebfbc55ed96a7a1536d372d69cb24549f1ebbe6ad51178b33c60"
+    }
+  ],
+  "source_snapshots": [
+    {
+      "directory": "src/bits/wasm",
+      "files": 42,
+      "sha256": "c7237a6dd44d4c95ee8fc3c786d0f5c06c425aab737d22df29d235aa4176934b",
+      "encoding": "sorted repository-relative path + NUL + file SHA-256 + newline",
+      "excluded_names": []
+    },
+    {
+      "directory": "src/memory/allocation/wasmalloc",
+      "files": 25,
+      "sha256": "c2b574844818bca16a7d10e8b10d031463ac13363a4f14ab59906df222cd96c9",
+      "encoding": "sorted repository-relative path + NUL + file SHA-256 + newline",
+      "excluded_names": []
+    },
+    {
+      "directory": "tests/wasm",
+      "files": 41,
+      "sha256": "3f88cd427f192b0a093ffa209cb79b83bdcf562d5be7dd82077744705fd546e3",
+      "encoding": "sorted repository-relative path + NUL + file SHA-256 + newline",
+      "excluded_names": [
+        "validation.json"
+      ]
+    }
+  ],
+  "critical_files": [
+    {
+      "path": "src/bits/__arch.hpp",
+      "sha256": "cff756fc525d3ae2f034fe915f9023d69354c0603ae0bb8a9ca020dae40add0d"
+    },
+    {
+      "path": "src/bits/wasm/host.mjs",
+      "sha256": "acc16bff919bab09d93b8bba53e4f8cc46a3247962f195803d583723b175503a"
+    },
+    {
+      "path": "src/bits/wasm/worker.mjs",
+      "sha256": "4c77f3db73088a5bd74daaae6d7dc137e11a4280e03d7ca4350ec92914ff0298"
+    },
+    {
+      "path": "src/bits/wasm/node.mjs",
+      "sha256": "baedb3b1e56c57c3063fbd7ec15ae08f3952eb57a80ae22cdb69cfd157ab2c04"
+    },
+    {
+      "path": "src/bits/wasm/features.hpp",
+      "sha256": "8480160a34d0032db3bf619822c488428c553305659f74c865b0a43d72d3f2f8"
+    },
+    {
+      "path": "src/bits/wasm/start.hpp",
+      "sha256": "4e12571720a2f2ca51a0c8e109be9e66790304d82ba49e844d43b70f71529f50"
+    },
+    {
+      "path": "src/bits/wasm/eh.hpp",
+      "sha256": "d0b93203973fb3441b926aa15724cb03c209c707b70cb3d25953e8052fa60575"
+    },
+    {
+      "path": "tools/src/recipes/gnu/config.hh",
+      "sha256": "349664b7811bb8e9a28f5b76415b676a7ce00ba08c0824884bd9116a48c9d9f4"
+    },
+    {
+      "path": "tools/src/recipes/gnu/batch.hh",
+      "sha256": "cc823eddb839e39877ff09554957d99b96eaef183997fe56d0d579cd1312c120"
+    },
+    {
+      "path": "tests/wasm/browser.mjs",
+      "sha256": "4b0341304fe14c041dc11c5ab0ba87627375e285ad5eb98b5f0bf430203df304"
+    },
+    {
+      "path": "tests/wasm/suite.py",
+      "sha256": "9472b6d67501c5540b5d12d333d235ddb15c8b6af38a75f26e92b65d82cbfdad"
+    },
+    {
+      "path": "tests/wasm/header_inventory.json",
+      "sha256": "4dec5414bb7e192c3ff197a8004720ad69fe477cdc96348f018f5621c2c6f035"
+    },
+    {
+      "path": "references/wasm/manifest.json",
+      "sha256": "1dcc8c6fbf698809ddbb03b665e900269da1acf0b4a9f99569ef111ad59a4cfc"
+    },
+    {
+      "path": "WASM.rst",
+      "sha256": "7fbd12885b4b18cb9147482cede1c012c2cc814ad4be42e243fcaf4b10bafcdf"
+    }
+  ],
+  "boundaries": [
+    "Abcmalloc has no working-tree changes; the new allocator is its wasmalloc sibling.",
+    "No Canvas source was modified or vendored; rendering integration is deferred.",
+    "No WASI, Emscripten, libc, STL, compiler-rt or external C++ runtime is linked.",
+    "Native filesystem/process/ELF/graphics and stackful task switching APIs are explicitly unavailable.",
+    "Configured linear memory is capped at 2 GiB; memory64 is unavailable.",
+    "Browser workers require COOP/COEP isolation. Worker/host crashes terminate the pool.",
+    "Strict correctly-rounded/faithful binary128 transcendental policies are unavailable; extended is explicit."
+  ],
+  "reproduce": [
+    "sh scripts/bootstap_duck.sh",
+    "python3 tests/wasm/check_config.py",
+    "bin/duck batch verify_compile_wasm.duck",
+    "python3 tests/wasm/suite.py --jobs 4",
+    "python3 tests/wasm/runner_controls.py",
+    "node tests/wasm/runtime_host.mjs",
+    "npm install --prefix bin/wasm-tools playwright@1.65.0",
+    "bin/wasm-tools/node_modules/.bin/playwright install chromium firefox webkit",
+    "node tests/wasm/browser.mjs",
+    "python3 scripts/check_wasm_headers.py --canvas /code/C++/canvas",
+    "node tests/wasm/numeric_oracle.mjs bin/wasm-tests/scalar/numeric.wasm",
+    "node tests/wasm/numeric_oracle.mjs bin/wasm-tests/simd-threads-eh/numeric.wasm --threads",
+    "node tests/wasm/math_oracle.mjs bin/wasm-tests/scalar/math.wasm",
+    "node tests/wasm/math_oracle.mjs bin/wasm-tests/simd-threads-eh/math.wasm --threads",
+    "python3 tests/wasm/numeric_policy.py",
+    "python3 tests/wasm/numeric_constants.py",
+    "python3 scripts/sync_wasmalloc.py --check"
+  ],
+  "artifact_notes": "Detailed modules, command lines and logs under bin/ are local ignored build artifacts. This summary, source hashes, test sources, reference manifest and benchmark baselines are reviewable repository files."
+}

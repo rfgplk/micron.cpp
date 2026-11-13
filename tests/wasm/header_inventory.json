@@ -1,0 +1,1767 @@
+{
+  "version": 1,
+  "scope": "All root Micron .hpp entry points and selected portable subsystem entry points; selected Canvas seams only. Each header is parsed independently. This inventory is compile coverage, not a claim of full template instantiation or application support.",
+  "profiles": [
+    "scalar",
+    "simd128"
+  ],
+  "exceptions": "native Wasm EH enabled for both profiles",
+  "canvas": "Optional --canvas checkout, CANVAS_NULL=1, read-only source probe against this Micron working tree. The installed Micron snapshot and Canvas build files are unchanged. No graphics execution.",
+  "reproduce": "python3 scripts/check_wasm_headers.py --canvas /code/C++/canvas",
+  "headers": [
+    {
+      "project": "micron",
+      "header": "alloc.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "allocator.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "array.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "attributes.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "bitfield.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "bits-types.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "bits.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "bytewise.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "chrono.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "circle_buffer.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "closures.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "cmalloc.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "compare.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "concepts.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "config.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "container_safety.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "control.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "coroio.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/tasks/tasks.hpp:10:2: error: \"micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend\"",
+          "micron/io.hpp:10:2: error: \"micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics\"",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/coroutine/fiber.hpp:10:2: error: \"micron: stack switching is unavailable in WebAssembly; stackful tasks are deferred\"",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/task.hpp:148:27: error: no member named '__frame_alloc' in namespace 'micron::fiber'",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/task.hpp:154:5: error: no member named '__frame_free' in namespace 'micron::fiber'; did you mean '__frame_base'?",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/task.hpp:226:27: error: no member named '__frame_alloc' in namespace 'micron::fiber'",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/task.hpp:232:5: error: no member named '__frame_free' in namespace 'micron::fiber'; did you mean '__frame_base'?",
+          "micron/io/coroutine/../../tasks/coroutine/../../thread/../io/../linux/../syscall.hpp:14:2: error: \"micron: Linux syscalls are unavailable in the native WebAssembly backend\""
+        ],
+        "simd128": [
+          "micron/tasks/tasks.hpp:10:2: error: \"micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend\"",
+          "micron/io.hpp:10:2: error: \"micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics\"",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/coroutine/fiber.hpp:10:2: error: \"micron: stack switching is unavailable in WebAssembly; stackful tasks are deferred\"",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/task.hpp:148:27: error: no member named '__frame_alloc' in namespace 'micron::fiber'",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/task.hpp:154:5: error: no member named '__frame_free' in namespace 'micron::fiber'; did you mean '__frame_base'?",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/task.hpp:226:27: error: no member named '__frame_alloc' in namespace 'micron::fiber'",
+          "micron/io/coroutine/../../tasks/coroutine/../../tasks/task.hpp:232:5: error: no member named '__frame_free' in namespace 'micron::fiber'; did you mean '__frame_base'?",
+          "micron/io/coroutine/../../tasks/coroutine/../../thread/../io/../linux/../syscall.hpp:14:2: error: \"micron: Linux syscalls are unavailable in the native WebAssembly backend\""
+        ]
+      },
+      "boundary_message": "micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "defs.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "doublelist.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "dynamic.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/dynamic.hpp:10:2: error: \"micron: native dynamic loading is unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/dynamic.hpp:10:2: error: \"micron: native dynamic loading is unavailable in WebAssembly\""
+        ]
+      },
+      "boundary_message": "micron: native dynamic loading is unavailable in WebAssembly",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "elf.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/elf.hpp:10:2: error: \"micron: ELF loading is unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/elf.hpp:10:2: error: \"micron: ELF loading is unavailable in WebAssembly\""
+        ]
+      },
+      "boundary_message": "micron: ELF loading is unavailable in WebAssembly",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "endian.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "errno.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "except.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "exit.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "function.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "gfx.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/gfx.hpp:10:2: error: \"micron: the native graphics backend is unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/gfx.hpp:10:2: error: \"micron: the native graphics backend is unavailable in WebAssembly\""
+        ]
+      },
+      "boundary_message": "micron: the native graphics backend is unavailable in WebAssembly",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "gl.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/gl.hpp:10:2: error: \"micron: the native OpenGL backend is unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/gl.hpp:10:2: error: \"micron: the native OpenGL backend is unavailable in WebAssembly\""
+        ]
+      },
+      "boundary_message": "micron: the native OpenGL backend is unavailable in WebAssembly",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "io.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/io.hpp:10:2: error: \"micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics\""
+        ],
+        "simd128": [
+          "micron/io.hpp:10:2: error: \"micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics\""
+        ]
+      },
+      "boundary_message": "micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "iterator.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "kernel.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/kernel.hpp:10:2: error: \"micron: Linux kernel interfaces are unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/kernel.hpp:10:2: error: \"micron: Linux kernel interfaces are unavailable in WebAssembly\""
+        ]
+      },
+      "boundary_message": "micron: Linux kernel interfaces are unavailable in WebAssembly",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "list.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "lz.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "map.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "maps.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "match.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "math.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "mem.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory_block.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "meta.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "new.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "numerics.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "pointer.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "proc.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/proc.hpp:11:2: error: \"micron: Linux process interfaces are unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/proc.hpp:11:2: error: \"micron: Linux process interfaces are unavailable in WebAssembly\""
+        ]
+      },
+      "boundary_message": "micron: Linux process interfaces are unavailable in WebAssembly",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "queue.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "range.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "reflect.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "regex.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "rng.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "sec.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/sec.hpp:10:2: error: \"micron: Linux security controls are unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/sec.hpp:10:2: error: \"micron: Linux security controls are unavailable in WebAssembly\""
+        ]
+      },
+      "boundary_message": "micron: Linux security controls are unavailable in WebAssembly",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "settle_fwd.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "slice.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "slice_forward.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "span.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "stack.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "start.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "std.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "stdcoro.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/tasks/tasks.hpp:10:2: error: \"micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend\""
+        ],
+        "simd128": [
+          "micron/tasks/tasks.hpp:10:2: error: \"micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend\""
+        ]
+      },
+      "boundary_message": "micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "stdthread.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "strings.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "sum.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "syscall.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/syscall.hpp:14:2: error: \"micron: Linux syscalls are unavailable in the native WebAssembly backend\""
+        ],
+        "simd128": [
+          "micron/syscall.hpp:14:2: error: \"micron: Linux syscalls are unavailable in the native WebAssembly backend\""
+        ]
+      },
+      "boundary_message": "micron: Linux syscalls are unavailable in the native WebAssembly backend",
+      "reason": "Native operating-system, graphics, dynamic-module, or stackful-coroutine surface excluded from the browser backend."
+    },
+    {
+      "project": "micron",
+      "header": "tags.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "trees.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "tuple.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "type_traits.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "types.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "vector.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "version.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "view.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/cmemory.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/addr.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/memory.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/allocation/kmemory.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/allocation/resources.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/pointers/atomic.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/pointers/shared.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/pointers/unique.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/pointers/hazard.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "vector/pvector.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "array/parray.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "maps/itable.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "string/rope.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "string/strings.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "sort/sort.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "sort/sorts.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "algorithm/algorithm.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "atomic/atomic.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "mutex/mutex.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "thread/thread.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "thread/thread_types/auto_thread.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "simd/simd.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "math/mk.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "math/linalg.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "math/quants/vecs.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "math/matrix/mat.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "math/quaternions/quaternions.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "chrono/posix.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "chrono/units.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "hash/hash.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "queue/spsc_queue.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "queue/static_mpmc.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "sync/latch.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "sync/semaphore.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "math/blas/blas.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "types.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "math/math.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "geometry/gen2d.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "geometry/gen3d.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "text/text.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "ui/document.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "ui/layout.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "ui/interact.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "ui/text_edit.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "ui/strokes/strokes.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "diagnostics": {
+        "scalar": [
+          "micron/io.hpp:10:2: error: \"micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics\"",
+          "canvas/src/ui/strokes/../../core/shader_source.hpp:118:22: error: no member named 'io' in namespace 'micron'",
+          "canvas/src/ui/strokes/../../core/shader_source.hpp:118:36: error: unexpected type name 'string': expected expression",
+          "canvas/src/ui/strokes/../../core/shader_source.hpp:118:52: error: no member named 'io' in namespace 'micron'"
+        ],
+        "simd128": [
+          "micron/io.hpp:10:2: error: \"micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics\"",
+          "canvas/src/ui/strokes/../../core/shader_source.hpp:118:22: error: no member named 'io' in namespace 'micron'",
+          "canvas/src/ui/strokes/../../core/shader_source.hpp:118:36: error: unexpected type name 'string': expected expression",
+          "canvas/src/ui/strokes/../../core/shader_source.hpp:118:52: error: no member named 'io' in namespace 'micron'"
+        ]
+      },
+      "boundary_message": "micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics",
+      "reason": "Canvas core/shader_source.hpp includes native filesystem I/O. Future Canvas host asset/shader loading work; no Canvas changes in the Micron backend."
+    },
+    {
+      "project": "canvas",
+      "header": "ui/strokes/state.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "ui/strokes/theme.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "canvas",
+      "header": "ui/theme.hpp",
+      "status": {
+        "scalar": "pass",
+        "simd128": "pass"
+      },
+      "diagnostics": {
+        "scalar": [],
+        "simd128": []
+      }
+    },
+    {
+      "project": "micron",
+      "header": "memory/allocation/kmapping.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: Linux virtual-memory mappings are unavailable on WebAssembly",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/memory/allocation/kmapping.hpp:11:2: error: \"micron: Linux virtual-memory mappings are unavailable on WebAssembly\""
+        ],
+        "simd128": [
+          "micron/memory/allocation/kmapping.hpp:11:2: error: \"micron: Linux virtual-memory mappings are unavailable on WebAssembly\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "vector/reserved_vector.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: reserved_vector requires virtual memory reservation and protection, unavailable in WebAssembly",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/vector/reserved_vector.hpp:10:2: error: \"micron: reserved_vector requires virtual memory reservation and protection, unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/vector/reserved_vector.hpp:10:2: error: \"micron: reserved_vector requires virtual memory reservation and protection, unavailable in WebAssembly\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "tasks/tasks.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/tasks/tasks.hpp:10:2: error: \"micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend\""
+        ],
+        "simd128": [
+          "micron/tasks/tasks.hpp:10:2: error: \"micron: the stackful task engine is unavailable in WebAssembly; use the worker thread backend\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "tasks/coroutine/fiber.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: stack switching is unavailable in WebAssembly; stackful tasks are deferred",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/tasks/coroutine/fiber.hpp:10:2: error: \"micron: stack switching is unavailable in WebAssembly; stackful tasks are deferred\""
+        ],
+        "simd128": [
+          "micron/tasks/coroutine/fiber.hpp:10:2: error: \"micron: stack switching is unavailable in WebAssembly; stackful tasks are deferred\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "parallel/engine.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: the task-based parallel engine is unavailable in WebAssembly; use worker threads",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/parallel/engine.hpp:10:2: error: \"micron: the task-based parallel engine is unavailable in WebAssembly; use worker threads\""
+        ],
+        "simd128": [
+          "micron/parallel/engine.hpp:10:2: error: \"micron: the task-based parallel engine is unavailable in WebAssembly; use worker threads\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "attach/entry.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: ELF module attachment is unavailable in WebAssembly",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/attach/entry.hpp:10:2: error: \"micron: ELF module attachment is unavailable in WebAssembly\""
+        ],
+        "simd128": [
+          "micron/attach/entry.hpp:10:2: error: \"micron: ELF module attachment is unavailable in WebAssembly\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "thread/arena.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/thread/arena.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ],
+        "simd128": [
+          "micron/thread/arena.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "thread/pool.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/thread/pool.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ],
+        "simd128": [
+          "micron/thread/pool.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "thread/spawn.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/thread/spawn.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ],
+        "simd128": [
+          "micron/thread/spawn.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "thread/thread_types/void_thread.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/thread/thread_types/void_thread.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ],
+        "simd128": [
+          "micron/thread/thread_types/void_thread.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "thread/thread_types/group_thread.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/thread/thread_types/group_thread.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ],
+        "simd128": [
+          "micron/thread/thread_types/group_thread.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "thread/thread_types/async_thread.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn",
+      "reason": "Native virtual memory, stackful tasks, ELF attachment, or Linux thread scheduling is explicitly unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/thread/thread_types/async_thread.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ],
+        "simd128": [
+          "micron/thread/thread_types/async_thread.hpp:9:2: error: \"micron: native thread arenas and scheduling types are unavailable on wasm; use micron::thread or micron::wasm::spawn\""
+        ]
+      }
+    },
+    {
+      "project": "micron",
+      "header": "sync/when.hpp",
+      "status": {
+        "scalar": "blocked",
+        "simd128": "blocked"
+      },
+      "boundary_message": "micron: detached native thread arenas are unavailable on wasm32; use micron::thread or micron::wasm::spawn",
+      "reason": "Native detached go/arena scheduling is unavailable; browser workers use thread/thread.hpp.",
+      "diagnostics": {
+        "scalar": [
+          "micron/sync/when.hpp:9:2: error: \"micron: detached native thread arenas are unavailable on wasm32; use micron::thread or micron::wasm::spawn\""
+        ],
+        "simd128": [
+          "micron/sync/when.hpp:9:2: error: \"micron: detached native thread arenas are unavailable on wasm32; use micron::thread or micron::wasm::spawn\""
+        ]
+      }
+    }
+  ]
+}

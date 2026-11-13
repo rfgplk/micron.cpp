@@ -18,7 +18,7 @@
 
 namespace micron::uxin::keymap
 {
-namespace detail
+namespace __impl
 {
 enum class token_kind : u8 { end, word, string, key, number, punctuation };
 
@@ -861,7 +861,7 @@ template<bool Accelerated> struct parser {
     return 0;
   }
 };
-}      // namespace detail
+}      // namespace __impl
 
 struct translation {
   u32 symbol = 0, codepoint = 0, consumed = 0;
@@ -870,9 +870,9 @@ struct translation {
 
 template<bool Accelerated = true> class basic_state
 {
-  detail::map map_{};
-  u32 modifiers_ = 0, group_ = 0;
-  bool valid_ = false;
+  __impl::map __map{};
+  u32 __modifiers = 0, __group = 0;
+  bool __valid = false;
 
 public:
   basic_state() = default;
@@ -892,13 +892,13 @@ public:
   {
     if ( bytes.len > 4 * 1024 * 1024 ) return -micron::error::message_too_long;
     try {
-      detail::map candidate;
-      detail::parser<Accelerated> parser{ bytes, candidate };
+      __impl::map candidate;
+      __impl::parser<Accelerated> parser{ bytes, candidate };
       const i32 error = parser.parse();
       if ( error ) return error;
-      map_ = micron::move(candidate);
-      modifiers_ = group_ = 0;
-      valid_ = true;
+      __map = micron::move(candidate);
+      __modifiers = __group = 0;
+      __valid = true;
       return 0;
     } catch ( ... ) {
       return -micron::error::out_of_memory;
@@ -908,15 +908,15 @@ public:
   void
   reset() noexcept
   {
-    map_ = {};
-    modifiers_ = group_ = 0;
-    valid_ = false;
+    __map = {};
+    __modifiers = __group = 0;
+    __valid = false;
   }
 
   bool
   valid() const noexcept
   {
-    return valid_;
+    return __valid;
   }
 
   void
@@ -927,14 +927,14 @@ public:
   void
   update_mods(u32 depressed, u32 latched, u32 locked, u32 group) noexcept
   {
-    modifiers_ = depressed | latched | locked;
-    group_ = group;
+    __modifiers = depressed | latched | locked;
+    __group = group;
   }
 
   u32
   modifiers() const noexcept
   {
-    return map_.expanded(modifiers_);
+    return __map.expanded(__modifiers);
   }
 
   u32
@@ -944,18 +944,18 @@ public:
     const raw_slice<const char> value{ name, micron::strlen(name) };
     for ( u32 i = 0; i < 8; ++i )
       if ( same(value, real[i]) ) return 1u << i;
-    for ( usize i = 0; i < map_.virtuals.size(); ++i )
-      if ( same(value, map_.virtuals[i].name.c_str()) ) return (1u << (8 + i)) | map_.virtuals[i].bindings;
+    for ( usize i = 0; i < __map.virtuals.size(); ++i )
+      if ( same(value, __map.virtuals[i].name.c_str()) ) return (1u << (8 + i)) | __map.virtuals[i].bindings;
     return 0;
   }
 
   translation
   translate(u32 evdev_code) const noexcept
   {
-    if ( !valid_ || evdev_code > ~0u - 8 ) return {};
-    const auto *entry = map_.code(evdev_code + 8);
+    if ( !__valid || evdev_code > ~0u - 8 ) return {};
+    const auto *entry = __map.code(evdev_code + 8);
     if ( !entry || !entry->group_count ) return {};
-    u32 selected = group_;
+    u32 selected = __group;
     if ( selected >= entry->group_count )
       selected = entry->policy == 1   ? entry->group_count - 1
                  : entry->policy == 2 ? (entry->redirect < entry->group_count ? entry->redirect : 0)
@@ -963,7 +963,7 @@ public:
     const auto &group = entry->groups[selected];
     u32 level = 0, consumed = 0;
     if ( !group.type.empty() ) {
-      for ( const auto &type : map_.types )
+      for ( const auto &type : __map.types )
         if ( type.name == group.type ) {
           const auto actual = modifiers() & type.modifiers;
           consumed = type.modifiers;
@@ -977,13 +977,13 @@ public:
         }
     } else if ( group.symbols.size() >= 2 ) {
       const auto lower = symbol_unicode(group.symbols[0]), upper = symbol_unicode(group.symbols[1]);
-      const bool alphabetic = detail::alphabetic_pair(lower, upper);
-      level = (modifiers_ & 1u) ? 1 : 0;
+      const bool alphabetic = __impl::alphabetic_pair(lower, upper);
+      level = (__modifiers & 1u) ? 1 : 0;
       consumed = alphabetic ? 3u : 1u;
-      if ( alphabetic && (modifiers_ & 2u) ) level ^= 1;
+      if ( alphabetic && (__modifiers & 2u) ) level ^= 1;
     }
-    for ( usize v = 0; v < map_.virtuals.size(); ++v )
-      if ( consumed & (1u << (8 + v)) ) consumed |= map_.virtuals[v].bindings;
+    for ( usize v = 0; v < __map.virtuals.size(); ++v )
+      if ( consumed & (1u << (8 + v)) ) consumed |= __map.virtuals[v].bindings;
     if ( level >= group.symbols.size() ) return { .consumed = consumed, .repeat = entry->repeat };
     const u32 symbol = group.symbols[level];
     const u32 codepoint = symbol_unicode(symbol);

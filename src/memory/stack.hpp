@@ -7,6 +7,9 @@
 
 #include "../bits/__arch.hpp"
 #include "stack_constants.hpp"
+#if defined(__micron_arch_wasm32)
+#include "../bits/wasm/runtime.hpp"
+#endif
 
 namespace micron
 {
@@ -18,6 +21,9 @@ inline constinit stack_t __micron_main_stack{ nullptr, 0 };
 inline auto
 get_stack(void) -> stack_t
 {
+#if defined(__micron_arch_wasm32)
+  return { static_cast<addr_t *>(wasm::stack_begin()), wasm::stack_size() };
+#else
 #if defined(__micron_freestanding)
   if ( __micron_main_stack.start != nullptr ) return __micron_main_stack;
 #endif
@@ -27,6 +33,7 @@ get_stack(void) -> stack_t
   const usize size = static_cast<usize>(default_stack_size);
   const uintptr_t lo = hi - static_cast<uintptr_t>(size);
   return stack_t{ reinterpret_cast<addr_t *>(lo), size };
+#endif
 }
 
 inline auto

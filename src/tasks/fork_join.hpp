@@ -26,7 +26,7 @@ namespace micron
 namespace coro
 {
 
-namespace __fork_detail
+namespace __impl
 {
 
 template<class F> struct __args_by_value: micron::true_type {
@@ -67,7 +67,7 @@ __fork_args_ok()
   else
     return __args_by_value<D>::value;
 }
-};      // namespace __fork_detail
+};      // namespace __impl
 
 template<class T, class Maker> struct __fork_awaitable {
   void *__dst;      // eventual<T>* | T* | nullptr, interpreted per __mode
@@ -189,7 +189,7 @@ template<class T, class Maker> struct __call_awaitable {
 };
 
 // WARNING: a forked callable must take its arguments by value
-namespace __cf_detail
+namespace __impl
 {
 template<class> struct __is_eventual: micron::false_type {
 };
@@ -206,7 +206,7 @@ template<class Fn> struct __fork_binder {
   [[nodiscard]] auto
   operator()(Args &&...__args)
   {
-    static_assert(__fork_detail::__fork_args_ok<Fn>(),
+    static_assert(__impl::__fork_args_ok<Fn>(),
                   "micron::fork: a forked callable must take its arguments by value; a reference parameter binds "
                   "to the awaitable-owned argument copy and dangles when the continuation is stolen");
     using T = coro::__task_value_t<decltype(__fn(micron::forward<Args>(__args)...))>;
@@ -225,14 +225,14 @@ template<class Fn> struct __call_binder {
   [[nodiscard]] auto
   operator()(Args &&...__args)
   {
-    static_assert(__fork_detail::__fork_args_ok<Fn>(), "micron::call: a result-bound callable must take its arguments by value");
+    static_assert(__impl::__fork_args_ok<Fn>(), "micron::call: a result-bound callable must take its arguments by value");
     using T = coro::__task_value_t<decltype(__fn(micron::forward<Args>(__args)...))>;
     auto __make
         = [__f = micron::move(__fn), ... __a = micron::forward<Args>(__args)]() mutable -> task<T> { return __f(micron::move(__a)...); };
     return __call_awaitable<T, decltype(__make)>{ __dst, __mode, micron::move(__make) };
   }
 };
-};      // namespace __cf_detail
+};      // namespace __impl
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // fork: second-order spawn
@@ -245,7 +245,7 @@ struct __fork_fn {
   [[nodiscard]] auto
   operator()(eventual<T> &__out, Fn &&__fn, Args &&...__args) const
   {
-    static_assert(__fork_detail::__fork_args_ok<Fn>(), "micron::fork: a forked callable must take its arguments BY VALUE");
+    static_assert(__impl::__fork_args_ok<Fn>(), "micron::fork: a forked callable must take its arguments BY VALUE");
     auto __make = [__fn = micron::forward<Fn>(__fn), ... __a = micron::forward<Args>(__args)]() mutable -> task<T> {
       return __fn(micron::move(__a)...);
     };
@@ -257,8 +257,8 @@ struct __fork_fn {
   [[nodiscard]] auto
   operator()(I *__ret, Fn &&__fn) const
   {
-    constexpr u8 __m = __cf_detail::__is_eventual<I>::value ? __rm_eventual : __rm_lvalue;
-    return __cf_detail::__fork_binder<micron::decay_t<Fn>>{ static_cast<void *>(__ret), __m, micron::forward<Fn>(__fn) };
+    constexpr u8 __m = __impl::__is_eventual<I>::value ? __rm_eventual : __rm_lvalue;
+    return __impl::__fork_binder<micron::decay_t<Fn>>{ static_cast<void *>(__ret), __m, micron::forward<Fn>(__fn) };
   }
 
   template<class I, class Fn>
@@ -273,7 +273,7 @@ struct __fork_fn {
   [[nodiscard]] auto
   operator()(discard_t, Fn &&__fn) const
   {
-    return __cf_detail::__fork_binder<micron::decay_t<Fn>>{ nullptr, __rm_discard, micron::forward<Fn>(__fn) };
+    return __impl::__fork_binder<micron::decay_t<Fn>>{ nullptr, __rm_discard, micron::forward<Fn>(__fn) };
   }
 
   template<class Fn>
@@ -297,8 +297,8 @@ struct __call_fn {
   [[nodiscard]] auto
   operator()(I *__ret, Fn &&__fn) const
   {
-    constexpr u8 __m = __cf_detail::__is_eventual<I>::value ? __rm_eventual : __rm_lvalue;
-    return __cf_detail::__call_binder<micron::decay_t<Fn>>{ static_cast<void *>(__ret), __m, micron::forward<Fn>(__fn) };
+    constexpr u8 __m = __impl::__is_eventual<I>::value ? __rm_eventual : __rm_lvalue;
+    return __impl::__call_binder<micron::decay_t<Fn>>{ static_cast<void *>(__ret), __m, micron::forward<Fn>(__fn) };
   }
 
   template<class I, class Fn>
@@ -313,7 +313,7 @@ struct __call_fn {
   [[nodiscard]] auto
   operator()(discard_t, Fn &&__fn) const
   {
-    return __cf_detail::__call_binder<micron::decay_t<Fn>>{ nullptr, __rm_discard, micron::forward<Fn>(__fn) };
+    return __impl::__call_binder<micron::decay_t<Fn>>{ nullptr, __rm_discard, micron::forward<Fn>(__fn) };
   }
 
   template<class Fn>

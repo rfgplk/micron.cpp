@@ -31,6 +31,9 @@
 #include "round.hpp"
 #include "sqrt.hpp"
 
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/extended.hpp"
+#endif
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
 __micron_push_options __micron_optimize_no_fast_math namespace micron
 {
@@ -688,6 +691,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   sin(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::sin(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(sin_f32(f32(x)));
     else
@@ -698,6 +704,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   cos(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::cos(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(cos_f32(f32(x)));
     else
@@ -708,6 +717,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   tan(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::tan(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(tan_f32(f32(x)));
     else
@@ -718,6 +730,12 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[gnu::always_inline]] inline constexpr void
   sincos(F x, F &s, F &c) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) {
+      micron::wasm::math::sincos(x, s, c);
+      return;
+    }
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) ) {
       f32 ss, cc;
       sincos_f32(f32(x), &ss, &cc);
@@ -735,6 +753,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   atan(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::atan(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(atan_f32(f32(x)));
     else
@@ -745,6 +766,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   atan2(F y, F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::atan2(y, x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(atan2_f32(f32(y), f32(x)));
     else
@@ -755,6 +779,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   asin(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::asin(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(asin_f32(f32(x)));
     else
@@ -765,6 +792,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   acos(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::acos(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(acos_f32(f32(x)));
     else

@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#include "bits/wasm/exit.hpp"
+#else
+
 #include "atomic/intrin.hpp"
 #include "bits/__pause.hpp"
 #include "bits/__profile.hpp"
@@ -362,3 +367,5 @@ __cxa_deleted_virtual()
 
 }      // extern "C"
 #endif
+
+#endif      // __micron_arch_wasm32

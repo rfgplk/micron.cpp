@@ -5,8 +5,15 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#error "micron: the native graphics backend is unavailable in WebAssembly"
+#else
+
 // main gfx include header
 // NOTE: still indev, half experimental
 
 #include "gfx/gl/gl.hpp"
 #include "gfx/vk.hpp"
+
+#endif

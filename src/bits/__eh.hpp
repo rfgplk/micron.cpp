@@ -10,7 +10,9 @@
 
 #include "eh/eh_config.hpp"
 
-#if defined(__micron_eh)
+#if defined(__micron_eh) && defined(__micron_arch_wasm32)
+#include "wasm/eh.hpp"
+#elif defined(__micron_eh)
 
 #include "eh/unwind.hpp"
 

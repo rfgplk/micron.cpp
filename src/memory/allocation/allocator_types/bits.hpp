@@ -8,6 +8,9 @@
 #include "../../../cmalloc.hpp"
 
 #include "../../../types.hpp"
+#if defined(__micron_arch_wasm32)
+#include "../wasmalloc/allocator.hpp"
+#endif
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // low-level allocator adapters
@@ -68,7 +71,11 @@ template<typename T> struct abc_allocator {
   static T *
   unmanaged_allocate(usize sz)
   {
+#if defined(__micron_arch_wasm32)
+    return reinterpret_cast<T *>(abc::__abc_allocator<byte>::calloc(sz).ptr);
+#else
     return reinterpret_cast<T *>(micron::sys_allocator<byte>::alloc(sz));
+#endif
   }
 
   static void
@@ -76,7 +83,11 @@ template<typename T> struct abc_allocator {
   {
     if ( ptr == nullptr ) [[unlikely]]
       return;
+#if defined(__micron_arch_wasm32)
+    abc::__abc_allocator<byte>::dealloc(reinterpret_cast<byte *>(ptr), sz);
+#else
     return micron::sys_allocator<byte>::dealloc(ptr, sz);
+#endif
   }
 };
 

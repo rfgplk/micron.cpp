@@ -10,11 +10,17 @@
 
 #include "../memory/memory.hpp"
 #include "../types.hpp"
+#if defined(__micron_arch_wasm32)
+#include "../bits/wasm/print_io.hpp"
+#else
 #include "io.hpp"
+#endif
 
 #include "../tuple.hpp"
 
+#if !defined(__micron_arch_wasm32)
 #include "__std.hpp"
+#endif
 
 #include "../string/conversions/bits.hpp"
 #include "../string/conversions/floating_point.hpp"

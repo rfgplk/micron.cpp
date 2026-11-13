@@ -185,9 +185,14 @@ __modti3(__int128 n, __int128 d) noexcept
 // freestanding link fails at the very header that exists to keep it linking. The other two are the
 // rest of the family: a sibling missing from a ladder is how that gap arrived in the first place.
 // The shift count is `int` -- libgcc2.h's shift_count_type, which aarch64 does not override.
+// Wasm lowering can speculate a range-guarded i128 shift before discarding its poison result.
+// Keep these compiler helpers total there; source-level shift checks still precede their calls.
 extern "C" __mc_libgcc_sym __int128
 __ashlti3(__int128 u, int b) noexcept
 {
+#if defined(__micron_arch_wasm32)
+  b = static_cast<unsigned>(b) & 127u;
+#endif
   if ( b == 0 ) return u;
   const unsigned __int128 uu = static_cast<unsigned __int128>(u);
   const unsigned long long lo = static_cast<unsigned long long>(uu);
@@ -207,6 +212,9 @@ __ashlti3(__int128 u, int b) noexcept
 extern "C" __mc_libgcc_sym __int128
 __lshrti3(__int128 u, int b) noexcept
 {
+#if defined(__micron_arch_wasm32)
+  b = static_cast<unsigned>(b) & 127u;
+#endif
   if ( b == 0 ) return u;
   const unsigned __int128 uu = static_cast<unsigned __int128>(u);
   const unsigned long long lo = static_cast<unsigned long long>(uu);
@@ -226,6 +234,9 @@ __lshrti3(__int128 u, int b) noexcept
 extern "C" __mc_libgcc_sym __int128
 __ashrti3(__int128 u, int b) noexcept
 {
+#if defined(__micron_arch_wasm32)
+  b = static_cast<unsigned>(b) & 127u;
+#endif
   if ( b == 0 ) return u;
   const unsigned __int128 uu = static_cast<unsigned __int128>(u);
   const unsigned long long lo = static_cast<unsigned long long>(uu);

@@ -48,6 +48,8 @@ inline bool
 target_runnable(const config_t &conf)
 {
   if ( !mc::posix::exists(conf.compiler_path.c_str()) ) return false;
+  if ( conf.arch == __arch::wasm32 )
+    return mc::posix::exists("/usr/bin/node") and mc::posix::exists(conf.wasm_runner.c_str());
   const emu_t e = emulator_for(conf);
   if ( e.qemu == nullptr ) return true;
   return mc::posix::exists(e.qemu) and mc::posix::exists(e.sysroot);
@@ -57,6 +59,10 @@ inline string_type
 __missing_for(const config_t &conf)
 {
   if ( !mc::posix::exists(conf.compiler_path.c_str()) ) return conf.compiler_path;
+  if ( conf.arch == __arch::wasm32 ) {
+    if ( !mc::posix::exists("/usr/bin/node") ) return string_type{ "/usr/bin/node" };
+    if ( !mc::posix::exists(conf.wasm_runner.c_str()) ) return conf.wasm_runner;
+  }
   const emu_t e = emulator_for(conf);
   if ( e.qemu != nullptr and !mc::posix::exists(e.qemu) ) return string_type{ e.qemu };
   if ( e.qemu != nullptr and !mc::posix::exists(e.sysroot) ) return string_type{ e.sysroot };
@@ -81,6 +87,17 @@ __suppress_core_dumps()
 inline string_type
 run_command(const config_t &conf)
 {
+  if ( conf.arch == __arch::wasm32 ) {
+    string_type command{ "/usr/bin/node " };
+    command += conf.wasm_runner;
+    command += ' ';
+    command += conf.target_out;
+    if ( conf.wasm_threads ) command += " --threads";
+    __wasm_option(command, "--initial-pages=", conf.wasm_initial_memory / 65536);
+    __wasm_option(command, "--maximum-pages=", conf.wasm_max_memory / 65536);
+    if ( conf.timeout ) __wasm_option(command, "--timeout=", conf.timeout);
+    return command;
+  }
   const emu_t e = emulator_for(conf);
   if ( e.qemu == nullptr ) return conf.target_out;
 
@@ -97,6 +114,11 @@ inline mc::status_t
 run_target(const config_t &conf)
 {
   __suppress_core_dumps();
+  if ( conf.arch == __arch::wasm32 ) {
+    string_type node{ "/usr/bin/node" };
+    string_type command = run_command(conf);
+    return mc::execute<Wait>(node, command);
+  }
   const emu_t e = emulator_for(conf);
   if ( e.qemu == nullptr ) return mc::execute<Wait>(conf.target_out);
 

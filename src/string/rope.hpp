@@ -880,7 +880,7 @@ public:
     __length = o.size();
   }
 
-  rope(const T restrict *__start, const T *__end) : __flat(nullptr)
+  rope(const T *restrict __start, const T *__end) : __flat(nullptr)
   {
     if ( __start >= __end ) {
       __root = nullptr;

@@ -8,7 +8,11 @@
 #include "__arch.hpp"
 #include "__pause.hpp"
 
+#if defined(__micron_arch_wasm32)
+#include "wasm/host.hpp"
+#else
 #include "../syscall.hpp"
+#endif
 #include "../types.hpp"
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +83,11 @@ template<> struct __cache_pad<0> {
 [[gnu::always_inline]] inline void
 __sched_yield() noexcept
 {
+#if defined(__micron_arch_wasm32)
+  wasm::yield();
+#else
   (void)micron::syscall(SYS_sched_yield);
+#endif
 }
 
 struct spin_policy {
@@ -168,9 +176,15 @@ __lock_misuse_trap(const char *__m) noexcept
 {
   usize __n = 0;
   while ( __m[__n] ) ++__n;
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag("micron lock misuse: ");
+  wasm::write_diag(__m, __n);
+  wasm::write_diag("\n");
+#else
   (void)micron::syscall(SYS_write, 2, "micron lock misuse: ", 20);
   (void)micron::syscall(SYS_write, 2, __m, __n);
   (void)micron::syscall(SYS_write, 2, "\n", 1);
+#endif
   __builtin_trap();
 }
 

@@ -17,7 +17,7 @@
 #include "../stack.hpp"
 #endif
 
-#include "../../memory/allocation/abcmalloc/malloc_forward.hpp"
+#include "../allocation/__seam.hpp"
 
 namespace micron
 {
@@ -319,7 +319,11 @@ __set_le32(byte *d, const u64 w, const u64 n) noexcept
 {
   // n in [0, 32]
   if ( n > 16 ) {
+#if defined(__micron_arch_wasm32)
+    const __v16 v = simd::__wasm_splat<__v16>(w);
+#else
     const __v16 v = { w, w };
+#endif
     __st16(d, v);
     __st16(d + n - 16, v);
   } else if ( n ) {
@@ -336,7 +340,11 @@ __set_33_64(byte *d, const u64 w, const u64 n) noexcept
   __st32(d, v);
   __st32(d + n - 32, v);
 #else
+#if defined(__micron_arch_wasm32)
+  const __v16 v = simd::__wasm_splat<__v16>(w);
+#else
   const __v16 v = { w, w };
+#endif
   __st16(d, v);
   __st16(d + 16, v);
   __st16(d + n - 32, v);
@@ -375,7 +383,11 @@ __set_129_256(byte *d, const u64 w, const u64 n) noexcept
 __set_65_128(byte *d, const u64 w, const u64 n) noexcept
 {
   // n in (64, 128]
+#if defined(__micron_arch_wasm32)
+  const __v16 v = simd::__wasm_splat<__v16>(w);
+#else
   const __v16 v = { w, w };
+#endif
   __st16(d, v);
   __st16(d + 16, v);
   __st16(d + 32, v);
@@ -393,7 +405,11 @@ __wset_le64(byte *d, const u64 w, const u64 n) noexcept
 {
   // n in [1, 64]
   if ( n >= 16 ) {
+#if defined(__micron_arch_wasm32)
+    const __v16 v = simd::__wasm_splat<__v16>(w);
+#else
     const __v16 v = { w, w };
+#endif
     __st16(d, v);
     if ( n > 16 ) __st16(d + n - 16, v);
     if ( n > 32 ) __st16(d + 16, v);
@@ -516,21 +532,21 @@ template<typename F>
 bool
 __is_at_heap(const F *ptr) noexcept
 {
-  return abc::within(reinterpret_cast<const addr_t *>(ptr));
+  return __heap_owns(ptr);
 }
 
 template<typename F>
 bool
 __is_at_heap(F &ref) noexcept
 {
-  return abc::within(reinterpret_cast<addr_t *>(&ref));
+  return __heap_owns(&ref);
 }
 
 template<typename F>
 bool
 __is_at_heap(const F &ref) noexcept
 {
-  return abc::within(reinterpret_cast<const addr_t *>(&ref));
+  return __heap_owns(&ref);
 }
 
 template<typename F>

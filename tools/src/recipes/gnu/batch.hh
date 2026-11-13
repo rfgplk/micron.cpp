@@ -703,10 +703,98 @@ batch_gas(const config_t &conf)
   return make_command(command_pre, conf.target, command_post, compile_objs, __flags_output(), conf.target_out);
 };
 
+inline string_type
+batch_cmp_wasm(const config_t &conf)
+{
+  string_type flags{ "--no-default-config --target=wasm32-unknown-unknown -ffreestanding -nostdlib -nostdinc -nostdinc++ "
+                     "-fhosted -fno-builtin -D__micron_freestanding=1 "
+                     "-fno-stack-protector -fno-fast-math -ffp-contract=off -mbulk-memory" };
+  __compose_add(flags, __opt_flags(conf).c_str());
+  __compose_add(flags, conf.wasm_simd ? "-msimd128" : "-mno-simd128");
+  __compose_add(flags, conf.freestanding_eh ? "-fwasm-exceptions -frtti -mllvm -wasm-use-legacy-eh=false"
+                                         : "-fno-exceptions -fno-rtti");
+  if ( conf.wasm_threads ) __compose_add(flags, "-matomics -DMICRON_WASM_THREADS");
+  if ( conf.wasm_ubsan_traps ) __compose_add(flags, "-fsanitize=undefined -fsanitize-trap=all -fno-sanitize=vptr");
+  if ( !conf.no_lto and !conf.raw_object ) __compose_add(flags, "-flto=thin");
+  if ( conf.mode == __opt_modes::debug ) __compose_add(flags, "-g3");
+  if ( conf.warnings ) __compose_add(flags, "-Wall -Wextra -Wpedantic");
+  if ( conf.unroll ) __compose_add(flags, "-funroll-loops");
+  if ( conf.opnames ) __compose_add(flags, "-fno-operator-names");
+  if ( conf.gc ) __compose_add(flags, "-ffunction-sections -fdata-sections");
+  __wasm_option(flags, "-DMICRON_WASM_STACK_SIZE=", conf.wasm_stack_size);
+
+  string_type startup, link;
+  if ( conf.compile_type == __comp_type::linked ) {
+    startup = conf.start_dir;
+    startup += "start.cpp";
+    if ( conf.freestanding_eh ) {
+      startup += ' ';
+      if ( conf.no_lto ) {
+        startup += conf.start_dir;
+        startup += "eh_runtime.cpp";
+      } else {
+        startup += conf.target_out;
+        startup += ".eh.o";
+      }
+    }
+    link = "-Wl,--no-entry,--import-memory,--export-memory,--fatal-warnings,--export=__stack_pointer,--export=__wasm_call_ctors";
+    if ( conf.wasm_threads )
+      __compose_add(link, "-Wl,--shared-memory,--export=__wasm_init_tls,--export=__tls_size,--export=__tls_align,--export=__tls_base");
+    if ( conf.freestanding_eh and !conf.no_lto )
+      __compose_add(link, "-Wl,-mllvm,-wasm-enable-eh,-mllvm,-exception-model=wasm,-mllvm,-wasm-use-legacy-eh=false");
+    __wasm_option(link, "-Wl,--initial-memory=", conf.wasm_initial_memory);
+    __wasm_option(link, "-Wl,--max-memory=", conf.wasm_max_memory);
+    __wasm_option(link, "-Wl,-z,stack-size=", conf.wasm_stack_size);
+    if ( conf.strip ) __compose_add(link, "-Wl,--strip-all");
+    if ( conf.gc ) __compose_add(link, "-Wl,--gc-sections");
+  }
+  return make_command(conf.compiler_path, conf.standard, __flags_comp_type(conf), flags, __flags_defines(conf),
+                      __flags_includes(conf), conf.target, startup, __flags_bonus_objs(conf), link, "-o", conf.target_out);
+}
+
+inline string_type
+batch_prerequisite(const config_t &conf)
+{
+  if ( conf.arch != __arch::wasm32 or !conf.freestanding_eh or conf.no_lto or conf.compile_type != __comp_type::linked ) return {};
+  // LLVM 22 records a module-asm exception tag as a function in its bitcode
+  // symbol table. Emit that runtime TU as real Wasm; the application keeps ThinLTO.
+  config_t runtime = conf;
+  runtime.target = conf.start_dir;
+  runtime.target += "eh_runtime.cpp";
+  runtime.target_out = conf.target_out;
+  runtime.target_out += ".eh.o";
+  runtime.compile_type = __comp_type::object;
+  runtime.raw_object = true;
+  runtime.no_lto = true;
+  runtime.bonus_objs.clear();
+  return batch_cmp_wasm(runtime);
+}
+
+template<bool Wait = mc::exec_wait>
+inline mc::status_t
+execute_batch(const config_t &conf, string_type &command)
+{
+  auto prerequisite = batch_prerequisite(conf);
+  if ( prerequisite.empty() ) return mc::execute<Wait>(conf.compiler_path, command);
+  mc::console("with runtime command: ", prerequisite);
+  mc::status_t status{};
+  status.pid = mc::fork();
+  if ( status.pid == 0 ) {
+    auto checked_exit = [](const mc::status_t &s) { return mc::wifsignaled(s.status) ? 128 + mc::wtermsig(s.status) : mc::wexitstatus(s); };
+    const int first = checked_exit(mc::execute<mc::exec_wait>(conf.compiler_path, prerequisite));
+    if ( first ) mc::proc_exit(first);
+    mc::proc_exit(checked_exit(mc::execute<mc::exec_wait>(conf.compiler_path, command)));
+  }
+  if constexpr ( Wait ) mc::waitpid(status);
+  return status;
+}
+
 inline __attribute__((always_inline)) string_type
 batch(const config_t &conf)
 {
-  if ( conf.language == __languages::lasm or conf.compiler == __compilers::nasm )
+  if ( conf.arch == __arch::wasm32 )
+    return batch_cmp_wasm(conf);
+  else if ( conf.language == __languages::lasm or conf.compiler == __compilers::nasm )
     return batch_asm(conf);
   else if ( conf.language == __languages::gas )
     return batch_gas(conf);

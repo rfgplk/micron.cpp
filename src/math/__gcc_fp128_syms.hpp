@@ -5,6 +5,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+
+#if defined(__micron_arch_wasm_any)
+#include "../bits/wasm/math/fp128.hpp"
+#else
+
 // FREESTANDING LIBGCC BINARY128 SOFT-FLOAT SYMBOLS
 //
 // WARNING: NOT FOR EXTERNAL USE. THE COMPILERS LOWERS THESE OPS TO LIBGCC SOFT FP CALLS
@@ -560,3 +566,5 @@ __unordtf2(__tf_t fa, __tf_t fb) noexcept
 
 __micron_diagnostic_pop
 #endif
+
+#endif      // __micron_arch_wasm_any

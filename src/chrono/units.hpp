@@ -5,7 +5,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#include "../bits/wasm/time.hpp"
+#else
 #include "../linux/sys/time.hpp"
+#endif
 #include "../math/ratios.hpp"
 #include "../type_traits.hpp"
 #include "../types.hpp"

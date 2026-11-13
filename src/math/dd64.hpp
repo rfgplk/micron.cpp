@@ -39,7 +39,7 @@ struct dd64 {
 
 static_assert(sizeof(dd64) == 16, "dd64 must be 2 doubles wide");
 
-#if defined(__micron_compiler_clang)
+#if defined(__micron_compiler_clang) && !defined(__micron_arch_wasm_any)
 #pragma float_control(push)
 #pragma float_control(precise, on)
 #endif
@@ -166,7 +166,7 @@ div(dd64 a, dd64 b) noexcept
 
 };      // namespace dd
 
-#if defined(__micron_compiler_clang)
+#if defined(__micron_compiler_clang) && !defined(__micron_arch_wasm_any)
 #pragma float_control(pop)
 #endif
 

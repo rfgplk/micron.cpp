@@ -106,6 +106,14 @@ help(void)
   mc::set_color(mc::color::reset);
   mc::console("    --gcc             use gcc / g++                            (default)");
   mc::console("    --clang           use clang / clang++");
+  mc::console("    --wasm32          native browser WebAssembly, Clang + LLD, freestanding; default -O3");
+  mc::console("    --wasm-simd128    enable SIMD128 (default --wasm-scalar)");
+  mc::console("    --wasm-threads    shared linear memory and dedicated workers; no-EH or -ke");
+  mc::console("    --wasm-ubsan-traps target UBSan traps without a runtime library (excludes vptr)");
+  mc::console("    --wasm-initial-memory <bytes>   initial memory, default 16777216; multiple of 65536");
+  mc::console("    --wasm-max-memory <bytes>       maximum memory, default 536870912; multiple of 65536");
+  mc::console("    --wasm-stack-size <bytes>       per-thread stack, default 1048576; multiple of 16");
+  mc::console("    --wasm-runner <path>            Node host CLI for run/test; missing runner is a failure");
   mc::console("    --nasm            use NASM (also implied by .asm/.s sources)");
   mc::console("    -c                treat source as C");
   mc::console("    -cpp              treat source as C++");

@@ -8,7 +8,9 @@
 #include "../../atomic/atomic.hpp"
 #include "../../sync/yield.hpp"
 
+#if !defined(__micron_arch_wasm32)
 #include "../../linux/sys/system.hpp"
+#endif
 
 namespace micron
 {

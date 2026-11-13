@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../bits/__arch.hpp"
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/packed.hpp"
+#else
+
 #include "../../simd/aliases.hpp"
 #include "../../simd/intrin.hpp"
 #include "../../types.hpp"
@@ -313,3 +318,4 @@ __micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic") __micron_diag
 };      // namespace micron
 
 __micron_diagnostic_pop
+#endif      // __micron_arch_wasm_any

@@ -6,7 +6,11 @@
 #pragma once
 
 #include "../../atomic/atomic.hpp"
+#if defined(__micron_arch_wasm32)
+#include "../../bits/wasm/time.hpp"
+#else
 #include "../../linux/sys/time.hpp"
+#endif
 #include "../../sync/futex.hpp"
 
 #include "../backoff.hpp"

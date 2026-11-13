@@ -56,8 +56,9 @@
 // arches
 #if defined(__micron_arch_arm_any)
 #elif defined(__micron_arch_x86_any)
+#elif defined(__micron_arch_wasm32)
 #else
-#error "This version of the Micron standard library is designed for x86 (amd64 / i386) or ARM (armv7-a / aarch64)."
+#error "micron: supported targets are amd64, i386, armv7-a, aarch64 and wasm32"
 #endif
 
 struct __ct_type_checker {
@@ -126,6 +127,10 @@ struct __ct_type_checker {
     static_assert(sizeof(long) == 8, "ARM64 long must be 64-bit");
 #elif defined(__micron_arch_arm32)
     static_assert(sizeof(long) == 4, "ARM32 long must be 32-bit");
+#elif defined(__micron_arch_wasm32)
+    static_assert(sizeof(void *) == 4 && sizeof(long) == 4, "wasm32 uses ILP32");
+    static_assert(sizeof(long double) == 16 && alignof(long double) == 16, "wasm32 long double uses binary128");
+    static_assert(sizeof(__micron_guard_t) == 4, "wasm32 local-static guards are four bytes");
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__) && __cplusplus >= 202300L && defined(__micron_arch_amd64)

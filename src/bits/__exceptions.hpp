@@ -6,7 +6,11 @@
 #pragma once
 
 #include "../exit.hpp"
+#if defined(__micron_arch_wasm32)
+#include "wasm/host.hpp"
+#else
 #include "../syscall.hpp"
+#endif
 
 #include "../memory/addr.hpp"
 
@@ -26,20 +30,36 @@ namespace except
 inline void
 __write_n(const char *str_err)
 {
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag(str_err);
+#else
   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
+#endif
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag("\n");
+#else
   micron::syscall(SYS_write, 2, micron::voidify("\n"), 1);
+#endif
 }
 
 inline void
 __write(const char *str_err, usize sz)
 {
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag(str_err, sz);
+#else
   micron::syscall(SYS_write, 2, micron::voidify(str_err), sz);
+#endif
 }
 
 inline void
 __write(const char *str_err)
 {
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag(str_err);
+#else
   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
+#endif
 }
 
 template<typename T>

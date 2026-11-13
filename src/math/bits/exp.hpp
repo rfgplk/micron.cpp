@@ -23,6 +23,9 @@
 #include "manip.hpp"
 #include "round.hpp"
 
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/extended.hpp"
+#endif
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
 __micron_push_options __micron_optimize_no_unsafe_math namespace micron
 {
@@ -240,6 +243,9 @@ __micron_push_options __micron_optimize_no_unsafe_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   exp(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::exp(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(exp_f32(f32(x)));
     else
@@ -250,6 +256,9 @@ __micron_push_options __micron_optimize_no_unsafe_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   exp2(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::exp2(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(exp2_f32(f32(x)));
     else
@@ -260,6 +269,9 @@ __micron_push_options __micron_optimize_no_unsafe_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   exp10(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::exp10(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(exp10_f32(f32(x)));
     else
@@ -270,6 +282,9 @@ __micron_push_options __micron_optimize_no_unsafe_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   expm1(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::expm1(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(expm1_f32(f32(x)));
     else

@@ -7,12 +7,17 @@
 
 #include "defs.hpp"
 
+#if defined(__micron_wasmalloc_backend)
+#include "memory/allocation/wasmalloc/malloc-c.hpp"
+#include "memory/allocation/wasmalloc/wasmalloc.hpp"
+#else
 // only if we're not already including abcmalloc externally
 #ifndef MICRON_ABCMALLOC_DISABLE_STD
 #ifdef MICRON_ABCMALLOC_STD
 #include "memory/allocation/abcmalloc/__abc.hpp"
 #include "memory/allocation/abcmalloc/__sys.hpp"
 #include "memory/allocation/abcmalloc/malloc.hpp"
+#endif
 #endif
 #endif
 

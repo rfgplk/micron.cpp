@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#error "micron: native filesystem I/O is unavailable in WebAssembly; use micron/io/console.hpp for diagnostics"
+#else
+
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // standard io include file
 // everything needed for (general) io should be here
@@ -54,3 +59,5 @@
 
 #include "io/stdin.hpp"
 #include "io/stdio.hpp"
+
+#endif

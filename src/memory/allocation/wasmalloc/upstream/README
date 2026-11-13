@@ -1,0 +1,7 @@
+GENERATED -- DO NOT EDIT.
+
+Pinned bbmalloc revision: 224ecfd62df165b5bf39cad02773f940a0bbbfae
+Only Micron include paths are rewritten. Refresh or verify with:
+  python3 scripts/sync_wasmalloc.py --write
+  python3 scripts/sync_wasmalloc.py --check
+The script reads Git objects and never modifies the upstream checkout.

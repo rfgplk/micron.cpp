@@ -16,6 +16,10 @@
 #include "manip.hpp"
 #include "round.hpp"
 
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/extended.hpp"
+#endif
+
 namespace micron
 {
 namespace math
@@ -118,6 +122,9 @@ template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 fmod(F x, F y) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::fmod(x, y);
+#endif
   u32 quo = 0;
   return __fmod_core<false, F>(x, y, quo);
 }
@@ -126,6 +133,9 @@ template<ieee754_floating F>
 [[nodiscard]] inline constexpr F
 remainder(F x, F y) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::remainder(x, y);
+#endif
   if ( ieee::is_nan(x) || ieee::is_nan(y) || ieee::is_inf(x) || y == F(0) ) return ieee::qnan_v<F>();
   if ( ieee::is_inf(y) ) return x;
 

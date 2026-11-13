@@ -9,7 +9,9 @@
 #include "bits/__profile.hpp"
 #include "config.hpp"
 
-#if !defined(MICRON_ABCMALLOC_STD) && !defined(MICRON_ABCMALLOC_DISABLE_STD)
+#if defined(__micron_arch_wasm32)
+#define __micron_wasmalloc_backend 1
+#elif !defined(MICRON_ABCMALLOC_STD) && !defined(MICRON_ABCMALLOC_DISABLE_STD)
 #define MICRON_ABCMALLOC_STD 1
 #endif
 
@@ -20,7 +22,7 @@
 
 // one predicate for every global C++ allocation path; mixing an interposed allocation with an
 // inlined abc deallocation silently strands the foreign block
-#if defined(MICRON_ABCMALLOC_STD) && !defined(ABCMALLOC_DISABLE) && !defined(__micron_sanitizer_owns_heap)
+#if defined(MICRON_ABCMALLOC_STD) && !defined(ABCMALLOC_DISABLE) && !defined(__micron_sanitizer_owns_heap) && !defined(__micron_arch_wasm32)
 #define __micron_abcmalloc_std_backend 1
 #endif
 

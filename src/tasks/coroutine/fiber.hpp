@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../../bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#error "micron: stack switching is unavailable in WebAssembly; stackful tasks are deferred"
+#else
+
 #include "../../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
 
 #include "../../atomic/atomic.hpp"
@@ -278,3 +283,5 @@ drain_seg_pool() noexcept
 
 };      // namespace fiber
 };      // namespace micron
+
+#endif

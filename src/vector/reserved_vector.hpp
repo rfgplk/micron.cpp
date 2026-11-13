@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#error "micron: reserved_vector requires virtual memory reservation and protection, unavailable in WebAssembly"
+#else
+
 #include "../allocator.hpp"
 #include "../memory/mman.hpp"
 #include "../memory/placement_new.hpp"
@@ -199,3 +204,5 @@ public:
 };
 
 };      // namespace micron
+
+#endif

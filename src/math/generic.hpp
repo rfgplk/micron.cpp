@@ -181,7 +181,11 @@ powerf(f64 x, f64 y)
 constexpr flong
 powerflong(flong x, flong y)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::pow_ns::pow<flong>(x, y);
+#else
   return static_cast<flong>(mkbits::pow_ns::pow<f64>(f64(x), f64(y)));
+#endif
 }
 
 constexpr float
@@ -217,7 +221,11 @@ expf32(f32 x)
 constexpr flong
 expf128(flong x)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::exp_ns::exp<flong>(x);
+#else
   return static_cast<flong>(mkbits::exp_ns::exp<f64>(f64(x)));
+#endif
 }
 
 constexpr float
@@ -253,7 +261,11 @@ logf64(f64 x)
 constexpr flong
 logf128(flong x)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::log_ns::log<flong>(x);
+#else
   return static_cast<flong>(mkbits::log_ns::log<f64>(f64(x)));
+#endif
 }
 
 constexpr f32
@@ -271,7 +283,11 @@ roundf64(f64 x)
 constexpr flong
 roundf128(flong x)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::round_ns::round<flong>(x);
+#else
   return static_cast<flong>(mkbits::round_ns::round<f64>(f64(x)));
+#endif
 }
 
 constexpr f32
@@ -289,7 +305,11 @@ maxf64(f64 x, f64 y)
 constexpr flong
 maxf128(flong x, flong y)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::manip::fmax<flong>(x, y);
+#else
   return static_cast<flong>(mkbits::manip::fmax<f64>(f64(x), f64(y)));
+#endif
 }
 
 constexpr f32
@@ -307,7 +327,11 @@ minf64(f64 x, f64 y)
 constexpr flong
 minf128(flong x, flong y)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::manip::fmin<flong>(x, y);
+#else
   return static_cast<flong>(mkbits::manip::fmin<f64>(f64(x), f64(y)));
+#endif
 }
 
 template<typename T>
@@ -357,7 +381,11 @@ flog2(double x) noexcept
 constexpr long double
 flog2(long double x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::log_ns::log2<flong>(x);
+#else
   return static_cast<long double>(mkbits::log_ns::log2<f64>(f64(x)));
+#endif
 }
 
 constexpr i32
@@ -389,7 +417,11 @@ log10f64(f64 x)
 constexpr flong
 log10f128(flong x)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::log_ns::log10<flong>(x);
+#else
   return static_cast<flong>(mkbits::log_ns::log10<f64>(f64(x)));
+#endif
 }
 
 constexpr f64
@@ -401,13 +433,21 @@ remainderf64(f64 x, f64 y)
 constexpr flong
 remainderf128(flong x, flong y)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::rem::remainder<flong>(x, y);
+#else
   return static_cast<flong>(mkbits::rem::remainder<f64>(f64(x), f64(y)));
+#endif
 }
 
 constexpr flong
 remainderf128(flong x, f32 y)
 {
+#if defined(__micron_arch_wasm_any)
+  return mkbits::rem::remainder<flong>(x, y);
+#else
   return static_cast<flong>(mkbits::rem::remainder<f64>(f64(x), f64(y)));
+#endif
 }
 
 template<typename T>

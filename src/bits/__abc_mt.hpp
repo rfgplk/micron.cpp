@@ -7,7 +7,7 @@
 
 #include "__arch.hpp"
 
-#if defined(__micron_freestanding) && !defined(MICRON_ABC_MT)
+#if defined(__micron_freestanding) && !defined(__micron_arch_wasm32) && !defined(MICRON_ABC_MT)
 #if defined(__micron_abc_mt_resolved)
 #error                                                                                                                                     \
     "micron: a threading/coroutine header was included after abcmalloc's config had already fixed the freestanding single-thread gate; cross-thread frees in this TU would skip owner routing. Include the threading header before std.hpp/cmalloc.hpp, or build with -DMICRON_ABC_MT (duck: --def MICRON_ABC_MT)."

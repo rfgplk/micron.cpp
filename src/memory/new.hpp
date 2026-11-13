@@ -34,7 +34,7 @@ enum class align_val_t : __SIZE_TYPE__;
 // A hosted allocator interposer must see the matching replaceable new/delete pair. When the
 // standard backend is libc, inlining only delete turns Valgrind's new allocation into a direct
 // free and defeats that pairing. The abc-native path keeps its normal optimizer visibility.
-#if !defined(__micron_abcmalloc_std_backend)
+#if !defined(__micron_abcmalloc_std_backend) && !defined(__micron_wasmalloc_backend)
 #define __MICRON_ALLOC_INTERPOSE __attribute__((weak, used, retain, noinline))
 #else
 #define __MICRON_ALLOC_INTERPOSE __attribute__((weak, used, retain))
@@ -110,6 +110,9 @@ namespace __aligned_new
 [[nodiscard, gnu::always_inline]] inline void *
 __do_alloc(usize size, usize align)
 {
+#if defined(__micron_arch_wasm32)
+  if ( align == 0 || (align & (align - 1)) != 0 || size > static_cast<usize>(-1) - (align - 1) ) return nullptr;
+#endif
   const usize padded = (size + align - 1) & ~(align - 1);
   return micron::__alloc_aligned(align, padded ? padded : align);
 }

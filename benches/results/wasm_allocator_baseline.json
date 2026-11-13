@@ -1,0 +1,115 @@
+{
+  "measured_utc": "2026-11-13T17:18:20.225980+00:00",
+  "benchmark": "benches/wasm_allocator.cpp",
+  "compiler": "clang version 22.1.8 (Fedora 22.1.8-4.fc44)",
+  "runtime": "v22.23.1",
+  "os": "Linux-7.3.3-200.fc44.x86_64-x86_64-with-glibc2.43",
+  "cpu": "Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz",
+  "bbmalloc_revision": "224ecfd62df165b5bf39cad02773f940a0bbbfae",
+  "build": {
+    "optimization": "-O3",
+    "lto": false,
+    "simd128": false,
+    "eh": false,
+    "initial_memory_bytes": 16777216,
+    "maximum_memory_bytes": 536870912,
+    "stack_bytes": 1048576
+  },
+  "trace": {
+    "seed": "0x510e527f",
+    "rounds": 100000,
+    "live_slots": 128,
+    "warmups": 2,
+    "samples": 7,
+    "alloc_sizes": "13..2060",
+    "realloc_sizes": "32..8223"
+  },
+  "notes": [
+    "Medians are per in-module sample; host startup and JIT warmup are excluded.",
+    "shared measures one allocator caller with atomic heap locking; four-worker correctness stress is tests/wasm/allocator_shared.cpp.",
+    "cold_growth_64m is one cold reservation/attach sample, not a median.",
+    "Growth leaves existing pointers valid; host memory views must be refreshed.",
+    "These are observational baselines, not machine-independent performance thresholds.",
+    "PASS exit status is 1."
+  ],
+  "results": [
+    {
+      "trace": "alloc_free",
+      "profile": "single",
+      "seed": 1359893119,
+      "operations": 200000,
+      "median_ns": 4847872,
+      "operations_per_second": 41255214,
+      "growth_events": 0,
+      "peak_requested_bytes": 157684,
+      "live_granted_bytes": 0,
+      "heap_capacity_bytes": 1048576,
+      "linear_memory_bytes": 16777216
+    },
+    {
+      "trace": "realloc",
+      "profile": "single",
+      "seed": 1359893119,
+      "operations": 100128,
+      "median_ns": 2905088,
+      "operations_per_second": 34466425,
+      "growth_events": 0,
+      "peak_requested_bytes": 640626,
+      "live_granted_bytes": 0,
+      "heap_capacity_bytes": 3145728,
+      "linear_memory_bytes": 16777216
+    },
+    {
+      "trace": "cold_growth_64m",
+      "profile": "single",
+      "seed": 1359893119,
+      "operations": 1,
+      "median_ns": 1164800,
+      "operations_per_second": 858,
+      "growth_events": 1,
+      "peak_requested_bytes": 67108864,
+      "live_granted_bytes": 67108864,
+      "heap_capacity_bytes": 70254592,
+      "linear_memory_bytes": 136314880
+    },
+    {
+      "trace": "alloc_free",
+      "profile": "shared",
+      "seed": 1359893119,
+      "operations": 200000,
+      "median_ns": 5912320,
+      "operations_per_second": 33827668,
+      "growth_events": 0,
+      "peak_requested_bytes": 157684,
+      "live_granted_bytes": 0,
+      "heap_capacity_bytes": 1048576,
+      "linear_memory_bytes": 16777216
+    },
+    {
+      "trace": "realloc",
+      "profile": "shared",
+      "seed": 1359893119,
+      "operations": 100128,
+      "median_ns": 3092224,
+      "operations_per_second": 32380577,
+      "growth_events": 0,
+      "peak_requested_bytes": 640626,
+      "live_granted_bytes": 0,
+      "heap_capacity_bytes": 3145728,
+      "linear_memory_bytes": 16777216
+    },
+    {
+      "trace": "cold_growth_64m",
+      "profile": "shared",
+      "seed": 1359893119,
+      "operations": 1,
+      "median_ns": 854528,
+      "operations_per_second": 1170,
+      "growth_events": 1,
+      "peak_requested_bytes": 67108864,
+      "live_granted_bytes": 67108864,
+      "heap_capacity_bytes": 70254592,
+      "linear_memory_bytes": 136314880
+    }
+  ]
+}

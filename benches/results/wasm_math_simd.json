@@ -1,0 +1,164 @@
+{
+  "node": "v22.23.1",
+  "cpu": "Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz",
+  "platform": "linux",
+  "arch": "x64",
+  "execution_context": "shared development machine; concurrent build/test load not controlled",
+  "unit": "ns_per_operation",
+  "warmups": 3,
+  "samples": 7,
+  "profiles": [
+    {
+      "file": "bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "compiler": "clang version 22.1.8 (Fedora 22.1.8-4.fc44)",
+      "command": "/usr/bin/clang++ -std=c++23 --no-default-config --target=wasm32-unknown-unknown -ffreestanding -nostdlib -nostdinc -nostdinc++ -fhosted -fno-builtin -D__micron_freestanding=1 -fno-stack-protector -fno-fast-math -ffp-contract=off -mbulk-memory -O2 -mno-simd128 -fno-exceptions -fno-rtti -DMICRON_WASM_STACK_SIZE=1048576 -I. -Isrc benches/wasm_math_simd.cpp start/start.cpp -Wl,--no-entry,--import-memory,--export-memory,--fatal-warnings,--export=__stack_pointer,--export=__wasm_call_ctors -Wl,--initial-memory=16777216 -Wl,--max-memory=536870912 -Wl,-z,stack-size=1048576 -o bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "optimization": "O2",
+      "lto": false,
+      "threads": false,
+      "exceptions": false,
+      "bytes": 192302,
+      "sha256": "94a54be4e62696782e4f13a0c37ec8e70f42c9edc0e73d53452c1348a3587198",
+      "simdWidth": 0
+    },
+    {
+      "file": "bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "compiler": "clang version 22.1.8 (Fedora 22.1.8-4.fc44)",
+      "command": "/usr/bin/clang++ -std=c++23 --no-default-config --target=wasm32-unknown-unknown -ffreestanding -nostdlib -nostdinc -nostdinc++ -fhosted -fno-builtin -D__micron_freestanding=1 -fno-stack-protector -fno-fast-math -ffp-contract=off -mbulk-memory -O2 -msimd128 -fno-exceptions -fno-rtti -DMICRON_WASM_STACK_SIZE=1048576 -I. -Isrc benches/wasm_math_simd.cpp start/start.cpp -Wl,--no-entry,--import-memory,--export-memory,--fatal-warnings,--export=__stack_pointer,--export=__wasm_call_ctors -Wl,--initial-memory=16777216 -Wl,--max-memory=536870912 -Wl,-z,stack-size=1048576 -o bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "optimization": "O2",
+      "lto": false,
+      "threads": false,
+      "exceptions": false,
+      "bytes": 191487,
+      "sha256": "755a89bc7c0d0b313186f458cdec042cd2048a6a035ecfba3dd84fed0d43ee3c",
+      "simdWidth": 128
+    }
+  ],
+  "results": [
+    {
+      "file": "bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "name": "bench_simd",
+      "operations": 2097152,
+      "median_ns": 0.2690582275390625,
+      "minimum_ns": 0.26633453369140625,
+      "maximum_ns": 0.27202796936035156,
+      "checksum": 2488.3635793328285
+    },
+    {
+      "file": "bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "name": "bench_quad_fma",
+      "operations": 2000,
+      "median_ns": 4687.129,
+      "minimum_ns": 4665.77,
+      "maximum_ns": 4694.3875,
+      "checksum": 1.2046806413163829
+    },
+    {
+      "file": "bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "name": "bench_quad_sqrt",
+      "operations": 2000,
+      "median_ns": 1359.576,
+      "minimum_ns": 1354.0235,
+      "maximum_ns": 1394.9415,
+      "checksum": 1.618033988749895
+    },
+    {
+      "file": "bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "name": "bench_quad_sin",
+      "operations": 256,
+      "median_ns": 28188.62109375,
+      "minimum_ns": 25913.2421875,
+      "maximum_ns": 31619.35546875,
+      "checksum": 0.18251379852393995
+    },
+    {
+      "file": "bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "name": "bench_quad_lgamma",
+      "operations": 256,
+      "median_ns": 169591.0390625,
+      "minimum_ns": 168189.51953125,
+      "maximum_ns": 182503.96484375,
+      "checksum": -4.366103597462846
+    },
+    {
+      "file": "bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "name": "bench_quad_gamma",
+      "operations": 128,
+      "median_ns": 7990136.28125,
+      "minimum_ns": 7847863.9296875,
+      "maximum_ns": 9059729.109375,
+      "checksum": 8.021034888782683e+211
+    },
+    {
+      "file": "bin/wasm-math-review/bench-scalar/wasm_math_simd.wasm",
+      "name": "bench_quad_pow",
+      "operations": 128,
+      "median_ns": 498933.2109375,
+      "minimum_ns": 496269.625,
+      "maximum_ns": 504304.078125,
+      "checksum": 166.3964041979161
+    },
+    {
+      "file": "bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "name": "bench_simd",
+      "operations": 2097152,
+      "median_ns": 0.05639171600341797,
+      "minimum_ns": 0.056333065032958984,
+      "maximum_ns": 0.13961219787597656,
+      "checksum": 2488.3635793328285
+    },
+    {
+      "file": "bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "name": "bench_quad_fma",
+      "operations": 2000,
+      "median_ns": 4159.1215,
+      "minimum_ns": 4138.4795,
+      "maximum_ns": 4294.3395,
+      "checksum": 1.2046806413163829
+    },
+    {
+      "file": "bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "name": "bench_quad_sqrt",
+      "operations": 2000,
+      "median_ns": 1803.443,
+      "minimum_ns": 1795.3755,
+      "maximum_ns": 1960.1205,
+      "checksum": 1.618033988749895
+    },
+    {
+      "file": "bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "name": "bench_quad_sin",
+      "operations": 256,
+      "median_ns": 34795.33984375,
+      "minimum_ns": 34709.47265625,
+      "maximum_ns": 35714.01171875,
+      "checksum": 0.18251379852393995
+    },
+    {
+      "file": "bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "name": "bench_quad_lgamma",
+      "operations": 256,
+      "median_ns": 167608.95703125,
+      "minimum_ns": 167346.9765625,
+      "maximum_ns": 168624.77734375,
+      "checksum": -4.366103597462846
+    },
+    {
+      "file": "bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "name": "bench_quad_gamma",
+      "operations": 128,
+      "median_ns": 7574320.234375,
+      "minimum_ns": 7560753.1640625,
+      "maximum_ns": 7601467.53125,
+      "checksum": 8.021034888782683e+211
+    },
+    {
+      "file": "bin/wasm-math-review/bench-simd/wasm_math_simd.wasm",
+      "name": "bench_quad_pow",
+      "operations": 128,
+      "median_ns": 485102.46875,
+      "minimum_ns": 483247.7421875,
+      "maximum_ns": 485561.25,
+      "checksum": 166.3964041979161
+    }
+  ]
+}

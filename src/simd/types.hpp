@@ -2,7 +2,9 @@
 
 #include "../bits/__arch.hpp"
 
-#if defined(__micron_arm_neon) && defined(__micron_arch_arm64)
+#if defined(__micron_arch_wasm_any)
+#include "../bits/wasm/simd/types.hpp"
+#elif defined(__micron_arm_neon) && defined(__micron_arch_arm64)
 #include "arch/types_arm64.hpp"
 #elif defined(__micron_arm_neon) && defined(__micron_arch_arm32)
 #include "arch/types_arm32.hpp"

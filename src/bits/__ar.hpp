@@ -6,6 +6,11 @@
 #pragma once
 
 #include "__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#include "wasm/ar.hpp"
+#else
+
+#include "__arch.hpp"
 
 #include "../attributes.hpp"
 #include "../types.hpp"
@@ -567,3 +572,5 @@ make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) n
 
 };      // namespace ar
 };      // namespace micron
+
+#endif      // __micron_arch_wasm32

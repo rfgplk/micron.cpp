@@ -1,0 +1,24 @@
+# Native WASM compile/link matrix; no browser canvas sources.
+# tests/wasm/suite.py runs the full runtime matrix and checks emitted instructions.
+build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 -o bin/wasm-matrix/scalar
+build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --raw-obj -o bin/wasm-matrix/scalar
+build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 -ke -o bin/wasm-matrix/scalar-eh
+build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 -ke --raw-obj -o bin/wasm-matrix/scalar-eh
+build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-threads -o bin/wasm-matrix/scalar-threads
+build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-threads --raw-obj -o bin/wasm-matrix/scalar-threads
+build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-threads -ke -o bin/wasm-matrix/scalar-threads-eh
+build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-threads -ke --raw-obj -o bin/wasm-matrix/scalar-threads-eh
+build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 -o bin/wasm-matrix/simd
+build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 --raw-obj -o bin/wasm-matrix/simd
+build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 -ke -o bin/wasm-matrix/simd-eh
+build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 -ke --raw-obj -o bin/wasm-matrix/simd-eh
+build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 --wasm-threads -o bin/wasm-matrix/simd-threads
+build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 --wasm-threads --raw-obj -o bin/wasm-matrix/simd-threads
+build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 --wasm-threads -ke -o bin/wasm-matrix/simd-threads-eh
+build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 --wasm-threads -ke --raw-obj -o bin/wasm-matrix/simd-threads-eh
+# Regression and fuzz codegen, including target-side UB instrumentation.
+build tests/wasm/math_edges.cpp --wasm32 --std c++23 --start start -i . -i src -O2 -o bin/wasm-matrix/regressions
+build tests/wasm/fuzz_simd.cpp --wasm32 --std c++23 --start start -i . -i src -O3 --wasm-simd128 --wasm-ubsan-traps -o bin/wasm-matrix/regressions
+build tests/wasm/fuzz_chrono.cpp --wasm32 --std c++23 --start start -i . -i src -O3 -ke --wasm-ubsan-traps -o bin/wasm-matrix/regressions
+build tests/wasm/runtime_cancel.cpp --wasm32 --std c++23 --start start -i . -i src -O0 --no-lto --wasm-threads -ke -o bin/wasm-matrix/regressions
+build tests/wasm/runtime_join_reuse.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-threads -o bin/wasm-matrix/regressions

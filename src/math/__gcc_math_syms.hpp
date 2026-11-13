@@ -5,6 +5,11 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
 
+#include "../bits/__arch.hpp"
+#if defined(__micron_arch_wasm_any)
+#include "../bits/wasm/math/symbols.hpp"
+#else
+
 // FREESTANDING LIBM SYMBOLS
 //
 // WARNING: THESE AREN'T FOR EXTERNAL USE, THE COMPILER EMITS CALLS TO THESE IF USING __BUILTIN_* QUALIFIED FNS FOR ERRNO CALLBACK OR IF NO
@@ -352,3 +357,5 @@ __micron_diagnostic_pop
 
 // libgcc binary128 soft fp fns
 #include "__gcc_fp128_syms.hpp"
+
+#endif      // __micron_arch_wasm_any

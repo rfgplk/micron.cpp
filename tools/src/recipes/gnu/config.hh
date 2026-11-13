@@ -29,7 +29,7 @@ __is_cxx26_standard(const string_type &__std)
   return __std == gcc::__standard_cxx26 or __std == gcc::__standard_gnuxx26;
 }
 
-enum __arch : u32 { x86 = 0, arm, arm64 };
+enum __arch : u32 { x86 = 0, arm, arm64, wasm32 };
 
 // x86 ISA level
 //   base -> -march=x86-64
@@ -149,6 +149,13 @@ struct config_t {
   string_type bin_dir;
   string_type standard;
   string_type start_dir;      // --start <dir> / MICRON_START; empty until finalize_and_infer resolves it
+  string_type wasm_runner{ "src/bits/wasm/node.mjs" };
+  u32 wasm_initial_memory = 16 * 1024 * 1024;
+  u32 wasm_max_memory = 512 * 1024 * 1024;
+  u32 wasm_stack_size = 1024 * 1024;
+  bool wasm_simd = false;
+  bool wasm_threads = false;
+  bool wasm_ubsan_traps = false;
   bool marm = false;          // --marm: -marm, force ARM state on armv7-a
   string_type mtp;            // --mtp <soft|cp15|auto>: -mtp=, how the thread pointer is read on armv7-a
   mc::vector<string_type> include_path;
@@ -213,7 +220,38 @@ __flag_takes_value(const char *a)
 {
   return mc::strcmp(a, "-o") == 0 or mc::strcmp(a, "-i") == 0 or mc::strcmp(a, "-l") == 0 or mc::strcmp(a, "--lib") == 0
          or mc::strcmp(a, "--def") == 0 or mc::strcmp(a, "--std") == 0 or mc::strcmp(a, "--isa") == 0 or mc::strcmp(a, "-j") == 0
-         or mc::strcmp(a, "--timeout") == 0 or mc::strcmp(a, "--start") == 0 or mc::strcmp(a, "--mtp") == 0;
+         or mc::strcmp(a, "--timeout") == 0 or mc::strcmp(a, "--start") == 0 or mc::strcmp(a, "--mtp") == 0
+         or mc::strcmp(a, "--wasm-initial-memory") == 0 or mc::strcmp(a, "--wasm-max-memory") == 0
+         or mc::strcmp(a, "--wasm-stack-size") == 0 or mc::strcmp(a, "--wasm-runner") == 0;
+}
+
+inline u32
+__wasm_bytes(const char *value, const char *flag)
+{
+  u32 result = 0;
+  if ( !value or !*value ) mc::cerror(flag, " requires a positive byte count");
+  for ( const char *p = value; *p; ++p ) {
+    if ( *p < '0' or *p > '9' or result > (0x80000000u - static_cast<u32>(*p - '0')) / 10 )
+      mc::cerror(flag, " requires a decimal byte count no larger than 2147483648");
+    result = result * 10 + static_cast<u32>(*p - '0');
+  }
+  if ( !result ) mc::cerror(flag, " requires a positive byte count");
+  return result;
+}
+
+inline void
+__wasm_option(string_type &flags, const char *prefix, u32 value)
+{
+  string_type option{ prefix };
+  char digits[11]{};
+  u32 n = 0;
+  do {
+    digits[n++] = '0' + value % 10;
+    value /= 10;
+  } while ( value );
+  while ( n ) option += digits[--n];
+  if ( !flags.empty() ) flags += ' ';
+  flags += option;
 }
 
 inline int
@@ -250,7 +288,7 @@ __determine_source(config_t &conf, string_type &&str)
     return true;
   } else {
     auto sstr = str.substr(itr);
-    if ( sstr == ".bin" ) {
+    if ( sstr == ".bin" or sstr == ".wasm" ) {
       conf.target_out = str;
       return true;
     } else if ( sstr == ".o" ) {
@@ -295,6 +333,26 @@ __make_name(config_t &conf)
 inline void
 finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_type, bool user_provided_opt)
 {
+  if ( conf.arch == __arch::wasm32 ) {
+    conf.compiler = __compilers::clang;
+    conf.width = 32;
+    conf.freestanding = true;
+    conf.no_ssp = true;
+    if ( !user_provided_opt ) conf.opt_mode = gcc::opt_flags::flags::optimize_three;
+    if ( conf.opt_mode == gcc::opt_flags::flags::optimize_fast ) mc::cerror("--wasm32 requires precise math; use -O3 instead of -Ofast");
+    if ( conf.language != __languages::cpp ) mc::cerror("--wasm32 currently builds C++ sources");
+    if ( conf.direct or conf.mx or conf.cont or conf.static_binary or conf.static_pie or conf.pie or conf.relro or conf.cfi
+         or conf.fortify or conf.asan or conf.ubsan or conf.tsan or conf.lsan or conf.pgo_gen or conf.pgo_use
+         or !conf.bonus_libs.empty() )
+      mc::cerror("--wasm32 cannot use native entry points, ELF/link-library flags, sanitizers, or profile runtimes");
+    if ( conf.freestanding_eh and (conf.no_eh or conf.no_rtti) ) mc::cerror("--wasm32 -ke requires exceptions and RTTI");
+    if ( (conf.wasm_initial_memory % 65536) or (conf.wasm_max_memory % 65536) )
+      mc::cerror("WASM initial and maximum memory must be multiples of 65536 bytes");
+    if ( conf.wasm_initial_memory > conf.wasm_max_memory or conf.wasm_stack_size >= conf.wasm_initial_memory
+         or conf.wasm_stack_size < 65536
+         or (conf.wasm_stack_size % 16) )
+      mc::cerror("WASM needs 65536 <= stack < initial memory <= maximum memory, with a 16-byte aligned stack");
+  }
   if ( conf.mode == __opt_modes::debug && !user_provided_opt ) conf.opt_mode = gcc::opt_flags::flags::optimize_zero;
 
   conf.target_out.insert(conf.target_out.begin(), conf.bin_dir);
@@ -307,6 +365,8 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
         conf.target_out.append(".s");
       else if ( conf.compiler == __compilers::nasm )
         conf.target_out.append(".o");      // nasm always emits an object, never a linked binary
+      else if ( conf.arch == __arch::wasm32 and conf.compile_type == __comp_type::linked )
+        conf.target_out.append(".wasm");
     } else {
       conf.target_out = *conf.bonus_objs.last();
       conf.bonus_objs.pop_back();
@@ -319,7 +379,7 @@ finalize_and_infer(config_t &conf, bool user_provided_out, bool user_provided_ty
       auto sstr = conf.target_out.substr(itr);
       if ( sstr == ".o" )
         conf.compile_type = __comp_type::object;
-      else if ( sstr == ".bin" )
+      else if ( sstr == ".bin" or sstr == ".wasm" )
         conf.compile_type = __comp_type::linked;
       else if ( sstr == ".a" ) {
         // TODO: implement static outs
@@ -465,6 +525,27 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
       conf.arch = __arch::arm;
     } else if ( mc::strcmp(argv[i], "--arm64") == 0 or mc::strcmp(argv[i], "--aarch64") == 0 ) {
       conf.arch = __arch::arm64;
+    } else if ( mc::strcmp(argv[i], "--wasm32") == 0 ) {
+      conf.arch = __arch::wasm32;
+    } else if ( mc::strcmp(argv[i], "--wasm-simd128") == 0 ) {
+      conf.wasm_simd = true;
+    } else if ( mc::strcmp(argv[i], "--wasm-scalar") == 0 ) {
+      conf.wasm_simd = false;
+    } else if ( mc::strcmp(argv[i], "--wasm-threads") == 0 ) {
+      conf.wasm_threads = true;
+    } else if ( mc::strcmp(argv[i], "--wasm-ubsan-traps") == 0 ) {
+      conf.wasm_ubsan_traps = true;
+    } else if ( mc::strcmp(argv[i], "--wasm-runner") == 0 ) {
+      if ( ++i >= argc or __is_flag(argv[i]) ) mc::cerror("--wasm-runner requires a Node runner path");
+      conf.wasm_runner = argv[i];
+    } else if ( mc::strcmp(argv[i], "--wasm-initial-memory") == 0 or mc::strcmp(argv[i], "--wasm-max-memory") == 0
+                or mc::strcmp(argv[i], "--wasm-stack-size") == 0 ) {
+      const char *flag = argv[i];
+      if ( ++i >= argc ) mc::cerror(flag, " requires a byte count");
+      const u32 bytes = __wasm_bytes(argv[i], flag);
+      if ( mc::strcmp(flag, "--wasm-initial-memory") == 0 ) conf.wasm_initial_memory = bytes;
+      else if ( mc::strcmp(flag, "--wasm-max-memory") == 0 ) conf.wasm_max_memory = bytes;
+      else conf.wasm_stack_size = bytes;
     } else if ( mc::strcmp(argv[i], "--isa") == 0 ) {
       if ( ++i >= argc ) mc::cerror("the --isa flag must be followed by one of: base, v2, v3, v4, native");
       if ( mc::strcmp(argv[i], "base") == 0 or mc::strcmp(argv[i], "v1") == 0 )
@@ -689,6 +770,17 @@ parse_config(config_t &conf, int argc, char **argv, int source_index)
       if ( __is_flag(argv[i]) ) mc::cerror("unknown flag '", argv[i], "' - see 'duck help'");
       if ( __determine_source(conf, string_type{ argv[i] }) ) user_provided_out = true;
     }
+  }
+  if ( __has_flag(argc, argv, "--wasm32") ) {
+    if ( conf.arch != __arch::wasm32 or __has_flag(argc, argv, "--x86") or __has_flag(argc, argv, "--i386")
+         or __has_flag(argc, argv, "--arm") or __has_flag(argc, argv, "--arm64") or __has_flag(argc, argv, "--aarch64")
+         or __has_flag(argc, argv, "--isa") or __has_flag(argc, argv, "-64") or __has_flag(argc, argv, "--gcc")
+         or __has_flag(argc, argv, "--nasm") or __has_flag(argc, argv, "--uring") or __has_flag(argc, argv, "--spall") )
+      mc::cerror("--wasm32 cannot be combined with native architecture, GCC/NASM, io_uring, or stack-protector flags");
+  } else if ( conf.wasm_threads or conf.wasm_ubsan_traps or __has_flag(argc, argv, "--wasm-simd128") or __has_flag(argc, argv, "--wasm-scalar")
+              or __has_flag(argc, argv, "--wasm-runner") or __has_flag(argc, argv, "--wasm-initial-memory")
+              or __has_flag(argc, argv, "--wasm-max-memory") or __has_flag(argc, argv, "--wasm-stack-size") ) {
+    mc::cerror("--wasm-* options require --wasm32");
   }
   // splat only prints the command; it must not build the output tree that command would write into
   if ( !splat::active() ) __mkdir_p(conf.bin_dir);

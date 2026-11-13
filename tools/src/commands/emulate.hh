@@ -43,7 +43,7 @@ build_and_emulate(const recipes::gnu::config_t &conf)
     auto command = recipes::gnu::batch(conf);
     mc::console("with command: ", command);
     mc::set_color(mc::color::reset);
-    r = mc::wexitstatus(mc::execute<mc::exec_wait>(conf.compiler_path, command));
+    r = mc::wexitstatus(recipes::gnu::execute_batch<mc::exec_wait>(conf, command));
   };
   auto end = mc::now();
   mc::set_color(mc::color::yellow);

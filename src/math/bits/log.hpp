@@ -21,6 +21,9 @@
 #include "impl.hpp"
 #include "manip.hpp"
 
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/extended.hpp"
+#endif
 // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results
 __micron_push_options __micron_optimize_no_fast_math namespace micron
 {
@@ -225,6 +228,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   log(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::log(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(log_f32(f32(x)));
     else
@@ -235,6 +241,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   log2(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::log2(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(log2_f32(f32(x)));
     else
@@ -245,6 +254,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   log10(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::log10(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(log10_f32(f32(x)));
     else
@@ -255,6 +267,9 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
   [[nodiscard, gnu::always_inline]] inline constexpr F
   log1p(F x) noexcept
   {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::log1p(x);
+#endif
     if constexpr ( sizeof(F) == sizeof(f32) )
       return F(log1p_f32(f32(x)));
     else

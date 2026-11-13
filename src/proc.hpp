@@ -6,6 +6,11 @@
 
 #pragma once
 
+#include "bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#error "micron: Linux process interfaces are unavailable in WebAssembly"
+#else
+
 #include "linux/process/child.hpp"
 #include "linux/process/exec.hpp"
 #include "linux/process/process.hpp"
@@ -15,3 +20,5 @@
 namespace micron
 {
 };
+
+#endif

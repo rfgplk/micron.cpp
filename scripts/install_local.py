@@ -21,7 +21,7 @@ def main():
     for root, _, files in os.walk(external_path):
         for f in files:
             if (
-                f.endswith((".h", ".hh", ".hpp", ".c", ".cc", ".cpp"))
+                f.endswith((".h", ".hh", ".hpp", ".c", ".cc", ".cpp", ".mjs"))
                 or f in ("coroutine", "initializer_list", "index_sequence", "pthread", "meta", "compare", "pthread_key")
             ):
                 src_file = os.path.join(root, f)
@@ -35,7 +35,7 @@ def main():
     for root, _, files in os.walk(src_path):
         for f in files:
             if (
-                f.endswith((".h", ".hh", ".hpp", ".c", ".cc", ".cpp"))
+                f.endswith((".h", ".hh", ".hpp", ".c", ".cc", ".cpp", ".mjs"))
                 or f in ("coroutine", "initializer_list", "index_sequence", "pthread", "meta", "compare", "pthread_key")
             ):
                 src_file = os.path.join(root, f)

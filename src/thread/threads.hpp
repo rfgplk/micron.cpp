@@ -4,6 +4,10 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 #pragma once
+#include "../bits/__arch.hpp"
+#if defined(__micron_arch_wasm32)
+#include "../bits/wasm/thread_api.hpp"
+#else
 
 #include "../bits/__abc_mt.hpp"      // autofires MICRON_ABC_MT; must precede abcmalloc
 
@@ -53,3 +57,5 @@ threads_available(void) noexcept
 }
 
 };      // namespace micron
+
+#endif      // __micron_arch_wasm32

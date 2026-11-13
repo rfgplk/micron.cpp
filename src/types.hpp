@@ -12,7 +12,7 @@
 #include "endian.hpp"
 
 #include "bits-types.hpp"
-#include "linux/sys/types.hpp"
+#include "bits/__posix_types.hpp"
 #include "type_traits.hpp"
 
 // must surpress int128 extensions

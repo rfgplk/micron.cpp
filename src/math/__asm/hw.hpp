@@ -10,6 +10,9 @@
 #include "../../simd/aliases.hpp"
 #include "../../simd/intrin.hpp"
 #include "../../types.hpp"
+#if defined(__micron_arch_wasm_any)
+#include "../../bits/wasm/math/real.hpp"
+#endif
 
 namespace micron
 {
@@ -157,6 +160,9 @@ template<typename F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 sqrt(F x) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::sqrt(x);
+#endif
   if constexpr ( sizeof(F) == sizeof(f32) )
     return F(sqrt_ss(f32(x)));
   else
@@ -244,6 +250,9 @@ template<typename F>
 [[nodiscard, gnu::always_inline]] inline constexpr F
 fmadd(F a, F b, F c) noexcept
 {
+#if defined(__micron_arch_wasm_any)
+  if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::fma(a, b, c);
+#endif
   if constexpr ( sizeof(F) == sizeof(f32) )
     return F(fmadd_ss(f32(a), f32(b), f32(c)));
   else
