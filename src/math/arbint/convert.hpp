@@ -122,15 +122,29 @@ to_chars(char *buf, usize cap, const arbuint<B, S, A> &a, u32 base = 10u, bool u
   const usize want = a.bit_length();
   if ( cap < want ) return 0;
 
-  __arb::scratch<(B != 0) ? arbuint<B, S, A>::cap_limbs : 1u, A, arbuint<B, S, A>::bounded> sc(n);
-  mpn::limb_t *work = sc.get();
-  mpn::copyi(work, a.limbs(), n);
+  if ( n <= 32 ) {
+    mpn::limb_t work[32];
+    mpn::copyi(work, a.limbs(), n);
+    char *const end = buf + want;
+    char *const first = __arb::emit_digits(end, work, n, base, upper);
+    const usize length = static_cast<usize>(end - first);
+    for ( usize i = 0; i < length; ++i ) buf[i] = first[i];
+    return length;
+  }
 
-  char *const end = buf + want;
-  char *const first = __arb::emit_digits(end, work, n, base, upper);
-  const usize len = static_cast<usize>(end - first);
-  for ( usize i = 0; i < len; ++i ) buf[i] = first[i];
-  return len;
+  if constexpr ( arbuint<B, S, A>::bounded && arbuint<B, S, A>::cap_limbs <= 32 ) {
+    return 0;
+  } else {
+    __arb::scratch<(B != 0) ? arbuint<B, S, A>::cap_limbs : 1u, A, arbuint<B, S, A>::bounded> sc(n);
+    mpn::limb_t *work = sc.get();
+    mpn::copyi(work, a.limbs(), n);
+
+    char *const end = buf + want;
+    char *const first = __arb::emit_digits(end, work, n, base, upper);
+    const usize len = static_cast<usize>(end - first);
+    for ( usize i = 0; i < len; ++i ) buf[i] = first[i];
+    return len;
+  }
 }
 
 template<usize B, arb_solver S, class A>

@@ -1450,8 +1450,7 @@ template<typename T> struct __is_swappable_with_impl<T &, T &>: public __impl::_
   using type = decltype(__test<T &>(0));
 };
 
-template<typename T, typename Uxp>
-struct __is_nothrow_swappable_with_impl: public __impl::__do_is_nothrow_swappable_with_impl {
+template<typename T, typename Uxp> struct __is_nothrow_swappable_with_impl: public __impl::__do_is_nothrow_swappable_with_impl {
   using type = decltype(__test<T, Uxp>(0));
 };
 

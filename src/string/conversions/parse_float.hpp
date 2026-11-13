@@ -9,6 +9,7 @@
 #include "../../types.hpp"
 #include "bits.hpp"
 #include "decimal.hpp"
+#include "decimal_simd.hpp"
 #include "error.hpp"
 
 // text -> binary floating point, correctly rounded (round-to-nearest, ties-to-even)
@@ -645,7 +646,48 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
     bool any = false;
 
     s.int_first = p;
-    while ( __live<Bounded>(p, e) && __is_digit(*p) ) {
+    bool fraction_started = false;
+    if constexpr ( Bounded && __is_same(T, char) ) {
+      if !consteval {
+        micron::__impl::__digits::__prefix16 prefix;
+        if ( e - p >= 16 && micron::__impl::__digits::read16(p, prefix) ) {
+          mant = prefix.mantissa;
+          any = true;
+          if ( prefix.point < 16 ) {
+            s.int_last = p + prefix.point;
+            s.frac_first = s.int_last + 1;
+            exp10 = -static_cast<i64>(15 - prefix.point);
+            fraction_started = true;
+          }
+          p += 16;
+        }
+      }
+    }
+    if constexpr ( Bounded && __is_same(T, char) ) {
+      if !consteval {
+        while ( !fraction_started && e - p >= 8 && mant <= (~u64{ 0 } - 99999999) / 100000000 ) {
+          u32 group;
+          if ( !micron::__impl::__digits::read8(p, group) ) break;
+          mant = mant * 100000000 + group;
+          p += 8;
+          any = true;
+        }
+      }
+    }
+    while ( !fraction_started && __live<Bounded>(p, e) && __is_digit(*p) ) {
+      if constexpr ( Bounded && __is_same(T, char) ) {
+        if !consteval {
+          if ( mant > __mant_cap && e - p >= 8 ) {
+            u32 group;
+            if ( micron::__impl::__digits::read8(p, group) ) {
+              exp10 += 8;
+              s.truncated |= group != 0;
+              p += 8;
+              continue;
+            }
+          }
+        }
+      }
       u32 d = __digit_val(*p);
       if ( mant <= __mant_cap )
         mant = mant * 10 + d;
@@ -656,14 +698,41 @@ __micron_push_options __micron_optimize_no_fast_math namespace micron
       any = true;
       ++p;
     }
-    s.int_last = p;
-
-    s.frac_first = p;
-    s.frac_last = p;
-    if ( __live<Bounded>(p, e) && *p == static_cast<T>('.') ) {
-      ++p;
+    if ( !fraction_started ) {
+      s.int_last = p;
       s.frac_first = p;
+    }
+    s.frac_last = p;
+    if ( fraction_started || (__live<Bounded>(p, e) && *p == static_cast<T>('.')) ) {
+      if ( !fraction_started ) {
+        ++p;
+        s.frac_first = p;
+      }
+      if constexpr ( Bounded && __is_same(T, char) ) {
+        if !consteval {
+          while ( e - p >= 8 && mant <= (~u64{ 0 } - 99999999) / 100000000 ) {
+            u32 group;
+            if ( !micron::__impl::__digits::read8(p, group) ) break;
+            mant = mant * 100000000 + group;
+            exp10 -= 8;
+            p += 8;
+            any = true;
+          }
+        }
+      }
       while ( __live<Bounded>(p, e) && __is_digit(*p) ) {
+        if constexpr ( Bounded && __is_same(T, char) ) {
+          if !consteval {
+            if ( mant > __mant_cap && e - p >= 8 ) {
+              u32 group;
+              if ( micron::__impl::__digits::read8(p, group) ) {
+                s.truncated |= group != 0;
+                p += 8;
+                continue;
+              }
+            }
+          }
+        }
         u32 d = __digit_val(*p);
         if ( mant <= __mant_cap ) {
           mant = mant * 10 + d;

@@ -1,0 +1,18 @@
+# Bounded SIMD decimal and serialization regression cells.
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests -O2 --timeout 120 -o bin/conversion-io/native
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests --isa base -O2 --timeout 120 -o bin/conversion-io/sse2
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests --i386 --isa base -O2 --timeout 120 -o bin/conversion-io/i386
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests --def MICRON_NO_SIMD -O2 --timeout 120 -o bin/conversion-io/scalar
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests --arm -O2 --timeout 120 -o bin/conversion-io/arm32
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests --arm64 -O2 --timeout 120 -o bin/conversion-io/arm64
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests --wasm32 --start start -O2 --timeout 120 -o bin/conversion-io/wasm-scalar
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests --wasm32 --wasm-simd128 --start start -O2 --timeout 120 -o bin/conversion-io/wasm-simd
+test tests/rigor/conversion_io.cpp --std c++23 -i . -i tests --clang -O1 --asan --ubsan --no-lto --no-ssp --timeout 120 -o bin/conversion-io/sanitize
+test tests/rigor/conversion_io_storage.cpp --std c++23 -i . -i tests -O2 --def MICRON_ABC_STATS --timeout 120 -o bin/conversion-io/storage
+test tests/rigor/conversion_io_storage.cpp --std c++23 -i . -i tests --wasm32 --start start -O2 --timeout 120 -o bin/conversion-io/storage-wasm-scalar
+test tests/rigor/conversion_io_storage.cpp --std c++23 -i . -i tests --wasm32 --wasm-simd128 --start start -O2 --timeout 120 -o bin/conversion-io/storage-wasm-simd
+test tests/rigor/decimal.cpp --std c++23 -i . -i tests -O2 --timeout 120 -o bin/conversion-io/existing
+test tests/rigor/canonical.cpp --std c++23 -i . -i tests -O2 --timeout 120 -o bin/conversion-io/existing
+test tests/rigor/symbolic.cpp --std c++23 -i . -i tests -O2 --timeout 120 -o bin/conversion-io/existing
+test tests/rigor/math_arbint_convert.cpp --std c++23 -i . -i tests -O2 --timeout 120 -o bin/conversion-io/existing
+test tests/rigor/rigor_format_parse.cpp --std c++23 -i . -i tests -O2 --timeout 120 -o bin/conversion-io/existing

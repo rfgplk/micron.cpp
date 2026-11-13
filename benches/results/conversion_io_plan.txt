@@ -1,0 +1,24 @@
+Scope: HEAD 9651a85, math/{decimal,rational,symbolic,scalar}.hpp,
+io/canonical.hpp and their shared string/serialization dependencies.
+
+1. Freeze the original headers and build the same microbenchmark before/after.
+   Use fixed binary64 corpora: ordinary magnitudes and the full finite exponent
+   range; exact output and 17 significant digits; parse each corpus separately.
+   Exercise canonical framing at 64 B, 4 KiB and 64 KiB, zero-copy views,
+   misaligned scalar reads/writes, vector serialization and symbolic generation.
+2. Use duck --perf --fp --no-ssp --no-lto, pin to one CPU, warm each case,
+   calibrate iterations, collect repeated perf stat user cycles, instructions,
+   branches, branch misses and cache misses. Record raw counters, elapsed time,
+   compiler commands, checksums and allocator calls. Keep setup outside timing.
+3. Remove decimal digit-at-a-time work and redundant buffer passes; vectorize
+   bounded digit parsing/rendering with SSE2/SSSE3 (amd64/i386), NEON
+   (arm32/aarch64), wasm simd128, and a constexpr/scalar fallback. Never load
+   beyond the supplied range, or select an instruction above the build ISA.
+4. Preserve the exact spelling, ties-to-even and failed-output contracts.
+   Retain binary wire layouts; reuse container capacity and caller scratch
+   when possible. Benchmark allocation reductions independently of throughput.
+5. Run seeded differential and boundary tests, sanitizers, and executable
+   amd64/i386/arm32/aarch64/wasm scalar/SIMD checks. Inspect real code generation.
+   QEMU numbers establish correctness only; native PMU results describe x86.
+6. After implementation, use independent Sol-6.1 max-effort subagents to audit
+   memory correctness, UB, bounds and corruption; fix findings and rerun checks.

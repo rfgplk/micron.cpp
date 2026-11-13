@@ -116,7 +116,7 @@ __put_u64(byte *dst, usize &off, u64 v) noexcept
 inline bool
 __get_bytes(const byte *src, usize len, usize &off, void *dst, usize n) noexcept
 {
-  if ( off + n > len ) [[unlikely]]
+  if ( off > len || n > len - off ) [[unlikely]]
     return false;
   micron::bytecpy(static_cast<byte *>(dst), src + off, n);
   off += n;
@@ -265,12 +265,22 @@ unframe_element(const byte *src, usize len, usize &off, E &out) noexcept
     if ( blen > len - off ) [[unlikely]]      // overflow safe
       return -error::invalid_arg;
     const usize elems = static_cast<usize>(blen) / sizeof(typename U::value_type);
-    out = U();
-    if constexpr ( requires(U u, usize n) { u.reserve(n); } ) out.reserve(elems + 1);
-    for ( usize i = 0; i < elems; ++i ) {
-      typename U::value_type ch{};
-      __get_bytes(src, len, off, &ch, sizeof(ch));
-      out.push_back(ch);
+    if constexpr ( requires(U u, usize n) {
+                     u.reserve(n);
+                     u.data();
+                     u._buf_set_length(n);
+                   } ) {
+      out.reserve(elems + 1);
+      __get_bytes(src, len, off, out.data(), elems * sizeof(typename U::value_type));
+      out._buf_set_length(elems);
+    } else {
+      out = U();
+      if constexpr ( requires(U u, usize n) { u.reserve(n); } ) out.reserve(elems + 1);
+      for ( usize i = 0; i < elems; ++i ) {
+        typename U::value_type ch{};
+        __get_bytes(src, len, off, &ch, sizeof(ch));
+        out.push_back(ch);
+      }
     }
     off += static_cast<usize>(blen) - elems * sizeof(typename U::value_type);      // skip any trailing partial element
     return 0;
@@ -285,21 +295,26 @@ unframe_element(const byte *src, usize len, usize &off, E &out) noexcept
     if ( cnt > (len - off) / sizeof(typename U::value_type) ) [[unlikely]]
       return -error::invalid_arg;
     const usize nbytes = static_cast<usize>(cnt) * sizeof(typename U::value_type);
-    out = U();
-    if constexpr ( requires(U u, usize n) { u.reserve(n); } ) out.reserve(static_cast<usize>(cnt) + 1);
     if constexpr ( (requires(U u, usize n) { u.data(); u.set_size(n); } || requires(U u, usize n) { u.data(); u._buf_set_length(n); })
                    && requires(U u, usize n) { u.reserve(n); } ) {
       // contiguous target with a size setter
+      out.reserve(static_cast<usize>(cnt));
       if ( !__get_bytes(src, len, off, out.data(), nbytes) ) [[unlikely]]
         return -error::invalid_arg;
       __blit_set_len(out, static_cast<usize>(cnt));
     } else if constexpr ( requires(U u, typename U::value_type v) { u.push_back(v); } ) {
+      if constexpr ( requires(U u) { u.clear(); } )
+        out.clear();
+      else
+        out = U();
+      if constexpr ( requires(U u, usize n) { u.reserve(n); } ) out.reserve(static_cast<usize>(cnt));
       for ( u64 i = 0; i < cnt; ++i ) {
         typename U::value_type v;
         __get_bytes(src, len, off, &v, sizeof(v));
         out.push_back(v);
       }
     } else {
+      out = U();
       usize i = 0;
       for ( ; i < static_cast<usize>(cnt) && i < out.size(); ++i ) __get_bytes(src, len, off, &out[i], sizeof(typename U::value_type));
       off += (static_cast<usize>(cnt) - i) * sizeof(typename U::value_type);
@@ -341,6 +356,28 @@ unframe_element(const byte *src, usize len, usize &off, E &out) noexcept
     u64 cnt = 0;
     if ( !__get_u64(src, len, off, cnt) ) [[unlikely]]
       return -error::invalid_arg;
+    if constexpr ( requires(U u, usize n) {
+                     u.data();
+                     u.reserve(n);
+                     u.resize(n);
+                     u[n];
+                     u.push_back(micron::move(u[n]));
+                   } ) {
+      if ( cnt > len - off ) return -error::invalid_arg;
+      for ( usize i = 0; i < static_cast<usize>(cnt); ++i ) {
+        if ( i < out.size() ) {
+          if ( max_t r = unframe_element<D + 1>(src, len, off, out[i]); r < 0 ) [[unlikely]]
+            return r;
+        } else {
+          typename U::value_type value{};
+          if ( max_t r = unframe_element<D + 1>(src, len, off, value); r < 0 ) [[unlikely]]
+            return r;
+          out.push_back(micron::move(value));
+        }
+      }
+      out.resize(static_cast<usize>(cnt));
+      return 0;
+    }
     out = U();
     for ( u64 i = 0; i < cnt; ++i ) {
       typename U::value_type v{};

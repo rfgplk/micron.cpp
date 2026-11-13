@@ -185,9 +185,28 @@ class arena
     error failure = error::none;
   };
 
+  struct __text_buffer {
+    char *bytes;
+    usize capacity;
+    micron::reserved_vector<char> *overflow = nullptr;
+    usize maximum = 0;
+
+    bool
+    ensure(usize needed)
+    {
+      if ( needed <= capacity ) return true;
+      if ( !overflow || needed > maximum ) return false;
+      if ( !overflow->max_size() && !overflow->initialize(maximum) ) return false;
+      if ( !overflow->try_resize(needed) ) return false;
+      bytes = overflow->data();
+      capacity = overflow->size();
+      return true;
+    }
+  };
+
   template<typename Sink>
   error
-  write_node(node_id id, Sink &sink, micron::reserved_vector<char> &scratch, u64 &remaining) const
+  write_node(node_id id, Sink &sink, __text_buffer &scratch, u64 &remaining) const
   {
     if ( !remaining ) return error::rewrite_limit;
     --remaining;
@@ -195,14 +214,18 @@ class arena
     const auto &value = __nodes[id];
     if ( value.type == kind::rational ) {
       const auto &q = __constants[value.payload];
+      const usize numerator_capacity = q.numerator().magnitude().bit_length() + 2;
+      const usize denominator_capacity = q.denominator().bit_length() + 1;
+      if ( !scratch.ensure(numerator_capacity > denominator_capacity ? numerator_capacity : denominator_capacity) )
+        return scratch.overflow ? error::allocation : error::output_limit;
       const bool fraction = !q.is_integer();
       if ( fraction && !emit("(/ ", 3) ) return error::output_limit;
-      const usize bytes = micron::math::to_chars(scratch.data(), scratch.size(), q.numerator());
-      if ( !bytes || !emit(scratch.data(), bytes) ) return error::output_limit;
+      const usize bytes = micron::math::to_chars(scratch.bytes, scratch.capacity, q.numerator());
+      if ( !bytes || !emit(scratch.bytes, bytes) ) return error::output_limit;
       if ( fraction ) {
         if ( !emit(" ", 1) ) return error::output_limit;
-        const usize denominator_bytes = micron::math::to_chars(scratch.data(), scratch.size(), q.denominator());
-        if ( !denominator_bytes || !emit(scratch.data(), denominator_bytes) || !emit(")", 1) ) return error::output_limit;
+        const usize denominator_bytes = micron::math::to_chars(scratch.bytes, scratch.capacity, q.denominator());
+        if ( !denominator_bytes || !emit(scratch.bytes, denominator_bytes) || !emit(")", 1) ) return error::output_limit;
       }
       return error::none;
     }
@@ -295,8 +318,9 @@ class arena
       if ( code != error::none ) return code;
     } else if ( value.type == kind::power ) {
       if ( !emit(" ", 1) ) return error::output_limit;
-      const usize bytes = micron::math::to_chars(scratch.data(), scratch.size(), arbint<>(value.exponent));
-      if ( !bytes || !emit(scratch.data(), bytes) ) return error::output_limit;
+      if ( !scratch.ensure(65) ) return scratch.overflow ? error::allocation : error::output_limit;
+      const usize bytes = micron::math::to_chars(scratch.bytes, scratch.capacity, arbint<64>(value.exponent));
+      if ( !bytes || !emit(scratch.bytes, bytes) ) return error::output_limit;
     }
     return emit(")", 1) ? error::none : error::output_limit;
   }
@@ -668,8 +692,9 @@ public:
     }
     usize table_size = 1;
     while ( table_size < static_cast<usize>(__limits.max_nodes) * 2 ) table_size *= 2;
-    if ( !__nodes.initialize(__limits.max_nodes) || !__constants.initialize(__limits.max_nodes) || !__symbols.initialize(__limits.max_symbols)
-         || !__text.initialize(__limits.max_text_bytes) || !__table.initialize(table_size) || !__table.try_resize(table_size) ) {
+    if ( !__nodes.initialize(__limits.max_nodes) || !__constants.initialize(__limits.max_nodes)
+         || !__symbols.initialize(__limits.max_symbols) || !__text.initialize(__limits.max_text_bytes) || !__table.initialize(table_size)
+         || !__table.try_resize(table_size) ) {
       __state = error::allocation;
       return;
     }
@@ -725,9 +750,22 @@ public:
   {
     if ( !get(expression) ) return error::invalid_node;
     if ( __limits.rational.max_limbs > (~usize{ 0 } - 80) / mpn::limb_bits ) return error::limb_limit;
-    const usize capacity = __limits.rational.max_limbs * mpn::limb_bits + 80;
-    micron::reserved_vector<char> scratch;
-    if ( !scratch.initialize(capacity) || !scratch.try_resize(capacity) ) return error::allocation;
+    char local[256];
+    micron::reserved_vector<char> overflow;
+    __text_buffer scratch{ local, sizeof(local), &overflow, __limits.rational.max_limbs * mpn::limb_bits + 80 };
+    u64 remaining = __limits.max_rewrites;
+    return write_node(expression, sink, scratch, remaining);
+  }
+
+  // Scratch is caller-owned and reused across writes; sinks consume each span synchronously.
+  template<typename Sink>
+  error
+  write_csexp(node_id expression, Sink &&sink, char *buffer, usize capacity) const
+  {
+    if ( !get(expression) ) return error::invalid_node;
+    if ( __limits.rational.max_limbs > (~usize{ 0 } - 80) / mpn::limb_bits ) return error::limb_limit;
+    if ( !buffer && capacity ) return error::output_limit;
+    __text_buffer scratch{ buffer, capacity };
     u64 remaining = __limits.max_rewrites;
     return write_node(expression, sink, scratch, remaining);
   }
@@ -1062,6 +1100,13 @@ public:
   write_csexp(Sink &&sink) const
   {
     return __arena.write_csexp(__root, micron::forward<Sink>(sink));
+  }
+
+  template<typename Sink>
+  error
+  write_csexp(Sink &&sink, char *buffer, usize capacity) const
+  {
+    return __arena.write_csexp(__root, micron::forward<Sink>(sink), buffer, capacity);
   }
 };
 

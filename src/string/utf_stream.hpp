@@ -279,7 +279,7 @@ public:
         }
         __half_unit = false;
         const u16 unit = __selected == encoding::utf16_le ? static_cast<u16>(__unit_byte | (u16(byte) << 8))
-                                                         : static_cast<u16>((u16(__unit_byte) << 8) | byte);
+                                                          : static_cast<u16>((u16(__unit_byte) << 8) | byte);
         if ( __high ) {
           if ( unit < 0xdc00 || unit > 0xdfff ) {
             __failure = decode_status::invalid;

@@ -1,0 +1,124 @@
+conversion and serialization optimization report
+Original source: 9651a85f535e038d0538a3ed9ed7dee78de853f9
+Collected: 2026-11-13T20:55:12.530119+00:00
+
+Changes
+  binary64 generation uses packed integer powers and base-10^9 limbs instead
+  of repeated decimal digit shifts. The read-only tables occupy about 16 KiB.
+  Rendering uses bounded SIMD digit blocks and avoids redundant buffer passes.
+  Bounded char parsing scans 16-byte prefixes and eight-digit groups, with
+  scalar tails and preserved unbounded, wide-character and constexpr paths.
+  Canonical scalar IO uses unaligned-safe fixed-size copies; header validation
+  compares eight bytes at once. Wire bytes and constexpr behavior are unchanged.
+  Deserialization reuses string, flat vector and nested element capacities.
+  Symbolic output starts with local scratch and allocates overflow lazily;
+  a caller-scratch overload and local arbint conversion work remove normal
+  repeated-writer allocations. Sink spans must be consumed synchronously.
+
+Native measurements
+  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz; GCC 16.2.1; O3, native ISA, no LTO.
+  Median thread CPU ns/op, five samples, CPU 3. See JSON for wall times,
+  raw PMU counters and every sample. Speedup = before CPU time / after.
+
+case                         before ns    after ns   speedup    tracked alloc/op
+decimal_exact_common            147.44       79.83     1.85x              0 -> 0
+decimal_17_common               160.17       87.47     1.83x              0 -> 0
+parse_17_common                  29.71       27.17     1.09x              0 -> 0
+parse_exact_common               83.51       47.33     1.76x              0 -> 0
+decimal_exact_wide             3662.91      306.90    11.93x              0 -> 0
+decimal_17_wide                3654.85      290.29    12.59x              0 -> 0
+parse_17_wide                    33.67       28.97     1.16x              0 -> 0
+parse_exact_wide                417.25      138.40     3.01x              0 -> 0
+frame_64                          8.99        8.69     1.04x              0 -> 0
+view_64                           9.44        8.07     1.17x              0 -> 0
+frame_4096                       51.89       52.84     0.98x              0 -> 0
+view_4096                         8.78        7.54     1.16x              0 -> 0
+frame_65536                    2100.33     2070.85     1.01x              0 -> 0
+view_65536                        8.78        7.54     1.17x              0 -> 0
+scalar_write                    203.34       79.66     2.55x              0 -> 0
+scalar_read                     438.76       72.11     6.08x              0 -> 0
+vector_frame                     39.55       38.25     1.03x              0 -> 0
+vector_unframe                  128.43       50.33     2.55x              2 -> 0
+string_unframe                 7085.84       65.13   108.79x              2 -> 0
+nested_unframe                 3118.52      123.67    25.22x             45 -> 0
+symbolic_write               158614.33      474.12   334.54x              0 -> 0
+symbolic_write_scratch       159088.26      336.22   473.17x              0 -> 0
+
+  Scalar IO: one operation writes/reads 256 u64 values. Vector and string
+  payloads: 4 KiB. Nested payload: 16 strings of 64 bytes. Symbolic case:
+  a small expression with a symbol, integer coefficient and integer power.
+  The original caller-scratch case falls back to the original default API.
+  Allocation values above count the selected container allocator only.
+  Symbolic zeroes do not measure its old direct VM reservations. A separate
+  allocator-stats test verifies zero heap calls for normal caller-scratch IO.
+  Byte framing is already a copy path; the data show no material change.
+  Large symbolic gains come from removing an oversized per-call VM scratch
+  reservation, and are specific to repeated generation of small expressions.
+
+Measurement limits
+  This is a shared host, without fixed frequency or an exclusive CPU. CPU
+  time excludes descheduling; wall time and user PMU counters remain in JSON.
+  Original-code calibration targets 150 ms; the same operation count is used
+  for optimized code, so the fastest optimized cases run for much less time.
+  Small differences are noise; these results describe the fixed workloads
+  and establish neither universal speedups nor a global throughput maximum.
+
+Backend coverage
+  amd64/i386: SSE2 baseline; SSSE3 reductions when compile flags authorize it.
+  arm32/aarch64: NEON validation, packed reduction, rendering and ASCII paths.
+  wasm: SIMD128 and scalar fallback; compiled and executed under Node.
+  MICRON_NO_SIMD and constexpr: scalar algorithms. No runtime CPU detection.
+  Real object inspection confirms SSE2 floors and NEON/SIMD128 instructions.
+  ARM benchmark runs use QEMU and prove correctness, not native performance.
+  Wasm numeric/serialization benchmarks run; symbolic arenas still require
+  virtual-memory reservation and are excluded on that backend.
+
+Validation and independent review
+  Initial 15 focused runtime cells passed, covering all targets, scalar/SIMD,
+  sanitizers and existing decimal/canonical/symbolic/arbint/parse suites.
+  After review: 12 focused runtime/codegen checks passed. Final canonical
+  checks passed on native, i386, both ARM targets and wasm scalar/SIMD.
+  Seven real codegen profiles and five cross-target benchmark smoke profiles
+  passed. Cross-target benchmark checksums agree with native results.
+  Tests cover all binary64 exponents, random mantissas, exact expansion
+  against the original algorithm, misalignment, every SIMD byte lane, guard
+  pages, output canaries, failed writes, truncated frames and capacity reuse.
+  Three new independent gpt-6.1-sol agents at max effort reviewed memory
+  correctness, UB, out-of-bounds access and corruption. Numeric review found
+  no defects. Serialization review caught eager malformed-input allocation;
+  symbolic review caught a missing arithmetic guard in the new overload.
+  Both findings are fixed with regression tests and resolved follow-ups.
+  No outstanding introduced memory-safety findings in the scoped reviews.
+  Full repository compile matrices and unrelated suites were not run.
+
+Reproduce from the repository root
+  sh scripts/bootstap_duck.sh
+  bin/duck batch tests/rigor/conversion_io.duck
+
+  mkdir -p bin/conversion-repro/original/benches
+  git archive 9651a85f535e038d0538a3ed9ed7dee78de853f9 src external start tests/support/mock_allocators.hpp | tar -x -C bin/conversion-repro/original
+  ln -s src bin/conversion-repro/original/micron
+  cp benches/conversion_io.cpp bin/conversion-repro/original/benches/
+  bin/duck build bin/conversion-repro/original/benches/conversion_io.cpp --std c++23 -i bin/conversion-repro/original --perf --fp --no-ssp --no-lto -o bin/conversion-repro/before
+  bin/duck build benches/conversion_io.cpp --std c++23 -i . --perf --fp --no-ssp --no-lto -o bin/conversion-repro/after
+  python3 benches/conversion_io_perf.py --binary before=bin/conversion-repro/before/conversion_io --binary after=bin/conversion-repro/after/conversion_io --output bin/conversion-repro/results.json --samples 5 --milliseconds 150 --cpu 3
+
+  The runner invokes perf stat with cycles:u,instructions:u,branches:u,
+  branch-misses:u,cache-misses:u and acknowledged --control fd enable/disable.
+  Setup, warmup and printing are excluded. The benchmark success exit is 1.
+  Exact compiler commands and binary hashes are in the baseline JSON.
+  Detailed check commands and review scope are in the validation JSON.
+
+Alias follow-up
+  The x86 decimal backend now uses the existing micron::simd::sse aliases
+  through src/simd/aliases.hpp. All required aliases already existed. ARM
+  decimal kernels contain vector expressions rather than raw NEON calls;
+  wasm is unchanged. Complete compile-probe object files are byte-identical
+  before/after for GCC and Clang, amd64 native/base and i386 base. Five
+  runtime profiles pass: GCC native/base, i386 native/base and Clang base
+  with ASan+UBSan. Detailed commands and hashes are in the validation JSON.
+
+Artifacts
+  benches/results/conversion_io_plan.txt
+  benches/results/conversion_io_baseline.json
+  benches/results/conversion_io_validation.json

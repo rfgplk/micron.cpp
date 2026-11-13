@@ -17,6 +17,8 @@ build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -
 build tests/wasm/arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 --wasm-threads -ke -o bin/wasm-matrix/simd-threads-eh
 build tests/compiletests/wasm_arch.cpp --wasm32 --std c++23 --start start -i . -i src -O2 --wasm-simd128 --wasm-threads -ke --raw-obj -o bin/wasm-matrix/simd-threads-eh
 # Regression and fuzz codegen, including target-side UB instrumentation.
+build tests/compiletests/conversion_io.cpp --wasm32 --std c++23 --start start -i . -O2 --raw-obj -o bin/wasm-matrix/conversion-scalar
+build tests/compiletests/conversion_io.cpp --wasm32 --wasm-simd128 --std c++23 --start start -i . -O2 --raw-obj -o bin/wasm-matrix/conversion-simd
 build tests/wasm/math_edges.cpp --wasm32 --std c++23 --start start -i . -i src -O2 -o bin/wasm-matrix/regressions
 build tests/wasm/fuzz_simd.cpp --wasm32 --std c++23 --start start -i . -i src -O3 --wasm-simd128 --wasm-ubsan-traps -o bin/wasm-matrix/regressions
 build tests/wasm/fuzz_chrono.cpp --wasm32 --std c++23 --start start -i . -i src -O3 -ke --wasm-ubsan-traps -o bin/wasm-matrix/regressions

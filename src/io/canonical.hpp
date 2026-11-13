@@ -55,7 +55,16 @@ public:
   put_unsigned(T value) noexcept
   {
     if ( sizeof(T) > remaining() ) return false;
-    for ( usize i = 0; i < sizeof(T); ++i ) __data[__position + i] = static_cast<byte>(value >> (i * 8));
+    if consteval {
+      for ( usize i = 0; i < sizeof(T); ++i ) __data[__position + i] = static_cast<byte>(value >> (i * 8));
+    } else {
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+      if constexpr ( sizeof(T) == 2 ) value = __builtin_bswap16(value);
+      if constexpr ( sizeof(T) == 4 ) value = __builtin_bswap32(value);
+      if constexpr ( sizeof(T) == 8 ) value = __builtin_bswap64(value);
+#endif
+      __builtin_memcpy(__data + __position, &value, sizeof(T));
+    }
     __position += sizeof(T);
     return true;
   }
@@ -142,7 +151,16 @@ public:
   {
     if ( sizeof(T) > remaining() ) return false;
     T result = 0;
-    for ( usize i = 0; i < sizeof(T); ++i ) result |= static_cast<T>(__data[__position + i]) << (i * 8);
+    if consteval {
+      for ( usize i = 0; i < sizeof(T); ++i ) result |= static_cast<T>(__data[__position + i]) << (i * 8);
+    } else {
+      __builtin_memcpy(&result, __data + __position, sizeof(T));
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+      if constexpr ( sizeof(T) == 2 ) result = __builtin_bswap16(result);
+      if constexpr ( sizeof(T) == 4 ) result = __builtin_bswap32(result);
+      if constexpr ( sizeof(T) == 8 ) result = __builtin_bswap64(result);
+#endif
+    }
     __position += sizeof(T);
     value = result;
     return true;
@@ -223,8 +241,15 @@ unframe_bytes(const byte *source, usize count, byte_view &value, u64 maximum_byt
 {
   if ( !source || count < byte_frame_overhead ) return -error::invalid_arg;
   const byte magic[8] = { 'M', 'F', 'R', '1', 1, 0, 0, 0 };
-  for ( usize i = 0; i < sizeof(magic); ++i )
-    if ( source[i] != magic[i] ) return -error::invalid_arg;
+  if consteval {
+    for ( usize i = 0; i < sizeof(magic); ++i )
+      if ( source[i] != magic[i] ) return -error::invalid_arg;
+  } else {
+    u64 observed, expected;
+    __builtin_memcpy(&observed, source, sizeof(observed));
+    __builtin_memcpy(&expected, magic, sizeof(expected));
+    if ( observed != expected ) return -error::invalid_arg;
+  }
   reader in(source + 8, count - 8);
   u64 bytes = 0;
   in.get_u64(bytes);
