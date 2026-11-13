@@ -6,8 +6,13 @@
 #pragma once
 
 #include "../../types.hpp"
+#include "fft_plan.hpp"
 #include "limb.hpp"
 #include "tags.hpp"
+
+#if !defined(MICRON_ARBINT_NO_FFT) && !defined(MICRON_NO_FP) && !defined(__micron_no_fp) && __micron_dbl_mant_dig == 53
+#define __micron_arbint_fft 1
+#endif
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // tier crossovers
@@ -34,6 +39,8 @@
 //  toom-3       53 .. 125     (skylake 73, zen 107, zen3 89)
 //  toom-4       93 .. 324     (skylake 208, zen3 130)
 //  nussbaumer  180000          (Haswell, AVX2 SoA transform; final 2^20 seam wins by 21.2% mul / 23.4% sqr)
+//  FFT          8192          (64-bit limbs; 16384 at 32 bits). Balanced products require
+//                            >=15/16 transform occupancy; see docs/ARBINT_FFT.md and its CSV.
 //  DC_DIV       19 .. 76      (skylake 55)
 //  MU_DIV      855 .. 1899    (skylake 1528)
 
@@ -56,6 +63,9 @@
 #ifndef MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD
 #define MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD 180000
 #endif
+#ifndef MICRON_ARBINT_MUL_FFT_THRESHOLD
+#define MICRON_ARBINT_MUL_FFT_THRESHOLD 8192
+#endif
 
 #ifndef MICRON_ARBINT_SQR_COMBA_THRESHOLD
 #define MICRON_ARBINT_SQR_COMBA_THRESHOLD MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD
@@ -71,6 +81,9 @@
 #endif
 #ifndef MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD
 #define MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD 180000
+#endif
+#ifndef MICRON_ARBINT_SQR_FFT_THRESHOLD
+#define MICRON_ARBINT_SQR_FFT_THRESHOLD 8192
 #endif
 
 #ifndef MICRON_ARBINT_DIV_DC_THRESHOLD
@@ -123,6 +136,9 @@
 #ifndef MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD
 #define MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD 200000000u
 #endif
+#ifndef MICRON_ARBINT_MUL_FFT_THRESHOLD
+#define MICRON_ARBINT_MUL_FFT_THRESHOLD 16384
+#endif
 
 #ifndef MICRON_ARBINT_SQR_COMBA_THRESHOLD
 #define MICRON_ARBINT_SQR_COMBA_THRESHOLD MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD
@@ -138,6 +154,9 @@
 #endif
 #ifndef MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD
 #define MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD 200000000u
+#endif
+#ifndef MICRON_ARBINT_SQR_FFT_THRESHOLD
+#define MICRON_ARBINT_SQR_FFT_THRESHOLD 16384
 #endif
 
 #ifndef MICRON_ARBINT_DIV_DC_THRESHOLD
@@ -174,10 +193,23 @@
 #endif
 
 #ifndef MICRON_ARBINT_MUL_TIER_CAP
-#define MICRON_ARBINT_MUL_TIER_CAP 5
+#define MICRON_ARBINT_MUL_TIER_CAP 6
 #endif
 #ifndef MICRON_ARBINT_SQR_TIER_CAP
-#define MICRON_ARBINT_SQR_TIER_CAP 5
+#define MICRON_ARBINT_SQR_TIER_CAP 6
+#endif
+
+#ifndef MICRON_ARBINT_FFT_MAX_LOG
+#define MICRON_ARBINT_FFT_MAX_LOG 20
+#endif
+
+#ifndef MICRON_ARBINT_FFT_BALANCED
+#if !defined(MICRON_NO_SIMD) && !defined(__micron_simd_generic)                                                                            \
+    && (defined(__micron_x86_avx2) || (defined(__micron_arm_neon) && defined(__micron_arch_arm64)))
+#define MICRON_ARBINT_FFT_BALANCED 1
+#else
+#define MICRON_ARBINT_FFT_BALANCED 0
+#endif
 #endif
 
 #ifndef MICRON_ARBINT_NUSSBAUMER_LEAF_LOG
@@ -234,12 +266,16 @@ inline constexpr usize mul_karatsuba = MICRON_ARBINT_MUL_KARATSUBA_THRESHOLD;
 inline constexpr usize mul_toom3 = MICRON_ARBINT_MUL_TOOM3_THRESHOLD;
 inline constexpr usize mul_toom4 = MICRON_ARBINT_MUL_TOOM4_THRESHOLD;
 inline constexpr usize mul_nussbaumer = MICRON_ARBINT_MUL_NUSSBAUMER_THRESHOLD;
+inline constexpr usize mul_fft = MICRON_ARBINT_MUL_FFT_THRESHOLD;
 
 inline constexpr usize sqr_comba = MICRON_ARBINT_SQR_COMBA_THRESHOLD;
 inline constexpr usize sqr_karatsuba = MICRON_ARBINT_SQR_KARATSUBA_THRESHOLD;
 inline constexpr usize sqr_toom3 = MICRON_ARBINT_SQR_TOOM3_THRESHOLD;
 inline constexpr usize sqr_toom4 = MICRON_ARBINT_SQR_TOOM4_THRESHOLD;
 inline constexpr usize sqr_nussbaumer = MICRON_ARBINT_SQR_NUSSBAUMER_THRESHOLD;
+inline constexpr usize sqr_fft = MICRON_ARBINT_SQR_FFT_THRESHOLD;
+inline constexpr usize fft_max_log = MICRON_ARBINT_FFT_MAX_LOG;
+inline constexpr bool fft_balanced = MICRON_ARBINT_FFT_BALANCED;
 
 inline constexpr usize nussbaumer_leaf_log = MICRON_ARBINT_NUSSBAUMER_LEAF_LOG;
 inline constexpr usize nussbaumer_max_log = MICRON_ARBINT_NUSSBAUMER_MAX_LOG;
@@ -267,6 +303,9 @@ inline constexpr usize get_str_dc = MICRON_ARBINT_GET_STR_DC_THRESHOLD;
 inline constexpr usize set_str_dc = MICRON_ARBINT_SET_STR_DC_THRESHOLD;
 
 static_assert(mul_comba >= 1 && mul_comba <= mul_karatsuba, "arbint: mul thresholds must ascend");
+static_assert(mul_fft >= 2u && sqr_fft >= 2u, "arbint: FFT thresholds must be at least two limbs");
+static_assert(fft_max_log >= 6u && fft_max_log <= 20u, "arbint: FFT_MAX_LOG must be in [6, 20] for binary64 precision");
+static_assert(MICRON_ARBINT_FFT_BALANCED == 0 || MICRON_ARBINT_FFT_BALANCED == 1, "arbint: FFT_BALANCED must be 0 or 1");
 static_assert(mul_karatsuba <= mul_toom3 && mul_toom3 <= mul_toom4 && mul_toom4 <= mul_nussbaumer, "arbint: mul thresholds must ascend");
 static_assert(sqr_comba >= 1 && sqr_comba <= sqr_karatsuba, "arbint: sqr thresholds must ascend");
 static_assert(sqr_karatsuba <= sqr_toom3 && sqr_toom3 <= sqr_toom4 && sqr_toom4 <= sqr_nussbaumer, "arbint: sqr thresholds must ascend");
@@ -292,6 +331,29 @@ static_assert(hgcd2_window == 1u || hgcd2_window == 2u,
 
 };      // namespace threshold
 
+[[nodiscard]] inline constexpr __fft_plan
+__fft_make_plan(usize an, usize bn) noexcept
+{
+  return __fft_plan_for(an, bn, threshold::fft_max_log);
+}
+
+inline constexpr usize __fft_block_limbs
+    = ((usize{ 1 } << (threshold::fft_max_log - 1u)) * __fft_digit_bits(threshold::fft_max_log)) / limb_bits;
+
+[[nodiscard]] inline constexpr bool
+__fft_auto_shape(usize an, usize bn) noexcept
+{
+  const auto p = __fft_make_plan(an, bn);
+  if ( !p.valid ) return false;
+  // Unequal operands otherwise fall back to Karatsuba. Balanced Toom is much
+  // stronger: only enter FFT near the full end of a power-of-two padding band.
+  if ( an != bn ) return true;
+  if constexpr ( !threshold::fft_balanced ) return false;
+  const usize bits = an * limb_bits;
+  const usize digits = bits / p.digit_bits + usize(bits % p.digit_bits != 0u);
+  return 2u * digits - 1u >= p.n - p.n / 16u;
+}
+
 // %%%%%%%%%%%%%%%%%%%
 // ladders
 
@@ -300,6 +362,11 @@ static_assert(hgcd2_window == 1u || hgcd2_window == 2u,
 pick_mul(usize an, usize bn) noexcept
 {
   const usize n = an < bn ? an : bn;
+  if ( n >= threshold::mul_nussbaumer ) return algo::nussbaumer;
+#if defined(__micron_arbint_fft)
+  if constexpr ( MICRON_ARBINT_MUL_TIER_CAP >= 6 )
+    if ( n >= threshold::mul_fft && __fft_auto_shape(an, bn) ) return algo::fft;
+#endif
   if ( n < threshold::mul_comba ) return algo::basecase;
   if ( n < threshold::mul_karatsuba ) return algo::comba;
   if ( n < threshold::mul_toom3 ) return algo::karatsuba;
@@ -312,6 +379,11 @@ pick_mul(usize an, usize bn) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr algo
 pick_sqr(usize n) noexcept
 {
+  if ( n >= threshold::sqr_nussbaumer ) return algo::nussbaumer;
+#if defined(__micron_arbint_fft)
+  if constexpr ( MICRON_ARBINT_SQR_TIER_CAP >= 6 )
+    if ( n >= threshold::sqr_fft && __fft_auto_shape(n, n) ) return algo::fft;
+#endif
   if ( n < threshold::sqr_comba ) return algo::basecase;
   if ( n < threshold::sqr_karatsuba ) return algo::comba;
   if ( n < threshold::sqr_toom3 ) return algo::karatsuba;
@@ -365,6 +437,8 @@ pinned_algo() noexcept
     return algo::karatsuba;
   else if constexpr ( micron::is_same_v<S, solver::toom> )
     return algo::toom3;
+  else if constexpr ( micron::is_same_v<S, solver::fft> )
+    return algo::fft;
   else
     return algo::nussbaumer;
 }

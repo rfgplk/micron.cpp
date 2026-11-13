@@ -128,13 +128,13 @@ mont_one(limb_t *rp, const mont_ctx &c, limb_t *scratch) noexcept
 [[nodiscard, gnu::flatten]] inline constexpr usize
 mont_mul_itch(usize n) noexcept
 {
-  return 2u * n + mul_itch(n, n);
+  return 2u * n + __mul_itch_bound(n, n);
 }
 
 [[nodiscard, gnu::flatten]] inline constexpr usize
 mont_sqr_itch(usize n) noexcept
 {
-  return 2u * n + sqr_itch(n);
+  return 2u * n + __sqr_itch_bound(n);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr usize
@@ -147,7 +147,7 @@ from_mont_itch(usize n) noexcept
 to_mont_itch(usize an, usize n) noexcept
 {
   if ( an == 0 ) an = 1;
-  return (an + n) + (an + 1u) + divrem_itch(an + n, n);
+  return (an + n) + (an + 1u) + divrem_cap_itch(an + n, n);
 }
 
 [[nodiscard, gnu::flatten]] inline constexpr usize

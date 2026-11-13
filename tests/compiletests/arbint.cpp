@@ -69,10 +69,15 @@ main()
   arbuint<0, micron::math::solver::basecase> pb(5u);
   arbuint<512, micron::math::solver::nussbaumer> pn(7u);
   arbuint<0, micron::math::solver::nussbaumer> pnd(11u);
+  volatile u64 fft_input = 0xabcdef0123456789ull;
+  arbuint<513, micron::math::solver::fft> pf(static_cast<u64>(fft_input));
+  arbuint<0, micron::math::solver::fft> pfd(static_cast<u64>(fft_input));
   pc = pc * pc;
   pb = pb * pb;
   pn = pn * pn;
   pnd = micron::math::sqr(pnd);
+  pf *= pf + arbuint<513, micron::math::solver::fft>(1u);
+  pfd = micron::math::sqr(pfd);
 
   const arbuint<> dm(1000003u);
   micron::math::montgomery<arbuint<>> mgd(dm);
@@ -124,6 +129,7 @@ main()
   return static_cast<int>(static_cast<u64>(u) + static_cast<u64>(k) + static_cast<u64>(pc) + static_cast<u64>(odd.popcount())
                           + static_cast<u64>(n) + static_cast<u64>(ok) + str.size() + static_cast<u64>(ord) + static_cast<u64>(s.size())
                           + static_cast<u64>(re.size()) + static_cast<u64>(reu.size()) + static_cast<u64>(parsed.size())
-                          + static_cast<u64>(pb.size()) + static_cast<u64>(pn.size()) + static_cast<u64>(pnd.size()) + fold())
+                          + static_cast<u64>(pb.size()) + static_cast<u64>(pn.size()) + static_cast<u64>(pnd.size()) + static_cast<u64>(pf)
+                          + static_cast<u64>(pfd) + fold())
          & 0x7f;
 }

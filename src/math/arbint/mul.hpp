@@ -9,6 +9,7 @@
 #include "limb.hpp"
 #include "mpn_core.hpp"
 #include "mul_basecase.hpp"
+#include "mul_fft.hpp"
 #include "mul_karatsuba.hpp"
 #include "mul_nussbaumer.hpp"
 #include "mul_toom.hpp"
@@ -26,7 +27,7 @@ namespace math
 namespace mpn
 {
 
-inline constexpr algo tiers_built = algo::nussbaumer;
+inline constexpr algo tiers_built = algo::fft;
 
 inline constexpr algo mul_tier_cap = static_cast<algo>(MICRON_ARBINT_MUL_TIER_CAP);
 inline constexpr algo sqr_tier_cap = static_cast<algo>(MICRON_ARBINT_SQR_TIER_CAP);
@@ -49,6 +50,7 @@ clamp_algo(algo k) noexcept
 mul_itch(usize an, usize bn, usize cutoff = threshold::mul_karatsuba) noexcept
 {
   const usize n = an < bn ? an : bn;
+  if ( clamp_algo(pick_mul(an, bn)) == algo::fft ) return fft_itch(an, bn);
   if ( n < cutoff ) return 0;
   if ( clamp_algo(pick_mul(an, bn)) == algo::nussbaumer ) return nussbaumer_itch(an, bn);
   usize base = karatsuba_itch(n, cutoff);
@@ -66,6 +68,7 @@ mul_itch(usize an, usize bn, usize cutoff = threshold::mul_karatsuba) noexcept
 [[nodiscard, gnu::flatten]] inline constexpr usize
 sqr_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept
 {
+  if ( clamp_to(pick_sqr(n), sqr_tier_cap) == algo::fft ) return fft_itch(n, n);
   if ( clamp_to(pick_sqr(n), sqr_tier_cap) == algo::nussbaumer ) return sqr_nussbaumer_itch(n);
   usize base = sqr_karatsuba_itch(n, cutoff);
   if ( n >= threshold::sqr_toom3 ) {
@@ -92,6 +95,8 @@ mul_itch_forced(usize an, usize bn) noexcept
   }
   const usize ns = nussbaumer_itch(an, bn);
   if ( ns > base ) base = ns;
+  const usize fs = fft_itch(an, bn);
+  if ( fs > base ) base = fs;
   return base;
 }
 
@@ -107,6 +112,8 @@ sqr_itch_forced(usize n) noexcept
   if ( t4 > base ) base = t4;
   const usize ns = sqr_nussbaumer_itch(n);
   if ( ns > base ) base = ns;
+  const usize fs = fft_itch(n, n);
+  if ( fs > base ) base = fs;
   return base;
 }
 
@@ -134,6 +141,8 @@ mul_itch_with(usize an, usize bn) noexcept
     return mul_itch_with<algo::karatsuba>(an, bn);
   } else if constexpr ( K == algo::nussbaumer )
     return nussbaumer_itch(an, bn);
+  else if constexpr ( K == algo::fft )
+    return fft_itch(an, bn);
 }
 
 template<algo K>
@@ -155,6 +164,8 @@ sqr_itch_with(usize n) noexcept
     return sqr_itch_with<algo::karatsuba>(n);
   } else if constexpr ( K == algo::nussbaumer )
     return sqr_nussbaumer_itch(n);
+  else if constexpr ( K == algo::fft )
+    return fft_itch(n, n);
 }
 
 template<arb_solver S>
@@ -191,6 +202,8 @@ mul_solver_cap_itch(usize cap) noexcept
     return 0u;
   } else if constexpr ( micron::is_same_v<S, solver::nussbaumer> ) {
     return nussbaumer_itch(cap, cap);
+  } else if constexpr ( micron::is_same_v<S, solver::fft> ) {
+    return fft_itch(cap, cap);
   } else {
     // Every unbalanced Karatsuba stage follows an Euclidean remainder chain.  The sum of that
     // chain is below 3*cap and each stage reserves 2*bn, so this bounds every an,bn <= cap.
@@ -208,6 +221,10 @@ mul_solver_cap_itch(usize cap) noexcept
         if ( cap >= threshold::mul_toom4 ) out = __mul_itch_max(out, toom4_itch(cap));
       if constexpr ( static_cast<u8>(mul_tier_cap) >= static_cast<u8>(algo::nussbaumer) )
         if ( cap >= threshold::mul_nussbaumer ) out = __mul_itch_max(out, nussbaumer_itch(cap, cap));
+#if defined(__micron_arbint_fft)
+      if constexpr ( static_cast<u8>(mul_tier_cap) >= static_cast<u8>(algo::fft) )
+        if ( cap >= threshold::mul_fft ) out = __mul_itch_max(out, fft_itch(cap, cap));
+#endif
     }
     return out;
   }
@@ -217,10 +234,33 @@ template<arb_solver S>
 [[nodiscard, gnu::flatten]] inline constexpr usize
 sqr_solver_cap_itch(usize cap) noexcept
 {
-  if constexpr ( micron::is_same_v<S, solver::automatic> )
-    return sqr_itch(cap);
-  else
+  if constexpr ( micron::is_same_v<S, solver::automatic> ) {
+    usize out = sqr_itch(cap);
+#if defined(__micron_arbint_fft)
+    if constexpr ( static_cast<u8>(sqr_tier_cap) >= static_cast<u8>(algo::fft) )
+      if ( cap >= threshold::sqr_fft ) out = __mul_itch_max(out, fft_itch(cap, cap));
+#endif
+    return out;
+  } else
     return sqr_itch_with<pinned_algo<S>()>(cap);
+}
+
+// A normalized intermediate can enter FFT even when its maximum shape cannot.
+// Consumers reserving for a range of operand lengths must include that workspace.
+[[nodiscard]] inline constexpr usize
+__mul_itch_bound(usize an, usize bn) noexcept
+{
+#if defined(__micron_arbint_fft)
+  if constexpr ( MICRON_ARBINT_MUL_TIER_CAP >= 6 )
+    if ( an >= threshold::mul_fft && bn >= threshold::mul_fft ) return mul_solver_cap_itch<solver::automatic>(an > bn ? an : bn);
+#endif
+  return mul_itch(an, bn);
+}
+
+[[nodiscard]] inline constexpr usize
+__sqr_itch_bound(usize n) noexcept
+{
+  return sqr_solver_cap_itch<solver::automatic>(n);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -250,6 +290,8 @@ mul_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const
       mul_toom3(rp, ap, bp, an, scratch, threshold::mul_karatsuba);
     else
       mul_karatsuba_top(rp, ap, an, bp, bn, scratch);
+  } else if constexpr ( K == algo::fft ) {
+    mul_fft(rp, ap, an, bp, bn, scratch);
   } else {
     mul_nussbaumer(rp, ap, an, bp, bn, scratch);
   }
@@ -279,6 +321,8 @@ sqr_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t
       sqr_toom3(rp, ap, n, scratch, threshold::sqr_karatsuba);
     else
       sqr_karatsuba_top(rp, ap, n, scratch);
+  } else if constexpr ( K == algo::fft ) {
+    sqr_fft(rp, ap, n, scratch);
   } else {
     sqr_nussbaumer(rp, ap, n, scratch);
   }
@@ -321,6 +365,9 @@ mul(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb
   case algo::nussbaumer:
     mul_nussbaumer(rp, ap, an, bp, bn, scratch);
     return;
+  case algo::fft:
+    mul_fft(rp, ap, an, bp, bn, scratch);
+    return;
   }
 }
 
@@ -357,6 +404,9 @@ sqr(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scr
     return;
   case algo::nussbaumer:
     sqr_nussbaumer(rp, ap, n, scratch);
+    return;
+  case algo::fft:
+    sqr_fft(rp, ap, n, scratch);
     return;
   }
 }

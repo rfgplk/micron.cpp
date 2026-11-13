@@ -33,8 +33,8 @@ namespace mpn
 invmod_itch(usize an, usize mn) noexcept
 {
   const usize s = mn + 3u;
-  usize w = divrem_itch(2u * s, s);
-  const usize m = mul_itch(s, s);
+  usize w = divrem_cap_itch(2u * s, s);
+  const usize m = __mul_itch_bound(s, s);
   if ( m > w ) w = m;
   if ( an > mn ) {
     const usize h = (an - mn + 1u) + divrem_itch(an, mn);

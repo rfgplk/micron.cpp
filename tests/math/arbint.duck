@@ -1,4 +1,5 @@
 # arbint validation: the rigor suite on every arch that has a toolchain here.
+# The FFT integration and its forced/sanitizer/cross cells are in tests/math/arbint_fft.duck.
 #
 #   duck tests/math/arbint.duck          (== duck batch tests/math/arbint.duck)
 #   duck batch parallel tests/math/arbint.duck

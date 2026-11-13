@@ -1,0 +1,5 @@
+# started on Fri Nov  6 19:58:56 2026
+
+5412832489,,cycles:u,0.30%,1357885001,100.00,,
+15865706482,,uops_retired.retire_slots:u,0.00%,1357885001,100.00,,
+11324334,,int_misc.recovery_cycles:u,1.16%,1357885001,100.00,,

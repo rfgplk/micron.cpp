@@ -1,0 +1,11 @@
+# Finite complex division regressions and seeded exponent sweeps.
+# Range preservation requires gradual underflow and no fast-math reassociation.
+test tests/rigor/fft_core_regressions.cpp --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/core-regressions-gcc --timeout 30
+test tests/rigor/fft_core_regressions.cpp --clang --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/core-regressions-clang --timeout 30
+test tests/rigor/fft_core_regressions.cpp --std c++23 --isa base -O1 --asan --ubsan --no-lto -i . -i ./src -o bin/fft/check/core-regressions-sanitize --timeout 30
+test tests/rigor/fft_core_regressions.cpp --std c++23 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/core-regressions-k --timeout 30
+test tests/rigor/fft_core_regressions.cpp --std c++23 --i386 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/core-regressions-i386 --timeout 30
+test tests/rigor/fft_core_regressions.cpp --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/core-regressions-arm --timeout 30
+test tests/rigor/fft_core_regressions.cpp --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/core-regressions-arm64 --timeout 30
+test tests/rigor/fft_core_regressions.cpp --clang --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/core-regressions-clang-arm --timeout 30
+test tests/rigor/fft_core_regressions.cpp --clang --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/core-regressions-clang-arm64 --timeout 30

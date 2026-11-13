@@ -51,12 +51,14 @@ template<class U> struct mod_sizes {
   static constexpr usize cap = U::cap_limbs;
 
   // __pow2_mod at its widest, k == 2*cap: np(k+1) + qp(k-n+2) + rp(n) + divrem_itch(k+1, n)
-  // barrett's ctor carves 2*cap + invert_n_itch(cap) out of the same constant, which is smaller
-  static constexpr usize setup = bounded ? (2u * cap + 1u) + (cap + 2u) + cap + mpn::divrem_itch(2u * cap + 1u, cap) : 1u;
+  // Barrett's ctor shares it with a Newton reciprocal, whose FFT can need more than division.
+  static constexpr usize setup
+      = bounded ? mod_max((2u * cap + 1u) + (cap + 2u) + cap + mpn::divrem_cap_itch(2u * cap + 1u, cap), 2u * cap + mpn::invert_n_itch(cap))
+                : 1u;
 
   // prod(2cap) + qp(cap+2) + rp(cap) + divrem_itch(2cap, cap)
   // mulmod, sqrmod, __reduced and barrett::reduce all carve out of this one
-  static constexpr usize wide = bounded ? 2u * cap + (cap + 2u) + cap + mpn::divrem_itch(2u * cap, cap) : 1u;
+  static constexpr usize wide = bounded ? 2u * cap + (cap + 2u) + cap + mpn::divrem_cap_itch(2u * cap, cap) : 1u;
 
   // __mont_op / __bar_op both lay two n-limb operands down first and then hand the rest to the engine
   static constexpr usize op = bounded ? 2u * cap + mod_max(mpn::mont_op_itch(cap), mpn::barrett_op_itch(cap)) : 1u;

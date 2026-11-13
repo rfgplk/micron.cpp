@@ -1,0 +1,6 @@
+operation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns
+multiply,f64,4096,4096,0,1,100000,1,4338.61474,4338.61474,4338.61474,4338.61474,4338.61474
+operation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns
+multiply,f64,4096,4096,0,1,100000,1,4410.2625,4410.2625,4410.2625,4410.2625,4410.2625
+operation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns
+multiply,f64,4096,4096,0,1,100000,1,4391.2152,4391.2152,4391.2152,4391.2152,4391.2152

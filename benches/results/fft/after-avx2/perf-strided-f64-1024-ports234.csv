@@ -1,0 +1,6 @@
+# started on Fri Nov  6 20:03:36 2026
+
+886553876,,cycles:u,1.24%,222269403,100.00,,
+424998243,,uops_executed_port.port_2:u,0.53%,222269403,100.00,,
+422064395,,uops_executed_port.port_3:u,0.47%,222269403,100.00,,
+331746272,,uops_executed_port.port_4:u,0.25%,222269403,100.00,,

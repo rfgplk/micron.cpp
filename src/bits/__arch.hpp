@@ -98,6 +98,12 @@ inline constexpr unsigned __micron_width = __wordsize;
 #define __micron_ldbl_bytes __SIZEOF_LONG_DOUBLE__
 #endif
 
+#define __micron_dbl_mant_dig __DBL_MANT_DIG__
+#define __micron_ldbl_epsilon __LDBL_EPSILON__
+#define __micron_ldbl_mant_dig __LDBL_MANT_DIG__
+#define __micron_ldbl_max_exp __LDBL_MAX_EXP__
+#define __micron_ldbl_denorm_min __LDBL_DENORM_MIN__
+
 #if defined(__FLT128_MANT_DIG__) && defined(__micron_has_int128) && !defined(__micron_ldbl_binary128)
 #define __micron_f128_distinct 1
 #endif

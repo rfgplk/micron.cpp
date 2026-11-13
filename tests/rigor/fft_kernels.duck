@@ -1,0 +1,14 @@
+# Focused FFT kernel gates. The AArch64 oracle cap bounds software binary128 work under QEMU.
+test tests/rigor/fft_kernels.cpp --std c++23 --isa v3 -O2 --no-lto -i . -i ./src -o bin/fft/tuning/check/gcc-avx2 --timeout 90
+test tests/rigor/fft_kernels.cpp --clang --std c++23 --isa v3 -O2 --no-lto -i . -i ./src -o bin/fft/tuning/check/clang-avx2 --timeout 90
+test tests/rigor/fft_kernels.cpp --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/tuning/check/base --timeout 90
+test tests/rigor/fft_kernels.cpp --std c++23 --isa base -O2 --no-lto --def MICRON_NO_SIMD -i . -i ./src -o bin/fft/tuning/check/scalar --timeout 90
+test tests/rigor/fft_kernels.cpp --std c++23 --isa v3 -Ofast --no-lto -i . -i ./src -o bin/fft/tuning/check/fast --timeout 90
+test tests/rigor/fft_kernels.cpp --clang --std c++23 --isa v3 -O1 --asan --ubsan --no-lto -i . -i ./src -o bin/fft/tuning/check/sanitize --timeout 90
+test tests/rigor/fft_kernels.cpp --std c++23 --i386 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/tuning/check/i386 --timeout 90
+test tests/rigor/fft_kernels.cpp --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/tuning/check/arm --timeout 90
+test tests/rigor/fft_kernels.cpp --std c++23 --arm64 -O2 --no-lto -k --start ./start --def MICRON_FFT_TEST_MAX_ORACLE_N=256 -i . -i ./src -o bin/fft/tuning/check/arm64 --timeout 180
+test tests/rigor/fft_kernels.cpp --clang --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/tuning/check/clang-arm --timeout 90
+test tests/rigor/fft_kernels.cpp --clang --std c++23 --arm64 -O2 --no-lto -k --start ./start --def MICRON_FFT_TEST_MAX_ORACLE_N=256 -i . -i ./src -o bin/fft/tuning/check/clang-arm64 --timeout 180
+test tests/rigor/fft_kernels.cpp --std c++23 --isa v3 --perf --fp --no-ssp --no-lto -i . -i ./src -o bin/fft/tuning/check/gcc-perf --timeout 90
+test tests/rigor/fft_kernels.cpp --clang --std c++23 --isa v3 --perf --fp --no-ssp --no-lto -i . -i ./src -o bin/fft/tuning/check/clang-perf --timeout 90

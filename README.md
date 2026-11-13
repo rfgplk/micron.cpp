@@ -243,6 +243,7 @@ All headers live under `src/` and may be included directly. Each top-level modul
 ###### Numerics and compute
 - **`math/`** -- arithmetic, trigonometry, logarithms, square roots, activations, special functions, branchless helpers and dispatch
 - **`math/blas/`** -- BLAS levels 1–3 with extensions and tag-based dispatch
+- **`math/fft/`** -- planned arbitrary-length real/complex FFTs, ND layouts, DCT/DST, convolution, and explicit executors
 - **`math/arbint/`** -- arbitrary precision integer support and associated utilities
 - **`math/linalg/`** -- linear algebra (decompositions, polynomials, Householder, pseudoinverse, Schur)
 - **`math/matrix/`** -- fixed- and dynamic-shape matrices with packed and viewed forms

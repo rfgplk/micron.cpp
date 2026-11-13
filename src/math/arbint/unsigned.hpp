@@ -49,7 +49,7 @@ private:
   static constexpr usize mul_scratch_limbs
       = bounded ? 2u * cap_limbs + 2u + (mul_cap_itch > sqr_cap_itch ? mul_cap_itch : sqr_cap_itch) : 1u;
 
-  static constexpr usize div_scratch_limbs = bounded ? (cap_limbs + 1u) + cap_limbs + mpn::divrem_itch(2u * cap_limbs, cap_limbs) : 1u;
+  static constexpr usize div_scratch_limbs = bounded ? (cap_limbs + 1u) + cap_limbs + mpn::divrem_cap_itch(2u * cap_limbs, cap_limbs) : 1u;
 
   template<typename T> friend class __arb_friend_tag;
 

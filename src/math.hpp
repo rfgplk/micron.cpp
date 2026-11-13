@@ -20,6 +20,7 @@
 #include "math/cr.hpp"
 #include "math/dd64.hpp"
 #include "math/dispatch.hpp"
+#include "math/fft.hpp"
 #include "math/generic.hpp"
 #include "math/graph.hpp"
 #include "math/ieee.hpp"

@@ -158,7 +158,11 @@ __map_recursive(const char *path, rtld flags, load_state &st, usize depth) noexc
   }
   const dyn_info_t &d = m->mod.dyn;
   // A truncated dependency closure cannot be relocated reliably.
-  if ( d.needed_truncated ) { __err_set_once("dynamic_open: DT_NEEDED list truncated", path); st.failed = true; return nullptr; }
+  if ( d.needed_truncated ) {
+    __err_set_once("dynamic_open: DT_NEEDED list truncated", path);
+    st.failed = true;
+    return nullptr;
+  }
   for ( usize i = 0; i < d.needed_count && !st.failed; ++i ) {
     if ( !d.strtab ) break;
     const char *dep_name = d.strtab + d.needed[i];
@@ -239,7 +243,10 @@ __close_module(dl_module *m) noexcept
 
   for ( usize i = 0; i < n; ++i ) {
     dl_module *d = __slots[doomed[i]];
-    if ( d && d->in_use && d->initialized ) { d->initialized = false; __run_finalizers(d->mod); }
+    if ( d && d->in_use && d->initialized ) {
+      d->initialized = false;
+      __run_finalizers(d->mod);
+    }
   }
   for ( usize i = 0; i < n; ++i ) {
     dl_module *d = __slots[doomed[i]];

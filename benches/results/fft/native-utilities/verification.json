@@ -1,0 +1,485 @@
+{
+  "date": "2026-11-13",
+  "scope": "Replace compiler builtins and legacy SIMD intrinsic calls in the uncommitted FFT and complex arithmetic with micron utilities.",
+  "environment": {
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "g++": "g++ (GCC) 16.2.1 20261029 (Red Hat 16.2.1-3)",
+    "clang++": "clang version 22.1.8 (Fedora 22.1.8-4.fc44)"
+  },
+  "measurement": {
+    "cpu": 2,
+    "flags": [
+      "--std c++23",
+      "--perf",
+      "--fp",
+      "--no-ssp",
+      "--no-lto"
+    ],
+    "gcc64_rounds": 7,
+    "samples_per_round": 7,
+    "gcc64_fixed_iterations": "ceil(8 milliseconds / initial per-operation baseline), minimum 1",
+    "i386_rounds": 9,
+    "i386_samples_per_round": 11,
+    "ratio": "original time / native time; above 1 is faster",
+    "i386_timing_note": "Substantial host timing variation; kernel instruction streams match the original exactly. Do not infer small speed differences from these timings.",
+    "aggregate": [
+      {
+        "target": "gcc-base",
+        "cases": 34,
+        "rounds": 7,
+        "median_paired_speedup": 1.0007683627682118
+      },
+      {
+        "target": "gcc-v3",
+        "cases": 34,
+        "rounds": 7,
+        "median_paired_speedup": 0.9991774688945368
+      },
+      {
+        "target": "gcc-i386",
+        "cases": 8,
+        "rounds": 9,
+        "median_paired_speedup": 0.9983319551748487
+      }
+    ]
+  },
+  "bitwise_equivalence": {
+    "precisions": [
+      "float",
+      "double",
+      "long double"
+    ],
+    "lengths": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      7,
+      16,
+      17,
+      32,
+      64,
+      101,
+      256,
+      1000,
+      1009,
+      1024,
+      4096
+    ],
+    "operations": [
+      "forward FFT",
+      "backward FFT",
+      "complex division"
+    ],
+    "x87_padding": "Checksums exclude the six or two padding bytes; only the ten value bytes are observed.",
+    "targets": [
+      {
+        "target": "clang-arm",
+        "bitwise_equal": true,
+        "original_checksums": [
+          "f32,6140335596970012198",
+          "f64,17854370816994411741",
+          "long_double,17854370816994411741"
+        ],
+        "native_checksums": [
+          "f32,6140335596970012198",
+          "f64,17854370816994411741",
+          "long_double,17854370816994411741"
+        ]
+      },
+      {
+        "target": "clang-arm64",
+        "bitwise_equal": true,
+        "original_checksums": [
+          "f32,881993257239499560",
+          "f64,10734693591475150667",
+          "long_double,12220454176804535605"
+        ],
+        "native_checksums": [
+          "f32,881993257239499560",
+          "f64,10734693591475150667",
+          "long_double,12220454176804535605"
+        ]
+      },
+      {
+        "target": "clang-base",
+        "bitwise_equal": true,
+        "original_checksums": [
+          "f32,6140335596970012198",
+          "f64,17854370816994411741",
+          "long_double,7882750993509637922"
+        ],
+        "native_checksums": [
+          "f32,6140335596970012198",
+          "f64,17854370816994411741",
+          "long_double,7882750993509637922"
+        ]
+      },
+      {
+        "target": "clang-v3",
+        "bitwise_equal": true,
+        "original_checksums": [
+          "f32,1425335411907219031",
+          "f64,9238291836208310184",
+          "long_double,7882750993509637922"
+        ],
+        "native_checksums": [
+          "f32,1425335411907219031",
+          "f64,9238291836208310184",
+          "long_double,7882750993509637922"
+        ]
+      },
+      {
+        "target": "gcc-arm",
+        "bitwise_equal": true,
+        "original_checksums": [
+          "f32,6140335596970012198",
+          "f64,17854370816994411741",
+          "long_double,17854370816994411741"
+        ],
+        "native_checksums": [
+          "f32,6140335596970012198",
+          "f64,17854370816994411741",
+          "long_double,17854370816994411741"
+        ]
+      },
+      {
+        "target": "gcc-arm64",
+        "bitwise_equal": true,
+        "original_checksums": [
+          "f32,5810864244222036454",
+          "f64,6428593470961696120",
+          "long_double,12220454176804535605"
+        ],
+        "native_checksums": [
+          "f32,5810864244222036454",
+          "f64,6428593470961696120",
+          "long_double,12220454176804535605"
+        ]
+      },
+      {
+        "target": "gcc-base",
+        "bitwise_equal": true,
+        "original_checksums": [
+          "f32,6140335596970012198",
+          "f64,17854370816994411741",
+          "long_double,7882750993509637922"
+        ],
+        "native_checksums": [
+          "f32,6140335596970012198",
+          "f64,17854370816994411741",
+          "long_double,7882750993509637922"
+        ]
+      },
+      {
+        "target": "gcc-v3",
+        "bitwise_equal": true,
+        "original_checksums": [
+          "f32,16705775517264696606",
+          "f64,7858546906606244716",
+          "long_double,7882750993509637922"
+        ],
+        "native_checksums": [
+          "f32,16705775517264696606",
+          "f64,7858546906606244716",
+          "long_double,7882750993509637922"
+        ]
+      }
+    ]
+  },
+  "codegen": {
+    "normalization": "Compare instruction operands and function labels after renaming local labels; ignore assembler metadata.",
+    "fft_probes": [
+      {
+        "target": "clang-arm-probe",
+        "original_functions": 184,
+        "converted_functions": 184,
+        "identical_functions": 184,
+        "changed_functions": 0,
+        "original_instructions": 20404,
+        "converted_instructions": 20404
+      },
+      {
+        "target": "clang-arm64-probe",
+        "original_functions": 190,
+        "converted_functions": 190,
+        "identical_functions": 190,
+        "changed_functions": 0,
+        "original_instructions": 19611,
+        "converted_instructions": 19611
+      },
+      {
+        "target": "clang-base-probe",
+        "original_functions": 187,
+        "converted_functions": 187,
+        "identical_functions": 187,
+        "changed_functions": 0,
+        "original_instructions": 20187,
+        "converted_instructions": 20187
+      },
+      {
+        "target": "clang-i386-probe",
+        "original_functions": 182,
+        "converted_functions": 182,
+        "identical_functions": 182,
+        "changed_functions": 0,
+        "original_instructions": 24464,
+        "converted_instructions": 24464
+      },
+      {
+        "target": "clang-scalar-probe",
+        "original_functions": 188,
+        "converted_functions": 188,
+        "identical_functions": 188,
+        "changed_functions": 0,
+        "original_instructions": 21565,
+        "converted_instructions": 21565
+      },
+      {
+        "target": "clang-v3-probe",
+        "original_functions": 190,
+        "converted_functions": 190,
+        "identical_functions": 190,
+        "changed_functions": 0,
+        "original_instructions": 20611,
+        "converted_instructions": 20611
+      },
+      {
+        "target": "gcc-arm-probe",
+        "original_functions": 117,
+        "converted_functions": 117,
+        "identical_functions": 117,
+        "changed_functions": 0,
+        "original_instructions": 28280,
+        "converted_instructions": 28280
+      },
+      {
+        "target": "gcc-arm64-probe",
+        "original_functions": 122,
+        "converted_functions": 122,
+        "identical_functions": 122,
+        "changed_functions": 0,
+        "original_instructions": 29020,
+        "converted_instructions": 29020
+      },
+      {
+        "target": "gcc-base-probe",
+        "original_functions": 133,
+        "converted_functions": 133,
+        "identical_functions": 132,
+        "changed_functions": 1,
+        "original_instructions": 25984,
+        "converted_instructions": 25984
+      },
+      {
+        "target": "gcc-i386-probe",
+        "original_functions": 129,
+        "converted_functions": 129,
+        "identical_functions": 129,
+        "changed_functions": 0,
+        "original_instructions": 30233,
+        "converted_instructions": 30233
+      },
+      {
+        "target": "gcc-scalar-probe",
+        "original_functions": 130,
+        "converted_functions": 130,
+        "identical_functions": 130,
+        "changed_functions": 0,
+        "original_instructions": 25859,
+        "converted_instructions": 25859
+      },
+      {
+        "target": "gcc-v3-probe",
+        "original_functions": 135,
+        "converted_functions": 135,
+        "identical_functions": 135,
+        "changed_functions": 0,
+        "original_instructions": 27251,
+        "converted_instructions": 27251
+      }
+    ],
+    "gcc_sse2_difference": "Only register swaps in float pointwise multiplication; identical instruction count and llvm-mca throughput.",
+    "gcc_x87_complex_division": "The typed cbytecpy conversion preserves the original long-double benchmark instruction stream exactly. The double benchmark uses one fewer instruction.",
+    "clang_complex_division_binary_byte_identical": true,
+    "native_utility_load_selection": "Integer SIMD aliases preserve AVX2 and i386 byte loads; amd64 SSE2 keeps floating load aliases."
+  },
+  "benchmark_binaries": [
+    {
+      "target": "gcc-base",
+      "original_sha256": "672600025ea8359bd153dd15ccfbd768d8149f6f453e7b65af74a5c41b88808f",
+      "native_sha256": "63088559c991b894a82088b91d59d1c0f03d1b852b8e77202d568a8dcb60b9f7",
+      "byte_identical": false
+    },
+    {
+      "target": "gcc-v3",
+      "original_sha256": "4c7512f0428da89599ee88e18613f546f2f37772161e585b53f05bc5c3028b43",
+      "native_sha256": "9ddee0d98fcf94542921359a922f8a3a75dd139ff0be84c2e0060c9a59f091c7",
+      "byte_identical": false
+    },
+    {
+      "target": "clang-base",
+      "original_sha256": "52f47566e06d3fd0242f3508ae2d07a3d62faa75d7b4a2136ce25ca3a98a865a",
+      "native_sha256": "52f47566e06d3fd0242f3508ae2d07a3d62faa75d7b4a2136ce25ca3a98a865a",
+      "byte_identical": true
+    },
+    {
+      "target": "clang-v3",
+      "original_sha256": "7b7457d79805e7d026714674d2200a8dad21e1ba7dc82de16dbac6b417567c05",
+      "native_sha256": "7b7457d79805e7d026714674d2200a8dad21e1ba7dc82de16dbac6b417567c05",
+      "byte_identical": true
+    }
+  ],
+  "validation": {
+    "focused_fft_and_integer_fft_cells": 121,
+    "focused_fft_and_integer_fft_passed": true,
+    "final_packet_kernel_and_O0_cells": 26,
+    "final_packet_kernel_and_O0_passed": true,
+    "final_copy_core_regression_cells": 4,
+    "final_copy_core_regression_passed": true,
+    "avx2_without_fma": [
+      "gcc: PASS",
+      "clang: PASS"
+    ],
+    "multi_translation_unit_executions": 8,
+    "multi_translation_unit_passed": true,
+    "freestanding_clang_example_passed": true,
+    "atomic_counter_control": [
+      "packed: PASS",
+      "separate: PASS"
+    ],
+    "all_four_architectures": true,
+    "gcc_and_clang": true,
+    "sanitizers": [
+      "ASan",
+      "UBSan"
+    ],
+    "full_repository_compile_matrices_run": false,
+    "manifests": [
+      "tests/rigor/fft.duck",
+      "tests/rigor/fft_kernels.duck",
+      "selected cells from tests/math/arbint_fft.duck"
+    ],
+    "logs_directory": "bin/fft/native-audit"
+  },
+  "sources": [
+    {
+      "path": "src/bits/__arch.hpp",
+      "original_sha256": "146b0d90af5a803900b5a4d2a51a805af7312fccbc78b5ac6663bba12e4c4b12",
+      "native_sha256": "001f55992f240078cf50944053ace1bb048abfd74c07f007dec55cc63c592f9d"
+    },
+    {
+      "path": "src/math/arbint/mul_fft.hpp",
+      "original_sha256": "f16cf45cf33b6bb5d981657031d371e0c2a4b670651d8371dba49516010810a1",
+      "native_sha256": "2e3ca5f53aa21a0a2ba1b58573897e5fba13dba7fb3b3db4e909a2a15dbfb8b5"
+    },
+    {
+      "path": "src/math/arbint/thresholds.hpp",
+      "original_sha256": "680a1c38f52d5ef06ca3e49b78a378b272a9838bfb769e9730311f9b544e5548",
+      "native_sha256": "f732adcfc827480a187b082f9224bf2df2a80839d75bba8fad8d15c8ad595189"
+    },
+    {
+      "path": "src/math/complex.hpp",
+      "original_sha256": "7a1355279a0993d6e2e24434782eb5e8e3810dc92fdbe86197566346926c600f",
+      "native_sha256": "8778ab8d29f17e8f99f425f6a47268f2f74739b7568578cb8d37f280a761add0"
+    },
+    {
+      "path": "src/math/fft/arch/packet_amd64.hpp",
+      "original_sha256": "0ab6e67cb033f49bb0a1829c34821bacd780677c88e946e8f208a58e9b2135d8",
+      "native_sha256": "6d6f3945724995e70455d0f70d57fa887d959bb854b49f88a5be707d21077ef5"
+    },
+    {
+      "path": "src/math/fft/arch/packet_arm32.hpp",
+      "original_sha256": "ee66cf0565642309fe67d0c07d16ad7cd9be22ce63142010daa84d8b17e6cd63",
+      "native_sha256": "ee66cf0565642309fe67d0c07d16ad7cd9be22ce63142010daa84d8b17e6cd63"
+    },
+    {
+      "path": "src/math/fft/arch/packet_arm64.hpp",
+      "original_sha256": "37aaa560fe96e16b53c33c3b38637b625b14600f72f9705f8628d76c8bc46b51",
+      "native_sha256": "d636984ff4440801af599b6339dd9a2e90ff837bd10273b1bd1331f4fcc4bb85"
+    },
+    {
+      "path": "src/math/fft/arch/packet_generic.hpp",
+      "original_sha256": "a4b526778e042febad9baa5d20e10c2e569b2125536cb2113b53d78e1544f42f",
+      "native_sha256": "a4b526778e042febad9baa5d20e10c2e569b2125536cb2113b53d78e1544f42f"
+    },
+    {
+      "path": "src/math/fft/arch/packet_neon.hpp",
+      "original_sha256": "123b34ccfaf6f72d93828bf77e5c3fbf66249dfa036e64471ad3c83f84d38d59",
+      "native_sha256": "6967624ff3b48beb4b28d77684706c4ba5c4dd6ef5abc2424b826adfd548829b"
+    },
+    {
+      "path": "src/math/fft/common.hpp",
+      "original_sha256": "a11fa28227bdf6d551202de99f0f8e81878f017b5a3e1159512043a76d8244c1",
+      "native_sha256": "045a2b729bce4dac3b1027a206d6a0abc185f063de41816b9581215d15f1e6a5"
+    },
+    {
+      "path": "src/math/fft/convolution.hpp",
+      "original_sha256": "62e4ff55d92b8a0b1176aced48e399211c60a85fadd73403f7069d938612ba0b",
+      "native_sha256": "62e4ff55d92b8a0b1176aced48e399211c60a85fadd73403f7069d938612ba0b"
+    },
+    {
+      "path": "src/math/fft/engine.hpp",
+      "original_sha256": "370afe0dcbd244e75e4189e3c9534f4381e63f558b33c5f2c9f059fafdaff2c2",
+      "native_sha256": "370afe0dcbd244e75e4189e3c9534f4381e63f558b33c5f2c9f059fafdaff2c2"
+    },
+    {
+      "path": "src/math/fft/helpers.hpp",
+      "original_sha256": "046920f78f146cd64849712b0733bfc2aaf1fa13032980d3140abbf9ae8c6baa",
+      "native_sha256": "652d4c1381dcea5b5239d11945506c472f3f68575c436ee88ec1be8226a57de4"
+    },
+    {
+      "path": "src/math/fft/kernels.hpp",
+      "original_sha256": "e15d97cfbbb871967e506e1eca6ada8b97b6fb7e1a8a6dfa4ae85b2e8c078a62",
+      "native_sha256": "e15d97cfbbb871967e506e1eca6ada8b97b6fb7e1a8a6dfa4ae85b2e8c078a62"
+    },
+    {
+      "path": "src/math/fft/packet.hpp",
+      "original_sha256": "0dd0ed0661d9c336280fe4170eb30f67d19dcdc91a150e4a23f94017b1448e20",
+      "native_sha256": "0dd0ed0661d9c336280fe4170eb30f67d19dcdc91a150e4a23f94017b1448e20"
+    },
+    {
+      "path": "src/math/fft/parallel.hpp",
+      "original_sha256": "4e228bcabe7746933847f600fb524226f3f7e9d1eb0c3beb6e9d7f7e2f15255a",
+      "native_sha256": "8686443b1a60b1deb9801af6dc2cb837ebc4679bc74f95d9a260ec569dc5c57d"
+    },
+    {
+      "path": "src/math/fft/plan.hpp",
+      "original_sha256": "423974982fb61b16e44cad1db26825a8b3cbb2a794f129616cda2afa521c1214",
+      "native_sha256": "423974982fb61b16e44cad1db26825a8b3cbb2a794f129616cda2afa521c1214"
+    },
+    {
+      "path": "src/math/fft/real.hpp",
+      "original_sha256": "508f9f508f59bdc1ed7768d92a3c9010065bf8f2683fc294e6121989bb1d838b",
+      "native_sha256": "508f9f508f59bdc1ed7768d92a3c9010065bf8f2683fc294e6121989bb1d838b"
+    },
+    {
+      "path": "src/math/fft.hpp",
+      "original_sha256": "5870db3eb05db8d840fe0bb7b1d6258b633ca6c7eff56ea3d7cd8448eee6f97f",
+      "native_sha256": "5870db3eb05db8d840fe0bb7b1d6258b633ca6c7eff56ea3d7cd8448eee6f97f"
+    },
+    {
+      "path": "src/simd/aliases/neon.hpp",
+      "original_sha256": "8498d4dd3a5904aa30a4902c5a0ff28ae92d822689abb3b9af384833d87116a7",
+      "native_sha256": "cde94875de2049c1cd387fabefe1619de736f1b401e6df34843a5a89afa47d69"
+    }
+  ]
+}

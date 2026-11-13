@@ -1,0 +1,26 @@
+[
+  {
+    "label": "division-final",
+    "cpu": 3,
+    "sibling": 11,
+    "sibling_utilization": 0.06477732793522262,
+    "elapsed_seconds": 2.421129746002407,
+    "returncode": 0
+  },
+  {
+    "label": "division-final-clang",
+    "cpu": 3,
+    "sibling": 11,
+    "sibling_utilization": 0.022421524663677084,
+    "elapsed_seconds": 2.217244875999313,
+    "returncode": 0
+  },
+  {
+    "label": "division-final-v3",
+    "cpu": 3,
+    "sibling": 11,
+    "sibling_utilization": 0.03829787234042559,
+    "elapsed_seconds": 2.3215568400009943,
+    "returncode": 0
+  }
+]

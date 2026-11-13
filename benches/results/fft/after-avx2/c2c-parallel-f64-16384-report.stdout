@@ -1,0 +1,179 @@
+=================================================
+            Trace Event Information              
+=================================================
+  Total records                     :      10163
+  Locked Load/Store Operations      :          0
+  Load Operations                   :       4980
+  Loads - uncacheable               :          0
+  Loads - IO                        :          0
+  Loads - Miss                      :          0
+  Loads - no mapping                :          0
+  Load Fill Buffer Hit              :       1654
+  Load L1D hit                      :       2289
+  Load L2D hit                      :        287
+  Load LLC hit                      :        747
+  Load Local HITM                   :         17
+  Load Remote HITM                  :          0
+  Load Remote HIT                   :          0
+  Load Local DRAM                   :          3
+  Load Remote DRAM                  :          0
+  Load MESI State Exclusive         :          3
+  Load MESI State Shared            :          0
+  Load LLC Misses                   :          3
+  Load access blocked by data       :          0
+  Load access blocked by address    :          0
+  Load HIT Local Peer               :          0
+  Load HIT Remote Peer              :          0
+  LLC Misses to Local DRAM          :      100.0%
+  LLC Misses to Remote DRAM         :        0.0%
+  LLC Misses to Remote cache (HIT)  :        0.0%
+  LLC Misses to Remote cache (HITM) :        0.0%
+  Store Operations                  :       5183
+  Store - uncacheable               :          0
+  Store - no mapping                :          0
+  Store L1D Hit                     :          0
+  Store L1D Miss                    :       5183
+  Store No available memory level   :          0
+  No Page Map Rejects               :       2396
+  Unable to parse data source       :          0
+
+=================================================
+    Global Shared Cache Line Event Information   
+=================================================
+  Total Shared Cache Lines          :         16
+  Load HITs on shared lines         :         23
+  Fill Buffer Hits on shared lines  :          3
+  L1D hits on shared lines          :          0
+  L2D hits on shared lines          :          2
+  LLC hits on shared lines          :         18
+  Load hits on peer cache or nodes  :          0
+  Locked Access on shared lines     :          0
+  Blocked Access on shared lines    :          0
+  Store HITs on shared lines        :          2
+  Store L1D hits on shared lines    :          0
+  Store No available memory level   :          0
+  Total Merged records              :         19
+
+=================================================
+                 c2c details                     
+=================================================
+  Events                            : cpu/mem-loads,ldlat=30/Pu
+                                    : cpu/mem-stores/Pu
+  Cachelines sort on                : Total HITMs
+  Cacheline data grouping           : offset,iaddr
+
+=================================================
+           Shared Data Cache Line Table          
+=================================================
+#
+#        ----------- Cacheline ----------      Tot  ------- Load Hitm -------    Total    Total    Total  --------- Stores --------  ----- Core Load Hit -----  - LLC Load Hit --  - RMT Load Hit --  --- Load Dram ----
+# Index             Address  Node  PA cnt     Hitm    Total  LclHitm  RmtHitm  records    Loads   Stores    L1Hit   L1Miss      N/A       FB       L1       L2    LclHit  LclHitm    RmtHit  RmtHitm       Lcl       Rmt
+# .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  ........  .......  ........  .......  ........  ........
+#
+      0      0x7f9fcd276440   N/A       0   11.76%        2        2        0        2        2        0        0        0        0        0        0        0         0        2         0        0         0         0
+      1      0x7f9fcd260940   N/A       0    5.88%        1        1        0        3        3        0        0        0        0        0        0        2         0        1         0        0         0         0
+      2      0x7f9fcd261540   N/A       0    5.88%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      3      0x7f9fcd26c340   N/A       0    5.88%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      4      0x7f9fcd276b40   N/A       0    5.88%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      5      0x7f9fcd276f40   N/A       0    5.88%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      6      0x7f9fcd279380   N/A       0    5.88%        1        1        0        2        2        0        0        0        0        1        0        0         0        1         0        0         0         0
+      7      0x7f9fcd27ca40   N/A       0    5.88%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      8      0x7f9fcd27d480   N/A       0    5.88%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      9      0x7f9fcd27e140   N/A       0    5.88%        1        1        0        2        2        0        0        0        0        0        0        0         1        1         0        0         0         0
+     10      0x7f9fcd27f840   N/A       0    5.88%        1        1        0        2        2        0        0        0        0        1        0        0         0        1         0        0         0         0
+     11      0x7f9fcd27fd40   N/A       0    5.88%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+     12      0x7f9fcd28bf80   N/A       0    5.88%        1        1        0        2        2        0        0        0        0        1        0        0         0        1         0        0         0         0
+     13      0x7f9fcd290200   N/A       0    5.88%        1        1        0        2        1        1        0        1        0        0        0        0         0        1         0        0         0         0
+     14      0x7f9fcd2925c0   N/A       0    5.88%        1        1        0        2        1        1        0        1        0        0        0        0         0        1         0        0         0         0
+     15      0x7f9fcd29ba00   N/A       0    5.88%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+
+=================================================
+      Shared Cache Line Distribution Pareto      
+=================================================
+#
+#        ----- HITM -----  ------- Store Refs ------  --------- Data address ---------                      ---------- cycles ----------    Total       cpu                                          Shared                                      
+#   Num  RmtHitm  LclHitm   L1 Hit  L1 Miss      N/A              Offset  Node  PA cnt        Code address  rmt hitm  lcl hitm      load  records       cnt                          Symbol          Object                     Source:Line  Node
+# .....  .......  .......  .......  .......  .......  ..................  ....  ......  ..................  ........  ........  ........  .......  ........  ..............................  ..............  ..............................  ....
+#
+  ----------------------------------------------------------------------
+      0        0        2        0        0        0      0x7f9fcd276440
+  ----------------------------------------------------------------------
+           0.00%   50.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x494f26         0       117         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+           0.00%   50.00%    0.00%    0.00%    0.00%                 0x8   N/A       0            0x494f36         0       129         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      1        0        1        0        0        0      0x7f9fcd260940
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x494f14         0       117         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      2        0        1        0        0        0      0x7f9fcd261540
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                0x20   N/A       0            0x494f14         0       139         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      3        0        1        0        0        0      0x7f9fcd26c340
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x494f14         0       155         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      4        0        1        0        0        0      0x7f9fcd276b40
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x494f26         0       115         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      5        0        1        0        0        0      0x7f9fcd276f40
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x494f26         0       118         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      6        0        1        0        0        0      0x7f9fcd279380
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x8   N/A       0            0x494f36         0       126         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      7        0        1        0        0        0      0x7f9fcd27ca40
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x494f26         0       133         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      8        0        1        0        0        0      0x7f9fcd27d480
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x8   N/A       0            0x494f36         0       123         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      9        0        1        0        0        0      0x7f9fcd27e140
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x494f26         0       129         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+     10        0        1        0        0        0      0x7f9fcd27f840
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x494f26         0       150         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+     11        0        1        0        0        0      0x7f9fcd27fd40
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x8   N/A       0            0x494f36         0       134         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+     12        0        1        0        0        0      0x7f9fcd28bf80
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x49a4e2         0       100        69        2         2  [.] micron::math::fft::plan<do  fft_microbench  micron::math::fft::plan<double   0
+
+  ----------------------------------------------------------------------
+     13        0        1        0        1        0      0x7f9fcd290200
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x49a4e2         0       159         0        1         1  [.] micron::math::fft::plan<do  fft_microbench  micron::math::fft::plan<double   0
+           0.00%    0.00%    0.00%  100.00%    0.00%                 0x0   N/A       0            0x46dec1         0         0         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+     14        0        1        0        1        0      0x7f9fcd2925c0
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x49a514         0       174         0        1         1  [.] micron::math::fft::plan<do  fft_microbench  micron::math::fft::plan<double   0
+           0.00%    0.00%    0.00%  100.00%    0.00%                 0x0   N/A       0            0x46dec1         0         0         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+     15        0        1        0        0        0      0x7f9fcd29ba00
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                0x10   N/A       0            0x49a4ed         0        48         0        1         1  [.] micron::math::fft::plan<do  fft_microbench  micron::math::fft::plan<double   0

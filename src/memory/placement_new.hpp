@@ -20,4 +20,12 @@ operator new(usize size, P *ptr)
   return ptr;
 }
 
+template<typename P>
+void *
+operator new[](usize size, P *ptr) noexcept
+{
+  (void)size;
+  return ptr;
+}
+
 __micron_diagnostic_pop

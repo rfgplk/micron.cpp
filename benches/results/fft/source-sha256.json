@@ -1,0 +1,19 @@
+{
+  "src/math/fft/common.hpp": "a11fa28227bdf6d551202de99f0f8e81878f017b5a3e1159512043a76d8244c1",
+  "src/math/fft/engine.hpp": "370afe0dcbd244e75e4189e3c9534f4381e63f558b33c5f2c9f059fafdaff2c2",
+  "src/math/fft/plan.hpp": "423974982fb61b16e44cad1db26825a8b3cbb2a794f129616cda2afa521c1214",
+  "src/math/fft/real.hpp": "508f9f508f59bdc1ed7768d92a3c9010065bf8f2683fc294e6121989bb1d838b",
+  "src/math/fft/helpers.hpp": "8483f79cc073767cd088b5df2ae406d123cde04fcc8a9b57d982f3aab03a926c",
+  "src/math/fft/convolution.hpp": "a7514194ccb88a183e180752ad39d6ded45ecb802fb4c11278cd35aea4205aae",
+  "src/math/fft/parallel.hpp": "132b9d93c0fdbdc93d872a9859e4b29986e68d20aa80393f51ae5dec51ec0466",
+  "src/math/fft/packet.hpp": "185b73eed1610b69f22426e3e85a4e0fbf77d54d499b6dc52fb32fdcfa491e2c",
+  "src/math/fft/kernels.hpp": "7088ec9eac856b73a260437e1d8b3bd6a6a6fe6c08b0f74a0be015ec18918642",
+  "src/math/fft/arch/packet_generic.hpp": "a4b526778e042febad9baa5d20e10c2e569b2125536cb2113b53d78e1544f42f",
+  "src/math/fft/arch/packet_amd64.hpp": "c45ac9cd11cb6c67f8054e88a69369f7a7b2e8ae810d2e18ee864280d3b4abaa",
+  "src/math/fft/arch/packet_arm32.hpp": "ee66cf0565642309fe67d0c07d16ad7cd9be22ce63142010daa84d8b17e6cd63",
+  "src/math/fft/arch/packet_arm64.hpp": "37aaa560fe96e16b53c33c3b38637b625b14600f72f9705f8628d76c8bc46b51",
+  "src/math/fft/arch/packet_neon.hpp": "123b34ccfaf6f72d93828bf77e5c3fbf66249dfa036e64471ad3c83f84d38d59",
+  "src/math/fft.hpp": "5870db3eb05db8d840fe0bb7b1d6258b633ca6c7eff56ea3d7cd8448eee6f97f",
+  "src/math/complex.hpp": "a4dd3e23a00065ea615d7d157e1eea0868b1fd6db707f60daf953b2866f28e94",
+  "benches/fft_microbench.cpp": "422526fee920cd6967eb72dd2fb1f34d786d99b353532912502eeb4222f75c76"
+}

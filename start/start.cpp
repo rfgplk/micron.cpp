@@ -125,7 +125,9 @@ __micron_startc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) 
 
   // NOTE: we must register shutdown io first so it lands at the bottom of the atexit stack,
   // ensuring it runs last
-  micron::atexit([] { if ( __shutdown_io_buffers ) __shutdown_io_buffers(); });
+  micron::atexit([] {
+    if ( __shutdown_io_buffers ) __shutdown_io_buffers();
+  });
 
   // threading and sig pipes
   __boot_threadpool();      // __global_threadpool ready before any user micron::go()
@@ -185,7 +187,9 @@ __micron_mxc(int argc, char **argv, char **envp, const micron::auxv_t *auxv) noe
 
   if ( __micron_mem_init ) __micron_mem_init();
 
-  micron::atexit([] { if ( __shutdown_io_buffers ) __shutdown_io_buffers(); });
+  micron::atexit([] {
+    if ( __shutdown_io_buffers ) __shutdown_io_buffers();
+  });
 
   __boot_threadpool();
   __boot_io_sigpipe();

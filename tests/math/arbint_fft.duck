@@ -1,0 +1,32 @@
+# Focused FFT integer multiplication gates; all includes and CRT sources come from this checkout.
+test tests/rigor/math_arbint_fft.cpp --std c++23 -O2 --no-lto -i . -i ./src -o bin/arbint/fft/gcc --timeout 180
+test tests/rigor/math_arbint_fft.cpp --clang --std c++23 -O2 --no-lto -i . -i ./src -o bin/arbint/fft/clang --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 -Ofast -i . -i ./src -o bin/arbint/fft/fast --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/arbint/fft/base --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 --isa base -O2 --no-lto --def MICRON_ARBINT_FFT_BALANCED=1 -i . -i ./src -o bin/arbint/fft/base-balanced --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 --isa base -O2 --no-lto --def MICRON_NO_SIMD -i . -i ./src -o bin/arbint/fft/scalar --timeout 180
+test tests/rigor/math_arbint_fft.cpp --clang --std c++23 -O1 --no-lto --asan --ubsan -i . -i ./src -o bin/arbint/fft/sanitize --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 -O2 --no-lto --def MICRON_ARBINT_FFT_MAX_LOG=6 --def MICRON_ARBINT_MUL_FFT_THRESHOLD=2 --def MICRON_ARBINT_SQR_FFT_THRESHOLD=2 -i . -i ./src -o bin/arbint/fft/tiles --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 -O2 --no-lto --def MICRON_ARBINT_NO_FFT -i . -i ./src -o bin/arbint/fft/disabled --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 -O2 --no-lto --def MICRON_NO_FP -i . -i ./src -o bin/arbint/fft/nofp --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 -O2 --no-lto --def MICRON_ARBINT_MUL_TIER_CAP=5 --def MICRON_ARBINT_SQR_TIER_CAP=5 -i . -i ./src -o bin/arbint/fft/cap --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 --i386 --isa base -O2 --no-lto -k --start ./start --def ARBINT_RIGOR_LITE -i . -i ./src -o bin/arbint/fft/i386 --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 --arm -O2 --no-lto -k --start ./start --def ARBINT_RIGOR_LITE -i . -i ./src -o bin/arbint/fft/arm --timeout 300
+test tests/rigor/math_arbint_fft.cpp --std c++23 --arm64 -O2 --no-lto -k --start ./start --def ARBINT_RIGOR_LITE -i . -i ./src -o bin/arbint/fft/arm64 --timeout 300
+test tests/rigor/math_arbint_fft.cpp --clang --std c++23 --arm -O2 --no-lto -k --start ./start --def ARBINT_RIGOR_LITE -i . -i ./src -o bin/arbint/fft/clang-arm --timeout 300
+test tests/rigor/math_arbint_fft.cpp --clang --std c++23 --arm64 -O2 --no-lto -k --start ./start --def ARBINT_RIGOR_LITE -i . -i ./src -o bin/arbint/fft/clang-arm64 --timeout 300
+test tests/rigor/math_arbint_fft.cpp --std c++23 -O2 -k --start ./start -i . -i ./src -o bin/arbint/fft/free-k --timeout 180
+test tests/rigor/math_arbint_fft.cpp --clang --std c++23 -O2 -ke --start ./start -i . -i ./src -o bin/arbint/fft/free-ke --timeout 180
+
+# Automatic dispatch through existing arithmetic/division scratch and bounded storage.
+test tests/rigor/math_arbint_mul.cpp --std c++23 -O2 --no-lto --def ARBINT_RIGOR_LITE --def MICRON_ARBINT_MUL_FFT_THRESHOLD=2 --def MICRON_ARBINT_SQR_FFT_THRESHOLD=2 -i . -i ./src -o bin/arbint/fft/mul-forced --timeout 180
+test tests/rigor/math_arbint_bounded.cpp --std c++23 -O2 --no-lto --def ARBINT_RIGOR_LITE --def MICRON_ARBINT_MUL_FFT_THRESHOLD=2 --def MICRON_ARBINT_SQR_FFT_THRESHOLD=2 -i . -i ./src -o bin/arbint/fft/bounded-forced --timeout 180
+test tests/rigor/math_arbint_div.cpp --std c++23 -O2 --no-lto --def ARBINT_RIGOR_LITE --def MICRON_ARBINT_MUL_FFT_THRESHOLD=2 --def MICRON_ARBINT_SQR_FFT_THRESHOLD=2 -i . -i ./src -o bin/arbint/fft/div-forced --timeout 180
+test tests/rigor/math_arbint_fft.cpp --std c++23 -O2 --no-lto --def MICRON_ARBINT_DIV_TIER_CAP=2 -i . -i ./src -o bin/arbint/fft/barrett-cap --timeout 180
+test tests/rigor/math_arbint_div.cpp --clang --std c++23 -O1 --no-lto --asan --ubsan --def ARBINT_RIGOR_LITE --def MICRON_ARBINT_MUL_FFT_THRESHOLD=2 --def MICRON_ARBINT_SQR_FFT_THRESHOLD=2 -i . -i ./src -o bin/arbint/fft/div-sanitize --timeout 180
+test tests/rigor/math_arbint_gcd.cpp --std c++23 -O2 --no-lto --def ARBINT_RIGOR_LITE --def MICRON_ARBINT_MUL_FFT_THRESHOLD=2 --def MICRON_ARBINT_SQR_FFT_THRESHOLD=2 -i . -i ./src -o bin/arbint/fft/gcd-forced --timeout 180
+test tests/rigor/math_arbint_modular.cpp --std c++23 -O2 --no-lto --def ARBINT_RIGOR_LITE --def MICRON_ARBINT_MUL_FFT_THRESHOLD=2 --def MICRON_ARBINT_SQR_FFT_THRESHOLD=2 -i . -i ./src -o bin/arbint/fft/modular-forced --timeout 180
+
+# The existing compile-test directory is swept by both root compiler manifests.
+build tests/compiletests/arbint.cpp --std c++23 -O2 -k --start ./start -i . -i ./src -o bin/arbint/fft/compile-gcc
+build tests/compiletests/arbint.cpp --clang --std c++23 -O2 -ke --start ./start -i . -i ./src -o bin/arbint/fft/compile-clang

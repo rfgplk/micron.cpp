@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "perf",
+    "stat",
+    "-x",
+    ",",
+    "-r",
+    "3",
+    "-o",
+    "benches/results/fft/experiments/leaf-init-forwarding.csv",
+    "-e",
+    "{cycles:u,instructions:u,ld_blocks.store_forward:u,resource_stalls.rs:u}",
+    "--",
+    "taskset",
+    "-c",
+    "2",
+    "bin/fft/tuning/leaf-init/fft_microbench",
+    "c2c",
+    "f64",
+    "1024",
+    "100000",
+    "1",
+    "0",
+    "1"
+  ],
+  "returncode": 0,
+  "stdout": "operation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns\nc2c,f64,1024,1024,0,1,100000,1,4514.49633,4514.49633,4514.49633,4514.49633,4514.49633\noperation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns\nc2c,f64,1024,1024,0,1,100000,1,4428.48466,4428.48466,4428.48466,4428.48466,4428.48466\noperation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns\nc2c,f64,1024,1024,0,1,100000,1,4407.95069,4407.95069,4407.95069,4407.95069,4407.95069\n",
+  "stderr": ""
+}

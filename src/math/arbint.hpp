@@ -17,7 +17,8 @@
 // -> Comba
 // -> Karatsuba
 // -> Toom-Cook
-// -> Nussbaumer, picked by a constexpr
+// -> real FFT convolution
+// -> Nussbaumer for the largest sizes and the integer-only fallback
 
 #include "arbint/convert.hpp"
 #include "arbint/div.hpp"

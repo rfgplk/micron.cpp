@@ -59,8 +59,8 @@ barrett_make_itch(usize n) noexcept
 [[nodiscard, gnu::flatten]] inline constexpr usize
 barrett_reduce_itch(usize n) noexcept
 {
-  usize w = mul_itch(n + 1u, n);
-  const usize v = mul_itch(n, n);
+  usize w = __mul_itch_bound(n + 1u, n);
+  const usize v = __mul_itch_bound(n, n);
   if ( v > w ) w = v;
   // xw 2n+1, P 2n+1, T n+2, q3 n, U 2n, rr n+1
   return (2u * n + 1u) + (2u * n + 1u) + (n + 2u) + n + (2u * n) + (n + 1u) + w;
@@ -134,8 +134,8 @@ barrett_sqr(limb_t *rp, const limb_t *ap, const barrett_ctx &c, limb_t *scratch)
 [[nodiscard, gnu::flatten]] inline constexpr usize
 barrett_op_itch(usize n) noexcept
 {
-  usize w = mul_itch(n, n);
-  const usize s = sqr_itch(n);
+  usize w = __mul_itch_bound(n, n);
+  const usize s = __sqr_itch_bound(n);
   if ( s > w ) w = s;
   const usize r = barrett_reduce_itch(n);
   if ( r > w ) w = r;
@@ -164,7 +164,7 @@ __powm_work_itch(usize n, usize bn) noexcept
   usize bar = barrett_make_itch(n);
   const usize bop = barrett_op_itch(n);
   if ( bop > bar ) bar = bop;
-  const usize bred = (bn > n ? (bn - n + 1u) : 1u) + divrem_itch(bn > n ? bn : n, n);
+  const usize bred = (bn > n ? (bn - n + 1u) : 1u) + divrem_cap_itch(bn > n ? bn : n, n);
   if ( bred > bar ) bar = bred;
   bar += 2u * n;
 

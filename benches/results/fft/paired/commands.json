@@ -1,0 +1,5234 @@
+[
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "16"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "64"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "256"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1000"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1009"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1024"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "4096"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "16384"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "262144"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1048576"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "16"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "64"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "256"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1000"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1009"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1024"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "4096"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "16384"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "262144"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1048576"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "16"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "64"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "256"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1000"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1009"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1024"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "4096"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "16384"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "262144"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1048576"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "16"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "64"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "256"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1000"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1009"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1024"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "4096"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "16384"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "262144"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1048576"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "16"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "64"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "256"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1000"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1009"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1024"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "4096"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "16384"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "262144"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1048576"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "16"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "64"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "256"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1000"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1009"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1024"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "4096"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "16384"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "262144"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1048576"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "16"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "64"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "256"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1000"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1009"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1024"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "4096"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "16384"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "262144"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f32",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f32",
+      "1048576"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "16"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "64"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "256"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1000"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1009"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1024"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "4096"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "16384"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "262144"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2c",
+      "f64",
+      "1048576",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "f64",
+      "1048576"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  }
+]

@@ -18,8 +18,8 @@ void *header_odr_foreign_aligned();
 #if defined(__micron_freestanding)
 extern "C"
 #endif
-int
-main()
+    int
+    main()
 {
   byte *p = abc::alloc(96);
   if ( !p || !abc::is_present(p) ) return 6;

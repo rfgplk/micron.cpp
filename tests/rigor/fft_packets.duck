@@ -1,0 +1,14 @@
+# Packet sign masks must remain distinct under fast math, including LTO.
+test tests/rigor/fft_packets.cpp --std c++23 --isa v3 -Ofast --no-lto -i . -i ./src -o bin/fft/review-packet/final/gcc-fast --timeout 90
+test tests/rigor/fft_packets.cpp --std c++23 --isa v3 -O3 --no-lto -i . -i ./src -o bin/fft/review-packet/final/gcc-strict --timeout 90
+test tests/rigor/fft_packets.cpp --std c++23 --isa base -Ofast --no-lto -i . -i ./src -o bin/fft/review-packet/final/base --timeout 90
+test tests/rigor/fft_packets.cpp --std c++23 --isa v3 -Ofast -i . -i ./src -o bin/fft/review-packet/final/lto --timeout 90
+test tests/rigor/fft_packets.cpp --std c++23 --isa base -Ofast --no-lto --def MICRON_NO_SIMD -i . -i ./src -o bin/fft/review-packet/final/scalar --timeout 90
+test tests/rigor/fft_packets.cpp --clang --std c++23 --isa v3 -Ofast --no-lto -i . -i ./src -o bin/fft/review-packet/final/clang-fast --timeout 90
+test tests/rigor/fft_packets.cpp --clang --std c++23 --isa base -O3 --no-lto -i . -i ./src -o bin/fft/review-packet/final/clang-strict --timeout 90
+test tests/rigor/fft_packets.cpp --clang --std c++23 --isa v3 -O1 --asan --ubsan --no-lto -i . -i ./src -o bin/fft/review-packet/final/sanitize --timeout 90
+test tests/rigor/fft_packets.cpp --std c++23 --i386 --isa base -Ofast --no-lto -k --start ./start -i . -i ./src -o bin/fft/review-packet/final/i386 --timeout 90
+test tests/rigor/fft_packets.cpp --std c++23 --arm -O3 --no-lto -k --start ./start -i . -i ./src -o bin/fft/review-packet/final/arm --timeout 90
+test tests/rigor/fft_packets.cpp --std c++23 --arm64 -O3 --no-lto -k --start ./start -i . -i ./src -o bin/fft/review-packet/final/arm64 --timeout 90
+test tests/rigor/fft_packets.cpp --clang --std c++23 --arm -O3 --no-lto -k --start ./start -i . -i ./src -o bin/fft/review-packet/final/clang-arm --timeout 90
+test tests/rigor/fft_packets.cpp --clang --std c++23 --arm64 -O3 --no-lto -k --start ./start -i . -i ./src -o bin/fft/review-packet/final/clang-arm64 --timeout 90

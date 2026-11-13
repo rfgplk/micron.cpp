@@ -176,7 +176,7 @@ invert_n_itch(usize n) noexcept
     const usize h = (m + 1u) / 2u;
     const usize lev = (2u * m + 1u) + (m + h) + (m + 1u) + (3u * m + 2u);
     usize w = mul_itch(m, h);
-    const usize w2 = mul_itch(2u * m + 1u, m + 1u);
+    const usize w2 = __mul_itch_bound(2u * m + 1u, m + 1u);
     if ( w2 > w ) w = w2;
     const usize w3 = mul_itch(m, m);
     if ( w3 > w ) w = w3;
@@ -312,6 +312,27 @@ divrem_itch(usize nn, usize dn) noexcept
   else if ( div_wants_dc(nn + 1u, dn) )
     t += dc_div_itch(dn);
   return t;
+}
+
+// Bounds every division with numerator <= nn and divisor <= dn. Reducing the
+// divisor can change the Barrett block size and enter a larger FFT padding band.
+[[nodiscard]] inline constexpr usize
+divrem_cap_itch(usize nn, usize dn) noexcept
+{
+  if ( dn > nn ) dn = nn;
+  if ( dn <= 1u ) return 0u;
+  usize work = 0u;
+  if constexpr ( MICRON_ARBINT_DIV_TIER_CAP >= 1 )
+    if ( dn >= threshold::div_dc ) work = dc_div_itch(dn);
+  if constexpr ( MICRON_ARBINT_DIV_TIER_CAP >= 2 ) {
+    if ( dn >= threshold::div_mu ) {
+      usize inner = invert_n_itch(dn);
+      inner = __mul_itch_max(inner, mul_solver_cap_itch<solver::automatic>(dn));
+      inner = __mul_itch_max(inner, work);
+      work = __mul_itch_max(work, 3u * dn + inner);
+    }
+  }
+  return nn + 1u + dn + work;
 }
 
 // qp: nn - dn + 1 limbs, rp: dn limbs, scratch: divrem_itch(nn, dn) limbs

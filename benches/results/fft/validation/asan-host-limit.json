@@ -1,0 +1,34 @@
+{
+  "overcommit_memory": "2",
+  "overcommit_ratio": "50",
+  "rlimit_as": [
+    -1,
+    -1
+  ],
+  "rlimit_data": [
+    -1,
+    -1
+  ],
+  "meminfo": "MemTotal:       32767584 kB\nMemFree:         2168312 kB\nMemAvailable:   20820368 kB\nBuffers:            2164 kB\nCached:         17704408 kB\nSwapCached:            0 kB\nActive:         11391432 kB\nInactive:       13994044 kB\nActive(anon):    7089368 kB\nInactive(anon):   716888 kB\nActive(file):    4302064 kB\nInactive(file): 13277156 kB\nUnevictable:        5424 kB\nMlocked:            5424 kB\nSwapTotal:      24870904 kB\nSwapFree:       24865948 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:             13588 kB\nWriteback:             0 kB\nAnonPages:       7680804 kB\nMapped:           924672 kB\nShmem:            246696 kB\nKReclaimable:    1544216 kB\nSlab:            2278060 kB\nSReclaimable:    1544216 kB\nSUnreclaim:       733844 kB\nKernelStack:       29552 kB\nPageTables:        81508 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    41254696 kB\nCommitted_AS:   20537828 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      116808 kB\nVmallocChunk:          0 kB\nPercpu:            19008 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:    317440 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:               0 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        155360 kB\nGPUReclaim:       103756 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      748244 kB\nDirectMap2M:    26433536 kB\nDirectMap1G:     6291456 kB\n",
+  "controls": [
+    {
+      "binary": "bin/fft/check/parallel-sanitize/fft_parallel",
+      "exit": 77,
+      "output": "==761389==ERROR: AddressSanitizer failed to allocate 0xdfff0001000 (15392894357504) bytes at address 0x02008fff7000 (errno: 12)\n==761389==ReserveShadowMemoryRange failed while trying to map 0xdfff0001000 bytes. Perhaps you're using ulimit -v or ulimit -d\n"
+    },
+    {
+      "binary": "bin/fft/tuning/check/sanitize/fft_kernels",
+      "exit": 77,
+      "output": "==761391==ERROR: AddressSanitizer failed to allocate 0xdfff0001000 (15392894357504) bytes at address 0x02008fff7000 (errno: 12)\n==761391==ReserveShadowMemoryRange failed while trying to map 0xdfff0001000 bytes. Perhaps you're using ulimit -v or ulimit -d\n"
+    }
+  ],
+  "resolution": {
+    "overcommit_memory": "1",
+    "set_by": "user",
+    "unchanged_binary_reruns": {
+      "final-parallel-asan": "vm.overcommit_memory = 1\nExit: 1\n",
+      "final-kernels-asan-rerun": "vm.overcommit_memory = 1\nExit: 1\n",
+      "final-layouts-asan-rerun": "vm.overcommit_memory = 1\nExit: 1\n"
+    }
+  }
+}

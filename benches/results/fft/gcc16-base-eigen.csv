@@ -1,0 +1,9 @@
+operation,n,iterations,median_ns,min_ns,max_ns
+eigen_kiss_c2c_execute,16,12508,104.217,103.123,105.017
+eigen_kiss_c2c_execute,64,3133,520.120,513.971,555.330
+eigen_kiss_c2c_execute,256,789,2487.763,2469.902,2656.460
+eigen_kiss_c2c_execute,1000,208,11789.918,11488.654,12887.957
+eigen_kiss_c2c_execute,1009,206,2229974.320,2210421.039,2259178.917
+eigen_kiss_c2c_execute,1024,203,11615.394,11574.621,11790.552
+eigen_kiss_c2c_execute,4096,56,58967.589,58277.143,66250.857
+eigen_kiss_c2c_execute,16384,20,322926.650,318346.200,338367.050

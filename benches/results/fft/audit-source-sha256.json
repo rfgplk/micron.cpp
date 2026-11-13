@@ -1,0 +1,6 @@
+{
+  "src/math/complex.hpp": "121c9f1ff23b9f8ed0ac03d195a826aa97ea5ac5497462e8892929f50520b66e",
+  "src/math/fft/helpers.hpp": "046920f78f146cd64849712b0733bfc2aaf1fa13032980d3140abbf9ae8c6baa",
+  "src/math/fft/convolution.hpp": "62e4ff55d92b8a0b1176aced48e399211c60a85fadd73403f7069d938612ba0b",
+  "src/math/fft/arch/packet_amd64.hpp": "253a97a508d442f4d8f24cfb07c1e7e516ba45269e61d3ad6b85c880b97e877a"
+}

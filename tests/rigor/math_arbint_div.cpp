@@ -34,7 +34,9 @@ static mpn::limb_t g_n[CAP], g_d[CAP];
 static mpn::limb_t g_nw[CAP + 2], g_dw[CAP];
 static mpn::limb_t g_nb[CAP + 2], g_nc[CAP + 2];
 static mpn::limb_t g_q1[CAP], g_q2[CAP];
-static mpn::limb_t g_sc[10 * CAP + 8192];
+// Newton products can reach 2*CAP+1 limbs; tuned multiplication may need much
+// more workspace than the division staging buffers.
+static mpn::limb_t g_sc[10 * CAP + 8192 + mpn::mul_solver_cap_itch<micron::math::solver::automatic>(2u * CAP + 1u)];
 
 static mpn::limb_t g_nd[CAP + 2], g_q3[CAP];
 static mpn::limb_t g_ip[CAP], g_prod[2 * CAP + 4], g_res[2 * CAP + 4];

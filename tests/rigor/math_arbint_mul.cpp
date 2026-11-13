@@ -123,7 +123,7 @@ int
 main()
 {
   print("=== ARBINT MUL LADDER DIFFERENTIAL ===");
-  print("    tiers built through: nussbaumer");
+  print("    tiers built through: fft");
 
   test_case("mul: every tier agrees with the reference at every threshold seam");
   {
@@ -292,6 +292,13 @@ main()
     mpn::algo prev = mpn::pick_mul(1, 1);
     for ( usize n = 1; n <= 200000u; n = n * 2u ) {
       const mpn::algo cur = mpn::pick_mul(n, n);
+      // FFT can enter and leave at padding boundaries. The integer ladder
+      // retains its ascending crossovers underneath that shape selection.
+      if ( cur == mpn::algo::fft ) {
+        require_true(n >= mpn::threshold::mul_fft);
+        require_true(n < mpn::threshold::mul_nussbaumer);
+        continue;
+      }
       require_true(static_cast<u8>(cur) >= static_cast<u8>(prev));
       prev = cur;
     }

@@ -1,0 +1,37 @@
+# Focused FFT gates. Run from the repository root: duck tests/rigor/fft.duck
+# Tests return 1 on success; every runtime cell has an explicit timeout.
+test tests/rigor/fft.cpp --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/gcc-core --timeout 90
+test tests/rigor/fft_layouts.cpp --std c++23 --isa base -O2 --no-lto --def MICRON_ABC_STATS=1 -i . -i ./src -o bin/fft/check/gcc-layouts --timeout 90
+test tests/rigor/fft_precision.cpp --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/gcc-precision --timeout 90
+test tests/rigor/fft_parallel.cpp --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/gcc-parallel --timeout 90
+test tests/rigor/fft.cpp --clang --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/clang-core --timeout 90
+test tests/rigor/fft_layouts.cpp --clang --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/clang-layouts --timeout 90
+test tests/rigor/fft_precision.cpp --clang --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/clang-precision --timeout 90
+test tests/rigor/fft_parallel.cpp --clang --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/check/clang-parallel --timeout 90
+test tests/rigor/fft.cpp --std c++23 --isa base -O2 --no-lto --def MICRON_NO_SIMD -i . -i ./src -o bin/fft/check/scalar --timeout 90
+test tests/rigor/fft_layouts.cpp --std c++23 --isa base -O2 --no-lto --def MICRON_NO_SIMD -i . -i ./src -o bin/fft/check/scalar-layouts --timeout 90
+test tests/rigor/fft.cpp --std c++23 --isa v3 -O2 --no-lto -i . -i ./src -o bin/fft/check/avx2 --timeout 90
+test tests/rigor/fft_layouts.cpp --std c++23 --isa base -O1 --asan --ubsan --no-lto -i . -i ./src -o bin/fft/check/gcc-sanitize --timeout 90
+test tests/rigor/fft.cpp --clang --std c++23 --isa base -O1 --asan --ubsan --no-lto -i . -i ./src -o bin/fft/check/clang-sanitize --timeout 90
+test tests/rigor/fft_parallel.cpp --clang --std c++23 --isa base -O1 --asan --ubsan --no-lto -i . -i ./src -o bin/fft/check/parallel-sanitize --timeout 90
+test tests/rigor/fft.cpp --std c++23 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/gcc-k --timeout 90
+test tests/rigor/fft_layouts.cpp --std c++23 --isa base -O2 --no-lto -ke --start ./start -i . -i ./src -o bin/fft/check/gcc-ke --timeout 90
+test tests/rigor/fft_precision.cpp --clang --std c++23 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/clang-k --timeout 90
+test tests/rigor/fft_precision.cpp --clang --std c++23 --isa base -O2 --no-lto -ke --start ./start -i . -i ./src -o bin/fft/check/clang-ke --timeout 90
+test tests/rigor/fft_precision.cpp --std c++23 --i386 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/i386-precision --timeout 90
+test tests/rigor/fft_layouts.cpp --std c++23 --i386 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/i386-layouts --timeout 90
+test tests/rigor/fft_precision.cpp --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/arm-precision --timeout 90
+test tests/rigor/fft_layouts.cpp --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/arm-layouts --timeout 90
+test tests/rigor/fft_precision.cpp --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/arm64-precision --timeout 90
+test tests/rigor/fft_layouts.cpp --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/arm64-layouts --timeout 90
+test tests/rigor/fft_precision.cpp --clang --std c++23 --i386 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/clang-i386 --timeout 90
+test tests/rigor/fft_precision.cpp --clang --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/clang-arm --timeout 90
+test tests/rigor/fft_precision.cpp --clang --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/check/clang-arm64 --timeout 90
+test tests/rigor/fft.cpp --std c++23 --isa base -Ofast --no-lto -i . -i ./src -o bin/fft/check/gcc-fast --timeout 90
+test tests/rigor/fft.cpp --clang --std c++23 --isa base -Ofast --no-lto -i . -i ./src -o bin/fft/check/clang-fast --timeout 90
+
+# Audit regressions: complex arithmetic, packet signs, frequency scales, and empty convolution geometry.
+batch tests/rigor/fft_core_regressions.duck
+batch tests/rigor/fft_packets.duck
+batch tests/rigor/fft_helpers.duck
+batch tests/rigor/fft_convolution_regressions.duck

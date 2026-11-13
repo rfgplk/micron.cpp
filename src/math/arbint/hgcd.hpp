@@ -93,7 +93,7 @@ matrix22_mul_itch(usize rn, usize mn) noexcept
   const usize w = rn + mn + 1u;
   const usize a = rn > mn ? rn : mn;
   const usize b = rn > mn ? mn : rn;
-  return 4u * w + (rn + mn) + mul_itch(a, b);
+  return 4u * w + (rn + mn) + __mul_itch_bound(a, b);
 }
 
 [[gnu::always_inline]] inline constexpr void
@@ -151,7 +151,7 @@ hgcd_mat_adjust_itch(usize p, usize mn) noexcept
 {
   const usize a = p > mn ? p : mn;
   const usize b = p > mn ? mn : p;
-  return 3u * (p + mn) + mul_itch(a, b);
+  return 3u * (p + mn) + __mul_itch_bound(a, b);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr usize
@@ -202,7 +202,7 @@ hgcd_mat_update_q_itch(usize mn, usize qn) noexcept
 {
   const usize a = mn > qn ? mn : qn;
   const usize b = mn > qn ? qn : mn;
-  return (mn + qn + 1u) + mul_itch(a, b);
+  return (mn + qn + 1u) + __mul_itch_bound(a, b);
 }
 
 // requires M.n + qn + 1 <= M.alloc
@@ -245,7 +245,7 @@ __mat1_make_even(mat1 &m) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr usize
 subdiv_step_itch(usize n) noexcept
 {
-  return (n + 1u) + n + divrem_itch(n, n);
+  return (n + 1u) + n + divrem_cap_itch(n, n);
 }
 
 [[nodiscard, gnu::always_inline]] inline constexpr usize
@@ -292,7 +292,7 @@ __subdiv_step(limb_t *ap, limb_t *bp, usize n, Hook &hook, limb_t *tp) noexcept
 [[nodiscard, gnu::always_inline]] inline constexpr usize
 hgcd_subdiv_pair_itch(usize n) noexcept
 {
-  const usize d = divrem_itch(n, n);
+  const usize d = divrem_cap_itch(n, n);
   const usize u = hgcd_mat_update_q_itch_max(n);
   return (n + 1u) + 3u * n + 2u + (d > u ? d : u);
 }

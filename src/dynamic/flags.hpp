@@ -11,7 +11,10 @@
 namespace micron
 {
 
-namespace elf { struct module_t; }
+namespace elf
+{
+struct module_t;
+}
 
 // The callbacks and their context must outlive the loaded dependency closure.
 struct dynamic_options {

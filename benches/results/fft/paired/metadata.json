@@ -1,0 +1,19 @@
+{
+  "binaries": {
+    "before": {
+      "path": "/code/C++/micron/bin/fft/tuning/before-avx2/fft_microbench",
+      "sha256": "1ca08e586b93caffcbd01ac6938c14ca2824eaf527a353840ec369c392e8177e"
+    },
+    "after": {
+      "path": "/code/C++/micron/bin/fft/tuning/final-avx2/fft_microbench",
+      "sha256": "7da6247d3331697d0ae9381a6e4fb0ffc80fbe4018552c4c2733e9332dc7203d"
+    },
+    "eigen": {
+      "path": "/code/C++/micron/bin/fft/tuning/eigen-avx2/fft_eigen_bench",
+      "sha256": "b71a80a17974ebc59b525d5d94b7db4bc3927488fd40688f124b1893ff317da7"
+    }
+  },
+  "cpu": 2,
+  "rounds": 4,
+  "started": "2026-11-06T20:05:58+0100"
+}

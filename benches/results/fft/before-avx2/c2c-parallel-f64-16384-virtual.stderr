@@ -1,0 +1,2 @@
+[ perf record: Woken up 6 times to write data ]
+[ perf record: Captured and wrote 1.561 MB benches/results/fft/before-avx2/c2c-parallel-f64-16384.data (19742 samples) ]

@@ -1,0 +1,6 @@
+# started on Fri Nov  6 19:59:04 2026
+
+5441479939,,cycles:u,0.26%,1372049067,100.00,,
+14840351,,cycle_activity.stalls_l1d_pending:u,7.18%,1372049067,100.00,,
+107193112,,cycle_activity.stalls_l2_pending:u,4.32%,1372049067,100.00,,
+213395721,,cycle_activity.stalls_ldm_pending:u,1.21%,1372049067,100.00,,

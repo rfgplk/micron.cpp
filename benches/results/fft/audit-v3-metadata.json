@@ -1,0 +1,15 @@
+{
+  "binaries": {
+    "before": {
+      "path": "/code/C++/micron/bin/fft/audit/before-v3/fft_microbench",
+      "sha256": "7da6247d3331697d0ae9381a6e4fb0ffc80fbe4018552c4c2733e9332dc7203d"
+    },
+    "after": {
+      "path": "/code/C++/micron/bin/fft/audit/final-v3/fft_microbench",
+      "sha256": "4c7512f0428da89599ee88e18613f546f2f37772161e585b53f05bc5c3028b43"
+    }
+  },
+  "cpu": 2,
+  "rounds": 3,
+  "started": "2026-11-06T22:01:43+0100"
+}

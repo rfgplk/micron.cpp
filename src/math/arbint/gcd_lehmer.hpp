@@ -36,7 +36,7 @@ gcd_lehmer_itch(usize un, usize vn) noexcept
     vn = t;
   }
   if ( vn == 0 ) return 0;
-  return 4u * un + (un + 1u) + divrem_itch(un, vn);
+  return 4u * un + (un + 1u) + divrem_cap_itch(un, vn);
 }
 
 // un >= vn >= 1

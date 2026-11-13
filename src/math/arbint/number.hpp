@@ -39,7 +39,7 @@ template<class U> struct gcd_sizes {
   static constexpr usize cap = U::cap_limbs;
 
   static constexpr usize gcd
-      = bounded ? cap + cap + (cap + 1u) + mod_gcd_max(mpn::divrem_itch(cap, cap), mpn::gcd_tier_itch(cap, cap)) : 1u;
+      = bounded ? cap + cap + (cap + 1u) + mod_gcd_max(mpn::divrem_cap_itch(cap, cap), mpn::gcd_tier_itch(cap, cap)) : 1u;
 
   static constexpr usize inv = bounded ? cap + mpn::invmod_itch(cap, cap) : 1u;
 };

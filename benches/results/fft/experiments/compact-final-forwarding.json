@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "perf",
+    "stat",
+    "-x",
+    ",",
+    "-r",
+    "3",
+    "-o",
+    "benches/results/fft/experiments/compact-final-forwarding.csv",
+    "-e",
+    "{cycles:u,instructions:u,ld_blocks.store_forward:u,resource_stalls.rs:u}",
+    "--",
+    "taskset",
+    "-c",
+    "2",
+    "bin/fft/tuning/compact-final/fft_microbench",
+    "c2c",
+    "f64",
+    "1024",
+    "100000",
+    "1",
+    "0",
+    "1"
+  ],
+  "returncode": 0,
+  "stdout": "operation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns\nc2c,f64,1024,1024,0,1,100000,1,6234.74359,6234.74359,6234.74359,6234.74359,6234.74359\noperation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns\nc2c,f64,1024,1024,0,1,100000,1,6189.42996,6189.42996,6189.42996,6189.42996,6189.42996\noperation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns\nc2c,f64,1024,1024,0,1,100000,1,6254.52535,6254.52535,6254.52535,6254.52535,6254.52535\n",
+  "stderr": ""
+}

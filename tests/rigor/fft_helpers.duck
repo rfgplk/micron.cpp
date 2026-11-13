@@ -1,0 +1,10 @@
+# Frequency-range regressions use strict floating-point semantics, including infinities.
+test tests/rigor/fft_helper_regressions.cpp --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/regression/helpers-gcc --timeout 60
+test tests/rigor/fft_helper_regressions.cpp --clang --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/regression/helpers-clang --timeout 60
+test tests/rigor/fft_helper_regressions.cpp --std c++23 --isa base -O2 --no-lto --def MICRON_NO_SIMD -i . -i ./src -o bin/fft/regression/helpers-scalar --timeout 60
+test tests/rigor/fft_helper_regressions.cpp --clang --std c++23 --isa base -O1 --asan --ubsan --no-lto -i . -i ./src -o bin/fft/regression/helpers-sanitize --timeout 60
+test tests/rigor/fft_helper_regressions.cpp --std c++23 --i386 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/helpers-i386 --timeout 60
+test tests/rigor/fft_helper_regressions.cpp --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/helpers-arm32 --timeout 60
+test tests/rigor/fft_helper_regressions.cpp --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/helpers-arm64 --timeout 60
+test tests/rigor/fft_helper_regressions.cpp --clang --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/helpers-clang-arm32 --timeout 60
+test tests/rigor/fft_helper_regressions.cpp --clang --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/helpers-clang-arm64 --timeout 60

@@ -1,0 +1,663 @@
+--- a/src/math/fft/engine.hpp
++++ b/src/math/fft/engine.hpp
+@@ -5,7 +5,7 @@
+ //  http://www.boost.org/LICENSE_1_0.txt
+ #pragma once
+ 
+-#include "packet.hpp"
++#include "kernels.hpp"
+ 
+ namespace micron::math::fft::__impl
+ {
+@@ -13,116 +13,39 @@
+ template<fft_scalar F> class __engine
+ {
+   usize __n{}, __m{};
+-  buffer<complex<F>> __roots, __chirp, __kernel;
+-  buffer<usize> __sizes, __radices, __root_steps;
++  buffer<complex<F>> __twiddles, __chirp, __kernel;
++  buffer<usize> __sizes, __radices, __twiddle_offsets;
+ 
+   static usize
+   __radix(usize n) noexcept
+   {
+-    for ( usize r : { usize(8), usize(4), usize(2), usize(3), usize(5), usize(7) } )
++    if ( n == 8 ) return 8;
++    for ( usize r : { usize(4), usize(2), usize(3), usize(5), usize(7) } )
+       if ( n % r == 0 ) return r;
+     return n;
+   }
+ 
+-  template<usize R, bool Inverse>
+-  void
+-  __butterflies(complex<F> *out, usize m, usize root_step, usize begin, usize end) const noexcept
+-  {
+-    const usize small_step = __m / R;
+-    for ( usize k = begin; k < end; ++k ) {
+-      complex<F> v[R], result[R];
+-      for ( usize j = 0; j < R; ++j ) v[j] = out[j * m + k];
+-      if ( k ) {
+-        complex<F> twiddle[R];
+-        for ( usize j = 0; j < R; ++j ) {
+-          auto w = __roots[j * k * root_step];
+-          twiddle[j] = Inverse ? conj(w) : w;
+-        }
+-        __multiply(v, twiddle, R);
+-      }
+-      auto rotate = [](complex<F> z) noexcept {
+-        if constexpr ( Inverse )
+-          return complex<F>{ -z.imag, z.real };
+-        else
+-          return complex<F>{ z.imag, -z.real };
+-      };
+-      if constexpr ( R == 2 ) {
+-        result[0] = v[0] + v[1];
+-        result[1] = v[0] - v[1];
+-      } else if constexpr ( R == 3 ) {
+-        auto sum = v[1] + v[2], difference = rotate(v[1] - v[2]) * (-__roots[small_step].imag);
+-        auto center = v[0] - sum * F(0.5);
+-        result[0] = v[0] + sum;
+-        result[1] = center + difference;
+-        result[2] = center - difference;
+-      } else if constexpr ( R == 4 ) {
+-        auto a = v[0] + v[2], b = v[0] - v[2], c = v[1] + v[3], d = rotate(v[1] - v[3]);
+-        result[0] = a + c;
+-        result[1] = b + d;
+-        result[2] = a - c;
+-        result[3] = b - d;
+-      } else if constexpr ( R == 5 ) {
+-        auto p = v[1] + v[4], q = v[2] + v[3], d = v[1] - v[4], e = v[2] - v[3];
+-        auto w = __roots[small_step], z = __roots[2 * small_step];
+-        auto a = v[0] + p * w.real + q * z.real, b = v[0] + p * z.real + q * w.real;
+-        auto c = rotate(d * (-w.imag) + e * (-z.imag)), f = rotate(d * (-z.imag) - e * (-w.imag));
+-        result[0] = v[0] + p + q;
+-        result[1] = a + c;
+-        result[4] = a - c;
+-        result[2] = b + f;
+-        result[3] = b - f;
+-      } else if constexpr ( R == 8 ) {
+-        complex<F> even[4], odd[4];
+-        for ( usize parity = 0; parity < 2; ++parity ) {
+-          auto a = v[parity] + v[parity + 4], b = v[parity] - v[parity + 4];
+-          auto c = v[parity + 2] + v[parity + 6], d = rotate(v[parity + 2] - v[parity + 6]);
+-          auto *t = parity ? odd : even;
+-          t[0] = a + c;
+-          t[1] = b + d;
+-          t[2] = a - c;
+-          t[3] = b - d;
+-        }
+-        for ( usize j = 0; j < 4; ++j ) {
+-          auto w = __roots[j * small_step], t = odd[j] * (Inverse ? conj(w) : w);
+-          result[j] = even[j] + t;
+-          result[j + 4] = even[j] - t;
+-        }
+-      } else {
+-        for ( usize l = 0; l < R; ++l ) {
+-          result[l] = v[0];
+-          for ( usize j = 1; j < R; ++j ) {
+-            auto w = __roots[((j * l) % R) * small_step];
+-            result[l] += v[j] * (Inverse ? conj(w) : w);
+-          }
+-        }
+-      }
+-      for ( usize l = 0; l < R; ++l ) out[l * m + k] = result[l];
+-    }
+-  }
+-
+   template<bool Inverse>
+   void
+   __combine_stage(complex<F> *out, usize stage, usize begin, usize end) const noexcept
+   {
+-    usize m = __sizes[stage + 1], step = __root_steps[stage];
++    usize m = __sizes[stage + 1];
++    const auto *tw = __twiddles.data() + __twiddle_offsets[stage];
+     switch ( __radices[stage] ) {
+     case 2:
+-      __butterflies<2, Inverse>(out, m, step, begin, end);
++      __stage<2, Inverse>(out, tw, m, begin, end);
+       break;
+     case 3:
+-      __butterflies<3, Inverse>(out, m, step, begin, end);
++      __stage<3, Inverse>(out, tw, m, begin, end);
+       break;
+     case 4:
+-      __butterflies<4, Inverse>(out, m, step, begin, end);
++      __stage<4, Inverse>(out, tw, m, begin, end);
+       break;
+     case 5:
+-      __butterflies<5, Inverse>(out, m, step, begin, end);
++      __stage<5, Inverse>(out, tw, m, begin, end);
+       break;
+     case 7:
+-      __butterflies<7, Inverse>(out, m, step, begin, end);
+-      break;
+-    case 8:
+-      __butterflies<8, Inverse>(out, m, step, begin, end);
++      __stage<7, Inverse>(out, tw, m, begin, end);
+       break;
+     }
+   }
+@@ -136,10 +59,30 @@
+       return;
+     }
+     usize r = __radices[stage], m = __sizes[stage + 1];
+-    if ( m == 1 )
+-      for ( usize j = 0; j < r; ++j ) out[j] = in[j * stride];
+-    else
+-      for ( usize j = 0; j < r; ++j ) __smooth_stage<Inverse>(in + j * stride, out + j * m, stage + 1, stride * r);
++    if ( m == 1 ) {
++      switch ( r ) {
++      case 2:
++        __leaf<2, Inverse>(in, out, stride);
++        break;
++      case 3:
++        __leaf<3, Inverse>(in, out, stride);
++        break;
++      case 4:
++        __leaf<4, Inverse>(in, out, stride);
++        break;
++      case 5:
++        __leaf<5, Inverse>(in, out, stride);
++        break;
++      case 7:
++        __leaf<7, Inverse>(in, out, stride);
++        break;
++      case 8:
++        __leaf<8, Inverse>(in, out, stride);
++        break;
++      }
++      return;
++    }
++    for ( usize j = 0; j < r; ++j ) __smooth_stage<Inverse>(in + j * stride, out + j * m, stage + 1, stride * r);
+     __combine_stage<Inverse>(out, stage, 0, m);
+   }
+ 
+@@ -188,16 +131,26 @@
+     for ( usize r : { usize(2), usize(3), usize(5), usize(7) } )
+       while ( remaining % r == 0 ) remaining /= r;
+     __m = remaining == 1 ? n : next_fast_len(__add(n, n) - 1);
++    usize offset = 0;
+     for ( usize size = __m; size > 1; ) {
+       usize radix = __radix(size);
+       __sizes.push_back(size);
+       __radices.push_back(radix);
+-      __root_steps.push_back(__m / size);
++      __twiddle_offsets.push_back(offset);
++      offset += (radix - 1) * (size / radix);
+       size /= radix;
+     }
+     __sizes.push_back(1);
+-    __roots.resize(__m);
+-    for ( usize k = 0; k < __m; ++k ) __roots[k] = __root<F>(k, __m);
++    __twiddles.resize(offset);
++    for ( usize stage = 0; stage < __radices.size(); ++stage ) {
++      usize r = __radices[stage], m = __sizes[stage + 1], step = __m / __sizes[stage];
++      auto *tw = __twiddles.data() + __twiddle_offsets[stage];
++      for ( usize j = 1; j < r; ++j )
++        for ( usize k = 0; k < m; ++k ) {
++          auto w = __root<F>(j * k * step, __m);
++          tw[(j - 1) * m + k] = w;
++        }
++    }
+     if ( __m == __n ) return;
+     __chirp.resize(n);
+     __kernel.resize(__m);
+--- a/src/math/fft/packet.hpp
++++ b/src/math/fft/packet.hpp
+@@ -1,77 +1,29 @@
+ //  Copyright (c) 2024- David Lucius Severus
+-//
+ //  Distributed under the Boost Software License, Version 1.0.
+ //  See accompanying file LICENSE_1_0.txt or copy at
+ //  http://www.boost.org/LICENSE_1_0.txt
+ #pragma once
+ 
+-#include "common.hpp"
++#include "arch/packet_generic.hpp"
+ #if !defined(MICRON_NO_SIMD) && !defined(__micron_simd_generic)
+ #if defined(__micron_x86_sse2)
+-#include "../../simd/aliases/sse.hpp"
+-#if defined(__micron_x86_avx)
+-#include "../../simd/aliases/avx.hpp"
+-#endif
+-#elif defined(__micron_arm_neon)
+-#include "../../simd/aliases/neon.hpp"
++#include "arch/packet_amd64.hpp"
++#elif defined(__micron_arm_neon) && defined(__micron_arch_arm64)
++#include "arch/packet_arm64.hpp"
++#elif defined(__micron_arm_neon) && defined(__micron_arch_arm32)
++#include "arch/packet_arm32.hpp"
+ #endif
+ #endif
+ 
+ namespace micron::math::fft::__impl
+ {
+-
+-template<typename F> struct __packet {
+-  static constexpr usize width = 1;
+-};
+-
+-#define MICRON_FFT_PACKET(F, N, NS, SUFFIX, LOAD, STORE)                                                                                   \
+-  template<> struct __packet<F> {                                                                                                          \
+-    static constexpr usize width = N;                                                                                                      \
+-    static void                                                                                                                            \
+-    multiply(const F *ar, const F *ai, const F *br, const F *bi, F *real, F *imag) noexcept                                                \
+-    {                                                                                                                                      \
+-      auto a = NS::LOAD(ar), b = NS::LOAD(ai), c = NS::LOAD(br), d = NS::LOAD(bi);                                                         \
+-      NS::STORE(real, NS::sub##SUFFIX(NS::mul##SUFFIX(a, c), NS::mul##SUFFIX(b, d)));                                                      \
+-      NS::STORE(imag, NS::add##SUFFIX(NS::mul##SUFFIX(a, d), NS::mul##SUFFIX(b, c)));                                                      \
+-    }                                                                                                                                      \
+-  };
+-
+-#if !defined(MICRON_NO_SIMD) && !defined(__micron_simd_generic)
+-#if defined(__micron_x86_avx)
+-MICRON_FFT_PACKET(float, 8, micron::simd::avx, _f32, loadu_f32, storeu_f32)
+-MICRON_FFT_PACKET(double, 4, micron::simd::avx, _f64, loadu_f64, storeu_f64)
+-#elif defined(__micron_x86_sse2)
+-MICRON_FFT_PACKET(float, 4, micron::simd::sse, _f32, loadu_f32, storeu_f32)
+-MICRON_FFT_PACKET(double, 2, micron::simd::sse, _f64, loadu_f64, storeu_f64)
+-#elif defined(__micron_arm_neon)
+-MICRON_FFT_PACKET(float, 4, micron::simd::neon, , load_f32, store_f32)
+-#if defined(__micron_arch_arm64)
+-MICRON_FFT_PACKET(double, 2, micron::simd::neon, , load_f64, store_f64)
+-#endif
+-#endif
+-#endif
+-#undef MICRON_FFT_PACKET
+-
+ template<fft_scalar F>
+ void
+ __multiply(complex<F> *left, const complex<F> *right, usize n) noexcept
+ {
+-  usize k = 0;
+-  constexpr usize width = __packet<F>::width;
+-  if constexpr ( width > 1 ) {
+-    for ( ; k + width <= n; k += width ) {
+-      F ar[width], ai[width], br[width], bi[width], re[width], im[width];
+-      for ( usize j = 0; j < width; ++j ) {
+-        ar[j] = left[k + j].real;
+-        ai[j] = left[k + j].imag;
+-        br[j] = right[k + j].real;
+-        bi[j] = right[k + j].imag;
+-      }
+-      __packet<F>::multiply(ar, ai, br, bi, re, im);
+-      for ( usize j = 0; j < width; ++j ) left[k + j] = { re[j], im[j] };
+-    }
+-  }
+-  for ( ; k < n; ++k ) left[k] *= right[k];
++  using P = __complex_packet<F>;
++  const usize vector_end = n - n % P::width;
++  for ( usize k = 0; k < vector_end; k += P::width ) P::store(left + k, P::mul(P::load(left + k), P::load(right + k)));
++  for ( usize tail = 0; tail < n % P::width; ++tail ) left[vector_end + tail] *= right[vector_end + tail];
+ }
+-
+ }      // namespace micron::math::fft::__impl
+--- a/src/math/fft/plan.hpp
++++ b/src/math/fft/plan.hpp
+@@ -50,11 +50,23 @@
+ __offset(usize index, const buffer<usize> &shape, const layout &l, usize batch) noexcept
+ {
+   ssize_t offset = l.offset + ssize_t(batch) * l.distance;
++  if ( shape.size() == 1 ) return offset + ssize_t(index) * l.strides[0];
+   for ( usize j = shape.size(); j-- > 0; ) {
+     offset += ssize_t(index % shape[j]) * l.strides[j];
+     index /= shape[j];
+   }
+   return offset;
++}
++
++inline bool
++__dense(const buffer<usize> &shape, const layout &l) noexcept
++{
++  usize stride = 1;
++  for ( usize j = shape.size(); j-- > 0; ) {
++    if ( l.strides[j] != ssize_t(stride) ) return false;
++    stride *= shape[j];
++  }
++  return true;
+ }
+ 
+ template<fft_scalar F> struct __serial {
+@@ -77,6 +89,7 @@
+   buffer<complex<F>> __real_twiddles;
+   usize __volume{}, __input_volume{}, __output_volume{}, __transform_volume{ 1 };
+   usize __line_size{}, __engine_scratch{}, __data_size{}, __scratch_size{}, __packed_axis{};
++  bool __input_dense{}, __output_dense{};
+ 
+   usize
+   __packed_index(usize index, bool &mirror) const noexcept
+@@ -146,6 +159,8 @@
+                   d.kind == domain::real_forward ? sizeof(F) : sizeof(complex<F>));
+     __impl::__mul(__impl::__add(__impl::__complete_layout(__desc.output, __output_shape, d.batches), 1),
+                   d.kind == domain::real_backward ? sizeof(F) : sizeof(complex<F>));
++    __input_dense = __impl::__dense(__input_shape, __desc.input);
++    __output_dense = __impl::__dense(__output_shape, __desc.output);
+     __data_size = __impl::__mul(__volume, d.batches);
+     __scratch_size = __impl::__add(__impl::__mul(5, __line_size), __engine_scratch);
+     __impl::__mul(workspace_size(), sizeof(complex<F>));
+@@ -210,7 +225,9 @@
+       for ( usize k = 0; k < __volume; ++k ) {
+         bool mirror = false;
+         usize source = __desc.kind == domain::real_backward ? __packed_index(k, mirror) : k;
+-        auto z = load(__impl::__offset(source, __input_shape, __desc.input, b));
++        ssize_t index = __input_dense ? __desc.input.offset + ssize_t(b) * __desc.input.distance + ssize_t(source)
++                                      : __impl::__offset(source, __input_shape, __desc.input, b);
++        auto z = load(index);
+         data[b * __volume + k] = mirror ? conj(z) : z;
+       }
+     for ( usize pass = 0; pass < __desc.axes.size(); ++pass ) {
+@@ -219,6 +236,16 @@
+       usize lines = __data_size / n;
+       usize tile = stride >= 4 ? 4 : 1;
+       runner((lines + tile - 1) / tile, data + __data_size, __scratch_size, [&](usize group, complex<F> *scratch) noexcept {
++        if ( __desc.kind == domain::complex && stride == 1 ) {
++          auto *line = data + group * n;
++          auto *temp = scratch + __line_size;
++          if ( lines == 1 )
++            __engines[a].execute_parallel(line, scratch, temp, dir == direction::backward, runner);
++          else
++            __engines[a].execute(line, scratch, temp, dir == direction::backward);
++          for ( usize j = 0; j < n; ++j ) line[j] = scratch[j];
++          return;
++        }
+         usize count = lines - group * tile < tile ? lines - group * tile : tile;
+         usize bases[4];
+         for ( usize lane = 0; lane < count; ++lane ) {
+@@ -287,7 +314,9 @@
+             t /= __output_shape[j];
+           }
+         }
+-        store(__impl::__offset(k, __output_shape, __desc.output, b), data[b * __volume + source] * scale);
++        ssize_t index = __output_dense ? __desc.output.offset + ssize_t(b) * __desc.output.distance + ssize_t(k)
++                                       : __impl::__offset(k, __output_shape, __desc.output, b);
++        store(index, data[b * __volume + source] * scale);
+       }
+     return max_t(output_size() * (__desc.kind == domain::real_backward ? sizeof(F) : sizeof(complex<F>)));
+   }
+@@ -333,6 +362,28 @@
+   execute(const F *in, complex<F> *out, workspace_view<F> work) const noexcept
+   {
+     if ( __desc.kind != domain::real_forward || (__desc.batches && (!in || !out)) ) return -22;
++    if ( __desc.shape.size() == 1 && __desc.batches == 1 && __input_dense && __output_dense ) {
++      if ( !work.data || work.size < __data_size + __scratch_size ) return -105;
++      in += __desc.input.offset;
++      out += __desc.output.offset;
++      auto *packed = work.data, *spectrum = packed + __volume, *temp = spectrum + __volume;
++      usize n = __volume, h = n / 2;
++      F scale = __impl::__scale<F>(__desc.norm, direction::forward, n) * __desc.forward_scale;
++      if ( n % 2 == 0 ) {
++        for ( usize j = 0; j < h; ++j ) packed[j] = { in[2 * j], in[2 * j + 1] };
++        __engines[0].execute(packed, spectrum, temp, false);
++        for ( usize k = 0; k <= h; ++k ) {
++          auto x = spectrum[k == h ? 0 : k], y = conj(spectrum[k ? h - k : 0]);
++          auto difference = (x - y) * __real_twiddles[k];
++          out[k] = (x + y + complex<F>{ difference.imag, -difference.real }) * (F(0.5) * scale);
++        }
++      } else {
++        for ( usize j = 0; j < n; ++j ) packed[j] = { in[j] };
++        __engines[0].execute(packed, spectrum, temp, false);
++        for ( usize k = 0; k <= h; ++k ) out[k] = spectrum[k] * scale;
++      }
++      return max_t(__output_volume * sizeof(complex<F>));
++    }
+     __impl::__serial<F> runner;
+     return __execute([&](ssize_t i) { return complex<F>{ in[i] }; }, [&](ssize_t i, complex<F> z) { out[i] = z; }, work, direction::forward,
+                      runner);
+@@ -342,6 +393,32 @@
+   execute(const complex<F> *in, F *out, workspace_view<F> work) const noexcept
+   {
+     if ( __desc.kind != domain::real_backward || (__desc.batches && (!in || !out)) ) return -22;
++    if ( __desc.shape.size() == 1 && __desc.batches == 1 && __input_dense && __output_dense ) {
++      if ( !work.data || work.size < __data_size + __scratch_size ) return -105;
++      in += __desc.input.offset;
++      out += __desc.output.offset;
++      auto *packed = work.data, *time = packed + __volume, *temp = time + __volume;
++      usize n = __volume, h = n / 2;
++      F scale = __impl::__scale<F>(__desc.norm, direction::backward, n) * __desc.backward_scale;
++      if ( n % 2 == 0 ) {
++        for ( usize k = 0; k < h; ++k ) {
++          auto x = in[k], y = conj(in[h - k]);
++          auto difference = (x - y) * conj(__real_twiddles[k]);
++          packed[k] = (x + y + complex<F>{ -difference.imag, difference.real }) * F(0.5);
++        }
++        __engines[0].execute(packed, time, temp, true);
++        for ( usize k = 0; k < h; ++k ) {
++          out[2 * k] = time[k].real * (F(2) * scale);
++          out[2 * k + 1] = time[k].imag * (F(2) * scale);
++        }
++      } else {
++        for ( usize k = 0; k <= h; ++k ) packed[k] = in[k];
++        for ( usize k = h + 1; k < n; ++k ) packed[k] = conj(in[n - k]);
++        __engines[0].execute(packed, time, temp, true);
++        for ( usize k = 0; k < n; ++k ) out[k] = time[k].real * scale;
++      }
++      return max_t(__output_volume * sizeof(F));
++    }
+     __impl::__serial<F> runner;
+     return __execute([&](ssize_t i) { return in[i]; }, [&](ssize_t i, complex<F> z) { out[i] = z.real; }, work, direction::backward,
+                      runner);
+--- a/benches/fft_microbench.cpp
++++ b/benches/fft_microbench.cpp
+@@ -3,9 +3,9 @@
+ // duck build benches/fft_microbench.cpp --std c++23 --isa v3 --perf --fp --no-ssp --no-lto -i . -i ./src -o bin/fft/tuning
+ #include "../src/chrono/clock.hpp"
+ #include "../src/io/console.hpp"
++#include "../src/math/compute/thread_pool.hpp"
+ #include "../src/math/fft.hpp"
+ #include "../src/math/fft/parallel.hpp"
+-#include "../src/math/compute/thread_pool.hpp"
+ 
+ namespace ft = micron::math::fft;
+ using micron::math::complex;
+@@ -24,8 +24,7 @@
+   usize n = 0;
+   if ( !*s ) micron::exc<micron::except::invalid_argument>("empty benchmark argument");
+   for ( ; *s; ++s ) {
+-    if ( *s < '0' || *s > '9' || n > (usize(1) << 30) / 10 )
+-      micron::exc<micron::except::invalid_argument>("invalid benchmark argument");
++    if ( *s < '0' || *s > '9' || n > (usize(1) << 30) / 10 ) micron::exc<micron::except::invalid_argument>("invalid benchmark argument");
+     n = 10 * n + usize(*s - '0');
+   }
+   return n;
+@@ -76,13 +75,70 @@
+ }
+ 
+ template<typename F>
++static bool
++stage_bench(const options &o)
++{
++  usize radix = 0;
++  if ( equal(o.mode, "stage2") ) radix = 2;
++  if ( equal(o.mode, "stage3") ) radix = 3;
++  if ( equal(o.mode, "stage4") ) radix = 4;
++  if ( equal(o.mode, "stage5") ) radix = 5;
++  if ( equal(o.mode, "stage7") ) radix = 7;
++  if ( !radix ) return false;
++  ft::buffer<complex<F>> output(radix * o.n + o.offset), tw((radix - 1) * o.n + o.offset);
++  auto *out = output.data() + o.offset, *roots = tw.data() + o.offset;
++  for ( usize j = 1; j < radix; ++j )
++    for ( usize k = 0; k < o.n; ++k ) roots[(j - 1) * o.n + k] = ft::__impl::__root<F>(j * k, radix * o.n);
++  // Zero input keeps repeated unnormalized butterflies finite. Memory clobbers
++  // prevent constant propagation; correctness is checked independently in fft_kernels.cpp.
++  switch ( radix ) {
++  case 2:
++    measure(o, 2 * o.n, [&] {
++      ft::__impl::__stage<2, false>(out, roots, o.n, 0, o.n);
++      observe(out);
++    });
++    break;
++  case 3:
++    measure(o, 3 * o.n, [&] {
++      ft::__impl::__stage<3, false>(out, roots, o.n, 0, o.n);
++      observe(out);
++    });
++    break;
++  case 4:
++    measure(o, 4 * o.n, [&] {
++      ft::__impl::__stage<4, false>(out, roots, o.n, 0, o.n);
++      observe(out);
++    });
++    break;
++  case 5:
++    measure(o, 5 * o.n, [&] {
++      ft::__impl::__stage<5, false>(out, roots, o.n, 0, o.n);
++      observe(out);
++    });
++    break;
++  case 7:
++    measure(o, 7 * o.n, [&] {
++      ft::__impl::__stage<7, false>(out, roots, o.n, 0, o.n);
++      observe(out);
++    });
++    break;
++  }
++  sink = double(out[0].real);
++  return true;
++}
++
++template<typename F>
+ static int
+ run(const options &o)
+ {
+   using C = complex<F>;
+   usize n = o.n;
++  if ( stage_bench<F>(o) ) return 0;
+   if ( equal(o.mode, "plan") ) {
+-    measure(o, n, [&] { ft::plan<F> p(n); sink = double(p.workspace_size()); });
++    measure(o, n, [&] {
++      ft::plan<F> p(n);
++      sink = double(p.workspace_size());
++    });
+     return 0;
+   }
+   ft::descriptor<F> d(n);
+@@ -106,54 +162,90 @@
+     z[i] = { F(0), (i & 1) ? F(1) : F(-1) };
+   }
+   if ( equal(o.mode, "workspace") ) {
+-    measure(o, n, [&] { ft::workspace<F> fresh(p); observe(fresh.view().data); });
++    measure(o, n, [&] {
++      ft::workspace<F> fresh(p);
++      observe(fresh.view().data);
++    });
+   } else if ( equal(o.mode, "engine") ) {
+     ft::__impl::__engine<F> e(n);
+     ft::buffer<C> scratch(e.scratch_size());
+-    measure(o, n, [&] { e.execute(x, y, scratch.data(), false); observe(y); });
++    measure(o, n, [&] {
++      e.execute(x, y, scratch.data(), false);
++      observe(y);
++    });
+   } else if ( equal(o.mode, "multiply") ) {
+-    measure(o, n, [&] { ft::__impl::__multiply(x, z, n); observe(x); });
++    measure(o, n, [&] {
++      ft::__impl::__multiply(x, z, n);
++      observe(x);
++    });
+   } else if ( equal(o.mode, "copy") ) {
+-    measure(o, n, [&] { for ( usize k = 0; k < n; ++k ) y[k] = x[k]; observe(y); });
++    measure(o, n, [&] {
++      for ( usize k = 0; k < n; ++k ) y[k] = x[k];
++      observe(y);
++    });
+   } else if ( equal(o.mode, "gather") ) {
+-    measure(o, n, [&] { for ( usize k = 0; k < n; ++k ) y[k] = x[3 * k]; observe(y); });
++    measure(o, n, [&] {
++      for ( usize k = 0; k < n; ++k ) y[k] = x[3 * k];
++      observe(y);
++    });
+   } else if ( equal(o.mode, "parallel") ) {
+     micron::concurrent_arena arena;
+     for ( usize i = 1; i < o.workers; ++i ) (void)arena.create();
+     micron::math::compute::thread_pool_executor executor(arena);
+     ft::parallel_workspace<F> work(p, o.workers);
+-    measure(o, n, [&] { work.execute(p, x, y, executor); observe(y); });
++    measure(o, n, [&] {
++      work.execute(p, x, y, executor);
++      observe(y);
++    });
+   } else if ( equal(o.mode, "split") ) {
+     measure(o, n, [&] {
+       p.execute(ft::split_input<F>{ re.data(), im.data() }, ft::split_output<F>{ ore.data(), oim.data() }, w.view());
+-      observe(ore.data()); observe(oim.data());
++      observe(ore.data());
++      observe(oim.data());
+     });
+   } else if ( equal(o.mode, "r2c") ) {
+-    measure(o, n, [&] { p.execute(re.data(), y, w.view()); observe(y); });
++    measure(o, n, [&] {
++      p.execute(re.data(), y, w.view());
++      observe(y);
++    });
+   } else if ( equal(o.mode, "c2r") ) {
+     x[0].imag = F(0);
+     if ( n % 2 == 0 ) x[n / 2].imag = F(0);
+-    measure(o, n, [&] { p.execute(x, ore.data(), w.view()); observe(ore.data()); });
++    measure(o, n, [&] {
++      p.execute(x, ore.data(), w.view());
++      observe(ore.data());
++    });
+   } else if ( equal(o.mode, "dct") ) {
+     ft::r2r_plan<F> rp(n, ft::r2r_kind::dct_ii);
+     ft::workspace<F> rw(rp);
+-    measure(o, n, [&] { rp.execute(re.data(), ore.data(), rw.view()); observe(ore.data()); });
++    measure(o, n, [&] {
++      rp.execute(re.data(), ore.data(), rw.view());
++      observe(ore.data());
++    });
+   } else if ( equal(o.mode, "convolve") ) {
+     F kernel[31];
+     for ( usize i = 0; i < 31; ++i ) kernel[i] = F(i + 1) / F(32);
+     ft::convolution_plan<F> cp(ft::convolution_descriptor(n, 31), kernel);
+     ft::workspace<F> cw(cp);
+     ft::buffer<F> result(cp.output_size());
+-    measure(o, cp.output_size(), [&] { cp.execute(re.data(), result.data(), cw.view()); observe(result.data()); });
++    measure(o, cp.output_size(), [&] {
++      cp.execute(re.data(), result.data(), cw.view());
++      observe(result.data());
++    });
+   } else if ( equal(o.mode, "inplace_pair") ) {
+     measure(o, 2 * n, [&] {
+-      p.execute(x, x, w.view()); observe(x);
+-      p.execute(x, x, w.view(), ft::direction::backward); observe(x);
++      p.execute(x, x, w.view());
++      observe(x);
++      p.execute(x, x, w.view(), ft::direction::backward);
++      observe(x);
+     });
+   } else if ( equal(o.mode, "c2c") || equal(o.mode, "inverse") || equal(o.mode, "batch") || equal(o.mode, "nd")
+               || equal(o.mode, "strided") ) {
+     auto dir = equal(o.mode, "inverse") ? ft::direction::backward : ft::direction::forward;
+-    measure(o, count, [&] { p.execute(x, y, w.view(), dir); observe(y); });
++    measure(o, count, [&] {
++      p.execute(x, y, w.view(), dir);
++      observe(y);
++    });
+   } else {
+     micron::io::println("unknown mode");
+     return 2;
+@@ -167,13 +259,20 @@
+ {
+   if ( argc < 4 || argc > 8 ) {
+     micron::io::println("fft_microbench MODE f32|f64|f80 N [ITERATIONS=0 [SAMPLES=7 [OFFSET=0 [WORKERS=4]]]]");
+-    micron::io::println("modes: c2c inverse inplace_pair engine multiply copy gather batch strided split r2c c2r nd dct convolve parallel plan workspace");
++    micron::io::println(
++        "modes: c2c inverse inplace_pair engine multiply copy gather batch strided split r2c c2r nd dct convolve parallel plan workspace");
+     return 2;
+   }
+-  options o{ argv[1], argv[2], number(argv[3]), argc > 4 ? number(argv[4]) : 0, argc > 5 ? number(argv[5]) : 7,
+-             argc > 6 ? number(argv[6]) : 0, argc > 7 ? number(argv[7]) : 4 };
++  options o{ argv[1],
++             argv[2],
++             number(argv[3]),
++             argc > 4 ? number(argv[4]) : 0,
++             argc > 5 ? number(argv[5]) : 7,
++             argc > 6 ? number(argv[6]) : 0,
++             argc > 7 ? number(argv[7]) : 4 };
+   if ( argc > 8 || !o.n || o.n > (usize(1) << 24) || !o.samples || o.samples > 31 || o.offset > 15 || !o.workers || o.workers > 64
+-       || (equal(o.mode, "nd") && o.n > 2048) ) return 2;
++       || (equal(o.mode, "nd") && o.n > 2048) )
++    return 2;
+   if ( equal(o.precision, "f32") ) return run<float>(o);
+   if ( equal(o.precision, "f64") ) return run<double>(o);
+   if ( equal(o.precision, "f80") ) return run<long double>(o);

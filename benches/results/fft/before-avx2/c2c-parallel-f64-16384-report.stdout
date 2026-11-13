@@ -1,0 +1,129 @@
+=================================================
+            Trace Event Information              
+=================================================
+  Total records                     :      19742
+  Locked Load/Store Operations      :          1
+  Load Operations                   :       8094
+  Loads - uncacheable               :          0
+  Loads - IO                        :          0
+  Loads - Miss                      :          0
+  Loads - no mapping                :          0
+  Load Fill Buffer Hit              :       1174
+  Load L1D hit                      :       5270
+  Load L2D hit                      :        611
+  Load LLC hit                      :       1035
+  Load Local HITM                   :          8
+  Load Remote HITM                  :          0
+  Load Remote HIT                   :          0
+  Load Local DRAM                   :          4
+  Load Remote DRAM                  :          0
+  Load MESI State Exclusive         :          4
+  Load MESI State Shared            :          0
+  Load LLC Misses                   :          4
+  Load access blocked by data       :          0
+  Load access blocked by address    :          0
+  Load HIT Local Peer               :          0
+  Load HIT Remote Peer              :          0
+  LLC Misses to Local DRAM          :      100.0%
+  LLC Misses to Remote DRAM         :        0.0%
+  LLC Misses to Remote cache (HIT)  :        0.0%
+  LLC Misses to Remote cache (HITM) :        0.0%
+  Store Operations                  :      11648
+  Store - uncacheable               :          0
+  Store - no mapping                :          0
+  Store L1D Hit                     :          0
+  Store L1D Miss                    :      11648
+  Store No available memory level   :          0
+  No Page Map Rejects               :       3809
+  Unable to parse data source       :          0
+
+=================================================
+    Global Shared Cache Line Event Information   
+=================================================
+  Total Shared Cache Lines          :          8
+  Load HITs on shared lines         :          9
+  Fill Buffer Hits on shared lines  :          0
+  L1D hits on shared lines          :          1
+  L2D hits on shared lines          :          0
+  LLC hits on shared lines          :          8
+  Load hits on peer cache or nodes  :          0
+  Locked Access on shared lines     :          0
+  Blocked Access on shared lines    :          0
+  Store HITs on shared lines        :          1
+  Store L1D hits on shared lines    :          0
+  Store No available memory level   :          0
+  Total Merged records              :          9
+
+=================================================
+                 c2c details                     
+=================================================
+  Events                            : cpu/mem-loads,ldlat=30/Pu
+                                    : cpu/mem-stores/Pu
+  Cachelines sort on                : Total HITMs
+  Cacheline data grouping           : offset,iaddr
+
+=================================================
+           Shared Data Cache Line Table          
+=================================================
+#
+#        ----------- Cacheline ----------      Tot  ------- Load Hitm -------    Total    Total    Total  --------- Stores --------  ----- Core Load Hit -----  - LLC Load Hit --  - RMT Load Hit --  --- Load Dram ----
+# Index             Address  Node  PA cnt     Hitm    Total  LclHitm  RmtHitm  records    Loads   Stores    L1Hit   L1Miss      N/A       FB       L1       L2    LclHit  LclHitm    RmtHit  RmtHitm       Lcl       Rmt
+# .....  ..................  ....  ......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  .......  ........  .......  ........  .......  ........  ........
+#
+      0      0x7ee4560b6600   N/A       0   12.50%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      1      0x7ee4560bad80   N/A       0   12.50%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      2      0x7ee4560bf980   N/A       0   12.50%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      3      0x7ee4561912c0   N/A       0   12.50%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      4      0x7ee4561919c0   N/A       0   12.50%        1        1        0        2        1        1        0        1        0        0        0        0         0        1         0        0         0         0
+      5      0x7ee4561a1940   N/A       0   12.50%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+      6      0x7ee4561bc7c0   N/A       0   12.50%        1        1        0        2        2        0        0        0        0        0        1        0         0        1         0        0         0         0
+      7      0x7fff9ef29680   N/A       0   12.50%        1        1        0        1        1        0        0        0        0        0        0        0         0        1         0        0         0         0
+
+=================================================
+      Shared Cache Line Distribution Pareto      
+=================================================
+#
+#        ----- HITM -----  ------- Store Refs ------  --------- Data address ---------                      ---------- cycles ----------    Total       cpu                                          Shared                                      
+#   Num  RmtHitm  LclHitm   L1 Hit  L1 Miss      N/A              Offset  Node  PA cnt        Code address  rmt hitm  lcl hitm      load  records       cnt                          Symbol          Object                     Source:Line  Node
+# .....  .......  .......  .......  .......  .......  ..................  ....  ......  ..................  ........  ........  ........  .......  ........  ..............................  ..............  ..............................  ....
+#
+  ----------------------------------------------------------------------
+      0        0        1        0        0        0      0x7ee4560b6600
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                0x20   N/A       0            0x49a99f         0       118         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      1        0        1        0        0        0      0x7ee4560bad80
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                0x20   N/A       0            0x49a99f         0        86         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      2        0        1        0        0        0      0x7ee4560bf980
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x49a99f         0       142         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      3        0        1        0        0        0      0x7ee4561912c0
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x4aee39         0       230         0        1         1  [.] micron::math::fft::plan<do  fft_microbench  micron::math::fft::plan<double   0
+
+  ----------------------------------------------------------------------
+      4        0        1        0        1        0      0x7ee4561919c0
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x4aee39         0       306         0        1         1  [.] micron::math::fft::plan<do  fft_microbench  micron::math::fft::plan<double   0
+           0.00%    0.00%    0.00%  100.00%    0.00%                 0x0   N/A       0            0x49a97a         0         0         0        1         1  [.] void micron::math::fft::__  fft_microbench  void micron::math::fft::__impl   0
+
+  ----------------------------------------------------------------------
+      5        0        1        0        0        0      0x7ee4561a1940
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x4aee39         0       187         0        1         1  [.] micron::math::fft::plan<do  fft_microbench  micron::math::fft::plan<double   0
+
+  ----------------------------------------------------------------------
+      6        0        1        0        0        0      0x7ee4561bc7c0
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x4aee39         0       302         0        1         1  [.] micron::math::fft::plan<do  fft_microbench  micron::math::fft::plan<double   0
+
+  ----------------------------------------------------------------------
+      7        0        1        0        0        0      0x7fff9ef29680
+  ----------------------------------------------------------------------
+           0.00%  100.00%    0.00%    0.00%    0.00%                 0x0   N/A       0            0x4079e3         0        78         0        1         1  [.] micron::__worker_kernel(mi  fft_microbench  micron::__worker_kernel(micron   0

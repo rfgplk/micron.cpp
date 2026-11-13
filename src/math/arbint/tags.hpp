@@ -34,12 +34,15 @@ struct toom {
 struct nussbaumer {
 };
 
+struct fft {
+};
+
 };      // namespace solver
 
 namespace mpn
 {
 
-enum class algo : u8 { basecase = 0, comba = 1, karatsuba = 2, toom3 = 3, toom4 = 4, nussbaumer = 5 };
+enum class algo : u8 { basecase = 0, comba = 1, karatsuba = 2, toom3 = 3, toom4 = 4, nussbaumer = 5, fft = 6 };
 
 enum class divalgo : u8 { sbpi1 = 0, dc = 1, mu = 2 };
 
@@ -57,9 +60,9 @@ clamp_to(E k, E cap) noexcept
 };      // namespace mpn
 
 template<typename S>
-concept arb_solver
-    = micron::is_same_v<S, solver::automatic> || micron::is_same_v<S, solver::basecase> || micron::is_same_v<S, solver::comba>
-      || micron::is_same_v<S, solver::karatsuba> || micron::is_same_v<S, solver::toom> || micron::is_same_v<S, solver::nussbaumer>;
+concept arb_solver = micron::is_same_v<S, solver::automatic> || micron::is_same_v<S, solver::basecase>
+                     || micron::is_same_v<S, solver::comba> || micron::is_same_v<S, solver::karatsuba> || micron::is_same_v<S, solver::toom>
+                     || micron::is_same_v<S, solver::nussbaumer> || micron::is_same_v<S, solver::fft>;
 
 template<typename S>
 concept arb_solver_auto = micron::is_same_v<S, solver::automatic>;

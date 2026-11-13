@@ -131,8 +131,8 @@ apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept
   const u32 si = r.sym;
   if ( !ctx.d ) return reloc_result::unresolved;
   if ( si != stn_undef && (!ctx.d->symtab || si >= ctx.d->symcount) ) return reloc_result::unresolved;
-  if ( si != stn_undef && elf_st_type(ctx.d->symtab[si].info) == stt_tls
-       && ctx.d->symtab[si].shndx == shn_undef ) return reloc_result::unsupported;
+  if ( si != stn_undef && elf_st_type(ctx.d->symtab[si].info) == stt_tls && ctx.d->symtab[si].shndx == shn_undef )
+    return reloc_result::unsupported;
   u8 *const p = ctx.load_base + r.offset;
   const i64 a = r.rela ? r.addend : __implicit_addend(p);
   const u8 *const b = ctx.load_base;
@@ -193,8 +193,8 @@ apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept
   const u32 si = r.sym;
   if ( !ctx.d ) return reloc_result::unresolved;
   if ( si != stn_undef && (!ctx.d->symtab || si >= ctx.d->symcount) ) return reloc_result::unresolved;
-  if ( si != stn_undef && elf_st_type(ctx.d->symtab[si].info) == stt_tls
-       && ctx.d->symtab[si].shndx == shn_undef ) return reloc_result::unsupported;
+  if ( si != stn_undef && elf_st_type(ctx.d->symtab[si].info) == stt_tls && ctx.d->symtab[si].shndx == shn_undef )
+    return reloc_result::unsupported;
   u8 *const p = ctx.load_base + r.offset;
   const i64 a = r.rela ? r.addend : __implicit_addend(p);
   const u8 *const b = ctx.load_base;
@@ -254,8 +254,8 @@ apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept
   const u32 si = r.sym;
   if ( !ctx.d ) return reloc_result::unresolved;
   if ( si != stn_undef && (!ctx.d->symtab || si >= ctx.d->symcount) ) return reloc_result::unresolved;
-  if ( si != stn_undef && elf_st_type(ctx.d->symtab[si].info) == stt_tls
-       && ctx.d->symtab[si].shndx == shn_undef ) return reloc_result::unsupported;
+  if ( si != stn_undef && elf_st_type(ctx.d->symtab[si].info) == stt_tls && ctx.d->symtab[si].shndx == shn_undef )
+    return reloc_result::unsupported;
   u8 *const p = ctx.load_base + r.offset;
   const i64 a = r.rela ? r.addend : __implicit_addend(p);
   const u32 b = static_cast<u32>(reinterpret_cast<uintptr_t>(ctx.load_base));
@@ -329,8 +329,8 @@ apply_reloc(const reloc_ctx_t &ctx, const reloc_view &r) noexcept
   const u32 si = r.sym;
   if ( !ctx.d ) return reloc_result::unresolved;
   if ( si != stn_undef && (!ctx.d->symtab || si >= ctx.d->symcount) ) return reloc_result::unresolved;
-  if ( si != stn_undef && elf_st_type(ctx.d->symtab[si].info) == stt_tls
-       && ctx.d->symtab[si].shndx == shn_undef ) return reloc_result::unsupported;
+  if ( si != stn_undef && elf_st_type(ctx.d->symtab[si].info) == stt_tls && ctx.d->symtab[si].shndx == shn_undef )
+    return reloc_result::unsupported;
   u8 *const p = ctx.load_base + r.offset;
   const i64 a = r.rela ? r.addend : __implicit_addend(p);
   const u32 b = static_cast<u32>(reinterpret_cast<uintptr_t>(ctx.load_base));

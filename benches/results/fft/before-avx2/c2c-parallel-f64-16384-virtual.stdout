@@ -1,0 +1,2 @@
+operation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns
+parallel,f64,16384,16384,0,4,2000,1,788404.991,788404.991,788404.991,788404.991,788404.991

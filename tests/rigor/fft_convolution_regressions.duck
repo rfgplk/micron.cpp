@@ -1,0 +1,9 @@
+# Empty tensors must bypass padding/product arithmetic without requiring storage.
+test tests/rigor/fft_convolution_regressions.cpp --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/regression/convolution-gcc --timeout 60
+test tests/rigor/fft_convolution_regressions.cpp --clang --std c++23 --isa base -O2 --no-lto -i . -i ./src -o bin/fft/regression/convolution-clang --timeout 60
+test tests/rigor/fft_convolution_regressions.cpp --clang --std c++23 --isa base -O1 --asan --ubsan --no-lto -i . -i ./src -o bin/fft/regression/convolution-sanitize --timeout 60
+test tests/rigor/fft_convolution_regressions.cpp --std c++23 --i386 --isa base -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/convolution-i386 --timeout 60
+test tests/rigor/fft_convolution_regressions.cpp --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/convolution-arm32 --timeout 60
+test tests/rigor/fft_convolution_regressions.cpp --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/convolution-arm64 --timeout 60
+test tests/rigor/fft_convolution_regressions.cpp --clang --std c++23 --arm -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/convolution-clang-arm32 --timeout 60
+test tests/rigor/fft_convolution_regressions.cpp --clang --std c++23 --arm64 -O2 --no-lto -k --start ./start -i . -i ./src -o bin/fft/regression/convolution-clang-arm64 --timeout 60

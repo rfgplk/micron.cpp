@@ -1,0 +1,1170 @@
+[
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "8",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "32",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "inverse",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "inplace_pair",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "engine",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "multiply",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "copy",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "gather",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "strided",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "split",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "r2c",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2r",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "dct",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "convolve",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "plan",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "workspace",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "batch",
+      "f32",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "batch",
+      "f32",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "batch",
+      "f32",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "nd",
+      "f32",
+      "32",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "nd",
+      "f32",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "1",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "2",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f32",
+      "4096",
+      "0",
+      "7",
+      "3",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "8",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "32",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "256",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "1000",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "1009",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "inverse",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "inplace_pair",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "engine",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "multiply",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "copy",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "gather",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "strided",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "split",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "r2c",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2r",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "dct",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "convolve",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "plan",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "workspace",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "batch",
+      "f64",
+      "16",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "batch",
+      "f64",
+      "64",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "batch",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "nd",
+      "f64",
+      "32",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "nd",
+      "f64",
+      "128",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "1",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "2",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "c2c",
+      "f64",
+      "4096",
+      "0",
+      "7",
+      "3",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2,3",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "2"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2,3,4,5",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "1024",
+      "0",
+      "7",
+      "0",
+      "4"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2,3",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "2"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2,3,4,5",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "16384",
+      "0",
+      "7",
+      "0",
+      "4"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "1"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2,3",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "2"
+    ],
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "taskset",
+      "-c",
+      "2,3,4,5",
+      "/code/C++/micron/bin/fft/tuning/final-clang/fft_microbench",
+      "parallel",
+      "f64",
+      "262144",
+      "0",
+      "7",
+      "0",
+      "4"
+    ],
+    "returncode": 0
+  }
+]

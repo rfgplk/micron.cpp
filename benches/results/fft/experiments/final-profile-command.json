@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "perf",
+    "record",
+    "-e",
+    "cycles:u",
+    "-F",
+    "499",
+    "--user-callchains",
+    "-g",
+    "--call-graph",
+    "fp",
+    "-o",
+    "bin/fft/tuning/profile/final.data",
+    "--",
+    "taskset",
+    "-c",
+    "2",
+    "bin/fft/tuning/final-avx2/fft_microbench",
+    "c2c",
+    "f64",
+    "1024",
+    "500000",
+    "1",
+    "0",
+    "1"
+  ],
+  "stdout": "operation,precision,n,items,offset,workers,iterations,samples,median_ns,min_ns,p25_ns,p75_ns,max_ns\nc2c,f64,1024,1024,0,1,500000,1,4375.237688,4375.237688,4375.237688,4375.237688,4375.237688\n",
+  "stderr": "[ perf record: Woken up 2 times to write data ]\n[ perf record: Captured and wrote 0.135 MB bin/fft/tuning/profile/final.data (974 samples) ]\n"
+}
