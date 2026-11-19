@@ -37,6 +37,9 @@ Unlike library collections such as Boost et al., *micron* does not intend to mer
   - a high performance, cache-aware algorithmic base architecture
   - provides an innovative foundation for systems-level development, reimagining conventional approaches to low-level programming
 
+> [!IMPORTANT]
+> The [micron reference](docs/reference/index.html) provides offline documentation for the library's modules and function overloads, with source-backed effects, examples, and header and symbol indexes. Open the page directly in a browser; no documentation server is required.
+
 
 ##### Using the Library
 
@@ -202,10 +205,6 @@ The micron library has an extensive testing suite located at `tests/`. As of 1.9
 ###### Conformance with the STL
 
 *micron* currently provides numerous containers and functions which have existing implementations in the C++ Standard Library. Although *most* of these functions do generallyhave the same interfaces and functionality, there are minute core differences (in certain cases, significant ones) which you must be aware of. Do not assume all containers are functionally identical to the STL, because they are not.
-
-> [!IMPORTANT]
-> The [micron reference](docs/reference/index.html) provides offline documentation for the library's modules and function overloads, with source-backed effects, examples, and header and symbol indexes. Open the page directly in a browser; no documentation server is required.
-
  
 ##### Libraries
 
