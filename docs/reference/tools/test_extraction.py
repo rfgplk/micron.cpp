@@ -6,6 +6,7 @@ import unittest
 sys.dont_write_bytecode = True
 from update_functions import PARSER, branches, entry, facts, function_declarator, parser_input, walk
 from macro_functions import expand_macros
+from update_inventory import namespace_lines, repair_scope
 
 
 def extract(source):
@@ -72,6 +73,15 @@ class SourceEvidenceTests(unittest.TestCase):
         gates = branches(source)
         self.assertEqual(gates[3], ['#if defined(A) || defined(B)'])
         self.assertEqual(gates[5], ['#else of #if defined(A) || defined(B)'])
+
+    def test_diagnostic_macros_before_namespace_keep_internal_scope(self):
+        source = ['__micron_diagnostic_push __micron_diagnostic_ignored("-Wpedantic") namespace micron',
+                  '{', 'namespace __impl', '{', 'struct digit_pair {};',
+                  '} // namespace __impl', '} // namespace micron']
+        lexical = namespace_lines(source)
+        self.assertIsNotNone(lexical)
+        self.assertEqual(lexical[5], 'micron::__impl')
+        self.assertEqual(repair_scope('micron', 'namespace', lexical[5]), 'micron::__impl')
 
     def test_macro_generated_overloads(self):
         source = '#define OP(NAME) inline int NAME(int x) { return x + 1; } inline long NAME(long x) { return x - 1; }\nOP(next)\n'

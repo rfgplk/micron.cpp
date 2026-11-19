@@ -24,6 +24,8 @@ MODULES = [
  ("MICRON_MEM_NT_THRESHOLD", "Sets the default threshold, in bytes, used by the memory operation tuning code."),
  ("MICRON_ENABLE_ATTACH", "Enables attachment support in code that provides an attach-capable host."),
  ("__micron_reflection", "Is defined when the selected C++ language mode and compiler expose reflection support. It gates the reflection interfaces.")], None),
+("bitops", "Bit operations", "foundation", ["bits.hpp"],
+ "Integer masks, shifts, rotations, bit counts, byte order, alignment, and bit extraction/deposition.", [], None),
 ("traits", "Type traits and concepts", "foundation", ["type_traits.hpp", "concepts.hpp", "compare.hpp", "tags.hpp", "container_safety.hpp"],
  "Compile-time predicates, transformations, constraints, comparison utilities, and container tags.", [
  ("micron::is_same_v<T, U>", "Evaluates to true when `T` and `U` are the same type."),
@@ -130,7 +132,7 @@ MODULES = [
  ("micron::sort::quick(container)", "Reorders the container using quicksort."),
  ("micron::sort::insertion(container, comparator)", "Reorders the container using insertion sort and the supplied ordering predicate."),
  ("micron::sort::merge(container)", "Reorders the container using merge sort."),
- ("micron::sort::is_sorted(first, last)", "Tests whether the elements in the selected range are ordered.")], "algorithms.cpp"),
+ ("micron::sort::is_sorted(container)", "Tests adjacent indexed elements of the container for a descending pair. A comparator overload is also available.")], "algorithms.cpp"),
 ("hashing", "Hashing", "algorithms", ["hash/"],
  "Hash functions, checksums, and hash types for byte sequences and values. Select the function and seed required by the data format or container.", [
  ("micron::hashes::murmur", "A member of the Murmur hash family."),
@@ -230,12 +232,12 @@ MODULES = [
 ("io_coro", "Coroutine I/O", "io", ["io/coroutine/"],
  "Coroutine-oriented file, pipe, filesystem, and stream operations. The coroutine and I/O backends must be available in the selected build.", [
  ("<micron/coroio.hpp>", "Provides the coroutine I/O entry header.")], None),
-("math", "Mathematical functions", "numeric", ["math/", "math.hpp", "numerics.hpp", "rng.hpp"],
+("math", "Mathematical functions", "numeric", ["math/", "math.hpp", "rng.hpp"],
  "Scalar and packed mathematical functions, numeric types, and specialized mathematical facilities. Subsections describe their respective data structures and algorithms.", [
  ("micron::math::fsqrt(x)", "Computes a square root of `x`; overloads accept supported floating-point and integer types."),
  ("micron::math::cbrt(x)", "Computes a cube root for a floating-point argument."),
  ("micron::math::frsqrt(x)", "Computes a reciprocal square root for `x`.")], "math.cpp"),
-("numeric_types", "Numeric types", "numeric", ["math/complex.hpp", "math/rational.hpp", "math/decimal.hpp", "math/float16.hpp", "math/dd64.hpp"],
+("numeric_types", "Numeric types", "numeric", ["numerics.hpp", "math/complex.hpp", "math/rational.hpp", "math/decimal.hpp", "math/float16.hpp", "math/dd64.hpp", "math/ieee.hpp"],
  "Complex, rational, decimal-conversion, and reduced-precision floating-point facilities.", [
  ("micron::math::complex<T>", "Stores a complex value with real and imaginary components of type `T`."),
  ("micron::math::rational", "Represents a rational number with numerator and denominator accessors."),
@@ -249,7 +251,7 @@ MODULES = [
  "Packed mathematical functions operate on vector values using the available compile-time SIMD backend.", [
  ("micron::math::mk::exp", "Computes exponential values for the supplied packed input."),
  ("micron::math::mk::log", "Computes logarithms for the supplied packed input.")], None),
-("arbint", "Arbitrary-precision integers", "numeric", ["math/arbint/", "math/arbint.hpp"],
+("arbint", "Arbitrary-precision integers", "numeric", ["math/arbint/", "math/arbint.hpp", "math/types.hpp"],
  "Arbitrary-precision integer arithmetic and low-level multi-precision limb operations.", [
  ("micron::math::to_chars", "Converts an arbitrary-precision value to characters in the selected representation."),
  ("micron::math::from_chars", "Parses characters into an arbitrary-precision value.")], None),
@@ -340,7 +342,7 @@ MODULES = [
  ("micron::dynamic_open", "Opens a dynamic module according to the selected path and flags."),
  ("micron::dynamic_sym", "Looks up a symbol in a dynamic module."),
  ("micron::dynamic_close", "Closes a dynamic module handle.")], None),
-("elf", "ELF", "system", ["elf/", "elf.hpp"],
+("elf", "ELF", "system", ["elf/", "elf.hpp", "linux/elf/"],
  "ELF image loading, execution, and symbol inspection facilities.", [
  ("micron::elf::open", "Opens an ELF image."),
  ("micron::elf::list_symbols", "Enumerates symbols from an ELF image."),

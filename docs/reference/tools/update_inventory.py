@@ -58,6 +58,7 @@ def namespace_lines(lines: list[str]) -> dict[int, str] | None:
     mismatch = False
     for number, line in enumerate(lines, 1):
         code = line.split("//", 1)[0]
+        code = re.sub(r'\b__micron_diagnostic_(?:push|pop)\b|\b__micron_diagnostic_ignored\s*\(\s*"[^"]*"\s*\)', '', code)
         opening = re.match(r"^\s*(?:inline\s+)?namespace\s+([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*)\s*(?:\{|$)", code)
         if opening:
             stack.extend(opening.group(1).split("::"))

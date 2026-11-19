@@ -19,6 +19,12 @@ pre { width: auto; max-width: 100%; box-sizing: border-box; overflow: auto; }
 .source-listing { tab-size: 4; line-height: 1.45; }
 .source-line { display: block; min-width: max-content; }
 .source-line:target { background: #fff2cc; }
+.type-entry { border-top: 1px solid #c8ccd1; padding-top: .4em; margin-top: 1.6em; }
+.type-entry h3, .type-entry h4 { overflow-wrap: anywhere; }
+.guide-table { max-width: 100%; overflow-x: auto; }
+.guide-table table { width: 100%; margin: .5em 0 1em; }
+.guide-table th, .guide-table td { padding: .35em .5em; vertical-align: top; white-space: normal; }
+.guide-table th { text-align: left; }
 .line-number { display: inline-block; width: 4.5em; text-align: right; color: #666; padding-right: 1em; user-select: none; }
 #search-results code { color: #555; font-size: .85em; }
 @media (max-width: 780px) {

@@ -67,7 +67,7 @@ DETAILS = {
 ("lazy", "lz::collect<C>()"): {
  "header": "algorithm/lazy/collect.hpp", "parameters": [("C", "The output container type.")],
  "returns": "A container of type `C` populated from the input view.",
- "notes": "The input must be bounded. Use an adaptor such as `take` before collecting an unbounded source."
+ "notes": "An endless input is rejected at compile time. Exact-sized and bounded inputs can use a sized output allocation; an unknown-length input requires an output with push_back(). A source that may run indefinitely must be bounded with take or take_while before materialization. Fixed arrays additionally require a matching compile-time extent."
 },
 ("regex", "regex::match(input), regex::search(input)"): {
  "header": "regex/regex.hpp", "declarations": ["template<class S> rmatch match(const S& input) const noexcept;", "template<class S> rmatch search(const S& input) const noexcept;"],
@@ -88,12 +88,12 @@ DETAILS = {
 ("memory", "micron::memcpy(destination, source, count)"): {
  "header": "memory/cmemory/memcpy.hpp", "declarations": ["template<typename F, typename D>\nconstexpr F* memcpy(F* destination, const D* source, u64 count) noexcept;"],
  "parameters": [("destination", "Pointer to the first destination element."), ("source", "Pointer to the first source element."), ("count", "Number of elements to copy for this typed overload.")],
- "returns": "`destination`.", "notes": "The source and destination ranges must not overlap. A separate `void*` overload takes its count in bytes."
+ "returns": "`destination`.", "notes": "The source and destination ranges must not overlap. Runtime copies require equal-sized trivially copyable element types and copy their representations; constant evaluation assigns converted elements. `micron::voidcpy` is the raw byte-count interface."
 },
 ("memory", "micron::memmove(destination, source, count)"): {
  "header": "memory/cmemory/memmove.hpp", "declarations": ["template<typename F, typename D>\nF* memmove(F* destination, D* source, u64 count) noexcept;"],
  "parameters": [("destination, source", "Pointers to the destination and source ranges."), ("count", "Number of elements for this typed overload.")],
- "returns": "`destination`.", "notes": "The ranges may overlap. A separate `void*` overload takes its count in bytes."
+ "returns": "`destination`.", "notes": "The ranges may overlap. The runtime typed overload copies representations of equal-sized trivially copyable elements. `constexpr_memmove` is a separate element-assignment helper; inspect the selected overload for its count units."
 },
 ("memory", "micron::memset(destination, value, count)"): {
  "header": "memory/cmemory/memset.hpp", "declarations": ["template<typename F>\nF* memset(F* destination, byte value, u64 count) noexcept;"],
@@ -107,7 +107,7 @@ DETAILS = {
 },
 ("mutexes", "mutex::try_lock()"): {
  "header": "mutex/mutex.hpp", "declarations": ["bool try_lock() noexcept;"],
- "returns": "True if the mutex was acquired; false if it was already held."
+ "returns": "True if the mutex was acquired. A false result may indicate contention or a spurious failure of the single weak compare-and-swap attempt."
 },
 ("synchronization", "basic_semaphore::try_wait()"): {
  "header": "sync/semaphore.hpp", "declarations": ["bool try_wait() noexcept;"],

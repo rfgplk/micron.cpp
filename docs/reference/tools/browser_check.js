@@ -78,6 +78,18 @@ async function main() {
     catch (_) { return false; }
   }, 'vector navigation');
   if (!(await evaluate("document.body.textContent.includes('null pointer when no element matches')"))) throw new Error('Vector contract missing');
+  if (!(await evaluate("[...document.querySelectorAll('.type-entry h3')].some(e => e.textContent === 'micron::segmented_vector') && document.body.textContent.includes('Complexity')"))) throw new Error('Vector family prose missing');
+  await evaluate("[...document.querySelectorAll('.type-entry h3')].find(e => e.textContent === 'micron::segmented_vector').closest('.type-entry').querySelector('p a').click(); true");
+  await waitFor(async () => {
+    try { return await evaluate("location.pathname.endsWith('/headers/vector/segmented_vector.hpp.html') && document.readyState === 'complete'"); }
+    catch (_) { return false; }
+  }, 'type header navigation');
+  if (!(await evaluate("document.querySelector('.type-entry').textContent.includes('micron::segmented_vector')"))) throw new Error('Header type prose missing');
+
+  await command('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await navigate(fileURL('modules/maps.html'));
+  if (!(await evaluate("document.querySelectorAll('.guide-table').length > 0 && [...document.querySelectorAll('.guide-table')].every(e => e.getBoundingClientRect().width <= document.querySelector('#content').getBoundingClientRect().width + 1)"))) throw new Error('Comparison tables overflow on mobile');
+  await command('Emulation.clearDeviceMetricsOverride');
 
   await navigate(fileURL('headers/vector/vector.hpp.html'));
   if (!(await evaluate("document.querySelectorAll('.function-entry').length > 100"))) throw new Error('Per-overload documentation missing');
@@ -95,10 +107,22 @@ async function main() {
     catch (_) { return false; }
   }, 'source evidence navigation');
 
+  for (const [header, name, module] of [
+    ['thread/thread_types/reg_thread.hpp', 'micron::thread', 'threads'],
+    ['bits/wasm/thread_api.hpp', 'micron::thread', 'wasm'],
+    ['math/linalg/svd_bdc.hpp', 'micron::math::linalg::decomp::bidiag_result_dyn', 'matrix'],
+  ]) {
+    await navigate(fileURL('headers/' + header + '.html'));
+    const destination = '/modules/' + module + '.html#';
+    const linked = await evaluate(`[...document.querySelectorAll('tr')].some(row => [...row.querySelectorAll('code[id]')].some(code => code.textContent === ${JSON.stringify(name)}) && [...row.querySelectorAll('a')].some(a => a.href.includes(${JSON.stringify(destination)})))`);
+    if (!linked) throw new Error('Header type prose routing failed: ' + header + ': ' + name);
+  }
+
   const search = fileURL('search.html') + '?q=micron%3A%3Avector';
   await navigate(search);
   await waitFor(() => evaluate("document.querySelector('#search-status').textContent.includes('result')"), 'local search');
   if (!(await evaluate("[...document.querySelectorAll('#search-results a')].some(a => a.textContent === 'micron::vector')"))) throw new Error('Vector search missing');
+  if (!(await evaluate("[...document.querySelectorAll('#search-results a')].some(a => a.textContent === 'micron::vector' && a.href.includes('/modules/vectors.html#'))"))) throw new Error('Type search does not link to prose');
   await evaluate("document.querySelector('#query').value = 'robin_map::find'; document.querySelector('#search-form').requestSubmit(); true");
   if (!(await evaluate("[...document.querySelectorAll('#search-results a')].some(a => a.textContent === 'micron::robin_map::find')"))) throw new Error('Search submission failed');
 

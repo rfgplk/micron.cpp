@@ -14,6 +14,7 @@ from collections import defaultdict
 from pathlib import Path
 sys.dont_write_bytecode = True
 from function_pages import function_anchor, function_doc, source_page, source_body
+from guide_pages import guide_html, load_guides, type_anchor, type_html, validate_guides
 
 SITE = Path(__file__).resolve().parents[1]
 CONTENT = SITE / "content"
@@ -30,6 +31,8 @@ GROUPS = modules.GROUPS
 BY_ID = {module[0]: module for module in MODULES}
 INVENTORY = json.loads((CONTENT / "inventory.json").read_text(encoding="utf-8"))
 FUNCTIONS = json.loads((CONTENT / "functions.json").read_text(encoding="utf-8"))
+GUIDES = load_guides(CONTENT)
+validate_guides(GUIDES, MODULES, {source["path"] for source in FUNCTIONS["sources"]})
 
 
 def esc(value):
@@ -154,6 +157,27 @@ def main():
         lookup.setdefault(item["name"], (header_page(item["path"]) + "#" + destination, item["path"]))
     for item in functions:
         lookup.setdefault(item["name"], (header_page(item["path"]) + "#" + function_anchor(item), item["path"]))
+    type_guides = defaultdict(list)
+    type_references = {}
+    type_review_sources = {}
+    preferred_types = {}
+    for ident, guide in GUIDES.items():
+        reviewed_sources = frozenset(guide["sources"])
+        for item in guide.get("types", []):
+            type_guides[item["header"]].append((ident, item))
+            target = "modules/" + ident + ".html#" + type_anchor(ident, item, anchor)
+            for name in [item["name"], *item.get("covers", [])]:
+                type_references[(item["header"], name)] = (target, item["summary"])
+                type_review_sources[(item["header"], name)] = reviewed_sources
+                preferred_path = lookup.get(name, (None, None))[1]
+                rank = (item["header"] != preferred_path,
+                        is_internal.get(item["header"], True),
+                        item["header"], ident)
+                candidate = (rank, target, item["header"])
+                if name not in preferred_types or rank < preferred_types[name][0]:
+                    preferred_types[name] = candidate
+    for name, (_, target, path) in preferred_types.items():
+        lookup[name] = (target, path)
 
     current = "index.html"
     sections = []
@@ -161,7 +185,8 @@ def main():
         rows = []
         for module in MODULES:
             if module[2] == group:
-                rows.append(row(link(current, "modules/" + module[0] + ".html", module[1]), prose(module[4])))
+                rows.append(row(link(current, "modules/" + module[0] + ".html", module[1]),
+                                prose(GUIDES.get(module[0], {}).get("summary", module[4]))))
         sections.append(f'<h2><span class="mw-headline">{esc(title)}</span></h2>' + table(rows))
     intro = ('<p>The micron reference describes the library’s facilities, function overloads, and headers. '
              'Choose a section below, browse the function, header, and symbol indexes, or search by name.</p>'
@@ -171,11 +196,14 @@ def main():
     for module in MODULES:
         ident, title, group, _, intro, entries, example = module
         current = "modules/" + ident + ".html"
-        body = f'<p>{prose(intro)}</p>'
+        guide = GUIDES.get(ident, {})
+        body = f'<p>{prose(guide.get("summary", intro))}</p>'
+        body += guide_html(current, ident, guide, anchor, esc, prose, link, header_page, row, table)
         if entries:
             rows = []
             detail = []
             for name, description in entries:
+                description = guide.get("entry_overrides", {}).get(name, description)
                 a = module_anchor(name)
                 rows.append(row(f'<a href="#{a}"><code>{esc(name)}</code></a>', prose(description)))
                 contract = DETAILS.get((ident, name), {})
@@ -193,7 +221,7 @@ def main():
                 if contract.get("notes"):
                     extra += '<h4>Notes</h4><p>' + prose(contract["notes"]) + '</p>'
                 detail.append(f'<h3 id="{a}"><code>{esc(name)}</code></h3><p>{prose(description)}</p>{extra}')
-            body += '<h2>Overview</h2>' + table(rows) + '<h2>Interface notes</h2>' + "".join(detail)
+            body += ('<h2>Selected interfaces</h2>' if guide else '<h2>Overview</h2>') + table(rows) + '<h2>Interface notes</h2>' + "".join(detail)
         if example:
             source = (SITE / "examples" / example).read_text(encoding="utf-8")
             body += '<h2>Example</h2><pre class="source-cpp">' + esc(source) + '</pre>'
@@ -239,6 +267,11 @@ def main():
                      'headers; include the public interface that provides the facility.</p>')
         body += ('<p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. '
                  + link(current, source_page(path), 'Read the complete source snapshot') + ' for the surrounding type definitions and macros.</p>')
+        if type_guides[path]:
+            body += '<h2>Type reference</h2>'
+            for ident, item in type_guides[path]:
+                body += type_html(current, ident, item, anchor, esc, prose, link, header_page)
+                body += '<p>' + link(current, 'modules/' + ident + '.html', 'Related types and selection guide') + '.</p>'
         if items:
             rows = []
             for item in items:
@@ -247,8 +280,17 @@ def main():
                 conditions = '<br><small>' + '<br>'.join('<code>' + esc(x) + '</code>' for x in gate) + '</small>' if gate else ''
                 label = (link(current, '#' + item['function_anchor'], item['name'] + item['signature'])
                          if 'function_anchor' in item else f'<code id="{symbol_anchor(item)}">{sig}</code>')
+                description = f'{esc(item["kind"])}; line {item["line"]}{conditions}'
+                reference = type_references.get((path, item["name"]))
+                if reference is None and item["kind"] in {"class", "struct", "union", "enum", "typedef", "alias", "concept"} and item["name"] in preferred_types:
+                    _, _, defining_path = preferred_types[item["name"]]
+                    if path in type_review_sources[(defining_path, item["name"])]:
+                        reference = type_references[(defining_path, item["name"])]
+                if reference is not None:
+                    target, summary = reference
+                    description += '<br>' + prose(summary) + ' ' + link(current, target, 'Type reference') + '.'
                 rows.append(row(label,
-                                f'{esc(item["kind"])}; line {item["line"]}{conditions}'))
+                                description))
             body += table(rows)
         else:
             body += '<p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p>'
@@ -308,6 +350,13 @@ def main():
 
     search_entries = [[name, target, path] for name, (target, path) in sorted(lookup.items(), key=lambda i: i[0].casefold())]
     result["assets/search-index.js"] = "window.MICRON_SEARCH_INDEX = " + json.dumps(search_entries, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    result["content/guide-coverage.json"] = json.dumps({
+        ident: {"types": [item["name"] for item in guide.get("types", [])],
+                "related_types": sorted({name for item in guide.get("types", [])
+                                         for name in item.get("covers", [])}),
+                "sources": guide["sources"]}
+        for ident, guide in sorted(GUIDES.items())
+    }, indent=2) + "\n"
     current = "search.html"
     body = ('<p>Search names and headers in the local reference.</p><form id="search-form" role="search">'
             '<label for="query">Search terms</label> <input id="query" name="q" type="search" required> '
@@ -327,6 +376,10 @@ def main():
             '<a href="https://en.cppreference.com/Cppreference%3ACopyrights">its published terms</a>.</p>'
             '<h2>Maintaining this reference</h2><p>See ' + link(current, "README.md", "the maintenance instructions") +
             ' for the generation and inventory commands.</p>'
+            '<h2>Module and type descriptions</h2><p>Handwritten guides describe storage, ownership, operations, complexity, invalidation, '
+            'and implementation limits for ' + str(sum(len(guide.get("types", [])) for guide in GUIDES.values())) +
+            ' type entries in ' + str(len(GUIDES)) + ' modules. Related aliases and supporting types are explained together. '
+            'Their source-file coverage is recorded in ' + link(current, 'content/guide-coverage.json', 'the guide inventory') + '.</p>'
             '<h2>Function coverage and source evidence</h2><p>The function reference contains '
             + str(len(functions)) + ' callable entries from ' + str(len(FUNCTIONS['sources'])) +
             ' source files. Definitions specify their effects through source-equivalent code; return expressions and explicit failure sites are shown with source locations. '

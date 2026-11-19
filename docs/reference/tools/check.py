@@ -6,9 +6,13 @@ import json
 import hashlib
 import re
 import subprocess
+import sys
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+
+sys.dont_write_bytecode = True
+from guide_pages import load_guides
 
 SITE = Path(__file__).resolve().parents[1]
 ROOT = SITE.parents[1]
@@ -81,6 +85,45 @@ def main():
                 "micron::math::quaternions::normalize"}
     if required - names:
         errors.append(f"representative declarations missing: {sorted(required - names)}")
+    guides = load_guides(SITE / "content")
+    from importlib.util import module_from_spec, spec_from_file_location
+    module_spec = spec_from_file_location("reference_modules", SITE / "content/modules.py")
+    module_content = module_from_spec(module_spec)
+    module_spec.loader.exec_module(module_content)
+    missing_guides = {module[0] for module in module_content.MODULES} - guides.keys()
+    if missing_guides:
+        errors.append(f"module guides missing: {sorted(missing_guides)}")
+    reviewed_sources = {path for guide in guides.values() for path in guide["sources"]}
+    if source_files - reviewed_sources:
+        errors.append(f"sources absent from guide review inventory: {sorted(source_files - reviewed_sources)}")
+    guide_types = [item for guide in guides.values() for item in guide.get("types", [])]
+    guide_names = {item["name"] for item in guide_types}
+    explained_names = {name for item in guide_types for name in [item["name"], *item.get("covers", [])]}
+    internal_headers = {item["path"] for item in inventory["headers"] if item["internal"]}
+    class_scopes = {item["name"] for item in inventory["symbols"] if item["kind"] in {"class", "struct", "union"}}
+    unexplained = set()
+    for item in inventory["symbols"]:
+        parts = item["name"].split("::")
+        if item["kind"] not in {"class", "struct", "union", "enum", "typedef", "alias"}:
+            continue
+        if item["path"] in internal_headers or any(part.startswith("_") or part in {"impl", "detail", "details"} for part in parts):
+            continue
+        if any("::".join(parts[:i]) in class_scopes for i in range(1, len(parts))):
+            continue
+        if item["name"] not in explained_names:
+            unexplained.add((item["path"], item["name"]))
+    if unexplained:
+        errors.append(f"public type names absent from explanatory articles: {sorted(unexplained)}")
+    required_guides = {"micron::vector", "micron::segmented_vector", "micron::parray", "micron::robin_map",
+                       "micron::immutable_map", "micron::rb_tree", "micron::lz::filter_view",
+                       "usize", "micron::numeric_limits", "micron::weak_pointer"}
+    if required_guides - guide_names:
+        errors.append(f"representative type prose missing: {sorted(required_guides - guide_names)}")
+    for item in guide_types:
+        name = item["name"]
+        leaf = name.rsplit("::", 1)[-1]
+        if leaf.encode() not in source_bytes[item["header"]]:
+            errors.append(f"{item['header']}: guide type {name} absent from its defining source")
     source_lines = {}
     for item in inventory["symbols"]:
         path = item["path"]
@@ -142,6 +185,11 @@ def main():
     entries = json.loads(index_js.removeprefix("window.MICRON_SEARCH_INDEX = ").removesuffix(";\n"))
     for name, target, _ in entries:
         check_url(SITE / "search.html", target, external_allowed=False)
+        if name in required_guides and not target.startswith("modules/"):
+            errors.append(f"{name}: type search does not lead to handwritten prose")
+    type_search = {name: target for name, target, _ in entries}
+    if not type_search.get("micron::thread", "").startswith("modules/threads.html#"):
+        errors.append("native micron::thread search is hidden by a conditional backend type")
     subprocess.run(["node", "--check", str(SITE / "assets/search.js")], check=True)
     if errors:
         print("Validation errors:")

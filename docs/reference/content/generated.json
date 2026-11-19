@@ -1,6 +1,7 @@
 [
   "about.html",
   "assets/search-index.js",
+  "content/guide-coverage.json",
   "functions/index.html",
   "headers/__special/compare.html",
   "headers/__special/coroutine.html",
@@ -1270,6 +1271,7 @@
   "modules/arrays.html",
   "modules/atomics.html",
   "modules/attach.html",
+  "modules/bitops.html",
   "modules/blas.html",
   "modules/chrono.html",
   "modules/compute.html",
